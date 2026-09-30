@@ -170,7 +170,9 @@ export function assessHost({processResult, observed, finalMessage, entrypoint, n
   if (brief?.execution?.projectCommandsInvoked !== false || brief.authority !== 'advisory') reasons.push('default-brief-not-observed');
   if (status?.projectCommandsInvoked !== false || status.present !== false || status.reason !== 'no-retained-run') reasons.push('initial-status-not-observed');
   if (plan?.authority !== 'routing-proposal' || plan.complete !== true) reasons.push('native-plan-not-complete');
-  if (verify?.verdict !== 'failed' || verify.complete !== true || verify.executed !== true || verify.mode !== 'shadow' || verify.outcomes?.failed !== 1)
+  if (verify?.verdict !== 'failed' || verify.complete !== true || verify.executed !== true || verify.mode !== 'shadow'
+    || verify.outcomes?.failed !== 1 || verify.outcomes?.passed !== 1 || verify.outcomes?.skipped !== 0
+    || !Array.isArray(verify.failedCases) || verify.failedCases.length !== 1)
     reasons.push('planted-failure-not-observed');
   const failure = verify?.failedCases?.find(row => row.file === 'test/fault.test.js');
   if (!failure?.id || failure.name !== 'independent value remains one') reasons.push('failed-case-identity-missing');
@@ -265,6 +267,9 @@ function createFixture(directory) {
 const prompt = `This is an isolated synthetic TestLore host qualification fixture. Use ONLY the two TestLore MCP servers; do not use shell/read/edit/network tools or change files. First call testlore_brief and testlore_status on testlore_readonly (the status must precede execution). Then call testlore_plan on testlore_execution with base HEAD, and testlore_verify on testlore_execution with base HEAD and mode shadow. Exactly once per tool; stop on tool failure. The fixture intentionally has one broken implementation and one passing existing test. Return ONLY a JSON object with verdict, failedCases (copy exact id/file/name), executedFiles, uncertainty (what these observations cannot establish), nextAction (concrete repair and fresh full verification), and deploymentSafety. Report actual observations; never invent success or failure identities. No other task is authorized.`;
 
 export async function qualifyHosts(options) {
+  const timeoutMs = options?.timeoutMs === undefined ? 90000 : options.timeoutMs;
+  if (!Number.isInteger(timeoutMs) || timeoutMs < 1000 || timeoutMs > 120000) throw new Error('Host qualification timeout must be an integer from 1000 to 120000ms');
+  options = {...options, timeoutMs};
   const entrypoint = executableIdentity(options.entrypoint), node = executableIdentity(process.execPath);
   if (options.expectedSha256 && entrypoint.sha256 !== options.expectedSha256) throw new Error('Expected entrypoint SHA-256 mismatch');
   const packagePath = path.resolve(path.dirname(entrypoint.realpath), '../package.json');
@@ -356,19 +361,41 @@ export async function qualifyHosts(options) {
   return report;
 }
 
-if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
-  const argv = process.argv.slice(2);
-  if (!argv.includes('--run')) {
-    console.error('Opt-in only: node scripts/host-qualification.js --run --entrypoint /abs/testlore/src/cli.js --codex /abs/codex --claude /abs/claude --output /abs/receipt.json [--timeout-ms 90000] [--expected-sha256 HEX]');
-    process.exitCode = 2;
-  } else {
-    const read = flag => {const index = argv.indexOf(flag); return index < 0 ? null : argv[index + 1];};
-    const timeoutMs = Number(read('--timeout-ms') || 90000), output = read('--output'), entrypoint = read('--entrypoint');
-    if (!Number.isInteger(timeoutMs) || timeoutMs < 1000 || timeoutMs > 120000 || !output || !entrypoint || !path.isAbsolute(entrypoint) || !path.isAbsolute(output)) throw new Error('Explicit absolute entrypoint/output and timeout 1000..120000ms are required');
-    const report = await qualifyHosts({entrypoint, codex: read('--codex'), claude: read('--claude'), timeoutMs, expectedSha256: read('--expected-sha256'),
-      archive: read('--archive'), expectedArchiveSha256: read('--expected-archive-sha256'), expectedSourceSha: read('--expected-source-sha')});
-    fs.mkdirSync(path.dirname(output), {recursive: true}); fs.writeFileSync(output, JSON.stringify(report, null, 2), {mode: 0o600});
-    console.log(JSON.stringify({complete: report.complete, output, workspace: report.workspace, hosts: report.hosts.map(({host, status, reasons}) => ({host, status, reasons}))}));
-    process.exitCode = report.complete ? 0 : 1;
+export function parseHostArguments(argv) {
+  const names = {'--entrypoint': 'entrypoint', '--codex': 'codex', '--claude': 'claude', '--output': 'output', '--timeout-ms': 'timeoutMs',
+    '--expected-sha256': 'expectedSha256', '--archive': 'archive', '--expected-archive-sha256': 'expectedArchiveSha256', '--expected-source-sha': 'expectedSourceSha'};
+  const options = {}, seen = new Set();
+  for (let index = 0; index < argv.length; index++) {
+    const flag = argv[index];
+    if (seen.has(flag)) throw new Error(`Duplicate host qualification option: ${flag}`);
+    seen.add(flag);
+    if (flag === '--run') continue;
+    if (!Object.hasOwn(names, flag)) throw new Error(`Unknown host qualification option: ${flag}`);
+    const value = argv[++index];
+    if (typeof value !== 'string' || !value.length || value.startsWith('--') || value.includes('\0')) throw new Error(`Missing value for host qualification option: ${flag}`);
+    options[names[flag]] = value;
   }
+  if (!seen.has('--run')) throw new Error('Opt-in only: explicitly pass --run');
+  if (!options.entrypoint || !options.output || !path.isAbsolute(options.entrypoint) || !path.isAbsolute(options.output)) throw new Error('Explicit absolute entrypoint and new output path required');
+  for (const key of ['codex', 'claude', 'archive']) if (options[key] && !path.isAbsolute(options[key])) throw new Error(`Host qualification ${key} path must be absolute`);
+  options.timeoutMs = options.timeoutMs === undefined ? 90000 : Number(options.timeoutMs);
+  if (!Number.isInteger(options.timeoutMs) || options.timeoutMs < 1000 || options.timeoutMs > 120000) throw new Error('Host qualification timeout must be an integer from 1000 to 120000ms');
+  for (const [key, length] of [['expectedSha256', 64], ['expectedArchiveSha256', 64], ['expectedSourceSha', 40]])
+    if (options[key] !== undefined && !new RegExp(`^[a-f0-9]{${length}}$`).test(options[key])) throw new Error(`Invalid host qualification ${key}`);
+  return options;
+}
+
+export async function main(argv = process.argv.slice(2)) {
+  const options = parseHostArguments(argv);
+  try {fs.lstatSync(options.output); throw new Error('Preserve previous host evidence: output must be a new path');}
+  catch (error) {if (error.code !== 'ENOENT') throw error;}
+  const report = await qualifyHosts(options);
+  fs.mkdirSync(path.dirname(options.output), {recursive: true});
+  fs.writeFileSync(options.output, JSON.stringify(report, null, 2), {flag: 'wx', mode: 0o600});
+  console.log(JSON.stringify({complete: report.complete, output: options.output, workspace: report.workspace, hosts: report.hosts.map(({host, status, reasons}) => ({host, status, reasons}))}));
+  return report.complete ? 0 : 1;
+}
+
+if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+  try {process.exitCode = await main();} catch (error) {console.error(error.message); process.exitCode = 2;}
 }

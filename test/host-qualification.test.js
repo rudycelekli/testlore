@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {assessHost, safeHostEnvironment, boundedProcess, executableIdentity, qualifyHosts, packageSnapshot, hostEvents,
-  readBoundedText, readObserverReceipt, executableDrift, assertCanonicalEntrypoint} from '../scripts/host-qualification.js';
+  readBoundedText, readObserverReceipt, executableDrift, assertCanonicalEntrypoint, main as hostMain, parseHostArguments} from '../scripts/host-qualification.js';
 import {boundedSummary, summarizeRun} from '../src/mcp-worker.js';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -17,7 +17,7 @@ function successfulObservation() {
       {id: 2, name: 'testlore_status', arguments: {}, requestedAt: 102, respondedAt: 103, result: {present: false, projectCommandsInvoked: false, reason: 'no-retained-run'}}]},
     {mode: 'execution', entrypoint, node: nodeIdentity, tools: ['testlore_brief', 'testlore_status', 'testlore_plan', 'testlore_verify'], calls: [
       {id: 1, name: 'testlore_plan', arguments: {base: 'HEAD'}, requestedAt: 104, respondedAt: 105, result: {authority: 'routing-proposal', complete: true}},
-      {id: 2, name: 'testlore_verify', arguments: {base: 'HEAD', mode: 'shadow'}, requestedAt: 106, respondedAt: 107, result: {verdict: 'failed', mode: 'shadow', executed: true, complete: true, outcomes: {failed: 1}, failedCases, executedFiles}}]}
+      {id: 2, name: 'testlore_verify', arguments: {base: 'HEAD', mode: 'shadow'}, requestedAt: 106, respondedAt: 107, result: {verdict: 'failed', mode: 'shadow', executed: true, complete: true, outcomes: {failed: 1, passed: 1, skipped: 0}, failedCases, executedFiles}}]}
   ];
   return {entrypoint, nodeIdentity, observed, processResult: {status: 'completed', exitCode: 0},
     finalMessage: JSON.stringify({verdict: 'failed', failedCases, executedFiles, uncertainty: 'Fixture observations do not establish deployment safety or defect effectiveness.',
@@ -93,6 +93,43 @@ test('native host evidence requires exact shadow arguments, response ordering an
   const sameMillisecond = successfulObservation();
   for (const receipt of sameMillisecond.observed) for (const call of receipt.calls) call.requestedAt = call.respondedAt = 100;
   assert.equal(assessHost(sameMillisecond).qualified, true);
+});
+
+test('synthetic native host fixture requires exactly one failure, one preserved pass and zero skips', () => {
+  for (const alter of [
+    run => {run.outcomes.passed = 0;}, run => {run.outcomes.passed = 2;}, run => {run.outcomes.skipped = 1;},
+    run => {run.failedCases = [];}, run => {run.failedCases.push({...run.failedCases[0]});}
+  ]) {const input = successfulObservation(); alter(input.observed[1].calls[1].result); assert.equal(assessHost(input).qualified, false);}
+});
+
+test('CLI rejects reused receipts and invalid options before invoking a sentinel host; API validates its timeout first', async t => {
+  const root = fixture(t, {'package.json': {name: 'testlore', bin: {testlore: 'src/cli.js'}}, 'src/cli.js': "console.log('fixture');"});
+  const entrypoint = path.join(root, 'src/cli.js'), output = path.join(root, 'previous.json'), freshOutput = path.join(root, 'fresh.json');
+  const marker = path.join(root, 'host-called'), host = path.join(root, 'sentinel-host');
+  fs.writeFileSync(host, `#!/usr/bin/env node\nrequire('node:fs').writeFileSync(${JSON.stringify(marker)},'called');process.exit(9);\n`, {mode: 0o700});
+  fs.writeFileSync(output, 'previous evidence');
+  const base = ['--run', '--entrypoint', entrypoint, '--codex', host, '--output', freshOutput];
+  for (const argv of [
+    ['--run', '--entrypoint', entrypoint, '--codex', host, '--output', output],
+    [...base, '--run'], [...base, '--output', output], [...base, '--unknown', 'value'],
+    [...base, '--timeout-ms'], [...base, '--archive', '--timeout-ms', '1000'],
+    [...base, '--timeout-ms', '0'], [...base, '--timeout-ms', '120001']
+  ]) {
+    await assert.rejects(hostMain(argv), /new path|Duplicate|Unknown|Missing|timeout/);
+    assert.equal(fs.existsSync(marker), false); assert.equal(fs.existsSync(freshOutput), false); assert.equal(fs.readFileSync(output, 'utf8'), 'previous evidence');
+  }
+  for (const timeoutMs of [0, 120001, NaN, Infinity, 1000.5, null, '1000']) {
+    await assert.rejects(qualifyHosts({entrypoint: '/unreadable-before-timeout-validation', codex: host, timeoutMs}), /timeout/);
+    assert.equal(fs.existsSync(marker), false);
+  }
+  const defaults = parseHostArguments(base); assert.equal(defaults.timeoutMs, 90000);
+  const report = await qualifyHosts({entrypoint}); t.after(() => fs.rmSync(report.workspace, {recursive: true, force: true}));
+  assert.equal(report.timeoutMs, 90000); assert.equal(report.complete, false);
+  const newReceipt = path.join(root, 'new-receipt.json');
+  assert.equal(await hostMain(['--run', '--entrypoint', entrypoint, '--output', newReceipt]), 1);
+  const saved = JSON.parse(fs.readFileSync(newReceipt, 'utf8')); t.after(() => fs.rmSync(saved.workspace, {recursive: true, force: true}));
+  assert.equal(saved.complete, false); assert.equal(fs.statSync(newReceipt).mode & 0o777, 0o600);
+  assert.equal(fs.existsSync(marker), false);
 });
 
 test('native host file evidence rejects oversized, symlinked, malformed and noncanonical inputs and detects executable drift', async t => {
