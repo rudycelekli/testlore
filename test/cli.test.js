@@ -35,3 +35,17 @@ test('npm-style symlinked bin entrypoints actually execute the CLI', t => {
   const result = spawnSync('node',[bin,'--version'],{cwd:root,encoding:'utf8'});
   assert.equal(result.status,0); assert.equal(result.stdout.trim(),'0.1.0');
 });
+test('agent entrypoints keep project inspection and execution permissions separate', t => {
+  const root = fixture(t, {...twoModules, 'tddswarm.config.json': {runner: ['node', 'missing-runner.js']}});
+  const result = exec(root, ['brief', '--query', 'Check independent behavior', '--json']);
+  assert.equal(result.status, 0);
+  const brief = JSON.parse(result.stdout);
+  assert.equal(brief.execution.projectCommandsInvoked, false);
+  assert.equal(brief.task, 'Check independent behavior');
+  for (const args of [['brief', '--allow-execution'], ['mcp', '--execute'], ['mcp', '--changed', 'src/a.js']]) {
+    const rejected = exec(root, args);
+    assert.equal(rejected.status, 2);
+    assert.match(rejected.stderr, /applies only to mcp|accepts only/);
+  }
+  assert.equal(fs.existsSync(path.join(root, '.tddswarm')), false);
+});

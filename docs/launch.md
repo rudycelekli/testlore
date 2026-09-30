@@ -33,6 +33,8 @@ Run the workflow with publishing disabled first and retain the exact hosted run 
 
 Every PR also runs `packed-install` against its exact checkout, without installing development dependencies into the proof project. The installed proof runs ordinary `testlore run` to verify the persisted shadow default and ordinary `improve` to verify the generated Action uses the sealed source SHA; command-line overrides cannot supply these assurances. Verification requires strict boolean attestations, both Action identities and the installed manifest hash.
 
+The proof also connects the official MCP SDK client to the installed package's stdio server, checks the default read-only tool set and runner-free brief, then explicitly enables execution and verifies that default shadow mode catches a planted fault while retaining both test files. The client SDK is a development dependency of the proof harness, not of the fresh production-only project. These measured checks cover the named fixture; they do not establish universal agent-host compatibility.
+
 Release qualification independently reruns the measured-quality, native-selector and browser proof scripts. Its full source suite uses `scripts/test-qualification.js` with Chromium enabled. This gate retains native TAP and a source-bound receipt, enumerates all current test files and requires the two browser proof cases. Skipped/todo/cancelled/failed cases, empty file-load placeholders, inconsistent or truncated summaries, wrong scope, output/deadline overruns and source drift reject qualification. A normal test command exiting zero is insufficient. To run locally on a clean committed checkout with the SDK and browser installed:
 
 ```sh

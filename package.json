@@ -34,7 +34,9 @@
     "benchmark:defects": "node scripts/generated-defects.js"
   },
   "dependencies": {
-    "typescript": "6.0.3"
+    "@modelcontextprotocol/server": "2.2.0",
+    "typescript": "6.0.3",
+    "zod": "4.6.5"
   },
   "license": "MIT",
   "repository": {
@@ -55,6 +57,7 @@
   ],
   "devDependencies": {
     "@bazel/bazelisk": "1.28.1",
+    "@modelcontextprotocol/client": "2.2.0",
     "@playwright/test": "1.63.0",
     "@stryker-mutator/core": "10.0.0",
     "c8": "12.0.0",

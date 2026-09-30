@@ -93,6 +93,26 @@ npx --no-install testlore run --shadow --base HEAD
 
 Local analysis and routing require no AI account. Generation may consume your selected worker's allowance.
 
+## The verification contract for coding agents
+
+Before an agent changes code, give it a concrete quality brief:
+
+```sh
+npx --no-install testlore brief --query "Verify the checkout behavior change" --json
+```
+
+The brief names independent expectations, native scope, input uncertainty, regression preservation and bug-detection evidence. It reads bounded static project data without invoking your runner, resolvers or service probes. Static assertion counts carry no effectiveness claim; old receipts carry no current certification.
+
+Connect your coding agent through **MCP stdio**:
+
+```sh
+npx --no-install testlore mcp --root /absolute/project
+```
+
+Inspection is the default. Start with `--allow-execution` to let an agent request the configured native plan and full shadow verification. The server stays bound to one project; tool arguments cannot grant permissions, change the root, supply arbitrary commands, or merge changes. Work is supervised and serialized, with bounded summaries and durable receipts. Your native test engine and independent review retain authority. [Agent tools and configuration →](docs/mcp.md)
+
+The useful loop is **brief → independent expectations → native plan → shadow verification → reviewable evidence**. TestLore gives agents a shared way to describe what a change needs to prove, alongside the testing tools you already use.
+
 ## A paragraph edit deserves an understandable plan
 
 ```text

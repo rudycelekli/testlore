@@ -7,6 +7,8 @@ import assert from 'node:assert/strict';
 import {spawnSync} from 'node:child_process';
 import {createHash} from 'node:crypto';
 import {fileURLToPath} from 'node:url';
+import {Client} from '@modelcontextprotocol/client';
+import {StdioClientTransport} from '@modelcontextprotocol/client/stdio';
 const source=fileURLToPath(new URL('../',import.meta.url));
 const workspace=fs.mkdtempSync(path.join(os.tmpdir(),'tddswarm-packed-proof-'));
 const project=path.join(workspace,'project');const tools=path.join(workspace,'tools');
@@ -38,6 +40,16 @@ try{
  for(const args of [['init','-b','main'],['config','user.name','Packed Proof'],['config','user.email','proof@example.invalid'],['add','.'],['commit','-m','baseline']])invoke(project,['git',...args]);
  command(['setup','--no-ci']);
  assert.equal(JSON.parse(fs.readFileSync(path.join(project,'tddswarm.config.json'))).executionMode,'shadow');
+ const brief=command(['brief']);assert.equal(brief.authority,'advisory');assert.equal(brief.execution.projectCommandsInvoked,false);assert.equal(brief.inventory.observedTestFiles,2);
+ const mcpClient=new Client({name:'testlore-packed-proof',version:'1.0.0'});
+ const mcpTransport=new StdioClientTransport({command:process.execPath,args:[cli,'mcp','--root',project],stderr:'pipe'});
+ mcpTransport.stderr?.on('data',()=>{});
+ try{
+  await mcpClient.connect(mcpTransport,{timeout:10000});
+  const tools=await mcpClient.listTools();assert.deepEqual(tools.tools.map(tool=>tool.name).sort(),['testlore_brief','testlore_status']);
+  const context=await mcpClient.callTool({name:'testlore_brief',arguments:{task:'Verify independent module contracts'}});
+  assert.notEqual(context.isError,true);assert.equal(context.structuredContent.authority,'advisory');assert.equal(context.structuredContent.execution.projectCommandsInvoked,false);
+ }finally{await mcpClient.close();}
  if(expectedSource){const {installedActionReference}=await import(path.join(tools,'node_modules/testlore/src/quality-layer.js'));assert.equal(installedPackage.gitHead,expectedSource);assert.equal(installedActionReference(),expectedSource);}
  const recommendation=command(['plugins','--recommend']);assert.ok(Array.isArray(recommendation.recommendations));
  const automatic=command(['plugins','--auto']);assert.equal(automatic.changed,false);
@@ -50,6 +62,17 @@ try{
  write('src/a.js','export const a=2;');
  const shadow=command(['run','--base','HEAD'],1);
  assert.equal(shadow.shadow,true);assert.equal(shadow.complete,true);assert.deepEqual(shadow.plan.selected,['test/a.test.js']);assert.equal(shadow.tests.filter(t=>t.status==='failed').length,1);assert.equal(shadow.executedFiles.length,2);
+ const executionClient=new Client({name:'testlore-packed-execution-proof',version:'1.0.0'});
+ const executionTransport=new StdioClientTransport({command:process.execPath,args:[cli,'mcp','--root',project,'--allow-execution'],stderr:'pipe'});
+ executionTransport.stderr?.on('data',()=>{});
+ try{
+  await executionClient.connect(executionTransport,{timeout:10000});
+  const result=await executionClient.callTool({name:'testlore_verify',arguments:{base:'HEAD'}});
+  assert.notEqual(result.isError,true);const observed=result.structuredContent;
+  assert.equal(observed.mode,'shadow');assert.equal(observed.complete,true);assert.equal(observed.verdict,'failed');
+  assert.equal(observed.outcomes.failed,1);assert.deepEqual(observed.executedFiles.sort(),['test/a.test.js','test/b.test.js']);
+  assert.equal(observed.deploymentSafety,'not-established');assert.equal(observed.receipts.json,'.tddswarm/last-run.json');
+ }finally{await executionClient.close();}
  invoke(project,['git','restore','src/a.js']);
  const capture=command(['capture']);assert.equal(capture.complete,true);
  write('.tddswarm/proposal.json',{files:[{path:'test/extra.test.js',content:"import test from 'node:test';import assert from 'node:assert/strict';import {a} from '../src/a.js';test('independent a contract',()=>assert.equal(a,1));"}],review:{accepted:true,findings:[],oracle:{independent:true,basis:['a and b are one.']}},requirements:'a and b are one.'});
@@ -62,7 +85,7 @@ try{
  const recall=command(['recall','--query','independent a contract']);assert.ok(recall.records.length);assert.equal(recall.advisoryOnly,true);assert.equal(recall.retrieval,'deterministic-lexical');
  assert.ok(recall.warnings.some(value=>value==='RuVector fallback: ruvector-sdk-missing'));
  assert.equal(createHash('sha256').update(fs.readFileSync(archive)).digest('hex'),sha256,'Archive changed during qualification');
- const receipt={schemaVersion:1,exactInputArchive:Boolean(inputArchive),proofScriptSha256:createHash('sha256').update(fs.readFileSync(fileURLToPath(import.meta.url))).digest('hex'),date:new Date().toISOString(),archive:pack.filename,sha256,version:pack.version,node:process.version,productionInstall:true,packedManifestSha256:createHash('sha256').update(fs.readFileSync(path.join(tools,'node_modules/testlore/package.json'))).digest('hex'),actionReference:installedPackage.gitHead||null,workflowActionReference,actionIdentityVerified:Boolean(expectedSource),shadowSetupVerified:true,plugins:{catalogCount:catalog.plugins.length,missingSdkExit:missingVectorSdk.exitCode,lexicalFallbackVerified:true},nativeShadow:{complete:shadow.complete,selected:shadow.plan.selected,executed:shadow.executedFiles.length,detected:true},runtimeCaptureComplete:capture.complete,improvement:{status:improvement.status,cases:improvement.fullRun.tests.length,originalBranch:'main'},limitations:['Local packed-artifact installation; no registry publication or live GitHub PR created.','Controlled two-module fixture; broad project compatibility remains unqualified.']};
+ const receipt={schemaVersion:1,exactInputArchive:Boolean(inputArchive),proofScriptSha256:createHash('sha256').update(fs.readFileSync(fileURLToPath(import.meta.url))).digest('hex'),date:new Date().toISOString(),archive:pack.filename,sha256,version:pack.version,node:process.version,productionInstall:true,mcpStdioVerified:true,mcpShadowVerified:true,briefInspectionVerified:true,packedManifestSha256:createHash('sha256').update(fs.readFileSync(path.join(tools,'node_modules/testlore/package.json'))).digest('hex'),actionReference:installedPackage.gitHead||null,workflowActionReference,actionIdentityVerified:Boolean(expectedSource),shadowSetupVerified:true,plugins:{catalogCount:catalog.plugins.length,missingSdkExit:missingVectorSdk.exitCode,lexicalFallbackVerified:true},nativeShadow:{complete:shadow.complete,selected:shadow.plan.selected,executed:shadow.executedFiles.length,detected:true},runtimeCaptureComplete:capture.complete,improvement:{status:improvement.status,cases:improvement.fullRun.tests.length,originalBranch:'main'},limitations:['Local packed-artifact installation; no registry publication or live GitHub PR created.','Controlled two-module fixture; broad project compatibility remains unqualified.']};
  fs.mkdirSync(path.dirname(output),{recursive:true});fs.writeFileSync(output,JSON.stringify(receipt,null,2));console.log(JSON.stringify(receipt,null,2));
 }finally{
  if(improvement?.worktreeRoot)invoke(project,['git','worktree','remove','--force',improvement.worktreeRoot]);

@@ -33,6 +33,8 @@ Project inspection recommends compatible installed tools without invoking them. 
 
 ## Continuing qualification
 
+[Coding-agent entry point](mcp.md): a runner-free verification brief and an actual MCP v2 stdio server. Default tools inspect bounded static obligations and historical receipts. Startup opt-in exposes supervised native planning and full shadow verification, with explicit uncertainty, scoped verdicts, cancellation and deadline rejection. Repository text cannot grant execution permission. Real SDK integration tests and the production-only installed archive exercise this interface; broader agent-host compatibility remains qualification work.
+
 - Broader real-project change corpora, including missed dependencies and order-dependent subset failures.
 - Held-out evaluation of actual model-generated tests against independent behavioral specifications.
 - Browser/framework instrumentation producers for the runtime protocol.

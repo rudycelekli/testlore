@@ -12,12 +12,15 @@ import { renderRunReport } from './run-report.js';
 import { routingProposals } from './routing-proposals.js';
 import { captureBrowserEvidence, proposeBrowserMappings, proposeBrowserInstrumentation, inspectBrowserBuildArtifacts } from './browser-evidence.js';
 import { pilot, exportPilot } from './pilot.js';
+import {verificationBrief} from './agent-contract.js';
 
 const help = `TestLore — know why each test runs.
 
 Usage: testlore <command> [options]
 
   setup       Configure a quality agent, native runner and shadow CI in one command
+  brief       Give agents a bounded verification contract without running project code
+  mcp         Serve project quality tools over MCP stdio (inspection only by default)
   report      Explain the last execution and every proposed omission
   mappings    Propose local runtime mappings for review (no automatic changes)
   browser-capture   Collect native browser inputs using the opt-in fixture
@@ -72,7 +75,7 @@ export function parseArgs(args) {
   const options = {};
   let command = 'help';
   const values = new Set(['root','base','changed','output','report','type','provenance','repeat','id','patch','target','framework','head','action-ref','base-branch','query','name','enable','disable','select','plugin','settings','manifest','mutate','defects']);
-  const flags = new Set(['json', 'full', 'shadow', 'execute', 'help', 'version', 'local', 'no-ci','check','recommend','auto','selective']);
+  const flags = new Set(['json', 'full', 'shadow', 'execute', 'help', 'version', 'local', 'no-ci','check','recommend','auto','selective','allow-execution']);
   if (args[0] && !args[0].startsWith('-')) command = args.shift();
   for (let i = 0; i < args.length; i++) {
     const key = args[i].replace(/^--/, '');
@@ -128,11 +131,19 @@ export async function main(args = process.argv.slice(2)) {
   if (options.version) { console.log(JSON.parse(fs.readFileSync(new URL('../package.json',import.meta.url),'utf8')).version); return 0; }
   if (command === 'help' || options.help) { console.log(help); return 0; }
   const root = path.resolve(options.root || '.');
+  if (command === 'mcp') {
+    if (Object.keys(options).some(key => !['root','allow-execution'].includes(key))) throw new Error('mcp accepts only --root and --allow-execution');
+    const {startMcpServer} = await import('./mcp.js');
+    await startMcpServer({root, allowExecution: options['allow-execution'] === true});
+    return 0;
+  }
+  if (options['allow-execution']) throw new Error('--allow-execution applies only to mcp');
   if ((options.auto || options.recommend) && command !== 'plugins') throw new Error('--auto and --recommend require the plugins command');
   if(options.shadow && options.selective)throw new Error('Choose --shadow or --selective');
   if (command === 'run' && options.changed) throw new Error('--changed is diagnostic only. run uses Git to discover the complete change set.');
   let result;
   switch (command) {
+    case 'brief': result = verificationBrief(root, {task: options.query || '', changed: options.changed || []}); break;
     case 'setup': {
       const written=installQualityLayer(root,{ci:!options['no-ci'],actionRef:options['action-ref']});
       const agent=ensureQualityAgent(root,{name:options.name});

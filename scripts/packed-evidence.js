@@ -6,6 +6,7 @@ export function packedEvidenceComplete(receipt, evidence, {proofScriptSha256, so
     [receipt.archiveSha256, receipt.packedManifestSha256, proofScriptSha256, sourceManifestSha256].every(hex) &&
     evidence.sha256 === receipt.archiveSha256 && evidence.version === receipt.version &&
     evidence.exactInputArchive === true && evidence.productionInstall === true && evidence.shadowSetupVerified === true &&
+    evidence.mcpStdioVerified === true && evidence.mcpShadowVerified === true && evidence.briefInspectionVerified === true &&
     evidence.actionIdentityVerified === true && evidence.runtimeCaptureComplete === true &&
     evidence.proofScriptSha256 === proofScriptSha256 && receipt.sourceManifestSha256 === sourceManifestSha256 &&
     evidence.packedManifestSha256 === receipt.packedManifestSha256 && receipt.archiveRecipe === 'tracked-source-with-exact-gitHead' &&

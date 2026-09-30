@@ -21,3 +21,4 @@ export {renderRunReport} from './run-report.js';
 export {routingProposals} from './routing-proposals.js';
 export {captureBrowserEvidence,proposeBrowserMappings,proposeBrowserInstrumentation,inspectBrowserBuildArtifacts,validateBrowserBuildArtifacts} from './browser-evidence.js';
 export {measureMutation,measureTestEffectiveness} from './quality-measurement.js';
+export {verificationBrief,inspectVerificationStatus} from './agent-contract.js';
