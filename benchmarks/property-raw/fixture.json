@@ -1,0 +1,58 @@
+{
+  "spec": "For every finite number x, clamp(x) returns 0 when x<=0, 10 when x>=10, and exactly x otherwise. Fractions must not be rounded.",
+  "source": "export function clamp(value){if(!Number.isFinite(value))throw new TypeError('finite number required');return Math.min(10,Math.max(0,value));}\n",
+  "original": "import test from 'node:test';import assert from 'node:assert/strict';import {clamp} from '../src/clamp.js';\ntest('five original clamp examples',()=>{for(const [input,expected] of [[-5,0],[1,1],[5,5],[9,9],[20,10]])assert.equal(clamp(input),expected);});\n",
+  "candidate": "import test from 'node:test';import assert from 'node:assert/strict';import fc from 'fast-check';import {clamp} from '../src/clamp.js';\nconst expected=x=>x<=0?0:x>=10?10:x;\nconst inputs=fc.oneof(fc.constantFrom(-0.5,0,0.5,10,10.5),fc.double({min:-20,max:30,noNaN:true,noDefaultInfinity:true}));\nconst contract=fc.property(inputs,x=>assert.equal(clamp(x),expected(x)));\ntest(\"finite clamp preserves fractions and exact boundaries\",()=>{\n const replay=process.env.TESTLORE_PROPERTY_REPLAY_PATH;\n const result=fc.check(contract,{seed:424242,numRuns:500,endOnFailure:false,plugins:[fc.interruptAfterTimeLimit(5000,{failOnInterrupt:true})],...(replay?{path:replay}:{})});\n const error=result.errorInstance;\n console.log('@testlore-property:'+JSON.stringify({failed:result.failed,interrupted:result.interrupted,numRuns:result.numRuns,numShrinks:result.numShrinks,numSkips:result.numSkips,seed:result.seed,counterexample:result.counterexample,counterexamplePath:result.counterexamplePath,error:error?{name:error.name,code:error.code,message:error.message,actual:error.actual,expected:error.expected,operator:error.operator}:null}));\n if(result.failed)throw error||new Error('Property failed without an assertion exception');\n});\n",
+  "examples": [
+    [
+      -5,
+      0
+    ],
+    [
+      1,
+      1
+    ],
+    [
+      5,
+      5
+    ],
+    [
+      9,
+      9
+    ],
+    [
+      20,
+      10
+    ]
+  ],
+  "defects": [
+    {
+      "name": "exact lower boundary off by one",
+      "condition": "value===0",
+      "replacement": "1",
+      "path": "src/clamp.js",
+      "content": "export function clamp(value){if(!Number.isFinite(value))throw new TypeError('finite number required');if(value===0)return 1;return Math.min(10,Math.max(0,value));}\n"
+    },
+    {
+      "name": "exact upper boundary off by one",
+      "condition": "value===10",
+      "replacement": "9",
+      "path": "src/clamp.js",
+      "content": "export function clamp(value){if(!Number.isFinite(value))throw new TypeError('finite number required');if(value===10)return 9;return Math.min(10,Math.max(0,value));}\n"
+    },
+    {
+      "name": "round interior fractions down",
+      "condition": "value>0&&value<10&&!Number.isInteger(value)",
+      "replacement": "Math.floor(value)",
+      "path": "src/clamp.js",
+      "content": "export function clamp(value){if(!Number.isFinite(value))throw new TypeError('finite number required');if(value>0&&value<10&&!Number.isInteger(value))return Math.floor(value);return Math.min(10,Math.max(0,value));}\n"
+    },
+    {
+      "name": "negative fractional passthrough",
+      "condition": "value<0&&value>-1",
+      "replacement": "value",
+      "path": "src/clamp.js",
+      "content": "export function clamp(value){if(!Number.isFinite(value))throw new TypeError('finite number required');if(value<0&&value>-1)return value;return Math.min(10,Math.max(0,value));}\n"
+    }
+  ]
+}

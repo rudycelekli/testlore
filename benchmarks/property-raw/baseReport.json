@@ -1,0 +1,87 @@
+{
+  "adapter": "node",
+  "exitCode": 0,
+  "durationMs": 121,
+  "tests": [
+    {
+      "file": "test/original.test.js",
+      "name": "five original clamp examples",
+      "status": "passed",
+      "durationMs": 0.395917,
+      "line": 2,
+      "column": 1,
+      "id": "fc4681dcf086b50fa776871ca4a5d95894dda373609f080c03c7b84ff886672e"
+    },
+    {
+      "file": "test/property.test.js",
+      "name": "finite clamp preserves fractions and exact boundaries",
+      "status": "passed",
+      "durationMs": 4.558125,
+      "line": 5,
+      "column": 1,
+      "id": "6f0395d0145f571f958ae98c3283035224eb1101ae5e17d52ee951737c22bfbf"
+    }
+  ],
+  "collectionFiles": [
+    "test/original.test.js",
+    "test/property.test.js"
+  ],
+  "requestedFiles": [
+    "test/original.test.js",
+    "test/property.test.js"
+  ],
+  "executedFiles": [
+    "test/original.test.js",
+    "test/property.test.js"
+  ],
+  "missingFiles": [],
+  "unknownFiles": [],
+  "complete": true,
+  "command": [
+    "<node>",
+    "--test",
+    "--test-reporter=<testlore>/src/reporters/node.js",
+    "--test-reporter-destination=<scratch>/results.json",
+    "./test/original.test.js",
+    "./test/property.test.js"
+  ],
+  "stdout": "@testlore-property:{\"failed\":false,\"interrupted\":false,\"numRuns\":500,\"numShrinks\":0,\"numSkips\":0,\"seed\":424242,\"counterexample\":null,\"counterexamplePath\":null,\"error\":null}\n",
+  "stderr": "",
+  "signal": null,
+  "reportErrors": [],
+  "discovery": {
+    "files": [
+      "test/original.test.js",
+      "test/property.test.js"
+    ],
+    "complete": true,
+    "adapter": "node",
+    "warnings": []
+  },
+  "provenance": {
+    "schemaVersion": 1,
+    "revision": null,
+    "runner": "db6d231c8308cd4b3ab516b629016b937cc1ae31fa91e4eacc10381f218a2a1c",
+    "environment": {
+      "node": "v22.19.0",
+      "platform": "darwin",
+      "arch": "arm64",
+      "labels": {}
+    },
+    "services": {},
+    "serviceWarnings": [],
+    "files": {
+      "package.json": "d904bcb48ce015ec27966836ede3807b92c7040c9f66a50f14aa9a116e344588",
+      "src/clamp.js": "479c7b0775eea18d573f50341437f7539312d4a65ef2c1d62831316df3578b56",
+      "tddswarm.config.json": "f9b7e8ce3fa893621c80f70d12274b2e65798c93d1e38e11e28ee49893c8e0f9",
+      "tddswarm.requirements.md": "1b624cbb7a589b0e1de518f741bb7883d9aef1a9ddf89da9d909c79a00bcf30d",
+      "test/original.test.js": "97166ee655b5ec4874bd11bc1b559f276ab090cfe5352ac8c74840e8344b85bb",
+      "test/property.test.js": "993351f1e843bbd1be61367f5ad6039f1cc6821f5b5e3a95cbe815b27537ebf0"
+    },
+    "fingerprint": "70c7d6f343731317f43fba3720b0ece735326fb8f3673624e9d64398d026ff22"
+  },
+  "stable": {
+    "fresh": true,
+    "reasons": []
+  }
+}

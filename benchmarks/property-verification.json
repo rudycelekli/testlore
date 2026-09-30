@@ -1,0 +1,288 @@
+{
+  "schemaVersion": 1,
+  "scope": "Manually authored fast-check compatibility and four fixed synthetic hold-out defects; not AI generation quality or general performance certification",
+  "generatedAt": "2026-09-30T04:00:12.977Z",
+  "node": "v22.19.0",
+  "passed": true,
+  "applied": false,
+  "unapplied": true,
+  "library": {
+    "name": "fast-check",
+    "version": "4.10.2",
+    "packageHash": "3df7a54da656099e4f63c1577fc10aac90cb0078212067c856fa99970dcccdbb",
+    "entryHash": "7f32ed0cafb401360c536af7ffd1b6fbd554f41c043bc3274da58a0430800a1b",
+    "repository": "https://github.com/dubzzz/fast-check"
+  },
+  "budget": {
+    "seed": 424242,
+    "numRuns": 500,
+    "domain": "finite doubles [-20,30] plus fixed boundary/fraction samples",
+    "propertyTimeLimitMs": 5000,
+    "runnerTimeoutMs": 15000
+  },
+  "fixtureHash": "68eebcbe3e276d923c3c36ddd1599953bf6585e3b4d76e5d3a31d2b0a7948b7b",
+  "coreValidation": {
+    "accepted": true,
+    "originalComplete": true,
+    "candidateComplete": true,
+    "originalCases": 1,
+    "candidateCases": 2,
+    "embeddedHeldOutDefects": 0,
+    "reasons": [],
+    "provenance": {
+      "schemaVersion": 1,
+      "revision": null,
+      "runner": "db6d231c8308cd4b3ab516b629016b937cc1ae31fa91e4eacc10381f218a2a1c",
+      "environment": {
+        "node": "v22.19.0",
+        "platform": "darwin",
+        "arch": "arm64",
+        "labels": {}
+      },
+      "services": {},
+      "serviceWarnings": [],
+      "files": {
+        "package.json": "d904bcb48ce015ec27966836ede3807b92c7040c9f66a50f14aa9a116e344588",
+        "src/clamp.js": "479c7b0775eea18d573f50341437f7539312d4a65ef2c1d62831316df3578b56",
+        "tddswarm.config.json": "f9b7e8ce3fa893621c80f70d12274b2e65798c93d1e38e11e28ee49893c8e0f9",
+        "tddswarm.requirements.md": "1b624cbb7a589b0e1de518f741bb7883d9aef1a9ddf89da9d909c79a00bcf30d",
+        "test/original.test.js": "97166ee655b5ec4874bd11bc1b559f276ab090cfe5352ac8c74840e8344b85bb"
+      },
+      "fingerprint": "ded80851aee73d442abed689b6780e3686e84657712072b2f69202c79822e3f3"
+    }
+  },
+  "supplementaryHoldouts": {
+    "count": 4,
+    "caught": 4,
+    "replayed": 4,
+    "recall": 1,
+    "method": "Separate full normalized Node executions: original examples must pass and candidate must fail its named assertion, with independently checked counterexample and seed/path replay.",
+    "cases": [
+      {
+        "name": "exact lower boundary off by one",
+        "sourceHash": "d417ef5d835fd814eab9c84feb80729b6cbd83c10330ca838b934133433f11c7",
+        "originalGreen": true,
+        "propertyCaught": true,
+        "reproduced": true,
+        "details": {
+          "failed": true,
+          "interrupted": false,
+          "numRuns": 6,
+          "numShrinks": 0,
+          "numSkips": 0,
+          "seed": 424242,
+          "counterexample": [
+            0
+          ],
+          "counterexamplePath": "5",
+          "error": {
+            "name": "AssertionError",
+            "code": "ERR_ASSERTION",
+            "message": "Expected values to be strictly equal:\n\n1 !== 0\n",
+            "actual": 1,
+            "expected": 0,
+            "operator": "strictEqual"
+          }
+        },
+        "replayDetails": {
+          "failed": true,
+          "interrupted": false,
+          "numRuns": 1,
+          "numShrinks": 0,
+          "numSkips": 0,
+          "seed": 424242,
+          "counterexample": [
+            0
+          ],
+          "counterexamplePath": "5",
+          "error": {
+            "name": "AssertionError",
+            "code": "ERR_ASSERTION",
+            "message": "Expected values to be strictly equal:\n\n1 !== 0\n",
+            "actual": 1,
+            "expected": 0,
+            "operator": "strictEqual"
+          }
+        }
+      },
+      {
+        "name": "exact upper boundary off by one",
+        "sourceHash": "669fd7128cd636f69ae374749d8517df461aaa4c16da21de5372031c958e5a48",
+        "originalGreen": true,
+        "propertyCaught": true,
+        "reproduced": true,
+        "details": {
+          "failed": true,
+          "interrupted": false,
+          "numRuns": 10,
+          "numShrinks": 0,
+          "numSkips": 0,
+          "seed": 424242,
+          "counterexample": [
+            10
+          ],
+          "counterexamplePath": "9",
+          "error": {
+            "name": "AssertionError",
+            "code": "ERR_ASSERTION",
+            "message": "Expected values to be strictly equal:\n\n9 !== 10\n",
+            "actual": 9,
+            "expected": 10,
+            "operator": "strictEqual"
+          }
+        },
+        "replayDetails": {
+          "failed": true,
+          "interrupted": false,
+          "numRuns": 1,
+          "numShrinks": 0,
+          "numSkips": 0,
+          "seed": 424242,
+          "counterexample": [
+            10
+          ],
+          "counterexamplePath": "9",
+          "error": {
+            "name": "AssertionError",
+            "code": "ERR_ASSERTION",
+            "message": "Expected values to be strictly equal:\n\n9 !== 10\n",
+            "actual": 9,
+            "expected": 10,
+            "operator": "strictEqual"
+          }
+        }
+      },
+      {
+        "name": "round interior fractions down",
+        "sourceHash": "3741abd38daee003b532bcb2acd40e756ff1dee4166699c935f2f3e2d6443bee",
+        "originalGreen": true,
+        "propertyCaught": true,
+        "reproduced": true,
+        "details": {
+          "failed": true,
+          "interrupted": false,
+          "numRuns": 3,
+          "numShrinks": 62,
+          "numSkips": 0,
+          "seed": 424242,
+          "counterexample": [
+            5e-324
+          ],
+          "counterexamplePath": "2:1:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0",
+          "error": {
+            "name": "AssertionError",
+            "code": "ERR_ASSERTION",
+            "message": "Expected values to be strictly equal:\n\n0 !== 5e-324\n",
+            "actual": 0,
+            "expected": 5e-324,
+            "operator": "strictEqual"
+          }
+        },
+        "replayDetails": {
+          "failed": true,
+          "interrupted": false,
+          "numRuns": 1,
+          "numShrinks": 0,
+          "numSkips": 0,
+          "seed": 424242,
+          "counterexample": [
+            5e-324
+          ],
+          "counterexamplePath": "2:1:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0",
+          "error": {
+            "name": "AssertionError",
+            "code": "ERR_ASSERTION",
+            "message": "Expected values to be strictly equal:\n\n0 !== 5e-324\n",
+            "actual": 0,
+            "expected": 5e-324,
+            "operator": "strictEqual"
+          }
+        }
+      },
+      {
+        "name": "negative fractional passthrough",
+        "sourceHash": "5b3b311dda963511e4a37a4d20e2b860ec87ebffdc4cc5eaabed6b718e2d4ea7",
+        "originalGreen": true,
+        "propertyCaught": true,
+        "reproduced": true,
+        "details": {
+          "failed": true,
+          "interrupted": false,
+          "numRuns": 1,
+          "numShrinks": 0,
+          "numSkips": 0,
+          "seed": 424242,
+          "counterexample": [
+            -0.5
+          ],
+          "counterexamplePath": "0",
+          "error": {
+            "name": "AssertionError",
+            "code": "ERR_ASSERTION",
+            "message": "Expected values to be strictly equal:\n\n-0.5 !== 0\n",
+            "actual": -0.5,
+            "expected": 0,
+            "operator": "strictEqual"
+          }
+        },
+        "replayDetails": {
+          "failed": true,
+          "interrupted": false,
+          "numRuns": 1,
+          "numShrinks": 0,
+          "numSkips": 0,
+          "seed": 424242,
+          "counterexample": [
+            -0.5
+          ],
+          "counterexamplePath": "0",
+          "error": {
+            "name": "AssertionError",
+            "code": "ERR_ASSERTION",
+            "message": "Expected values to be strictly equal:\n\n-0.5 !== 0\n",
+            "actual": -0.5,
+            "expected": 0,
+            "operator": "strictEqual"
+          }
+        }
+      }
+    ]
+  },
+  "routing": {
+    "mode": "affected",
+    "selected": [
+      "test/original.test.js",
+      "test/property.test.js"
+    ],
+    "reasons": [],
+    "warnings": [],
+    "propertyDependencyPath": [
+      "test/property.test.js",
+      "src/clamp.js"
+    ],
+    "claim": "Native dependency participation only; both known consumers selected, no unrelated-test omission or speed claim."
+  },
+  "rawArtifacts": {
+    "fixture.json": {
+      "sha256": "5abe4b511c9948502daa5da978f2a397b9240612e2404ee79070e57c4c93d73d"
+    },
+    "validation.json": {
+      "sha256": "9775e4f6d206f18bed7b5e5f2e99fd085cdbde4bd6c37c2aa00c9953c84894af"
+    },
+    "baseReport.json": {
+      "sha256": "2a431798e3e0861e27837e617379221218056a75b894e3d58bf22e546fbc5f34"
+    },
+    "observations.json": {
+      "sha256": "e91119ff2121061e50696482b5f683b8a6af144c1e92d264e904530bc945c144"
+    },
+    "routing.json": {
+      "sha256": "5ce2b0f7289cf0416f29c7c98795f495f686605e4776145e43e437d46e58fb49"
+    }
+  },
+  "limitations": [
+    "The property and independent review are manually authored synthetic fixtures; no model or provider API was invoked.",
+    "Four deliberately weak-example blind spots do not establish broad defect recall or a best-tool ranking.",
+    "Core held-out validation requires an original failing case; these original-green defects are a separately gated compatibility experiment.",
+    "Trials stop at the first failure; shrinking has its own bounded work and replay requires the pinned library/generator/seed/path."
+  ]
+}

@@ -1,0 +1,1174 @@
+[
+  {
+    "name": "exact lower boundary off by one",
+    "sourceHash": "d417ef5d835fd814eab9c84feb80729b6cbd83c10330ca838b934133433f11c7",
+    "originalGreen": true,
+    "propertyCaught": true,
+    "reproduced": true,
+    "details": {
+      "failed": true,
+      "interrupted": false,
+      "numRuns": 6,
+      "numShrinks": 0,
+      "numSkips": 0,
+      "seed": 424242,
+      "counterexample": [
+        0
+      ],
+      "counterexamplePath": "5",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "message": "Expected values to be strictly equal:\n\n1 !== 0\n",
+        "actual": 1,
+        "expected": 0,
+        "operator": "strictEqual"
+      }
+    },
+    "replayDetails": {
+      "failed": true,
+      "interrupted": false,
+      "numRuns": 1,
+      "numShrinks": 0,
+      "numSkips": 0,
+      "seed": 424242,
+      "counterexample": [
+        0
+      ],
+      "counterexamplePath": "5",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "message": "Expected values to be strictly equal:\n\n1 !== 0\n",
+        "actual": 1,
+        "expected": 0,
+        "operator": "strictEqual"
+      }
+    },
+    "original": {
+      "adapter": "node",
+      "exitCode": 0,
+      "durationMs": 93,
+      "tests": [
+        {
+          "file": "test/original.test.js",
+          "name": "five original clamp examples",
+          "status": "passed",
+          "durationMs": 0.382583,
+          "line": 2,
+          "column": 1,
+          "id": "fc4681dcf086b50fa776871ca4a5d95894dda373609f080c03c7b84ff886672e"
+        }
+      ],
+      "collectionFiles": [
+        "test/original.test.js"
+      ],
+      "requestedFiles": [
+        "test/original.test.js"
+      ],
+      "executedFiles": [
+        "test/original.test.js"
+      ],
+      "missingFiles": [],
+      "unknownFiles": [],
+      "complete": true,
+      "command": [
+        "<node>",
+        "--test",
+        "--test-reporter=<testlore>/src/reporters/node.js",
+        "--test-reporter-destination=<scratch>/results.json",
+        "./test/original.test.js"
+      ],
+      "stdout": "",
+      "stderr": "",
+      "signal": null,
+      "reportErrors": [],
+      "discovery": {
+        "files": [
+          "test/original.test.js"
+        ],
+        "complete": true,
+        "adapter": "node",
+        "warnings": []
+      },
+      "provenance": {
+        "schemaVersion": 1,
+        "revision": null,
+        "runner": "db6d231c8308cd4b3ab516b629016b937cc1ae31fa91e4eacc10381f218a2a1c",
+        "environment": {
+          "node": "v22.19.0",
+          "platform": "darwin",
+          "arch": "arm64",
+          "labels": {}
+        },
+        "services": {},
+        "serviceWarnings": [],
+        "files": {
+          "package.json": "d904bcb48ce015ec27966836ede3807b92c7040c9f66a50f14aa9a116e344588",
+          "src/clamp.js": "d417ef5d835fd814eab9c84feb80729b6cbd83c10330ca838b934133433f11c7",
+          "tddswarm.config.json": "f9b7e8ce3fa893621c80f70d12274b2e65798c93d1e38e11e28ee49893c8e0f9",
+          "tddswarm.requirements.md": "1b624cbb7a589b0e1de518f741bb7883d9aef1a9ddf89da9d909c79a00bcf30d",
+          "test/original.test.js": "97166ee655b5ec4874bd11bc1b559f276ab090cfe5352ac8c74840e8344b85bb"
+        },
+        "fingerprint": "3a484a344d13dc32de1c0cd599e8574d4c1cc9ae95e12adac141d72bfdc0fb5a"
+      },
+      "stable": {
+        "fresh": true,
+        "reasons": []
+      }
+    },
+    "candidate": {
+      "adapter": "node",
+      "exitCode": 1,
+      "durationMs": 120,
+      "tests": [
+        {
+          "file": "test/original.test.js",
+          "name": "five original clamp examples",
+          "status": "passed",
+          "durationMs": 0.407125,
+          "line": 2,
+          "column": 1,
+          "id": "fc4681dcf086b50fa776871ca4a5d95894dda373609f080c03c7b84ff886672e"
+        },
+        {
+          "file": "test/property.test.js",
+          "name": "finite clamp preserves fractions and exact boundaries",
+          "status": "failed",
+          "durationMs": 3.059125,
+          "line": 5,
+          "column": 1,
+          "id": "6f0395d0145f571f958ae98c3283035224eb1101ae5e17d52ee951737c22bfbf"
+        }
+      ],
+      "collectionFiles": [
+        "test/original.test.js",
+        "test/property.test.js"
+      ],
+      "requestedFiles": [
+        "test/original.test.js",
+        "test/property.test.js"
+      ],
+      "executedFiles": [
+        "test/original.test.js",
+        "test/property.test.js"
+      ],
+      "missingFiles": [],
+      "unknownFiles": [],
+      "complete": true,
+      "command": [
+        "<node>",
+        "--test",
+        "--test-reporter=<testlore>/src/reporters/node.js",
+        "--test-reporter-destination=<scratch>/results.json",
+        "./test/original.test.js",
+        "./test/property.test.js"
+      ],
+      "stdout": "@testlore-property:{\"failed\":true,\"interrupted\":false,\"numRuns\":6,\"numShrinks\":0,\"numSkips\":0,\"seed\":424242,\"counterexample\":[0],\"counterexamplePath\":\"5\",\"error\":{\"name\":\"AssertionError\",\"code\":\"ERR_ASSERTION\",\"message\":\"Expected values to be strictly equal:\\n\\n1 !== 0\\n\",\"actual\":1,\"expected\":0,\"operator\":\"strictEqual\"}}\n",
+      "stderr": "",
+      "signal": null,
+      "reportErrors": [],
+      "discovery": {
+        "files": [
+          "test/original.test.js",
+          "test/property.test.js"
+        ],
+        "complete": true,
+        "adapter": "node",
+        "warnings": []
+      },
+      "provenance": {
+        "schemaVersion": 1,
+        "revision": null,
+        "runner": "db6d231c8308cd4b3ab516b629016b937cc1ae31fa91e4eacc10381f218a2a1c",
+        "environment": {
+          "node": "v22.19.0",
+          "platform": "darwin",
+          "arch": "arm64",
+          "labels": {}
+        },
+        "services": {},
+        "serviceWarnings": [],
+        "files": {
+          "package.json": "d904bcb48ce015ec27966836ede3807b92c7040c9f66a50f14aa9a116e344588",
+          "src/clamp.js": "d417ef5d835fd814eab9c84feb80729b6cbd83c10330ca838b934133433f11c7",
+          "tddswarm.config.json": "f9b7e8ce3fa893621c80f70d12274b2e65798c93d1e38e11e28ee49893c8e0f9",
+          "tddswarm.requirements.md": "1b624cbb7a589b0e1de518f741bb7883d9aef1a9ddf89da9d909c79a00bcf30d",
+          "test/original.test.js": "97166ee655b5ec4874bd11bc1b559f276ab090cfe5352ac8c74840e8344b85bb",
+          "test/property.test.js": "993351f1e843bbd1be61367f5ad6039f1cc6821f5b5e3a95cbe815b27537ebf0"
+        },
+        "fingerprint": "fcc5ed1dc5208d222f7ece18547b4a196d849613e3ae57bb4fc02cee519bbb5e"
+      },
+      "stable": {
+        "fresh": true,
+        "reasons": []
+      }
+    },
+    "replay": {
+      "adapter": "node",
+      "exitCode": 1,
+      "durationMs": 117,
+      "tests": [
+        {
+          "file": "test/original.test.js",
+          "name": "five original clamp examples",
+          "status": "passed",
+          "durationMs": 0.385667,
+          "line": 2,
+          "column": 1,
+          "id": "fc4681dcf086b50fa776871ca4a5d95894dda373609f080c03c7b84ff886672e"
+        },
+        {
+          "file": "test/property.test.js",
+          "name": "finite clamp preserves fractions and exact boundaries",
+          "status": "failed",
+          "durationMs": 2.733,
+          "line": 5,
+          "column": 1,
+          "id": "6f0395d0145f571f958ae98c3283035224eb1101ae5e17d52ee951737c22bfbf"
+        }
+      ],
+      "collectionFiles": [
+        "test/original.test.js",
+        "test/property.test.js"
+      ],
+      "requestedFiles": [
+        "test/original.test.js",
+        "test/property.test.js"
+      ],
+      "executedFiles": [
+        "test/original.test.js",
+        "test/property.test.js"
+      ],
+      "missingFiles": [],
+      "unknownFiles": [],
+      "complete": true,
+      "command": [
+        "<node>",
+        "--test",
+        "--test-reporter=<testlore>/src/reporters/node.js",
+        "--test-reporter-destination=<scratch>/results.json",
+        "./test/original.test.js",
+        "./test/property.test.js"
+      ],
+      "stdout": "@testlore-property:{\"failed\":true,\"interrupted\":false,\"numRuns\":1,\"numShrinks\":0,\"numSkips\":0,\"seed\":424242,\"counterexample\":[0],\"counterexamplePath\":\"5\",\"error\":{\"name\":\"AssertionError\",\"code\":\"ERR_ASSERTION\",\"message\":\"Expected values to be strictly equal:\\n\\n1 !== 0\\n\",\"actual\":1,\"expected\":0,\"operator\":\"strictEqual\"}}\n",
+      "stderr": "",
+      "signal": null,
+      "reportErrors": [],
+      "discovery": {
+        "files": [
+          "test/original.test.js",
+          "test/property.test.js"
+        ],
+        "complete": true,
+        "adapter": "node",
+        "warnings": []
+      },
+      "provenance": {
+        "schemaVersion": 1,
+        "revision": null,
+        "runner": "c81c5b5dbf02993c5f61c3d807b06548c08cb6677ada2c85f9e8e67b81848067",
+        "environment": {
+          "node": "v22.19.0",
+          "platform": "darwin",
+          "arch": "arm64",
+          "labels": {}
+        },
+        "services": {},
+        "serviceWarnings": [],
+        "files": {
+          "package.json": "d904bcb48ce015ec27966836ede3807b92c7040c9f66a50f14aa9a116e344588",
+          "src/clamp.js": "d417ef5d835fd814eab9c84feb80729b6cbd83c10330ca838b934133433f11c7",
+          "tddswarm.config.json": "f9b7e8ce3fa893621c80f70d12274b2e65798c93d1e38e11e28ee49893c8e0f9",
+          "tddswarm.requirements.md": "1b624cbb7a589b0e1de518f741bb7883d9aef1a9ddf89da9d909c79a00bcf30d",
+          "test/original.test.js": "97166ee655b5ec4874bd11bc1b559f276ab090cfe5352ac8c74840e8344b85bb",
+          "test/property.test.js": "993351f1e843bbd1be61367f5ad6039f1cc6821f5b5e3a95cbe815b27537ebf0"
+        },
+        "fingerprint": "bc02b3205352cfbce5a04664586e98da29a0f3d0d3c98f759251c556a4a717df"
+      },
+      "stable": {
+        "fresh": true,
+        "reasons": []
+      }
+    }
+  },
+  {
+    "name": "exact upper boundary off by one",
+    "sourceHash": "669fd7128cd636f69ae374749d8517df461aaa4c16da21de5372031c958e5a48",
+    "originalGreen": true,
+    "propertyCaught": true,
+    "reproduced": true,
+    "details": {
+      "failed": true,
+      "interrupted": false,
+      "numRuns": 10,
+      "numShrinks": 0,
+      "numSkips": 0,
+      "seed": 424242,
+      "counterexample": [
+        10
+      ],
+      "counterexamplePath": "9",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "message": "Expected values to be strictly equal:\n\n9 !== 10\n",
+        "actual": 9,
+        "expected": 10,
+        "operator": "strictEqual"
+      }
+    },
+    "replayDetails": {
+      "failed": true,
+      "interrupted": false,
+      "numRuns": 1,
+      "numShrinks": 0,
+      "numSkips": 0,
+      "seed": 424242,
+      "counterexample": [
+        10
+      ],
+      "counterexamplePath": "9",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "message": "Expected values to be strictly equal:\n\n9 !== 10\n",
+        "actual": 9,
+        "expected": 10,
+        "operator": "strictEqual"
+      }
+    },
+    "original": {
+      "adapter": "node",
+      "exitCode": 0,
+      "durationMs": 95,
+      "tests": [
+        {
+          "file": "test/original.test.js",
+          "name": "five original clamp examples",
+          "status": "passed",
+          "durationMs": 0.384041,
+          "line": 2,
+          "column": 1,
+          "id": "fc4681dcf086b50fa776871ca4a5d95894dda373609f080c03c7b84ff886672e"
+        }
+      ],
+      "collectionFiles": [
+        "test/original.test.js"
+      ],
+      "requestedFiles": [
+        "test/original.test.js"
+      ],
+      "executedFiles": [
+        "test/original.test.js"
+      ],
+      "missingFiles": [],
+      "unknownFiles": [],
+      "complete": true,
+      "command": [
+        "<node>",
+        "--test",
+        "--test-reporter=<testlore>/src/reporters/node.js",
+        "--test-reporter-destination=<scratch>/results.json",
+        "./test/original.test.js"
+      ],
+      "stdout": "",
+      "stderr": "",
+      "signal": null,
+      "reportErrors": [],
+      "discovery": {
+        "files": [
+          "test/original.test.js"
+        ],
+        "complete": true,
+        "adapter": "node",
+        "warnings": []
+      },
+      "provenance": {
+        "schemaVersion": 1,
+        "revision": null,
+        "runner": "db6d231c8308cd4b3ab516b629016b937cc1ae31fa91e4eacc10381f218a2a1c",
+        "environment": {
+          "node": "v22.19.0",
+          "platform": "darwin",
+          "arch": "arm64",
+          "labels": {}
+        },
+        "services": {},
+        "serviceWarnings": [],
+        "files": {
+          "package.json": "d904bcb48ce015ec27966836ede3807b92c7040c9f66a50f14aa9a116e344588",
+          "src/clamp.js": "669fd7128cd636f69ae374749d8517df461aaa4c16da21de5372031c958e5a48",
+          "tddswarm.config.json": "f9b7e8ce3fa893621c80f70d12274b2e65798c93d1e38e11e28ee49893c8e0f9",
+          "tddswarm.requirements.md": "1b624cbb7a589b0e1de518f741bb7883d9aef1a9ddf89da9d909c79a00bcf30d",
+          "test/original.test.js": "97166ee655b5ec4874bd11bc1b559f276ab090cfe5352ac8c74840e8344b85bb"
+        },
+        "fingerprint": "22877b6dde020e995e955d7a201dadc6c665bbd767835957f0d16cf51d12640d"
+      },
+      "stable": {
+        "fresh": true,
+        "reasons": []
+      }
+    },
+    "candidate": {
+      "adapter": "node",
+      "exitCode": 1,
+      "durationMs": 125,
+      "tests": [
+        {
+          "file": "test/original.test.js",
+          "name": "five original clamp examples",
+          "status": "passed",
+          "durationMs": 0.393542,
+          "line": 2,
+          "column": 1,
+          "id": "fc4681dcf086b50fa776871ca4a5d95894dda373609f080c03c7b84ff886672e"
+        },
+        {
+          "file": "test/property.test.js",
+          "name": "finite clamp preserves fractions and exact boundaries",
+          "status": "failed",
+          "durationMs": 3.212,
+          "line": 5,
+          "column": 1,
+          "id": "6f0395d0145f571f958ae98c3283035224eb1101ae5e17d52ee951737c22bfbf"
+        }
+      ],
+      "collectionFiles": [
+        "test/original.test.js",
+        "test/property.test.js"
+      ],
+      "requestedFiles": [
+        "test/original.test.js",
+        "test/property.test.js"
+      ],
+      "executedFiles": [
+        "test/original.test.js",
+        "test/property.test.js"
+      ],
+      "missingFiles": [],
+      "unknownFiles": [],
+      "complete": true,
+      "command": [
+        "<node>",
+        "--test",
+        "--test-reporter=<testlore>/src/reporters/node.js",
+        "--test-reporter-destination=<scratch>/results.json",
+        "./test/original.test.js",
+        "./test/property.test.js"
+      ],
+      "stdout": "@testlore-property:{\"failed\":true,\"interrupted\":false,\"numRuns\":10,\"numShrinks\":0,\"numSkips\":0,\"seed\":424242,\"counterexample\":[10],\"counterexamplePath\":\"9\",\"error\":{\"name\":\"AssertionError\",\"code\":\"ERR_ASSERTION\",\"message\":\"Expected values to be strictly equal:\\n\\n9 !== 10\\n\",\"actual\":9,\"expected\":10,\"operator\":\"strictEqual\"}}\n",
+      "stderr": "",
+      "signal": null,
+      "reportErrors": [],
+      "discovery": {
+        "files": [
+          "test/original.test.js",
+          "test/property.test.js"
+        ],
+        "complete": true,
+        "adapter": "node",
+        "warnings": []
+      },
+      "provenance": {
+        "schemaVersion": 1,
+        "revision": null,
+        "runner": "db6d231c8308cd4b3ab516b629016b937cc1ae31fa91e4eacc10381f218a2a1c",
+        "environment": {
+          "node": "v22.19.0",
+          "platform": "darwin",
+          "arch": "arm64",
+          "labels": {}
+        },
+        "services": {},
+        "serviceWarnings": [],
+        "files": {
+          "package.json": "d904bcb48ce015ec27966836ede3807b92c7040c9f66a50f14aa9a116e344588",
+          "src/clamp.js": "669fd7128cd636f69ae374749d8517df461aaa4c16da21de5372031c958e5a48",
+          "tddswarm.config.json": "f9b7e8ce3fa893621c80f70d12274b2e65798c93d1e38e11e28ee49893c8e0f9",
+          "tddswarm.requirements.md": "1b624cbb7a589b0e1de518f741bb7883d9aef1a9ddf89da9d909c79a00bcf30d",
+          "test/original.test.js": "97166ee655b5ec4874bd11bc1b559f276ab090cfe5352ac8c74840e8344b85bb",
+          "test/property.test.js": "993351f1e843bbd1be61367f5ad6039f1cc6821f5b5e3a95cbe815b27537ebf0"
+        },
+        "fingerprint": "46bdef935265e977853225fcbc393a72a22f7b1712c72891f195dcd7543e10af"
+      },
+      "stable": {
+        "fresh": true,
+        "reasons": []
+      }
+    },
+    "replay": {
+      "adapter": "node",
+      "exitCode": 1,
+      "durationMs": 116,
+      "tests": [
+        {
+          "file": "test/original.test.js",
+          "name": "five original clamp examples",
+          "status": "passed",
+          "durationMs": 0.390541,
+          "line": 2,
+          "column": 1,
+          "id": "fc4681dcf086b50fa776871ca4a5d95894dda373609f080c03c7b84ff886672e"
+        },
+        {
+          "file": "test/property.test.js",
+          "name": "finite clamp preserves fractions and exact boundaries",
+          "status": "failed",
+          "durationMs": 3.038042,
+          "line": 5,
+          "column": 1,
+          "id": "6f0395d0145f571f958ae98c3283035224eb1101ae5e17d52ee951737c22bfbf"
+        }
+      ],
+      "collectionFiles": [
+        "test/original.test.js",
+        "test/property.test.js"
+      ],
+      "requestedFiles": [
+        "test/original.test.js",
+        "test/property.test.js"
+      ],
+      "executedFiles": [
+        "test/original.test.js",
+        "test/property.test.js"
+      ],
+      "missingFiles": [],
+      "unknownFiles": [],
+      "complete": true,
+      "command": [
+        "<node>",
+        "--test",
+        "--test-reporter=<testlore>/src/reporters/node.js",
+        "--test-reporter-destination=<scratch>/results.json",
+        "./test/original.test.js",
+        "./test/property.test.js"
+      ],
+      "stdout": "@testlore-property:{\"failed\":true,\"interrupted\":false,\"numRuns\":1,\"numShrinks\":0,\"numSkips\":0,\"seed\":424242,\"counterexample\":[10],\"counterexamplePath\":\"9\",\"error\":{\"name\":\"AssertionError\",\"code\":\"ERR_ASSERTION\",\"message\":\"Expected values to be strictly equal:\\n\\n9 !== 10\\n\",\"actual\":9,\"expected\":10,\"operator\":\"strictEqual\"}}\n",
+      "stderr": "",
+      "signal": null,
+      "reportErrors": [],
+      "discovery": {
+        "files": [
+          "test/original.test.js",
+          "test/property.test.js"
+        ],
+        "complete": true,
+        "adapter": "node",
+        "warnings": []
+      },
+      "provenance": {
+        "schemaVersion": 1,
+        "revision": null,
+        "runner": "0319be0e4bc4bda0fa2565f6863cd56ef263648dc164d0d66f3da945b1fae9b0",
+        "environment": {
+          "node": "v22.19.0",
+          "platform": "darwin",
+          "arch": "arm64",
+          "labels": {}
+        },
+        "services": {},
+        "serviceWarnings": [],
+        "files": {
+          "package.json": "d904bcb48ce015ec27966836ede3807b92c7040c9f66a50f14aa9a116e344588",
+          "src/clamp.js": "669fd7128cd636f69ae374749d8517df461aaa4c16da21de5372031c958e5a48",
+          "tddswarm.config.json": "f9b7e8ce3fa893621c80f70d12274b2e65798c93d1e38e11e28ee49893c8e0f9",
+          "tddswarm.requirements.md": "1b624cbb7a589b0e1de518f741bb7883d9aef1a9ddf89da9d909c79a00bcf30d",
+          "test/original.test.js": "97166ee655b5ec4874bd11bc1b559f276ab090cfe5352ac8c74840e8344b85bb",
+          "test/property.test.js": "993351f1e843bbd1be61367f5ad6039f1cc6821f5b5e3a95cbe815b27537ebf0"
+        },
+        "fingerprint": "3ecc91ac9e5865ad96e9bc87545829ec901c63d3eadf8bee8dce550642b74f29"
+      },
+      "stable": {
+        "fresh": true,
+        "reasons": []
+      }
+    }
+  },
+  {
+    "name": "round interior fractions down",
+    "sourceHash": "3741abd38daee003b532bcb2acd40e756ff1dee4166699c935f2f3e2d6443bee",
+    "originalGreen": true,
+    "propertyCaught": true,
+    "reproduced": true,
+    "details": {
+      "failed": true,
+      "interrupted": false,
+      "numRuns": 3,
+      "numShrinks": 62,
+      "numSkips": 0,
+      "seed": 424242,
+      "counterexample": [
+        5e-324
+      ],
+      "counterexamplePath": "2:1:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "message": "Expected values to be strictly equal:\n\n0 !== 5e-324\n",
+        "actual": 0,
+        "expected": 5e-324,
+        "operator": "strictEqual"
+      }
+    },
+    "replayDetails": {
+      "failed": true,
+      "interrupted": false,
+      "numRuns": 1,
+      "numShrinks": 0,
+      "numSkips": 0,
+      "seed": 424242,
+      "counterexample": [
+        5e-324
+      ],
+      "counterexamplePath": "2:1:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "message": "Expected values to be strictly equal:\n\n0 !== 5e-324\n",
+        "actual": 0,
+        "expected": 5e-324,
+        "operator": "strictEqual"
+      }
+    },
+    "original": {
+      "adapter": "node",
+      "exitCode": 0,
+      "durationMs": 96,
+      "tests": [
+        {
+          "file": "test/original.test.js",
+          "name": "five original clamp examples",
+          "status": "passed",
+          "durationMs": 0.393833,
+          "line": 2,
+          "column": 1,
+          "id": "fc4681dcf086b50fa776871ca4a5d95894dda373609f080c03c7b84ff886672e"
+        }
+      ],
+      "collectionFiles": [
+        "test/original.test.js"
+      ],
+      "requestedFiles": [
+        "test/original.test.js"
+      ],
+      "executedFiles": [
+        "test/original.test.js"
+      ],
+      "missingFiles": [],
+      "unknownFiles": [],
+      "complete": true,
+      "command": [
+        "<node>",
+        "--test",
+        "--test-reporter=<testlore>/src/reporters/node.js",
+        "--test-reporter-destination=<scratch>/results.json",
+        "./test/original.test.js"
+      ],
+      "stdout": "",
+      "stderr": "",
+      "signal": null,
+      "reportErrors": [],
+      "discovery": {
+        "files": [
+          "test/original.test.js"
+        ],
+        "complete": true,
+        "adapter": "node",
+        "warnings": []
+      },
+      "provenance": {
+        "schemaVersion": 1,
+        "revision": null,
+        "runner": "db6d231c8308cd4b3ab516b629016b937cc1ae31fa91e4eacc10381f218a2a1c",
+        "environment": {
+          "node": "v22.19.0",
+          "platform": "darwin",
+          "arch": "arm64",
+          "labels": {}
+        },
+        "services": {},
+        "serviceWarnings": [],
+        "files": {
+          "package.json": "d904bcb48ce015ec27966836ede3807b92c7040c9f66a50f14aa9a116e344588",
+          "src/clamp.js": "3741abd38daee003b532bcb2acd40e756ff1dee4166699c935f2f3e2d6443bee",
+          "tddswarm.config.json": "f9b7e8ce3fa893621c80f70d12274b2e65798c93d1e38e11e28ee49893c8e0f9",
+          "tddswarm.requirements.md": "1b624cbb7a589b0e1de518f741bb7883d9aef1a9ddf89da9d909c79a00bcf30d",
+          "test/original.test.js": "97166ee655b5ec4874bd11bc1b559f276ab090cfe5352ac8c74840e8344b85bb"
+        },
+        "fingerprint": "fd293b04ca294d20edcb89fb61dff91ec8973f5d0dc648c8c936dda9f67fef2b"
+      },
+      "stable": {
+        "fresh": true,
+        "reasons": []
+      }
+    },
+    "candidate": {
+      "adapter": "node",
+      "exitCode": 1,
+      "durationMs": 120,
+      "tests": [
+        {
+          "file": "test/original.test.js",
+          "name": "five original clamp examples",
+          "status": "passed",
+          "durationMs": 0.40125,
+          "line": 2,
+          "column": 1,
+          "id": "fc4681dcf086b50fa776871ca4a5d95894dda373609f080c03c7b84ff886672e"
+        },
+        {
+          "file": "test/property.test.js",
+          "name": "finite clamp preserves fractions and exact boundaries",
+          "status": "failed",
+          "durationMs": 5.451041,
+          "line": 5,
+          "column": 1,
+          "id": "6f0395d0145f571f958ae98c3283035224eb1101ae5e17d52ee951737c22bfbf"
+        }
+      ],
+      "collectionFiles": [
+        "test/original.test.js",
+        "test/property.test.js"
+      ],
+      "requestedFiles": [
+        "test/original.test.js",
+        "test/property.test.js"
+      ],
+      "executedFiles": [
+        "test/original.test.js",
+        "test/property.test.js"
+      ],
+      "missingFiles": [],
+      "unknownFiles": [],
+      "complete": true,
+      "command": [
+        "<node>",
+        "--test",
+        "--test-reporter=<testlore>/src/reporters/node.js",
+        "--test-reporter-destination=<scratch>/results.json",
+        "./test/original.test.js",
+        "./test/property.test.js"
+      ],
+      "stdout": "@testlore-property:{\"failed\":true,\"interrupted\":false,\"numRuns\":3,\"numShrinks\":62,\"numSkips\":0,\"seed\":424242,\"counterexample\":[5e-324],\"counterexamplePath\":\"2:1:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0\",\"error\":{\"name\":\"AssertionError\",\"code\":\"ERR_ASSERTION\",\"message\":\"Expected values to be strictly equal:\\n\\n0 !== 5e-324\\n\",\"actual\":0,\"expected\":5e-324,\"operator\":\"strictEqual\"}}\n",
+      "stderr": "",
+      "signal": null,
+      "reportErrors": [],
+      "discovery": {
+        "files": [
+          "test/original.test.js",
+          "test/property.test.js"
+        ],
+        "complete": true,
+        "adapter": "node",
+        "warnings": []
+      },
+      "provenance": {
+        "schemaVersion": 1,
+        "revision": null,
+        "runner": "db6d231c8308cd4b3ab516b629016b937cc1ae31fa91e4eacc10381f218a2a1c",
+        "environment": {
+          "node": "v22.19.0",
+          "platform": "darwin",
+          "arch": "arm64",
+          "labels": {}
+        },
+        "services": {},
+        "serviceWarnings": [],
+        "files": {
+          "package.json": "d904bcb48ce015ec27966836ede3807b92c7040c9f66a50f14aa9a116e344588",
+          "src/clamp.js": "3741abd38daee003b532bcb2acd40e756ff1dee4166699c935f2f3e2d6443bee",
+          "tddswarm.config.json": "f9b7e8ce3fa893621c80f70d12274b2e65798c93d1e38e11e28ee49893c8e0f9",
+          "tddswarm.requirements.md": "1b624cbb7a589b0e1de518f741bb7883d9aef1a9ddf89da9d909c79a00bcf30d",
+          "test/original.test.js": "97166ee655b5ec4874bd11bc1b559f276ab090cfe5352ac8c74840e8344b85bb",
+          "test/property.test.js": "993351f1e843bbd1be61367f5ad6039f1cc6821f5b5e3a95cbe815b27537ebf0"
+        },
+        "fingerprint": "5c3a01c69add1c5440dbb1c16c14909ccbabcb081937163695d0a318af1d6a7c"
+      },
+      "stable": {
+        "fresh": true,
+        "reasons": []
+      }
+    },
+    "replay": {
+      "adapter": "node",
+      "exitCode": 1,
+      "durationMs": 121,
+      "tests": [
+        {
+          "file": "test/original.test.js",
+          "name": "five original clamp examples",
+          "status": "passed",
+          "durationMs": 0.388834,
+          "line": 2,
+          "column": 1,
+          "id": "fc4681dcf086b50fa776871ca4a5d95894dda373609f080c03c7b84ff886672e"
+        },
+        {
+          "file": "test/property.test.js",
+          "name": "finite clamp preserves fractions and exact boundaries",
+          "status": "failed",
+          "durationMs": 3.58725,
+          "line": 5,
+          "column": 1,
+          "id": "6f0395d0145f571f958ae98c3283035224eb1101ae5e17d52ee951737c22bfbf"
+        }
+      ],
+      "collectionFiles": [
+        "test/original.test.js",
+        "test/property.test.js"
+      ],
+      "requestedFiles": [
+        "test/original.test.js",
+        "test/property.test.js"
+      ],
+      "executedFiles": [
+        "test/original.test.js",
+        "test/property.test.js"
+      ],
+      "missingFiles": [],
+      "unknownFiles": [],
+      "complete": true,
+      "command": [
+        "<node>",
+        "--test",
+        "--test-reporter=<testlore>/src/reporters/node.js",
+        "--test-reporter-destination=<scratch>/results.json",
+        "./test/original.test.js",
+        "./test/property.test.js"
+      ],
+      "stdout": "@testlore-property:{\"failed\":true,\"interrupted\":false,\"numRuns\":1,\"numShrinks\":0,\"numSkips\":0,\"seed\":424242,\"counterexample\":[5e-324],\"counterexamplePath\":\"2:1:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0\",\"error\":{\"name\":\"AssertionError\",\"code\":\"ERR_ASSERTION\",\"message\":\"Expected values to be strictly equal:\\n\\n0 !== 5e-324\\n\",\"actual\":0,\"expected\":5e-324,\"operator\":\"strictEqual\"}}\n",
+      "stderr": "",
+      "signal": null,
+      "reportErrors": [],
+      "discovery": {
+        "files": [
+          "test/original.test.js",
+          "test/property.test.js"
+        ],
+        "complete": true,
+        "adapter": "node",
+        "warnings": []
+      },
+      "provenance": {
+        "schemaVersion": 1,
+        "revision": null,
+        "runner": "7e79717c3bb02f863ac472137fd5581812b7231b1ba33556015125623c8b3d4a",
+        "environment": {
+          "node": "v22.19.0",
+          "platform": "darwin",
+          "arch": "arm64",
+          "labels": {}
+        },
+        "services": {},
+        "serviceWarnings": [],
+        "files": {
+          "package.json": "d904bcb48ce015ec27966836ede3807b92c7040c9f66a50f14aa9a116e344588",
+          "src/clamp.js": "3741abd38daee003b532bcb2acd40e756ff1dee4166699c935f2f3e2d6443bee",
+          "tddswarm.config.json": "f9b7e8ce3fa893621c80f70d12274b2e65798c93d1e38e11e28ee49893c8e0f9",
+          "tddswarm.requirements.md": "1b624cbb7a589b0e1de518f741bb7883d9aef1a9ddf89da9d909c79a00bcf30d",
+          "test/original.test.js": "97166ee655b5ec4874bd11bc1b559f276ab090cfe5352ac8c74840e8344b85bb",
+          "test/property.test.js": "993351f1e843bbd1be61367f5ad6039f1cc6821f5b5e3a95cbe815b27537ebf0"
+        },
+        "fingerprint": "67b68a68aa66d620f6049100b21806347c0d87fd1dcb2ec008d6c72387f05707"
+      },
+      "stable": {
+        "fresh": true,
+        "reasons": []
+      }
+    }
+  },
+  {
+    "name": "negative fractional passthrough",
+    "sourceHash": "5b3b311dda963511e4a37a4d20e2b860ec87ebffdc4cc5eaabed6b718e2d4ea7",
+    "originalGreen": true,
+    "propertyCaught": true,
+    "reproduced": true,
+    "details": {
+      "failed": true,
+      "interrupted": false,
+      "numRuns": 1,
+      "numShrinks": 0,
+      "numSkips": 0,
+      "seed": 424242,
+      "counterexample": [
+        -0.5
+      ],
+      "counterexamplePath": "0",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "message": "Expected values to be strictly equal:\n\n-0.5 !== 0\n",
+        "actual": -0.5,
+        "expected": 0,
+        "operator": "strictEqual"
+      }
+    },
+    "replayDetails": {
+      "failed": true,
+      "interrupted": false,
+      "numRuns": 1,
+      "numShrinks": 0,
+      "numSkips": 0,
+      "seed": 424242,
+      "counterexample": [
+        -0.5
+      ],
+      "counterexamplePath": "0",
+      "error": {
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "message": "Expected values to be strictly equal:\n\n-0.5 !== 0\n",
+        "actual": -0.5,
+        "expected": 0,
+        "operator": "strictEqual"
+      }
+    },
+    "original": {
+      "adapter": "node",
+      "exitCode": 0,
+      "durationMs": 96,
+      "tests": [
+        {
+          "file": "test/original.test.js",
+          "name": "five original clamp examples",
+          "status": "passed",
+          "durationMs": 0.411625,
+          "line": 2,
+          "column": 1,
+          "id": "fc4681dcf086b50fa776871ca4a5d95894dda373609f080c03c7b84ff886672e"
+        }
+      ],
+      "collectionFiles": [
+        "test/original.test.js"
+      ],
+      "requestedFiles": [
+        "test/original.test.js"
+      ],
+      "executedFiles": [
+        "test/original.test.js"
+      ],
+      "missingFiles": [],
+      "unknownFiles": [],
+      "complete": true,
+      "command": [
+        "<node>",
+        "--test",
+        "--test-reporter=<testlore>/src/reporters/node.js",
+        "--test-reporter-destination=<scratch>/results.json",
+        "./test/original.test.js"
+      ],
+      "stdout": "",
+      "stderr": "",
+      "signal": null,
+      "reportErrors": [],
+      "discovery": {
+        "files": [
+          "test/original.test.js"
+        ],
+        "complete": true,
+        "adapter": "node",
+        "warnings": []
+      },
+      "provenance": {
+        "schemaVersion": 1,
+        "revision": null,
+        "runner": "db6d231c8308cd4b3ab516b629016b937cc1ae31fa91e4eacc10381f218a2a1c",
+        "environment": {
+          "node": "v22.19.0",
+          "platform": "darwin",
+          "arch": "arm64",
+          "labels": {}
+        },
+        "services": {},
+        "serviceWarnings": [],
+        "files": {
+          "package.json": "d904bcb48ce015ec27966836ede3807b92c7040c9f66a50f14aa9a116e344588",
+          "src/clamp.js": "5b3b311dda963511e4a37a4d20e2b860ec87ebffdc4cc5eaabed6b718e2d4ea7",
+          "tddswarm.config.json": "f9b7e8ce3fa893621c80f70d12274b2e65798c93d1e38e11e28ee49893c8e0f9",
+          "tddswarm.requirements.md": "1b624cbb7a589b0e1de518f741bb7883d9aef1a9ddf89da9d909c79a00bcf30d",
+          "test/original.test.js": "97166ee655b5ec4874bd11bc1b559f276ab090cfe5352ac8c74840e8344b85bb"
+        },
+        "fingerprint": "2be50c9dc25927117627a3fdb76d43535cfe019073e2e990f51dc98083c78121"
+      },
+      "stable": {
+        "fresh": true,
+        "reasons": []
+      }
+    },
+    "candidate": {
+      "adapter": "node",
+      "exitCode": 1,
+      "durationMs": 116,
+      "tests": [
+        {
+          "file": "test/original.test.js",
+          "name": "five original clamp examples",
+          "status": "passed",
+          "durationMs": 0.400167,
+          "line": 2,
+          "column": 1,
+          "id": "fc4681dcf086b50fa776871ca4a5d95894dda373609f080c03c7b84ff886672e"
+        },
+        {
+          "file": "test/property.test.js",
+          "name": "finite clamp preserves fractions and exact boundaries",
+          "status": "failed",
+          "durationMs": 2.84025,
+          "line": 5,
+          "column": 1,
+          "id": "6f0395d0145f571f958ae98c3283035224eb1101ae5e17d52ee951737c22bfbf"
+        }
+      ],
+      "collectionFiles": [
+        "test/original.test.js",
+        "test/property.test.js"
+      ],
+      "requestedFiles": [
+        "test/original.test.js",
+        "test/property.test.js"
+      ],
+      "executedFiles": [
+        "test/original.test.js",
+        "test/property.test.js"
+      ],
+      "missingFiles": [],
+      "unknownFiles": [],
+      "complete": true,
+      "command": [
+        "<node>",
+        "--test",
+        "--test-reporter=<testlore>/src/reporters/node.js",
+        "--test-reporter-destination=<scratch>/results.json",
+        "./test/original.test.js",
+        "./test/property.test.js"
+      ],
+      "stdout": "@testlore-property:{\"failed\":true,\"interrupted\":false,\"numRuns\":1,\"numShrinks\":0,\"numSkips\":0,\"seed\":424242,\"counterexample\":[-0.5],\"counterexamplePath\":\"0\",\"error\":{\"name\":\"AssertionError\",\"code\":\"ERR_ASSERTION\",\"message\":\"Expected values to be strictly equal:\\n\\n-0.5 !== 0\\n\",\"actual\":-0.5,\"expected\":0,\"operator\":\"strictEqual\"}}\n",
+      "stderr": "",
+      "signal": null,
+      "reportErrors": [],
+      "discovery": {
+        "files": [
+          "test/original.test.js",
+          "test/property.test.js"
+        ],
+        "complete": true,
+        "adapter": "node",
+        "warnings": []
+      },
+      "provenance": {
+        "schemaVersion": 1,
+        "revision": null,
+        "runner": "db6d231c8308cd4b3ab516b629016b937cc1ae31fa91e4eacc10381f218a2a1c",
+        "environment": {
+          "node": "v22.19.0",
+          "platform": "darwin",
+          "arch": "arm64",
+          "labels": {}
+        },
+        "services": {},
+        "serviceWarnings": [],
+        "files": {
+          "package.json": "d904bcb48ce015ec27966836ede3807b92c7040c9f66a50f14aa9a116e344588",
+          "src/clamp.js": "5b3b311dda963511e4a37a4d20e2b860ec87ebffdc4cc5eaabed6b718e2d4ea7",
+          "tddswarm.config.json": "f9b7e8ce3fa893621c80f70d12274b2e65798c93d1e38e11e28ee49893c8e0f9",
+          "tddswarm.requirements.md": "1b624cbb7a589b0e1de518f741bb7883d9aef1a9ddf89da9d909c79a00bcf30d",
+          "test/original.test.js": "97166ee655b5ec4874bd11bc1b559f276ab090cfe5352ac8c74840e8344b85bb",
+          "test/property.test.js": "993351f1e843bbd1be61367f5ad6039f1cc6821f5b5e3a95cbe815b27537ebf0"
+        },
+        "fingerprint": "0e9b57f6e917e1eb390e67796aaec5e8d4f1261822d6bc948353707b3c9afc30"
+      },
+      "stable": {
+        "fresh": true,
+        "reasons": []
+      }
+    },
+    "replay": {
+      "adapter": "node",
+      "exitCode": 1,
+      "durationMs": 185,
+      "tests": [
+        {
+          "file": "test/original.test.js",
+          "name": "five original clamp examples",
+          "status": "passed",
+          "durationMs": 0.633291,
+          "line": 2,
+          "column": 1,
+          "id": "fc4681dcf086b50fa776871ca4a5d95894dda373609f080c03c7b84ff886672e"
+        },
+        {
+          "file": "test/property.test.js",
+          "name": "finite clamp preserves fractions and exact boundaries",
+          "status": "failed",
+          "durationMs": 3.968791,
+          "line": 5,
+          "column": 1,
+          "id": "6f0395d0145f571f958ae98c3283035224eb1101ae5e17d52ee951737c22bfbf"
+        }
+      ],
+      "collectionFiles": [
+        "test/original.test.js",
+        "test/property.test.js"
+      ],
+      "requestedFiles": [
+        "test/original.test.js",
+        "test/property.test.js"
+      ],
+      "executedFiles": [
+        "test/original.test.js",
+        "test/property.test.js"
+      ],
+      "missingFiles": [],
+      "unknownFiles": [],
+      "complete": true,
+      "command": [
+        "<node>",
+        "--test",
+        "--test-reporter=<testlore>/src/reporters/node.js",
+        "--test-reporter-destination=<scratch>/results.json",
+        "./test/original.test.js",
+        "./test/property.test.js"
+      ],
+      "stdout": "@testlore-property:{\"failed\":true,\"interrupted\":false,\"numRuns\":1,\"numShrinks\":0,\"numSkips\":0,\"seed\":424242,\"counterexample\":[-0.5],\"counterexamplePath\":\"0\",\"error\":{\"name\":\"AssertionError\",\"code\":\"ERR_ASSERTION\",\"message\":\"Expected values to be strictly equal:\\n\\n-0.5 !== 0\\n\",\"actual\":-0.5,\"expected\":0,\"operator\":\"strictEqual\"}}\n",
+      "stderr": "",
+      "signal": null,
+      "reportErrors": [],
+      "discovery": {
+        "files": [
+          "test/original.test.js",
+          "test/property.test.js"
+        ],
+        "complete": true,
+        "adapter": "node",
+        "warnings": []
+      },
+      "provenance": {
+        "schemaVersion": 1,
+        "revision": null,
+        "runner": "f83f5c6b0c86a1f17826457373c5874e1928c5819f4765bc22c703f542d14086",
+        "environment": {
+          "node": "v22.19.0",
+          "platform": "darwin",
+          "arch": "arm64",
+          "labels": {}
+        },
+        "services": {},
+        "serviceWarnings": [],
+        "files": {
+          "package.json": "d904bcb48ce015ec27966836ede3807b92c7040c9f66a50f14aa9a116e344588",
+          "src/clamp.js": "5b3b311dda963511e4a37a4d20e2b860ec87ebffdc4cc5eaabed6b718e2d4ea7",
+          "tddswarm.config.json": "f9b7e8ce3fa893621c80f70d12274b2e65798c93d1e38e11e28ee49893c8e0f9",
+          "tddswarm.requirements.md": "1b624cbb7a589b0e1de518f741bb7883d9aef1a9ddf89da9d909c79a00bcf30d",
+          "test/original.test.js": "97166ee655b5ec4874bd11bc1b559f276ab090cfe5352ac8c74840e8344b85bb",
+          "test/property.test.js": "993351f1e843bbd1be61367f5ad6039f1cc6821f5b5e3a95cbe815b27537ebf0"
+        },
+        "fingerprint": "28f43342d2c94e11f586dae2946041bd18484563d8060f7e82196f97266b852d"
+      },
+      "stable": {
+        "fresh": true,
+        "reasons": []
+      }
+    }
+  }
+]
