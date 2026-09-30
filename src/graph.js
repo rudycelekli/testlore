@@ -2,6 +2,9 @@ import fs from 'node:fs';
 import path from 'node:path';
 import ts from 'typescript';
 import { isBuiltin } from 'node:module';
+import { createHash } from 'node:crypto';
+import { fileURLToPath } from 'node:url';
+import { createAnalysisCache, ANALYSIS_CACHE_IMPLEMENTATION } from './graph-cache.js';
 import { discover as nativeDiscovery, resolveNativeBatch } from './execution.js';
 import { declaredInputs } from './inputs.js';
 import { SOURCE, TEST, listFiles, normalize, safePath, readConfig } from './files.js';
@@ -35,6 +38,17 @@ export function analyze(file, text) {
   }
   return { ast, imports: [...imports], warnings: [...new Set(warnings)] };
 }
+
+const ANALYSIS_ENGINE = createHash('sha256').update(JSON.stringify({ schemaVersion: 1, typescript: ts.version, node: process.version, graph: createHash('sha256').update(fs.readFileSync(fileURLToPath(import.meta.url))).digest('hex'), cache: ANALYSIS_CACHE_IMPLEMENTATION })).digest('hex');
+const SUMMARY_CACHE = Symbol('sourceAnalysisCache');
+function summaries(graph) {
+  if (!graph[SUMMARY_CACHE]) {
+    graph[SUMMARY_CACHE] = createAnalysisCache(graph.root, graph.config?.analysisCache, ANALYSIS_ENGINE);
+    graph.analysisCache = graph[SUMMARY_CACHE].stats;
+  }
+  return graph[SUMMARY_CACHE];
+}
+function sourceSummary(graph, file, text) { return summaries(graph).analyze(file, text, analyze); }
 
 export function resolveImport(file, spec, files) {
   if (!spec.startsWith('.')) return { external: !spec.startsWith('#') && !spec.startsWith('@/') && !spec.startsWith('~/'), unresolved: spec.startsWith('#') || spec.startsWith('@/') || spec.startsWith('~/') };
@@ -90,7 +104,7 @@ export function buildGraph(root) {
 // A single native config/server resolves all literal imports, including baseline edges.
 export function addSources(graph, entries, files = new Set(graph.files)) {
   if(graph.root && (graph.config?.discovery === 'native' || Array.isArray(graph.config?.discovery))) {
-    const imports = entries.flatMap(([file,text]) => analyze(file,text).imports.filter(specifier=>!isBuiltin(specifier)).map(specifier=>({file,specifier})));
+    const imports = entries.flatMap(([file,text]) => sourceSummary(graph,file,text).imports.filter(specifier=>!isBuiltin(specifier)).map(specifier=>({file,specifier})));
     const batch = resolveNativeBatch(graph.root,imports,graph.config);
     if(batch.supported) {
       graph.nativeResolutions ||= new Map();
@@ -100,10 +114,11 @@ export function addSources(graph, entries, files = new Set(graph.files)) {
     }
   }
   for(const [file,text] of entries) addSource(graph,file,text,files);
+  summaries(graph).flush();
 }
 
 export function addSource(graph, file, text, files = new Set(graph.files)) {
-  const info = analyze(file, text);
+  const info = sourceSummary(graph, file, text);
   const edges = graph.edges[file] || [];
   for (const reason of info.warnings) graph.warnings.push({ file, reason });
   for (const spec of info.imports) {
@@ -142,7 +157,7 @@ export function evidencePath(graph, start, target) {
 function configurationSeeds(root,config) {
   const seeds = new Set();
   if(config.tsconfig)seeds.add(normalize(config.tsconfig));
-  for(const file of listFiles(root)) if(/^(?:tsconfig\.json|jsconfig\.json|(?:vitest|vite|jest)\.config\.[cm]?[jt]s)$/.test(file))seeds.add(file);
+  for(const file of listFiles(root)) if(/^(?:tsconfig\.json|jsconfig\.json|(?:vitest|vite|jest|playwright)\.config\.[cm]?[jt]s)$/.test(file))seeds.add(file);
   const argv=config.runner||[];
   for(let i=0;i<argv.length;i++) {
     let file;
