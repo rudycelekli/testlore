@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {assessHost, safeHostEnvironment, boundedProcess, executableIdentity, qualifyHosts, packageSnapshot, hostEvents} from '../scripts/host-qualification.js';
+import {assessHost, safeHostEnvironment, boundedProcess, executableIdentity, qualifyHosts, packageSnapshot, hostEvents,
+  readBoundedText, readObserverReceipt, executableDrift, assertCanonicalEntrypoint} from '../scripts/host-qualification.js';
 import {boundedSummary, summarizeRun} from '../src/mcp-worker.js';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -8,17 +9,17 @@ import {spawnSync} from 'node:child_process';
 import {fixture, write} from './helpers.js';
 
 function successfulObservation() {
-  const entrypoint = {sha256: 'a'.repeat(64)}, failedCases = [{id: 'observed-identity', file: 'test/fault.test.js', name: 'independent value remains one'}];
+  const entrypoint = {sha256: 'a'.repeat(64)}, nodeIdentity = {sha256: 'b'.repeat(64)}, failedCases = [{id: 'observed-identity', file: 'test/fault.test.js', name: 'independent value remains one'}];
   const executedFiles = ['test/fault.test.js', 'test/preserved.test.js'];
   const observed = [
-    {mode: 'readonly', entrypoint, tools: ['testlore_brief', 'testlore_status'], calls: [
-      {name: 'testlore_brief', result: {authority: 'advisory', execution: {projectCommandsInvoked: false}}},
-      {name: 'testlore_status', result: {present: false, projectCommandsInvoked: false, reason: 'no-retained-run'}}]},
-    {mode: 'execution', entrypoint, tools: ['testlore_brief', 'testlore_status', 'testlore_plan', 'testlore_verify'], calls: [
-      {name: 'testlore_plan', result: {authority: 'routing-proposal', complete: true}},
-      {name: 'testlore_verify', result: {verdict: 'failed', executed: true, complete: true, outcomes: {failed: 1}, failedCases, executedFiles}}]}
+    {mode: 'readonly', entrypoint, node: nodeIdentity, tools: ['testlore_brief', 'testlore_status'], calls: [
+      {id: 1, name: 'testlore_brief', arguments: {}, requestedAt: 100, respondedAt: 101, result: {authority: 'advisory', execution: {projectCommandsInvoked: false}}},
+      {id: 2, name: 'testlore_status', arguments: {}, requestedAt: 102, respondedAt: 103, result: {present: false, projectCommandsInvoked: false, reason: 'no-retained-run'}}]},
+    {mode: 'execution', entrypoint, node: nodeIdentity, tools: ['testlore_brief', 'testlore_status', 'testlore_plan', 'testlore_verify'], calls: [
+      {id: 1, name: 'testlore_plan', arguments: {base: 'HEAD'}, requestedAt: 104, respondedAt: 105, result: {authority: 'routing-proposal', complete: true}},
+      {id: 2, name: 'testlore_verify', arguments: {base: 'HEAD', mode: 'shadow'}, requestedAt: 106, respondedAt: 107, result: {verdict: 'failed', mode: 'shadow', executed: true, complete: true, outcomes: {failed: 1}, failedCases, executedFiles}}]}
   ];
-  return {entrypoint, observed, processResult: {status: 'completed', exitCode: 0},
+  return {entrypoint, nodeIdentity, observed, processResult: {status: 'completed', exitCode: 0},
     finalMessage: JSON.stringify({verdict: 'failed', failedCases, executedFiles, uncertainty: 'Fixture observations do not establish deployment safety or defect effectiveness.',
       nextAction: 'Repair the value to match the independent expectation and rerun the full suite.', deploymentSafety: 'not-established'})};
 }
@@ -68,6 +69,53 @@ test('host final account rejects invented failures, invented scope, renamed case
   const reordered = successfulObservation(), summary = JSON.parse(reordered.finalMessage);
   summary.executedFiles.reverse(); reordered.finalMessage = JSON.stringify(summary);
   assert.equal(assessHost(reordered).qualified, true);
+});
+
+test('native host evidence requires exact shadow arguments, response ordering and unambiguous finite timestamps', () => {
+  for (const mutate of [
+    input => {input.observed[1].calls[1].result.mode = 'full';},
+    input => {input.observed[1].calls[0].arguments = {base: 'HEAD', root: '/unsafe'};},
+    input => {input.observed[1].calls[0].arguments = {};},
+    input => {input.observed[1].calls[1].arguments = {base: 'HEAD', mode: 'full'};},
+    input => {input.observed[1].calls[1].arguments = {base: 'HEAD', mode: 'shadow', command: ['unsafe']};},
+    input => {input.observed[1].calls[1].arguments = {mode: 'shadow'};},
+    input => {input.observed[0].calls.push({...input.observed[0].calls[0]});},
+    input => {input.observed[1].calls[1].id = input.observed[1].calls[0].id;},
+    input => {delete input.observed[0].calls[0].id;},
+    input => {delete input.observed[0].calls[0].respondedAt;},
+    input => {input.observed[1].calls[0].requestedAt = Infinity;},
+    input => {input.observed[1].calls[1].respondedAt = 105;},
+    input => {input.observed[0].calls[0].respondedAt = 105;},
+    input => {input.observed[0].calls[1].respondedAt = 105;},
+    input => {input.observed[1].calls[0].respondedAt = 107;},
+    input => {input.observed[1].node = {sha256: 'c'.repeat(64)};}
+  ]) {const input = successfulObservation(); mutate(input); assert.equal(assessHost(input).qualified, false);}
+  const sameMillisecond = successfulObservation();
+  for (const receipt of sameMillisecond.observed) for (const call of receipt.calls) call.requestedAt = call.respondedAt = 100;
+  assert.equal(assessHost(sameMillisecond).qualified, true);
+});
+
+test('native host file evidence rejects oversized, symlinked, malformed and noncanonical inputs and detects executable drift', async t => {
+  const root = fixture(t, {'package.json': {name: 'testlore', bin: {testlore: 'src/cli.js'}}, 'src/cli.js': "console.log('canonical');", 'foo/cli.js': "console.log('canonical');"});
+  const entrypoint = path.join(root, 'src/cli.js'), identity = executableIdentity(entrypoint), snapshot = packageSnapshot(entrypoint);
+  assert.doesNotThrow(() => assertCanonicalEntrypoint(identity, snapshot));
+  assert.throws(() => assertCanonicalEntrypoint(executableIdentity(path.join(root, 'foo/cli.js')), snapshot), /exactly match/);
+  await assert.rejects(qualifyHosts({entrypoint: path.join(root, 'foo/cli.js'), timeoutMs: 1000}), /exactly match/);
+  assert.throws(() => assertCanonicalEntrypoint({...identity, sha256: '0'.repeat(64)}, snapshot), /exactly match/);
+  const large = path.join(root, 'large.json'); fs.writeFileSync(large, 'x'.repeat(16385));
+  assert.throws(() => readBoundedText(large, 16384), /byte budget/);
+  const linked = path.join(root, 'linked.json'); fs.symlinkSync(large, linked);
+  assert.throws(() => readBoundedText(linked, 16384), /regular file/);
+  const receiptPath = path.join(root, 'receipt.json'), receipt = {schemaVersion: 1, transport: 'transparent-stdio-relay', mode: 'readonly',
+    entrypoint: identity, node: identity, tools: ['testlore_brief', 'testlore_status'], calls: successfulObservation().observed[0].calls, incomplete: false, stderr: ''};
+  fs.writeFileSync(receiptPath, JSON.stringify(receipt)); assert.deepEqual(readObserverReceipt(receiptPath, 'readonly'), receipt);
+  assert.throws(() => readObserverReceipt(receiptPath, 'execution'), /schema/);
+  fs.writeFileSync(receiptPath, JSON.stringify({...receipt, calls: 'invented'})); assert.throws(() => readObserverReceipt(receiptPath, 'readonly'), /schema/);
+  fs.writeFileSync(receiptPath, 'x'.repeat(2 * 1024 * 1024 + 1)); assert.throws(() => readObserverReceipt(receiptPath, 'readonly'), /byte budget/);
+  assert.deepEqual(executableDrift(identity, 'fixture-launcher'), []);
+  fs.writeFileSync(entrypoint, "console.log('changed');"); assert.deepEqual(executableDrift(identity, 'fixture-launcher'), ['fixture-launcher-executable-identity-changed']);
+  fs.unlinkSync(entrypoint); assert.match(executableDrift(identity, 'fixture-launcher')[0], /executable-unreadable/);
+  assert.ok(hostEvents('codex', 'null\n').errors.includes('invalid-native-host-event-shape'));
 });
 
 test('native streamed authentication errors retain the observed cause without a provider fallback', () => {

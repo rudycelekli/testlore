@@ -21,6 +21,46 @@ export function executableIdentity(filename) {
     sha256: hash.digest('hex')};
 }
 
+export function readBoundedText(filename, maximumBytes) {
+  if (!Number.isInteger(maximumBytes) || maximumBytes < 1 || maximumBytes > 2 * 1024 * 1024) throw new Error('Invalid host evidence read budget');
+  const initial = fs.lstatSync(filename);
+  if (!initial.isFile() || initial.isSymbolicLink() || initial.size > maximumBytes) throw new Error('Host evidence must be a regular file within its byte budget');
+  const descriptor = fs.openSync(filename, fs.constants.O_RDONLY | (fs.constants.O_NOFOLLOW || 0));
+  try {
+    const opened = fs.fstatSync(descriptor);
+    if (!opened.isFile() || opened.dev !== initial.dev || opened.ino !== initial.ino || opened.size > maximumBytes) throw new Error('Host evidence changed before reading');
+    const buffer = Buffer.alloc(maximumBytes + 1); let bytes = 0, length;
+    while (bytes < buffer.length && (length = fs.readSync(descriptor, buffer, bytes, buffer.length - bytes, null)) > 0) bytes += length;
+    if (bytes > maximumBytes) throw new Error('Host evidence grew beyond its byte budget');
+    return buffer.subarray(0, bytes).toString('utf8');
+  } finally {fs.closeSync(descriptor);}
+}
+
+export function readObserverReceipt(filename, expectedMode) {
+  const receipt = JSON.parse(readBoundedText(filename, 2 * 1024 * 1024));
+  const object = value => value && typeof value === 'object' && !Array.isArray(value);
+  const identity = value => object(value) && typeof value.path === 'string' && typeof value.realpath === 'string'
+    && /^[a-f0-9]{64}$/.test(value.sha256) && Number.isSafeInteger(value.bytes) && value.bytes >= 0;
+  if (!object(receipt) || receipt.schemaVersion !== 1 || receipt.transport !== 'transparent-stdio-relay' || receipt.mode !== expectedMode
+    || !identity(receipt.entrypoint) || !identity(receipt.node) || typeof receipt.incomplete !== 'boolean'
+    || typeof receipt.stderr !== 'string' || Buffer.byteLength(receipt.stderr) > 8000
+    || !(receipt.tools === null || Array.isArray(receipt.tools) && receipt.tools.length <= 16 && receipt.tools.every(name => typeof name === 'string' && name.length <= 100))
+    || !Array.isArray(receipt.calls) || receipt.calls.length > 12
+    || receipt.calls.some(call => !object(call) || typeof call.name !== 'string' || call.name.length > 100
+      || !object(call.arguments) || !(call.result === null || object(call.result))
+      || !(typeof call.id === 'string' && call.id.length > 0 && call.id.length <= 100 || Number.isSafeInteger(call.id))))
+    throw new Error('Invalid bounded MCP observer receipt schema');
+  return receipt;
+}
+
+export function executableDrift(identity, label) {
+  try {
+    const current = executableIdentity(identity.path);
+    return current.sha256 === identity.sha256 && current.realpath === identity.realpath && current.bytes === identity.bytes
+      ? [] : [`${label}-executable-identity-changed`];
+  } catch (error) {return [`${label}-executable-unreadable:${error.code || error.message}`];}
+}
+
 // Allow subscription login through the host's existing HOME; strip keys and provider routing.
 // The harness never reads, copies or writes personal credentials/configuration.
 export function safeHostEnvironment(input) {
@@ -44,6 +84,12 @@ export function packageSnapshot(entrypoint) {
   return {root, sha256: digest, files};
 }
 
+export function assertCanonicalEntrypoint(entrypoint, snapshot) {
+  const source = snapshot.files.find(row => row.file === 'src/cli.js');
+  if (entrypoint.realpath !== path.join(snapshot.root, 'src', 'cli.js') || !source || source.realpath !== entrypoint.realpath || source.sha256 !== entrypoint.sha256)
+    throw new Error('Entrypoint must exactly match the snapshotted package src/cli.js path and SHA-256');
+}
+
 function hostIdentityFor(filename, host) {
   const identity = executableIdentity(filename);
   if (host === 'codex' && identity.realpath.endsWith('/bin/codex.js')) {
@@ -59,25 +105,32 @@ function hostIdentityFor(filename, host) {
 }
 
 export function hostEvents(host, stdout) {
-  const events = [];
-  for (const line of stdout.split('\n')) {try {events.push(JSON.parse(line));} catch {}}
+  const events = [], malformed = [];
+  for (const line of stdout.split('\n')) {
+    if (!line.trim()) continue;
+    try {
+      const event = JSON.parse(line);
+      if (!event || typeof event !== 'object' || Array.isArray(event)) throw new Error();
+      events.push(event);
+    } catch {if (malformed.length < 8) malformed.push('invalid-native-host-event-shape');}
+  }
   const result = events.findLast(row => row.type === 'result');
   const allowed = new Set(['mcp__testlore_readonly__testlore_brief', 'mcp__testlore_readonly__testlore_status',
     'mcp__testlore_execution__testlore_plan', 'mcp__testlore_execution__testlore_verify']);
   const unauthorized = events.flatMap(row => {
     if (row.item?.type === 'mcp_tool_call' && !['testlore_readonly', 'testlore_execution'].includes(row.item.server)) return [`unexpected-mcp-server:${row.item.server}`];
     if (['command_execution', 'file_change', 'web_search'].includes(row.item?.type)) return [`unexpected-host-tool:${row.item.type}`];
-    return (row.message?.content || []).filter(item => item.type === 'tool_use' && !allowed.has(item.name)).map(item => `unexpected-host-tool:${item.name}`);
+    return (Array.isArray(row.message?.content) ? row.message.content : []).filter(item => item?.type === 'tool_use' && !allowed.has(item.name)).map(item => `unexpected-host-tool:${item.name}`);
   });
   return {finalMessage: host === 'claude' ? result?.result || '' : '',
     model: events.find(row => row.type === 'system' && row.subtype === 'init')?.model || null,
     nativeApiRetriesObserved: events.filter(row => row.type === 'system' && row.subtype === 'api_retry').length,
-    errors: [...unauthorized, ...events.flatMap(row => row.type === 'system' && row.subtype === 'api_retry'
+    errors: [...malformed, ...unauthorized, ...events.flatMap(row => row.type === 'system' && row.subtype === 'api_retry'
       ? [{status: row.error_status, error: row.error, nativeRetryAttempt: row.attempt}]
       : row.type === 'error' ? [row.message || row.error] : row.item?.error ? [row.item.error] : row.is_error ? [row.errors || row.result || 'host-error'] : [])].slice(0, 8)};
 }
 
-export function assessHost({processResult, observed, finalMessage, entrypoint, hostErrors = []}) {
+export function assessHost({processResult, observed, finalMessage, entrypoint, nodeIdentity, hostErrors = []}) {
   const reasons = [];
   if (processResult.status !== 'completed' || processResult.exitCode !== 0)
     reasons.push(`host-${processResult.status}:${processResult.reason || processResult.exitCode}`);
@@ -87,6 +140,7 @@ export function assessHost({processResult, observed, finalMessage, entrypoint, h
     ['execution', execution, ['testlore_brief', 'testlore_status', 'testlore_plan', 'testlore_verify']]]) {
     if (!receipt) {reasons.push(`${mode}-server-not-started`); continue;}
     if (receipt.entrypoint?.sha256 !== entrypoint.sha256) reasons.push(`${mode}-entrypoint-mismatch`);
+    if (nodeIdentity && receipt.node?.sha256 !== nodeIdentity.sha256) reasons.push(`${mode}-node-identity-mismatch`);
     if (receipt.incomplete) reasons.push(`${mode}-observer-incomplete`);
     if (JSON.stringify([...(receipt.tools || [])].sort()) !== JSON.stringify([...tools].sort())) reasons.push(`${mode}-tool-surface-mismatch`);
   }
@@ -96,11 +150,27 @@ export function assessHost({processResult, observed, finalMessage, entrypoint, h
   if (JSON.stringify((readOnly?.calls || []).map(row => row.name)) !== JSON.stringify(['testlore_brief', 'testlore_status'])) reasons.push('default-tool-call-sequence-mismatch');
   if (JSON.stringify((execution?.calls || []).map(row => row.name)) !== JSON.stringify(['testlore_plan', 'testlore_verify'])) reasons.push('execution-tool-call-sequence-mismatch');
   const statusCall = readOnly?.calls?.find(row => row.name === 'testlore_status'), planCall = execution?.calls?.find(row => row.name === 'testlore_plan');
-  if (statusCall?.respondedAt && planCall?.requestedAt && statusCall.respondedAt > planCall.requestedAt) reasons.push('execution-preceded-default-status');
+  const verifyCall = execution?.calls?.find(row => row.name === 'testlore_verify');
+  for (const receipt of [readOnly, execution].filter(Boolean)) {
+    const ids = new Set();
+    for (const call of receipt.calls || []) {
+      if (!(typeof call.id === 'string' && call.id.length > 0 || Number.isSafeInteger(call.id)) || ids.has(call.id)) reasons.push(`${receipt.mode}-ambiguous-request-id`);
+      ids.add(call.id);
+      if (!Number.isFinite(call.requestedAt) || !Number.isFinite(call.respondedAt) || call.respondedAt < call.requestedAt)
+        reasons.push(`${receipt.mode}-invalid-observer-timestamps`);
+    }
+  }
+  const exactArguments = (actual, expected) => actual && typeof actual === 'object' && !Array.isArray(actual)
+    && JSON.stringify(Object.keys(actual).sort()) === JSON.stringify(Object.keys(expected).sort())
+    && Object.keys(expected).every(key => actual[key] === expected[key]);
+  if (!exactArguments(planCall?.arguments, {base: 'HEAD'})) reasons.push('plan-arguments-mismatch');
+  if (!exactArguments(verifyCall?.arguments, {base: 'HEAD', mode: 'shadow'})) reasons.push('verify-arguments-mismatch');
+  if (readOnly?.calls?.some(call => Number.isFinite(call.respondedAt) && Number.isFinite(planCall?.requestedAt) && call.respondedAt > planCall.requestedAt)) reasons.push('execution-preceded-default-responses');
+  if (Number.isFinite(planCall?.respondedAt) && Number.isFinite(verifyCall?.requestedAt) && planCall.respondedAt > verifyCall.requestedAt) reasons.push('verification-preceded-plan-response');
   if (brief?.execution?.projectCommandsInvoked !== false || brief.authority !== 'advisory') reasons.push('default-brief-not-observed');
   if (status?.projectCommandsInvoked !== false || status.present !== false || status.reason !== 'no-retained-run') reasons.push('initial-status-not-observed');
   if (plan?.authority !== 'routing-proposal' || plan.complete !== true) reasons.push('native-plan-not-complete');
-  if (verify?.verdict !== 'failed' || verify.complete !== true || verify.executed !== true || verify.outcomes?.failed !== 1)
+  if (verify?.verdict !== 'failed' || verify.complete !== true || verify.executed !== true || verify.mode !== 'shadow' || verify.outcomes?.failed !== 1)
     reasons.push('planted-failure-not-observed');
   const failure = verify?.failedCases?.find(row => row.file === 'test/fault.test.js');
   if (!failure?.id || failure.name !== 'independent value remains one') reasons.push('failed-case-identity-missing');
@@ -198,9 +268,10 @@ export async function qualifyHosts(options) {
   const entrypoint = executableIdentity(options.entrypoint), node = executableIdentity(process.execPath);
   if (options.expectedSha256 && entrypoint.sha256 !== options.expectedSha256) throw new Error('Expected entrypoint SHA-256 mismatch');
   const packagePath = path.resolve(path.dirname(entrypoint.realpath), '../package.json');
-  const packageIdentity = executableIdentity(packagePath), packageData = JSON.parse(fs.readFileSync(packagePath, 'utf8'));
+  const packageIdentity = executableIdentity(packagePath), packageData = JSON.parse(readBoundedText(packagePath, 128 * 1024));
   if (packageData.name !== 'testlore' || path.basename(entrypoint.realpath) !== 'cli.js' || packageData.bin?.testlore !== 'src/cli.js') throw new Error('Entrypoint must be TestLore src/cli.js from a source/installed package');
   const snapshot = packageSnapshot(options.entrypoint);
+  assertCanonicalEntrypoint(entrypoint, snapshot);
   let archive = null;
   if (options.archive) {
     archive = executableIdentity(options.archive);
@@ -252,17 +323,33 @@ export async function qualifyHosts(options) {
         '--disable-slash-commands', '--no-session-persistence', '--verbose', '--output-format', 'stream-json', '--effort', 'low', prompt];
     }
     const processResult = await boundedProcess(executable, args, {cwd: fixture, env, timeoutMs: options.timeoutMs, stopOnNativeRetry: name === 'claude'});
-    const observed = configurations.map(config => {try {return JSON.parse(fs.readFileSync(config.receipt, 'utf8'));} catch {return null;}}).filter(Boolean);
+    const evidenceErrors = [];
+    const observed = configurations.map(config => {try {return readObserverReceipt(config.receipt, config.mode);} catch (error) {
+      if (error.code !== 'ENOENT') evidenceErrors.push(`observer-receipt-rejected:${config.mode}:${error.message}`); return null;
+    }}).filter(Boolean);
     let finalMessage = '';
-    if (name === 'codex' && fs.existsSync(finalPath)) finalMessage = fs.readFileSync(finalPath, 'utf8').slice(0, 16384);
+    if (name === 'codex') {try {finalMessage = readBoundedText(finalPath, 16384);} catch (error) {
+      if (error.code !== 'ENOENT') evidenceErrors.push(`final-message-rejected:${error.message}`);
+    }}
     const events = hostEvents(name, processResult.stdout);
     if (name === 'claude') finalMessage = events.finalMessage;
-    const assessment = assessHost({processResult, observed, finalMessage, entrypoint, hostErrors: events.errors});
+    if (typeof finalMessage !== 'string' || Buffer.byteLength(finalMessage) > 16384) {finalMessage = ''; evidenceErrors.push('final-message-byte-or-type-budget-exceeded');}
+    const identities = [[node, 'node'], [hostIdentity, `${name}-launcher`], ...(hostIdentity.nativeBinary ? [[hostIdentity.nativeBinary, `${name}-native`]] : [])];
+    for (const [identity, label] of identities) evidenceErrors.push(...executableDrift(identity, label));
+    if (hostIdentity.nativeBinaryUnavailable) evidenceErrors.push(`${name}-native-executable-identity-unavailable`);
+    // Resolve the wrapper's current binary again, so a resolution/path change
+    // cannot evade checks on the previously resolved executable.
+    try {
+      const afterIdentity = hostIdentityFor(executable, name);
+      if (JSON.stringify(afterIdentity.nativeBinary || null) !== JSON.stringify(hostIdentity.nativeBinary || null)) evidenceErrors.push(`${name}-native-executable-resolution-changed`);
+    } catch (error) {evidenceErrors.push(`${name}-post-invocation-identity-rejected:${error.code || error.message}`);}
+    const assessment = assessHost({processResult, observed, finalMessage, entrypoint, nodeIdentity: node, hostErrors: [...events.errors, ...evidenceErrors]});
     report.hosts.push({host: name, identity: hostIdentity, helpSha256: createHash('sha256').update(help.stdout).digest('hex'),
       invocation: {command: executable, args, cwd: fixture, inheritedConfiguration: false},
       ...assessment, model: events.model, nativeApiRetriesObserved: events.nativeApiRetriesObserved,
       process: {...processResult, stdout: processResult.stdout.slice(0, 20000), stderr: processResult.stderr.slice(0, 8000)}, observed});
-    if (packageSnapshot(options.entrypoint).sha256 !== snapshot.sha256) {report.hosts.at(-1).qualified = false; report.hosts.at(-1).status = 'not-qualified'; report.hosts.at(-1).reasons.push('package-source-changed-during-run');}
+    try {if (packageSnapshot(options.entrypoint).sha256 !== snapshot.sha256) throw new Error('source-digest-changed');}
+    catch (error) {report.hosts.at(-1).qualified = false; report.hosts.at(-1).status = 'not-qualified'; report.hosts.at(-1).reasons.push(`package-source-changed-during-run:${error.code || error.message}`);}
   }
   report.complete = report.hosts.length === 2 && report.hosts.every(row => row.qualified);
   report.finishedAt = new Date().toISOString();
