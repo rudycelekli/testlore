@@ -6,8 +6,15 @@ import {git,safePath} from './files.js';
 export function publishImprovement(root, result, options = {}) {
   if(result.status!=='ready-for-review'||result.validation?.accepted!==true||result.fullRun?.complete!==true||result.fullRun?.exitCode!==0||!result.fullRun?.tests?.some(t=>t.status==='passed')||!result.sha||!result.branch||!result.worktree)throw new Error('Only a tested improvement commit can open a pull request');
   const worktree=result.worktree;
+  if(!/^tddswarm\/improve-[a-zA-Z0-9][a-zA-Z0-9_-]{0,100}$/.test(result.branch))throw new Error('Invalid improvement branch');
+  if(git(worktree,['rev-parse',`refs/heads/${result.branch}`]).trim()!==result.sha)throw new Error('Improvement branch changed after validation');
   if(git(worktree,['rev-parse','HEAD']).trim()!==result.sha)throw new Error('Improvement commit changed after validation');
-  if(git(worktree,['status','--porcelain']).trim())throw new Error('Improvement worktree changed after validation');
+  const prefix=git(worktree,['rev-parse','--show-prefix']).trim();
+  const status=git(worktree,['status','--porcelain=v1','-z','--untracked-files=all']).split('\0').filter(Boolean);
+  const metadata=line=>{if(line.slice(0,2)!=='??')return false;const file=line.slice(3);const local=prefix&&file.startsWith(prefix)?file.slice(prefix.length):file;
+    if(local==='.tddswarm'||local.startsWith('.tddswarm/'))return true;
+    if(local==='node_modules'){try{return fs.lstatSync(path.join(worktree,'node_modules')).isSymbolicLink()&&fs.realpathSync(path.join(worktree,'node_modules'))===fs.realpathSync(path.join(root,'node_modules'));}catch{}}return false;};
+  if(status.some(line=>!metadata(line)))throw new Error('Improvement worktree changed after validation');
   const remote=options.remote||'origin';
   if(!/^[A-Za-z0-9._-]+$/.test(remote)||remote.startsWith('-'))throw new Error('Invalid remote name');
   const url=git(root,['remote','get-url',remote]).trim();
@@ -23,6 +30,7 @@ export function publishImprovement(root, result, options = {}) {
   invoke(['repo','view',match[1],'--json','nameWithOwner']);
   const pushed=spawnSync('git',['-C',worktree,'push','--set-upstream',remote,result.branch],{encoding:'utf8',shell:false,timeout:60000,maxBuffer:4*1024*1024});
   if(pushed.error||pushed.status!==0)throw new Error(pushed.error?.message||`Git push failed (${pushed.status}): ${(pushed.stderr||'').slice(0,2000)}`);
+  if(git(worktree,['rev-parse',`refs/heads/${result.branch}`]).trim()!==result.sha||git(worktree,['rev-parse','HEAD']).trim()!==result.sha)throw new Error('Improvement branch changed during publication');
   const directory=safePath(worktree,'.tddswarm');fs.mkdirSync(directory,{recursive:true});
   const body=path.join(directory,'pull-request.md');
   const full=result.fullRun||result.execution||result.finalRun||result.run||{};

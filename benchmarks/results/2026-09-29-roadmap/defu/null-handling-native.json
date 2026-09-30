@@ -1,0 +1,22 @@
+{
+  "command": [
+    "/Users/rudycelekli/.nvm/versions/node/v22.19.0/bin/node",
+    "/private/var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-public-benchmark-qxdjVr/tools-defu/node_modules/vitest/vitest.mjs",
+    "related",
+    "--reporter=json",
+    "--outputFile=/Users/rudycelekli/Downloads/tddswarm/benchmarks/results/2026-09-29-roadmap/defu/null-handling-native.runner.json",
+    "src/defu.ts",
+    "--run",
+    "--passWithNoTests"
+  ],
+  "exitCode": 1,
+  "durationMs": 353,
+  "stdout": "JSON report written to /Users/rudycelekli/Downloads/tddswarm/benchmarks/results/2026-09-29-roadmap/defu/null-handling-native.runner.json\n",
+  "stderr": "",
+  "identities": {
+    "complete": true,
+    "failures": [
+      "test/defu.test.ts:defu should fill in values that are null"
+    ]
+  }
+}

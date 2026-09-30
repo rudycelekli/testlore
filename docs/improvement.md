@@ -9,11 +9,12 @@ The CLI can automatically open a GitHub pull request for review after the tested
 ## Library flow
 
 ```js
-import { improve } from 'tddswarm';
+import { improve, installQualityLayer, installQualityWorkflow } from 'tddswarm';
 
 const result = await improve(projectRoot, {
   id: previouslyValidatedCandidateId,
-  prepare: installQualityLayer
+  prepare: root => installQualityLayer(root, {ci:false}),
+  prepareRepository: (repository, {project}) => installQualityWorkflow(repository, {project})
 });
 console.log(result.status, result.branch, result.worktree, result.sha);
 ```
@@ -28,9 +29,11 @@ Generation is followed by `validateCandidates`, which checks the original full s
 
 `options.prepare(branchProjectRoot)` is a trusted callback invoked after accepted patch application and before the final full run. It must return an array of changed project-relative paths. The CLI uses it to install ongoing quality configuration and CI workflow files; those paths are committed together with the validated patch. It cannot alter the exact reviewed candidate file contents or restore a reviewed deletion. A preparation step that changes runtime behavior must still pass the complete final suite and preserve the candidate's passing case names and multiplicities.
 
+`options.prepareRepository(repositoryRoot, {project})` is a trusted callback for repository-level workflow files. It returns canonical repository-relative paths, which are included in the exact staged tree. Nested projects use repository-root workflows with their project path passed to the action; dependency setup uses the applicable workspace lockfile. Existing workflow contents are preserved, and distinct nested projects receive distinct workflow filenames.
+
 An optional `options.initialize(branchProjectRoot)` callback runs before generation when neither `id` nor `patch` is supplied. It must likewise return changed paths, which are included in a successful commit. It does not run ahead of a prevalidated candidate's provenance checks. The usual CLI path can pass its detected worker through `options.agent` without writing machine-specific executable paths into project configuration.
 
-Before committing, the workflow rejects test-created source drift, original-checkout drift, branch movement in the original checkout, and unexpected file changes outside the declared patch/preparation paths. Only those declared paths are staged. If commit hooks change tested inputs or produce a different committed tree, the result requires review rather than being marked ready. Dependencies and project executables remain trusted: installed `node_modules` can be shared through a symlink, and this is file-state isolation, not a security sandbox.
+Before committing, the workflow rejects test-created source drift, original-checkout drift, branch movement in the original checkout, and unexpected file changes outside the declared patch/preparation paths. Only those declared paths are staged. Repository-wide inputs are checked around the full run, and the final commit tree must exactly equal the staged tree from before hooks. If commit hooks change tested inputs or produce a different committed tree, the result requires review rather than being marked ready. Dependencies and project executables remain trusted: installed `node_modules` can be shared through a symlink, and this is file-state isolation, not a security sandbox.
 
 Generated branch names use `tddswarm/improve-<uuid>`. A library caller can supply `branch` only in the validated `tddswarm/improve-...` namespace. Arbitrary worktree destinations are not accepted. Worktrees are registered with Git under a generated temporary-system path and retained for review. The branch ref preserves committed results; save any uncommitted failure artifacts before cleaning a worktree or allowing system temporary-directory cleanup.
 
@@ -53,7 +56,7 @@ Rejected candidates and failed applied branches remain available for inspection.
 
 ## Staying the quality engineer after merge
 
-The CLI's branch preparation installs or preserves `tddswarm.config.json`, ignores local `.tddswarm/` artifacts, and adds `.github/workflows/tddswarm.yml` when that workflow does not already exist. Existing configuration and existing workflow contents are preserved. Review dependency setup, declared browser/service inputs, and the action reference in the proposed diff; pin the action to a reviewed commit for reproducible CI.
+The CLI's branch preparation installs or preserves `tddswarm.config.json`, ignores local `.tddswarm/` artifacts, and adds a repository-root `.github/workflows/tddswarm.yml` (or a project-specific filename for nested projects) when that workflow does not already exist. Existing configuration and existing workflow contents are preserved. Review dependency setup, declared browser/service inputs, and the action reference in the proposed diff. The installer pins the source commit recorded by the Git installation when available; otherwise it uses main. `--action-ref <reviewed-sha>` provides an explicit reproducible pin.
 
 After merge, that workflow runs static/measured audit reporting plus affected execution on pull requests, and a full native run on default-branch pushes. It retains machine-readable evidence through the composite action. The configuration remains available for local affected-test execution and periodic full-run policy. This makes the quality layer part of the project rather than a one-time test rewrite.
 

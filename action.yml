@@ -93,4 +93,5 @@ runs:
         path: |
           ${{ inputs.root }}/.tddswarm/action-report.json
           ${{ inputs.root }}/.tddswarm/audit.json
+        include-hidden-files: true
         if-no-files-found: warn

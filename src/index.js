@@ -9,6 +9,6 @@ export { ingestQuality, qualityEvidence, measureStability, captureRuntime, inges
 export { stagePatch, validateCandidates, applyPatch } from './candidates.js';
 export { externalPlan, externalRun } from './integrations.js';
 export { aqeGenerate, aqeCapabilities } from './adapters/aqe.js';
-export { installQualityLayer } from './quality-layer.js';
+export { installQualityLayer, installQualityWorkflow } from './quality-layer.js';
 export { improve } from './improvement.js';
 export { publishImprovement } from './pull-request.js';

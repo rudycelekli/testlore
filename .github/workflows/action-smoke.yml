@@ -107,4 +107,5 @@ jobs:
             .action-smoke/.tddswarm/last-run.json
             .action-smoke/.tddswarm/history*.json
             .action-smoke/.tddswarm/smoke-verification.json
+          include-hidden-files: true
           if-no-files-found: warn

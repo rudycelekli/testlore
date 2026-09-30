@@ -1,0 +1,27 @@
+[
+  {
+    "command": [
+      "git",
+      "clone",
+      "--no-checkout",
+      "https://github.com/ai/nanoid.git",
+      "/private/var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-public-benchmark-qxdjVr/nanoid"
+    ],
+    "exitCode": 0,
+    "durationMs": 4274,
+    "stdout": "",
+    "stderr": "Cloning into '/private/var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-public-benchmark-qxdjVr/nanoid'...\n"
+  },
+  {
+    "command": [
+      "git",
+      "checkout",
+      "--detach",
+      "bb68abcd59ebb86a849d634320726add6be54d47"
+    ],
+    "exitCode": 0,
+    "durationMs": 88,
+    "stdout": "",
+    "stderr": "HEAD is now at bb68abc docs: fix custom generator JSDoc examples (#610)\n"
+  }
+]

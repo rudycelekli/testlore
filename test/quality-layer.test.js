@@ -12,11 +12,11 @@ test('quality onboarding creates native config and ongoing affected/full workflo
 });
 test('existing project policy and workflow are preserved during onboarding',t=>{
  const config={runner:['node','--test','{files}'],alwaysRun:['test/a.test.js']};const root=fixture(t,{...twoModules,'tddswarm.config.json':config,'.github/workflows/tddswarm.yml':'maintainer policy\n'});
- assert.deepEqual(installQualityLayer(root),[]);assert.deepEqual(JSON.parse(fs.readFileSync(path.join(root,'tddswarm.config.json'))),config);assert.equal(fs.readFileSync(path.join(root,'.github/workflows/tddswarm.yml'),'utf8'),'maintainer policy\n');
+ assert.deepEqual(installQualityLayer(root),['.gitignore']);assert.deepEqual(JSON.parse(fs.readFileSync(path.join(root,'tddswarm.config.json'))),config);assert.equal(fs.readFileSync(path.join(root,'.github/workflows/tddswarm.yml'),'utf8'),'maintainer policy\n');
 });
 test('local onboarding can omit CI and preserve ignore content',t=>{
  const root=fixture(t,{'package.json':{devDependencies:{jest:'30'}},'.gitignore':'custom/'});installQualityLayer(root,{ci:false});
- assert.equal(fs.existsSync(path.join(root,'.github/workflows/tddswarm.yml')),false);assert.equal(JSON.parse(fs.readFileSync(path.join(root,'tddswarm.config.json'))).adapter,'jest');assert.equal(fs.readFileSync(path.join(root,'.gitignore'),'utf8'),'custom/\n.tddswarm/\n');
+ assert.equal(fs.existsSync(path.join(root,'.github/workflows/tddswarm.yml')),false);assert.equal(JSON.parse(fs.readFileSync(path.join(root,'tddswarm.config.json'))).adapter,'jest');assert.equal(fs.readFileSync(path.join(root,'.gitignore'),'utf8'),'custom/\n.tddswarm/\nnode_modules/\n');
 });
 test('workflow references cannot introduce YAML or command interpolation',t=>{
  const root=fixture(t,twoModules);assert.throws(()=>installQualityLayer(root,{actionRef:'main\nanything:'}),/Invalid action reference/);

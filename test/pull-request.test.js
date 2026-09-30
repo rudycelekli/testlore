@@ -2,13 +2,14 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import path from 'node:path';
 import fs from 'node:fs';
+import {improve} from '../src/improvement.js';
 import {publishImprovement} from '../src/pull-request.js';
 import {fixture,write,commit,git,twoModules} from './helpers.js';
 test('publication requires the exact clean tested branch commit',t=>{
  const root=fixture(t,twoModules);commit(root);
  assert.throws(()=>publishImprovement(root,{status:'rejected'}),/Only a tested/);
- const result={status:'ready-for-review',validation:{accepted:true},fullRun:{complete:true,exitCode:0,tests:[{status:'passed'}]},sha:'wrong',branch:'tddswarm/improve',baseBranch:'main',worktree:root};
- assert.throws(()=>publishImprovement(root,result),/commit changed/);
+ const result={status:'ready-for-review',validation:{accepted:true},fullRun:{complete:true,exitCode:0,tests:[{status:'passed'}]},sha:'wrong',branch:'main',baseBranch:'main',worktree:root};
+ result.branch='tddswarm/improve-test';git(root,'branch',result.branch);assert.throws(()=>publishImprovement(root,result),/branch changed/);
  result.sha=git(root,'rev-parse','HEAD').trim();write(root,'src/a.js','changed');
  assert.throws(()=>publishImprovement(root,result),/worktree changed/);
 });
@@ -20,4 +21,13 @@ test('automatic PR publication uses actual Git push and structured GitHub CLI ar
  const result={status:'ready-for-review',validation:{accepted:true},fullRun:{complete:true,exitCode:0,tests:[{status:'passed'}]},sha:git(root,'rev-parse','HEAD').trim(),branch:'tddswarm/improve-safe',baseBranch:'main',worktree:root,execution:{tests:[{status:'passed'}]}};
  const published=publishImprovement(root,result,{command:[process.execPath,cli]});assert.equal(published.pullRequest,'https://github.com/test-owner/project/pull/123');assert.equal(git(bare,'rev-parse','refs/heads/tddswarm/improve-safe').trim(),result.sha);
  const args=JSON.parse(fs.readFileSync(path.join(root,'.tddswarm/requests.jsonl'),'utf8').trim().split('\n')[1]);assert.deepEqual(args.slice(0,8),['pr','create','--repo','test-owner/project','--head',result.branch,'--base','main']);
+});
+
+
+test('verified shared dependency metadata does not block an otherwise clean improvement publication',async t=>{
+ const root=fixture(t,twoModules);commit(root);write(root,'node_modules/proof.marker','installed dependency');
+ const result=await improve(root,{patch:{files:[{path:'test/extra.test.js',content:"import test from 'node:test';test('extra',()=>{});"}],review:{accepted:true,findings:[],oracle:{independent:true,basis:['a is one and b is two']}},requirements:'a is one and b is two'}});t.after(()=>fs.rmSync(result.worktreeRoot,{recursive:true,force:true}));assert.equal(result.status,'ready-for-review');assert.ok(git(result.worktree,'status','--porcelain').includes('node_modules'));
+ const bare=fixture(t);git(bare,'init','--bare');git(root,'remote','add','origin','https://github.com/test-owner/project.git');git(root,'config',`url.${bare}.pushInsteadOf`,'https://github.com/test-owner/project.git');git(root,'push','origin','main');
+ const cli=path.join(result.worktree,'.tddswarm','gh.cjs');write(result.worktree,'.tddswarm/gh.cjs',"console.log(process.argv[2]==='repo'?'{}':'https://github.com/test-owner/project/pull/124');");
+ assert.equal(publishImprovement(root,result,{command:[process.execPath,cli]}).pullRequest,'https://github.com/test-owner/project/pull/124');
 });

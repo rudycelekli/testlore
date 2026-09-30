@@ -1,0 +1,40 @@
+[
+  {
+    "command": [
+      "git",
+      "clone",
+      "--no-checkout",
+      "https://github.com/unjs/defu.git",
+      "/private/var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-public-benchmark-t21cjX/defu"
+    ],
+    "exitCode": 0,
+    "durationMs": 591,
+    "stdout": "",
+    "stderr": "Cloning into '/private/var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-public-benchmark-t21cjX/defu'...\n"
+  },
+  {
+    "command": [
+      "git",
+      "checkout",
+      "--detach",
+      "82632b66f5914e9946edce300e10633a3d5c0cb7"
+    ],
+    "exitCode": 0,
+    "durationMs": 33,
+    "stdout": "",
+    "stderr": "HEAD is now at 82632b6 chore(deps): update all non-major dependencies (#161)\n"
+  },
+  {
+    "command": [
+      "npm",
+      "ci",
+      "--prefix",
+      "/private/var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-public-benchmark-t21cjX/tools-defu",
+      "--ignore-scripts"
+    ],
+    "exitCode": 0,
+    "durationMs": 793,
+    "stdout": "\nadded 69 packages, and audited 70 packages in 712ms\n\n27 packages are looking for funding\n  run `npm fund` for details\n\n2 moderate severity vulnerabilities\n\nTo address all issues, run:\n  npm audit fix --force\n\nRun `npm audit` for details.\n",
+    "stderr": ""
+  }
+]

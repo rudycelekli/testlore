@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 1,
+  "mode": "full",
+  "base": null,
+  "changed": [
+    "README.md"
+  ],
+  "ignored": [],
+  "selected": [
+    "test/defu.test.ts",
+    "test/utils.test.ts"
+  ],
+  "total": 2,
+  "omitted": 0,
+  "selectionReduction": 0,
+  "reasons": [
+    "dependency-graph-incomplete",
+    "change-without-test-evidence"
+  ],
+  "warnings": [
+    {
+      "file": "lib/defu.cjs",
+      "reason": "unresolved-import:../dist/defu.cjs"
+    },
+    {
+      "file": "lib/defu.d.cts",
+      "reason": "unresolved-import:../dist/defu.mts"
+    }
+  ],
+  "decisions": [
+    {
+      "test": "test/defu.test.ts",
+      "selected": true,
+      "reasons": [
+        "dependency-graph-incomplete",
+        "change-without-test-evidence"
+      ],
+      "paths": []
+    },
+    {
+      "test": "test/utils.test.ts",
+      "selected": true,
+      "reasons": [
+        "dependency-graph-incomplete",
+        "change-without-test-evidence"
+      ],
+      "paths": []
+    }
+  ],
+  "fingerprint": "45db023f00dd5e16b690aa1b80e53962ffd1199f64eacc6dac1dbe6c941a8d60",
+  "discovery": {
+    "complete": true,
+    "method": "configured-static-conventions"
+  },
+  "runtime": {
+    "usable": false,
+    "reason": "runtime-disabled",
+    "policy": "supplement-static-only"
+  },
+  "evidence": "static-imports-and-declared-dependencies",
+  "limitations": [
+    "Runtime and external service dependencies are not observed.",
+    "Selection operates at test-file granularity.",
+    "No deployment safety or measured wall-clock savings are implied."
+  ]
+}

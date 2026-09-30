@@ -1,0 +1,203 @@
+{
+  "schemaVersion": 1,
+  "provenance": {
+    "schemaVersion": 1,
+    "revision": "bb68abcd59ebb86a849d634320726add6be54d47",
+    "runner": "cac9638d963d5f828896b6cebfe0336c93c70192f5c91c69c250b06202e9fef0",
+    "environment": {
+      "node": "v22.19.0",
+      "platform": "darwin",
+      "arch": "arm64",
+      "labels": {}
+    },
+    "services": {},
+    "serviceWarnings": [],
+    "files": {
+      ".devcontainer.json": "9dc1d02ed07d0fbb1e737f92b37c814f480758725c82a971bf331e51cb0aa6bf",
+      ".editorconfig": "c75379895e15cc155dbfbd4d6d128dccef8c41a0eb5fc2d868cb17f65fe4a966",
+      ".github/FUNDING.yml": "9abed04afaab1947957e1b1c0dedda56339200d37f12aed878d86574caf70030",
+      ".github/workflows/benchmark.yml": "6b4b8d9ef9a29d3d3aa0378815bdd5560acfa973cb2a200d3c1dba241f08052b",
+      ".github/workflows/jsr.yml": "6fcec3d02f1025ecdcc03dced1007bd3ec4a5dc2f73ebe373652b0f81be8b5fb",
+      ".github/workflows/release.yml": "1745f0100bb93f96b1876114bc808667102b89fcd298650b5b98c9c48a373aa5",
+      ".github/workflows/test.yml": "d46cc488a361c0fb0265ad9c0b8e389b44f18e4d941ae94a86a78ebf4f7d73a1",
+      ".gitignore": "5635203b29382685cbc8e6a9da794cf6940ad8befcd450f8452df5ac53ee15a7",
+      ".npmignore": "d357bf1586099a8a9c4d98a282d7ca2212732f59bdcf4d003fbdcf3ba248f8e2",
+      ".prettierignore": "d08ce8eb1e39d30f173fe3d5b9bd6e468c7aa6bd1c80ed4b09aff0590eadb280",
+      ".prettierrc.js": "eb091bc6587ae42fe4d77c3521100dec4ca2ccc64e1e64dadbca6bc9b6ef6127",
+      "CHANGELOG.md": "66c9f8b93c37da33f0029797bc18c1e228d487c5d55ff88714a40dc6586b3e51",
+      "LICENSE": "4383cb2c3608397ce7a4159502614ed66890f8999c2a9c056dd3b1024d6721f0",
+      "README.ar.md": "a57ab759fd215ea9b5f49f71134d895cac1dd9b315e1a10a4edd69adfca51f70",
+      "README.id-ID.md": "2fd05e4b2b3a78db5c6519e6130ea9c19ca3d5c105162fc01bc3307bee000d86",
+      "README.ja.md": "f846edaaaf185984a67031635a6b01a0591cd6f4fbea0a3ee4336cbc62376ae9",
+      "README.ko.md": "b1c6c45f827933a57d1dc854ffb511381be1205fa12ce279779ef8d6634cf8b9",
+      "README.md": "7ed8e93357f1084880d0804b6e30ea398e00ddc116824c9953a42a8ffcef2636",
+      "README.ru.md": "5c8d0609d571da1c012f08544fa6ddecedf7dabe90b23910436cadf48c4ddc39",
+      "README.zh-CN.md": "09c053f8176339f68686551c8144a2642f3a61f557a14b35e011b160cd027a1b",
+      "SECURITY.md": "83004180fc52994447fe09e82647904ece0053828ad662211f32d7c0a7c14421",
+      "bin/nanoid.js": "4b6305d622874476c7fe2eb0905e88bc084887aae823f160e0c52f054ad60471",
+      "img/distribution.png": "4d5f986c4f72395394845703f89a693b07151a0ccd64917f057e850e616dc5a9",
+      "img/icon.svg": "041be08f4af57514f776d72abe71c451bfe72f8abe8966f87f5ab2f6f86570ca",
+      "img/logo.svg": "2e3136738be74c81b812be23e8c00c9f4579ce9b895f37fdf7a12c4e99cdc064",
+      "index.browser.js": "ab34be8c0dd11ebdf198e8bf9e98893d5f5905711d4ca6b23d9651b41c5bea2f",
+      "index.d.ts": "285dc50ff9786631c1fb55c7e5eea32e875eee34fc93f4f6b3a74ed903854169",
+      "index.js": "506c533e028e8539386e85cf2e8cebe68496208a711e9889c2e470afcf2d00f6",
+      "jsr.json": "dc76d32bee7c3a3b095508e3a68049c8964a25cf5769d6e36d731131d50038e0",
+      "nanoid.js": "fdd9b994abae495794a6e60f0fe50d7f0ce147df072a5786443362419951730e",
+      "non-secure/index.d.ts": "5644171f3bf41e3fb461770107690ac099dda7e7ad82c1d14af7cd4ef84879fa",
+      "non-secure/index.js": "042cbe59513068e83bcaef4f7c6f81eff832fa2ee20bfcdcdaaedd70528fb5aa",
+      "oxfmt.config.ts": "eb091bc6587ae42fe4d77c3521100dec4ca2ccc64e1e64dadbca6bc9b6ef6127",
+      "oxlint.config.ts": "033fe9ce882f9da77ab2f8df8b62b9f681639053bf29a834a22f4a63c57420c9",
+      "package.json": "9bc91edb251dd6bf01acc36e36edf6a86dfe6fe25c41ea6e810c450c348db023",
+      "pnpm-lock.yaml": "aeff83ec3adeacea1141b28446b5589a1cfaee5d6720411d0818363e7a76bdd6",
+      "pnpm-workspace.yaml": "17b06591536aeef72352e9ed707cafd79ec9c231dd221f3ab9b4862e09ec871d",
+      "test/benchmark.js": "75bbf8af6fbd360c2358bded043995c3f33d15fd4824d3ae81e346544bfb1958",
+      "test/bin.test.js": "7ce884e25edd0b4b82e50ed17cdd606c69a1d1b8631745b44cc3d256cdfc3f61",
+      "test/check-prebuild.js": "9befca5cda1f21dd0a98d470a901ebda004c5ff034769264d74364512534f74f",
+      "test/check-versions.js": "0e2219b7c7c603836a5366be6c5a927cf9dc7fe6266fe22e54415423f0e9bf43",
+      "test/demo/index.html": "a0e095dfb4b0be70dfec19f67704514d3dc56bf9cc45837b115526bd18c4d091",
+      "test/demo/index.js": "d9623b83579ea7de2418fe31f449595c490f7d418cd01e40ad2622b563bb0951",
+      "test/index.test.js": "b7ce36ae07e3a3a630e4b07d8378e53b88989e41fcf81cfa9c29d18882e9e790",
+      "test/non-secure.test.js": "51fd51c5a13fddabfdac3b2007f1eefe038551d4e9f53a65b22c5d309aa6dd93",
+      "test/pool.test.js": "bf3e51c41acb3d3f5118a942888d219d6113bbfb47e7099c45c0cd43d8acad09",
+      "test/prebuild.js": "bf01b037b0f413392f3303043c367574f57f07957610a56bd0d6554d179f48f4",
+      "test/update-prebuild.js": "7cde3afe39a0ef7fb88d2809cc820f279be02604f6d8bf4c57d425664b191bea",
+      "url-alphabet/index.js": "679b6b3d0d01525d2e490362d0d071acf65b4e34213eb15566082d2b5af55d66"
+    },
+    "fingerprint": "6ecc5a6b285b403344b27cd950d963d5655e481fb5696a1fcc4a642ce7dc48a8"
+  },
+  "serviceTokens": {},
+  "configurationFiles": [],
+  "mode": "full",
+  "base": null,
+  "changed": [
+    "non-secure/index.js"
+  ],
+  "ignored": [],
+  "selected": [
+    "test/bin.test.js",
+    "test/index.test.js",
+    "test/non-secure.test.js",
+    "test/pool.test.js"
+  ],
+  "total": 4,
+  "omitted": 0,
+  "selectionReduction": 0,
+  "reasons": [
+    "dependency-graph-incomplete"
+  ],
+  "warnings": [
+    {
+      "file": "bin/nanoid.js",
+      "reason": "runtime-dependency"
+    },
+    {
+      "file": "bin/nanoid.js",
+      "reason": "unresolved-import:../index.js"
+    },
+    {
+      "file": "test/benchmark.js",
+      "reason": "unresolved-import:../index.js"
+    },
+    {
+      "file": "test/benchmark.js",
+      "reason": "unresolved-import:../non-secure/index.js"
+    },
+    {
+      "file": "test/bin.test.js",
+      "reason": "runtime-dependency"
+    },
+    {
+      "file": "test/check-prebuild.js",
+      "reason": "runtime-dependency"
+    },
+    {
+      "file": "test/check-versions.js",
+      "reason": "runtime-dependency"
+    },
+    {
+      "file": "test/demo/index.js",
+      "reason": "unresolved-import:../../non-secure/index.js"
+    },
+    {
+      "file": "test/index.test.js",
+      "reason": "unresolved-import:../index.js"
+    },
+    {
+      "file": "test/non-secure.test.js",
+      "reason": "unresolved-import:../index.js"
+    },
+    {
+      "file": "test/non-secure.test.js",
+      "reason": "unresolved-import:../non-secure/index.js"
+    },
+    {
+      "file": "test/pool.test.js",
+      "reason": "unresolved-import:../index.js"
+    },
+    {
+      "file": "test/prebuild.js",
+      "reason": "runtime-dependency"
+    },
+    {
+      "file": "test/update-prebuild.js",
+      "reason": "runtime-dependency"
+    }
+  ],
+  "decisions": [
+    {
+      "test": "test/bin.test.js",
+      "selected": true,
+      "reasons": [
+        "dependency-graph-incomplete",
+        "test-without-local-dependencies"
+      ],
+      "paths": []
+    },
+    {
+      "test": "test/index.test.js",
+      "selected": true,
+      "reasons": [
+        "dependency-graph-incomplete"
+      ],
+      "paths": []
+    },
+    {
+      "test": "test/non-secure.test.js",
+      "selected": true,
+      "reasons": [
+        "dependency-graph-incomplete",
+        "dependency-path"
+      ],
+      "paths": [
+        [
+          "test/non-secure.test.js",
+          "non-secure/index.js"
+        ]
+      ]
+    },
+    {
+      "test": "test/pool.test.js",
+      "selected": true,
+      "reasons": [
+        "dependency-graph-incomplete"
+      ],
+      "paths": []
+    }
+  ],
+  "fingerprint": "692261791d1ff96897cbe1b0ac5df38901858618494def4bce14381bd3323527",
+  "discovery": {
+    "complete": true,
+    "method": "configured-static-conventions"
+  },
+  "runtime": {
+    "usable": false,
+    "reason": "runtime-disabled",
+    "policy": "supplement-static-only"
+  },
+  "evidence": "static-imports-and-declared-dependencies",
+  "limitations": [
+    "Runtime observations cover exercised inputs; external services require declared versions.",
+    "Selection operates at test-file granularity.",
+    "No deployment safety or measured wall-clock savings are implied."
+  ]
+}

@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import {spawnSync} from 'node:child_process';
 import { fileURLToPath } from 'node:url';
-import { audit, modules, plan, generate, run, snapshot, ingestQuality, measureStability, captureRuntime, stagePatch, validateCandidates, applyPatch, externalPlan, externalRun, aqeGenerate, improve, installQualityLayer, publishImprovement } from './index.js';
+import { audit, modules, plan, generate, run, snapshot, ingestQuality, measureStability, captureRuntime, stagePatch, validateCandidates, applyPatch, externalPlan, externalRun, aqeGenerate, improve, installQualityLayer, installQualityWorkflow, publishImprovement } from './index.js';
 import { safePath, readConfig, git } from './files.js';
 
 const help = `TDDSwarm — know why each test runs.
@@ -110,7 +110,7 @@ export async function main(args = process.argv.slice(2)) {
       }
       const patch=options.patch?JSON.parse(fs.readFileSync(path.resolve(root,options.patch),'utf8')):undefined;
       let defaultBranch='main';try{defaultBranch=git(root,['symbolic-ref','--short','refs/remotes/origin/HEAD']).trim().replace(/^[^/]+\//,'');}catch{}
-      result=await improve(root,{...options,patch,agent,initialize:branch=>installQualityLayer(branch,{ci:false}),prepare:branch=>installQualityLayer(branch,{ci:!options['no-ci'],actionRef:options['action-ref'],defaultBranch})});
+      result=await improve(root,{...options,patch,agent,initialize:branch=>installQualityLayer(branch,{ci:false}),prepare:branch=>installQualityLayer(branch,{ci:false}),prepareRepository:(repo,{project})=>options['no-ci']?[]:installQualityWorkflow(repo,{project,actionRef:options['action-ref'],defaultBranch})});
       if(result.status==='ready-for-review'&&!options.local){
         try{result=publishImprovement(root,result,{baseBranch:options['base-branch']});}
         catch(error){result={...result,published:false,publicationError:error.message};}

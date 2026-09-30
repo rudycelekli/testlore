@@ -86,7 +86,7 @@ node scripts/quality-proof.js
 node scripts/bazel-proof.js
 ```
 
-Pinned public nanoid/defu changes caught both planted regressions with zero observed misses, while conservatively selecting the full runtime scope. [Raw results](benchmarks/results/2026-09-29-roadmap/summary.json) include native baselines and planning overhead. Single-run timing differences establish no production speedup.
+Pinned public nanoid/defu changes caught both planted regressions with zero observed misses, while conservatively selecting the full runtime scope. [Raw results](benchmarks/results/2026-09-29-final-roadmap/summary.json) include native baselines and planning overhead. Single-run timing differences establish no production speedup.
 
 [Real c8/Stryker proof](docs/quality-proof.md) measured 6/8 covered lines and 11/13 detected mutants on a controlled fixture, and rejected source/service drift and report tampering. Synthetic candidate controls caught four held-out defects while vacuous replacements caught none. A [live Codex run](benchmarks/quality/live-codex.receipt.json) generated 50 passing cases and caught four withheld mutations on one controlled specification. Actual pytest-testmon, Nx, Bazel and AQE executions are documented with exact limits. Hosted CI tests the composite action. Live model quality and universal selection safety remain open qualification work.
 

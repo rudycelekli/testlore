@@ -1,0 +1,201 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-09-30T02:08:44.405Z",
+  "environment": {
+    "node": "v22.19.0",
+    "platform": "darwin",
+    "architecture": "arm64"
+  },
+  "repetitions": 1,
+  "projects": [
+    {
+      "project": {
+        "name": "nanoid",
+        "url": "https://github.com/ai/nanoid.git",
+        "commit": "bb68abcd59ebb86a849d634320726add6be54d47",
+        "framework": "node",
+        "scope": "Upstream runtime tests test/*.test.js; lint, size, prebuild, type and version checks excluded",
+        "changes": [
+          {
+            "name": "non-secure-default-length",
+            "file": "non-secure/index.js",
+            "before": "export let nanoid = (size = 21)",
+            "after": "export let nanoid = (size = 20)",
+            "regression": true
+          },
+          {
+            "name": "documentation",
+            "file": "README.md",
+            "append": "\n<!-- TDDSwarm benchmark documentation edit -->\n",
+            "regression": false
+          }
+        ]
+      },
+      "baseline": {
+        "durationMs": 481,
+        "exitCode": 0
+      },
+      "changes": [
+        {
+          "change": {
+            "name": "non-secure-default-length",
+            "file": "non-secure/index.js",
+            "before": "export let nanoid = (size = 21)",
+            "after": "export let nanoid = (size = 20)",
+            "regression": true
+          },
+          "valid": true,
+          "selectionMs": 159,
+          "selected": [
+            "test/bin.test.js",
+            "test/index.test.js",
+            "test/non-secure.test.js",
+            "test/pool.test.js"
+          ],
+          "totalFiles": 4,
+          "groundTruthFailures": [
+            "test/non-secure.test.js:generates URL-friendly IDs:12"
+          ],
+          "missed": [],
+          "nativeMissed": [],
+          "decisionRecall": 1,
+          "fullMs": 476,
+          "subsetMs": 533,
+          "nativeMs": 486,
+          "netSavingMs": -216,
+          "nativeBaseline": "Node has no native dependency selection; full runtime suite",
+          "fullExitCode": 1,
+          "subsetExitCode": 1,
+          "nativeExitCode": 1
+        },
+        {
+          "change": {
+            "name": "documentation",
+            "file": "README.md",
+            "append": "\n<!-- TDDSwarm benchmark documentation edit -->\n",
+            "regression": false
+          },
+          "valid": true,
+          "selectionMs": 131,
+          "selected": [
+            "test/bin.test.js",
+            "test/index.test.js",
+            "test/non-secure.test.js",
+            "test/pool.test.js"
+          ],
+          "totalFiles": 4,
+          "groundTruthFailures": [],
+          "missed": [],
+          "nativeMissed": [],
+          "decisionRecall": null,
+          "fullMs": 502,
+          "subsetMs": 486,
+          "nativeMs": 514,
+          "netSavingMs": -115,
+          "nativeBaseline": "Node has no native dependency selection; full runtime suite",
+          "fullExitCode": 0,
+          "subsetExitCode": 0,
+          "nativeExitCode": 0
+        }
+      ]
+    },
+    {
+      "project": {
+        "name": "defu",
+        "url": "https://github.com/unjs/defu.git",
+        "commit": "82632b66f5914e9946edce300e10633a3d5c0cb7",
+        "framework": "vitest",
+        "dependencies": [
+          "vitest@4.1.6",
+          "expect-type@1.3.0"
+        ],
+        "scope": "Upstream Vitest runtime tests only; lint, type checks and packaging excluded",
+        "changes": [
+          {
+            "name": "null-handling",
+            "file": "src/defu.ts",
+            "before": "if (value === null || value === undefined)",
+            "after": "if (value === undefined)",
+            "regression": true
+          },
+          {
+            "name": "documentation",
+            "file": "README.md",
+            "append": "\n<!-- TDDSwarm benchmark documentation edit -->\n",
+            "regression": false
+          }
+        ],
+        "dependencyLockfile": "locks/defu-package-lock.json"
+      },
+      "baseline": {
+        "durationMs": 1052,
+        "exitCode": 0
+      },
+      "changes": [
+        {
+          "change": {
+            "name": "null-handling",
+            "file": "src/defu.ts",
+            "before": "if (value === null || value === undefined)",
+            "after": "if (value === undefined)",
+            "regression": true
+          },
+          "valid": true,
+          "selectionMs": 121,
+          "selected": [
+            "test/defu.test.ts",
+            "test/utils.test.ts"
+          ],
+          "totalFiles": 2,
+          "groundTruthFailures": [
+            "test/defu.test.ts:defu should fill in values that are null"
+          ],
+          "missed": [],
+          "nativeMissed": [],
+          "decisionRecall": 1,
+          "fullMs": 366,
+          "subsetMs": 363,
+          "nativeMs": 346,
+          "netSavingMs": -118,
+          "nativeBaseline": "vitest related --run",
+          "fullExitCode": 1,
+          "subsetExitCode": 1,
+          "nativeExitCode": 1
+        },
+        {
+          "change": {
+            "name": "documentation",
+            "file": "README.md",
+            "append": "\n<!-- TDDSwarm benchmark documentation edit -->\n",
+            "regression": false
+          },
+          "valid": true,
+          "selectionMs": 122,
+          "selected": [
+            "test/defu.test.ts",
+            "test/utils.test.ts"
+          ],
+          "totalFiles": 2,
+          "groundTruthFailures": [],
+          "missed": [],
+          "nativeMissed": [],
+          "decisionRecall": null,
+          "fullMs": 375,
+          "subsetMs": 368,
+          "nativeMs": 295,
+          "netSavingMs": -115,
+          "nativeBaseline": "vitest related --run",
+          "fullExitCode": 0,
+          "subsetExitCode": 0,
+          "nativeExitCode": 0
+        }
+      ]
+    }
+  ],
+  "limitations": [
+    "Single runs; timing noise and stochastic upstream tests are not controlled.",
+    "Only listed deterministic patches and runtime test scope measured.",
+    "Selection is a diagnostic working-tree plan; generated config is excluded from changed inputs.",
+    "No release safety, whole-project quality, or general production speedup claim."
+  ]
+}

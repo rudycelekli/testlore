@@ -43,4 +43,5 @@ jobs:
         with:
           name: measured-quality-proof
           path: .tddswarm/ci-*.json
+          include-hidden-files: true
           if-no-files-found: error

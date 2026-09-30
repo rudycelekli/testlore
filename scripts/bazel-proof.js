@@ -3,11 +3,14 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
+import {fileURLToPath} from 'node:url';
 import { externalPlan, externalRun } from '../src/integrations.js';
 
 const args = process.argv.slice(2);
-const executable = args.includes('--executable') ? args[args.indexOf('--executable') + 1] : 'bazelisk';
-const output = path.resolve(args.includes('--output') ? args[args.indexOf('--output') + 1] : 'benchmarks/bazel-verification.json');
+const localBazelisk=fileURLToPath(new URL('../node_modules/.bin/bazelisk',import.meta.url));
+const requested=args.includes('--executable')?args[args.indexOf('--executable')+1]:fs.existsSync(localBazelisk)?localBazelisk:'bazelisk';
+const executable=requested.includes(path.sep)?path.resolve(requested):requested;
+const output = path.resolve(args.includes('--output') ? args[args.indexOf('--output') + 1] : `.tddswarm/bazel-proof-${Date.now()}.json`);
 if (fs.existsSync(output)) throw new Error('Proof output already exists; preserve prior receipts');
 const root = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), 'tddswarm-bazel-proof-')));
 const outputRoot = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), 'tddswarm-bazel-output-')));

@@ -1,0 +1,2673 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-09-30T01:30:22.289Z",
+  "scope": "Actual installed Codex architect/author/reviewer calls on one controlled specification; no claim of general model quality",
+  "cli": "codex-cli 0.155.1",
+  "node": "v22.19.0",
+  "source": "export function clamp(value,min,max){if(min>max)throw new RangeError('invalid bounds');return Math.min(max,Math.max(min,value));}\n",
+  "requirements": "For finite numeric values, clamp returns min below the lower bound, max above the upper bound, and the input within the inclusive interval. Equal bounds return that bound. Reversed bounds throw RangeError. Cover negative numbers, zero and boundary values with exact expectations, not implementation-generated values. Use Node test and assert, named runnable cases, and only test paths.",
+  "sourceDigests": {
+    "src/swarm.js": "821d4534df40e3c79e8dab136f6233f6dc3f25588f36d8c54e105f89bff1bc99",
+    "src/adapters/codex.js": "967a895581cbc10de3c404197f916793c80caec00c3add7beca03f278d4374b4",
+    "src/candidates.js": "808aa105185172b4c24c5475b27c10dde74db024a90a631f90865d0f6c10d7af",
+    "scripts/live-generation-proof.js": "eb828412c9a5858217264ebb2104b068cd4d2f5535240aef27bbf7fda399a0d8"
+  },
+  "files": [
+    "src/clamp.test.js"
+  ],
+  "review": {
+    "accepted": true,
+    "findings": [],
+    "oracle": {
+      "independent": true,
+      "basis": [
+        "Explicit requirements establish literal expected results below, within, and above inclusive bounds, including negative numbers, zero, fractions, and exact boundaries.",
+        "Equal-bound cases independently assert the required bound for inputs below, at, and above it.",
+        "Reversed-bound cases assert the required RangeError across input positions and signed intervals.",
+        "Tests use deterministic named Node test cases, strict assertions, and a relative import matching the supplied export. Only a test path is submitted. Acceptance reflects source review, not execution validation."
+      ]
+    }
+  },
+  "validation": {
+    "schemaVersion": 1,
+    "id": "fb8f0121-8aed-49bf-98fa-1e868dd1c67a",
+    "validatedAt": "2026-09-30T01:30:21.550Z",
+    "manifestHash": "1f956f9fd032fe2c8e8e5284ae90b4ec43d39f275e21666acd3b56699be7b702",
+    "provenance": {
+      "schemaVersion": 1,
+      "revision": null,
+      "runner": "c5c8878907e750d7b6381b4b903766c159117405cec556e67cbb3e6feca8fda8",
+      "environment": {
+        "node": "v22.19.0",
+        "platform": "darwin",
+        "arch": "arm64",
+        "labels": {}
+      },
+      "services": {},
+      "serviceWarnings": [],
+      "files": {
+        "package.json": "6dc1b06d6b093e9cccb20bee06a93836eee0420ae26803ca2ce4065d82f070d1",
+        "src/clamp.js": "29d21dc4052a14bc05ee7b8010f9c480381c4bf00cb2dad324bdbbcc52a73650",
+        "tddswarm.config.json": "e25d885c91f406e1dce19a5810e48593ea46e6203735e259a18e8670b6d3a250",
+        "tddswarm.requirements.md": "457b1223deb072668a417070f5b7bc3569972c91a411852f802c48af5029725c"
+      },
+      "fingerprint": "5bfbb18fac515e9e5b3945be83056b05cf432b26438f16d0ff53ea547e410320"
+    },
+    "accepted": true,
+    "reasons": [],
+    "original": {
+      "discovery": {
+        "files": [],
+        "complete": true,
+        "adapter": "node",
+        "warnings": []
+      },
+      "exitCode": 0,
+      "complete": true,
+      "tests": [],
+      "collectionFiles": [],
+      "executedFiles": []
+    },
+    "candidate": {
+      "adapter": "node",
+      "exitCode": 0,
+      "durationMs": 115,
+      "tests": [
+        {
+          "file": "src/clamp.test.js",
+          "name": "above equal negative bounds",
+          "status": "passed",
+          "durationMs": 0.818,
+          "line": 46,
+          "column": 3,
+          "id": "aa8c1b44e0a0ab0ee6c6a3fdcea030fa88c1409e825bd963c2beddb7988315ab"
+        },
+        {
+          "file": "src/clamp.test.js",
+          "name": "above equal negative bounds",
+          "status": "passed",
+          "durationMs": 0.128834,
+          "line": 46,
+          "column": 3,
+          "id": "d80dd83df98d3617065157a2df470313541d8320f5ffb72eafb4d7095e59be9a"
+        },
+        {
+          "file": "src/clamp.test.js",
+          "name": "above equal negative bounds",
+          "status": "passed",
+          "durationMs": 0.04625,
+          "line": 46,
+          "column": 3,
+          "id": "958b10e96b10182ba5009021059c7fe4663c987d9b6740562ef79314f3234d7e"
+        },
+        {
+          "file": "src/clamp.test.js",
+          "name": "above equal negative bounds",
+          "status": "passed",
+          "durationMs": 0.041708,
+          "line": 46,
+          "column": 3,
+          "id": "19316b3d4d353408f20fe5d467b73ddfb1380395189476116d8e93f51a68edc1"
+        },
+        {
+          "file": "src/clamp.test.js",
+          "name": "above equal negative bounds",
+          "status": "passed",
+          "durationMs": 0.0485,
+          "line": 46,
+          "column": 3,
+          "id": "ff227ead0d50b5e72b115534360bb4f874be54fa2c9231d02c2a7b5afece4bbe"
+        },
+        {
+          "file": "src/clamp.test.js",
+          "name": "above equal negative bounds",
+          "status": "passed",
+          "durationMs": 0.045208,
+          "line": 46,
+          "column": 3,
+          "id": "55a6061355c41d26136ab0776024db1e4cf9ff9886de87a68d35bd30a0302206"
+        },
+        {
+          "file": "src/clamp.test.js",
+          "name": "above equal negative bounds",
+          "status": "passed",
+          "durationMs": 0.043166,
+          "line": 46,
+          "column": 3,
+          "id": "40fe1ab9aad5cab4d5fb57cf41619738af0dcf5996f0d820926fa1c1aeb77d8a"
+        },
+        {
+          "file": "src/clamp.test.js",
+          "name": "above equal negative bounds",
+          "status": "passed",
+          "durationMs": 0.036542,
+          "line": 46,
+          "column": 3,
+          "id": "effdb5508da1ddc466c7a0302aa7eea24a26565d338333fe40362a6d9d82c405"
+        },
+        {
+          "file": "src/clamp.test.js",
+          "name": "above equal negative bounds",
+          "status": "passed",
+          "durationMs": 0.305459,
+          "line": 46,
+          "column": 3,
+          "id": "c14ccbffd1c621744462ef0b5912542208a1af83858ac41cf016122d8e1748b0"
+        },
+        {
+          "file": "src/clamp.test.js",
+          "name": "above equal negative bounds",
+          "status": "passed",
+          "durationMs": 0.322042,
+          "line": 46,
+          "column": 3,
+          "id": "8be0930fdebb217ee5f64781c47462eb9ec7be532f655bb1a4f8ab5c1796e06b"
+        },
+        {
+          "file": "src/clamp.test.js",
+          "name": "above equal negative bounds",
+          "status": "passed",
+          "durationMs": 0.136708,
+          "line": 46,
+          "column": 3,
+          "id": "467a9dfd0938c6028a2cd00f9fb524a0e73002638494e1a98ee64337721baf8e"
+        },
+        {
+          "file": "src/clamp.test.js",
+          "name": "above equal negative bounds",
+          "status": "passed",
+          "durationMs": 0.038458,
+          "line": 46,
+          "column": 3,
+          "id": "b688b38c66b718f7ccf9651b0d04d39a188129cd97ec83261b56eff473052859"
+        },
+        {
+          "file": "src/clamp.test.js",
+          "name": "above equal negative bounds",
+          "status": "passed",
+          "durationMs": 0.02625,
+          "line": 46,
+          "column": 3,
+          "id": "7d312fc0026e5795b17cf7e2f9afa082e0559bbf337ea8a408849b3efc9d7c86"
+        },
+        {
+          "file": "src/clamp.test.js",
+          "name": "above equal negative bounds",
+          "status": "passed",
+          "durationMs": 0.02275,
+          "line": 46,
+          "column": 3,
+          "id": "ca84634be4a00e78202e2068484386a2a6786db6b8d3a34c35f55c6d5932c580"
+        },
+        {
+          "file": "src/clamp.test.js",
+          "name": "above equal negative bounds",
+          "status": "passed",
+          "durationMs": 0.022625,
+          "line": 46,
+          "column": 3,
+          "id": "c4ae0b4bd4e77ef5937ff53b55b5a5687cac9abbe090e8ea26e9500c8c1b5930"
+        },
+        {
+          "file": "src/clamp.test.js",
+          "name": "above equal negative bounds",
+          "status": "passed",
+          "durationMs": 0.021,
+          "line": 46,
+          "column": 3,
+          "id": "b77aa5697540902ebc3619b9a39fd1e57f76289b0c5fc24419e6a00dc0e7eb7b"
+        },
+        {
+          "file": "src/clamp.test.js",
+          "name": "above equal negative bounds",
+          "status": "passed",
+          "durationMs": 0.021416,
+          "line": 46,
+          "column": 3,
+          "id": "61ea09f21efa4e03b91fa6ff00f9fbf74282dc50fc39c02e22af80e5814ed4ea"
+        },
+        {
+          "file": "src/clamp.test.js",
+          "name": "above equal negative bounds",
+          "status": "passed",
+          "durationMs": 0.020791,
+          "line": 46,
+          "column": 3,
+          "id": "4d109c1e6b55c2d9ef6b352fd35e5a32e1fe2bca60ca57aa91dac197453b7b0a"
+        },
+        {
+          "file": "src/clamp.test.js",
+          "name": "above equal negative bounds",
+          "status": "passed",
+          "durationMs": 0.024084,
+          "line": 46,
+          "column": 3,
+          "id": "43d028f351ca38185a9d4e29060a4f2429d7ff0146adb80660ceae0b24316756"
+        },
+        {
+          "file": "src/clamp.test.js",
+          "name": "above equal negative bounds",
+          "status": "passed",
+          "durationMs": 0.021334,
+          "line": 46,
+          "column": 3,
+          "id": "ab7124252d4a14fa49b415ec10d39cceaf17159998c86577e62468d2177c0b1d"
+        },
+        {
+          "file": "src/clamp.test.js",
+          "name": "above equal negative bounds",
+          "status": "passed",
+          "durationMs": 0.020292,
+          "line": 46,
+          "column": 3,
+          "id": "d70a24119eb160daf8e54b0867899a07d5510b8e5ddbbf0bd8366b9ee8ca04b9"
+        },
+        {
+          "file": "src/clamp.test.js",
+          "name": "above equal negative bounds",
+          "status": "passed",
+          "durationMs": 0.021459,
+          "line": 46,
+          "column": 3,
+          "id": "e22563f1980ae841c22116588858f9e3712fa2c6ad1830ea229fa87fdeb164d6"
+        },
+        {
+          "file": "src/clamp.test.js",
+          "name": "above equal negative bounds",
+          "status": "passed",
+          "durationMs": 0.02025,
+          "line": 46,
+          "column": 3,
+          "id": "5b7e3aa1797eeffa318cda0b33e9958578ad5e32e7d971924077ee23ca8549f6"
+        },
+        {
+          "file": "src/clamp.test.js",
+          "name": "above equal negative bounds",
+          "status": "passed",
+          "durationMs": 0.020208,
+          "line": 46,
+          "column": 3,
+          "id": "a29fe05bc934c1e0b841ab7ffd311237c22534559619d3d917b006f525156ce8"
+        },
+        {
+          "file": "src/clamp.test.js",
+          "name": "above equal negative bounds",
+          "status": "passed",
+          "durationMs": 0.020458,
+          "line": 46,
+          "column": 3,
+          "id": "524139297fb116a407401a1710bfb5afb2a0476213cf6207e41ce01234540e60"
+        },
+        {
+          "file": "src/clamp.test.js",
+          "name": "above equal negative bounds",
+          "status": "passed",
+          "durationMs": 0.019875,
+          "line": 46,
+          "column": 3,
+          "id": "50591fcf5a20412bb849ce483d165ac2c76e0045abad50603d1d2f94c0dca9af"
+        },
+        {
+          "file": "src/clamp.test.js",
+          "name": "above equal negative bounds",
+          "status": "passed",
+          "durationMs": 0.020958,
+          "line": 46,
+          "column": 3,
+          "id": "2e83b149df3a648ad725b20a400b2e33301fec42a6db6de9f0033b741ef7990f"
+        },
+        {
+          "file": "src/clamp.test.js",
+          "name": "above equal negative bounds",
+          "status": "passed",
+          "durationMs": 0.02025,
+          "line": 46,
+          "column": 3,
+          "id": "1deb86e7ead33bd3c0acfb6dc13ef77fd990d2745151acb9a51d7726a7f9ca0c"
+        },
+        {
+          "file": "src/clamp.test.js",
+          "name": "above equal negative bounds",
+          "status": "passed",
+          "durationMs": 0.020625,
+          "line": 46,
+          "column": 3,
+          "id": "979f6bcbc01f792a82782e266debf51f9819afb8a640219b7635c96d8a48fe41"
+        },
+        {
+          "file": "src/clamp.test.js",
+          "name": "above equal negative bounds",
+          "status": "passed",
+          "durationMs": 0.020959,
+          "line": 46,
+          "column": 3,
+          "id": "228ca421d9249025628698b20c0d4ebfce14c373e401626671843799cb15a8b4"
+        },
+        {
+          "file": "src/clamp.test.js",
+          "name": "above equal negative bounds",
+          "status": "passed",
+          "durationMs": 0.026708,
+          "line": 46,
+          "column": 3,
+          "id": "671f81efe1db855716605c9fd56a0edf5f2c8535b2fb5257a8cfb61a6944137f"
+        },
+        {
+          "file": "src/clamp.test.js",
+          "name": "above equal negative bounds",
+          "status": "passed",
+          "durationMs": 0.022125,
+          "line": 46,
+          "column": 3,
+          "id": "5aa4dd03ab340c00a15467187a3facf6cd70beb66f3ea884954a5719a8962599"
+        },
+        {
+          "file": "src/clamp.test.js",
+          "name": "above equal negative bounds",
+          "status": "passed",
+          "durationMs": 0.020625,
+          "line": 46,
+          "column": 3,
+          "id": "304289dc436570a1a98f44c4ac51bfce4fa42685e25bc2479a98498c323bf271"
+        },
+        {
+          "file": "src/clamp.test.js",
+          "name": "above equal negative bounds",
+          "status": "passed",
+          "durationMs": 0.020166,
+          "line": 46,
+          "column": 3,
+          "id": "88d45c4a8bcfb1c913b50d1541ad671e52e18934f9dc42f70e46fff546cf5013"
+        },
+        {
+          "file": "src/clamp.test.js",
+          "name": "above equal negative bounds",
+          "status": "passed",
+          "durationMs": 0.021167,
+          "line": 46,
+          "column": 3,
+          "id": "ce01d7c9233114e4dc6140cd8d53cbd0e5e6c39264e432a550e1f36110ff2857"
+        },
+        {
+          "file": "src/clamp.test.js",
+          "name": "above equal negative bounds",
+          "status": "passed",
+          "durationMs": 0.023209,
+          "line": 46,
+          "column": 3,
+          "id": "b48ed463aa3aa4de67cbde9df4d7664aeaa648430b28c7a81caa335d84d0c736"
+        },
+        {
+          "file": "src/clamp.test.js",
+          "name": "above equal negative bounds",
+          "status": "passed",
+          "durationMs": 0.020125,
+          "line": 46,
+          "column": 3,
+          "id": "7615cd9733d8e6f3381a305637a6a99a10f4c213364e1c76672f57ab28163ef9"
+        },
+        {
+          "file": "src/clamp.test.js",
+          "name": "throws RangeError reversed bounds spanning zero",
+          "status": "passed",
+          "durationMs": 0.207667,
+          "line": 62,
+          "column": 3,
+          "id": "1c3bff3f219c1ed8369e8fa00dffbfc65e22a89e8f9a7b099a209550e6770028"
+        },
+        {
+          "file": "src/clamp.test.js",
+          "name": "throws RangeError reversed bounds spanning zero",
+          "status": "passed",
+          "durationMs": 0.032041,
+          "line": 62,
+          "column": 3,
+          "id": "2581ad4db3ee7d79841fadedb07f71066b62f5b53a8ff3cbfdfb05d70b4bd2a4"
+        },
+        {
+          "file": "src/clamp.test.js",
+          "name": "throws RangeError reversed bounds spanning zero",
+          "status": "passed",
+          "durationMs": 0.028583,
+          "line": 62,
+          "column": 3,
+          "id": "294012b650c88344f17a8ff8e83e2b37a159f0c5cf9e401a4d4d322a2ec775a2"
+        },
+        {
+          "file": "src/clamp.test.js",
+          "name": "throws RangeError reversed bounds spanning zero",
+          "status": "passed",
+          "durationMs": 0.027459,
+          "line": 62,
+          "column": 3,
+          "id": "406d3d23993258418d93077eb02d232e0e7d9258549939c8daf0258cf55fd3e2"
+        },
+        {
+          "file": "src/clamp.test.js",
+          "name": "throws RangeError reversed bounds spanning zero",
+          "status": "passed",
+          "durationMs": 0.028667,
+          "line": 62,
+          "column": 3,
+          "id": "86e60e759397ac6f80b91d5583f7c31347856f54761d07c32103bebe84dbfaa8"
+        },
+        {
+          "file": "src/clamp.test.js",
+          "name": "throws RangeError reversed bounds spanning zero",
+          "status": "passed",
+          "durationMs": 0.026458,
+          "line": 62,
+          "column": 3,
+          "id": "85ccf98a145884b393498235fdab8c8e08498df40d9184bc6f0c52efc00a75ec"
+        },
+        {
+          "file": "src/clamp.test.js",
+          "name": "throws RangeError reversed bounds spanning zero",
+          "status": "passed",
+          "durationMs": 0.033875,
+          "line": 62,
+          "column": 3,
+          "id": "a03500eba22b280428e04baf3dbbb06d2abd6127e74c0f3c850304a729aef0ca"
+        }
+      ],
+      "collectionFiles": [
+        "src/clamp.test.js"
+      ],
+      "requestedFiles": [
+        "src/clamp.test.js"
+      ],
+      "executedFiles": [
+        "src/clamp.test.js"
+      ],
+      "missingFiles": [],
+      "unknownFiles": [],
+      "complete": true,
+      "command": [
+        "<node>",
+        "--test",
+        "--test-reporter=<repository>src/reporters/node.js",
+        "--test-reporter-destination=/var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-report-yzKP4b/results.json",
+        "./src/clamp.test.js"
+      ],
+      "stdout": "",
+      "stderr": "",
+      "signal": null,
+      "reportErrors": [],
+      "discovery": {
+        "files": [
+          "src/clamp.test.js"
+        ],
+        "complete": true,
+        "adapter": "node",
+        "warnings": []
+      }
+    },
+    "missingCases": [],
+    "defects": [],
+    "measured": {
+      "execution": true,
+      "heldOutDefects": 0
+    },
+    "isolation": "disposable-file-copy-with-trusted-dependencies",
+    "applied": false
+  },
+  "baseline": {
+    "adapter": "node",
+    "exitCode": 0,
+    "durationMs": 116,
+    "tests": [
+      {
+        "file": "src/clamp.test.js",
+        "name": "above equal negative bounds",
+        "status": "passed",
+        "durationMs": 0.718,
+        "line": 46,
+        "column": 3,
+        "id": "aa8c1b44e0a0ab0ee6c6a3fdcea030fa88c1409e825bd963c2beddb7988315ab"
+      },
+      {
+        "file": "src/clamp.test.js",
+        "name": "above equal negative bounds",
+        "status": "passed",
+        "durationMs": 0.121583,
+        "line": 46,
+        "column": 3,
+        "id": "d80dd83df98d3617065157a2df470313541d8320f5ffb72eafb4d7095e59be9a"
+      },
+      {
+        "file": "src/clamp.test.js",
+        "name": "above equal negative bounds",
+        "status": "passed",
+        "durationMs": 0.049167,
+        "line": 46,
+        "column": 3,
+        "id": "958b10e96b10182ba5009021059c7fe4663c987d9b6740562ef79314f3234d7e"
+      },
+      {
+        "file": "src/clamp.test.js",
+        "name": "above equal negative bounds",
+        "status": "passed",
+        "durationMs": 0.045083,
+        "line": 46,
+        "column": 3,
+        "id": "19316b3d4d353408f20fe5d467b73ddfb1380395189476116d8e93f51a68edc1"
+      },
+      {
+        "file": "src/clamp.test.js",
+        "name": "above equal negative bounds",
+        "status": "passed",
+        "durationMs": 0.047708,
+        "line": 46,
+        "column": 3,
+        "id": "ff227ead0d50b5e72b115534360bb4f874be54fa2c9231d02c2a7b5afece4bbe"
+      },
+      {
+        "file": "src/clamp.test.js",
+        "name": "above equal negative bounds",
+        "status": "passed",
+        "durationMs": 0.044333,
+        "line": 46,
+        "column": 3,
+        "id": "55a6061355c41d26136ab0776024db1e4cf9ff9886de87a68d35bd30a0302206"
+      },
+      {
+        "file": "src/clamp.test.js",
+        "name": "above equal negative bounds",
+        "status": "passed",
+        "durationMs": 0.041583,
+        "line": 46,
+        "column": 3,
+        "id": "40fe1ab9aad5cab4d5fb57cf41619738af0dcf5996f0d820926fa1c1aeb77d8a"
+      },
+      {
+        "file": "src/clamp.test.js",
+        "name": "above equal negative bounds",
+        "status": "passed",
+        "durationMs": 0.056625,
+        "line": 46,
+        "column": 3,
+        "id": "effdb5508da1ddc466c7a0302aa7eea24a26565d338333fe40362a6d9d82c405"
+      },
+      {
+        "file": "src/clamp.test.js",
+        "name": "above equal negative bounds",
+        "status": "passed",
+        "durationMs": 0.366875,
+        "line": 46,
+        "column": 3,
+        "id": "c14ccbffd1c621744462ef0b5912542208a1af83858ac41cf016122d8e1748b0"
+      },
+      {
+        "file": "src/clamp.test.js",
+        "name": "above equal negative bounds",
+        "status": "passed",
+        "durationMs": 0.35,
+        "line": 46,
+        "column": 3,
+        "id": "8be0930fdebb217ee5f64781c47462eb9ec7be532f655bb1a4f8ab5c1796e06b"
+      },
+      {
+        "file": "src/clamp.test.js",
+        "name": "above equal negative bounds",
+        "status": "passed",
+        "durationMs": 0.1055,
+        "line": 46,
+        "column": 3,
+        "id": "467a9dfd0938c6028a2cd00f9fb524a0e73002638494e1a98ee64337721baf8e"
+      },
+      {
+        "file": "src/clamp.test.js",
+        "name": "above equal negative bounds",
+        "status": "passed",
+        "durationMs": 0.033958,
+        "line": 46,
+        "column": 3,
+        "id": "b688b38c66b718f7ccf9651b0d04d39a188129cd97ec83261b56eff473052859"
+      },
+      {
+        "file": "src/clamp.test.js",
+        "name": "above equal negative bounds",
+        "status": "passed",
+        "durationMs": 0.0255,
+        "line": 46,
+        "column": 3,
+        "id": "7d312fc0026e5795b17cf7e2f9afa082e0559bbf337ea8a408849b3efc9d7c86"
+      },
+      {
+        "file": "src/clamp.test.js",
+        "name": "above equal negative bounds",
+        "status": "passed",
+        "durationMs": 0.02275,
+        "line": 46,
+        "column": 3,
+        "id": "ca84634be4a00e78202e2068484386a2a6786db6b8d3a34c35f55c6d5932c580"
+      },
+      {
+        "file": "src/clamp.test.js",
+        "name": "above equal negative bounds",
+        "status": "passed",
+        "durationMs": 0.021042,
+        "line": 46,
+        "column": 3,
+        "id": "c4ae0b4bd4e77ef5937ff53b55b5a5687cac9abbe090e8ea26e9500c8c1b5930"
+      },
+      {
+        "file": "src/clamp.test.js",
+        "name": "above equal negative bounds",
+        "status": "passed",
+        "durationMs": 0.020958,
+        "line": 46,
+        "column": 3,
+        "id": "b77aa5697540902ebc3619b9a39fd1e57f76289b0c5fc24419e6a00dc0e7eb7b"
+      },
+      {
+        "file": "src/clamp.test.js",
+        "name": "above equal negative bounds",
+        "status": "passed",
+        "durationMs": 0.021667,
+        "line": 46,
+        "column": 3,
+        "id": "61ea09f21efa4e03b91fa6ff00f9fbf74282dc50fc39c02e22af80e5814ed4ea"
+      },
+      {
+        "file": "src/clamp.test.js",
+        "name": "above equal negative bounds",
+        "status": "passed",
+        "durationMs": 0.020625,
+        "line": 46,
+        "column": 3,
+        "id": "4d109c1e6b55c2d9ef6b352fd35e5a32e1fe2bca60ca57aa91dac197453b7b0a"
+      },
+      {
+        "file": "src/clamp.test.js",
+        "name": "above equal negative bounds",
+        "status": "passed",
+        "durationMs": 0.021,
+        "line": 46,
+        "column": 3,
+        "id": "43d028f351ca38185a9d4e29060a4f2429d7ff0146adb80660ceae0b24316756"
+      },
+      {
+        "file": "src/clamp.test.js",
+        "name": "above equal negative bounds",
+        "status": "passed",
+        "durationMs": 0.020333,
+        "line": 46,
+        "column": 3,
+        "id": "ab7124252d4a14fa49b415ec10d39cceaf17159998c86577e62468d2177c0b1d"
+      },
+      {
+        "file": "src/clamp.test.js",
+        "name": "above equal negative bounds",
+        "status": "passed",
+        "durationMs": 0.020417,
+        "line": 46,
+        "column": 3,
+        "id": "d70a24119eb160daf8e54b0867899a07d5510b8e5ddbbf0bd8366b9ee8ca04b9"
+      },
+      {
+        "file": "src/clamp.test.js",
+        "name": "above equal negative bounds",
+        "status": "passed",
+        "durationMs": 0.021417,
+        "line": 46,
+        "column": 3,
+        "id": "e22563f1980ae841c22116588858f9e3712fa2c6ad1830ea229fa87fdeb164d6"
+      },
+      {
+        "file": "src/clamp.test.js",
+        "name": "above equal negative bounds",
+        "status": "passed",
+        "durationMs": 0.020125,
+        "line": 46,
+        "column": 3,
+        "id": "5b7e3aa1797eeffa318cda0b33e9958578ad5e32e7d971924077ee23ca8549f6"
+      },
+      {
+        "file": "src/clamp.test.js",
+        "name": "above equal negative bounds",
+        "status": "passed",
+        "durationMs": 0.020417,
+        "line": 46,
+        "column": 3,
+        "id": "a29fe05bc934c1e0b841ab7ffd311237c22534559619d3d917b006f525156ce8"
+      },
+      {
+        "file": "src/clamp.test.js",
+        "name": "above equal negative bounds",
+        "status": "passed",
+        "durationMs": 0.0205,
+        "line": 46,
+        "column": 3,
+        "id": "524139297fb116a407401a1710bfb5afb2a0476213cf6207e41ce01234540e60"
+      },
+      {
+        "file": "src/clamp.test.js",
+        "name": "above equal negative bounds",
+        "status": "passed",
+        "durationMs": 0.020916,
+        "line": 46,
+        "column": 3,
+        "id": "50591fcf5a20412bb849ce483d165ac2c76e0045abad50603d1d2f94c0dca9af"
+      },
+      {
+        "file": "src/clamp.test.js",
+        "name": "above equal negative bounds",
+        "status": "passed",
+        "durationMs": 0.020125,
+        "line": 46,
+        "column": 3,
+        "id": "2e83b149df3a648ad725b20a400b2e33301fec42a6db6de9f0033b741ef7990f"
+      },
+      {
+        "file": "src/clamp.test.js",
+        "name": "above equal negative bounds",
+        "status": "passed",
+        "durationMs": 0.02,
+        "line": 46,
+        "column": 3,
+        "id": "1deb86e7ead33bd3c0acfb6dc13ef77fd990d2745151acb9a51d7726a7f9ca0c"
+      },
+      {
+        "file": "src/clamp.test.js",
+        "name": "above equal negative bounds",
+        "status": "passed",
+        "durationMs": 0.02025,
+        "line": 46,
+        "column": 3,
+        "id": "979f6bcbc01f792a82782e266debf51f9819afb8a640219b7635c96d8a48fe41"
+      },
+      {
+        "file": "src/clamp.test.js",
+        "name": "above equal negative bounds",
+        "status": "passed",
+        "durationMs": 0.021,
+        "line": 46,
+        "column": 3,
+        "id": "228ca421d9249025628698b20c0d4ebfce14c373e401626671843799cb15a8b4"
+      },
+      {
+        "file": "src/clamp.test.js",
+        "name": "above equal negative bounds",
+        "status": "passed",
+        "durationMs": 0.023042,
+        "line": 46,
+        "column": 3,
+        "id": "671f81efe1db855716605c9fd56a0edf5f2c8535b2fb5257a8cfb61a6944137f"
+      },
+      {
+        "file": "src/clamp.test.js",
+        "name": "above equal negative bounds",
+        "status": "passed",
+        "durationMs": 0.024875,
+        "line": 46,
+        "column": 3,
+        "id": "5aa4dd03ab340c00a15467187a3facf6cd70beb66f3ea884954a5719a8962599"
+      },
+      {
+        "file": "src/clamp.test.js",
+        "name": "above equal negative bounds",
+        "status": "passed",
+        "durationMs": 0.020833,
+        "line": 46,
+        "column": 3,
+        "id": "304289dc436570a1a98f44c4ac51bfce4fa42685e25bc2479a98498c323bf271"
+      },
+      {
+        "file": "src/clamp.test.js",
+        "name": "above equal negative bounds",
+        "status": "passed",
+        "durationMs": 0.020083,
+        "line": 46,
+        "column": 3,
+        "id": "88d45c4a8bcfb1c913b50d1541ad671e52e18934f9dc42f70e46fff546cf5013"
+      },
+      {
+        "file": "src/clamp.test.js",
+        "name": "above equal negative bounds",
+        "status": "passed",
+        "durationMs": 0.024125,
+        "line": 46,
+        "column": 3,
+        "id": "ce01d7c9233114e4dc6140cd8d53cbd0e5e6c39264e432a550e1f36110ff2857"
+      },
+      {
+        "file": "src/clamp.test.js",
+        "name": "above equal negative bounds",
+        "status": "passed",
+        "durationMs": 0.02025,
+        "line": 46,
+        "column": 3,
+        "id": "b48ed463aa3aa4de67cbde9df4d7664aeaa648430b28c7a81caa335d84d0c736"
+      },
+      {
+        "file": "src/clamp.test.js",
+        "name": "above equal negative bounds",
+        "status": "passed",
+        "durationMs": 0.019792,
+        "line": 46,
+        "column": 3,
+        "id": "7615cd9733d8e6f3381a305637a6a99a10f4c213364e1c76672f57ab28163ef9"
+      },
+      {
+        "file": "src/clamp.test.js",
+        "name": "throws RangeError reversed bounds spanning zero",
+        "status": "passed",
+        "durationMs": 0.202917,
+        "line": 62,
+        "column": 3,
+        "id": "1c3bff3f219c1ed8369e8fa00dffbfc65e22a89e8f9a7b099a209550e6770028"
+      },
+      {
+        "file": "src/clamp.test.js",
+        "name": "throws RangeError reversed bounds spanning zero",
+        "status": "passed",
+        "durationMs": 0.03175,
+        "line": 62,
+        "column": 3,
+        "id": "2581ad4db3ee7d79841fadedb07f71066b62f5b53a8ff3cbfdfb05d70b4bd2a4"
+      },
+      {
+        "file": "src/clamp.test.js",
+        "name": "throws RangeError reversed bounds spanning zero",
+        "status": "passed",
+        "durationMs": 0.028333,
+        "line": 62,
+        "column": 3,
+        "id": "294012b650c88344f17a8ff8e83e2b37a159f0c5cf9e401a4d4d322a2ec775a2"
+      },
+      {
+        "file": "src/clamp.test.js",
+        "name": "throws RangeError reversed bounds spanning zero",
+        "status": "passed",
+        "durationMs": 0.029375,
+        "line": 62,
+        "column": 3,
+        "id": "406d3d23993258418d93077eb02d232e0e7d9258549939c8daf0258cf55fd3e2"
+      },
+      {
+        "file": "src/clamp.test.js",
+        "name": "throws RangeError reversed bounds spanning zero",
+        "status": "passed",
+        "durationMs": 0.026584,
+        "line": 62,
+        "column": 3,
+        "id": "86e60e759397ac6f80b91d5583f7c31347856f54761d07c32103bebe84dbfaa8"
+      },
+      {
+        "file": "src/clamp.test.js",
+        "name": "throws RangeError reversed bounds spanning zero",
+        "status": "passed",
+        "durationMs": 0.027,
+        "line": 62,
+        "column": 3,
+        "id": "85ccf98a145884b393498235fdab8c8e08498df40d9184bc6f0c52efc00a75ec"
+      },
+      {
+        "file": "src/clamp.test.js",
+        "name": "throws RangeError reversed bounds spanning zero",
+        "status": "passed",
+        "durationMs": 0.036709,
+        "line": 62,
+        "column": 3,
+        "id": "a03500eba22b280428e04baf3dbbb06d2abd6127e74c0f3c850304a729aef0ca"
+      }
+    ],
+    "collectionFiles": [
+      "src/clamp.test.js"
+    ],
+    "requestedFiles": [
+      "src/clamp.test.js"
+    ],
+    "executedFiles": [
+      "src/clamp.test.js"
+    ],
+    "missingFiles": [],
+    "unknownFiles": [],
+    "complete": true,
+    "command": [
+      "<node>",
+      "--test",
+      "--test-reporter=<repository>src/reporters/node.js",
+      "--test-reporter-destination=/var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-report-BdnH1z/results.json",
+      "./src/clamp.test.js"
+    ],
+    "stdout": "",
+    "stderr": "",
+    "signal": null,
+    "reportErrors": []
+  },
+  "heldOut": [
+    {
+      "name": "lower-bound",
+      "mutated": "export function clamp(value,min,max){if(min>max)throw new RangeError('invalid bounds');return Math.min(max,value);}\n",
+      "detected": true,
+      "result": {
+        "adapter": "node",
+        "exitCode": 1,
+        "durationMs": 147,
+        "tests": [
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "failed",
+            "durationMs": 1.082583,
+            "line": 46,
+            "column": 3,
+            "id": "aa8c1b44e0a0ab0ee6c6a3fdcea030fa88c1409e825bd963c2beddb7988315ab"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "passed",
+            "durationMs": 0.076834,
+            "line": 46,
+            "column": 3,
+            "id": "d80dd83df98d3617065157a2df470313541d8320f5ffb72eafb4d7095e59be9a"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "passed",
+            "durationMs": 0.046417,
+            "line": 46,
+            "column": 3,
+            "id": "958b10e96b10182ba5009021059c7fe4663c987d9b6740562ef79314f3234d7e"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "passed",
+            "durationMs": 0.044875,
+            "line": 46,
+            "column": 3,
+            "id": "19316b3d4d353408f20fe5d467b73ddfb1380395189476116d8e93f51a68edc1"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "passed",
+            "durationMs": 0.044792,
+            "line": 46,
+            "column": 3,
+            "id": "ff227ead0d50b5e72b115534360bb4f874be54fa2c9231d02c2a7b5afece4bbe"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "failed",
+            "durationMs": 0.091875,
+            "line": 46,
+            "column": 3,
+            "id": "55a6061355c41d26136ab0776024db1e4cf9ff9886de87a68d35bd30a0302206"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "passed",
+            "durationMs": 0.099459,
+            "line": 46,
+            "column": 3,
+            "id": "40fe1ab9aad5cab4d5fb57cf41619738af0dcf5996f0d820926fa1c1aeb77d8a"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "passed",
+            "durationMs": 0.040667,
+            "line": 46,
+            "column": 3,
+            "id": "effdb5508da1ddc466c7a0302aa7eea24a26565d338333fe40362a6d9d82c405"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "passed",
+            "durationMs": 0.273083,
+            "line": 46,
+            "column": 3,
+            "id": "c14ccbffd1c621744462ef0b5912542208a1af83858ac41cf016122d8e1748b0"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "passed",
+            "durationMs": 0.73025,
+            "line": 46,
+            "column": 3,
+            "id": "8be0930fdebb217ee5f64781c47462eb9ec7be532f655bb1a4f8ab5c1796e06b"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "passed",
+            "durationMs": 0.111375,
+            "line": 46,
+            "column": 3,
+            "id": "467a9dfd0938c6028a2cd00f9fb524a0e73002638494e1a98ee64337721baf8e"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "failed",
+            "durationMs": 0.104166,
+            "line": 46,
+            "column": 3,
+            "id": "b688b38c66b718f7ccf9651b0d04d39a188129cd97ec83261b56eff473052859"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "passed",
+            "durationMs": 0.032375,
+            "line": 46,
+            "column": 3,
+            "id": "7d312fc0026e5795b17cf7e2f9afa082e0559bbf337ea8a408849b3efc9d7c86"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "passed",
+            "durationMs": 0.024583,
+            "line": 46,
+            "column": 3,
+            "id": "ca84634be4a00e78202e2068484386a2a6786db6b8d3a34c35f55c6d5932c580"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "passed",
+            "durationMs": 0.022083,
+            "line": 46,
+            "column": 3,
+            "id": "c4ae0b4bd4e77ef5937ff53b55b5a5687cac9abbe090e8ea26e9500c8c1b5930"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "passed",
+            "durationMs": 0.021458,
+            "line": 46,
+            "column": 3,
+            "id": "b77aa5697540902ebc3619b9a39fd1e57f76289b0c5fc24419e6a00dc0e7eb7b"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "failed",
+            "durationMs": 0.064792,
+            "line": 46,
+            "column": 3,
+            "id": "61ea09f21efa4e03b91fa6ff00f9fbf74282dc50fc39c02e22af80e5814ed4ea"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "failed",
+            "durationMs": 0.056709,
+            "line": 46,
+            "column": 3,
+            "id": "4d109c1e6b55c2d9ef6b352fd35e5a32e1fe2bca60ca57aa91dac197453b7b0a"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "passed",
+            "durationMs": 0.026042,
+            "line": 46,
+            "column": 3,
+            "id": "43d028f351ca38185a9d4e29060a4f2429d7ff0146adb80660ceae0b24316756"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "passed",
+            "durationMs": 0.021042,
+            "line": 46,
+            "column": 3,
+            "id": "ab7124252d4a14fa49b415ec10d39cceaf17159998c86577e62468d2177c0b1d"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "passed",
+            "durationMs": 0.020791,
+            "line": 46,
+            "column": 3,
+            "id": "d70a24119eb160daf8e54b0867899a07d5510b8e5ddbbf0bd8366b9ee8ca04b9"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "passed",
+            "durationMs": 0.020708,
+            "line": 46,
+            "column": 3,
+            "id": "e22563f1980ae841c22116588858f9e3712fa2c6ad1830ea229fa87fdeb164d6"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "passed",
+            "durationMs": 0.020542,
+            "line": 46,
+            "column": 3,
+            "id": "5b7e3aa1797eeffa318cda0b33e9958578ad5e32e7d971924077ee23ca8549f6"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "failed",
+            "durationMs": 0.153,
+            "line": 46,
+            "column": 3,
+            "id": "a29fe05bc934c1e0b841ab7ffd311237c22534559619d3d917b006f525156ce8"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "passed",
+            "durationMs": 0.024375,
+            "line": 46,
+            "column": 3,
+            "id": "524139297fb116a407401a1710bfb5afb2a0476213cf6207e41ce01234540e60"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "passed",
+            "durationMs": 0.021375,
+            "line": 46,
+            "column": 3,
+            "id": "50591fcf5a20412bb849ce483d165ac2c76e0045abad50603d1d2f94c0dca9af"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "passed",
+            "durationMs": 0.020125,
+            "line": 46,
+            "column": 3,
+            "id": "2e83b149df3a648ad725b20a400b2e33301fec42a6db6de9f0033b741ef7990f"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "passed",
+            "durationMs": 0.020083,
+            "line": 46,
+            "column": 3,
+            "id": "1deb86e7ead33bd3c0acfb6dc13ef77fd990d2745151acb9a51d7726a7f9ca0c"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "failed",
+            "durationMs": 0.053208,
+            "line": 46,
+            "column": 3,
+            "id": "979f6bcbc01f792a82782e266debf51f9819afb8a640219b7635c96d8a48fe41"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "passed",
+            "durationMs": 0.022334,
+            "line": 46,
+            "column": 3,
+            "id": "228ca421d9249025628698b20c0d4ebfce14c373e401626671843799cb15a8b4"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "passed",
+            "durationMs": 0.078,
+            "line": 46,
+            "column": 3,
+            "id": "671f81efe1db855716605c9fd56a0edf5f2c8535b2fb5257a8cfb61a6944137f"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "failed",
+            "durationMs": 0.207541,
+            "line": 46,
+            "column": 3,
+            "id": "5aa4dd03ab340c00a15467187a3facf6cd70beb66f3ea884954a5719a8962599"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "passed",
+            "durationMs": 0.037291,
+            "line": 46,
+            "column": 3,
+            "id": "304289dc436570a1a98f44c4ac51bfce4fa42685e25bc2479a98498c323bf271"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "passed",
+            "durationMs": 0.029625,
+            "line": 46,
+            "column": 3,
+            "id": "88d45c4a8bcfb1c913b50d1541ad671e52e18934f9dc42f70e46fff546cf5013"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "failed",
+            "durationMs": 0.233084,
+            "line": 46,
+            "column": 3,
+            "id": "ce01d7c9233114e4dc6140cd8d53cbd0e5e6c39264e432a550e1f36110ff2857"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "passed",
+            "durationMs": 0.025042,
+            "line": 46,
+            "column": 3,
+            "id": "b48ed463aa3aa4de67cbde9df4d7664aeaa648430b28c7a81caa335d84d0c736"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "passed",
+            "durationMs": 0.022542,
+            "line": 46,
+            "column": 3,
+            "id": "7615cd9733d8e6f3381a305637a6a99a10f4c213364e1c76672f57ab28163ef9"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "throws RangeError reversed bounds spanning zero",
+            "status": "passed",
+            "durationMs": 0.232875,
+            "line": 62,
+            "column": 3,
+            "id": "1c3bff3f219c1ed8369e8fa00dffbfc65e22a89e8f9a7b099a209550e6770028"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "throws RangeError reversed bounds spanning zero",
+            "status": "passed",
+            "durationMs": 0.031625,
+            "line": 62,
+            "column": 3,
+            "id": "2581ad4db3ee7d79841fadedb07f71066b62f5b53a8ff3cbfdfb05d70b4bd2a4"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "throws RangeError reversed bounds spanning zero",
+            "status": "passed",
+            "durationMs": 0.029958,
+            "line": 62,
+            "column": 3,
+            "id": "294012b650c88344f17a8ff8e83e2b37a159f0c5cf9e401a4d4d322a2ec775a2"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "throws RangeError reversed bounds spanning zero",
+            "status": "passed",
+            "durationMs": 0.027125,
+            "line": 62,
+            "column": 3,
+            "id": "406d3d23993258418d93077eb02d232e0e7d9258549939c8daf0258cf55fd3e2"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "throws RangeError reversed bounds spanning zero",
+            "status": "passed",
+            "durationMs": 0.026875,
+            "line": 62,
+            "column": 3,
+            "id": "86e60e759397ac6f80b91d5583f7c31347856f54761d07c32103bebe84dbfaa8"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "throws RangeError reversed bounds spanning zero",
+            "status": "passed",
+            "durationMs": 0.026709,
+            "line": 62,
+            "column": 3,
+            "id": "85ccf98a145884b393498235fdab8c8e08498df40d9184bc6f0c52efc00a75ec"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "throws RangeError reversed bounds spanning zero",
+            "status": "passed",
+            "durationMs": 0.02775,
+            "line": 62,
+            "column": 3,
+            "id": "a03500eba22b280428e04baf3dbbb06d2abd6127e74c0f3c850304a729aef0ca"
+          }
+        ],
+        "collectionFiles": [
+          "src/clamp.test.js"
+        ],
+        "requestedFiles": [
+          "src/clamp.test.js"
+        ],
+        "executedFiles": [
+          "src/clamp.test.js"
+        ],
+        "missingFiles": [],
+        "unknownFiles": [],
+        "complete": true,
+        "command": [
+          "<node>",
+          "--test",
+          "--test-reporter=<repository>src/reporters/node.js",
+          "--test-reporter-destination=/var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-report-6BDZ7k/results.json",
+          "./src/clamp.test.js"
+        ],
+        "stdout": "",
+        "stderr": "",
+        "signal": null,
+        "reportErrors": []
+      }
+    },
+    {
+      "name": "upper-bound",
+      "mutated": "export function clamp(value,min,max){if(min>max)throw new RangeError('invalid bounds');return Math.max(min,value);}\n",
+      "detected": true,
+      "result": {
+        "adapter": "node",
+        "exitCode": 1,
+        "durationMs": 114,
+        "tests": [
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "passed",
+            "durationMs": 0.67525,
+            "line": 46,
+            "column": 3,
+            "id": "aa8c1b44e0a0ab0ee6c6a3fdcea030fa88c1409e825bd963c2beddb7988315ab"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "passed",
+            "durationMs": 0.115875,
+            "line": 46,
+            "column": 3,
+            "id": "d80dd83df98d3617065157a2df470313541d8320f5ffb72eafb4d7095e59be9a"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "failed",
+            "durationMs": 0.512333,
+            "line": 46,
+            "column": 3,
+            "id": "958b10e96b10182ba5009021059c7fe4663c987d9b6740562ef79314f3234d7e"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "passed",
+            "durationMs": 0.066792,
+            "line": 46,
+            "column": 3,
+            "id": "19316b3d4d353408f20fe5d467b73ddfb1380395189476116d8e93f51a68edc1"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "passed",
+            "durationMs": 0.054792,
+            "line": 46,
+            "column": 3,
+            "id": "ff227ead0d50b5e72b115534360bb4f874be54fa2c9231d02c2a7b5afece4bbe"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "passed",
+            "durationMs": 0.04975,
+            "line": 46,
+            "column": 3,
+            "id": "55a6061355c41d26136ab0776024db1e4cf9ff9886de87a68d35bd30a0302206"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "passed",
+            "durationMs": 0.040042,
+            "line": 46,
+            "column": 3,
+            "id": "40fe1ab9aad5cab4d5fb57cf41619738af0dcf5996f0d820926fa1c1aeb77d8a"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "failed",
+            "durationMs": 0.156541,
+            "line": 46,
+            "column": 3,
+            "id": "effdb5508da1ddc466c7a0302aa7eea24a26565d338333fe40362a6d9d82c405"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "passed",
+            "durationMs": 0.273833,
+            "line": 46,
+            "column": 3,
+            "id": "c14ccbffd1c621744462ef0b5912542208a1af83858ac41cf016122d8e1748b0"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "passed",
+            "durationMs": 0.300875,
+            "line": 46,
+            "column": 3,
+            "id": "8be0930fdebb217ee5f64781c47462eb9ec7be532f655bb1a4f8ab5c1796e06b"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "failed",
+            "durationMs": 0.153709,
+            "line": 46,
+            "column": 3,
+            "id": "467a9dfd0938c6028a2cd00f9fb524a0e73002638494e1a98ee64337721baf8e"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "passed",
+            "durationMs": 0.038416,
+            "line": 46,
+            "column": 3,
+            "id": "b688b38c66b718f7ccf9651b0d04d39a188129cd97ec83261b56eff473052859"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "passed",
+            "durationMs": 0.029375,
+            "line": 46,
+            "column": 3,
+            "id": "7d312fc0026e5795b17cf7e2f9afa082e0559bbf337ea8a408849b3efc9d7c86"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "passed",
+            "durationMs": 0.024083,
+            "line": 46,
+            "column": 3,
+            "id": "ca84634be4a00e78202e2068484386a2a6786db6b8d3a34c35f55c6d5932c580"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "passed",
+            "durationMs": 0.021791,
+            "line": 46,
+            "column": 3,
+            "id": "c4ae0b4bd4e77ef5937ff53b55b5a5687cac9abbe090e8ea26e9500c8c1b5930"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "failed",
+            "durationMs": 0.059084,
+            "line": 46,
+            "column": 3,
+            "id": "b77aa5697540902ebc3619b9a39fd1e57f76289b0c5fc24419e6a00dc0e7eb7b"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "passed",
+            "durationMs": 0.022334,
+            "line": 46,
+            "column": 3,
+            "id": "61ea09f21efa4e03b91fa6ff00f9fbf74282dc50fc39c02e22af80e5814ed4ea"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "passed",
+            "durationMs": 0.020667,
+            "line": 46,
+            "column": 3,
+            "id": "4d109c1e6b55c2d9ef6b352fd35e5a32e1fe2bca60ca57aa91dac197453b7b0a"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "passed",
+            "durationMs": 0.021583,
+            "line": 46,
+            "column": 3,
+            "id": "43d028f351ca38185a9d4e29060a4f2429d7ff0146adb80660ceae0b24316756"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "passed",
+            "durationMs": 0.020667,
+            "line": 46,
+            "column": 3,
+            "id": "ab7124252d4a14fa49b415ec10d39cceaf17159998c86577e62468d2177c0b1d"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "failed",
+            "durationMs": 0.055,
+            "line": 46,
+            "column": 3,
+            "id": "d70a24119eb160daf8e54b0867899a07d5510b8e5ddbbf0bd8366b9ee8ca04b9"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "passed",
+            "durationMs": 0.022542,
+            "line": 46,
+            "column": 3,
+            "id": "e22563f1980ae841c22116588858f9e3712fa2c6ad1830ea229fa87fdeb164d6"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "passed",
+            "durationMs": 0.020291,
+            "line": 46,
+            "column": 3,
+            "id": "5b7e3aa1797eeffa318cda0b33e9958578ad5e32e7d971924077ee23ca8549f6"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "passed",
+            "durationMs": 0.020208,
+            "line": 46,
+            "column": 3,
+            "id": "a29fe05bc934c1e0b841ab7ffd311237c22534559619d3d917b006f525156ce8"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "passed",
+            "durationMs": 0.020208,
+            "line": 46,
+            "column": 3,
+            "id": "524139297fb116a407401a1710bfb5afb2a0476213cf6207e41ce01234540e60"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "failed",
+            "durationMs": 0.1395,
+            "line": 46,
+            "column": 3,
+            "id": "50591fcf5a20412bb849ce483d165ac2c76e0045abad50603d1d2f94c0dca9af"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "passed",
+            "durationMs": 0.02325,
+            "line": 46,
+            "column": 3,
+            "id": "2e83b149df3a648ad725b20a400b2e33301fec42a6db6de9f0033b741ef7990f"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "passed",
+            "durationMs": 0.026833,
+            "line": 46,
+            "column": 3,
+            "id": "1deb86e7ead33bd3c0acfb6dc13ef77fd990d2745151acb9a51d7726a7f9ca0c"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "passed",
+            "durationMs": 0.020666,
+            "line": 46,
+            "column": 3,
+            "id": "979f6bcbc01f792a82782e266debf51f9819afb8a640219b7635c96d8a48fe41"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "passed",
+            "durationMs": 0.02075,
+            "line": 46,
+            "column": 3,
+            "id": "228ca421d9249025628698b20c0d4ebfce14c373e401626671843799cb15a8b4"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "failed",
+            "durationMs": 0.054042,
+            "line": 46,
+            "column": 3,
+            "id": "671f81efe1db855716605c9fd56a0edf5f2c8535b2fb5257a8cfb61a6944137f"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "passed",
+            "durationMs": 0.0225,
+            "line": 46,
+            "column": 3,
+            "id": "5aa4dd03ab340c00a15467187a3facf6cd70beb66f3ea884954a5719a8962599"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "passed",
+            "durationMs": 0.020459,
+            "line": 46,
+            "column": 3,
+            "id": "304289dc436570a1a98f44c4ac51bfce4fa42685e25bc2479a98498c323bf271"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "failed",
+            "durationMs": 0.099625,
+            "line": 46,
+            "column": 3,
+            "id": "88d45c4a8bcfb1c913b50d1541ad671e52e18934f9dc42f70e46fff546cf5013"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "passed",
+            "durationMs": 0.022208,
+            "line": 46,
+            "column": 3,
+            "id": "ce01d7c9233114e4dc6140cd8d53cbd0e5e6c39264e432a550e1f36110ff2857"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "passed",
+            "durationMs": 0.020458,
+            "line": 46,
+            "column": 3,
+            "id": "b48ed463aa3aa4de67cbde9df4d7664aeaa648430b28c7a81caa335d84d0c736"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "failed",
+            "durationMs": 0.19025,
+            "line": 46,
+            "column": 3,
+            "id": "7615cd9733d8e6f3381a305637a6a99a10f4c213364e1c76672f57ab28163ef9"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "throws RangeError reversed bounds spanning zero",
+            "status": "passed",
+            "durationMs": 0.19125,
+            "line": 62,
+            "column": 3,
+            "id": "1c3bff3f219c1ed8369e8fa00dffbfc65e22a89e8f9a7b099a209550e6770028"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "throws RangeError reversed bounds spanning zero",
+            "status": "passed",
+            "durationMs": 0.030542,
+            "line": 62,
+            "column": 3,
+            "id": "2581ad4db3ee7d79841fadedb07f71066b62f5b53a8ff3cbfdfb05d70b4bd2a4"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "throws RangeError reversed bounds spanning zero",
+            "status": "passed",
+            "durationMs": 0.027292,
+            "line": 62,
+            "column": 3,
+            "id": "294012b650c88344f17a8ff8e83e2b37a159f0c5cf9e401a4d4d322a2ec775a2"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "throws RangeError reversed bounds spanning zero",
+            "status": "passed",
+            "durationMs": 0.027084,
+            "line": 62,
+            "column": 3,
+            "id": "406d3d23993258418d93077eb02d232e0e7d9258549939c8daf0258cf55fd3e2"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "throws RangeError reversed bounds spanning zero",
+            "status": "passed",
+            "durationMs": 0.026917,
+            "line": 62,
+            "column": 3,
+            "id": "86e60e759397ac6f80b91d5583f7c31347856f54761d07c32103bebe84dbfaa8"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "throws RangeError reversed bounds spanning zero",
+            "status": "passed",
+            "durationMs": 0.026917,
+            "line": 62,
+            "column": 3,
+            "id": "85ccf98a145884b393498235fdab8c8e08498df40d9184bc6f0c52efc00a75ec"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "throws RangeError reversed bounds spanning zero",
+            "status": "passed",
+            "durationMs": 0.027334,
+            "line": 62,
+            "column": 3,
+            "id": "a03500eba22b280428e04baf3dbbb06d2abd6127e74c0f3c850304a729aef0ca"
+          }
+        ],
+        "collectionFiles": [
+          "src/clamp.test.js"
+        ],
+        "requestedFiles": [
+          "src/clamp.test.js"
+        ],
+        "executedFiles": [
+          "src/clamp.test.js"
+        ],
+        "missingFiles": [],
+        "unknownFiles": [],
+        "complete": true,
+        "command": [
+          "<node>",
+          "--test",
+          "--test-reporter=<repository>src/reporters/node.js",
+          "--test-reporter-destination=/var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-report-2rpQZR/results.json",
+          "./src/clamp.test.js"
+        ],
+        "stdout": "",
+        "stderr": "",
+        "signal": null,
+        "reportErrors": []
+      }
+    },
+    {
+      "name": "interior",
+      "mutated": "export function clamp(value,min,max){if(min>max)throw new RangeError('invalid bounds');return min;}\n",
+      "detected": true,
+      "result": {
+        "adapter": "node",
+        "exitCode": 1,
+        "durationMs": 129,
+        "tests": [
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "passed",
+            "durationMs": 0.69,
+            "line": 46,
+            "column": 3,
+            "id": "aa8c1b44e0a0ab0ee6c6a3fdcea030fa88c1409e825bd963c2beddb7988315ab"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "failed",
+            "durationMs": 0.537167,
+            "line": 46,
+            "column": 3,
+            "id": "d80dd83df98d3617065157a2df470313541d8320f5ffb72eafb4d7095e59be9a"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "failed",
+            "durationMs": 0.090083,
+            "line": 46,
+            "column": 3,
+            "id": "958b10e96b10182ba5009021059c7fe4663c987d9b6740562ef79314f3234d7e"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "passed",
+            "durationMs": 0.112792,
+            "line": 46,
+            "column": 3,
+            "id": "19316b3d4d353408f20fe5d467b73ddfb1380395189476116d8e93f51a68edc1"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "failed",
+            "durationMs": 0.079667,
+            "line": 46,
+            "column": 3,
+            "id": "ff227ead0d50b5e72b115534360bb4f874be54fa2c9231d02c2a7b5afece4bbe"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "passed",
+            "durationMs": 0.040958,
+            "line": 46,
+            "column": 3,
+            "id": "55a6061355c41d26136ab0776024db1e4cf9ff9886de87a68d35bd30a0302206"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "failed",
+            "durationMs": 0.12725,
+            "line": 46,
+            "column": 3,
+            "id": "40fe1ab9aad5cab4d5fb57cf41619738af0dcf5996f0d820926fa1c1aeb77d8a"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "failed",
+            "durationMs": 0.062375,
+            "line": 46,
+            "column": 3,
+            "id": "effdb5508da1ddc466c7a0302aa7eea24a26565d338333fe40362a6d9d82c405"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "passed",
+            "durationMs": 0.296834,
+            "line": 46,
+            "column": 3,
+            "id": "c14ccbffd1c621744462ef0b5912542208a1af83858ac41cf016122d8e1748b0"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "failed",
+            "durationMs": 0.3515,
+            "line": 46,
+            "column": 3,
+            "id": "8be0930fdebb217ee5f64781c47462eb9ec7be532f655bb1a4f8ab5c1796e06b"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "failed",
+            "durationMs": 0.132,
+            "line": 46,
+            "column": 3,
+            "id": "467a9dfd0938c6028a2cd00f9fb524a0e73002638494e1a98ee64337721baf8e"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "passed",
+            "durationMs": 0.0405,
+            "line": 46,
+            "column": 3,
+            "id": "b688b38c66b718f7ccf9651b0d04d39a188129cd97ec83261b56eff473052859"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "failed",
+            "durationMs": 0.110833,
+            "line": 46,
+            "column": 3,
+            "id": "7d312fc0026e5795b17cf7e2f9afa082e0559bbf337ea8a408849b3efc9d7c86"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "failed",
+            "durationMs": 0.2015,
+            "line": 46,
+            "column": 3,
+            "id": "ca84634be4a00e78202e2068484386a2a6786db6b8d3a34c35f55c6d5932c580"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "failed",
+            "durationMs": 0.066333,
+            "line": 46,
+            "column": 3,
+            "id": "c4ae0b4bd4e77ef5937ff53b55b5a5687cac9abbe090e8ea26e9500c8c1b5930"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "failed",
+            "durationMs": 0.051917,
+            "line": 46,
+            "column": 3,
+            "id": "b77aa5697540902ebc3619b9a39fd1e57f76289b0c5fc24419e6a00dc0e7eb7b"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "passed",
+            "durationMs": 0.028125,
+            "line": 46,
+            "column": 3,
+            "id": "61ea09f21efa4e03b91fa6ff00f9fbf74282dc50fc39c02e22af80e5814ed4ea"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "passed",
+            "durationMs": 0.023875,
+            "line": 46,
+            "column": 3,
+            "id": "4d109c1e6b55c2d9ef6b352fd35e5a32e1fe2bca60ca57aa91dac197453b7b0a"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "passed",
+            "durationMs": 0.024584,
+            "line": 46,
+            "column": 3,
+            "id": "43d028f351ca38185a9d4e29060a4f2429d7ff0146adb80660ceae0b24316756"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "failed",
+            "durationMs": 0.102875,
+            "line": 46,
+            "column": 3,
+            "id": "ab7124252d4a14fa49b415ec10d39cceaf17159998c86577e62468d2177c0b1d"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "failed",
+            "durationMs": 0.053416,
+            "line": 46,
+            "column": 3,
+            "id": "d70a24119eb160daf8e54b0867899a07d5510b8e5ddbbf0bd8366b9ee8ca04b9"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "failed",
+            "durationMs": 0.049125,
+            "line": 46,
+            "column": 3,
+            "id": "e22563f1980ae841c22116588858f9e3712fa2c6ad1830ea229fa87fdeb164d6"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "failed",
+            "durationMs": 0.046083,
+            "line": 46,
+            "column": 3,
+            "id": "5b7e3aa1797eeffa318cda0b33e9958578ad5e32e7d971924077ee23ca8549f6"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "passed",
+            "durationMs": 0.024709,
+            "line": 46,
+            "column": 3,
+            "id": "a29fe05bc934c1e0b841ab7ffd311237c22534559619d3d917b006f525156ce8"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "failed",
+            "durationMs": 0.060292,
+            "line": 46,
+            "column": 3,
+            "id": "524139297fb116a407401a1710bfb5afb2a0476213cf6207e41ce01234540e60"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "failed",
+            "durationMs": 0.116667,
+            "line": 46,
+            "column": 3,
+            "id": "50591fcf5a20412bb849ce483d165ac2c76e0045abad50603d1d2f94c0dca9af"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "passed",
+            "durationMs": 0.026208,
+            "line": 46,
+            "column": 3,
+            "id": "2e83b149df3a648ad725b20a400b2e33301fec42a6db6de9f0033b741ef7990f"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "failed",
+            "durationMs": 0.047834,
+            "line": 46,
+            "column": 3,
+            "id": "1deb86e7ead33bd3c0acfb6dc13ef77fd990d2745151acb9a51d7726a7f9ca0c"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "passed",
+            "durationMs": 0.02625,
+            "line": 46,
+            "column": 3,
+            "id": "979f6bcbc01f792a82782e266debf51f9819afb8a640219b7635c96d8a48fe41"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "passed",
+            "durationMs": 0.021958,
+            "line": 46,
+            "column": 3,
+            "id": "228ca421d9249025628698b20c0d4ebfce14c373e401626671843799cb15a8b4"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "passed",
+            "durationMs": 0.023583,
+            "line": 46,
+            "column": 3,
+            "id": "671f81efe1db855716605c9fd56a0edf5f2c8535b2fb5257a8cfb61a6944137f"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "passed",
+            "durationMs": 0.021083,
+            "line": 46,
+            "column": 3,
+            "id": "5aa4dd03ab340c00a15467187a3facf6cd70beb66f3ea884954a5719a8962599"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "passed",
+            "durationMs": 0.021125,
+            "line": 46,
+            "column": 3,
+            "id": "304289dc436570a1a98f44c4ac51bfce4fa42685e25bc2479a98498c323bf271"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "passed",
+            "durationMs": 0.0205,
+            "line": 46,
+            "column": 3,
+            "id": "88d45c4a8bcfb1c913b50d1541ad671e52e18934f9dc42f70e46fff546cf5013"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "passed",
+            "durationMs": 0.020209,
+            "line": 46,
+            "column": 3,
+            "id": "ce01d7c9233114e4dc6140cd8d53cbd0e5e6c39264e432a550e1f36110ff2857"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "passed",
+            "durationMs": 0.020584,
+            "line": 46,
+            "column": 3,
+            "id": "b48ed463aa3aa4de67cbde9df4d7664aeaa648430b28c7a81caa335d84d0c736"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "passed",
+            "durationMs": 0.019959,
+            "line": 46,
+            "column": 3,
+            "id": "7615cd9733d8e6f3381a305637a6a99a10f4c213364e1c76672f57ab28163ef9"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "throws RangeError reversed bounds spanning zero",
+            "status": "passed",
+            "durationMs": 0.18,
+            "line": 62,
+            "column": 3,
+            "id": "1c3bff3f219c1ed8369e8fa00dffbfc65e22a89e8f9a7b099a209550e6770028"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "throws RangeError reversed bounds spanning zero",
+            "status": "passed",
+            "durationMs": 0.029291,
+            "line": 62,
+            "column": 3,
+            "id": "2581ad4db3ee7d79841fadedb07f71066b62f5b53a8ff3cbfdfb05d70b4bd2a4"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "throws RangeError reversed bounds spanning zero",
+            "status": "passed",
+            "durationMs": 0.030333,
+            "line": 62,
+            "column": 3,
+            "id": "294012b650c88344f17a8ff8e83e2b37a159f0c5cf9e401a4d4d322a2ec775a2"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "throws RangeError reversed bounds spanning zero",
+            "status": "passed",
+            "durationMs": 0.027666,
+            "line": 62,
+            "column": 3,
+            "id": "406d3d23993258418d93077eb02d232e0e7d9258549939c8daf0258cf55fd3e2"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "throws RangeError reversed bounds spanning zero",
+            "status": "passed",
+            "durationMs": 0.027,
+            "line": 62,
+            "column": 3,
+            "id": "86e60e759397ac6f80b91d5583f7c31347856f54761d07c32103bebe84dbfaa8"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "throws RangeError reversed bounds spanning zero",
+            "status": "passed",
+            "durationMs": 0.026958,
+            "line": 62,
+            "column": 3,
+            "id": "85ccf98a145884b393498235fdab8c8e08498df40d9184bc6f0c52efc00a75ec"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "throws RangeError reversed bounds spanning zero",
+            "status": "passed",
+            "durationMs": 0.067208,
+            "line": 62,
+            "column": 3,
+            "id": "a03500eba22b280428e04baf3dbbb06d2abd6127e74c0f3c850304a729aef0ca"
+          }
+        ],
+        "collectionFiles": [
+          "src/clamp.test.js"
+        ],
+        "requestedFiles": [
+          "src/clamp.test.js"
+        ],
+        "executedFiles": [
+          "src/clamp.test.js"
+        ],
+        "missingFiles": [],
+        "unknownFiles": [],
+        "complete": true,
+        "command": [
+          "<node>",
+          "--test",
+          "--test-reporter=<repository>src/reporters/node.js",
+          "--test-reporter-destination=/var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-report-VlMFgA/results.json",
+          "./src/clamp.test.js"
+        ],
+        "stdout": "",
+        "stderr": "",
+        "signal": null,
+        "reportErrors": []
+      }
+    },
+    {
+      "name": "reversed-bounds",
+      "mutated": "export function clamp(value,min,max){return Math.min(max,Math.max(min,value));}\n",
+      "detected": true,
+      "result": {
+        "adapter": "node",
+        "exitCode": 1,
+        "durationMs": 115,
+        "tests": [
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "passed",
+            "durationMs": 0.680125,
+            "line": 46,
+            "column": 3,
+            "id": "aa8c1b44e0a0ab0ee6c6a3fdcea030fa88c1409e825bd963c2beddb7988315ab"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "passed",
+            "durationMs": 0.118834,
+            "line": 46,
+            "column": 3,
+            "id": "d80dd83df98d3617065157a2df470313541d8320f5ffb72eafb4d7095e59be9a"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "passed",
+            "durationMs": 0.0475,
+            "line": 46,
+            "column": 3,
+            "id": "958b10e96b10182ba5009021059c7fe4663c987d9b6740562ef79314f3234d7e"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "passed",
+            "durationMs": 0.044667,
+            "line": 46,
+            "column": 3,
+            "id": "19316b3d4d353408f20fe5d467b73ddfb1380395189476116d8e93f51a68edc1"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "passed",
+            "durationMs": 0.047167,
+            "line": 46,
+            "column": 3,
+            "id": "ff227ead0d50b5e72b115534360bb4f874be54fa2c9231d02c2a7b5afece4bbe"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "passed",
+            "durationMs": 0.041916,
+            "line": 46,
+            "column": 3,
+            "id": "55a6061355c41d26136ab0776024db1e4cf9ff9886de87a68d35bd30a0302206"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "passed",
+            "durationMs": 0.039167,
+            "line": 46,
+            "column": 3,
+            "id": "40fe1ab9aad5cab4d5fb57cf41619738af0dcf5996f0d820926fa1c1aeb77d8a"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "passed",
+            "durationMs": 0.038458,
+            "line": 46,
+            "column": 3,
+            "id": "effdb5508da1ddc466c7a0302aa7eea24a26565d338333fe40362a6d9d82c405"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "passed",
+            "durationMs": 0.293792,
+            "line": 46,
+            "column": 3,
+            "id": "c14ccbffd1c621744462ef0b5912542208a1af83858ac41cf016122d8e1748b0"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "passed",
+            "durationMs": 0.316625,
+            "line": 46,
+            "column": 3,
+            "id": "8be0930fdebb217ee5f64781c47462eb9ec7be532f655bb1a4f8ab5c1796e06b"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "passed",
+            "durationMs": 0.176875,
+            "line": 46,
+            "column": 3,
+            "id": "467a9dfd0938c6028a2cd00f9fb524a0e73002638494e1a98ee64337721baf8e"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "passed",
+            "durationMs": 0.041292,
+            "line": 46,
+            "column": 3,
+            "id": "b688b38c66b718f7ccf9651b0d04d39a188129cd97ec83261b56eff473052859"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "passed",
+            "durationMs": 0.029167,
+            "line": 46,
+            "column": 3,
+            "id": "7d312fc0026e5795b17cf7e2f9afa082e0559bbf337ea8a408849b3efc9d7c86"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "passed",
+            "durationMs": 0.023417,
+            "line": 46,
+            "column": 3,
+            "id": "ca84634be4a00e78202e2068484386a2a6786db6b8d3a34c35f55c6d5932c580"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "passed",
+            "durationMs": 0.022458,
+            "line": 46,
+            "column": 3,
+            "id": "c4ae0b4bd4e77ef5937ff53b55b5a5687cac9abbe090e8ea26e9500c8c1b5930"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "passed",
+            "durationMs": 0.021458,
+            "line": 46,
+            "column": 3,
+            "id": "b77aa5697540902ebc3619b9a39fd1e57f76289b0c5fc24419e6a00dc0e7eb7b"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "passed",
+            "durationMs": 0.021916,
+            "line": 46,
+            "column": 3,
+            "id": "61ea09f21efa4e03b91fa6ff00f9fbf74282dc50fc39c02e22af80e5814ed4ea"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "passed",
+            "durationMs": 0.02075,
+            "line": 46,
+            "column": 3,
+            "id": "4d109c1e6b55c2d9ef6b352fd35e5a32e1fe2bca60ca57aa91dac197453b7b0a"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "passed",
+            "durationMs": 0.020583,
+            "line": 46,
+            "column": 3,
+            "id": "43d028f351ca38185a9d4e29060a4f2429d7ff0146adb80660ceae0b24316756"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "passed",
+            "durationMs": 0.020333,
+            "line": 46,
+            "column": 3,
+            "id": "ab7124252d4a14fa49b415ec10d39cceaf17159998c86577e62468d2177c0b1d"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "passed",
+            "durationMs": 0.02075,
+            "line": 46,
+            "column": 3,
+            "id": "d70a24119eb160daf8e54b0867899a07d5510b8e5ddbbf0bd8366b9ee8ca04b9"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "passed",
+            "durationMs": 0.020833,
+            "line": 46,
+            "column": 3,
+            "id": "e22563f1980ae841c22116588858f9e3712fa2c6ad1830ea229fa87fdeb164d6"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "passed",
+            "durationMs": 0.020709,
+            "line": 46,
+            "column": 3,
+            "id": "5b7e3aa1797eeffa318cda0b33e9958578ad5e32e7d971924077ee23ca8549f6"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "passed",
+            "durationMs": 0.021041,
+            "line": 46,
+            "column": 3,
+            "id": "a29fe05bc934c1e0b841ab7ffd311237c22534559619d3d917b006f525156ce8"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "passed",
+            "durationMs": 0.02025,
+            "line": 46,
+            "column": 3,
+            "id": "524139297fb116a407401a1710bfb5afb2a0476213cf6207e41ce01234540e60"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "passed",
+            "durationMs": 0.020833,
+            "line": 46,
+            "column": 3,
+            "id": "50591fcf5a20412bb849ce483d165ac2c76e0045abad50603d1d2f94c0dca9af"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "passed",
+            "durationMs": 0.020833,
+            "line": 46,
+            "column": 3,
+            "id": "2e83b149df3a648ad725b20a400b2e33301fec42a6db6de9f0033b741ef7990f"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "passed",
+            "durationMs": 0.020792,
+            "line": 46,
+            "column": 3,
+            "id": "1deb86e7ead33bd3c0acfb6dc13ef77fd990d2745151acb9a51d7726a7f9ca0c"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "passed",
+            "durationMs": 0.02075,
+            "line": 46,
+            "column": 3,
+            "id": "979f6bcbc01f792a82782e266debf51f9819afb8a640219b7635c96d8a48fe41"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "passed",
+            "durationMs": 0.02225,
+            "line": 46,
+            "column": 3,
+            "id": "228ca421d9249025628698b20c0d4ebfce14c373e401626671843799cb15a8b4"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "passed",
+            "durationMs": 0.024166,
+            "line": 46,
+            "column": 3,
+            "id": "671f81efe1db855716605c9fd56a0edf5f2c8535b2fb5257a8cfb61a6944137f"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "passed",
+            "durationMs": 0.022875,
+            "line": 46,
+            "column": 3,
+            "id": "5aa4dd03ab340c00a15467187a3facf6cd70beb66f3ea884954a5719a8962599"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "passed",
+            "durationMs": 0.027292,
+            "line": 46,
+            "column": 3,
+            "id": "304289dc436570a1a98f44c4ac51bfce4fa42685e25bc2479a98498c323bf271"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "passed",
+            "durationMs": 0.021709,
+            "line": 46,
+            "column": 3,
+            "id": "88d45c4a8bcfb1c913b50d1541ad671e52e18934f9dc42f70e46fff546cf5013"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "passed",
+            "durationMs": 0.023458,
+            "line": 46,
+            "column": 3,
+            "id": "ce01d7c9233114e4dc6140cd8d53cbd0e5e6c39264e432a550e1f36110ff2857"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "passed",
+            "durationMs": 0.021083,
+            "line": 46,
+            "column": 3,
+            "id": "b48ed463aa3aa4de67cbde9df4d7664aeaa648430b28c7a81caa335d84d0c736"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "above equal negative bounds",
+            "status": "passed",
+            "durationMs": 0.020792,
+            "line": 46,
+            "column": 3,
+            "id": "7615cd9733d8e6f3381a305637a6a99a10f4c213364e1c76672f57ab28163ef9"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "throws RangeError reversed bounds spanning zero",
+            "status": "failed",
+            "durationMs": 0.462625,
+            "line": 62,
+            "column": 3,
+            "id": "1c3bff3f219c1ed8369e8fa00dffbfc65e22a89e8f9a7b099a209550e6770028"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "throws RangeError reversed bounds spanning zero",
+            "status": "failed",
+            "durationMs": 0.069209,
+            "line": 62,
+            "column": 3,
+            "id": "2581ad4db3ee7d79841fadedb07f71066b62f5b53a8ff3cbfdfb05d70b4bd2a4"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "throws RangeError reversed bounds spanning zero",
+            "status": "failed",
+            "durationMs": 0.05,
+            "line": 62,
+            "column": 3,
+            "id": "294012b650c88344f17a8ff8e83e2b37a159f0c5cf9e401a4d4d322a2ec775a2"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "throws RangeError reversed bounds spanning zero",
+            "status": "failed",
+            "durationMs": 0.04475,
+            "line": 62,
+            "column": 3,
+            "id": "406d3d23993258418d93077eb02d232e0e7d9258549939c8daf0258cf55fd3e2"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "throws RangeError reversed bounds spanning zero",
+            "status": "failed",
+            "durationMs": 0.048417,
+            "line": 62,
+            "column": 3,
+            "id": "86e60e759397ac6f80b91d5583f7c31347856f54761d07c32103bebe84dbfaa8"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "throws RangeError reversed bounds spanning zero",
+            "status": "failed",
+            "durationMs": 0.043084,
+            "line": 62,
+            "column": 3,
+            "id": "85ccf98a145884b393498235fdab8c8e08498df40d9184bc6f0c52efc00a75ec"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "throws RangeError reversed bounds spanning zero",
+            "status": "failed",
+            "durationMs": 0.044083,
+            "line": 62,
+            "column": 3,
+            "id": "a03500eba22b280428e04baf3dbbb06d2abd6127e74c0f3c850304a729aef0ca"
+          }
+        ],
+        "collectionFiles": [
+          "src/clamp.test.js"
+        ],
+        "requestedFiles": [
+          "src/clamp.test.js"
+        ],
+        "executedFiles": [
+          "src/clamp.test.js"
+        ],
+        "missingFiles": [],
+        "unknownFiles": [],
+        "complete": true,
+        "command": [
+          "<node>",
+          "--test",
+          "--test-reporter=<repository>src/reporters/node.js",
+          "--test-reporter-destination=/var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-report-XLki5K/results.json",
+          "./src/clamp.test.js"
+        ],
+        "stdout": "",
+        "stderr": "",
+        "signal": null,
+        "reportErrors": []
+      }
+    }
+  ],
+  "detected": 4,
+  "total": 4,
+  "limitations": [
+    "One small deterministic specification and one unpinned CLI default model; no general efficacy or vendor-diverse review claim.",
+    "Four mutations are withheld from worker payloads; independent requirements are supplied.",
+    "Installed native credentials/allowance are used; provider API environment keys are stripped by the adapter."
+  ]
+}

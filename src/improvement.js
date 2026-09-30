@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { randomUUID } from 'node:crypto';
-import { git, readConfig, safePath } from './files.js';
+import { git, readConfig, safePath, listFiles } from './files.js';
 import { snapshot, freshness, digest } from './provenance.js';
 import { stagePatch, validateCandidates, applyPatch } from './candidates.js';
 import { generate } from './swarm.js';
@@ -55,6 +55,7 @@ function copyCandidate(root, destination, id) {
   }
   return { id, directory: target };
 }
+const repositoryInputs=root=>digest(Object.fromEntries(listFiles(root).map(file=>[file,digest(fs.readFileSync(safePath(root,file)))])));
 function fullSuite(root, options) {
   const config = readConfig(root);
   const discovery = discover(root, { ...config, discovery: Array.isArray(config.discovery) ? config.discovery : 'native' });
@@ -137,32 +138,44 @@ export async function improve(root, options = {}) {
       if (!Array.isArray(prepared) || prepared.some(file => typeof file !== 'string')) throw new Error('prepare must return an array of changed project paths');
       prepared = prepared.map(file => changedPath(worktree, file));
     }
+    let repositoryPrepared=[];
+    if(options.prepareRepository){
+      if(typeof options.prepareRepository!=='function')throw new Error('prepareRepository must be a trusted callback');
+      repositoryPrepared=await options.prepareRepository(worktreeRoot,{project:prefix||'.'});
+      if(!Array.isArray(repositoryPrepared)||repositoryPrepared.some(file=>typeof file!=='string'))throw new Error('prepareRepository must return repository paths');
+      repositoryPrepared=repositoryPrepared.map(file=>changedPath(worktreeRoot,file));
+    }
     const paths = [...new Set([...candidate.files.map(file => file.path), ...candidate.delete, ...initialized, ...prepared])];
     for (const file of candidate.files) if (digest(fs.readFileSync(safePath(worktree, file.path))) !== file.hash) throw new Error(`Preparation altered reviewed candidate: ${file.path}`);
     for (const file of candidate.delete) if (fs.existsSync(safePath(worktree, file))) throw new Error(`Preparation restored a reviewed deletion: ${file}`);
     const installed = snapshot(worktree, readConfig(worktree));
+    const testedRepository=repositoryInputs(worktreeRoot);
     const report = fullSuite(worktree, options); result.fullRun = report;
     result.missingCases = missingPassingCases(validation.candidate?.tests, report.tests);
     if (!report.complete || report.exitCode !== 0 || !report.tests.some(test => test.status === 'passed') || result.missingCases.length) {
       result.status = 'full-run-failed'; return receipt();
     }
+    if(repositoryInputs(worktreeRoot)!==testedRepository)throw new Error('Repository inputs changed during full execution');
     const branchFresh = freshness(installed, snapshot(worktree, readConfig(worktree)));
     if (!branchFresh.fresh) throw new Error(`Branch changed during full execution: ${branchFresh.reasons.join(', ')}`);
     const originalFresh = freshness(before, snapshot(root, readConfig(root)));
     if (!originalFresh.fresh || git(repository, ['rev-parse', 'HEAD']).trim() !== base || clean(repository, prefix).length) throw new Error('Original checkout changed while improvement was running; branch retained without a commit');
-    const allowed = new Set(paths.map(file => prefix ? `${prefix}/${file}` : file));
+    const allowed = new Set([...paths.map(file => prefix ? `${prefix}/${file}` : file),...repositoryPrepared]);
     const unexpected = changes(worktreeRoot).filter(change => !metadata(change, prefix) && !allowed.has(change.file));
     if (unexpected.length) throw new Error(`Unexpected changes outside the reviewed patch: ${unexpected.map(change => change.file).join(', ')}`);
     git(worktreeRoot, ['add', '--', ...allowed]);
     if (!git(worktreeRoot, ['diff', '--cached', '--name-only']).trim()) { result.status = 'no-changes'; return receipt(); }
+    const intendedTree=git(worktreeRoot,['write-tree']).trim();
     git(worktreeRoot, ['commit', '-m', 'test: improve reviewed test quality with full-suite evidence']);
     result.sha = git(worktreeRoot, ['rev-parse', 'HEAD']).trim();
     const afterCommit = freshness(installed, snapshot(worktree, readConfig(worktree)));
     const committedMatches = !git(worktreeRoot, ['diff', 'HEAD', '--name-only']).trim() && !changes(worktreeRoot).some(change => !metadata(change, prefix));
-    result.status = afterCommit.fresh && committedMatches ? 'ready-for-review' : 'commit-requires-review';
+    const treeMatches=git(worktreeRoot,['rev-parse','HEAD^{tree}']).trim()===intendedTree&&repositoryInputs(worktreeRoot)===testedRepository;
+    result.status = afterCommit.fresh && committedMatches && treeMatches ? 'ready-for-review' : 'commit-requires-review';
+    if(!treeMatches)result.error='Committed repository tree differs from the exact tested and staged inputs';
     if (!committedMatches) result.error = 'Committed tree differs from the inputs that passed the full suite';
     if (!afterCommit.fresh) result.error = `Git hooks changed tested inputs: ${afterCommit.reasons.join(', ')}`;
-    result.preparedPaths = [...initialized, ...prepared];
+    result.preparedPaths = [...initialized, ...prepared];result.repositoryPreparedPaths=repositoryPrepared;
     result.next = ['Review the branch diff and retained original/candidate/full-run evidence.', 'Open a pull request when ready; merge is explicit.', 'Keep configured quality workflows enabled after merge.'];
     return receipt();
   } catch (error) {

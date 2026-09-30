@@ -106,3 +106,13 @@ test('Git hooks cannot omit a tested candidate and still claim a verified commit
   assert.equal(result.status,'commit-requires-review');assert.ok(result.sha);assert.match(result.error,/Committed tree differs/);
   assert.equal(fs.existsSync(path.join(root,'test/boundary.test.js')),false);
 });
+
+
+test('a commit hook staging sibling-project changes invalidates the exact tested tree',async t=>{
+ const repo=fixture(t,Object.fromEntries(Object.entries(twoModules).map(([key,value])=>['packages/demo/'+key,value])));
+ write(repo,'other-project/config.js','export const version=1;');commit(repo);
+ const hook=path.join(repo,'.git/hooks/pre-commit');fs.writeFileSync(hook,'#!/bin/sh\nprintf "export const version=99;" > other-project/config.js\ngit add -- other-project/config.js\n');fs.chmodSync(hook,0o755);
+ const result=await improve(path.join(repo,'packages/demo'),{patch:{files:[{path:'test/extra.test.js',content:"import test from 'node:test';import assert from 'node:assert/strict';test('extra',()=>assert.equal(1,1));"}],review,requirements:'Contract: a is one and b is two.'}});
+ t.after(()=>fs.rmSync(result.worktreeRoot,{recursive:true,force:true}));
+ assert.equal(result.status,'commit-requires-review',JSON.stringify(result));assert.match(result.error,/repository tree/);assert.ok(git(result.worktreeRoot,'diff','--name-only',result.base,result.sha).includes('other-project/config.js'));
+});

@@ -1,0 +1,103 @@
+{
+  "schemaVersion": 1,
+  "mode": "full",
+  "base": null,
+  "changed": [
+    "README.md"
+  ],
+  "ignored": [],
+  "selected": [
+    "test/bin.test.js",
+    "test/index.test.js",
+    "test/non-secure.test.js",
+    "test/pool.test.js"
+  ],
+  "total": 4,
+  "omitted": 0,
+  "selectionReduction": 0,
+  "reasons": [
+    "dependency-graph-incomplete",
+    "change-without-test-evidence"
+  ],
+  "warnings": [
+    {
+      "file": "bin/nanoid.js",
+      "reason": "runtime-dependency"
+    },
+    {
+      "file": "test/bin.test.js",
+      "reason": "runtime-dependency"
+    },
+    {
+      "file": "test/check-prebuild.js",
+      "reason": "runtime-dependency"
+    },
+    {
+      "file": "test/check-versions.js",
+      "reason": "runtime-dependency"
+    },
+    {
+      "file": "test/prebuild.js",
+      "reason": "runtime-dependency"
+    },
+    {
+      "file": "test/update-prebuild.js",
+      "reason": "runtime-dependency"
+    }
+  ],
+  "decisions": [
+    {
+      "test": "test/bin.test.js",
+      "selected": true,
+      "reasons": [
+        "dependency-graph-incomplete",
+        "change-without-test-evidence",
+        "test-without-local-dependencies"
+      ],
+      "paths": []
+    },
+    {
+      "test": "test/index.test.js",
+      "selected": true,
+      "reasons": [
+        "dependency-graph-incomplete",
+        "change-without-test-evidence"
+      ],
+      "paths": []
+    },
+    {
+      "test": "test/non-secure.test.js",
+      "selected": true,
+      "reasons": [
+        "dependency-graph-incomplete",
+        "change-without-test-evidence"
+      ],
+      "paths": []
+    },
+    {
+      "test": "test/pool.test.js",
+      "selected": true,
+      "reasons": [
+        "dependency-graph-incomplete",
+        "change-without-test-evidence"
+      ],
+      "paths": []
+    }
+  ],
+  "fingerprint": "4a8cefe470b06e87ad8514fb0f1db7aa97be24b4e20564680f0c83da84b9f08e",
+  "discovery": {
+    "complete": true,
+    "method": "configured-static-conventions"
+  },
+  "runtime": {
+    "usable": false,
+    "reason": "runtime-disabled",
+    "policy": "supplement-static-only"
+  },
+  "evidence": "static-imports-and-declared-dependencies",
+  "limitations": [
+    "Runtime and external service dependencies are not observed.",
+    "Selection operates at test-file granularity.",
+    "No deployment safety or measured wall-clock savings are implied."
+  ]
+}
