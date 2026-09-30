@@ -1,20 +1,26 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="440" viewBox="0 0 1200 440" role="img" aria-labelledby="title description">
-<title id="title">TestLore — the quality engineer that learns your codebase</title><desc id="description">Build better tests, run what matters, and remember what worked. TestLore connects reviewed agent proposals, full validation, explainable routing, and local learning.</desc>
-<rect width="1200" height="440" rx="24" fill="#102a2a"/>
-<path d="M1050 0v440M0 355h1200" stroke="#244444" stroke-width="1"/>
-<g font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Arial,sans-serif">
-<path d="M64 52h37l13 12v47H77L64 99z" fill="none" stroke="#bcf4b5" stroke-width="3"/><path d="M77 65h24M77 76h19M77 87h24" stroke="#bcf4b5" stroke-width="3"/>
-<text x="130" y="101" font-size="60" font-weight="750" letter-spacing="-2" fill="#f7f8eb">TestLore<tspan fill="#bcf4b5">.</tspan></text>
-<text x="64" y="190" font-size="42" font-weight="600" letter-spacing="-1" fill="#f7f8eb">The quality engineer</text>
-<text x="64" y="245" font-size="42" font-weight="600" letter-spacing="-1" fill="#f7f8eb">that learns your codebase.</text>
-<text x="64" y="299" font-size="20" fill="#a6c4bd">Build better tests. Run what matters. Remember what worked.</text>
-<g font-size="17">
-<path d="M752 101v193" stroke="#5b8881" stroke-width="2" stroke-dasharray="5 5"/>
-<g fill="#1a3a39" stroke="#45635d"><rect x="705" y="54" width="426" height="60" rx="14"/><rect x="705" y="126" width="426" height="60" rx="14"/><rect x="705" y="198" width="426" height="60" rx="14"/><rect x="705" y="270" width="426" height="60" rx="14"/></g>
-<g fill="#bcf4b5"><circle cx="738" cy="84" r="5"/><circle cx="738" cy="156" r="5"/><circle cx="738" cy="228" r="5"/><circle cx="738" cy="300" r="5"/></g>
-<g fill="#eef3e9" font-weight="600"><text x="761" y="91">Propose reviewed tests</text><text x="761" y="163">Validate the full suite</text><text x="761" y="235">Explain the affected tests</text><text x="761" y="307">Recall what worked</text></g>
-<path d="M1148 301h16V83h-16" fill="none" stroke="#bcf4b5" stroke-width="2"/><path d="m1150 78-7 5 7 5" fill="none" stroke="#bcf4b5" stroke-width="2"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="730" viewBox="0 0 1200 730" role="img" aria-labelledby="title description">
+<title id="title">TestLore: from one change to an evidence loop</title>
+<desc id="description">An open-source quality engineer for developers and coding agents. Observe native tests, sign the evidence, challenge claims, review outcomes and learn advisory lessons. Keep your runners. Know why each test runs. Illustrated flow, not live status.</desc>
+<rect width="1200" height="730" rx="22" fill="#0e1c23"/>
+<path d="M0 80H1200M48 648H1152" stroke="#2c444d"/>
+<g font-family="Helvetica Neue,Arial,sans-serif">
+<text x="48" y="50" fill="#eff5f1" font-size="23" font-weight="750" letter-spacing="-1">TestLore<tspan fill="#9de9ca">.</tspan></text>
+<text x="188" y="48" fill="#bccacf" font-size="10" letter-spacing="2">QUALITY ENGINEERING / OPEN SOURCE</text>
+<text x="1152" y="48" text-anchor="end" fill="#9de9ca" font-size="11" letter-spacing="2">KNOW WHY EACH TEST RUNS</text>
+<text x="48" y="136" fill="#9de9ca" font-size="11" letter-spacing="2">01 / A QUALITY ENGINEER FOR YOUR REPOSITORY</text>
+<g font-size="64" font-weight="750" letter-spacing="-2" fill="#eff5f1"><text x="48" y="215">From one change</text><text x="48" y="286">to an <tspan fill="#9de9ca">evidence</tspan></text><text x="48" y="357" fill="#9de9ca">loop.</text></g>
+<text x="48" y="405" fill="#bccacf" font-size="18">Better tests. Smarter plans.</text><text x="48" y="433" fill="#bccacf" font-size="18">A memory that earns its place.</text>
+<text x="669" y="136" fill="#9de9ca" font-size="11" letter-spacing="2">WHAT RUNS, AND WHAT STILL NEEDS PROOF</text>
+<g fill="#eff5f1" font-size="38" font-weight="700" letter-spacing="-1"><text x="669" y="200">Observe. Sign. Challenge.</text><text x="669" y="246">Learn from reviewed</text><text x="669" y="292">outcomes.</text></g>
+<g fill="#bccacf" font-size="17"><text x="669" y="343">Keep the tools you trust. TestLore connects them</text><text x="669" y="370">with modular dependency reasoning, independent</text><text x="669" y="397">validation and local project memory.</text></g>
+<rect x="669" y="438" width="483" height="110" rx="14" fill="#182c35" stroke="#2c444d"/>
+<text x="695" y="474" fill="#eff5f1" font-size="19">A passing test and its evidence recorder</text><text x="695" y="504" fill="#9de9ca" font-size="19" font-weight="700">have separate health.</text>
+<g fill="#bccacf" font-size="12"><text x="669" y="590">Signed observations authenticate the recorder.</text><text x="669" y="611">Reviewed lessons stay advisory. Improvement needs proof.</text></g>
+<text x="48" y="691" fill="#9de9ca" font-size="12" letter-spacing="1.8">YOUR ENGINES. A SHARED QUALITY CONTRACT.</text><text x="1152" y="691" text-anchor="end" fill="#bccacf" font-size="12">MIT / EXPERIMENTAL ALPHA</text>
 </g>
-<text x="64" y="402" font-size="16" font-weight="650" letter-spacing="3" fill="#bcf4b5">CREATE · MEASURE · MODULARIZE · ROUTE · LEARN</text>
-<text x="1128" y="402" text-anchor="end" font-size="15" fill="#a6c4bd">OPEN SOURCE / MIT</text>
-</g></svg>
+<g fill="none" stroke="#2c444d"><circle cx="301" cy="548" r="96"/><circle cx="301" cy="548" r="68"/></g><circle cx="301" cy="452" r="5" fill="#9de9ca"/>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0L10 5L0 10" fill="#9de9ca"/></marker></defs>
+<g stroke="#9de9ca" fill="none" stroke-width="2" marker-end="url(#arrow)"><path d="M163 547H180M295 547H312M427 547H444"/><path d="M499 588C487 642 106 642 94 588" stroke-dasharray="7 6"/></g>
+<g fill="#182c35" stroke="#9de9ca" stroke-width="1.5"><rect x="48" y="509" width="115" height="76" rx="12"/><rect x="180" y="509" width="115" height="76" rx="12"/><rect x="312" y="509" width="115" height="76" rx="12" stroke="#e2c787"/><rect x="444" y="509" width="115" height="76" rx="12"/></g>
+<g font-family="Helvetica Neue,Arial,sans-serif" text-anchor="middle"><g fill="#eff5f1" font-size="12" font-weight="700"><text x="105" y="539">OBSERVE</text><text x="237" y="539">WITNESS</text><text x="369" y="539">CHALLENGE</text><text x="501" y="539">OUTCOME</text></g><g fill="#bccacf" font-size="10"><text x="105" y="563">native shadow run</text><text x="237" y="563">sign evidence</text><text x="369" y="563">check the claim</text><text x="501" y="563">explicit review</text><text x="301" y="638" font-size="9" letter-spacing="1">LEARN ONLY AFTER REVIEW</text></g></g>
+</svg>

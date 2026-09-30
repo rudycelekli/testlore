@@ -1,10 +1,10 @@
 <p align="center">
-  <img src="docs/assets/testlore-hero.svg" alt="TestLore — the quality engineer that learns your codebase. Build better tests. Run what matters. Remember what worked." width="1200" />
+  <img src="docs/assets/testlore-hero.svg" alt="TestLore: from one change to an evidence loop. Observe native tests, sign evidence, challenge claims and learn from reviewed outcomes." width="1200" />
 </p>
 
 <p align="center">
-  <strong>Create tests. Measure quality. Explain every run. Learn from experience.</strong><br />
-  An open-source testing intelligence layer for developers and coding agents.
+  <strong>Your quality engineer. Your tools. Evidence you can inspect.</strong><br />
+  An open-source quality-engineering layer for developers and coding agents.
 </p>
 
 <p align="center">
@@ -17,6 +17,7 @@
 <p align="center">
   <a href="#start-in-one-command">Quick start</a> ·
   <a href="#a-quality-engineer-inside-your-repository">How it works</a> ·
+  <a href="#from-one-change-to-an-evidence-loop">Evidence loop</a> ·
   <a href="#learning-that-stays-with-your-project">Learning</a> ·
   <a href="#show-the-evidence">Benchmarks</a> ·
   <a href="docs/configuration.md">Documentation</a> ·
@@ -25,20 +26,22 @@
 
 ## A quality engineer inside your repository
 
-Your code changes constantly. Your tests should keep up.
+Every change deserves an understandable test plan.
 
-TestLore connects an agent team, your existing test runner, measurable quality evidence, and persistent project memory. It proposes better tests on a new branch, validates them against the original suite, explains which tests each change affects, and remembers useful patterns for the next improvement.
+TestLore brings **test creation, intelligent routing and reviewed learning** into one inspectable workflow. It proposes improvements on an isolated branch, preserves your existing regression tests, and explains what each change needs to prove.
+
+**Keep your best tools.** Your native engines supply the expertise. TestLore adds the shared quality contract: modular dependencies, independent validation, reasons for every proposed omission, and a memory of reviewed outcomes.
 
 | Your starting point | What TestLore does |
 | --- | --- |
 | **No tests yet** | An architect, bounded author team, and independent reviewer propose runnable tests from your behavioral requirements. |
 | **Tests exist, confidence is unclear** | Audit structure, import actual coverage and mutation results, measure stability, and surface gaps with their evidence. |
 | **A growing suite slows development** | Follow static, declared, and observed dependencies to select affected test files, with reasons and conservative fallbacks. |
-| **Knowledge disappears between sessions** | Retain validated examples and rejection signals; retrieve useful historical patterns for future agents. |
+| **Knowledge disappears between sessions** | Retain validated examples, reviewed outcomes and rejection signals; retrieve relevant advisory history for future agents. |
 
 ## Start in one command
 
-Configure your local quality engineer and **shadow CI** without an AI account:
+Give your repository its own quality engineer. One command sets up **shadow verification** and CI:
 
 ```sh
 npm exec --yes --package=github:rudycelekli/testlore -- testlore setup
@@ -93,6 +96,20 @@ npx --no-install testlore run --shadow --base HEAD
 
 Local analysis and routing require no AI account. Generation may consume your selected worker's allowance.
 
+## From one change to an evidence loop
+
+[![Observe, witness, challenge, outcome: reviewed learning with separate recorder health](docs/assets/evidence-loop.svg)](docs/evidence-loop.md)
+
+Register an expected result, run native full shadow verification, sign its receipt, challenge the claim, and record an explicit review. Only reviewed outcomes become advisory lessons. The loop distinguishes failed tests, tests that never started, missing witnesses and altered receipts. An independently retained public key authenticates the recorder; an external checkpoint helps detect removed history.
+
+```sh
+npx --no-install testlore witness-init --output ../testlore-witness.pub.pem
+npx --no-install testlore observe --revision "candidate-1" --output ../testlore-checkpoint.json --json
+npx --no-install testlore loop-status --trusted-key ../testlore-witness.pub.pem --checkpoint ../testlore-checkpoint.json --json
+```
+
+Signatures establish recorder identity. Revision labels and reviewer names remain operator assertions; this local loop does not verify a live serving revision. Tests do not establish deployment safety, and reviewed memory does not establish learning improvement. [Evidence contract and outcome commands →](docs/evidence-loop.md) · [Interactive visual explanation →](docs/index.html)
+
 ## The verification contract for coding agents
 
 Before an agent changes code, give it a concrete quality brief:
@@ -129,20 +146,6 @@ SKIP  test/checkout.test.js
 Copy, styles, templates, localization, schemas, fixtures, and services can all affect behavior. Declare their relationships or capture runtime reads. TestLore combines these with static dependencies and explains its choices. Unresolved source dependencies retain every consuming test on every active change. Configuration, registration, discovery, unknown changed inputs and stale authority retain full fallback. Tooling outside test closures is reported separately. [Precision contract →](docs/precise-routing.md)
 
 Run `npm run demo` for a selective copy edit, a shared dependency, and an uncertain change. Selection works at **test-file granularity**; native execution reports individual cases. New installations default to shadow mode; `--selective` explicitly opts into the proposed subset. Shadow mode runs the full suite while checking the proposed selection against observed failures. [Routing configuration →](docs/configuration.md)
-
-## From one change to an evidence loop
-
-[![Observe, witness, challenge, outcome: reviewed learning with separate recorder health](docs/assets/evidence-loop.svg)](docs/evidence-loop.md)
-
-Register an expected result, run native full shadow verification, sign its receipt, challenge the claim, and record an explicit review. Only reviewed outcomes become advisory lessons. The loop distinguishes failed tests, tests that never started, missing witnesses and altered receipts. An independently retained public key authenticates the recorder; an external checkpoint helps detect removed history.
-
-```sh
-npx --no-install testlore witness-init --output ../testlore-witness.pub.pem
-npx --no-install testlore observe --revision "candidate-1" --output ../testlore-checkpoint.json --json
-npx --no-install testlore loop-status --trusted-key ../testlore-witness.pub.pem --checkpoint ../testlore-checkpoint.json --json
-```
-
-Signatures establish recorder identity. Revision labels and reviewer names remain operator assertions; this local loop does not verify a live serving revision. Tests do not establish deployment safety, and reviewed memory does not establish learning improvement. [Evidence contract and outcome commands →](docs/evidence-loop.md) · [Interactive visual explanation →](docs/index.html)
 
 ## Learning that stays with your project
 
@@ -205,7 +208,16 @@ Built to work alongside [Agentic QE](https://github.com/proffesor-for-testing/ag
 
 ## Show the evidence
 
-Reproducible results, raw outcomes, and stated scope accompany the claims. The comparison chart below is generated from actual test executions; raw outcomes and methodology accompany every comparison.
+Quality claims should come with receipts.
+
+The implemented loop can sign an observation, detect a missing witness and reject an unsupported claim. That is a concrete mechanism. Faster real-world development and better future tests must still be measured.
+
+**What the evidence says today:** controlled input-routing counterexamples catch defects native import selectors can omit; native selectors can also be faster. Constructed expensive suites show savings. Repeated learning evaluations establish no quality gain. [Read the comparison contract →](docs/comparison.md)
+
+<details>
+<summary><strong>Inspect the measured comparisons, raw outcomes and limits</strong></summary>
+
+The chart below is generated from actual executions. Each result names its scope.
 
 [![TestLore controlled comparison: fault recall, executed test files and total time](benchmarks/comparison/controlled-v1-2026-09-29-clarified/comparison.svg)](docs/comparison.md)
 
@@ -244,6 +256,8 @@ These are scoped experiments. The memory comparison confirms that historical rec
 
 The workload chart uses **64 independent files, a constructed 200 ms asynchronous delay per callback, concurrency four, and three repetitions**. TestLore caught the same one planted failure in every repetition. The observed savings apply to this specified condition. Real projects need their own measurements. [Reproduce this workload →](docs/workload.md)
 
+</details>
+
 ## Keep your runners
 
 | Ecosystem | Integration |
@@ -269,6 +283,8 @@ Source/service changes, incomplete reports, and altered receipts invalidate evid
 | `snapshot`, `evidence`, `stability`, `capture` | Bind and collect measured quality and runtime evidence. |
 | `generate`, `modularize`, `validate`, `apply` | Stage and validate generated or modular patches. |
 | `learn`, `recall`, `learning-export` | Inspect lessons, retrieve history, explicitly export aggregates. |
+| `witness-init`, `observe`, `loop-status` | Establish recorder trust, run native shadow observations and inspect separate recorder health. |
+| `challenge`, `outcome`, `outcome-lessons` | Assess scoped claims, record attributed reviews and retrieve advisory outcomes. |
 | `external-plan`, `external-run`, `aqe` | Native ecosystem and Agentic QE integration. |
 
 The `tddswarm` command remains an alias. Existing `tddswarm.config.json`, `tddswarm.requirements.md`, and `.tddswarm/` paths remain compatible.
@@ -291,4 +307,4 @@ node scripts/quality-proof.js
 node scripts/packed-proof.js
 ```
 
-<p align="center"><strong>Better tests. Clearer decisions. Knowledge that compounds.</strong></p>
+<p align="center"><strong>Better tests. Clearer decisions. A memory that earns its place.</strong></p>
