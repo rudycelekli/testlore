@@ -1,0 +1,206 @@
+{
+  "fixture": "rotate",
+  "base": {
+    "adapter": "node",
+    "exitCode": 0,
+    "durationMs": 510,
+    "tests": [
+      {
+        "file": "test/rotate.test.js",
+        "name": "independent rotation contract",
+        "status": "passed",
+        "durationMs": 22.073792,
+        "line": 1,
+        "column": 110,
+        "id": "1136c101e300c58977033f519e0dbfb5d9e15d8ac4c60f9332a0002d97b3e95d"
+      }
+    ],
+    "collectionFiles": [
+      "test/rotate.test.js"
+    ],
+    "requestedFiles": [
+      "test/rotate.test.js"
+    ],
+    "executedFiles": [
+      "test/rotate.test.js"
+    ],
+    "missingFiles": [],
+    "unknownFiles": [],
+    "dependencyFiles": [],
+    "complete": true,
+    "command": [
+      "<node>",
+      "--test",
+      "--test-reporter=<repository>src/reporters/node.js",
+      "--test-reporter-destination=/var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-report-4ZRM14/results.json",
+      "./test/rotate.test.js"
+    ],
+    "stdout": "",
+    "stderr": "",
+    "signal": null,
+    "reportErrors": [],
+    "discovery": {
+      "files": [
+        "test/rotate.test.js"
+      ],
+      "complete": true,
+      "adapter": "node",
+      "warnings": []
+    }
+  },
+  "defects": [
+    {
+      "id": "direction-reversed",
+      "result": {
+        "adapter": "node",
+        "exitCode": 1,
+        "durationMs": 276,
+        "tests": [
+          {
+            "file": "test/rotate.test.js",
+            "name": "independent rotation contract",
+            "status": "failed",
+            "durationMs": 5.51625,
+            "line": 1,
+            "column": 110,
+            "id": "1136c101e300c58977033f519e0dbfb5d9e15d8ac4c60f9332a0002d97b3e95d"
+          }
+        ],
+        "collectionFiles": [
+          "test/rotate.test.js"
+        ],
+        "requestedFiles": [
+          "test/rotate.test.js"
+        ],
+        "executedFiles": [
+          "test/rotate.test.js"
+        ],
+        "missingFiles": [],
+        "unknownFiles": [],
+        "dependencyFiles": [],
+        "complete": true,
+        "command": [
+          "<node>",
+          "--test",
+          "--test-reporter=<repository>src/reporters/node.js",
+          "--test-reporter-destination=/var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-report-boy10n/results.json",
+          "./test/rotate.test.js"
+        ],
+        "stdout": "",
+        "stderr": "",
+        "signal": null,
+        "reportErrors": [],
+        "discovery": {
+          "files": [
+            "test/rotate.test.js"
+          ],
+          "complete": true,
+          "adapter": "node",
+          "warnings": []
+        }
+      }
+    },
+    {
+      "id": "input-alias-returned",
+      "result": {
+        "adapter": "node",
+        "exitCode": 1,
+        "durationMs": 429,
+        "tests": [
+          {
+            "file": "test/rotate.test.js",
+            "name": "independent rotation contract",
+            "status": "failed",
+            "durationMs": 3.7825,
+            "line": 1,
+            "column": 110,
+            "id": "1136c101e300c58977033f519e0dbfb5d9e15d8ac4c60f9332a0002d97b3e95d"
+          }
+        ],
+        "collectionFiles": [
+          "test/rotate.test.js"
+        ],
+        "requestedFiles": [
+          "test/rotate.test.js"
+        ],
+        "executedFiles": [
+          "test/rotate.test.js"
+        ],
+        "missingFiles": [],
+        "unknownFiles": [],
+        "dependencyFiles": [],
+        "complete": true,
+        "command": [
+          "<node>",
+          "--test",
+          "--test-reporter=<repository>src/reporters/node.js",
+          "--test-reporter-destination=/var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-report-rM1Zul/results.json",
+          "./test/rotate.test.js"
+        ],
+        "stdout": "",
+        "stderr": "",
+        "signal": null,
+        "reportErrors": [],
+        "discovery": {
+          "files": [
+            "test/rotate.test.js"
+          ],
+          "complete": true,
+          "adapter": "node",
+          "warnings": []
+        }
+      }
+    },
+    {
+      "id": "negative-step-accepted",
+      "result": {
+        "adapter": "node",
+        "exitCode": 1,
+        "durationMs": 354,
+        "tests": [
+          {
+            "file": "test/rotate.test.js",
+            "name": "independent rotation contract",
+            "status": "failed",
+            "durationMs": 3.499125,
+            "line": 1,
+            "column": 110,
+            "id": "1136c101e300c58977033f519e0dbfb5d9e15d8ac4c60f9332a0002d97b3e95d"
+          }
+        ],
+        "collectionFiles": [
+          "test/rotate.test.js"
+        ],
+        "requestedFiles": [
+          "test/rotate.test.js"
+        ],
+        "executedFiles": [
+          "test/rotate.test.js"
+        ],
+        "missingFiles": [],
+        "unknownFiles": [],
+        "dependencyFiles": [],
+        "complete": true,
+        "command": [
+          "<node>",
+          "--test",
+          "--test-reporter=<repository>src/reporters/node.js",
+          "--test-reporter-destination=/var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-report-EGrdxb/results.json",
+          "./test/rotate.test.js"
+        ],
+        "stdout": "",
+        "stderr": "",
+        "signal": null,
+        "reportErrors": [],
+        "discovery": {
+          "files": [
+            "test/rotate.test.js"
+          ],
+          "complete": true,
+          "adapter": "node",
+          "warnings": []
+        }
+      }
+    }
+  ]
+}

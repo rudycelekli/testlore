@@ -1,0 +1,206 @@
+{
+  "fixture": "batches",
+  "base": {
+    "adapter": "node",
+    "exitCode": 0,
+    "durationMs": 435,
+    "tests": [
+      {
+        "file": "test/batches.test.js",
+        "name": "independent batch contract",
+        "status": "passed",
+        "durationMs": 4.636792,
+        "line": 1,
+        "column": 112,
+        "id": "cae136715f65b998ee0f3ac7197eef726c1f540add6c480c7d53325350cf2479"
+      }
+    ],
+    "collectionFiles": [
+      "test/batches.test.js"
+    ],
+    "requestedFiles": [
+      "test/batches.test.js"
+    ],
+    "executedFiles": [
+      "test/batches.test.js"
+    ],
+    "missingFiles": [],
+    "unknownFiles": [],
+    "dependencyFiles": [],
+    "complete": true,
+    "command": [
+      "<node>",
+      "--test",
+      "--test-reporter=<repository>src/reporters/node.js",
+      "--test-reporter-destination=/var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-report-J0qnp3/results.json",
+      "./test/batches.test.js"
+    ],
+    "stdout": "",
+    "stderr": "",
+    "signal": null,
+    "reportErrors": [],
+    "discovery": {
+      "files": [
+        "test/batches.test.js"
+      ],
+      "complete": true,
+      "adapter": "node",
+      "warnings": []
+    }
+  },
+  "defects": [
+    {
+      "id": "partial-batch-lost",
+      "result": {
+        "adapter": "node",
+        "exitCode": 1,
+        "durationMs": 521,
+        "tests": [
+          {
+            "file": "test/batches.test.js",
+            "name": "independent batch contract",
+            "status": "failed",
+            "durationMs": 3.965875,
+            "line": 1,
+            "column": 112,
+            "id": "cae136715f65b998ee0f3ac7197eef726c1f540add6c480c7d53325350cf2479"
+          }
+        ],
+        "collectionFiles": [
+          "test/batches.test.js"
+        ],
+        "requestedFiles": [
+          "test/batches.test.js"
+        ],
+        "executedFiles": [
+          "test/batches.test.js"
+        ],
+        "missingFiles": [],
+        "unknownFiles": [],
+        "dependencyFiles": [],
+        "complete": true,
+        "command": [
+          "<node>",
+          "--test",
+          "--test-reporter=<repository>src/reporters/node.js",
+          "--test-reporter-destination=/var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-report-kdxegR/results.json",
+          "./test/batches.test.js"
+        ],
+        "stdout": "",
+        "stderr": "",
+        "signal": null,
+        "reportErrors": [],
+        "discovery": {
+          "files": [
+            "test/batches.test.js"
+          ],
+          "complete": true,
+          "adapter": "node",
+          "warnings": []
+        }
+      }
+    },
+    {
+      "id": "negative-total-accepted",
+      "result": {
+        "adapter": "node",
+        "exitCode": 1,
+        "durationMs": 778,
+        "tests": [
+          {
+            "file": "test/batches.test.js",
+            "name": "independent batch contract",
+            "status": "failed",
+            "durationMs": 1.417167,
+            "line": 1,
+            "column": 112,
+            "id": "cae136715f65b998ee0f3ac7197eef726c1f540add6c480c7d53325350cf2479"
+          }
+        ],
+        "collectionFiles": [
+          "test/batches.test.js"
+        ],
+        "requestedFiles": [
+          "test/batches.test.js"
+        ],
+        "executedFiles": [
+          "test/batches.test.js"
+        ],
+        "missingFiles": [],
+        "unknownFiles": [],
+        "dependencyFiles": [],
+        "complete": true,
+        "command": [
+          "<node>",
+          "--test",
+          "--test-reporter=<repository>src/reporters/node.js",
+          "--test-reporter-destination=/var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-report-hFZX7e/results.json",
+          "./test/batches.test.js"
+        ],
+        "stdout": "",
+        "stderr": "",
+        "signal": null,
+        "reportErrors": [],
+        "discovery": {
+          "files": [
+            "test/batches.test.js"
+          ],
+          "complete": true,
+          "adapter": "node",
+          "warnings": []
+        }
+      }
+    },
+    {
+      "id": "zero-size-accepted",
+      "result": {
+        "adapter": "node",
+        "exitCode": 1,
+        "durationMs": 512,
+        "tests": [
+          {
+            "file": "test/batches.test.js",
+            "name": "independent batch contract",
+            "status": "failed",
+            "durationMs": 39.200584,
+            "line": 1,
+            "column": 112,
+            "id": "cae136715f65b998ee0f3ac7197eef726c1f540add6c480c7d53325350cf2479"
+          }
+        ],
+        "collectionFiles": [
+          "test/batches.test.js"
+        ],
+        "requestedFiles": [
+          "test/batches.test.js"
+        ],
+        "executedFiles": [
+          "test/batches.test.js"
+        ],
+        "missingFiles": [],
+        "unknownFiles": [],
+        "dependencyFiles": [],
+        "complete": true,
+        "command": [
+          "<node>",
+          "--test",
+          "--test-reporter=<repository>src/reporters/node.js",
+          "--test-reporter-destination=/var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-report-nlikyd/results.json",
+          "./test/batches.test.js"
+        ],
+        "stdout": "",
+        "stderr": "",
+        "signal": null,
+        "reportErrors": [],
+        "discovery": {
+          "files": [
+            "test/batches.test.js"
+          ],
+          "complete": true,
+          "adapter": "node",
+          "warnings": []
+        }
+      }
+    }
+  ]
+}

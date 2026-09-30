@@ -1,0 +1,97 @@
+{
+  "schemaVersion": 1,
+  "id": "c4405626-2c55-4ae8-ba7e-10ed1b09116b",
+  "validatedAt": "2026-09-30T15:52:07.395Z",
+  "manifestHash": "ef2b2c6a78f626eb7f5154cbdac32fc134840866a9dea758ba3c92a436a33dc3",
+  "provenance": {
+    "schemaVersion": 1,
+    "revision": null,
+    "runner": "b64ab6ce30d5608ce2ebe53b3cb5a7aced76a5bb499e38b1bb4951dd08a1c830",
+    "environment": {
+      "node": "v24.5.0",
+      "platform": "darwin",
+      "arch": "arm64",
+      "labels": {}
+    },
+    "services": {},
+    "serviceWarnings": [],
+    "files": {
+      "package.json": "6dc1b06d6b093e9cccb20bee06a93836eee0420ae26803ca2ce4065d82f070d1",
+      "src/clamp.js": "7b60baec447a34a71cbfd4f37e10ecea3d4ce73758ff324d9840ee66f0998901",
+      "tddswarm.config.json": "a3311cc256883b903294286ba81b3f6ae788dc27c86988fd2576f65b5f8d0b60"
+    },
+    "fingerprint": "80879855bf4b42384acdd89d6b33bda966dc2280454e5b0bc8b44221dd4cc233"
+  },
+  "accepted": true,
+  "reasons": [],
+  "original": {
+    "discovery": {
+      "files": [],
+      "complete": true,
+      "adapter": "node",
+      "warnings": []
+    },
+    "exitCode": 0,
+    "complete": true,
+    "tests": [],
+    "collectionFiles": [],
+    "executedFiles": []
+  },
+  "candidate": {
+    "adapter": "node",
+    "exitCode": 0,
+    "durationMs": 494,
+    "tests": [
+      {
+        "file": "test/clamp.test.js",
+        "name": "boundary interior negative error",
+        "status": "passed",
+        "durationMs": 0.972833,
+        "line": 1,
+        "column": 108,
+        "id": "79f10aa8a595d2efccaaa8b825305cde60ec89dadf6f5a81c449a50f58b6a56b"
+      }
+    ],
+    "collectionFiles": [
+      "test/clamp.test.js"
+    ],
+    "requestedFiles": [
+      "test/clamp.test.js"
+    ],
+    "executedFiles": [
+      "test/clamp.test.js"
+    ],
+    "missingFiles": [],
+    "unknownFiles": [],
+    "dependencyFiles": [],
+    "complete": true,
+    "command": [
+      "<node>",
+      "--test",
+      "--test-reporter=<repository>src/reporters/node.js",
+      "--test-reporter-destination=/var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-report-pxpp8p/results.json",
+      "./test/clamp.test.js"
+    ],
+    "stdout": "",
+    "stderr": "",
+    "signal": null,
+    "reportErrors": [],
+    "discovery": {
+      "files": [
+        "test/clamp.test.js"
+      ],
+      "complete": true,
+      "adapter": "node",
+      "warnings": []
+    }
+  },
+  "missingCases": [],
+  "defects": [],
+  "measured": {
+    "execution": true,
+    "heldOutDefects": 0
+  },
+  "isolation": "disposable-file-copy-with-trusted-dependencies",
+  "applied": false,
+  "integrity": "c305a8b99857a812f64142cd65aacb1ba3c83ad921898c35434bb78e5b62a6dd"
+}

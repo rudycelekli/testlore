@@ -1,0 +1,1399 @@
+{
+  "fixture": "batches",
+  "specificationId": "nonnegative-batch-counting",
+  "repetition": 1,
+  "arm": "without_memory",
+  "order": 6,
+  "recalledRecords": 0,
+  "recall": 1,
+  "cases": 22,
+  "generationMs": 47017,
+  "totalMs": 48533,
+  "outputBytes": 3068,
+  "calls": [
+    {
+      "role": "architect",
+      "durationMs": 13042,
+      "input": {
+        "schemaVersion": 1,
+        "role": "architect",
+        "requirements": "batches(total,size) returns the minimum number of batches needed for a nonnegative integer total with a positive integer batch size. Use exact integer results including zero, exact divisibility and a partial batch. Invalid totals or sizes (negative, fractional or zero size) throw RangeError.",
+        "context": [
+          {
+            "file": "src/batches.js",
+            "content": "export function batches(total,size){if(!Number.isInteger(total)||total<0||!Number.isInteger(size)||size<1)throw new RangeError();return Math.ceil(total/size);}"
+          }
+        ],
+        "budget": {
+          "maxTasks": 1,
+          "maxOutputBytes": 32768,
+          "timeoutMs": 90000,
+          "callsPerTrial": 3,
+          "orderSeed": 202609301,
+          "instructions": "Use only supplied context and requirements. No tools or filesystem reads. Return one task, then independent runnable Node tests named test/NAME.test.js (Node test and assert builtins; package type is module). Historical patterns are advisory. Do not infer expected values from current implementation."
+        },
+        "learning": {
+          "records": [],
+          "advisoryOnly": true,
+          "reason": "learning-disabled"
+        },
+        "order": {
+          "subjects": [
+            "src/batches.js"
+          ],
+          "roles": [
+            "architect",
+            "author",
+            "reviewer"
+          ],
+          "acceptance": [
+            "Independent requirements, deterministic assertions, boundaries and errors."
+          ]
+        }
+      },
+      "output": {
+        "tasks": [
+          {
+            "subject": "src/batches.js",
+            "instructions": "Create test/batches.test.js using node:test and node:assert/strict, importing batches from ../src/batches.js under the supplied ESM configuration. Derive expected values from the independent requirement that batches is the minimum number of batches needed, not from implementation output or Math.ceil(total/size). Use deterministic explicit cases covering zero total (0,1→0 and 0,5→0), unit size (7,1→7), exact divisibility (12,4→3), partial batches (13,4→4), and boundaries around one batch (3,4→1; 4,4→1; 5,4→2). Assert exact integer results with strict equality. Independently test negative and fractional totals with valid sizes, and negative, fractional, and zero sizes with valid totals; assert RangeError specifically. Include zero total with invalid sizes to verify validation still applies. Return a complete runnable test file without changing production code or adding dependencies. Keep assertions grounded in the supplied requirements; do not introduce unsupported contracts for coercion or unsafe integers."
+          }
+        ]
+      },
+      "outputBytes": 1094
+    },
+    {
+      "role": "author",
+      "durationMs": 20948,
+      "input": {
+        "schemaVersion": 1,
+        "role": "author",
+        "requirements": "batches(total,size) returns the minimum number of batches needed for a nonnegative integer total with a positive integer batch size. Use exact integer results including zero, exact divisibility and a partial batch. Invalid totals or sizes (negative, fractional or zero size) throw RangeError.",
+        "context": [
+          {
+            "file": "src/batches.js",
+            "content": "export function batches(total,size){if(!Number.isInteger(total)||total<0||!Number.isInteger(size)||size<1)throw new RangeError();return Math.ceil(total/size);}"
+          }
+        ],
+        "budget": {
+          "maxTasks": 1,
+          "maxOutputBytes": 32768,
+          "timeoutMs": 90000,
+          "callsPerTrial": 3,
+          "orderSeed": 202609301,
+          "instructions": "Use only supplied context and requirements. No tools or filesystem reads. Return one task, then independent runnable Node tests named test/NAME.test.js (Node test and assert builtins; package type is module). Historical patterns are advisory. Do not infer expected values from current implementation."
+        },
+        "learning": {
+          "records": [],
+          "advisoryOnly": true,
+          "reason": "learning-disabled"
+        },
+        "task": {
+          "subject": "src/batches.js",
+          "instructions": "Create test/batches.test.js using node:test and node:assert/strict, importing batches from ../src/batches.js under the supplied ESM configuration. Derive expected values from the independent requirement that batches is the minimum number of batches needed, not from implementation output or Math.ceil(total/size). Use deterministic explicit cases covering zero total (0,1→0 and 0,5→0), unit size (7,1→7), exact divisibility (12,4→3), partial batches (13,4→4), and boundaries around one batch (3,4→1; 4,4→1; 5,4→2). Assert exact integer results with strict equality. Independently test negative and fractional totals with valid sizes, and negative, fractional, and zero sizes with valid totals; assert RangeError specifically. Include zero total with invalid sizes to verify validation still applies. Return a complete runnable test file without changing production code or adding dependencies. Keep assertions grounded in the supplied requirements; do not introduce unsupported contracts for coercion or unsafe integers."
+        }
+      },
+      "output": {
+        "files": [
+          {
+            "path": "test/batches.test.js",
+            "content": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport { batches } from '../src/batches.js';\n\n// Expected counts follow the required minimum number of batches:\n// empty totals need none, full batches cover exact multiples, and any\n// remaining items require one additional batch.\nconst validCases = [\n  { total: 0, size: 1, expected: 0 },\n  { total: 0, size: 5, expected: 0 },\n  { total: 7, size: 1, expected: 7 },\n  { total: 12, size: 4, expected: 3 },\n  { total: 13, size: 4, expected: 4 },\n  { total: 3, size: 4, expected: 1 },\n  { total: 4, size: 4, expected: 1 },\n  { total: 5, size: 4, expected: 2 },\n];\n\nfor (const { total, size, expected } of validCases) {\n  test(`batches(${total}, ${size}) requires exactly ${expected} batches`, () => {\n    assert.strictEqual(batches(total, size), expected);\n  });\n}\n\nfor (const total of [-1, -7, 0.5, 3.5]) {\n  test(`rejects invalid total ${total} with a valid size`, () => {\n    assert.throws(() => batches(total, 4), RangeError);\n  });\n}\n\nfor (const size of [-1, -4, 0, 0.5, 2.5]) {\n  test(`rejects invalid size ${size} with a positive valid total`, () => {\n    assert.throws(() => batches(7, size), RangeError);\n  });\n\n  test(`rejects invalid size ${size} even when total is zero`, () => {\n    assert.throws(() => batches(0, size), RangeError);\n  });\n}\n"
+          }
+        ]
+      },
+      "outputBytes": 1419
+    },
+    {
+      "role": "reviewer",
+      "durationMs": 12808,
+      "input": {
+        "schemaVersion": 1,
+        "role": "reviewer",
+        "requirements": "batches(total,size) returns the minimum number of batches needed for a nonnegative integer total with a positive integer batch size. Use exact integer results including zero, exact divisibility and a partial batch. Invalid totals or sizes (negative, fractional or zero size) throw RangeError.",
+        "context": [
+          {
+            "file": "src/batches.js",
+            "content": "export function batches(total,size){if(!Number.isInteger(total)||total<0||!Number.isInteger(size)||size<1)throw new RangeError();return Math.ceil(total/size);}"
+          }
+        ],
+        "budget": {
+          "maxTasks": 1,
+          "maxOutputBytes": 32768,
+          "timeoutMs": 90000,
+          "callsPerTrial": 3,
+          "orderSeed": 202609301,
+          "instructions": "Use only supplied context and requirements. No tools or filesystem reads. Return one task, then independent runnable Node tests named test/NAME.test.js (Node test and assert builtins; package type is module). Historical patterns are advisory. Do not infer expected values from current implementation."
+        },
+        "files": [
+          {
+            "path": "test/batches.test.js",
+            "content": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport { batches } from '../src/batches.js';\n\n// Expected counts follow the required minimum number of batches:\n// empty totals need none, full batches cover exact multiples, and any\n// remaining items require one additional batch.\nconst validCases = [\n  { total: 0, size: 1, expected: 0 },\n  { total: 0, size: 5, expected: 0 },\n  { total: 7, size: 1, expected: 7 },\n  { total: 12, size: 4, expected: 3 },\n  { total: 13, size: 4, expected: 4 },\n  { total: 3, size: 4, expected: 1 },\n  { total: 4, size: 4, expected: 1 },\n  { total: 5, size: 4, expected: 2 },\n];\n\nfor (const { total, size, expected } of validCases) {\n  test(`batches(${total}, ${size}) requires exactly ${expected} batches`, () => {\n    assert.strictEqual(batches(total, size), expected);\n  });\n}\n\nfor (const total of [-1, -7, 0.5, 3.5]) {\n  test(`rejects invalid total ${total} with a valid size`, () => {\n    assert.throws(() => batches(total, 4), RangeError);\n  });\n}\n\nfor (const size of [-1, -4, 0, 0.5, 2.5]) {\n  test(`rejects invalid size ${size} with a positive valid total`, () => {\n    assert.throws(() => batches(7, size), RangeError);\n  });\n\n  test(`rejects invalid size ${size} even when total is zero`, () => {\n    assert.throws(() => batches(0, size), RangeError);\n  });\n}\n"
+          }
+        ],
+        "acceptance": [
+          "Independent current specification, deterministic runnable cases."
+        ]
+      },
+      "output": {
+        "accepted": true,
+        "findings": [],
+        "oracle": {
+          "independent": true,
+          "basis": [
+            "Supplied requirements establish exact minimum batch counts for zero totals, exact divisibility, and partial batches; literal expected values independently satisfy these rules.",
+            "Supplied requirements require RangeError for negative or fractional totals and negative, fractional, or zero sizes, including when total is zero.",
+            "Tests are deterministic and use valid Node built-in imports and the supplied module export. Acceptance is based on static review, not execution validation."
+          ]
+        }
+      },
+      "outputBytes": 555
+    }
+  ],
+  "defects": [
+    {
+      "id": "partial-batch-lost",
+      "detected": true,
+      "result": {
+        "adapter": "node",
+        "exitCode": 1,
+        "durationMs": 123,
+        "tests": [
+          {
+            "file": "test/batches.test.js",
+            "name": "batches(5, 4) requires exactly 2 batches",
+            "status": "passed",
+            "durationMs": 0.572709,
+            "line": 20,
+            "column": 3,
+            "id": "c4fa7c9ef458355247f5827bb40d9a62a16b2dc6e48afb1737b6b61304918c9c"
+          },
+          {
+            "file": "test/batches.test.js",
+            "name": "batches(5, 4) requires exactly 2 batches",
+            "status": "passed",
+            "durationMs": 0.059583,
+            "line": 20,
+            "column": 3,
+            "id": "e6fadf1376583b5e909a12537a253cbef37ddd28ff6623d39f5ac2b2dd02d118"
+          },
+          {
+            "file": "test/batches.test.js",
+            "name": "batches(5, 4) requires exactly 2 batches",
+            "status": "passed",
+            "durationMs": 0.065916,
+            "line": 20,
+            "column": 3,
+            "id": "ff3b0e47e7384995a61c1d66c3441996256f1f40a41427e8491fcbeeabb8c23f"
+          },
+          {
+            "file": "test/batches.test.js",
+            "name": "batches(5, 4) requires exactly 2 batches",
+            "status": "passed",
+            "durationMs": 0.057667,
+            "line": 20,
+            "column": 3,
+            "id": "57a9e1941a9b07e9692351e98bf7fef10192461ebc60db8fb16768b5d310020b"
+          },
+          {
+            "file": "test/batches.test.js",
+            "name": "batches(5, 4) requires exactly 2 batches",
+            "status": "failed",
+            "durationMs": 0.550958,
+            "line": 20,
+            "column": 3,
+            "id": "f35d3a9f238b9211d9c0d11107f7ebff1c52c030814e1be23dc0355b014b3f75"
+          },
+          {
+            "file": "test/batches.test.js",
+            "name": "batches(5, 4) requires exactly 2 batches",
+            "status": "failed",
+            "durationMs": 0.142208,
+            "line": 20,
+            "column": 3,
+            "id": "997e52f782657b5585419a8efa79c212cb748e62e33587aaa806b7777d5332d8"
+          },
+          {
+            "file": "test/batches.test.js",
+            "name": "batches(5, 4) requires exactly 2 batches",
+            "status": "passed",
+            "durationMs": 0.056916,
+            "line": 20,
+            "column": 3,
+            "id": "bae3cad44973da01e7c8f1ef9e0735adfb8cc760a6ca3eed6c1a2c6e05eca529"
+          },
+          {
+            "file": "test/batches.test.js",
+            "name": "batches(5, 4) requires exactly 2 batches",
+            "status": "failed",
+            "durationMs": 0.081,
+            "line": 20,
+            "column": 3,
+            "id": "56e0f445f977345d805dfb5708723a835cff805a8065ed675750f55aeb488bcd"
+          },
+          {
+            "file": "test/batches.test.js",
+            "name": "rejects invalid total 3.5 with a valid size",
+            "status": "passed",
+            "durationMs": 0.244792,
+            "line": 26,
+            "column": 3,
+            "id": "6a927807bfcadea18fbf7c008a915b050e3f863d3103a41bad4e4b0ae4085152"
+          },
+          {
+            "file": "test/batches.test.js",
+            "name": "rejects invalid total 3.5 with a valid size",
+            "status": "passed",
+            "durationMs": 0.102417,
+            "line": 26,
+            "column": 3,
+            "id": "f8e5e340a0c91a53da36618cb82e6975a8a00888edb8201ec11b3a9a76082bb9"
+          },
+          {
+            "file": "test/batches.test.js",
+            "name": "rejects invalid total 3.5 with a valid size",
+            "status": "passed",
+            "durationMs": 0.055584,
+            "line": 26,
+            "column": 3,
+            "id": "65384f0c480cd41cc815c6cec3110e990b46314f12532cd4b250004d90812678"
+          },
+          {
+            "file": "test/batches.test.js",
+            "name": "rejects invalid total 3.5 with a valid size",
+            "status": "passed",
+            "durationMs": 0.042166,
+            "line": 26,
+            "column": 3,
+            "id": "1a57fcf35d6cea608635d19d78f9f58aa2cad36f7742d277272ac18a1cbd8c7f"
+          },
+          {
+            "file": "test/batches.test.js",
+            "name": "rejects invalid size 2.5 with a positive valid total",
+            "status": "passed",
+            "durationMs": 0.063375,
+            "line": 32,
+            "column": 3,
+            "id": "7f39587a1a8296cd8c79f6bab457f49551cd26a1be057c276c92a98e515bb381"
+          },
+          {
+            "file": "test/batches.test.js",
+            "name": "rejects invalid size 2.5 even when total is zero",
+            "status": "passed",
+            "durationMs": 0.051917,
+            "line": 36,
+            "column": 3,
+            "id": "4955adbe4d160632d3052e19b7050147502a03c3c85eaa37aaf131cf023377ba"
+          },
+          {
+            "file": "test/batches.test.js",
+            "name": "rejects invalid size 2.5 with a positive valid total",
+            "status": "passed",
+            "durationMs": 0.047833,
+            "line": 32,
+            "column": 3,
+            "id": "d62597a4250e55556ecd5eb467105e97c019aeec1c1ffff3328d23b4c49e641a"
+          },
+          {
+            "file": "test/batches.test.js",
+            "name": "rejects invalid size 2.5 even when total is zero",
+            "status": "passed",
+            "durationMs": 0.05525,
+            "line": 36,
+            "column": 3,
+            "id": "737181a010e90a918d5477a68b3b061f9e6dcb06708673cd92a201d12e28e3bd"
+          },
+          {
+            "file": "test/batches.test.js",
+            "name": "rejects invalid size 2.5 with a positive valid total",
+            "status": "passed",
+            "durationMs": 0.610667,
+            "line": 32,
+            "column": 3,
+            "id": "607c14778d5a55325a14eb7b2798e940ca61bc61184f4a2ac05add107916ae45"
+          },
+          {
+            "file": "test/batches.test.js",
+            "name": "rejects invalid size 2.5 even when total is zero",
+            "status": "passed",
+            "durationMs": 0.073666,
+            "line": 36,
+            "column": 3,
+            "id": "874f95fa4c8a2708073e19d2c4828dda6df47dd1a6c74d7cb09278a8835b4077"
+          },
+          {
+            "file": "test/batches.test.js",
+            "name": "rejects invalid size 2.5 with a positive valid total",
+            "status": "passed",
+            "durationMs": 0.035833,
+            "line": 32,
+            "column": 3,
+            "id": "5ba71d45f50e1ed0629c0eabc027455466ee1f94ddf3cc6b7376ed1e9f4cdbcc"
+          },
+          {
+            "file": "test/batches.test.js",
+            "name": "rejects invalid size 2.5 even when total is zero",
+            "status": "passed",
+            "durationMs": 0.038,
+            "line": 36,
+            "column": 3,
+            "id": "5f16bf695ce24142dfb2bd7c27fcd5a8837944ae81e92726dd0d777d72ec8c4d"
+          },
+          {
+            "file": "test/batches.test.js",
+            "name": "rejects invalid size 2.5 with a positive valid total",
+            "status": "passed",
+            "durationMs": 0.048666,
+            "line": 32,
+            "column": 3,
+            "id": "12a1962d44c916aa3b0ac2b1f631590f0fa08e5b58a2c36061491f4d93b103e9"
+          },
+          {
+            "file": "test/batches.test.js",
+            "name": "rejects invalid size 2.5 even when total is zero",
+            "status": "passed",
+            "durationMs": 0.030959,
+            "line": 36,
+            "column": 3,
+            "id": "ad4b2ffe13a5b127f08582c8c3de1bb1f8976c0bbf175da0fabb574e5342d1e6"
+          }
+        ],
+        "collectionFiles": [
+          "test/batches.test.js"
+        ],
+        "requestedFiles": [
+          "test/batches.test.js"
+        ],
+        "executedFiles": [
+          "test/batches.test.js"
+        ],
+        "missingFiles": [],
+        "unknownFiles": [],
+        "dependencyFiles": [],
+        "complete": true,
+        "command": [
+          "<node>",
+          "--test",
+          "--test-reporter=<repository>src/reporters/node.js",
+          "--test-reporter-destination=/var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-report-g46yZf/results.json",
+          "./test/batches.test.js"
+        ],
+        "stdout": "",
+        "stderr": "",
+        "signal": null,
+        "reportErrors": [],
+        "discovery": {
+          "files": [
+            "test/batches.test.js"
+          ],
+          "complete": true,
+          "adapter": "node",
+          "warnings": []
+        }
+      }
+    },
+    {
+      "id": "negative-total-accepted",
+      "detected": true,
+      "result": {
+        "adapter": "node",
+        "exitCode": 1,
+        "durationMs": 112,
+        "tests": [
+          {
+            "file": "test/batches.test.js",
+            "name": "batches(5, 4) requires exactly 2 batches",
+            "status": "passed",
+            "durationMs": 0.538834,
+            "line": 20,
+            "column": 3,
+            "id": "c4fa7c9ef458355247f5827bb40d9a62a16b2dc6e48afb1737b6b61304918c9c"
+          },
+          {
+            "file": "test/batches.test.js",
+            "name": "batches(5, 4) requires exactly 2 batches",
+            "status": "passed",
+            "durationMs": 0.059792,
+            "line": 20,
+            "column": 3,
+            "id": "e6fadf1376583b5e909a12537a253cbef37ddd28ff6623d39f5ac2b2dd02d118"
+          },
+          {
+            "file": "test/batches.test.js",
+            "name": "batches(5, 4) requires exactly 2 batches",
+            "status": "passed",
+            "durationMs": 0.063375,
+            "line": 20,
+            "column": 3,
+            "id": "ff3b0e47e7384995a61c1d66c3441996256f1f40a41427e8491fcbeeabb8c23f"
+          },
+          {
+            "file": "test/batches.test.js",
+            "name": "batches(5, 4) requires exactly 2 batches",
+            "status": "passed",
+            "durationMs": 0.058875,
+            "line": 20,
+            "column": 3,
+            "id": "57a9e1941a9b07e9692351e98bf7fef10192461ebc60db8fb16768b5d310020b"
+          },
+          {
+            "file": "test/batches.test.js",
+            "name": "batches(5, 4) requires exactly 2 batches",
+            "status": "passed",
+            "durationMs": 0.050083,
+            "line": 20,
+            "column": 3,
+            "id": "f35d3a9f238b9211d9c0d11107f7ebff1c52c030814e1be23dc0355b014b3f75"
+          },
+          {
+            "file": "test/batches.test.js",
+            "name": "batches(5, 4) requires exactly 2 batches",
+            "status": "passed",
+            "durationMs": 0.041959,
+            "line": 20,
+            "column": 3,
+            "id": "997e52f782657b5585419a8efa79c212cb748e62e33587aaa806b7777d5332d8"
+          },
+          {
+            "file": "test/batches.test.js",
+            "name": "batches(5, 4) requires exactly 2 batches",
+            "status": "passed",
+            "durationMs": 0.040708,
+            "line": 20,
+            "column": 3,
+            "id": "bae3cad44973da01e7c8f1ef9e0735adfb8cc760a6ca3eed6c1a2c6e05eca529"
+          },
+          {
+            "file": "test/batches.test.js",
+            "name": "batches(5, 4) requires exactly 2 batches",
+            "status": "passed",
+            "durationMs": 0.038083,
+            "line": 20,
+            "column": 3,
+            "id": "56e0f445f977345d805dfb5708723a835cff805a8065ed675750f55aeb488bcd"
+          },
+          {
+            "file": "test/batches.test.js",
+            "name": "rejects invalid total 3.5 with a valid size",
+            "status": "failed",
+            "durationMs": 0.362542,
+            "line": 26,
+            "column": 3,
+            "id": "6a927807bfcadea18fbf7c008a915b050e3f863d3103a41bad4e4b0ae4085152"
+          },
+          {
+            "file": "test/batches.test.js",
+            "name": "rejects invalid total 3.5 with a valid size",
+            "status": "failed",
+            "durationMs": 0.116375,
+            "line": 26,
+            "column": 3,
+            "id": "f8e5e340a0c91a53da36618cb82e6975a8a00888edb8201ec11b3a9a76082bb9"
+          },
+          {
+            "file": "test/batches.test.js",
+            "name": "rejects invalid total 3.5 with a valid size",
+            "status": "passed",
+            "durationMs": 0.136167,
+            "line": 26,
+            "column": 3,
+            "id": "65384f0c480cd41cc815c6cec3110e990b46314f12532cd4b250004d90812678"
+          },
+          {
+            "file": "test/batches.test.js",
+            "name": "rejects invalid total 3.5 with a valid size",
+            "status": "passed",
+            "durationMs": 0.045208,
+            "line": 26,
+            "column": 3,
+            "id": "1a57fcf35d6cea608635d19d78f9f58aa2cad36f7742d277272ac18a1cbd8c7f"
+          },
+          {
+            "file": "test/batches.test.js",
+            "name": "rejects invalid size 2.5 with a positive valid total",
+            "status": "passed",
+            "durationMs": 0.06675,
+            "line": 32,
+            "column": 3,
+            "id": "7f39587a1a8296cd8c79f6bab457f49551cd26a1be057c276c92a98e515bb381"
+          },
+          {
+            "file": "test/batches.test.js",
+            "name": "rejects invalid size 2.5 even when total is zero",
+            "status": "passed",
+            "durationMs": 0.050417,
+            "line": 36,
+            "column": 3,
+            "id": "4955adbe4d160632d3052e19b7050147502a03c3c85eaa37aaf131cf023377ba"
+          },
+          {
+            "file": "test/batches.test.js",
+            "name": "rejects invalid size 2.5 with a positive valid total",
+            "status": "passed",
+            "durationMs": 0.04825,
+            "line": 32,
+            "column": 3,
+            "id": "d62597a4250e55556ecd5eb467105e97c019aeec1c1ffff3328d23b4c49e641a"
+          },
+          {
+            "file": "test/batches.test.js",
+            "name": "rejects invalid size 2.5 even when total is zero",
+            "status": "passed",
+            "durationMs": 0.032166,
+            "line": 36,
+            "column": 3,
+            "id": "737181a010e90a918d5477a68b3b061f9e6dcb06708673cd92a201d12e28e3bd"
+          },
+          {
+            "file": "test/batches.test.js",
+            "name": "rejects invalid size 2.5 with a positive valid total",
+            "status": "passed",
+            "durationMs": 0.042167,
+            "line": 32,
+            "column": 3,
+            "id": "607c14778d5a55325a14eb7b2798e940ca61bc61184f4a2ac05add107916ae45"
+          },
+          {
+            "file": "test/batches.test.js",
+            "name": "rejects invalid size 2.5 even when total is zero",
+            "status": "passed",
+            "durationMs": 0.033208,
+            "line": 36,
+            "column": 3,
+            "id": "874f95fa4c8a2708073e19d2c4828dda6df47dd1a6c74d7cb09278a8835b4077"
+          },
+          {
+            "file": "test/batches.test.js",
+            "name": "rejects invalid size 2.5 with a positive valid total",
+            "status": "passed",
+            "durationMs": 0.478458,
+            "line": 32,
+            "column": 3,
+            "id": "5ba71d45f50e1ed0629c0eabc027455466ee1f94ddf3cc6b7376ed1e9f4cdbcc"
+          },
+          {
+            "file": "test/batches.test.js",
+            "name": "rejects invalid size 2.5 even when total is zero",
+            "status": "passed",
+            "durationMs": 0.033333,
+            "line": 36,
+            "column": 3,
+            "id": "5f16bf695ce24142dfb2bd7c27fcd5a8837944ae81e92726dd0d777d72ec8c4d"
+          },
+          {
+            "file": "test/batches.test.js",
+            "name": "rejects invalid size 2.5 with a positive valid total",
+            "status": "passed",
+            "durationMs": 0.039375,
+            "line": 32,
+            "column": 3,
+            "id": "12a1962d44c916aa3b0ac2b1f631590f0fa08e5b58a2c36061491f4d93b103e9"
+          },
+          {
+            "file": "test/batches.test.js",
+            "name": "rejects invalid size 2.5 even when total is zero",
+            "status": "passed",
+            "durationMs": 0.023833,
+            "line": 36,
+            "column": 3,
+            "id": "ad4b2ffe13a5b127f08582c8c3de1bb1f8976c0bbf175da0fabb574e5342d1e6"
+          }
+        ],
+        "collectionFiles": [
+          "test/batches.test.js"
+        ],
+        "requestedFiles": [
+          "test/batches.test.js"
+        ],
+        "executedFiles": [
+          "test/batches.test.js"
+        ],
+        "missingFiles": [],
+        "unknownFiles": [],
+        "dependencyFiles": [],
+        "complete": true,
+        "command": [
+          "<node>",
+          "--test",
+          "--test-reporter=<repository>src/reporters/node.js",
+          "--test-reporter-destination=/var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-report-W9rWBj/results.json",
+          "./test/batches.test.js"
+        ],
+        "stdout": "",
+        "stderr": "",
+        "signal": null,
+        "reportErrors": [],
+        "discovery": {
+          "files": [
+            "test/batches.test.js"
+          ],
+          "complete": true,
+          "adapter": "node",
+          "warnings": []
+        }
+      }
+    },
+    {
+      "id": "zero-size-accepted",
+      "detected": true,
+      "result": {
+        "adapter": "node",
+        "exitCode": 1,
+        "durationMs": 112,
+        "tests": [
+          {
+            "file": "test/batches.test.js",
+            "name": "batches(5, 4) requires exactly 2 batches",
+            "status": "passed",
+            "durationMs": 0.568375,
+            "line": 20,
+            "column": 3,
+            "id": "c4fa7c9ef458355247f5827bb40d9a62a16b2dc6e48afb1737b6b61304918c9c"
+          },
+          {
+            "file": "test/batches.test.js",
+            "name": "batches(5, 4) requires exactly 2 batches",
+            "status": "passed",
+            "durationMs": 0.062916,
+            "line": 20,
+            "column": 3,
+            "id": "e6fadf1376583b5e909a12537a253cbef37ddd28ff6623d39f5ac2b2dd02d118"
+          },
+          {
+            "file": "test/batches.test.js",
+            "name": "batches(5, 4) requires exactly 2 batches",
+            "status": "passed",
+            "durationMs": 0.061042,
+            "line": 20,
+            "column": 3,
+            "id": "ff3b0e47e7384995a61c1d66c3441996256f1f40a41427e8491fcbeeabb8c23f"
+          },
+          {
+            "file": "test/batches.test.js",
+            "name": "batches(5, 4) requires exactly 2 batches",
+            "status": "passed",
+            "durationMs": 0.055167,
+            "line": 20,
+            "column": 3,
+            "id": "57a9e1941a9b07e9692351e98bf7fef10192461ebc60db8fb16768b5d310020b"
+          },
+          {
+            "file": "test/batches.test.js",
+            "name": "batches(5, 4) requires exactly 2 batches",
+            "status": "passed",
+            "durationMs": 0.050583,
+            "line": 20,
+            "column": 3,
+            "id": "f35d3a9f238b9211d9c0d11107f7ebff1c52c030814e1be23dc0355b014b3f75"
+          },
+          {
+            "file": "test/batches.test.js",
+            "name": "batches(5, 4) requires exactly 2 batches",
+            "status": "passed",
+            "durationMs": 0.043792,
+            "line": 20,
+            "column": 3,
+            "id": "997e52f782657b5585419a8efa79c212cb748e62e33587aaa806b7777d5332d8"
+          },
+          {
+            "file": "test/batches.test.js",
+            "name": "batches(5, 4) requires exactly 2 batches",
+            "status": "passed",
+            "durationMs": 0.038833,
+            "line": 20,
+            "column": 3,
+            "id": "bae3cad44973da01e7c8f1ef9e0735adfb8cc760a6ca3eed6c1a2c6e05eca529"
+          },
+          {
+            "file": "test/batches.test.js",
+            "name": "batches(5, 4) requires exactly 2 batches",
+            "status": "passed",
+            "durationMs": 0.038459,
+            "line": 20,
+            "column": 3,
+            "id": "56e0f445f977345d805dfb5708723a835cff805a8065ed675750f55aeb488bcd"
+          },
+          {
+            "file": "test/batches.test.js",
+            "name": "rejects invalid total 3.5 with a valid size",
+            "status": "passed",
+            "durationMs": 0.216917,
+            "line": 26,
+            "column": 3,
+            "id": "6a927807bfcadea18fbf7c008a915b050e3f863d3103a41bad4e4b0ae4085152"
+          },
+          {
+            "file": "test/batches.test.js",
+            "name": "rejects invalid total 3.5 with a valid size",
+            "status": "passed",
+            "durationMs": 0.098541,
+            "line": 26,
+            "column": 3,
+            "id": "f8e5e340a0c91a53da36618cb82e6975a8a00888edb8201ec11b3a9a76082bb9"
+          },
+          {
+            "file": "test/batches.test.js",
+            "name": "rejects invalid total 3.5 with a valid size",
+            "status": "passed",
+            "durationMs": 0.053209,
+            "line": 26,
+            "column": 3,
+            "id": "65384f0c480cd41cc815c6cec3110e990b46314f12532cd4b250004d90812678"
+          },
+          {
+            "file": "test/batches.test.js",
+            "name": "rejects invalid total 3.5 with a valid size",
+            "status": "passed",
+            "durationMs": 0.040125,
+            "line": 26,
+            "column": 3,
+            "id": "1a57fcf35d6cea608635d19d78f9f58aa2cad36f7742d277272ac18a1cbd8c7f"
+          },
+          {
+            "file": "test/batches.test.js",
+            "name": "rejects invalid size 2.5 with a positive valid total",
+            "status": "passed",
+            "durationMs": 0.047917,
+            "line": 32,
+            "column": 3,
+            "id": "7f39587a1a8296cd8c79f6bab457f49551cd26a1be057c276c92a98e515bb381"
+          },
+          {
+            "file": "test/batches.test.js",
+            "name": "rejects invalid size 2.5 even when total is zero",
+            "status": "passed",
+            "durationMs": 0.05725,
+            "line": 36,
+            "column": 3,
+            "id": "4955adbe4d160632d3052e19b7050147502a03c3c85eaa37aaf131cf023377ba"
+          },
+          {
+            "file": "test/batches.test.js",
+            "name": "rejects invalid size 2.5 with a positive valid total",
+            "status": "passed",
+            "durationMs": 0.031375,
+            "line": 32,
+            "column": 3,
+            "id": "d62597a4250e55556ecd5eb467105e97c019aeec1c1ffff3328d23b4c49e641a"
+          },
+          {
+            "file": "test/batches.test.js",
+            "name": "rejects invalid size 2.5 even when total is zero",
+            "status": "passed",
+            "durationMs": 0.036792,
+            "line": 36,
+            "column": 3,
+            "id": "737181a010e90a918d5477a68b3b061f9e6dcb06708673cd92a201d12e28e3bd"
+          },
+          {
+            "file": "test/batches.test.js",
+            "name": "rejects invalid size 2.5 with a positive valid total",
+            "status": "failed",
+            "durationMs": 0.309125,
+            "line": 32,
+            "column": 3,
+            "id": "607c14778d5a55325a14eb7b2798e940ca61bc61184f4a2ac05add107916ae45"
+          },
+          {
+            "file": "test/batches.test.js",
+            "name": "rejects invalid size 2.5 even when total is zero",
+            "status": "failed",
+            "durationMs": 0.070291,
+            "line": 36,
+            "column": 3,
+            "id": "874f95fa4c8a2708073e19d2c4828dda6df47dd1a6c74d7cb09278a8835b4077"
+          },
+          {
+            "file": "test/batches.test.js",
+            "name": "rejects invalid size 2.5 with a positive valid total",
+            "status": "passed",
+            "durationMs": 0.476958,
+            "line": 32,
+            "column": 3,
+            "id": "5ba71d45f50e1ed0629c0eabc027455466ee1f94ddf3cc6b7376ed1e9f4cdbcc"
+          },
+          {
+            "file": "test/batches.test.js",
+            "name": "rejects invalid size 2.5 even when total is zero",
+            "status": "passed",
+            "durationMs": 0.03575,
+            "line": 36,
+            "column": 3,
+            "id": "5f16bf695ce24142dfb2bd7c27fcd5a8837944ae81e92726dd0d777d72ec8c4d"
+          },
+          {
+            "file": "test/batches.test.js",
+            "name": "rejects invalid size 2.5 with a positive valid total",
+            "status": "passed",
+            "durationMs": 0.029708,
+            "line": 32,
+            "column": 3,
+            "id": "12a1962d44c916aa3b0ac2b1f631590f0fa08e5b58a2c36061491f4d93b103e9"
+          },
+          {
+            "file": "test/batches.test.js",
+            "name": "rejects invalid size 2.5 even when total is zero",
+            "status": "passed",
+            "durationMs": 0.024916,
+            "line": 36,
+            "column": 3,
+            "id": "ad4b2ffe13a5b127f08582c8c3de1bb1f8976c0bbf175da0fabb574e5342d1e6"
+          }
+        ],
+        "collectionFiles": [
+          "test/batches.test.js"
+        ],
+        "requestedFiles": [
+          "test/batches.test.js"
+        ],
+        "executedFiles": [
+          "test/batches.test.js"
+        ],
+        "missingFiles": [],
+        "unknownFiles": [],
+        "dependencyFiles": [],
+        "complete": true,
+        "command": [
+          "<node>",
+          "--test",
+          "--test-reporter=<repository>src/reporters/node.js",
+          "--test-reporter-destination=/var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-report-EDEMve/results.json",
+          "./test/batches.test.js"
+        ],
+        "stdout": "",
+        "stderr": "",
+        "signal": null,
+        "reportErrors": [],
+        "discovery": {
+          "files": [
+            "test/batches.test.js"
+          ],
+          "complete": true,
+          "adapter": "node",
+          "warnings": []
+        }
+      }
+    }
+  ],
+  "validation": {
+    "schemaVersion": 1,
+    "id": "ce86bb86-c57e-4001-9d3d-3664101b2574",
+    "validatedAt": "2026-09-30T16:03:57.182Z",
+    "manifestHash": "29cd375b3119e6558b87ad2f89b3c254687f05ef3b796babeedb213dca2c8707",
+    "provenance": {
+      "schemaVersion": 1,
+      "revision": null,
+      "runner": "b64ab6ce30d5608ce2ebe53b3cb5a7aced76a5bb499e38b1bb4951dd08a1c830",
+      "environment": {
+        "node": "v24.5.0",
+        "platform": "darwin",
+        "arch": "arm64",
+        "labels": {}
+      },
+      "services": {},
+      "serviceWarnings": [],
+      "files": {
+        "package.json": "6dc1b06d6b093e9cccb20bee06a93836eee0420ae26803ca2ce4065d82f070d1",
+        "src/batches.js": "58c0ada068c32ca76ded7ecfd71cf2e234efa93ed52fa1f2e4ab6f4f0ab9006c",
+        "tddswarm.config.json": "a8fe91846ae35a8de2e2dfe294e8bd592bf9f5fa80ca1e013caf34f14f51215a"
+      },
+      "fingerprint": "559f7355d523172ade4d665c68f14c4e0fa6862d67564b3e79d086934b7edd32"
+    },
+    "accepted": true,
+    "reasons": [],
+    "original": {
+      "discovery": {
+        "files": [],
+        "complete": true,
+        "adapter": "node",
+        "warnings": []
+      },
+      "exitCode": 0,
+      "complete": true,
+      "tests": [],
+      "collectionFiles": [],
+      "executedFiles": []
+    },
+    "candidate": {
+      "adapter": "node",
+      "exitCode": 0,
+      "durationMs": 115,
+      "tests": [
+        {
+          "file": "test/batches.test.js",
+          "name": "batches(5, 4) requires exactly 2 batches",
+          "status": "passed",
+          "durationMs": 0.525,
+          "line": 20,
+          "column": 3,
+          "id": "c4fa7c9ef458355247f5827bb40d9a62a16b2dc6e48afb1737b6b61304918c9c"
+        },
+        {
+          "file": "test/batches.test.js",
+          "name": "batches(5, 4) requires exactly 2 batches",
+          "status": "passed",
+          "durationMs": 0.058167,
+          "line": 20,
+          "column": 3,
+          "id": "e6fadf1376583b5e909a12537a253cbef37ddd28ff6623d39f5ac2b2dd02d118"
+        },
+        {
+          "file": "test/batches.test.js",
+          "name": "batches(5, 4) requires exactly 2 batches",
+          "status": "passed",
+          "durationMs": 0.062708,
+          "line": 20,
+          "column": 3,
+          "id": "ff3b0e47e7384995a61c1d66c3441996256f1f40a41427e8491fcbeeabb8c23f"
+        },
+        {
+          "file": "test/batches.test.js",
+          "name": "batches(5, 4) requires exactly 2 batches",
+          "status": "passed",
+          "durationMs": 0.058625,
+          "line": 20,
+          "column": 3,
+          "id": "57a9e1941a9b07e9692351e98bf7fef10192461ebc60db8fb16768b5d310020b"
+        },
+        {
+          "file": "test/batches.test.js",
+          "name": "batches(5, 4) requires exactly 2 batches",
+          "status": "passed",
+          "durationMs": 0.05125,
+          "line": 20,
+          "column": 3,
+          "id": "f35d3a9f238b9211d9c0d11107f7ebff1c52c030814e1be23dc0355b014b3f75"
+        },
+        {
+          "file": "test/batches.test.js",
+          "name": "batches(5, 4) requires exactly 2 batches",
+          "status": "passed",
+          "durationMs": 0.039792,
+          "line": 20,
+          "column": 3,
+          "id": "997e52f782657b5585419a8efa79c212cb748e62e33587aaa806b7777d5332d8"
+        },
+        {
+          "file": "test/batches.test.js",
+          "name": "batches(5, 4) requires exactly 2 batches",
+          "status": "passed",
+          "durationMs": 0.042875,
+          "line": 20,
+          "column": 3,
+          "id": "bae3cad44973da01e7c8f1ef9e0735adfb8cc760a6ca3eed6c1a2c6e05eca529"
+        },
+        {
+          "file": "test/batches.test.js",
+          "name": "batches(5, 4) requires exactly 2 batches",
+          "status": "passed",
+          "durationMs": 0.039208,
+          "line": 20,
+          "column": 3,
+          "id": "56e0f445f977345d805dfb5708723a835cff805a8065ed675750f55aeb488bcd"
+        },
+        {
+          "file": "test/batches.test.js",
+          "name": "rejects invalid total 3.5 with a valid size",
+          "status": "passed",
+          "durationMs": 0.230125,
+          "line": 26,
+          "column": 3,
+          "id": "6a927807bfcadea18fbf7c008a915b050e3f863d3103a41bad4e4b0ae4085152"
+        },
+        {
+          "file": "test/batches.test.js",
+          "name": "rejects invalid total 3.5 with a valid size",
+          "status": "passed",
+          "durationMs": 0.095708,
+          "line": 26,
+          "column": 3,
+          "id": "f8e5e340a0c91a53da36618cb82e6975a8a00888edb8201ec11b3a9a76082bb9"
+        },
+        {
+          "file": "test/batches.test.js",
+          "name": "rejects invalid total 3.5 with a valid size",
+          "status": "passed",
+          "durationMs": 0.054458,
+          "line": 26,
+          "column": 3,
+          "id": "65384f0c480cd41cc815c6cec3110e990b46314f12532cd4b250004d90812678"
+        },
+        {
+          "file": "test/batches.test.js",
+          "name": "rejects invalid total 3.5 with a valid size",
+          "status": "passed",
+          "durationMs": 0.041875,
+          "line": 26,
+          "column": 3,
+          "id": "1a57fcf35d6cea608635d19d78f9f58aa2cad36f7742d277272ac18a1cbd8c7f"
+        },
+        {
+          "file": "test/batches.test.js",
+          "name": "rejects invalid size 2.5 with a positive valid total",
+          "status": "passed",
+          "durationMs": 0.083542,
+          "line": 32,
+          "column": 3,
+          "id": "7f39587a1a8296cd8c79f6bab457f49551cd26a1be057c276c92a98e515bb381"
+        },
+        {
+          "file": "test/batches.test.js",
+          "name": "rejects invalid size 2.5 even when total is zero",
+          "status": "passed",
+          "durationMs": 0.159917,
+          "line": 36,
+          "column": 3,
+          "id": "4955adbe4d160632d3052e19b7050147502a03c3c85eaa37aaf131cf023377ba"
+        },
+        {
+          "file": "test/batches.test.js",
+          "name": "rejects invalid size 2.5 with a positive valid total",
+          "status": "passed",
+          "durationMs": 0.052292,
+          "line": 32,
+          "column": 3,
+          "id": "d62597a4250e55556ecd5eb467105e97c019aeec1c1ffff3328d23b4c49e641a"
+        },
+        {
+          "file": "test/batches.test.js",
+          "name": "rejects invalid size 2.5 even when total is zero",
+          "status": "passed",
+          "durationMs": 0.041833,
+          "line": 36,
+          "column": 3,
+          "id": "737181a010e90a918d5477a68b3b061f9e6dcb06708673cd92a201d12e28e3bd"
+        },
+        {
+          "file": "test/batches.test.js",
+          "name": "rejects invalid size 2.5 with a positive valid total",
+          "status": "passed",
+          "durationMs": 0.031916,
+          "line": 32,
+          "column": 3,
+          "id": "607c14778d5a55325a14eb7b2798e940ca61bc61184f4a2ac05add107916ae45"
+        },
+        {
+          "file": "test/batches.test.js",
+          "name": "rejects invalid size 2.5 even when total is zero",
+          "status": "passed",
+          "durationMs": 0.036208,
+          "line": 36,
+          "column": 3,
+          "id": "874f95fa4c8a2708073e19d2c4828dda6df47dd1a6c74d7cb09278a8835b4077"
+        },
+        {
+          "file": "test/batches.test.js",
+          "name": "rejects invalid size 2.5 with a positive valid total",
+          "status": "passed",
+          "durationMs": 0.041875,
+          "line": 32,
+          "column": 3,
+          "id": "5ba71d45f50e1ed0629c0eabc027455466ee1f94ddf3cc6b7376ed1e9f4cdbcc"
+        },
+        {
+          "file": "test/batches.test.js",
+          "name": "rejects invalid size 2.5 even when total is zero",
+          "status": "passed",
+          "durationMs": 0.031792,
+          "line": 36,
+          "column": 3,
+          "id": "5f16bf695ce24142dfb2bd7c27fcd5a8837944ae81e92726dd0d777d72ec8c4d"
+        },
+        {
+          "file": "test/batches.test.js",
+          "name": "rejects invalid size 2.5 with a positive valid total",
+          "status": "passed",
+          "durationMs": 0.033875,
+          "line": 32,
+          "column": 3,
+          "id": "12a1962d44c916aa3b0ac2b1f631590f0fa08e5b58a2c36061491f4d93b103e9"
+        },
+        {
+          "file": "test/batches.test.js",
+          "name": "rejects invalid size 2.5 even when total is zero",
+          "status": "passed",
+          "durationMs": 0.027333,
+          "line": 36,
+          "column": 3,
+          "id": "ad4b2ffe13a5b127f08582c8c3de1bb1f8976c0bbf175da0fabb574e5342d1e6"
+        }
+      ],
+      "collectionFiles": [
+        "test/batches.test.js"
+      ],
+      "requestedFiles": [
+        "test/batches.test.js"
+      ],
+      "executedFiles": [
+        "test/batches.test.js"
+      ],
+      "missingFiles": [],
+      "unknownFiles": [],
+      "dependencyFiles": [],
+      "complete": true,
+      "command": [
+        "<node>",
+        "--test",
+        "--test-reporter=<repository>src/reporters/node.js",
+        "--test-reporter-destination=/var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-report-Sihf6o/results.json",
+        "./test/batches.test.js"
+      ],
+      "stdout": "",
+      "stderr": "",
+      "signal": null,
+      "reportErrors": [],
+      "discovery": {
+        "files": [
+          "test/batches.test.js"
+        ],
+        "complete": true,
+        "adapter": "node",
+        "warnings": []
+      }
+    },
+    "missingCases": [],
+    "defects": [],
+    "measured": {
+      "execution": true,
+      "heldOutDefects": 0
+    },
+    "isolation": "disposable-file-copy-with-trusted-dependencies",
+    "applied": false,
+    "integrity": "3331a06efc6f338787502ab1e7ae55259ebca8ab187203dc9a654cdfc7b8f8ba"
+  },
+  "baseline": {
+    "adapter": "node",
+    "exitCode": 0,
+    "durationMs": 110,
+    "tests": [
+      {
+        "file": "test/batches.test.js",
+        "name": "batches(5, 4) requires exactly 2 batches",
+        "status": "passed",
+        "durationMs": 0.52725,
+        "line": 20,
+        "column": 3,
+        "id": "c4fa7c9ef458355247f5827bb40d9a62a16b2dc6e48afb1737b6b61304918c9c"
+      },
+      {
+        "file": "test/batches.test.js",
+        "name": "batches(5, 4) requires exactly 2 batches",
+        "status": "passed",
+        "durationMs": 0.058333,
+        "line": 20,
+        "column": 3,
+        "id": "e6fadf1376583b5e909a12537a253cbef37ddd28ff6623d39f5ac2b2dd02d118"
+      },
+      {
+        "file": "test/batches.test.js",
+        "name": "batches(5, 4) requires exactly 2 batches",
+        "status": "passed",
+        "durationMs": 0.059792,
+        "line": 20,
+        "column": 3,
+        "id": "ff3b0e47e7384995a61c1d66c3441996256f1f40a41427e8491fcbeeabb8c23f"
+      },
+      {
+        "file": "test/batches.test.js",
+        "name": "batches(5, 4) requires exactly 2 batches",
+        "status": "passed",
+        "durationMs": 0.0595,
+        "line": 20,
+        "column": 3,
+        "id": "57a9e1941a9b07e9692351e98bf7fef10192461ebc60db8fb16768b5d310020b"
+      },
+      {
+        "file": "test/batches.test.js",
+        "name": "batches(5, 4) requires exactly 2 batches",
+        "status": "passed",
+        "durationMs": 0.049208,
+        "line": 20,
+        "column": 3,
+        "id": "f35d3a9f238b9211d9c0d11107f7ebff1c52c030814e1be23dc0355b014b3f75"
+      },
+      {
+        "file": "test/batches.test.js",
+        "name": "batches(5, 4) requires exactly 2 batches",
+        "status": "passed",
+        "durationMs": 0.039542,
+        "line": 20,
+        "column": 3,
+        "id": "997e52f782657b5585419a8efa79c212cb748e62e33587aaa806b7777d5332d8"
+      },
+      {
+        "file": "test/batches.test.js",
+        "name": "batches(5, 4) requires exactly 2 batches",
+        "status": "passed",
+        "durationMs": 0.040875,
+        "line": 20,
+        "column": 3,
+        "id": "bae3cad44973da01e7c8f1ef9e0735adfb8cc760a6ca3eed6c1a2c6e05eca529"
+      },
+      {
+        "file": "test/batches.test.js",
+        "name": "batches(5, 4) requires exactly 2 batches",
+        "status": "passed",
+        "durationMs": 0.038792,
+        "line": 20,
+        "column": 3,
+        "id": "56e0f445f977345d805dfb5708723a835cff805a8065ed675750f55aeb488bcd"
+      },
+      {
+        "file": "test/batches.test.js",
+        "name": "rejects invalid total 3.5 with a valid size",
+        "status": "passed",
+        "durationMs": 0.207458,
+        "line": 26,
+        "column": 3,
+        "id": "6a927807bfcadea18fbf7c008a915b050e3f863d3103a41bad4e4b0ae4085152"
+      },
+      {
+        "file": "test/batches.test.js",
+        "name": "rejects invalid total 3.5 with a valid size",
+        "status": "passed",
+        "durationMs": 0.095708,
+        "line": 26,
+        "column": 3,
+        "id": "f8e5e340a0c91a53da36618cb82e6975a8a00888edb8201ec11b3a9a76082bb9"
+      },
+      {
+        "file": "test/batches.test.js",
+        "name": "rejects invalid total 3.5 with a valid size",
+        "status": "passed",
+        "durationMs": 0.052375,
+        "line": 26,
+        "column": 3,
+        "id": "65384f0c480cd41cc815c6cec3110e990b46314f12532cd4b250004d90812678"
+      },
+      {
+        "file": "test/batches.test.js",
+        "name": "rejects invalid total 3.5 with a valid size",
+        "status": "passed",
+        "durationMs": 0.041208,
+        "line": 26,
+        "column": 3,
+        "id": "1a57fcf35d6cea608635d19d78f9f58aa2cad36f7742d277272ac18a1cbd8c7f"
+      },
+      {
+        "file": "test/batches.test.js",
+        "name": "rejects invalid size 2.5 with a positive valid total",
+        "status": "passed",
+        "durationMs": 0.045292,
+        "line": 32,
+        "column": 3,
+        "id": "7f39587a1a8296cd8c79f6bab457f49551cd26a1be057c276c92a98e515bb381"
+      },
+      {
+        "file": "test/batches.test.js",
+        "name": "rejects invalid size 2.5 even when total is zero",
+        "status": "passed",
+        "durationMs": 0.053541,
+        "line": 36,
+        "column": 3,
+        "id": "4955adbe4d160632d3052e19b7050147502a03c3c85eaa37aaf131cf023377ba"
+      },
+      {
+        "file": "test/batches.test.js",
+        "name": "rejects invalid size 2.5 with a positive valid total",
+        "status": "passed",
+        "durationMs": 0.032083,
+        "line": 32,
+        "column": 3,
+        "id": "d62597a4250e55556ecd5eb467105e97c019aeec1c1ffff3328d23b4c49e641a"
+      },
+      {
+        "file": "test/batches.test.js",
+        "name": "rejects invalid size 2.5 even when total is zero",
+        "status": "passed",
+        "durationMs": 0.038333,
+        "line": 36,
+        "column": 3,
+        "id": "737181a010e90a918d5477a68b3b061f9e6dcb06708673cd92a201d12e28e3bd"
+      },
+      {
+        "file": "test/batches.test.js",
+        "name": "rejects invalid size 2.5 with a positive valid total",
+        "status": "passed",
+        "durationMs": 0.027417,
+        "line": 32,
+        "column": 3,
+        "id": "607c14778d5a55325a14eb7b2798e940ca61bc61184f4a2ac05add107916ae45"
+      },
+      {
+        "file": "test/batches.test.js",
+        "name": "rejects invalid size 2.5 even when total is zero",
+        "status": "passed",
+        "durationMs": 0.063459,
+        "line": 36,
+        "column": 3,
+        "id": "874f95fa4c8a2708073e19d2c4828dda6df47dd1a6c74d7cb09278a8835b4077"
+      },
+      {
+        "file": "test/batches.test.js",
+        "name": "rejects invalid size 2.5 with a positive valid total",
+        "status": "passed",
+        "durationMs": 0.659375,
+        "line": 32,
+        "column": 3,
+        "id": "5ba71d45f50e1ed0629c0eabc027455466ee1f94ddf3cc6b7376ed1e9f4cdbcc"
+      },
+      {
+        "file": "test/batches.test.js",
+        "name": "rejects invalid size 2.5 even when total is zero",
+        "status": "passed",
+        "durationMs": 0.062959,
+        "line": 36,
+        "column": 3,
+        "id": "5f16bf695ce24142dfb2bd7c27fcd5a8837944ae81e92726dd0d777d72ec8c4d"
+      },
+      {
+        "file": "test/batches.test.js",
+        "name": "rejects invalid size 2.5 with a positive valid total",
+        "status": "passed",
+        "durationMs": 0.0325,
+        "line": 32,
+        "column": 3,
+        "id": "12a1962d44c916aa3b0ac2b1f631590f0fa08e5b58a2c36061491f4d93b103e9"
+      },
+      {
+        "file": "test/batches.test.js",
+        "name": "rejects invalid size 2.5 even when total is zero",
+        "status": "passed",
+        "durationMs": 0.026666,
+        "line": 36,
+        "column": 3,
+        "id": "ad4b2ffe13a5b127f08582c8c3de1bb1f8976c0bbf175da0fabb574e5342d1e6"
+      }
+    ],
+    "collectionFiles": [
+      "test/batches.test.js"
+    ],
+    "requestedFiles": [
+      "test/batches.test.js"
+    ],
+    "executedFiles": [
+      "test/batches.test.js"
+    ],
+    "missingFiles": [],
+    "unknownFiles": [],
+    "dependencyFiles": [],
+    "complete": true,
+    "command": [
+      "<node>",
+      "--test",
+      "--test-reporter=<repository>src/reporters/node.js",
+      "--test-reporter-destination=/var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-report-5962DZ/results.json",
+      "./test/batches.test.js"
+    ],
+    "stdout": "",
+    "stderr": "",
+    "signal": null,
+    "reportErrors": [],
+    "discovery": {
+      "files": [
+        "test/batches.test.js"
+      ],
+      "complete": true,
+      "adapter": "node",
+      "warnings": []
+    }
+  }
+}

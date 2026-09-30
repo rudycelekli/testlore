@@ -1,0 +1,1580 @@
+{
+  "fixture": "rotate",
+  "specificationId": "stable-right-array-rotation",
+  "repetition": 0,
+  "arm": "without_memory",
+  "order": 2,
+  "recalledRecords": 0,
+  "recall": 1,
+  "cases": 26,
+  "generationMs": 114303,
+  "totalMs": 116351,
+  "outputBytes": 4292,
+  "calls": [
+    {
+      "role": "architect",
+      "durationMs": 57333,
+      "input": {
+        "schemaVersion": 1,
+        "role": "architect",
+        "requirements": "rotate(xs,k) accepts an array and a nonnegative integer k, returning a new array rotated right by k modulo the length, with order preserved and no input mutation. Zero steps and empty arrays return new copies. Non-array inputs throw TypeError; negative or fractional steps throw RangeError. Use exact independent expected arrays.",
+        "context": [
+          {
+            "file": "src/rotate.js",
+            "content": "export function rotate(xs,k){if(!Array.isArray(xs))throw new TypeError();if(!Number.isInteger(k)||k<0)throw new RangeError();if(!xs.length)return [];const n=k%xs.length;return n?[...xs.slice(-n),...xs.slice(0,-n)]:[...xs];}"
+          }
+        ],
+        "budget": {
+          "maxTasks": 1,
+          "maxOutputBytes": 32768,
+          "timeoutMs": 90000,
+          "callsPerTrial": 3,
+          "orderSeed": 202609301,
+          "instructions": "Use only supplied context and requirements. No tools or filesystem reads. Return one task, then independent runnable Node tests named test/NAME.test.js (Node test and assert builtins; package type is module). Historical patterns are advisory. Do not infer expected values from current implementation."
+        },
+        "learning": {
+          "records": [],
+          "advisoryOnly": true,
+          "reason": "learning-disabled"
+        },
+        "order": {
+          "subjects": [
+            "src/rotate.js"
+          ],
+          "roles": [
+            "architect",
+            "author",
+            "reviewer"
+          ],
+          "acceptance": [
+            "Independent requirements, deterministic assertions, boundaries and errors."
+          ]
+        }
+      },
+      "output": {
+        "tasks": [
+          {
+            "subject": "src/rotate.js",
+            "instructions": "Create test/rotate.test.js using node:test and node:assert/strict, importing rotate from ../src/rotate.js. Derive exact expected arrays solely from the supplied right-rotation contract. Cover [1,2,3,4] with k=1 → [4,1,2,3], k=2 → [3,4,1,2], k=3 → [2,3,4,1], k=4 → [1,2,3,4], and k=6 → [3,4,1,2]. Cover zero steps, empty arrays with zero and positive steps, and singleton arrays with zero and positive steps. Assert each successful result is a distinct array and the input retains its original contents. Include a frozen input to verify rotation requires no mutation. Assert TypeError for representative non-array inputs, including null, undefined, a string, a number, and an array-like object, using valid steps. Assert RangeError for negative and fractional steps on both nonempty and empty arrays. Use deterministic literal expectations; do not calculate expected results using rotation logic or implementation output. Keep tests runnable in the supplied ES-module project."
+          }
+        ]
+      },
+      "outputBytes": 1042
+    },
+    {
+      "role": "author",
+      "durationMs": 44937,
+      "input": {
+        "schemaVersion": 1,
+        "role": "author",
+        "requirements": "rotate(xs,k) accepts an array and a nonnegative integer k, returning a new array rotated right by k modulo the length, with order preserved and no input mutation. Zero steps and empty arrays return new copies. Non-array inputs throw TypeError; negative or fractional steps throw RangeError. Use exact independent expected arrays.",
+        "context": [
+          {
+            "file": "src/rotate.js",
+            "content": "export function rotate(xs,k){if(!Array.isArray(xs))throw new TypeError();if(!Number.isInteger(k)||k<0)throw new RangeError();if(!xs.length)return [];const n=k%xs.length;return n?[...xs.slice(-n),...xs.slice(0,-n)]:[...xs];}"
+          }
+        ],
+        "budget": {
+          "maxTasks": 1,
+          "maxOutputBytes": 32768,
+          "timeoutMs": 90000,
+          "callsPerTrial": 3,
+          "orderSeed": 202609301,
+          "instructions": "Use only supplied context and requirements. No tools or filesystem reads. Return one task, then independent runnable Node tests named test/NAME.test.js (Node test and assert builtins; package type is module). Historical patterns are advisory. Do not infer expected values from current implementation."
+        },
+        "learning": {
+          "records": [],
+          "advisoryOnly": true,
+          "reason": "learning-disabled"
+        },
+        "task": {
+          "subject": "src/rotate.js",
+          "instructions": "Create test/rotate.test.js using node:test and node:assert/strict, importing rotate from ../src/rotate.js. Derive exact expected arrays solely from the supplied right-rotation contract. Cover [1,2,3,4] with k=1 → [4,1,2,3], k=2 → [3,4,1,2], k=3 → [2,3,4,1], k=4 → [1,2,3,4], and k=6 → [3,4,1,2]. Cover zero steps, empty arrays with zero and positive steps, and singleton arrays with zero and positive steps. Assert each successful result is a distinct array and the input retains its original contents. Include a frozen input to verify rotation requires no mutation. Assert TypeError for representative non-array inputs, including null, undefined, a string, a number, and an array-like object, using valid steps. Assert RangeError for negative and fractional steps on both nonempty and empty arrays. Use deterministic literal expectations; do not calculate expected results using rotation logic or implementation output. Keep tests runnable in the supplied ES-module project."
+        }
+      },
+      "output": {
+        "files": [
+          {
+            "path": "test/rotate.test.js",
+            "content": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport { rotate } from '../src/rotate.js';\n\nconst cases = [\n  { name: 'zero steps', input: [1, 2, 3, 4], k: 0, expected: [1, 2, 3, 4] },\n  { name: 'one step right', input: [1, 2, 3, 4], k: 1, expected: [4, 1, 2, 3] },\n  { name: 'two steps right', input: [1, 2, 3, 4], k: 2, expected: [3, 4, 1, 2] },\n  { name: 'three steps right', input: [1, 2, 3, 4], k: 3, expected: [2, 3, 4, 1] },\n  { name: 'one full rotation', input: [1, 2, 3, 4], k: 4, expected: [1, 2, 3, 4] },\n  { name: 'steps exceeding the length', input: [1, 2, 3, 4], k: 6, expected: [3, 4, 1, 2] },\n  { name: 'empty array with zero steps', input: [], k: 0, expected: [] },\n  { name: 'empty array with positive steps', input: [], k: 7, expected: [] },\n  { name: 'singleton with zero steps', input: [9], k: 0, expected: [9] },\n  { name: 'singleton with positive steps', input: [9], k: 7, expected: [9] },\n];\n\nfor (const { name, input, k, expected } of cases) {\n  test(`rotate returns a new array and preserves input: ${name}`, () => {\n    const original = input.slice();\n    const result = rotate(input, k);\n\n    assert.ok(Array.isArray(result));\n    assert.notStrictEqual(result, input);\n    assert.deepStrictEqual(result, expected);\n    assert.deepStrictEqual(input, original);\n  });\n}\n\ntest('rotate accepts frozen input without mutating it', () => {\n  const input = Object.freeze([1, 2, 3, 4]);\n  const result = rotate(input, 1);\n\n  assert.ok(Array.isArray(result));\n  assert.notStrictEqual(result, input);\n  assert.deepStrictEqual(result, [4, 1, 2, 3]);\n  assert.deepStrictEqual(input, [1, 2, 3, 4]);\n});\n\nconst nonArrays = [\n  { name: 'null', value: null },\n  { name: 'undefined', value: undefined },\n  { name: 'string', value: 'abcd' },\n  { name: 'number', value: 42 },\n  { name: 'array-like object', value: { 0: 'a', 1: 'b', length: 2 } },\n];\n\nfor (const { name, value } of nonArrays) {\n  test(`rotate rejects ${name} with TypeError`, () => {\n    assert.throws(() => rotate(value, 0), TypeError);\n    assert.throws(() => rotate(value, 1), TypeError);\n  });\n}\n\nfor (const k of [-1, -4, 0.5, 1.5, -0.5]) {\n  test(`rotate rejects step count ${k} on a nonempty array`, () => {\n    const input = [1, 2, 3, 4];\n\n    assert.throws(() => rotate(input, k), RangeError);\n    assert.deepStrictEqual(input, [1, 2, 3, 4]);\n  });\n\n  test(`rotate rejects step count ${k} on an empty array`, () => {\n    const input = [];\n\n    assert.throws(() => rotate(input, k), RangeError);\n    assert.deepStrictEqual(input, []);\n  });\n}\n"
+          }
+        ]
+      },
+      "outputBytes": 2671
+    },
+    {
+      "role": "reviewer",
+      "durationMs": 11698,
+      "input": {
+        "schemaVersion": 1,
+        "role": "reviewer",
+        "requirements": "rotate(xs,k) accepts an array and a nonnegative integer k, returning a new array rotated right by k modulo the length, with order preserved and no input mutation. Zero steps and empty arrays return new copies. Non-array inputs throw TypeError; negative or fractional steps throw RangeError. Use exact independent expected arrays.",
+        "context": [
+          {
+            "file": "src/rotate.js",
+            "content": "export function rotate(xs,k){if(!Array.isArray(xs))throw new TypeError();if(!Number.isInteger(k)||k<0)throw new RangeError();if(!xs.length)return [];const n=k%xs.length;return n?[...xs.slice(-n),...xs.slice(0,-n)]:[...xs];}"
+          }
+        ],
+        "budget": {
+          "maxTasks": 1,
+          "maxOutputBytes": 32768,
+          "timeoutMs": 90000,
+          "callsPerTrial": 3,
+          "orderSeed": 202609301,
+          "instructions": "Use only supplied context and requirements. No tools or filesystem reads. Return one task, then independent runnable Node tests named test/NAME.test.js (Node test and assert builtins; package type is module). Historical patterns are advisory. Do not infer expected values from current implementation."
+        },
+        "files": [
+          {
+            "path": "test/rotate.test.js",
+            "content": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport { rotate } from '../src/rotate.js';\n\nconst cases = [\n  { name: 'zero steps', input: [1, 2, 3, 4], k: 0, expected: [1, 2, 3, 4] },\n  { name: 'one step right', input: [1, 2, 3, 4], k: 1, expected: [4, 1, 2, 3] },\n  { name: 'two steps right', input: [1, 2, 3, 4], k: 2, expected: [3, 4, 1, 2] },\n  { name: 'three steps right', input: [1, 2, 3, 4], k: 3, expected: [2, 3, 4, 1] },\n  { name: 'one full rotation', input: [1, 2, 3, 4], k: 4, expected: [1, 2, 3, 4] },\n  { name: 'steps exceeding the length', input: [1, 2, 3, 4], k: 6, expected: [3, 4, 1, 2] },\n  { name: 'empty array with zero steps', input: [], k: 0, expected: [] },\n  { name: 'empty array with positive steps', input: [], k: 7, expected: [] },\n  { name: 'singleton with zero steps', input: [9], k: 0, expected: [9] },\n  { name: 'singleton with positive steps', input: [9], k: 7, expected: [9] },\n];\n\nfor (const { name, input, k, expected } of cases) {\n  test(`rotate returns a new array and preserves input: ${name}`, () => {\n    const original = input.slice();\n    const result = rotate(input, k);\n\n    assert.ok(Array.isArray(result));\n    assert.notStrictEqual(result, input);\n    assert.deepStrictEqual(result, expected);\n    assert.deepStrictEqual(input, original);\n  });\n}\n\ntest('rotate accepts frozen input without mutating it', () => {\n  const input = Object.freeze([1, 2, 3, 4]);\n  const result = rotate(input, 1);\n\n  assert.ok(Array.isArray(result));\n  assert.notStrictEqual(result, input);\n  assert.deepStrictEqual(result, [4, 1, 2, 3]);\n  assert.deepStrictEqual(input, [1, 2, 3, 4]);\n});\n\nconst nonArrays = [\n  { name: 'null', value: null },\n  { name: 'undefined', value: undefined },\n  { name: 'string', value: 'abcd' },\n  { name: 'number', value: 42 },\n  { name: 'array-like object', value: { 0: 'a', 1: 'b', length: 2 } },\n];\n\nfor (const { name, value } of nonArrays) {\n  test(`rotate rejects ${name} with TypeError`, () => {\n    assert.throws(() => rotate(value, 0), TypeError);\n    assert.throws(() => rotate(value, 1), TypeError);\n  });\n}\n\nfor (const k of [-1, -4, 0.5, 1.5, -0.5]) {\n  test(`rotate rejects step count ${k} on a nonempty array`, () => {\n    const input = [1, 2, 3, 4];\n\n    assert.throws(() => rotate(input, k), RangeError);\n    assert.deepStrictEqual(input, [1, 2, 3, 4]);\n  });\n\n  test(`rotate rejects step count ${k} on an empty array`, () => {\n    const input = [];\n\n    assert.throws(() => rotate(input, k), RangeError);\n    assert.deepStrictEqual(input, []);\n  });\n}\n"
+          }
+        ],
+        "acceptance": [
+          "Independent current specification, deterministic runnable cases."
+        ]
+      },
+      "output": {
+        "accepted": true,
+        "findings": [],
+        "oracle": {
+          "independent": true,
+          "basis": [
+            "Exact expected arrays follow the supplied right-rotation and modulo requirements.",
+            "Identity and input-equality assertions verify new arrays and no mutation, including zero steps, empty arrays, and singletons.",
+            "Error assertions cover required TypeError behavior for non-arrays and RangeError behavior for negative and fractional steps on empty and nonempty arrays.",
+            "Tests are deterministic and use valid Node built-in imports and the supplied module export. Acceptance is based on review, not execution."
+          ]
+        }
+      },
+      "outputBytes": 579
+    }
+  ],
+  "defects": [
+    {
+      "id": "direction-reversed",
+      "detected": true,
+      "result": {
+        "adapter": "node",
+        "exitCode": 1,
+        "durationMs": 154,
+        "tests": [
+          {
+            "file": "test/rotate.test.js",
+            "name": "rotate returns a new array and preserves input: singleton with positive steps",
+            "status": "passed",
+            "durationMs": 1.297167,
+            "line": 19,
+            "column": 3,
+            "id": "c8ac0840bdaded9674084a083df4be4746dee1220ebe1cedc4bdb5fb59ebfadd"
+          },
+          {
+            "file": "test/rotate.test.js",
+            "name": "rotate returns a new array and preserves input: singleton with positive steps",
+            "status": "failed",
+            "durationMs": 0.888291,
+            "line": 19,
+            "column": 3,
+            "id": "bb1de186036476f509916186b233d4b8b524016319198ad1884c4ec1a389bdcb"
+          },
+          {
+            "file": "test/rotate.test.js",
+            "name": "rotate returns a new array and preserves input: singleton with positive steps",
+            "status": "passed",
+            "durationMs": 0.102125,
+            "line": 19,
+            "column": 3,
+            "id": "92137d8daff566e224eda0637e7b1c2eecdce7eac9a907e27e63fa205d38e400"
+          },
+          {
+            "file": "test/rotate.test.js",
+            "name": "rotate returns a new array and preserves input: singleton with positive steps",
+            "status": "failed",
+            "durationMs": 0.213041,
+            "line": 19,
+            "column": 3,
+            "id": "c91a7f13171201c504ac6f6d302573d087e4a149911049cefc26ea6a4093b7e9"
+          },
+          {
+            "file": "test/rotate.test.js",
+            "name": "rotate returns a new array and preserves input: singleton with positive steps",
+            "status": "passed",
+            "durationMs": 0.08225,
+            "line": 19,
+            "column": 3,
+            "id": "126fa282bd75277f8b7a9c90caa4d199ebf6b85662880072ac715b4ce076dbf4"
+          },
+          {
+            "file": "test/rotate.test.js",
+            "name": "rotate returns a new array and preserves input: singleton with positive steps",
+            "status": "passed",
+            "durationMs": 0.072208,
+            "line": 19,
+            "column": 3,
+            "id": "a6c93a2a6ab98c92d36c6d41a509a14a919ef3a40a1c89e4645a95e170b2a6e2"
+          },
+          {
+            "file": "test/rotate.test.js",
+            "name": "rotate returns a new array and preserves input: singleton with positive steps",
+            "status": "passed",
+            "durationMs": 0.067667,
+            "line": 19,
+            "column": 3,
+            "id": "b5bf2d87c4d2836f59865d353f34c83426ee9b8d341b8b7f30cd5ed5de77f75b"
+          },
+          {
+            "file": "test/rotate.test.js",
+            "name": "rotate returns a new array and preserves input: singleton with positive steps",
+            "status": "passed",
+            "durationMs": 0.055042,
+            "line": 19,
+            "column": 3,
+            "id": "6f5e6ce92d74c85e1ecbde6727389d41999e136aec8331b10042c27630e06c4c"
+          },
+          {
+            "file": "test/rotate.test.js",
+            "name": "rotate returns a new array and preserves input: singleton with positive steps",
+            "status": "passed",
+            "durationMs": 0.081958,
+            "line": 19,
+            "column": 3,
+            "id": "75edb28ee7b0b98e7bbe4e6bfb21bea572f13941f47e915a884a6812890835b1"
+          },
+          {
+            "file": "test/rotate.test.js",
+            "name": "rotate returns a new array and preserves input: singleton with positive steps",
+            "status": "passed",
+            "durationMs": 0.118042,
+            "line": 19,
+            "column": 3,
+            "id": "a45adab926cf3ed439df3abda49f491efcd45a08f5a06e27706dbae8fb8d0f21"
+          },
+          {
+            "file": "test/rotate.test.js",
+            "name": "rotate accepts frozen input without mutating it",
+            "status": "failed",
+            "durationMs": 0.215958,
+            "line": 30,
+            "column": 1,
+            "id": "3ea148ba3b0798dfb16e15734ae097a0799398048cac07e40f95e9d01a3ea43b"
+          },
+          {
+            "file": "test/rotate.test.js",
+            "name": "rotate rejects array-like object with TypeError",
+            "status": "passed",
+            "durationMs": 0.308625,
+            "line": 49,
+            "column": 3,
+            "id": "4266c7b1f9a6ffd423fc5ee404c73bdac6e0694b27d2712cb673284c9cab0730"
+          },
+          {
+            "file": "test/rotate.test.js",
+            "name": "rotate rejects array-like object with TypeError",
+            "status": "passed",
+            "durationMs": 0.083,
+            "line": 49,
+            "column": 3,
+            "id": "9ebedcc857271af622026ae7eb15df054f50cb1381872ccec5a37b4a75f9c181"
+          },
+          {
+            "file": "test/rotate.test.js",
+            "name": "rotate rejects array-like object with TypeError",
+            "status": "passed",
+            "durationMs": 0.086375,
+            "line": 49,
+            "column": 3,
+            "id": "cba9fd6c9f997f84bdc14e088ce1c8a569f440c0bcd30a14b7103c3663def798"
+          },
+          {
+            "file": "test/rotate.test.js",
+            "name": "rotate rejects array-like object with TypeError",
+            "status": "passed",
+            "durationMs": 0.799167,
+            "line": 49,
+            "column": 3,
+            "id": "3b97ad1692416fea7b8082e43c2f313620d514dbb8062bd1476795492c5c340e"
+          },
+          {
+            "file": "test/rotate.test.js",
+            "name": "rotate rejects array-like object with TypeError",
+            "status": "passed",
+            "durationMs": 0.098042,
+            "line": 49,
+            "column": 3,
+            "id": "796e5ee574343122192b818292c81fbf369921756cb59d3966a19b742b036b2c"
+          },
+          {
+            "file": "test/rotate.test.js",
+            "name": "rotate rejects step count -0.5 on a nonempty array",
+            "status": "passed",
+            "durationMs": 0.114292,
+            "line": 56,
+            "column": 3,
+            "id": "7d379612c76da7c6604dc2eeb4b71d77a615e9d281b81b69411504b5cd2e663a"
+          },
+          {
+            "file": "test/rotate.test.js",
+            "name": "rotate rejects step count -0.5 on an empty array",
+            "status": "passed",
+            "durationMs": 0.062833,
+            "line": 63,
+            "column": 3,
+            "id": "2a99d4a315115bb261e2d78371843785ea66f8dbad9ee318dd2782facb6fac72"
+          },
+          {
+            "file": "test/rotate.test.js",
+            "name": "rotate rejects step count -0.5 on a nonempty array",
+            "status": "passed",
+            "durationMs": 0.054625,
+            "line": 56,
+            "column": 3,
+            "id": "bf74f78ca02304f1a5c3f43b2c00096ec13ffa59e93a3307c85e7eea263fe63d"
+          },
+          {
+            "file": "test/rotate.test.js",
+            "name": "rotate rejects step count -0.5 on an empty array",
+            "status": "passed",
+            "durationMs": 0.047209,
+            "line": 63,
+            "column": 3,
+            "id": "b1cb1c988f5d5199b724521fe495e8efabc78e40166442a6957c6ede8c8f68dc"
+          },
+          {
+            "file": "test/rotate.test.js",
+            "name": "rotate rejects step count -0.5 on a nonempty array",
+            "status": "passed",
+            "durationMs": 0.052166,
+            "line": 56,
+            "column": 3,
+            "id": "d99961d3eddf84d8b7c82f9c63543fec324fe8ba90de8ba71f43b63630726224"
+          },
+          {
+            "file": "test/rotate.test.js",
+            "name": "rotate rejects step count -0.5 on an empty array",
+            "status": "passed",
+            "durationMs": 0.039083,
+            "line": 63,
+            "column": 3,
+            "id": "2c64ce1f00d944aa1e21baf13308b3388d6f40da06318dcdc08b93b093f58a38"
+          },
+          {
+            "file": "test/rotate.test.js",
+            "name": "rotate rejects step count -0.5 on a nonempty array",
+            "status": "passed",
+            "durationMs": 0.035875,
+            "line": 56,
+            "column": 3,
+            "id": "c83c74295ed57172b7667065632b60615cc928d99ca69530a2e70a8669e2da68"
+          },
+          {
+            "file": "test/rotate.test.js",
+            "name": "rotate rejects step count -0.5 on an empty array",
+            "status": "passed",
+            "durationMs": 0.033333,
+            "line": 63,
+            "column": 3,
+            "id": "02b73e30e96028b378014bf00705a0360eb95a6eb792031173feece36966f896"
+          },
+          {
+            "file": "test/rotate.test.js",
+            "name": "rotate rejects step count -0.5 on a nonempty array",
+            "status": "passed",
+            "durationMs": 0.033208,
+            "line": 56,
+            "column": 3,
+            "id": "edc2a36529f8479a026b267cc4794fed54ef7d64aa8dfed451357472b5e83f91"
+          },
+          {
+            "file": "test/rotate.test.js",
+            "name": "rotate rejects step count -0.5 on an empty array",
+            "status": "passed",
+            "durationMs": 0.032958,
+            "line": 63,
+            "column": 3,
+            "id": "aaf290aa1c6ae1cae664038c6e7eae1301561b4cca8a50a305be4bd14aee081e"
+          }
+        ],
+        "collectionFiles": [
+          "test/rotate.test.js"
+        ],
+        "requestedFiles": [
+          "test/rotate.test.js"
+        ],
+        "executedFiles": [
+          "test/rotate.test.js"
+        ],
+        "missingFiles": [],
+        "unknownFiles": [],
+        "dependencyFiles": [],
+        "complete": true,
+        "command": [
+          "<node>",
+          "--test",
+          "--test-reporter=<repository>src/reporters/node.js",
+          "--test-reporter-destination=/var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-report-Ywy6Hk/results.json",
+          "./test/rotate.test.js"
+        ],
+        "stdout": "",
+        "stderr": "",
+        "signal": null,
+        "reportErrors": [],
+        "discovery": {
+          "files": [
+            "test/rotate.test.js"
+          ],
+          "complete": true,
+          "adapter": "node",
+          "warnings": []
+        }
+      }
+    },
+    {
+      "id": "input-alias-returned",
+      "detected": true,
+      "result": {
+        "adapter": "node",
+        "exitCode": 1,
+        "durationMs": 144,
+        "tests": [
+          {
+            "file": "test/rotate.test.js",
+            "name": "rotate returns a new array and preserves input: singleton with positive steps",
+            "status": "failed",
+            "durationMs": 1.532666,
+            "line": 19,
+            "column": 3,
+            "id": "c8ac0840bdaded9674084a083df4be4746dee1220ebe1cedc4bdb5fb59ebfadd"
+          },
+          {
+            "file": "test/rotate.test.js",
+            "name": "rotate returns a new array and preserves input: singleton with positive steps",
+            "status": "passed",
+            "durationMs": 0.65175,
+            "line": 19,
+            "column": 3,
+            "id": "bb1de186036476f509916186b233d4b8b524016319198ad1884c4ec1a389bdcb"
+          },
+          {
+            "file": "test/rotate.test.js",
+            "name": "rotate returns a new array and preserves input: singleton with positive steps",
+            "status": "passed",
+            "durationMs": 0.138167,
+            "line": 19,
+            "column": 3,
+            "id": "92137d8daff566e224eda0637e7b1c2eecdce7eac9a907e27e63fa205d38e400"
+          },
+          {
+            "file": "test/rotate.test.js",
+            "name": "rotate returns a new array and preserves input: singleton with positive steps",
+            "status": "passed",
+            "durationMs": 0.092375,
+            "line": 19,
+            "column": 3,
+            "id": "c91a7f13171201c504ac6f6d302573d087e4a149911049cefc26ea6a4093b7e9"
+          },
+          {
+            "file": "test/rotate.test.js",
+            "name": "rotate returns a new array and preserves input: singleton with positive steps",
+            "status": "failed",
+            "durationMs": 0.166375,
+            "line": 19,
+            "column": 3,
+            "id": "126fa282bd75277f8b7a9c90caa4d199ebf6b85662880072ac715b4ce076dbf4"
+          },
+          {
+            "file": "test/rotate.test.js",
+            "name": "rotate returns a new array and preserves input: singleton with positive steps",
+            "status": "passed",
+            "durationMs": 0.070792,
+            "line": 19,
+            "column": 3,
+            "id": "a6c93a2a6ab98c92d36c6d41a509a14a919ef3a40a1c89e4645a95e170b2a6e2"
+          },
+          {
+            "file": "test/rotate.test.js",
+            "name": "rotate returns a new array and preserves input: singleton with positive steps",
+            "status": "passed",
+            "durationMs": 0.071792,
+            "line": 19,
+            "column": 3,
+            "id": "b5bf2d87c4d2836f59865d353f34c83426ee9b8d341b8b7f30cd5ed5de77f75b"
+          },
+          {
+            "file": "test/rotate.test.js",
+            "name": "rotate returns a new array and preserves input: singleton with positive steps",
+            "status": "passed",
+            "durationMs": 0.052083,
+            "line": 19,
+            "column": 3,
+            "id": "6f5e6ce92d74c85e1ecbde6727389d41999e136aec8331b10042c27630e06c4c"
+          },
+          {
+            "file": "test/rotate.test.js",
+            "name": "rotate returns a new array and preserves input: singleton with positive steps",
+            "status": "failed",
+            "durationMs": 0.112292,
+            "line": 19,
+            "column": 3,
+            "id": "75edb28ee7b0b98e7bbe4e6bfb21bea572f13941f47e915a884a6812890835b1"
+          },
+          {
+            "file": "test/rotate.test.js",
+            "name": "rotate returns a new array and preserves input: singleton with positive steps",
+            "status": "failed",
+            "durationMs": 0.1545,
+            "line": 19,
+            "column": 3,
+            "id": "a45adab926cf3ed439df3abda49f491efcd45a08f5a06e27706dbae8fb8d0f21"
+          },
+          {
+            "file": "test/rotate.test.js",
+            "name": "rotate accepts frozen input without mutating it",
+            "status": "passed",
+            "durationMs": 0.113334,
+            "line": 30,
+            "column": 1,
+            "id": "3ea148ba3b0798dfb16e15734ae097a0799398048cac07e40f95e9d01a3ea43b"
+          },
+          {
+            "file": "test/rotate.test.js",
+            "name": "rotate rejects array-like object with TypeError",
+            "status": "passed",
+            "durationMs": 0.395333,
+            "line": 49,
+            "column": 3,
+            "id": "4266c7b1f9a6ffd423fc5ee404c73bdac6e0694b27d2712cb673284c9cab0730"
+          },
+          {
+            "file": "test/rotate.test.js",
+            "name": "rotate rejects array-like object with TypeError",
+            "status": "passed",
+            "durationMs": 0.090916,
+            "line": 49,
+            "column": 3,
+            "id": "9ebedcc857271af622026ae7eb15df054f50cb1381872ccec5a37b4a75f9c181"
+          },
+          {
+            "file": "test/rotate.test.js",
+            "name": "rotate rejects array-like object with TypeError",
+            "status": "passed",
+            "durationMs": 0.064583,
+            "line": 49,
+            "column": 3,
+            "id": "cba9fd6c9f997f84bdc14e088ce1c8a569f440c0bcd30a14b7103c3663def798"
+          },
+          {
+            "file": "test/rotate.test.js",
+            "name": "rotate rejects array-like object with TypeError",
+            "status": "passed",
+            "durationMs": 0.672708,
+            "line": 49,
+            "column": 3,
+            "id": "3b97ad1692416fea7b8082e43c2f313620d514dbb8062bd1476795492c5c340e"
+          },
+          {
+            "file": "test/rotate.test.js",
+            "name": "rotate rejects array-like object with TypeError",
+            "status": "passed",
+            "durationMs": 0.076041,
+            "line": 49,
+            "column": 3,
+            "id": "796e5ee574343122192b818292c81fbf369921756cb59d3966a19b742b036b2c"
+          },
+          {
+            "file": "test/rotate.test.js",
+            "name": "rotate rejects step count -0.5 on a nonempty array",
+            "status": "passed",
+            "durationMs": 0.079667,
+            "line": 56,
+            "column": 3,
+            "id": "7d379612c76da7c6604dc2eeb4b71d77a615e9d281b81b69411504b5cd2e663a"
+          },
+          {
+            "file": "test/rotate.test.js",
+            "name": "rotate rejects step count -0.5 on an empty array",
+            "status": "passed",
+            "durationMs": 0.051958,
+            "line": 63,
+            "column": 3,
+            "id": "2a99d4a315115bb261e2d78371843785ea66f8dbad9ee318dd2782facb6fac72"
+          },
+          {
+            "file": "test/rotate.test.js",
+            "name": "rotate rejects step count -0.5 on a nonempty array",
+            "status": "passed",
+            "durationMs": 0.035042,
+            "line": 56,
+            "column": 3,
+            "id": "bf74f78ca02304f1a5c3f43b2c00096ec13ffa59e93a3307c85e7eea263fe63d"
+          },
+          {
+            "file": "test/rotate.test.js",
+            "name": "rotate rejects step count -0.5 on an empty array",
+            "status": "passed",
+            "durationMs": 0.041834,
+            "line": 63,
+            "column": 3,
+            "id": "b1cb1c988f5d5199b724521fe495e8efabc78e40166442a6957c6ede8c8f68dc"
+          },
+          {
+            "file": "test/rotate.test.js",
+            "name": "rotate rejects step count -0.5 on a nonempty array",
+            "status": "passed",
+            "durationMs": 0.04725,
+            "line": 56,
+            "column": 3,
+            "id": "d99961d3eddf84d8b7c82f9c63543fec324fe8ba90de8ba71f43b63630726224"
+          },
+          {
+            "file": "test/rotate.test.js",
+            "name": "rotate rejects step count -0.5 on an empty array",
+            "status": "passed",
+            "durationMs": 0.045,
+            "line": 63,
+            "column": 3,
+            "id": "2c64ce1f00d944aa1e21baf13308b3388d6f40da06318dcdc08b93b093f58a38"
+          },
+          {
+            "file": "test/rotate.test.js",
+            "name": "rotate rejects step count -0.5 on a nonempty array",
+            "status": "passed",
+            "durationMs": 0.032542,
+            "line": 56,
+            "column": 3,
+            "id": "c83c74295ed57172b7667065632b60615cc928d99ca69530a2e70a8669e2da68"
+          },
+          {
+            "file": "test/rotate.test.js",
+            "name": "rotate rejects step count -0.5 on an empty array",
+            "status": "passed",
+            "durationMs": 0.033459,
+            "line": 63,
+            "column": 3,
+            "id": "02b73e30e96028b378014bf00705a0360eb95a6eb792031173feece36966f896"
+          },
+          {
+            "file": "test/rotate.test.js",
+            "name": "rotate rejects step count -0.5 on a nonempty array",
+            "status": "passed",
+            "durationMs": 0.032875,
+            "line": 56,
+            "column": 3,
+            "id": "edc2a36529f8479a026b267cc4794fed54ef7d64aa8dfed451357472b5e83f91"
+          },
+          {
+            "file": "test/rotate.test.js",
+            "name": "rotate rejects step count -0.5 on an empty array",
+            "status": "passed",
+            "durationMs": 0.029834,
+            "line": 63,
+            "column": 3,
+            "id": "aaf290aa1c6ae1cae664038c6e7eae1301561b4cca8a50a305be4bd14aee081e"
+          }
+        ],
+        "collectionFiles": [
+          "test/rotate.test.js"
+        ],
+        "requestedFiles": [
+          "test/rotate.test.js"
+        ],
+        "executedFiles": [
+          "test/rotate.test.js"
+        ],
+        "missingFiles": [],
+        "unknownFiles": [],
+        "dependencyFiles": [],
+        "complete": true,
+        "command": [
+          "<node>",
+          "--test",
+          "--test-reporter=<repository>src/reporters/node.js",
+          "--test-reporter-destination=/var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-report-tao4f1/results.json",
+          "./test/rotate.test.js"
+        ],
+        "stdout": "",
+        "stderr": "",
+        "signal": null,
+        "reportErrors": [],
+        "discovery": {
+          "files": [
+            "test/rotate.test.js"
+          ],
+          "complete": true,
+          "adapter": "node",
+          "warnings": []
+        }
+      }
+    },
+    {
+      "id": "negative-step-accepted",
+      "detected": true,
+      "result": {
+        "adapter": "node",
+        "exitCode": 1,
+        "durationMs": 141,
+        "tests": [
+          {
+            "file": "test/rotate.test.js",
+            "name": "rotate returns a new array and preserves input: singleton with positive steps",
+            "status": "passed",
+            "durationMs": 1.444542,
+            "line": 19,
+            "column": 3,
+            "id": "c8ac0840bdaded9674084a083df4be4746dee1220ebe1cedc4bdb5fb59ebfadd"
+          },
+          {
+            "file": "test/rotate.test.js",
+            "name": "rotate returns a new array and preserves input: singleton with positive steps",
+            "status": "passed",
+            "durationMs": 0.115667,
+            "line": 19,
+            "column": 3,
+            "id": "bb1de186036476f509916186b233d4b8b524016319198ad1884c4ec1a389bdcb"
+          },
+          {
+            "file": "test/rotate.test.js",
+            "name": "rotate returns a new array and preserves input: singleton with positive steps",
+            "status": "passed",
+            "durationMs": 0.089875,
+            "line": 19,
+            "column": 3,
+            "id": "92137d8daff566e224eda0637e7b1c2eecdce7eac9a907e27e63fa205d38e400"
+          },
+          {
+            "file": "test/rotate.test.js",
+            "name": "rotate returns a new array and preserves input: singleton with positive steps",
+            "status": "passed",
+            "durationMs": 0.069625,
+            "line": 19,
+            "column": 3,
+            "id": "c91a7f13171201c504ac6f6d302573d087e4a149911049cefc26ea6a4093b7e9"
+          },
+          {
+            "file": "test/rotate.test.js",
+            "name": "rotate returns a new array and preserves input: singleton with positive steps",
+            "status": "passed",
+            "durationMs": 0.076959,
+            "line": 19,
+            "column": 3,
+            "id": "126fa282bd75277f8b7a9c90caa4d199ebf6b85662880072ac715b4ce076dbf4"
+          },
+          {
+            "file": "test/rotate.test.js",
+            "name": "rotate returns a new array and preserves input: singleton with positive steps",
+            "status": "passed",
+            "durationMs": 0.055708,
+            "line": 19,
+            "column": 3,
+            "id": "a6c93a2a6ab98c92d36c6d41a509a14a919ef3a40a1c89e4645a95e170b2a6e2"
+          },
+          {
+            "file": "test/rotate.test.js",
+            "name": "rotate returns a new array and preserves input: singleton with positive steps",
+            "status": "passed",
+            "durationMs": 0.064459,
+            "line": 19,
+            "column": 3,
+            "id": "b5bf2d87c4d2836f59865d353f34c83426ee9b8d341b8b7f30cd5ed5de77f75b"
+          },
+          {
+            "file": "test/rotate.test.js",
+            "name": "rotate returns a new array and preserves input: singleton with positive steps",
+            "status": "passed",
+            "durationMs": 0.060666,
+            "line": 19,
+            "column": 3,
+            "id": "6f5e6ce92d74c85e1ecbde6727389d41999e136aec8331b10042c27630e06c4c"
+          },
+          {
+            "file": "test/rotate.test.js",
+            "name": "rotate returns a new array and preserves input: singleton with positive steps",
+            "status": "passed",
+            "durationMs": 0.075292,
+            "line": 19,
+            "column": 3,
+            "id": "75edb28ee7b0b98e7bbe4e6bfb21bea572f13941f47e915a884a6812890835b1"
+          },
+          {
+            "file": "test/rotate.test.js",
+            "name": "rotate returns a new array and preserves input: singleton with positive steps",
+            "status": "passed",
+            "durationMs": 0.135375,
+            "line": 19,
+            "column": 3,
+            "id": "a45adab926cf3ed439df3abda49f491efcd45a08f5a06e27706dbae8fb8d0f21"
+          },
+          {
+            "file": "test/rotate.test.js",
+            "name": "rotate accepts frozen input without mutating it",
+            "status": "passed",
+            "durationMs": 0.25125,
+            "line": 30,
+            "column": 1,
+            "id": "3ea148ba3b0798dfb16e15734ae097a0799398048cac07e40f95e9d01a3ea43b"
+          },
+          {
+            "file": "test/rotate.test.js",
+            "name": "rotate rejects array-like object with TypeError",
+            "status": "passed",
+            "durationMs": 0.386916,
+            "line": 49,
+            "column": 3,
+            "id": "4266c7b1f9a6ffd423fc5ee404c73bdac6e0694b27d2712cb673284c9cab0730"
+          },
+          {
+            "file": "test/rotate.test.js",
+            "name": "rotate rejects array-like object with TypeError",
+            "status": "passed",
+            "durationMs": 0.108417,
+            "line": 49,
+            "column": 3,
+            "id": "9ebedcc857271af622026ae7eb15df054f50cb1381872ccec5a37b4a75f9c181"
+          },
+          {
+            "file": "test/rotate.test.js",
+            "name": "rotate rejects array-like object with TypeError",
+            "status": "passed",
+            "durationMs": 0.069125,
+            "line": 49,
+            "column": 3,
+            "id": "cba9fd6c9f997f84bdc14e088ce1c8a569f440c0bcd30a14b7103c3663def798"
+          },
+          {
+            "file": "test/rotate.test.js",
+            "name": "rotate rejects array-like object with TypeError",
+            "status": "passed",
+            "durationMs": 0.797375,
+            "line": 49,
+            "column": 3,
+            "id": "3b97ad1692416fea7b8082e43c2f313620d514dbb8062bd1476795492c5c340e"
+          },
+          {
+            "file": "test/rotate.test.js",
+            "name": "rotate rejects array-like object with TypeError",
+            "status": "passed",
+            "durationMs": 0.116917,
+            "line": 49,
+            "column": 3,
+            "id": "796e5ee574343122192b818292c81fbf369921756cb59d3966a19b742b036b2c"
+          },
+          {
+            "file": "test/rotate.test.js",
+            "name": "rotate rejects step count -0.5 on a nonempty array",
+            "status": "failed",
+            "durationMs": 0.558916,
+            "line": 56,
+            "column": 3,
+            "id": "7d379612c76da7c6604dc2eeb4b71d77a615e9d281b81b69411504b5cd2e663a"
+          },
+          {
+            "file": "test/rotate.test.js",
+            "name": "rotate rejects step count -0.5 on an empty array",
+            "status": "failed",
+            "durationMs": 0.121,
+            "line": 63,
+            "column": 3,
+            "id": "2a99d4a315115bb261e2d78371843785ea66f8dbad9ee318dd2782facb6fac72"
+          },
+          {
+            "file": "test/rotate.test.js",
+            "name": "rotate rejects step count -0.5 on a nonempty array",
+            "status": "failed",
+            "durationMs": 0.091417,
+            "line": 56,
+            "column": 3,
+            "id": "bf74f78ca02304f1a5c3f43b2c00096ec13ffa59e93a3307c85e7eea263fe63d"
+          },
+          {
+            "file": "test/rotate.test.js",
+            "name": "rotate rejects step count -0.5 on an empty array",
+            "status": "failed",
+            "durationMs": 0.078125,
+            "line": 63,
+            "column": 3,
+            "id": "b1cb1c988f5d5199b724521fe495e8efabc78e40166442a6957c6ede8c8f68dc"
+          },
+          {
+            "file": "test/rotate.test.js",
+            "name": "rotate rejects step count -0.5 on a nonempty array",
+            "status": "passed",
+            "durationMs": 0.056666,
+            "line": 56,
+            "column": 3,
+            "id": "d99961d3eddf84d8b7c82f9c63543fec324fe8ba90de8ba71f43b63630726224"
+          },
+          {
+            "file": "test/rotate.test.js",
+            "name": "rotate rejects step count -0.5 on an empty array",
+            "status": "passed",
+            "durationMs": 0.039542,
+            "line": 63,
+            "column": 3,
+            "id": "2c64ce1f00d944aa1e21baf13308b3388d6f40da06318dcdc08b93b093f58a38"
+          },
+          {
+            "file": "test/rotate.test.js",
+            "name": "rotate rejects step count -0.5 on a nonempty array",
+            "status": "passed",
+            "durationMs": 0.036083,
+            "line": 56,
+            "column": 3,
+            "id": "c83c74295ed57172b7667065632b60615cc928d99ca69530a2e70a8669e2da68"
+          },
+          {
+            "file": "test/rotate.test.js",
+            "name": "rotate rejects step count -0.5 on an empty array",
+            "status": "passed",
+            "durationMs": 0.034334,
+            "line": 63,
+            "column": 3,
+            "id": "02b73e30e96028b378014bf00705a0360eb95a6eb792031173feece36966f896"
+          },
+          {
+            "file": "test/rotate.test.js",
+            "name": "rotate rejects step count -0.5 on a nonempty array",
+            "status": "passed",
+            "durationMs": 0.043958,
+            "line": 56,
+            "column": 3,
+            "id": "edc2a36529f8479a026b267cc4794fed54ef7d64aa8dfed451357472b5e83f91"
+          },
+          {
+            "file": "test/rotate.test.js",
+            "name": "rotate rejects step count -0.5 on an empty array",
+            "status": "passed",
+            "durationMs": 0.046875,
+            "line": 63,
+            "column": 3,
+            "id": "aaf290aa1c6ae1cae664038c6e7eae1301561b4cca8a50a305be4bd14aee081e"
+          }
+        ],
+        "collectionFiles": [
+          "test/rotate.test.js"
+        ],
+        "requestedFiles": [
+          "test/rotate.test.js"
+        ],
+        "executedFiles": [
+          "test/rotate.test.js"
+        ],
+        "missingFiles": [],
+        "unknownFiles": [],
+        "dependencyFiles": [],
+        "complete": true,
+        "command": [
+          "<node>",
+          "--test",
+          "--test-reporter=<repository>src/reporters/node.js",
+          "--test-reporter-destination=/var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-report-LljfMA/results.json",
+          "./test/rotate.test.js"
+        ],
+        "stdout": "",
+        "stderr": "",
+        "signal": null,
+        "reportErrors": [],
+        "discovery": {
+          "files": [
+            "test/rotate.test.js"
+          ],
+          "complete": true,
+          "adapter": "node",
+          "warnings": []
+        }
+      }
+    }
+  ],
+  "validation": {
+    "schemaVersion": 1,
+    "id": "174e66d9-4f9f-400f-b105-e32805e066bd",
+    "validatedAt": "2026-09-30T15:59:35.280Z",
+    "manifestHash": "6bb701dc8ee54408dc20e15fdb80ecf7c9a2f041fad3284202206e392181c160",
+    "provenance": {
+      "schemaVersion": 1,
+      "revision": null,
+      "runner": "b64ab6ce30d5608ce2ebe53b3cb5a7aced76a5bb499e38b1bb4951dd08a1c830",
+      "environment": {
+        "node": "v24.5.0",
+        "platform": "darwin",
+        "arch": "arm64",
+        "labels": {}
+      },
+      "services": {},
+      "serviceWarnings": [],
+      "files": {
+        "package.json": "6dc1b06d6b093e9cccb20bee06a93836eee0420ae26803ca2ce4065d82f070d1",
+        "src/rotate.js": "5d6c2f40ea7ddd42648a9d28e02155f57c41ddcb43d8fa8476ae83391e05fc10",
+        "tddswarm.config.json": "a8fe91846ae35a8de2e2dfe294e8bd592bf9f5fa80ca1e013caf34f14f51215a"
+      },
+      "fingerprint": "a9a2961034e0d523cd7102cc3b4d54d1ca3bbce6f4698a40534f4cabbac4e065"
+    },
+    "accepted": true,
+    "reasons": [],
+    "original": {
+      "discovery": {
+        "files": [],
+        "complete": true,
+        "adapter": "node",
+        "warnings": []
+      },
+      "exitCode": 0,
+      "complete": true,
+      "tests": [],
+      "collectionFiles": [],
+      "executedFiles": []
+    },
+    "candidate": {
+      "adapter": "node",
+      "exitCode": 0,
+      "durationMs": 174,
+      "tests": [
+        {
+          "file": "test/rotate.test.js",
+          "name": "rotate returns a new array and preserves input: singleton with positive steps",
+          "status": "passed",
+          "durationMs": 1.571167,
+          "line": 19,
+          "column": 3,
+          "id": "c8ac0840bdaded9674084a083df4be4746dee1220ebe1cedc4bdb5fb59ebfadd"
+        },
+        {
+          "file": "test/rotate.test.js",
+          "name": "rotate returns a new array and preserves input: singleton with positive steps",
+          "status": "passed",
+          "durationMs": 0.131,
+          "line": 19,
+          "column": 3,
+          "id": "bb1de186036476f509916186b233d4b8b524016319198ad1884c4ec1a389bdcb"
+        },
+        {
+          "file": "test/rotate.test.js",
+          "name": "rotate returns a new array and preserves input: singleton with positive steps",
+          "status": "passed",
+          "durationMs": 0.090958,
+          "line": 19,
+          "column": 3,
+          "id": "92137d8daff566e224eda0637e7b1c2eecdce7eac9a907e27e63fa205d38e400"
+        },
+        {
+          "file": "test/rotate.test.js",
+          "name": "rotate returns a new array and preserves input: singleton with positive steps",
+          "status": "passed",
+          "durationMs": 0.07775,
+          "line": 19,
+          "column": 3,
+          "id": "c91a7f13171201c504ac6f6d302573d087e4a149911049cefc26ea6a4093b7e9"
+        },
+        {
+          "file": "test/rotate.test.js",
+          "name": "rotate returns a new array and preserves input: singleton with positive steps",
+          "status": "passed",
+          "durationMs": 0.092625,
+          "line": 19,
+          "column": 3,
+          "id": "126fa282bd75277f8b7a9c90caa4d199ebf6b85662880072ac715b4ce076dbf4"
+        },
+        {
+          "file": "test/rotate.test.js",
+          "name": "rotate returns a new array and preserves input: singleton with positive steps",
+          "status": "passed",
+          "durationMs": 0.070958,
+          "line": 19,
+          "column": 3,
+          "id": "a6c93a2a6ab98c92d36c6d41a509a14a919ef3a40a1c89e4645a95e170b2a6e2"
+        },
+        {
+          "file": "test/rotate.test.js",
+          "name": "rotate returns a new array and preserves input: singleton with positive steps",
+          "status": "passed",
+          "durationMs": 0.127292,
+          "line": 19,
+          "column": 3,
+          "id": "b5bf2d87c4d2836f59865d353f34c83426ee9b8d341b8b7f30cd5ed5de77f75b"
+        },
+        {
+          "file": "test/rotate.test.js",
+          "name": "rotate returns a new array and preserves input: singleton with positive steps",
+          "status": "passed",
+          "durationMs": 0.189458,
+          "line": 19,
+          "column": 3,
+          "id": "6f5e6ce92d74c85e1ecbde6727389d41999e136aec8331b10042c27630e06c4c"
+        },
+        {
+          "file": "test/rotate.test.js",
+          "name": "rotate returns a new array and preserves input: singleton with positive steps",
+          "status": "passed",
+          "durationMs": 0.102166,
+          "line": 19,
+          "column": 3,
+          "id": "75edb28ee7b0b98e7bbe4e6bfb21bea572f13941f47e915a884a6812890835b1"
+        },
+        {
+          "file": "test/rotate.test.js",
+          "name": "rotate returns a new array and preserves input: singleton with positive steps",
+          "status": "passed",
+          "durationMs": 0.16875,
+          "line": 19,
+          "column": 3,
+          "id": "a45adab926cf3ed439df3abda49f491efcd45a08f5a06e27706dbae8fb8d0f21"
+        },
+        {
+          "file": "test/rotate.test.js",
+          "name": "rotate accepts frozen input without mutating it",
+          "status": "passed",
+          "durationMs": 0.45025,
+          "line": 30,
+          "column": 1,
+          "id": "3ea148ba3b0798dfb16e15734ae097a0799398048cac07e40f95e9d01a3ea43b"
+        },
+        {
+          "file": "test/rotate.test.js",
+          "name": "rotate rejects array-like object with TypeError",
+          "status": "passed",
+          "durationMs": 0.519625,
+          "line": 49,
+          "column": 3,
+          "id": "4266c7b1f9a6ffd423fc5ee404c73bdac6e0694b27d2712cb673284c9cab0730"
+        },
+        {
+          "file": "test/rotate.test.js",
+          "name": "rotate rejects array-like object with TypeError",
+          "status": "passed",
+          "durationMs": 0.124333,
+          "line": 49,
+          "column": 3,
+          "id": "9ebedcc857271af622026ae7eb15df054f50cb1381872ccec5a37b4a75f9c181"
+        },
+        {
+          "file": "test/rotate.test.js",
+          "name": "rotate rejects array-like object with TypeError",
+          "status": "passed",
+          "durationMs": 0.078042,
+          "line": 49,
+          "column": 3,
+          "id": "cba9fd6c9f997f84bdc14e088ce1c8a569f440c0bcd30a14b7103c3663def798"
+        },
+        {
+          "file": "test/rotate.test.js",
+          "name": "rotate rejects array-like object with TypeError",
+          "status": "passed",
+          "durationMs": 0.060125,
+          "line": 49,
+          "column": 3,
+          "id": "3b97ad1692416fea7b8082e43c2f313620d514dbb8062bd1476795492c5c340e"
+        },
+        {
+          "file": "test/rotate.test.js",
+          "name": "rotate rejects array-like object with TypeError",
+          "status": "passed",
+          "durationMs": 0.060625,
+          "line": 49,
+          "column": 3,
+          "id": "796e5ee574343122192b818292c81fbf369921756cb59d3966a19b742b036b2c"
+        },
+        {
+          "file": "test/rotate.test.js",
+          "name": "rotate rejects step count -0.5 on a nonempty array",
+          "status": "passed",
+          "durationMs": 0.9205,
+          "line": 56,
+          "column": 3,
+          "id": "7d379612c76da7c6604dc2eeb4b71d77a615e9d281b81b69411504b5cd2e663a"
+        },
+        {
+          "file": "test/rotate.test.js",
+          "name": "rotate rejects step count -0.5 on an empty array",
+          "status": "passed",
+          "durationMs": 0.124416,
+          "line": 63,
+          "column": 3,
+          "id": "2a99d4a315115bb261e2d78371843785ea66f8dbad9ee318dd2782facb6fac72"
+        },
+        {
+          "file": "test/rotate.test.js",
+          "name": "rotate rejects step count -0.5 on a nonempty array",
+          "status": "passed",
+          "durationMs": 0.059167,
+          "line": 56,
+          "column": 3,
+          "id": "bf74f78ca02304f1a5c3f43b2c00096ec13ffa59e93a3307c85e7eea263fe63d"
+        },
+        {
+          "file": "test/rotate.test.js",
+          "name": "rotate rejects step count -0.5 on an empty array",
+          "status": "passed",
+          "durationMs": 0.0435,
+          "line": 63,
+          "column": 3,
+          "id": "b1cb1c988f5d5199b724521fe495e8efabc78e40166442a6957c6ede8c8f68dc"
+        },
+        {
+          "file": "test/rotate.test.js",
+          "name": "rotate rejects step count -0.5 on a nonempty array",
+          "status": "passed",
+          "durationMs": 0.047458,
+          "line": 56,
+          "column": 3,
+          "id": "d99961d3eddf84d8b7c82f9c63543fec324fe8ba90de8ba71f43b63630726224"
+        },
+        {
+          "file": "test/rotate.test.js",
+          "name": "rotate rejects step count -0.5 on an empty array",
+          "status": "passed",
+          "durationMs": 0.042917,
+          "line": 63,
+          "column": 3,
+          "id": "2c64ce1f00d944aa1e21baf13308b3388d6f40da06318dcdc08b93b093f58a38"
+        },
+        {
+          "file": "test/rotate.test.js",
+          "name": "rotate rejects step count -0.5 on a nonempty array",
+          "status": "passed",
+          "durationMs": 0.044917,
+          "line": 56,
+          "column": 3,
+          "id": "c83c74295ed57172b7667065632b60615cc928d99ca69530a2e70a8669e2da68"
+        },
+        {
+          "file": "test/rotate.test.js",
+          "name": "rotate rejects step count -0.5 on an empty array",
+          "status": "passed",
+          "durationMs": 0.044334,
+          "line": 63,
+          "column": 3,
+          "id": "02b73e30e96028b378014bf00705a0360eb95a6eb792031173feece36966f896"
+        },
+        {
+          "file": "test/rotate.test.js",
+          "name": "rotate rejects step count -0.5 on a nonempty array",
+          "status": "passed",
+          "durationMs": 0.039208,
+          "line": 56,
+          "column": 3,
+          "id": "edc2a36529f8479a026b267cc4794fed54ef7d64aa8dfed451357472b5e83f91"
+        },
+        {
+          "file": "test/rotate.test.js",
+          "name": "rotate rejects step count -0.5 on an empty array",
+          "status": "passed",
+          "durationMs": 0.037917,
+          "line": 63,
+          "column": 3,
+          "id": "aaf290aa1c6ae1cae664038c6e7eae1301561b4cca8a50a305be4bd14aee081e"
+        }
+      ],
+      "collectionFiles": [
+        "test/rotate.test.js"
+      ],
+      "requestedFiles": [
+        "test/rotate.test.js"
+      ],
+      "executedFiles": [
+        "test/rotate.test.js"
+      ],
+      "missingFiles": [],
+      "unknownFiles": [],
+      "dependencyFiles": [],
+      "complete": true,
+      "command": [
+        "<node>",
+        "--test",
+        "--test-reporter=<repository>src/reporters/node.js",
+        "--test-reporter-destination=/var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-report-GQEtbS/results.json",
+        "./test/rotate.test.js"
+      ],
+      "stdout": "",
+      "stderr": "",
+      "signal": null,
+      "reportErrors": [],
+      "discovery": {
+        "files": [
+          "test/rotate.test.js"
+        ],
+        "complete": true,
+        "adapter": "node",
+        "warnings": []
+      }
+    },
+    "missingCases": [],
+    "defects": [],
+    "measured": {
+      "execution": true,
+      "heldOutDefects": 0
+    },
+    "isolation": "disposable-file-copy-with-trusted-dependencies",
+    "applied": false,
+    "integrity": "491c047764c23c12171a0657aefb7d1ae8c688833aad538edc9b36135976940d"
+  },
+  "baseline": {
+    "adapter": "node",
+    "exitCode": 0,
+    "durationMs": 159,
+    "tests": [
+      {
+        "file": "test/rotate.test.js",
+        "name": "rotate returns a new array and preserves input: singleton with positive steps",
+        "status": "passed",
+        "durationMs": 1.26825,
+        "line": 19,
+        "column": 3,
+        "id": "c8ac0840bdaded9674084a083df4be4746dee1220ebe1cedc4bdb5fb59ebfadd"
+      },
+      {
+        "file": "test/rotate.test.js",
+        "name": "rotate returns a new array and preserves input: singleton with positive steps",
+        "status": "passed",
+        "durationMs": 0.102167,
+        "line": 19,
+        "column": 3,
+        "id": "bb1de186036476f509916186b233d4b8b524016319198ad1884c4ec1a389bdcb"
+      },
+      {
+        "file": "test/rotate.test.js",
+        "name": "rotate returns a new array and preserves input: singleton with positive steps",
+        "status": "passed",
+        "durationMs": 0.083166,
+        "line": 19,
+        "column": 3,
+        "id": "92137d8daff566e224eda0637e7b1c2eecdce7eac9a907e27e63fa205d38e400"
+      },
+      {
+        "file": "test/rotate.test.js",
+        "name": "rotate returns a new array and preserves input: singleton with positive steps",
+        "status": "passed",
+        "durationMs": 0.066042,
+        "line": 19,
+        "column": 3,
+        "id": "c91a7f13171201c504ac6f6d302573d087e4a149911049cefc26ea6a4093b7e9"
+      },
+      {
+        "file": "test/rotate.test.js",
+        "name": "rotate returns a new array and preserves input: singleton with positive steps",
+        "status": "passed",
+        "durationMs": 0.079666,
+        "line": 19,
+        "column": 3,
+        "id": "126fa282bd75277f8b7a9c90caa4d199ebf6b85662880072ac715b4ce076dbf4"
+      },
+      {
+        "file": "test/rotate.test.js",
+        "name": "rotate returns a new array and preserves input: singleton with positive steps",
+        "status": "passed",
+        "durationMs": 0.062292,
+        "line": 19,
+        "column": 3,
+        "id": "a6c93a2a6ab98c92d36c6d41a509a14a919ef3a40a1c89e4645a95e170b2a6e2"
+      },
+      {
+        "file": "test/rotate.test.js",
+        "name": "rotate returns a new array and preserves input: singleton with positive steps",
+        "status": "passed",
+        "durationMs": 0.063333,
+        "line": 19,
+        "column": 3,
+        "id": "b5bf2d87c4d2836f59865d353f34c83426ee9b8d341b8b7f30cd5ed5de77f75b"
+      },
+      {
+        "file": "test/rotate.test.js",
+        "name": "rotate returns a new array and preserves input: singleton with positive steps",
+        "status": "passed",
+        "durationMs": 0.062625,
+        "line": 19,
+        "column": 3,
+        "id": "6f5e6ce92d74c85e1ecbde6727389d41999e136aec8331b10042c27630e06c4c"
+      },
+      {
+        "file": "test/rotate.test.js",
+        "name": "rotate returns a new array and preserves input: singleton with positive steps",
+        "status": "passed",
+        "durationMs": 0.076042,
+        "line": 19,
+        "column": 3,
+        "id": "75edb28ee7b0b98e7bbe4e6bfb21bea572f13941f47e915a884a6812890835b1"
+      },
+      {
+        "file": "test/rotate.test.js",
+        "name": "rotate returns a new array and preserves input: singleton with positive steps",
+        "status": "passed",
+        "durationMs": 0.141292,
+        "line": 19,
+        "column": 3,
+        "id": "a45adab926cf3ed439df3abda49f491efcd45a08f5a06e27706dbae8fb8d0f21"
+      },
+      {
+        "file": "test/rotate.test.js",
+        "name": "rotate accepts frozen input without mutating it",
+        "status": "passed",
+        "durationMs": 0.122125,
+        "line": 30,
+        "column": 1,
+        "id": "3ea148ba3b0798dfb16e15734ae097a0799398048cac07e40f95e9d01a3ea43b"
+      },
+      {
+        "file": "test/rotate.test.js",
+        "name": "rotate rejects array-like object with TypeError",
+        "status": "passed",
+        "durationMs": 0.298459,
+        "line": 49,
+        "column": 3,
+        "id": "4266c7b1f9a6ffd423fc5ee404c73bdac6e0694b27d2712cb673284c9cab0730"
+      },
+      {
+        "file": "test/rotate.test.js",
+        "name": "rotate rejects array-like object with TypeError",
+        "status": "passed",
+        "durationMs": 0.075708,
+        "line": 49,
+        "column": 3,
+        "id": "9ebedcc857271af622026ae7eb15df054f50cb1381872ccec5a37b4a75f9c181"
+      },
+      {
+        "file": "test/rotate.test.js",
+        "name": "rotate rejects array-like object with TypeError",
+        "status": "passed",
+        "durationMs": 0.052417,
+        "line": 49,
+        "column": 3,
+        "id": "cba9fd6c9f997f84bdc14e088ce1c8a569f440c0bcd30a14b7103c3663def798"
+      },
+      {
+        "file": "test/rotate.test.js",
+        "name": "rotate rejects array-like object with TypeError",
+        "status": "passed",
+        "durationMs": 0.067792,
+        "line": 49,
+        "column": 3,
+        "id": "3b97ad1692416fea7b8082e43c2f313620d514dbb8062bd1476795492c5c340e"
+      },
+      {
+        "file": "test/rotate.test.js",
+        "name": "rotate rejects array-like object with TypeError",
+        "status": "passed",
+        "durationMs": 0.063625,
+        "line": 49,
+        "column": 3,
+        "id": "796e5ee574343122192b818292c81fbf369921756cb59d3966a19b742b036b2c"
+      },
+      {
+        "file": "test/rotate.test.js",
+        "name": "rotate rejects step count -0.5 on a nonempty array",
+        "status": "passed",
+        "durationMs": 0.162042,
+        "line": 56,
+        "column": 3,
+        "id": "7d379612c76da7c6604dc2eeb4b71d77a615e9d281b81b69411504b5cd2e663a"
+      },
+      {
+        "file": "test/rotate.test.js",
+        "name": "rotate rejects step count -0.5 on an empty array",
+        "status": "passed",
+        "durationMs": 0.085667,
+        "line": 63,
+        "column": 3,
+        "id": "2a99d4a315115bb261e2d78371843785ea66f8dbad9ee318dd2782facb6fac72"
+      },
+      {
+        "file": "test/rotate.test.js",
+        "name": "rotate rejects step count -0.5 on a nonempty array",
+        "status": "passed",
+        "durationMs": 0.052583,
+        "line": 56,
+        "column": 3,
+        "id": "bf74f78ca02304f1a5c3f43b2c00096ec13ffa59e93a3307c85e7eea263fe63d"
+      },
+      {
+        "file": "test/rotate.test.js",
+        "name": "rotate rejects step count -0.5 on an empty array",
+        "status": "passed",
+        "durationMs": 0.039417,
+        "line": 63,
+        "column": 3,
+        "id": "b1cb1c988f5d5199b724521fe495e8efabc78e40166442a6957c6ede8c8f68dc"
+      },
+      {
+        "file": "test/rotate.test.js",
+        "name": "rotate rejects step count -0.5 on a nonempty array",
+        "status": "passed",
+        "durationMs": 0.048334,
+        "line": 56,
+        "column": 3,
+        "id": "d99961d3eddf84d8b7c82f9c63543fec324fe8ba90de8ba71f43b63630726224"
+      },
+      {
+        "file": "test/rotate.test.js",
+        "name": "rotate rejects step count -0.5 on an empty array",
+        "status": "passed",
+        "durationMs": 0.038459,
+        "line": 63,
+        "column": 3,
+        "id": "2c64ce1f00d944aa1e21baf13308b3388d6f40da06318dcdc08b93b093f58a38"
+      },
+      {
+        "file": "test/rotate.test.js",
+        "name": "rotate rejects step count -0.5 on a nonempty array",
+        "status": "passed",
+        "durationMs": 0.036375,
+        "line": 56,
+        "column": 3,
+        "id": "c83c74295ed57172b7667065632b60615cc928d99ca69530a2e70a8669e2da68"
+      },
+      {
+        "file": "test/rotate.test.js",
+        "name": "rotate rejects step count -0.5 on an empty array",
+        "status": "passed",
+        "durationMs": 0.047583,
+        "line": 63,
+        "column": 3,
+        "id": "02b73e30e96028b378014bf00705a0360eb95a6eb792031173feece36966f896"
+      },
+      {
+        "file": "test/rotate.test.js",
+        "name": "rotate rejects step count -0.5 on a nonempty array",
+        "status": "passed",
+        "durationMs": 0.035708,
+        "line": 56,
+        "column": 3,
+        "id": "edc2a36529f8479a026b267cc4794fed54ef7d64aa8dfed451357472b5e83f91"
+      },
+      {
+        "file": "test/rotate.test.js",
+        "name": "rotate rejects step count -0.5 on an empty array",
+        "status": "passed",
+        "durationMs": 0.03975,
+        "line": 63,
+        "column": 3,
+        "id": "aaf290aa1c6ae1cae664038c6e7eae1301561b4cca8a50a305be4bd14aee081e"
+      }
+    ],
+    "collectionFiles": [
+      "test/rotate.test.js"
+    ],
+    "requestedFiles": [
+      "test/rotate.test.js"
+    ],
+    "executedFiles": [
+      "test/rotate.test.js"
+    ],
+    "missingFiles": [],
+    "unknownFiles": [],
+    "dependencyFiles": [],
+    "complete": true,
+    "command": [
+      "<node>",
+      "--test",
+      "--test-reporter=<repository>src/reporters/node.js",
+      "--test-reporter-destination=/var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-report-DNsieY/results.json",
+      "./test/rotate.test.js"
+    ],
+    "stdout": "",
+    "stderr": "",
+    "signal": null,
+    "reportErrors": [],
+    "discovery": {
+      "files": [
+        "test/rotate.test.js"
+      ],
+      "complete": true,
+      "adapter": "node",
+      "warnings": []
+    }
+  }
+}

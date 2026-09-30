@@ -1,0 +1,49 @@
+{
+  "schemaVersion": 1,
+  "kind": "local-pilot-aggregate",
+  "projects": 3,
+  "validProjects": 3,
+  "frameworks": [
+    "node",
+    "vitest"
+  ],
+  "trials": 18,
+  "validTrials": 18,
+  "observedFailures": 18,
+  "missedFailures": 0,
+  "unexpectedSubsetFailures": 0,
+  "nativeValidTrials": 18,
+  "nativeMissedFailures": 0,
+  "nativeUnexpectedFailures": 0,
+  "validTrialTimings": {
+    "fullMs": 127667,
+    "subsetMs": 102614,
+    "planningMs": 49265,
+    "testLoreMs": 156705,
+    "nativeMs": 96963
+  },
+  "limitation": "Unauthenticated local aggregates; planted changes and declared scopes only. Not an independent leaderboard.",
+  "measuredRoutingRevision": "f83a2d6cf03d7cd7f415fda0657bea7ac5fc839a",
+  "baselineCases": 1147,
+  "baselineFiles": 128,
+  "implementationHashes": {
+    "pilot.js": "35567e08ee8319cdb2f7d5d9fe727e2dcc66c53d761eab880f24a7530a76868f",
+    "pilot-worker.js": "ee9e06c6010458a266472cf7f701330bda029087a5a0082f94e3aecd447c92ff",
+    "runner.js": "5929a3713de4519a502221a4ef982a2b0c116db3a3889995da807f14e6fd6225",
+    "execution.js": "955589ba3593ccdacdbf2991c09881e43466c49974114d72327665279d4dfe04",
+    "selector.js": "2bc865ae1c88cd83dc6a33fc3bba916620bd4adc058a166584d2abcbb9d8500a",
+    "graph.js": "612b2ad417f405eb43336a43f2c4db14e40fbcb495a192ee839ef9492b3d1aed",
+    "provenance.js": "31729e07bb832015805752e26221b43bd25d440c12c4230e4399d812c60793a3"
+  },
+  "environment": {
+    "node": "v24.5.0",
+    "platform": "darwin",
+    "arch": "arm64"
+  },
+  "limitations": [
+    "Local scopes and planted changes only; no production or whole-project certification.",
+    "Installed dependencies are shared read-only by convention, not an OS sandbox. Native test code may access network or local files.",
+    "Provider credentials are removed from inherited environment; no dependency installation or agent invocation occurs.",
+    "Three execution arms rotate order; TestLore discovery, planning, execution, provenance and receipt retention are included. Native related selection runs through the native CLI where available. Timing results are environment-specific."
+  ]
+}

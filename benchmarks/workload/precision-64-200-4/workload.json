@@ -1,0 +1,423 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-09-30T16:08:21.296Z",
+  "toolRevision": "38ed98d5252b1f8b69e5f73f3f987398ec17e5a4",
+  "harnessDigest": "6c77613f58053e8dec947b32783e0eda2f213fe7627336e421171eb681054382",
+  "dataset": {
+    "name": "testlore-constructed-callback-workload-v1",
+    "files": 64,
+    "workloadMs": 200,
+    "concurrency": 4,
+    "repetitions": 3,
+    "distinctPlantedRegressions": 1,
+    "digest": "29f19460d81e9d7bc638eb47ae9e7eacb4a2b7824fc86d162b8bc6767b7b8ed6",
+    "setup": "Fresh authored independent Node modules, fixed async delay inside each test callback, cold history, native TestLore discovery; full native suite uses the exact authored file manifest."
+  },
+  "environment": {
+    "node": "v24.5.0",
+    "platform": "darwin",
+    "architecture": "arm64",
+    "cpu": "Apple M4 Pro"
+  },
+  "summary": [
+    {
+      "method": "full-native",
+      "complete": true,
+      "detectedFailureObservations": 3,
+      "groundTruthFailureObservations": 3,
+      "missedFailureObservations": 0,
+      "executedCallbackFiles": 192,
+      "availableFiles": 192,
+      "callbackFileFraction": 1,
+      "endToEndMedianMs": 4226,
+      "executionMedianMs": 4224,
+      "endToEndTotalMs": 12710
+    },
+    {
+      "method": "testlore",
+      "complete": true,
+      "detectedFailureObservations": 3,
+      "groundTruthFailureObservations": 3,
+      "missedFailureObservations": 0,
+      "executedCallbackFiles": 3,
+      "availableFiles": 192,
+      "callbackFileFraction": 0.015625,
+      "endToEndMedianMs": 1726,
+      "executionMedianMs": 305,
+      "endToEndTotalMs": 4972
+    }
+  ],
+  "trials": [
+    {
+      "method": "full-native",
+      "repetition": 0,
+      "order": [
+        "full-native",
+        "testlore"
+      ],
+      "endToEndMs": 4214,
+      "executionMs": 4212,
+      "callbackFiles": [
+        "test/000.test.js",
+        "test/001.test.js",
+        "test/002.test.js",
+        "test/003.test.js",
+        "test/004.test.js",
+        "test/005.test.js",
+        "test/006.test.js",
+        "test/007.test.js",
+        "test/008.test.js",
+        "test/009.test.js",
+        "test/010.test.js",
+        "test/011.test.js",
+        "test/012.test.js",
+        "test/013.test.js",
+        "test/014.test.js",
+        "test/015.test.js",
+        "test/016.test.js",
+        "test/017.test.js",
+        "test/018.test.js",
+        "test/019.test.js",
+        "test/020.test.js",
+        "test/021.test.js",
+        "test/022.test.js",
+        "test/023.test.js",
+        "test/024.test.js",
+        "test/025.test.js",
+        "test/026.test.js",
+        "test/027.test.js",
+        "test/028.test.js",
+        "test/029.test.js",
+        "test/030.test.js",
+        "test/031.test.js",
+        "test/032.test.js",
+        "test/033.test.js",
+        "test/034.test.js",
+        "test/035.test.js",
+        "test/036.test.js",
+        "test/037.test.js",
+        "test/038.test.js",
+        "test/039.test.js",
+        "test/040.test.js",
+        "test/041.test.js",
+        "test/042.test.js",
+        "test/043.test.js",
+        "test/044.test.js",
+        "test/045.test.js",
+        "test/046.test.js",
+        "test/047.test.js",
+        "test/048.test.js",
+        "test/049.test.js",
+        "test/050.test.js",
+        "test/051.test.js",
+        "test/052.test.js",
+        "test/053.test.js",
+        "test/054.test.js",
+        "test/055.test.js",
+        "test/056.test.js",
+        "test/057.test.js",
+        "test/058.test.js",
+        "test/059.test.js",
+        "test/060.test.js",
+        "test/061.test.js",
+        "test/062.test.js",
+        "test/063.test.js"
+      ],
+      "observedFailures": [
+        "d21e0286fb1049202e3221c5dffee96293fb4c795f891890c4092b9af4091bf1"
+      ],
+      "observedFailedFiles": [
+        "test/000.test.js"
+      ],
+      "complete": true,
+      "rawReport": "0-full-native.json",
+      "groundTruthFailures": [
+        "d21e0286fb1049202e3221c5dffee96293fb4c795f891890c4092b9af4091bf1"
+      ],
+      "detectedFailures": [
+        "d21e0286fb1049202e3221c5dffee96293fb4c795f891890c4092b9af4091bf1"
+      ],
+      "missedFailures": []
+    },
+    {
+      "method": "testlore",
+      "repetition": 0,
+      "order": [
+        "full-native",
+        "testlore"
+      ],
+      "endToEndMs": 1512,
+      "executionMs": 305,
+      "callbackFiles": [
+        "test/000.test.js"
+      ],
+      "observedFailures": [
+        "d21e0286fb1049202e3221c5dffee96293fb4c795f891890c4092b9af4091bf1"
+      ],
+      "observedFailedFiles": [
+        "test/000.test.js"
+      ],
+      "complete": true,
+      "rawReport": "0-testlore.json",
+      "groundTruthFailures": [
+        "d21e0286fb1049202e3221c5dffee96293fb4c795f891890c4092b9af4091bf1"
+      ],
+      "detectedFailures": [
+        "d21e0286fb1049202e3221c5dffee96293fb4c795f891890c4092b9af4091bf1"
+      ],
+      "missedFailures": []
+    },
+    {
+      "method": "testlore",
+      "repetition": 1,
+      "order": [
+        "testlore",
+        "full-native"
+      ],
+      "endToEndMs": 1726,
+      "executionMs": 298,
+      "callbackFiles": [
+        "test/000.test.js"
+      ],
+      "observedFailures": [
+        "d21e0286fb1049202e3221c5dffee96293fb4c795f891890c4092b9af4091bf1"
+      ],
+      "observedFailedFiles": [
+        "test/000.test.js"
+      ],
+      "complete": true,
+      "rawReport": "1-testlore.json",
+      "groundTruthFailures": [
+        "d21e0286fb1049202e3221c5dffee96293fb4c795f891890c4092b9af4091bf1"
+      ],
+      "detectedFailures": [
+        "d21e0286fb1049202e3221c5dffee96293fb4c795f891890c4092b9af4091bf1"
+      ],
+      "missedFailures": []
+    },
+    {
+      "method": "full-native",
+      "repetition": 1,
+      "order": [
+        "testlore",
+        "full-native"
+      ],
+      "endToEndMs": 4270,
+      "executionMs": 4269,
+      "callbackFiles": [
+        "test/000.test.js",
+        "test/001.test.js",
+        "test/002.test.js",
+        "test/003.test.js",
+        "test/004.test.js",
+        "test/005.test.js",
+        "test/006.test.js",
+        "test/007.test.js",
+        "test/008.test.js",
+        "test/009.test.js",
+        "test/010.test.js",
+        "test/011.test.js",
+        "test/012.test.js",
+        "test/013.test.js",
+        "test/014.test.js",
+        "test/015.test.js",
+        "test/016.test.js",
+        "test/017.test.js",
+        "test/018.test.js",
+        "test/019.test.js",
+        "test/020.test.js",
+        "test/021.test.js",
+        "test/022.test.js",
+        "test/023.test.js",
+        "test/024.test.js",
+        "test/025.test.js",
+        "test/026.test.js",
+        "test/027.test.js",
+        "test/028.test.js",
+        "test/029.test.js",
+        "test/030.test.js",
+        "test/031.test.js",
+        "test/032.test.js",
+        "test/033.test.js",
+        "test/034.test.js",
+        "test/035.test.js",
+        "test/036.test.js",
+        "test/037.test.js",
+        "test/038.test.js",
+        "test/039.test.js",
+        "test/040.test.js",
+        "test/041.test.js",
+        "test/042.test.js",
+        "test/043.test.js",
+        "test/044.test.js",
+        "test/045.test.js",
+        "test/046.test.js",
+        "test/047.test.js",
+        "test/048.test.js",
+        "test/049.test.js",
+        "test/050.test.js",
+        "test/051.test.js",
+        "test/052.test.js",
+        "test/053.test.js",
+        "test/054.test.js",
+        "test/055.test.js",
+        "test/056.test.js",
+        "test/057.test.js",
+        "test/058.test.js",
+        "test/059.test.js",
+        "test/060.test.js",
+        "test/061.test.js",
+        "test/062.test.js",
+        "test/063.test.js"
+      ],
+      "observedFailures": [
+        "d21e0286fb1049202e3221c5dffee96293fb4c795f891890c4092b9af4091bf1"
+      ],
+      "observedFailedFiles": [
+        "test/000.test.js"
+      ],
+      "complete": true,
+      "rawReport": "1-full-native.json",
+      "groundTruthFailures": [
+        "d21e0286fb1049202e3221c5dffee96293fb4c795f891890c4092b9af4091bf1"
+      ],
+      "detectedFailures": [
+        "d21e0286fb1049202e3221c5dffee96293fb4c795f891890c4092b9af4091bf1"
+      ],
+      "missedFailures": []
+    },
+    {
+      "method": "full-native",
+      "repetition": 2,
+      "order": [
+        "full-native",
+        "testlore"
+      ],
+      "endToEndMs": 4226,
+      "executionMs": 4224,
+      "callbackFiles": [
+        "test/000.test.js",
+        "test/001.test.js",
+        "test/002.test.js",
+        "test/003.test.js",
+        "test/004.test.js",
+        "test/005.test.js",
+        "test/006.test.js",
+        "test/007.test.js",
+        "test/008.test.js",
+        "test/009.test.js",
+        "test/010.test.js",
+        "test/011.test.js",
+        "test/012.test.js",
+        "test/013.test.js",
+        "test/014.test.js",
+        "test/015.test.js",
+        "test/016.test.js",
+        "test/017.test.js",
+        "test/018.test.js",
+        "test/019.test.js",
+        "test/020.test.js",
+        "test/021.test.js",
+        "test/022.test.js",
+        "test/023.test.js",
+        "test/024.test.js",
+        "test/025.test.js",
+        "test/026.test.js",
+        "test/027.test.js",
+        "test/028.test.js",
+        "test/029.test.js",
+        "test/030.test.js",
+        "test/031.test.js",
+        "test/032.test.js",
+        "test/033.test.js",
+        "test/034.test.js",
+        "test/035.test.js",
+        "test/036.test.js",
+        "test/037.test.js",
+        "test/038.test.js",
+        "test/039.test.js",
+        "test/040.test.js",
+        "test/041.test.js",
+        "test/042.test.js",
+        "test/043.test.js",
+        "test/044.test.js",
+        "test/045.test.js",
+        "test/046.test.js",
+        "test/047.test.js",
+        "test/048.test.js",
+        "test/049.test.js",
+        "test/050.test.js",
+        "test/051.test.js",
+        "test/052.test.js",
+        "test/053.test.js",
+        "test/054.test.js",
+        "test/055.test.js",
+        "test/056.test.js",
+        "test/057.test.js",
+        "test/058.test.js",
+        "test/059.test.js",
+        "test/060.test.js",
+        "test/061.test.js",
+        "test/062.test.js",
+        "test/063.test.js"
+      ],
+      "observedFailures": [
+        "d21e0286fb1049202e3221c5dffee96293fb4c795f891890c4092b9af4091bf1"
+      ],
+      "observedFailedFiles": [
+        "test/000.test.js"
+      ],
+      "complete": true,
+      "rawReport": "2-full-native.json",
+      "groundTruthFailures": [
+        "d21e0286fb1049202e3221c5dffee96293fb4c795f891890c4092b9af4091bf1"
+      ],
+      "detectedFailures": [
+        "d21e0286fb1049202e3221c5dffee96293fb4c795f891890c4092b9af4091bf1"
+      ],
+      "missedFailures": []
+    },
+    {
+      "method": "testlore",
+      "repetition": 2,
+      "order": [
+        "full-native",
+        "testlore"
+      ],
+      "endToEndMs": 1734,
+      "executionMs": 310,
+      "callbackFiles": [
+        "test/000.test.js"
+      ],
+      "observedFailures": [
+        "d21e0286fb1049202e3221c5dffee96293fb4c795f891890c4092b9af4091bf1"
+      ],
+      "observedFailedFiles": [
+        "test/000.test.js"
+      ],
+      "complete": true,
+      "rawReport": "2-testlore.json",
+      "groundTruthFailures": [
+        "d21e0286fb1049202e3221c5dffee96293fb4c795f891890c4092b9af4091bf1"
+      ],
+      "detectedFailures": [
+        "d21e0286fb1049202e3221c5dffee96293fb4c795f891890c4092b9af4091bf1"
+      ],
+      "missedFailures": []
+    }
+  ],
+  "baselineReports": [
+    "baseline-0.json",
+    "baseline-1.json",
+    "baseline-2.json"
+  ],
+  "limitations": [
+    "Constructed callback delays and concurrency determine this result; this is not a production corpus or independent leaderboard.",
+    "Full native timing includes its complete runtime suite with known authored scope; it does not require a redundant discovery pass.",
+    "TestLore timing includes native discovery, Git/static planning, selected execution, provenance and evidence retention.",
+    "Callback-file counts exclude native discovery probes, which still load every test module.",
+    "One distinct planted leaf regression is repeated; successful detection is not broad fault-recall evidence.",
+    "Installation and fixture setup costs are excluded for both methods. Local timings include machine noise.",
+    "Keep the separate tiny-suite comparison visible: it measured a routing slowdown. No universal speed or learning claim is supported."
+  ]
+}
