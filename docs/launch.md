@@ -31,4 +31,14 @@ The publish job alone receives `id-token: write`; qualification has read-only re
 
 Run the workflow with publishing disabled first and retain the exact hosted run URL/SHA, artifact digest, and packed proof. Then review package contents/license/dependency state and publisher mapping before approving a publish-enabled run. After publication, verify the registry version, dist-tag, integrity and provenance against the qualified receipt, and test installation from the registry in a fresh project. Only that later evidence supports a published-release claim. GitHub release notes, announcements and pilot outreach remain separate deliberate actions.
 
+Every PR also runs `packed-install` against its exact checkout, without installing development dependencies into the proof project. The installed proof runs ordinary `testlore run` to verify the persisted shadow default and ordinary `improve` to verify the generated Action uses the sealed source SHA; command-line overrides cannot supply these assurances. Verification requires strict boolean attestations, both Action identities and the installed manifest hash.
+
+Release qualification independently reruns the measured-quality, native-selector and browser proof scripts. Its full source suite uses `scripts/test-qualification.js` with Chromium enabled. This gate retains native TAP and a source-bound receipt, enumerates all current test files and requires the two browser proof cases. Skipped/todo/cancelled/failed cases, empty file-load placeholders, inconsistent or truncated summaries, wrong scope, output/deadline overruns and source drift reject qualification. A normal test command exiting zero is insufficient. To run locally on a clean committed checkout with the SDK and browser installed:
+
+```sh
+TESTLORE_PLAYWRIGHT_BROWSER=1 node scripts/test-qualification.js --output .tddswarm/new-source-qualification.json
+```
+
+`TESTLORE_BROWSER_CHANNEL=chrome` may select an already installed Chrome for local qualification; the channel is recorded. Hosted release qualification installs bundled Chromium and never publishes when these gates fail.
+
 The publish job additionally runs `scripts/registry-proof.js`: it revalidates source lineage and the sealed local artifact, downloads registry bytes with bounded size/time, and compares SHA-256 plus npm SHA-512 integrity to the qualified archive. Its receipt and qualification records are uploaded together. A mismatch fails the workflow; there is no repack or alternate download fallback.

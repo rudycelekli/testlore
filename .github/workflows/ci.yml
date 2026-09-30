@@ -9,6 +9,25 @@ concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
 jobs:
+  packed-install:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-node@v7.0.0
+        with:
+          node-version: '24'
+      - name: Qualify one exact production archive in a fresh project
+        run: |
+          node scripts/release-candidate.js --output .tddswarm/ci-packed-install --revision "$(git rev-parse HEAD)"
+          node scripts/release-candidate.js --verify .tddswarm/ci-packed-install/release-candidate.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: packed-install-${{ github.sha }}
+          path: .tddswarm/ci-packed-install/
+          include-hidden-files: true
+          if-no-files-found: error
   test:
     runs-on: ubuntu-latest
     strategy:

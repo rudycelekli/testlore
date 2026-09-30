@@ -42,8 +42,19 @@ jobs:
       - run: npm ci --ignore-scripts
       - run: npx --no-install playwright install --with-deps chromium
       - run: npm run check
-      - run: TESTLORE_PLAYWRIGHT_BROWSER=1 npm test
+      - name: Require a complete nonempty source suite without skips or todos
+        run: TESTLORE_PLAYWRIGHT_BROWSER=1 node scripts/test-qualification.js --output .tddswarm/alpha-source-tests.json
       - run: npm run demo
+      - name: Independently rerun measured quality and native-selector qualification
+        run: |
+          node scripts/incremental-quality-proof.js --output .tddswarm/alpha-incremental.json
+          node scripts/native-selection-proof.js .tddswarm/alpha-native-selector.json
+          node scripts/quality-proof.js --output .tddswarm/alpha-quality.json
+          node scripts/generated-defects.js > .tddswarm/alpha-defects.json
+      - name: Independently rerun browser qualification
+        run: |
+          node scripts/browser-mapping-proof.js --output .tddswarm/alpha-browser-mapping.json
+          node scripts/playwright-proof.js --output .tddswarm/alpha-playwright.json
       - name: Seal and qualify the exact production archive
         id: seal
         env:
@@ -60,6 +71,16 @@ jobs:
           include-hidden-files: true
           if-no-files-found: error
           retention-days: 14
+      - name: Preserve source qualification outcomes
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: alpha-source-tests-${{ inputs.source_sha }}
+          path: |
+            .tddswarm/alpha-source-tests.json*
+            .tddswarm/alpha-*.json
+          include-hidden-files: true
+          if-no-files-found: warn
   publish:
     if: inputs.publish
     needs: qualify

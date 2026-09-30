@@ -48,19 +48,21 @@ try{
  invoke(project,['git','add','.']);invoke(project,['git','commit','-m','native configuration']);
  const initial=invoke(project,['git','rev-parse','HEAD']).trim();
  write('src/a.js','export const a=2;');
- const shadow=command(['run','--shadow','--base','HEAD'],1);
- assert.equal(shadow.complete,true);assert.deepEqual(shadow.plan.selected,['test/a.test.js']);assert.equal(shadow.tests.filter(t=>t.status==='failed').length,1);assert.equal(shadow.executedFiles.length,2);
+ const shadow=command(['run','--base','HEAD'],1);
+ assert.equal(shadow.shadow,true);assert.equal(shadow.complete,true);assert.deepEqual(shadow.plan.selected,['test/a.test.js']);assert.equal(shadow.tests.filter(t=>t.status==='failed').length,1);assert.equal(shadow.executedFiles.length,2);
  invoke(project,['git','restore','src/a.js']);
  const capture=command(['capture']);assert.equal(capture.complete,true);
  write('.tddswarm/proposal.json',{files:[{path:'test/extra.test.js',content:"import test from 'node:test';import assert from 'node:assert/strict';import {a} from '../src/a.js';test('independent a contract',()=>assert.equal(a,1));"}],review:{accepted:true,findings:[],oracle:{independent:true,basis:['a and b are one.']}},requirements:'a and b are one.'});
- improvement=command(['improve','--local','--patch','.tddswarm/proposal.json','--action-ref','packed-proof']);
+ improvement=command(['improve','--local','--patch','.tddswarm/proposal.json']);
  assert.equal(improvement.status,'ready-for-review');assert.equal(improvement.fullRun.complete,true);assert.equal(improvement.fullRun.tests.filter(t=>t.status==='passed').length,3);
  assert.equal(invoke(project,['git','rev-parse','HEAD']).trim(),initial);assert.equal(invoke(project,['git','branch','--show-current']).trim(),'main');assert.equal(invoke(project,['git','status','--porcelain']).trim(),'');
- assert.match(fs.readFileSync(path.join(improvement.worktreeRoot,'.github/workflows/tddswarm.yml'),'utf8'),/testlore@packed-proof/);
+ const workflowActionReference=expectedSource||installedPackage.gitHead||'main';
+ const workflowReferences=[...fs.readFileSync(path.join(improvement.worktreeRoot,'.github/workflows/tddswarm.yml'),'utf8').matchAll(/^[ \t]*(?:-[ \t]*)?uses:[ \t]*rudycelekli\/testlore@([^\s]+)[ \t]*$/gm)].map(match=>match[1]);
+ assert.ok(workflowReferences.length>0);assert.ok(workflowReferences.every(reference=>reference===workflowActionReference),'Generated workflow must use the exact archive source identity');
  const recall=command(['recall','--query','independent a contract']);assert.ok(recall.records.length);assert.equal(recall.advisoryOnly,true);assert.equal(recall.retrieval,'deterministic-lexical');
  assert.ok(recall.warnings.some(value=>value==='RuVector fallback: ruvector-sdk-missing'));
  assert.equal(createHash('sha256').update(fs.readFileSync(archive)).digest('hex'),sha256,'Archive changed during qualification');
- const receipt={schemaVersion:1,exactInputArchive:Boolean(inputArchive),proofScriptSha256:createHash('sha256').update(fs.readFileSync(fileURLToPath(import.meta.url))).digest('hex'),date:new Date().toISOString(),archive:pack.filename,sha256,version:pack.version,node:process.version,productionInstall:true,actionReference:installedPackage.gitHead||null,shadowSetupVerified:true,plugins:{catalogCount:catalog.plugins.length,missingSdkExit:missingVectorSdk.exitCode,lexicalFallbackVerified:true},nativeShadow:{complete:shadow.complete,selected:shadow.plan.selected,executed:shadow.executedFiles.length,detected:true},runtimeCaptureComplete:capture.complete,improvement:{status:improvement.status,cases:improvement.fullRun.tests.length,originalBranch:'main'},limitations:['Local packed-artifact installation; no registry publication or live GitHub PR created.','Controlled two-module fixture; broad project compatibility remains unqualified.']};
+ const receipt={schemaVersion:1,exactInputArchive:Boolean(inputArchive),proofScriptSha256:createHash('sha256').update(fs.readFileSync(fileURLToPath(import.meta.url))).digest('hex'),date:new Date().toISOString(),archive:pack.filename,sha256,version:pack.version,node:process.version,productionInstall:true,packedManifestSha256:createHash('sha256').update(fs.readFileSync(path.join(tools,'node_modules/testlore/package.json'))).digest('hex'),actionReference:installedPackage.gitHead||null,workflowActionReference,actionIdentityVerified:Boolean(expectedSource),shadowSetupVerified:true,plugins:{catalogCount:catalog.plugins.length,missingSdkExit:missingVectorSdk.exitCode,lexicalFallbackVerified:true},nativeShadow:{complete:shadow.complete,selected:shadow.plan.selected,executed:shadow.executedFiles.length,detected:true},runtimeCaptureComplete:capture.complete,improvement:{status:improvement.status,cases:improvement.fullRun.tests.length,originalBranch:'main'},limitations:['Local packed-artifact installation; no registry publication or live GitHub PR created.','Controlled two-module fixture; broad project compatibility remains unqualified.']};
  fs.mkdirSync(path.dirname(output),{recursive:true});fs.writeFileSync(output,JSON.stringify(receipt,null,2));console.log(JSON.stringify(receipt,null,2));
 }finally{
  if(improvement?.worktreeRoot)invoke(project,['git','worktree','remove','--force',improvement.worktreeRoot]);
