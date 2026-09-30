@@ -43,6 +43,7 @@ Results include `branch`, `baseBranch`, original `sourceHead`/`base`, project `w
 | `ready-for-review` | Exact reviewed candidates and preparation paths passed validation and the final full run; the new branch has a commit |
 | `validation-rejected` | Original/candidate equivalence, independent review, collection, provenance, or supplied defect checks failed; no improvement commit |
 | `full-run-failed` | The applied/prepared branch failed its final native full run or lost previously passing cases; no improvement commit |
+| `awaiting-requirements` | A branch and work order exist, but independent requirements are missing; no tests were generated or committed |
 | `awaiting-agent` | A branch and work order exist, but no worker was configured or supplied; no tests were generated or committed |
 | `no-changes` | Validation passed but no declared Git changes remained to commit |
 | `failed` | A prerequisite, application, drift, Git operation, or callback failed; inspect `error` and retained artifacts |
@@ -54,7 +55,7 @@ Rejected candidates and failed applied branches remain available for inspection.
 
 The CLI's branch preparation installs or preserves `tddswarm.config.json`, ignores local `.tddswarm/` artifacts, and adds `.github/workflows/tddswarm.yml` when that workflow does not already exist. Existing configuration and existing workflow contents are preserved. Review dependency setup, declared browser/service inputs, and the action reference in the proposed diff; pin the action to a reviewed commit for reproducible CI.
 
-After merge, that workflow runs static/measured audit reporting plus full-suite shadow comparison on pull requests, and a full native run on pushes. It retains machine-readable evidence through the composite action. The configuration remains available for local affected-test execution and periodic full-run policy. This makes the quality layer part of the project rather than a one-time test rewrite.
+After merge, that workflow runs static/measured audit reporting plus affected execution on pull requests, and a full native run on default-branch pushes. It retains machine-readable evidence through the composite action. The configuration remains available for local affected-test execution and periodic full-run policy. This makes the quality layer part of the project rather than a one-time test rewrite.
 
 Scheduled mutation testing, repeated stability measurements, browser instrumentation, and external-service version sources still need the project's corresponding tools and policies. Continuous CI execution does not automatically reauthor tests or merge future changes: new improvements can repeat the branch/review flow, while measurement and selection continue through the installed layer.
 

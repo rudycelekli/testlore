@@ -180,6 +180,7 @@ export function validateCandidates(root, id, options = {}) {
     if (!after.fresh) reasons.push(...after.reasons.map(reason => `changed-during-validation:${reason}`));
   }
   const result = { schemaVersion: 1, id, validatedAt: new Date().toISOString(), manifestHash: hash, provenance: current, accepted: !reasons.length, reasons: [...new Set(reasons)], original, candidate, missingCases, defects, measured: { execution: Boolean(original && candidate), heldOutDefects: defects.length }, isolation: 'disposable-file-copy-with-trusted-dependencies', applied: false };
+  result.integrity=digest(result);
   fs.writeFileSync(path.join(dir, 'validation.json'), JSON.stringify(result, null, 2));
   return result;
 }
@@ -190,6 +191,8 @@ export function applyPatch(root, id, options = {}) {
   const validationFile = safePath(dir, 'validation.json');
   if (!fs.existsSync(validationFile)) throw new Error('Validate the staged patch before applying');
   const validation = json(validationFile);
+  const {integrity,...payload}=validation;
+  if(!integrity||integrity!==digest(payload))throw new Error('Candidate validation integrity mismatch');
   if (!validation.accepted || validation.manifestHash !== hash || !manifest.review.accepted) throw new Error('Patch lacks accepted validation of this exact manifest');
   const fresh = freshness(validation.provenance, snapshot(root, readConfig(root)));
   if (!fresh.fresh) throw new Error(`Patch is stale: ${fresh.reasons.join(', ')}`);

@@ -1,47 +1,30 @@
-# Roadmap
+# Roadmap implementation and evidence
 
-These are proposed milestones, not shipped functionality or commitments to release dates.
+The 0.2–0.4 engineering milestones have concrete implementations on the roadmap branch. These are experimental capabilities, not published version numbers or certification of arbitrary projects. Each ecosystem retains its own test engine.
 
-## 0.1 — implemented experimental foundation
+| Milestone | Implemented | Evidence and remaining qualification |
+| --- | --- | --- |
+| 0.1 foundation | One-command initialization, explainable selection, static triage, grouping, bounded worker teams | Regression suite and reproducible synthetic demo |
+| 0.2 trusted scope | Native Node/Jest/Vitest discovery and results, TS aliases/extends and native resolver bridges, per-case shadow comparison, runner/environment failure history, pinned public benchmarks, composite action | Real runner fixtures and public regression receipts; hosted action smoke workflow tests the exact PR commit |
+| 0.3 measured quality | Pre-run provenance, Istanbul and Stryker import, repeated-run stability, independent-oracle review, held-out defects, disposable candidate validation, transactional patch application, genuine optional AQE CLI bridge | Real c8/Stryker proof, synthetic strong/vacuous comparisons, and one live Codex specification/withheld-mutation proof; general model quality remains unqualified |
+| 0.4 runtime/ecosystems | Per-file Node V8/module/read traces, imported runtime protocol, freshness/integrity checks, browser route and contract declarations, service versions/probes, pytest-testmon/Nx/Bazel delegation | Actual adapter executions and runtime regressions; traces observe exercised behavior and require explicit closed-world policy to resolve dynamic uncertainty |
 
-- One-command initialization and a local static health report.
-- Explainable JS/TS import/declaration selection with conservative fallbacks.
-- Node execution and configurable Vitest/Jest argv adapters.
-- Shadow execution, failed-run retention, periodic full-run policy.
-- Module proposals and a bounded architect/author/reviewer worker protocol.
-- Optional Codex request adapter, reviewable staged candidates.
-- Regression fixtures and a transparent synthetic benchmark.
+## Acceptance criteria
 
-## 0.2 — establish trust on real projects
+Public benchmarks retain full, proposed-subset and native baseline outputs, failed case identities, planning overhead, runner time and missed regressions. A passing deterministic benchmark establishes results only for its named patches and runtime scope. It does not establish universal decision recall or production speedups.
 
-- Reconcile framework-native discovery with the selector's scope.
-- Add runner-native Jest/Vitest resolver adapters and alias support.
-- Compare full and proposed subset results at individual-test identity granularity.
-- Retain failure history by runner/environment and prove invalidation.
-- Publish pinned public-project change sets, raw outputs, overhead, and misses.
-- Add GitHub Action integration after shadow evidence is reliable.
+Quality reports name their scope and source/runner/environment provenance. Imports require a snapshot taken before execution. Source drift, service drift, incomplete outcomes and altered receipts invalidate measured status. Reviewer acceptance does not authorize application without independent expectations and successful candidate validation. Held-out defects must cause actual failing cases; process/import errors do not count as defect detection.
 
-Exit criterion: reported decision recall on deterministic real regression changes, with documented uncertainty and no hidden omitted scope. Include native runner selection as a baseline.
+Candidate preservation checks compare collection identities and passing outcomes, with optional held-out defects. These are useful regression checks, not proof of semantic equivalence. Disposable workspaces isolate file changes; installed dependencies and test executables are trusted and run with the user's permissions.
 
-## 0.3 — quality that is actually measured
+Browser declarations represent routes, copy, styles, templates and localization as inputs to an existing browser runner. Imported runtime reports trust their producer's completeness attestation. Observed runtime dependencies always supplement static edges; inference about unexercised branches remains a project policy.
 
-- Ingest coverage and Stryker mutation results with revision/environment provenance.
-- Measure repeated-run instability rather than guessing flakiness from sleeps.
-- Introduce independent test-oracle review and generated-defect benchmarks.
-- Validate candidate collection and execution in an isolated review workspace.
-- Add a reviewed modularization patch workflow, including deletion/fixture changes and original-suite equivalence checks.
-- Integrate Agentic QE through its actual supported interfaces, without relabeling custom workers as AQE.
+## Continuing qualification
 
-Exit criterion: generated tests catch held-out regressions, not just increase coverage; all reported metrics name scope and measured evidence.
+- Broader real-project change corpora, including missed dependencies and order-dependent subset failures.
+- Held-out evaluation of actual model-generated tests against independent behavioral specifications.
+- Browser/framework instrumentation producers for the runtime protocol.
+- Maintainer verification of native discovery and graph scope on large monorepos.
+- Repeated timing studies including instrumentation cost and native selection baselines.
 
-## 0.4 — browser and runtime evidence
-
-- Explicit browser route/copy/style/template/localization dependencies.
-- Per-test runtime/coverage evidence with completeness and freshness checks.
-- Contract/schema and external-service invalidation policies.
-- Python integration with pytest-testmon rather than recreating its engine.
-- Monorepo integrations with established Nx/Bazel graphs.
-
-## Community priorities
-
-Useful contribution order: reproducible missed dependencies, discovery fixtures, runner adapters, realistic benchmarks, measured quality evidence. Ship a short reproducible demo, document exact limits, invite maintainers to compare native selection, and publish failures as well as wins. Virality is an outcome the project can earn, not an acceptance criterion we can guarantee.
+The engineering roadmap now has APIs, commands, tests and integration seams. These qualification tasks remain open evidence work. Virality is an outcome the project can earn, not an acceptance criterion we can guarantee.

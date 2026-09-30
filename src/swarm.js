@@ -1,7 +1,8 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { spawn } from 'node:child_process';
-import { randomUUID } from 'node:crypto';
+import { stagePatch } from './candidates.js';
+import { snapshot } from './provenance.js';
 import { buildGraph } from './graph.js';
 import { audit } from './audit.js';
 import { TEST, readConfig, safePath } from './files.js';
@@ -50,15 +51,17 @@ export async function generate(root, options = {}) {
   const order = workOrder(root);
   const config = readConfig(root);
   if (!options.execute) return order;
-  if (!config.agent) throw new Error('Configure an agent executable in tddswarm.config.json before --execute. See docs/agents.md.');
+  const agent=config.agent||options.agent;
+  if (!agent) throw new Error('Configure an agent executable in tddswarm.config.json before --execute. See docs/agents.md.');
   const graph = buildGraph(root);
+  const provenance = snapshot(root,config);
   // Send only source/test files, never environment files or arbitrary repository data.
   const context = Object.entries(graph.sources).filter(([file]) => !/(?:^|\/)(?:secrets?|credentials?)(?:\.|\/)/i.test(file)).map(([file, content]) => ({ file, content }));
   const requirementsPath = path.join(root, 'tddswarm.requirements.md');
   const requirements = fs.existsSync(requirementsPath) ? fs.readFileSync(safePath(root, 'tddswarm.requirements.md'), 'utf8') : '';
   if (!requirements.trim()) throw new Error('Add tddswarm.requirements.md with independent behavior expectations before --execute.');
   if (Buffer.byteLength(JSON.stringify(context)) + Buffer.byteLength(requirements) > 256 * 1024) throw new Error('Agent context exceeds 256 KB. Scope this run to a smaller project.');
-  const architectural = await callAgent(config.agent, { schemaVersion: 1, role: 'architect', order, requirements, context }, root);
+  const architectural = await callAgent(agent, { schemaVersion: 1, role: 'architect', order, requirements, context }, root);
   if (!Array.isArray(architectural.tasks) || !architectural.tasks.length || architectural.tasks.length > 12) throw new Error('Architect must return 1–12 tasks');
   for (const task of architectural.tasks) {
     if (typeof task.subject !== 'string' || !graph.sources[task.subject] || typeof task.instructions !== 'string' || task.instructions.length > 20000) throw new Error('Invalid architect task');
@@ -66,7 +69,7 @@ export async function generate(root, options = {}) {
   // Three authors at a time; maximum 12 tasks + architect + reviewer = 14 calls.
   const drafts = [];
   for (let offset = 0; offset < architectural.tasks.length; offset += 3) {
-    const batch = await Promise.all(architectural.tasks.slice(offset, offset + 3).map(task => callAgent(config.agent, { schemaVersion: 1, role: 'author', task, requirements, context }, root)));
+    const batch = await Promise.all(architectural.tasks.slice(offset, offset + 3).map(task => callAgent(agent, { schemaVersion: 1, role: 'author', task, requirements, context }, root)));
     drafts.push(...batch);
   }
   const candidates = drafts.flatMap(d => {
@@ -81,17 +84,10 @@ export async function generate(root, options = {}) {
     if (paths.has(f.path)) throw new Error(`Duplicate candidate path: ${f.path}`);
     paths.add(f.path);
   }
-  const review = await callAgent(config.agent, { schemaVersion: 1, role: 'reviewer', requirements, context, files: candidates, acceptance: order.acceptance }, root);
+  const review = await callAgent(agent, { schemaVersion: 1, role: 'reviewer', requirements, context, files: candidates, acceptance: order.acceptance }, root);
   if (typeof review.accepted !== 'boolean' || !Array.isArray(review.findings) || review.findings.some(f => typeof f !== 'string')) throw new Error('Reviewer must return accepted:boolean and findings:string[]');
-  const id = randomUUID();
-  const dir = safePath(root, `.tddswarm/candidates/${id}`);
-  fs.mkdirSync(dir, { recursive: true });
-  for (const file of candidates) {
-    const target = safePath(dir, file.path);
-    fs.mkdirSync(path.dirname(target), { recursive: true });
-    fs.writeFileSync(target, file.content, { flag: 'wx' });
-  }
-  const result = { ...order, executed: true, id, directory: dir, calls: architectural.tasks.length + 2, files: candidates.map(f => f.path), review, status: review.accepted ? 'reviewed-candidates' : 'rejected-candidates', measured: { execution: false, mutation: false }, applied: false };
-  fs.writeFileSync(path.join(dir, 'review.json'), JSON.stringify(result, null, 2));
+  const staged=stagePatch(root,{files:candidates,delete:[],review,requirements,provenance,purpose:order.purpose});
+  const result = { ...order, ...staged, executed: true, calls: architectural.tasks.length + 2 };
+  fs.writeFileSync(path.join(staged.directory,'review.json'),JSON.stringify(result,null,2));
   return result;
 }

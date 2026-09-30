@@ -194,3 +194,12 @@ test('failed atomic installation rolls back deletions and earlier additions', t 
   assert.equal(fs.readdirSync(path.join(root, 'test')).some(file => file.endsWith('.tmp')), false);
   assert.equal(applyPatch(root, staged.id, { execute: true }).applied, true);
 });
+
+
+test('modified validation outcomes cannot authorize application', t => {
+  const root=project(t);
+  const staged=stagePatch(root,{files:[{path:'test/increment.test.js',content:first}],review,requirements:'Increment returns the mathematical successor.'});
+  const result=validateCandidates(root,staged.id);assert.equal(result.accepted,true);
+  const file=path.join(staged.directory,'validation.json');const saved=JSON.parse(fs.readFileSync(file));saved.candidate.durationMs=123;fs.writeFileSync(file,JSON.stringify(saved));
+  assert.throws(()=>applyPatch(root,staged.id,{execute:true}),/integrity mismatch/);
+});

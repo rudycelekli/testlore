@@ -8,13 +8,13 @@ function settings(config) {
   if (!value || !['pytest-testmon', 'nx', 'bazel'].includes(value.type)) throw new Error('Configure integration.type: pytest-testmon, nx, or bazel');
   for (const key of ['args', 'options', 'queryOptions']) if (value[key] !== undefined && (!Array.isArray(value[key]) || value[key].some(v => typeof v !== 'string' || v.includes('\0')))) throw new Error(`integration.${key} must be an argv array`);
   if (value.executable !== undefined && (typeof value.executable !== 'string' || !value.executable || value.executable.includes('\0'))) throw new Error('integration.executable must be a program path');
-  return value;
+  return {...value,env:config.env||{}};
 }
 function invoke(root, value, args) {
   const executable = value.executable || ({ nx: path.join(root, 'node_modules', '.bin', 'nx'), bazel: 'bazel', 'pytest-testmon': 'pytest' })[value.type];
   const command = [executable, ...(value.args || []), ...args];
   const start = performance.now();
-  const env = { ...process.env }; delete env.NODE_TEST_CONTEXT;
+  const env = { ...process.env,...value.env }; delete env.NODE_TEST_CONTEXT;
   const result = spawnSync(command[0], command.slice(1), { cwd: root, env, shell: false, encoding: 'utf8', timeout: value.timeoutMs || 120000, maxBuffer: 16 * 1024 * 1024 });
   return { adapter: value.type, command, exitCode: result.status ?? 2, stdout: result.stdout || '', stderr: result.stderr || '', durationMs: Math.round(performance.now() - start), ...(result.error ? { error: result.error.message } : {}), ...(result.signal ? { signal: result.signal } : {}) };
 }

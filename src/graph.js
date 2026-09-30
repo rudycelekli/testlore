@@ -1,6 +1,9 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import ts from 'typescript';
+import { isBuiltin } from 'node:module';
+import { discover as nativeDiscovery, resolveNative } from './execution.js';
+import { declaredInputs } from './inputs.js';
 import { SOURCE, TEST, listFiles, normalize, safePath, readConfig } from './files.js';
 
 export function analyze(file, text) {
@@ -47,27 +50,35 @@ export function resolveImport(file, spec, files) {
 export function buildGraph(root) {
   const config = readConfig(root);
   const files = listFiles(root);
-  const graph = { files, tests: files.filter(f => TEST.test(f)), edges: {}, warnings: [], sources: {} };
-  const set = new Set(files);
-  for (const file of files.filter(f => /(?:^|\/)tsconfig[^/]*\.json$/.test(f))) {
-    const parsed = ts.parseConfigFileTextToJson(file, fs.readFileSync(safePath(root, file), 'utf8'));
-    if (parsed.error || parsed.config?.compilerOptions?.paths || parsed.config?.compilerOptions?.baseUrl || parsed.config?.extends) graph.warnings.push({ file, reason: 'unsupported-tsconfig-resolution' });
+  const selected = files.filter(f => (config.testMatch ? config.testMatch.some(pattern => path.matchesGlob(f,pattern)) : TEST.test(f)) && !(config.testExclude || []).some(pattern => path.matchesGlob(f,pattern)));
+  const graph = { files, tests: selected, edges: {}, warnings: [], sources: {}, root, config, discovery: {complete:true,method:'configured-static-conventions'} };
+  if(config.discovery === 'native' || Array.isArray(config.discovery)) {
+    const discovered = nativeDiscovery(root,config);
+    graph.tests = discovered.files;
+    graph.discovery = discovered;
+    for(const file of discovered.files)if(!files.includes(file))graph.warnings.push({file,reason:'discovered-file-outside-graph'});
+    if(!discovered.complete)graph.warnings.push({file:'discovery',reason:'incomplete-native-discovery'});
   }
+  graph.compilerOptions = compilerOptions(root,config,graph.warnings);
+  graph.packageNames = new Set();
+  const set = new Set(files);
   for (const file of files.filter(f => /(?:^|\/)package\.json$/.test(f))) {
     try {
-      const pkg = JSON.parse(fs.readFileSync(safePath(root, file), 'utf8'));
-      if (pkg.workspaces || pkg.imports || pkg.exports) graph.warnings.push({ file, reason: 'unsupported-package-resolution' });
-    } catch { graph.warnings.push({ file, reason: 'invalid-package-json' }); }
+      const pkg = JSON.parse(fs.readFileSync(safePath(root,file),'utf8'));
+      if(pkg.name)graph.packageNames.add(pkg.name);
+    } catch { graph.warnings.push({file,reason:'invalid-package-json'}); }
   }
   for (const file of files.filter(f => SOURCE.test(f))) {
     const text = fs.readFileSync(safePath(root, file), 'utf8');
     graph.sources[file] = text;
     addSource(graph, file, text, set);
   }
-  for (const [test, deps] of Object.entries(config.dependencies || {})) {
+  const declared = declaredInputs(config);
+  for (const [test,deps] of Object.entries(config.dependencies || {})) declared[test] = [...(declared[test]||[]),...deps];
+  for (const [test, deps] of Object.entries(declared)) {
     if (!graph.tests.includes(test)) graph.warnings.push({ file: test, reason: 'unknown-mapped-test' });
     for (const dep of deps) {
-      if (!set.has(dep)) graph.warnings.push({ file: dep, reason: 'missing-mapped-dependency' });
+      if (!dep.startsWith('service:') && !set.has(dep)) graph.warnings.push({ file: dep, reason: 'missing-mapped-dependency' });
       graph.edges[test] = [...new Set([...(graph.edges[test] || []), dep])];
     }
   }
@@ -79,7 +90,7 @@ export function addSource(graph, file, text, files = new Set(graph.files)) {
   const edges = graph.edges[file] || [];
   for (const reason of info.warnings) graph.warnings.push({ file, reason });
   for (const spec of info.imports) {
-    const resolved = resolveImport(file, spec, files);
+    const resolved = resolveGraphImport(graph,file,spec,files);
     if (resolved.path) edges.push(resolved.path);
     else if (resolved.unresolved) graph.warnings.push({ file, reason: `unresolved-import:${spec}` });
   }
@@ -109,4 +120,39 @@ export function evidencePath(graph, start, target) {
     }
   }
   return null;
+}
+
+function compilerOptions(root,config,warnings) {
+  const filename=config.tsconfig ? safePath(root,config.tsconfig) : path.join(root,'tsconfig.json');
+  if(!fs.existsSync(filename)) return {allowJs:true,resolveJsonModule:true,moduleResolution:ts.ModuleResolutionKind.Bundler,module:ts.ModuleKind.ESNext};
+  const read=ts.readConfigFile(filename,ts.sys.readFile);
+  if(read.error){warnings.push({file:path.relative(root,filename),reason:'invalid-tsconfig'});return {};}
+  const parsed=ts.parseJsonConfigFileContent(read.config,ts.sys,path.dirname(filename));
+  if(parsed.errors.some(e=>e.code!==18003))warnings.push({file:path.relative(root,filename),reason:'invalid-tsconfig-resolution'});
+  return {...parsed.options,allowJs:true};
+}
+function resolveGraphImport(graph,file,spec,files) {
+  const direct=resolveImport(file,spec,files);
+  if(direct.path)return direct;
+  if(!graph.root)return direct;
+  if(isBuiltin(spec))return {external:true};
+  let resolved=ts.resolveModuleName(spec,path.join(graph.root,file),graph.compilerOptions||{},ts.sys).resolvedModule?.resolvedFileName;
+  if(!resolved && (graph.config?.discovery==='native' || Array.isArray(graph.config?.discovery))) {
+    try{resolved=resolveNative(graph.root,file,spec,graph.config);}catch{graph.warnings.push({file,reason:'native-resolver-failed'});}
+  }
+
+  if(resolved && typeof resolved==='object')resolved=resolved.path;
+  if(resolved) {
+    try {
+      const absolute=fs.realpathSync(path.isAbsolute(resolved)?resolved:path.join(graph.root,resolved));
+      const relative=normalize(path.relative(fs.realpathSync(graph.root),absolute));
+      if(files.has(relative))return {path:relative};
+      if(!relative.startsWith('../')&&!relative.split('/').includes('node_modules'))return {unresolved:true};
+      return {external:true};
+    }catch{return {unresolved:true};}
+  }
+  const isInternal=[...(graph.packageNames||[])].some(name=>spec===name||spec.startsWith(name+'/'));
+  const matchesAlias = Object.keys(graph.compilerOptions?.paths || {}).some(pattern => path.matchesGlob(spec,pattern));
+  if(isInternal || matchesAlias || (direct.external && (graph.config?.discovery==='native'||Array.isArray(graph.config?.discovery))))return {unresolved:true};
+  return direct;
 }

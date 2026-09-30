@@ -2,104 +2,92 @@
 
 **Know why each test runs. Improve the tests that matter.**
 
-An open source, local-first test intelligence layer for JavaScript and TypeScript. Audit existing tests, propose modular boundaries, stage tests with an agent team, and explain which test files a change affects.
+An MIT-licensed test intelligence layer: create or improve tests with an agent team, measure test quality, validate modular patches, and explain which tests a change can affect. Node/Jest/Vitest retain their runners; pytest-testmon, Nx and Bazel retain their dependency engines.
 
-**Experimental alpha.** The deterministic CLI works without AI credentials. Agent-generated candidates require a configured worker and independent requirements. Static grades describe visible structure; they do not certify test effectiveness or deployment readiness.
+**Experimental alpha.** Quality and routing use scoped evidence. A static grade, passing agent review or runtime trace does not certify every possible behavior.
 
-## One-line setup
+## One-line improvement workflow
 
-Requires Node.js 22+ and Git. Run inside your project:
+Requires Node.js 22.19+, Git, a clean project checkout, and GitHub CLI authentication for automatic pull requests:
+
+```sh
+npm exec --yes --package=github:rudycelekli/tddswarm -- tddswarm improve
+```
+
+The default workflow creates an isolated improvement branch, uses a configured worker or authenticated installed Codex CLI, validates the original and candidate suites, runs the full suite on the branch, and opens a GitHub pull request. Independent expectations belong in `tddswarm.requirements.md`. Without a worker or requirements, it retains a concrete work order instead of pretending tests were generated. `--local` leaves the tested branch for local review. No automatic merge.
+
+The proposal installs an ongoing GitHub quality workflow: scoped audit and affected tests on pull requests, full tests on default-branch pushes. Use shadow mode to compare selections with full-suite outcomes. Your existing configuration is preserved. See [improvement workflow](docs/improvement.md).
+
+For deterministic setup without generation:
 
 ```sh
 npm exec --yes --package=github:rudycelekli/tddswarm -- tddswarm init
-```
-
-This creates configuration, adds `.tddswarm/` to `.gitignore`, and saves a local health report. Existing configuration is preserved. Nothing is uploaded and no agent is invoked by `init`, `audit`, `modules`, `plan`, or `run`. Installation downloads this package and its dependency; your chosen test runner still has its usual behavior.
-
-For ongoing use, install in the project:
-
-```sh
 npm install --save-dev github:rudycelekli/tddswarm
-npx --no-install tddswarm audit
-npx --no-install tddswarm plan --base HEAD
+npx --no-install tddswarm audit --json
 npx --no-install tddswarm run --shadow --base HEAD
 ```
 
-The package is currently distributed through GitHub, **not published to npm**. `npx tddswarm` without a local installation is not the install command. Pin the Git dependency to a reviewed commit for reproducibility.
+Distributed through GitHub; **not published to npm**. Pin a reviewed Git commit for reproducibility. `init` preserves existing configuration, adds metadata to `.gitignore`, and writes a local audit. Generation sends bounded source context to your chosen worker and may consume its allowance. Deterministic analysis needs no AI account.
 
-## A small change should have an understandable test plan
+## A paragraph edit should have an understandable test plan
 
 ```text
-Landing-page copy
 AFFECTED · 1/2 test files selected
-SKIP test/checkout.test.js — no-known-dependency-on-change
 RUN  test/landing.test.js — dependency-path
-     test/landing.test.js → src/copy.json
-
-Shared helper
-AFFECTED · 2/2 test files selected
-     test/landing.test.js → src/landing.js → src/shared.js
-     test/checkout.test.js → src/checkout.js → src/shared.js
-
-Unknown runtime input
-FULL · 2/2 test files selected
-Reasons: unmapped-or-deleted-input, change-without-test-evidence
+     test/landing.test.js → public/copy.json
+SKIP test/checkout.test.js — no-known-dependency-on-change
 ```
 
-Run the synthetic demo with `npx --no-install tddswarm demo` after installation, or `npm run demo` from this repository. These are illustrative fixtures, not production performance results.
+Copy, styles, templates, localization and schemas are inputs, not automatic permission to bypass testing. Declare their browser/contract relationships or capture runtime reads. Unknown inputs, stale evidence and unresolved dependencies widen the plan. `npm run demo` demonstrates selective copy changes, shared dependencies and conservative fallback.
 
-Copy, CSS, templates, localization, and schemas can affect visual, accessibility, or integration tests. Declare dependencies when static imports cannot represent them. A paragraph change does not automatically bypass tests.
-
-## What is implemented
+## Implemented commands
 
 | Command | Result |
 | --- | --- |
-| `init` | Detect Node/Vitest/Jest runner configuration; create a health report |
-| `audit` | Static A–F triage grade, findings with lines, missing import relationships, and explicit unmeasured dimensions |
-| `plan --base <ref>` | Git changes → import/declaration graph → selected test files, dependency paths, uncertainty reasons |
-| `run` | Execute selected files, preserve exit status, record elapsed time and retry files from failed runs |
-| `run --shadow` | Execute the full discovered suite while recording the proposed subset |
-| `run --full` | Force the full discovered suite |
-| `modules` | Propose subject-based groups and flag broad dependencies; no automatic rewrite |
-| `generate` | Export an architect/author/reviewer work order without invoking agents |
-| `generate --execute` | Invoke configured workers; run up to three authors concurrently; stage reviewed or rejected candidates |
+| `improve` | Isolated branch → reviewed candidates → full validation → full branch test → automatic PR |
+| `init`, `audit`, `modules` | Runner setup, static triage plus scoped measured evidence, modular group proposals |
+| `plan --base <ref>` | Complete Git changes, dependency chains and reasons for every selected/omitted file |
+| `run`, `run --shadow`, `run --full` | Native per-case outcomes, retained failures and comparison with the proposed subset |
+| `snapshot`, `evidence` | Pre-run provenance and genuine Istanbul/Stryker report import |
+| `stability --repeat 5` | Observed repeated-run outcomes and unstable case identities |
+| `capture` | Per-file Node module/coverage/read observations; custom runtime report import |
+| `generate`, `generate --execute` | Bounded architect/authors/reviewer work order or staged agent proposals |
+| `modularize`, `validate`, `apply` | Reviewed file/fixture/deletion patch, isolated validation, explicit transactional application |
+| `external-plan`, `external-run` | Native pytest-testmon, Nx and Bazel delegation |
+| `aqe --target src/example.js` | Genuine optional Agentic QE generation, staged as unreviewed |
 
-Selection works at **test-file granularity**. It uses AST-parsed imports/re-exports, literal `require`/`import`, previous edges for changed files, and explicit asset dependencies. The graph is rebuilt each time; there is no stale graph cache. Unknown changed inputs, missing imports, computed imports, runtime filesystem access, config changes, and unsupported resolution widen selection to all discovered tests. Tests with no local dependencies are retained when inputs change. Explicit policy retains smoke tests, prior failed files, and periodic full runs.
+Selection operates at **test-file granularity**; native execution reports individual case identities. Native Node/Jest/Vitest discovery reconciles framework scope. TypeScript paths/extends and supported native aliases resolve to local dependencies. Static and runtime relationships are combined; runtime observations never delete static edges. Dynamic uncertainty remains conservative unless the project explicitly chooses a closed-world runtime policy.
 
-The built-in runner is Node's test runner. `init` detects installed Vitest/Jest dependencies and writes their CLI commands. TypeScript/JSX tests require a capable configured runner. Native runner discovery can be broader than TDDSwarm's naming convention; review the discovered files before enabling selective execution. See [configuration and limitations](docs/configuration.md).
+Failure history is partitioned by runner, dependency state and environment. Passing a subset preserves failures from unexecuted files. Source/service drift, incomplete reports and altered receipts invalidate evidence. Integrity digests detect accidental changes; they are not cryptographic signatures or a security sandbox.
 
-## Optional agent team
-
-Use your installed Codex CLI, or supply any JSON worker implementing the [agent protocol](docs/agents.md). The included Codex adapter uses separate architect, author, and reviewer calls with structured outputs. It does not use Agentic QE internally or claim its capabilities. The worker interface allows future integration without coupling routing to an LLM.
-
-1. Install TDDSwarm locally and authenticate your Codex CLI.
-2. Write `tddswarm.requirements.md` with independent expected behaviors.
-3. Add `"agent": ["npx", "--no-install", "tddswarm-codex-agent"]` to configuration.
-4. Run `npx --no-install tddswarm generate --execute`.
-5. Review `.tddswarm/candidates/<id>/`, copy desired changes, and validate with your runner and mutation tooling.
-
-`--execute` sends the bounded source/test context and requirements to the configured worker. A remote worker may upload that context and consume usage allowance. There are at most 14 worker calls, each with a timeout; this bounds calls, not tokens or money. Source can contain embedded secrets; inspect it before opting in. Candidates never overwrite project files or execute automatically. Reviewer acceptance is separate from runtime validation. The orchestration protocol is verified with deterministic workers; live model quality has not been benchmarked.
-
-## Why another testing tool?
-
-The problem is established. [pytest-testmon](https://www.testmon.org/), [Jest](https://jestjs.io/docs/30.0/cli), [Vitest](https://vitest.dev/guide/cli.html), [Nx](https://nx.dev/docs/features/ci-features/affected), and commercial products already select tests. [Agentic QE](https://github.com/proffesor-for-testing/agentic-qe) already covers test generation, quality assessment, and change impact.
-
-TDDSwarm's proposed contribution is an approachable open layer linking **test health → modular boundaries → explicit dependency evidence → understandable execution decisions**. It aims to interoperate with mature tools. This is an integration opportunity, not a claim to have invented test selection or AI testing. Read the [primary-source landscape research](docs/landscape.md).
-
-## Evidence, not a speedup slogan
+## Quality that is measured
 
 ```sh
-npm ci
-npm test
-npm run benchmark
+npx --no-install tddswarm snapshot
+# Run your coverage/mutation tool; keep reports under .tddswarm/
+npx --no-install tddswarm evidence --type coverage --report .tddswarm/coverage/coverage-final.json --provenance .tddswarm/snapshot.json
+npx --no-install tddswarm stability --repeat 5
 ```
 
-The benchmark creates 1,000 deliberately independent test files and measures planning, then compares selected and full execution on six small change fixtures. Raw sample outcomes and hardware information are in [synthetic.json](docs/benchmarks/synthetic.json). Test-count reduction is not wall-clock savings. This is not a production repository benchmark.
+Candidate acceptance requires independent expectations, full collection/execution, preserved original outcomes and fresh provenance. Optional held-out defects must cause actual failing cases. Name/outcome preservation is useful regression evidence, not formal semantic equivalence. Candidates execute in disposable copies using trusted dependencies, with the user's permissions.
 
-Next milestones are runtime/coverage evidence, measured mutation and flake reports, browser dependency adapters, automatic shadow-result comparison, and reproducible public-repository benchmarks. See [roadmap](docs/roadmap.md) and [architecture](docs/architecture.md).
+Read [configuration](docs/configuration.md), [runner adapters](docs/runners.md), [evidence](docs/evidence.md), [candidates](docs/candidates.md), [agents](docs/agents.md), and [native integrations](docs/integrations.md).
 
-## Contribute
+## Evidence and prior art
 
-Bring a reproducible missed dependency, a runner discovery fixture, an independent test-quality metric, or a public benchmark. See [CONTRIBUTING.md](CONTRIBUTING.md). Issues and pull requests are welcome. We will publish misses and overhead alongside improvements.
+The ecosystem already includes [pytest-testmon](https://www.testmon.org/), [Jest](https://jestjs.io/docs/cli), [Vitest](https://vitest.dev/guide/cli.html), [Nx](https://nx.dev/docs/features/ci-features/affected), [Bazel](https://bazel.build/query/guide), and [Agentic QE](https://github.com/proffesor-for-testing/agentic-qe). TDDSwarm connects quality, modular proposals and explainable execution; it does not claim to invent test selection. See [landscape research](docs/landscape.md).
 
-MIT licensed. No telemetry in the core CLI.
+```sh
+npm ci --ignore-scripts
+npm test
+npm run benchmark
+npm run benchmark:public
+node scripts/quality-proof.js
+node scripts/bazel-proof.js
+```
+
+Pinned public nanoid/defu changes caught both planted regressions with zero observed misses, while conservatively selecting the full runtime scope. [Raw results](benchmarks/results/2026-09-29-roadmap/summary.json) include native baselines and planning overhead. Single-run timing differences establish no production speedup.
+
+[Real c8/Stryker proof](docs/quality-proof.md) measured 6/8 covered lines and 11/13 detected mutants on a controlled fixture, and rejected source/service drift and report tampering. Synthetic candidate controls caught four held-out defects while vacuous replacements caught none. A [live Codex run](benchmarks/quality/live-codex.receipt.json) generated 50 passing cases and caught four withheld mutations on one controlled specification. Actual pytest-testmon, Nx, Bazel and AQE executions are documented with exact limits. Hosted CI tests the composite action. Live model quality and universal selection safety remain open qualification work.
+
+See [roadmap implementation](docs/roadmap.md) and [architecture](docs/architecture.md). Bring a reproducible missed dependency, independent quality metric or public benchmark. We welcome failures and measured overhead alongside improvements. No telemetry in the core CLI.

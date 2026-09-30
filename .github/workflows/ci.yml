@@ -26,3 +26,21 @@ jobs:
       - run: npm run demo
       - run: npm run benchmark
       - run: npm pack --dry-run
+  measured-quality:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-node@v7.0.0
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - run: node scripts/quality-proof.js --output .tddswarm/ci-quality.json
+      - run: node scripts/generated-defects.js > .tddswarm/ci-defects.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: measured-quality-proof
+          path: .tddswarm/ci-*.json
+          if-no-files-found: error

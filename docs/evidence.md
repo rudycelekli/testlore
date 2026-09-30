@@ -38,7 +38,7 @@ Coverage percentages use report counters; a zero denominator produces `null`, no
 
 Mutation score is `(Killed + Timeout) / (Killed + Timeout + Survived + NoCoverage)`. `CompileError`, `RuntimeError`, and `Ignored` are excluded and reported. `Pending` marks the report incomplete; incomplete mutation evidence is not labeled measured. A timeout contributes to this standard counter formula but does not independently establish a meaningful oracle. Unknown statuses fail import.
 
-Receipts and raw JSON are retained in `.tddswarm/evidence/quality/coverage.json`, `coverage.raw.json`, `mutation.json`, and `mutation.raw.json`. `qualityEvidence(root)` returns coverage, mutation, and stability records with freshness information. Missing, invalid, stale, or incomplete evidence remains unmeasured. Quality measurements currently inform the audit; aggregate coverage and mutation reports do not create per-test impact edges.
+Receipts and raw JSON are retained in `.tddswarm/evidence/quality/coverage.json`, `coverage.raw.json`, `mutation.json`, and `mutation.raw.json`. `qualityEvidence(root)` returns coverage, mutation, and stability records with freshness information. Missing, invalid, stale, incomplete or zero-eligible-scope evidence remains unmeasured. Quality measurements currently inform the audit; aggregate coverage and mutation reports do not create per-test impact edges.
 
 ## Repeated execution and observed instability
 

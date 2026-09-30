@@ -41,6 +41,8 @@ function manifest(root, id) {
 function copyCandidate(root, destination, id) {
   const source = manifest(root, id);
   const validation = JSON.parse(fs.readFileSync(safePath(source.directory, 'validation.json'), 'utf8'));
+  const {integrity,...payload}=validation;
+  if(!integrity||integrity!==digest(payload))throw new Error('Candidate validation integrity mismatch');
   if (!validation.accepted || validation.manifestHash !== digest(source.value)) throw new Error('Existing candidate requires accepted validation of this exact manifest');
   const target = safePath(destination, `.tddswarm/candidates/${id}`);
   fs.mkdirSync(target, { recursive: true });
@@ -118,6 +120,8 @@ export async function improve(root, options = {}) {
       if (!readConfig(worktree).agent && !options.agent) {
         result.status = 'awaiting-agent'; result.workOrder = await generate(worktree); return receipt();
       }
+      const requirements=safePath(worktree,'tddswarm.requirements.md');
+      if(!fs.existsSync(requirements)||!fs.readFileSync(requirements,'utf8').trim()){result.status='awaiting-requirements';result.workOrder=await generate(worktree);return receipt();}
       staged = await generate(worktree, { execute: true, agent: options.agent });
     }
     result.candidate = { id: staged.id, directory: staged.directory };
