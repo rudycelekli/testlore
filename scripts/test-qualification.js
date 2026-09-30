@@ -28,7 +28,7 @@ export function inspectQualificationTap(stdout) {
 export async function qualifyTests(root, files, {timeoutMs = 900000, maxBytes = 16 * 1024 * 1024} = {}) {
   if (!Array.isArray(files) || !files.length || files.some(file => typeof file !== 'string' || path.isAbsolute(file) || file.split(/[\\/]/).some(part => !part || part === '.' || part === '..') || !fs.lstatSync(path.join(root, file)).isFile())) throw new Error('Qualification requires explicit regular test files');
   if (!Number.isInteger(timeoutMs) || timeoutMs < 50 || timeoutMs > 1200000 || !Number.isInteger(maxBytes) || maxBytes < 1024 || maxBytes > 32 * 1024 * 1024) throw new Error('Invalid qualification budget');
-  const started = performance.now(), command = [process.execPath, '--test', '--test-reporter=tap', ...files.map(file => './' + file)];
+  const started = performance.now(), command = [process.execPath, '--test', '--test-concurrency=2', '--test-reporter=tap', ...files.map(file => './' + file)];
   const env = {...process.env}; delete env.NODE_TEST_CONTEXT;
   const execution = await new Promise(resolve => {
     const child = spawn(command[0], command.slice(1), {cwd: root, env, shell: false, detached: process.platform !== 'win32', stdio: ['ignore', 'pipe', 'pipe']});

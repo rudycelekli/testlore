@@ -86,7 +86,7 @@ test('full-shadow evidence detects a genuine failing case omitted by proposed ro
 });
 
 test('real runner timeout records incomplete execution and never supports success', t => {
-  const state = observe(t, { config: { runnerTimeoutMs: 400 }, files: {
+  const state = observe(t, { config: { discovery: 'static', runnerTimeoutMs: 400 }, files: {
     'test/a.test.js': "import test from 'node:test';test('slow case',async()=>{await new Promise(resolve=>setTimeout(resolve,2000));});"
   } });
   assert.equal(state.observation.status, 'incomplete'); assert.equal(state.observation.complete, false);

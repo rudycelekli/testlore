@@ -26,7 +26,7 @@
     "node": ">=22.19.0"
   },
   "scripts": {
-    "test": "node --test test/*.test.js",
+    "test": "node --test --test-concurrency=2 test/*.test.js",
     "check": "node scripts/check.js",
     "demo": "node src/cli.js demo",
     "benchmark": "node scripts/benchmark.js",
