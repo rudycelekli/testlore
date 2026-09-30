@@ -1,0 +1,88 @@
+{
+  "schemaVersion": 1,
+  "provenance": {
+    "schemaVersion": 1,
+    "revision": null,
+    "runner": "d81a830b445c6e6770b72e22be377664bfd743ff2c3667ff31cae7de0ace168d",
+    "environment": {
+      "node": "v22.19.0",
+      "platform": "darwin",
+      "arch": "arm64",
+      "labels": {}
+    },
+    "services": {},
+    "serviceWarnings": [],
+    "files": {
+      "browser/landing.spec.js": "be0ab9a0db2f2743b588761fe8090d7d37f4d613abca05fbccde66efef361839",
+      "browser/pricing.spec.js": "98a7f6c2251298442bcc8d13d43043bee9bdf8fdbbf956a15771c50be38ebb30",
+      "globalSetup.mjs": "883db17686136d5af0fb193c8d5e271e375781f323705ddee9e0fa75d5f58f09",
+      "package.json": "cb16315b1973cfa6ccb94958bc1fc80371b0f07555f8be0a1c12b6d311cbb18d",
+      "playwright.config.mjs": "4035d10fdab297282d73691fee7c38a1bd84fae724ad5ff3f97891e761d70e45",
+      "routes/landing.html": "a7d5cb4c9b2d2d4050097e2f2d90b0834aca2da500d36e8f88363a276f21a672",
+      "routes/pricing.html": "f6160a3e2ccc7d2fc418b571a66ff47143649da62a6ca6504e2a4a815379f5c6",
+      "tddswarm.config.json": "d4ba9cdbfb67fadb52ec5bbc3603ee45d53fc94af38c4eee911f5f31bd1fd60b",
+      "tddswarm.requirements.md": "6ba3a1a86258def5a1fd69b414b8992fc0c90b4aa265b7f5ff04be7b62a91692"
+    },
+    "fingerprint": "e1fefc9527970e3080b82134b61b97045af223b2a24aab6a91c62182d72e3439"
+  },
+  "serviceTokens": {},
+  "configurationFiles": [],
+  "mode": "affected",
+  "base": null,
+  "changed": [
+    "routes/landing.html"
+  ],
+  "ignored": [],
+  "selected": [
+    "browser/landing.spec.js"
+  ],
+  "total": 2,
+  "omitted": 1,
+  "selectionReduction": 0.5,
+  "reasons": [],
+  "warnings": [],
+  "decisions": [
+    {
+      "test": "browser/landing.spec.js",
+      "selected": true,
+      "reasons": [
+        "dependency-path"
+      ],
+      "paths": [
+        [
+          "browser/landing.spec.js",
+          "routes/landing.html"
+        ]
+      ]
+    },
+    {
+      "test": "browser/pricing.spec.js",
+      "selected": false,
+      "reasons": [
+        "no-known-dependency-on-change"
+      ],
+      "paths": []
+    }
+  ],
+  "fingerprint": "4a028e00fbd7904ed093af219c9c9f63567ba7b6109a9f6f685fb872c9d35ada",
+  "discovery": {
+    "files": [
+      "browser/landing.spec.js",
+      "browser/pricing.spec.js"
+    ],
+    "complete": true,
+    "adapter": "playwright",
+    "warnings": []
+  },
+  "runtime": {
+    "usable": false,
+    "reason": "runtime-disabled",
+    "policy": "supplement-static-only"
+  },
+  "evidence": "static-imports-and-declared-dependencies",
+  "limitations": [
+    "Runtime observations cover exercised inputs; external services require declared versions.",
+    "Selection operates at test-file granularity.",
+    "No deployment safety or measured wall-clock savings are implied."
+  ]
+}

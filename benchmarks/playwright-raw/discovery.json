@@ -1,0 +1,9 @@
+{
+  "files": [
+    "browser/landing.spec.js",
+    "browser/pricing.spec.js"
+  ],
+  "complete": true,
+  "adapter": "playwright",
+  "warnings": []
+}

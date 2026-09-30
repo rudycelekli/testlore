@@ -1,0 +1,45 @@
+{
+  "requirements": "The /landing route renders a visible heading exactly Community tools and its paragraph exactly Welcome builders. The /pricing route renders a visible heading exactly Simple pricing. Routing and assertions must preserve the unrelated pricing case.",
+  "source": {
+    "routes/landing.html": "<h1>Community tools</h1><p>Build together</p>",
+    "routes/pricing.html": "<h1>Simple pricing</h1><p>Free for the community</p>"
+  },
+  "edit": "<h1>Community tools</h1><p>Welcome builders</p>",
+  "defect": "<h1>Incorrect heading</h1><p>Welcome builders</p>",
+  "original": {
+    "browser/landing.spec.js": "import {test,expect} from '@playwright/test';test('landing heading matches independent copy specification',async({page})=>{await page.goto(process.env.TESTLORE_FIXTURE_URL+'/landing');await expect(page.getByRole('heading')).toHaveText('Community tools');});\n",
+    "browser/pricing.spec.js": "import {test,expect} from '@playwright/test';test('pricing heading matches independent copy specification',async({page})=>{await page.goto(process.env.TESTLORE_FIXTURE_URL+'/pricing');await expect(page.getByRole('heading')).toHaveText('Simple pricing');});\n"
+  },
+  "candidate": "import {test,expect} from '@playwright/test';test('landing heading matches independent copy specification',async({page})=>{await page.goto(process.env.TESTLORE_FIXTURE_URL+'/landing');await expect(page.getByRole('heading')).toHaveText('Community tools');});\ntest('landing paragraph matches independent copy specification',async({page})=>{await page.goto(process.env.TESTLORE_FIXTURE_URL+'/landing');await expect(page.locator('p')).toHaveText('Welcome builders');});\n",
+  "server": "import http from 'node:http';import fs from 'node:fs';import path from 'node:path';export default async function(){const root=process.cwd();const server=http.createServer((req,res)=>{const name=req.url==='/landing'?'landing':req.url==='/pricing'?'pricing':null;if(!name){res.writeHead(404);res.end();return;}res.setHeader('content-type','text/html');res.end(fs.readFileSync(path.join(root,'routes',name+'.html')));});await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));process.env.TESTLORE_FIXTURE_URL='http://127.0.0.1:'+server.address().port;return async()=>await new Promise(resolve=>server.close(resolve));}\n",
+  "config": {
+    "adapter": "playwright",
+    "discovery": "native",
+    "runner": [
+      "<node>",
+      "node_modules/@playwright/test/cli.js",
+      "test",
+      "{files}"
+    ],
+    "browser": {
+      "routes": {
+        "/landing": {
+          "tests": [
+            "browser/landing.spec.js"
+          ],
+          "inputs": [
+            "routes/landing.html"
+          ]
+        },
+        "/pricing": {
+          "tests": [
+            "browser/pricing.spec.js"
+          ],
+          "inputs": [
+            "routes/pricing.html"
+          ]
+        }
+      }
+    }
+  }
+}
