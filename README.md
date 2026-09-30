@@ -41,10 +41,10 @@ TestLore connects an agent team, your existing test runner, measurable quality e
 From a clean, committed project checkout:
 
 ```sh
-npm exec --yes --package=github:rudycelekli/testlore#feat/full-roadmap -- testlore improve
+npm exec --yes --package=github:rudycelekli/testlore -- testlore improve
 ```
 
-**Preview branch:** the full implementation is in [PR #1](https://github.com/rudycelekli/testlore/pull/1). After merge, use `github:rudycelekli/testlore`; pin a reviewed commit for reproducibility. Distributed through GitHub; not published to npm.
+**Experimental alpha:** the implementation is merged into `main`. Pin a reviewed commit for reproducibility. Install from GitHub; an npm alpha release requires separate publisher setup and exact-artifact qualification. [Adoption and pilots →](docs/adoption.md)
 
 Requires **Node 22.19+ and Git**. It creates your project’s quality-agent identity and local memory immediately. Existing `SPEC.md`, `REQUIREMENTS.md`, or README material can seed a proposed behavior contract on the branch. Commit `tddswarm.requirements.md` for explicit expectations; proposals without meaningful independent behavior must be rejected. Generation uses your configured worker or an installed, authenticated Codex CLI. Automatic PR creation uses your authenticated GitHub CLI. `--local` keeps the result for local review.
 
@@ -69,18 +69,18 @@ Failed validation retains the proposal and its evidence for inspection. Missing 
 Personalize your project agent:
 
 ```sh
-npm exec --yes --package=github:rudycelekli/testlore#feat/full-roadmap -- testlore agent --name "My project quality engineer" --json
+npm exec --yes --package=github:rudycelekli/testlore -- testlore agent --name "My project quality engineer" --json
 ```
 
 The agent runs when you invoke it or CI; its identity and history persist between runs. Customize `qualityAgent.name` and `qualityAgent.focus` in project configuration.
 
-`npm exec` uses a temporary package for that invocation. Before running any `npx --no-install testlore` commands below, including learning commands, install it locally with `npm install --save-dev github:rudycelekli/testlore#feat/full-roadmap`.
+`npm exec` uses a temporary package for that invocation. Before running any `npx --no-install testlore` commands below, including learning commands, install it locally with `npm install --save-dev github:rudycelekli/testlore`.
 
 Want a useful report before configuring agents?
 
 ```sh
-npm exec --yes --package=github:rudycelekli/testlore#feat/full-roadmap -- testlore init
-npm install --save-dev github:rudycelekli/testlore#feat/full-roadmap
+npm exec --yes --package=github:rudycelekli/testlore -- testlore init
+npm install --save-dev github:rudycelekli/testlore
 npx --no-install testlore audit --json
 npx --no-install testlore run --shadow --base HEAD
 ```
@@ -141,7 +141,7 @@ TestLore is a complementary coordination layer. Bring your specialist tools into
 Choose a setup in one command without first installing TestLore locally:
 
 ```sh
-npm exec --yes --package=github:rudycelekli/testlore#feat/full-roadmap -- testlore plugins --auto
+npm exec --yes --package=github:rudycelekli/testlore -- testlore plugins --auto
 ```
 
 Or inspect the choices and manage tools after a local install:
@@ -183,6 +183,8 @@ On **12 controlled changes across four Node fixtures**, TestLore caught all 63 o
 | **Complementary property library** | Real fast-check 4.10.2: complete base validation; 4/4 scoped defects caught and replayed from seed/path. | [Receipt](benchmarks/property-verification.json) · [Method](docs/ecosystem.md) |
 | **Independent AQE gate** | Actual template author reported score 100; independent review rejected the output. No live LLM claim. | [Composition receipt](benchmarks/aqe-composition-verification.json) |
 | **Packed installation** | Production-only install, native shadow fault detection, runtime capture, and a fully tested improvement branch. | `node scripts/packed-proof.js` |
+
+A [paired repeated learning evaluation](docs/learning-evaluation.md) now controls worker budgets and execution order across independent specifications; no quality gain is established merely by shipping the evaluator.
 
 These are scoped experiments. The memory comparison confirms that historical recall reaches real agent generation; it does not establish a general quality gain. Tiny suites can run slower after discovery and planning. There is no universal safety, production speedup, or “best overall” claim. Misses, overhead, and counterexamples belong in the results. [Benchmark methodology →](docs/comparison.md)
 

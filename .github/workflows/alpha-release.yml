@@ -1,0 +1,95 @@
+name: Alpha release candidate
+on:
+  workflow_dispatch:
+    inputs:
+      source_sha:
+        description: Reviewed full 40-character main commit SHA
+        required: true
+        type: string
+      publish:
+        description: Publish the qualified alpha archive (requires npm-alpha environment approval and trusted publisher)
+        default: false
+        type: boolean
+permissions:
+  contents: read
+concurrency:
+  group: alpha-release
+  cancel-in-progress: false
+jobs:
+  qualify:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    outputs:
+      artifact_id: ${{ steps.archive.outputs.artifact-id }}
+      archive_sha: ${{ steps.seal.outputs.archive_sha }}
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          ref: ${{ inputs.source_sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Require an immutable reviewed main revision
+        env:
+          SOURCE_SHA: ${{ inputs.source_sha }}
+        run: |
+          [[ "$SOURCE_SHA" =~ ^[0-9a-f]{40}$ ]]
+          test "$(git rev-parse HEAD)" = "$SOURCE_SHA"
+          git merge-base --is-ancestor "$SOURCE_SHA" origin/main
+      - uses: actions/setup-node@v7.0.0
+        with:
+          node-version: '24'
+      - run: npm ci --ignore-scripts
+      - run: npm run check
+      - run: npm test
+      - run: npm run demo
+      - name: Seal and qualify the exact production archive
+        id: seal
+        env:
+          SOURCE_SHA: ${{ inputs.source_sha }}
+        run: |
+          node scripts/release-candidate.js --output .tddswarm/alpha-release --revision "$SOURCE_SHA"
+          node scripts/release-candidate.js --verify .tddswarm/alpha-release/release-candidate.json
+          node --input-type=module -e "import fs from 'node:fs'; const r=JSON.parse(fs.readFileSync('.tddswarm/alpha-release/release-candidate.json')); fs.appendFileSync(process.env.GITHUB_OUTPUT, 'archive_sha='+r.archiveSha256+'\n');"
+      - uses: actions/upload-artifact@v4
+        id: archive
+        with:
+          name: alpha-release-${{ inputs.source_sha }}
+          path: .tddswarm/alpha-release/
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 14
+  publish:
+    if: inputs.publish
+    needs: qualify
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment: npm-alpha
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          ref: ${{ inputs.source_sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7.0.0
+        with:
+          node-version: '24'
+      - name: Require an OIDC-capable npm CLI
+        run: node -e "const [major,minor,patch]=require('node:child_process').execFileSync('npm',['--version'],{encoding:'utf8'}).trim().split('.').map(Number); if(major<11 || (major===11 && (minor<5 || (minor===5 && patch<1)))) process.exit(1);"
+      - uses: actions/download-artifact@v4
+        with:
+          artifact-ids: ${{ needs.qualify.outputs.artifact_id }}
+          path: .tddswarm/alpha-release
+          merge-multiple: true
+      - name: Verify the qualified archive and alpha version
+        env:
+          EXPECTED_ARCHIVE_SHA: ${{ needs.qualify.outputs.archive_sha }}
+        run: |
+          node scripts/release-candidate.js --verify .tddswarm/alpha-release/release-candidate.json --publish-check
+          node --input-type=module -e "import fs from 'node:fs'; const r=JSON.parse(fs.readFileSync('.tddswarm/alpha-release/release-candidate.json')); if(r.archiveSha256!==process.env.EXPECTED_ARCHIVE_SHA)process.exit(1);"
+      - name: Publish that archive using trusted OIDC
+        run: |
+          ARCHIVE=$(node --input-type=module -e "import fs from 'node:fs'; console.log(JSON.parse(fs.readFileSync('.tddswarm/alpha-release/release-candidate.json')).archive);")
+          npm publish ".tddswarm/alpha-release/$ARCHIVE" --ignore-scripts --access public --tag alpha --provenance

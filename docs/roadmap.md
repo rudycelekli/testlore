@@ -1,6 +1,6 @@
 # Roadmap implementation and evidence
 
-The 0.2–0.4 engineering milestones have concrete implementations on the roadmap branch. These are experimental capabilities, not published version numbers or certification of arbitrary projects. Each ecosystem retains its own test engine.
+The 0.2–0.4 engineering milestones have concrete implementations merged into main. These are experimental capabilities, not published version numbers or certification of arbitrary projects. Each ecosystem retains its own test engine.
 
 | Milestone | Implemented | Evidence and remaining qualification |
 | --- | --- | --- |
@@ -40,3 +40,9 @@ Project inspection recommends compatible installed tools without invoking them. 
 - Repeated timing studies including instrumentation cost and native selection baselines.
 
 The engineering roadmap now has APIs, commands, tests and integration seams. These qualification tasks remain open evidence work. Virality is an outcome the project can earn, not an acceptance criterion we can guarantee.
+
+## Alpha adoption and next evidence milestone
+
+The public GitHub alpha is available for voluntary pilots. [Adoption](adoption.md) describes shadow-first qualification and private evidence boundaries; [launch preparation](launch.md) supplies draft material and a protected exact-archive OIDC release workflow. Adding the workflow does not configure environment protection, establish npm ownership, or publish a package.
+
+[Paired learning evaluation](learning-evaluation.md) adds fixed worker budgets, balanced randomized order, distinct authored specifications, separately executed held-out defects, and raw per-trial receipts. Repetitions remain clustered by specification, and the default small dataset yields an inconclusive general-quality assessment. Live multi-task results, independently maintained pilots, exact-SHA hosted release gates, and registry installation evidence remain qualification work.

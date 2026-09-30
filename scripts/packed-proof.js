@@ -14,12 +14,21 @@ fs.mkdirSync(project);fs.mkdirSync(tools);
 function invoke(cwd,argv,expected=0){const env={...process.env};delete env.NODE_TEST_CONTEXT;const r=spawnSync(argv[0],argv.slice(1),{cwd,env,encoding:'utf8',shell:false,timeout:120000,maxBuffer:16*1024*1024});assert.equal(r.status,expected,r.stderr+'\n'+r.stdout);return r.stdout;}
 function write(file,content){const target=path.join(project,file);fs.mkdirSync(path.dirname(target),{recursive:true});fs.writeFileSync(target,typeof content==='string'?content:JSON.stringify(content));}
 const outputIndex=process.argv.indexOf('--output');const output=path.resolve(outputIndex<0?path.join(source,'.tddswarm/packed-proof.json'):process.argv[outputIndex+1]);
+const archiveIndex=process.argv.indexOf('--archive');
+const expectedIndex=process.argv.indexOf('--expected-sha256');
+const inputArchive=archiveIndex<0?null:path.resolve(process.argv[archiveIndex+1]||'');
+const expectedSha=expectedIndex<0?null:process.argv[expectedIndex+1];
+if(expectedSha&&!/^[a-f0-9]{64}$/.test(expectedSha))throw new Error('Expected SHA-256 must be 64 lowercase hex characters');
 let improvement;
 try{
- const pack=JSON.parse(invoke(source,['npm','pack','--json','--pack-destination',workspace]))[0];
- const archive=path.join(workspace,pack.filename);const sha256=createHash('sha256').update(fs.readFileSync(archive)).digest('hex');
+ const pack=inputArchive?{filename:path.basename(inputArchive)}:JSON.parse(invoke(source,['npm','pack','--ignore-scripts','--json','--pack-destination',workspace]))[0];
+ const archive=inputArchive||path.join(workspace,pack.filename);
+ const archiveStat=fs.statSync(archive);assert.ok(archiveStat.isFile()&&archiveStat.size<=20*1024*1024,'Archive must be a regular file <=20 MB');
+ const sha256=createHash('sha256').update(fs.readFileSync(archive)).digest('hex');
+ if(expectedSha)assert.equal(sha256,expectedSha,'Packed artifact checksum mismatch');
  fs.writeFileSync(path.join(tools,'package.json'),JSON.stringify({name:'packed-proof',version:'1.0.0',private:true}));
  invoke(tools,['npm','install','--omit=dev','--ignore-scripts','--no-audit','--no-fund',archive]);
+ const installedPackage=JSON.parse(fs.readFileSync(path.join(tools,'node_modules/testlore/package.json'),'utf8'));assert.equal(installedPackage.name,'testlore');pack.version=installedPackage.version;
  const cli=path.join(tools,'node_modules/testlore/src/cli.js');
  const command=(args,exit=0)=>JSON.parse(invoke(project,[process.execPath,cli,...args,'--json'],exit));
  write('package.json',{type:'module'});write('.gitignore','.tddswarm/\n');
@@ -46,7 +55,8 @@ try{
  assert.match(fs.readFileSync(path.join(improvement.worktreeRoot,'.github/workflows/tddswarm.yml'),'utf8'),/testlore@packed-proof/);
  const recall=command(['recall','--query','independent a contract']);assert.ok(recall.records.length);assert.equal(recall.advisoryOnly,true);assert.equal(recall.retrieval,'deterministic-lexical');
  assert.ok(recall.warnings.some(value=>value==='RuVector fallback: ruvector-sdk-missing'));
- const receipt={schemaVersion:1,date:new Date().toISOString(),archive:pack.filename,sha256,version:pack.version,node:process.version,productionInstall:true,plugins:{catalogCount:catalog.plugins.length,missingSdkExit:missingVectorSdk.exitCode,lexicalFallbackVerified:true},nativeShadow:{complete:shadow.complete,selected:shadow.plan.selected,executed:shadow.executedFiles.length,detected:true},runtimeCaptureComplete:capture.complete,improvement:{status:improvement.status,cases:improvement.fullRun.tests.length,originalBranch:'main'},limitations:['Local packed-artifact installation; no registry publication or live GitHub PR created.','Controlled two-module fixture; broad project compatibility remains unqualified.']};
+ assert.equal(createHash('sha256').update(fs.readFileSync(archive)).digest('hex'),sha256,'Archive changed during qualification');
+ const receipt={schemaVersion:1,exactInputArchive:Boolean(inputArchive),proofScriptSha256:createHash('sha256').update(fs.readFileSync(fileURLToPath(import.meta.url))).digest('hex'),date:new Date().toISOString(),archive:pack.filename,sha256,version:pack.version,node:process.version,productionInstall:true,plugins:{catalogCount:catalog.plugins.length,missingSdkExit:missingVectorSdk.exitCode,lexicalFallbackVerified:true},nativeShadow:{complete:shadow.complete,selected:shadow.plan.selected,executed:shadow.executedFiles.length,detected:true},runtimeCaptureComplete:capture.complete,improvement:{status:improvement.status,cases:improvement.fullRun.tests.length,originalBranch:'main'},limitations:['Local packed-artifact installation; no registry publication or live GitHub PR created.','Controlled two-module fixture; broad project compatibility remains unqualified.']};
  fs.mkdirSync(path.dirname(output),{recursive:true});fs.writeFileSync(output,JSON.stringify(receipt,null,2));console.log(JSON.stringify(receipt,null,2));
 }finally{
  if(improvement?.worktreeRoot)invoke(project,['git','worktree','remove','--force',improvement.worktreeRoot]);
