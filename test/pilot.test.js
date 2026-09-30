@@ -52,3 +52,42 @@ test('pilot replacements preserve dollar tokens literally',t=>{
   const root=fixture(t,{...twoModules,'src/a.js':"export const a = 'old';",'test/a.test.js':"import {a} from '../src/a.js';import test from 'node:test';import assert from 'node:assert/strict';test('string',()=>assert.ok(['old','$&'].includes(a)));"});commit(root);
   const m=manifest(root);m.repetitions=1;m.projects[0].changes=[{name:'literal',file:'src/a.js',before:"'old'",after:"'$&'",expectedFailure:false}];const report=pilot(fixture(t,{}),m,{execute:true});assert.equal(report.valid,true,JSON.stringify(report));
 });
+function historical(root, baseRevision, headRevision, config = {}) {
+  return {schemaVersion:1,repetitions:1,timeoutMs:10000,projects:[{name:'history',root,scope:'Native Node history scope',config:{adapter:'node',discovery:'native',...config},changes:[{name:'real-commit',kind:'history',baseRevision,headRevision,expectedFailure:false}]}]};
+}
+function revisionCommit(root) { git(root,'add','.');git(root,'commit','-m','historical change');return git(root,'rev-parse','HEAD').trim(); }
+test('historical replay uses actual rename/delete/assets/multi-file trees and leaves originals unchanged',t=>{
+  const root=fixture(t,{...twoModules,'unused.js':'export const unused=1;','public/style.css':'body { color: red; }'});commit(root);
+  const base=git(root,'rev-parse','HEAD').trim();
+  git(root,'mv','src/a.js','src/renamed.js');write(root,'test/a.test.js',twoModules['test/a.test.js'].replace('../src/a.js','../src/renamed.js'));
+  fs.rmSync(path.join(root,'unused.js'));write(root,'public/style.css','body { color: blue; }');
+  const head=revisionCommit(root), output=fixture(t,{}), m=historical(root,base,head);
+  const preview=pilot(output,m);const info=preview.projects[0].historicalChanges[0];
+  assert.equal(info.dependencyCompatible,true);assert.ok(info.entries.some(e=>e.status.startsWith('R')));assert.ok(info.entries.some(e=>e.status==='D'));
+  const report=pilot(output,m,{execute:true});assert.equal(report.valid,true,JSON.stringify(report));
+  assert.equal(report.projects[0].changes[0].history.headRevision,head);
+  assert.ok(report.projects[0].changes[0].changedPaths.includes('src/a.js'));assert.ok(report.projects[0].changes[0].changedPaths.includes('src/renamed.js'));
+  assert.equal(git(root,'rev-parse','HEAD').trim(),head);assert.equal(git(root,'status','--porcelain'),'');
+  assert.equal(exportPilot(report).historicalChanges,1);
+});
+test('history rejects mutable refs and retains dependency/runtime drift as invalid evidence',t=>{
+  const root=fixture(t,twoModules);commit(root);const base=git(root,'rev-parse','HEAD').trim();
+  write(root,'package.json',{type:'module',engines:{node:'>=24'}});const head=revisionCommit(root),m=historical(root,base,head),output=fixture(t,{});
+  const bad=structuredClone(m);bad.projects[0].changes[0].baseRevision='HEAD~1';assert.throws(()=>validatePilotManifest(bad),/immutable/);
+  assert.equal(pilot(output,m).projects[0].historicalChanges[0].dependencyCompatible,false);
+  const report=pilot(output,m,{execute:true});assert.equal(report.valid,false);assert.match(report.projects[0].changes[0].error,/dependency-or-runtime-drift/);
+});
+test('a native failing case omitted by a deliberately unsound input policy remains a miss in aggregates',t=>{
+  const root=fixture(t,{...twoModules,'input.txt':'1','test/a.test.js':"import {a} from '../src/a.js';import fs from 'node:fs';import test from 'node:test';import assert from 'node:assert/strict';test('a',()=>assert.equal(Number(fs.readFileSync(process.cwd()+'/input.txt','utf8')),a));"});commit(root);
+  const base=git(root,'rev-parse','HEAD').trim();write(root,'input.txt','9');const head=revisionCommit(root),m=historical(root,base,head,{ignoreChanges:['input.txt']});m.projects[0].changes[0].expectedFailure=true;
+  const report=pilot(fixture(t,{}),m,{execute:true});assert.equal(report.valid,false,JSON.stringify(report));
+  const trial=report.projects[0].changes[0].trials[0];assert.equal(trial.fullFailures,1);assert.equal(trial.missedFailures,1);assert.equal(trial.valid,false);
+  assert.equal(exportPilot(report).missedFailures,1);
+});
+test('historical workspace dependencies load the isolated revision rather than the original checkout',t=>{
+  const root=fixture(t,{'package.json':{type:'module',workspaces:['packages/local']},'.gitignore':'.tddswarm/\nnode_modules/\n','packages/local/package.json':{name:'local-pilot-package',type:'module',exports:'./index.js'},'packages/local/index.js':'export const value=1;','test/local.test.js':"import {value} from 'local-pilot-package';import test from 'node:test';import assert from 'node:assert/strict';test('workspace source',()=>assert.equal(value,1));"});commit(root);
+  const base=git(root,'rev-parse','HEAD').trim();write(root,'packages/local/index.js','export const value=9;');const head=revisionCommit(root);
+  fs.mkdirSync(path.join(root,'node_modules'));fs.symlinkSync(path.join(root,'packages/local'),path.join(root,'node_modules/local-pilot-package'),'dir');
+  const m=historical(root,base,head);m.projects[0].changes[0].expectedFailure=true;
+  const report=pilot(fixture(t,{}),m,{execute:true});assert.equal(report.valid,true,JSON.stringify(report));assert.equal(report.projects[0].dependencies.isolatedWorkspaceLinks,1);assert.equal(report.projects[0].changes[0].trials[0].fullFailures,1);
+});
