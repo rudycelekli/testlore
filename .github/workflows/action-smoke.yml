@@ -1,0 +1,110 @@
+name: Composite action smoke
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: action-smoke-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  shadow-action:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Create an independent native Node project
+        id: fixture
+        shell: bash
+        run: |
+          node --input-type=module <<'JS'
+          import fs from 'node:fs';
+          import path from 'node:path';
+          const root = '.action-smoke';
+          const files = {
+            'package.json': JSON.stringify({ name: 'tddswarm-action-fixture', private: true, type: 'module' }),
+            '.gitignore': '.tddswarm/\n',
+            'tddswarm.config.json': JSON.stringify({ adapter: 'node', discovery: 'native', runner: ['node', '--test', '{files}'] }),
+            'src/landing.js': 'export const paragraph = "Hello world";\n',
+            'src/service.js': 'export const status = "healthy";\n',
+            'test/landing.js': 'import test from "node:test"; import assert from "node:assert/strict"; import {paragraph} from "../src/landing.js"; test("landing paragraph", () => assert.ok(paragraph.startsWith("Hello")));\n',
+            'test/service.js': 'import test from "node:test"; import assert from "node:assert/strict"; import {status} from "../src/service.js"; test("service status", () => assert.equal(status, "healthy"));\n'
+          };
+          for (const [name, content] of Object.entries(files)) {
+            const target = path.join(root, name); fs.mkdirSync(path.dirname(target), { recursive: true }); fs.writeFileSync(target, content);
+          }
+          JS
+          git -C .action-smoke init -b main
+          git -C .action-smoke config user.name 'TDDSwarm CI'
+          git -C .action-smoke config user.email 'ci@example.invalid'
+          git -C .action-smoke add .
+          git -C .action-smoke commit -m 'Native discovery fixture baseline'
+          echo "base=$(git -C .action-smoke rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+          node --input-type=module <<'JS'
+          import fs from 'node:fs';
+          fs.writeFileSync('.action-smoke/src/landing.js', 'export const paragraph = "Hello open source";\n');
+          JS
+      - name: Exercise the checked-out composite action
+        id: tddswarm
+        uses: ./
+        with:
+          root: .action-smoke
+          base: ${{ steps.fixture.outputs.base }}
+          mode: shadow
+          adapter: node
+          environment: smoke-node22-linux-v1
+      - name: Verify full shadow evidence and the proposed subset
+        env:
+          TDDSWARM_SMOKE_REPORT: ${{ steps.tddswarm.outputs.report }}
+          TDDSWARM_SMOKE_EXIT: ${{ steps.tddswarm.outputs.exit-code }}
+          TDDSWARM_SMOKE_BASE: ${{ steps.fixture.outputs.base }}
+        run: |
+          node --input-type=module <<'JS'
+          import fs from 'node:fs';
+          import assert from 'node:assert/strict';
+          import path from 'node:path';
+          const report = JSON.parse(fs.readFileSync(process.env.TDDSWARM_SMOKE_REPORT, 'utf8'));
+          assert.equal(process.env.TDDSWARM_SMOKE_EXIT, '0');
+          assert.equal(report.exitCode, 0);
+          assert.equal(report.complete, true);
+          assert.equal(report.shadow, true);
+          assert.equal(report.plan.base, process.env.TDDSWARM_SMOKE_BASE);
+          assert.equal(report.plan.discovery.complete, true);
+          assert.deepEqual(report.plan.selected, ['test/landing.js']);
+          assert.equal(report.plan.total, 2);
+          assert.equal(report.plan.omitted, 1);
+          assert.deepEqual(report.executedTests, ['test/landing.js', 'test/service.js']);
+          assert.equal(report.tests.length, 2);
+          assert.ok(report.tests.every(test => test.status === 'passed' && test.id));
+          assert.equal(report.comparison.complete, true);
+          assert.equal(report.comparison.certified, true);
+          assert.equal(report.comparison.noObservedMisses, true);
+          assert.deepEqual(report.comparison.omittedFailures, []);
+          assert.equal(report.action.mode, 'shadow');
+          assert.equal(report.action.adapter, 'node');
+          assert.equal(report.action.environment, 'smoke-node22-linux-v1');
+          const directory = path.dirname(process.env.TDDSWARM_SMOKE_REPORT);
+          const history = JSON.parse(fs.readFileSync(path.join(directory, `history-${report.runner}.json`), 'utf8'));
+          assert.equal(history.runner, report.runner);
+          assert.equal(history.complete, true);
+          assert.deepEqual(history.failed, []);
+          fs.writeFileSync(path.join(directory, 'smoke-verification.json'), JSON.stringify({ checked: true, runner: report.runner, sourceRevision: report.provenance.revision, fullScope: report.executedTests, proposedScope: report.plan.selected, complete: report.comparison.complete }, null, 2));
+          JS
+      - name: Retain smoke receipts even when verification fails
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: composite-action-smoke-evidence
+          path: |
+            .action-smoke/.tddswarm/action-report.json
+            .action-smoke/.tddswarm/last-run.json
+            .action-smoke/.tddswarm/history*.json
+            .action-smoke/.tddswarm/smoke-verification.json
+          if-no-files-found: warn
