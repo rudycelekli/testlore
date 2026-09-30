@@ -21,6 +21,7 @@ test('actual isolated pilot measures both orders, catches a planted failure, and
   const report=pilot(output,manifest(root),{execute:true,output:'.tddswarm/pilots/first'});
   assert.equal(report.valid,true,JSON.stringify(report));assert.equal(report.projects[0].sourceCheckoutUnchanged,true);
   const changes=report.projects[0].changes;
+  assert.ok(changes.every(change=>change.trials.every(trial=>trial.nativeScopeComplete&&trial.nativeCasePreservation.complete)));
   assert.deepEqual(changes[0].trials.map(t=>t.order),[['full','subset','native'],['subset','native','full']]);
   assert.ok(changes[1].trials.every(t=>t.fullFailures===1&&t.missedFailures===0&&t.selectedFiles===1));
   assert.equal(git(root,'rev-parse','HEAD'),revision);assert.equal(git(root,'status','--porcelain'),'');assert.equal(fs.readFileSync(path.join(root,'src/a.js'),'utf8'),source);
@@ -76,6 +77,7 @@ test('history rejects mutable refs and retains dependency/runtime drift as inval
   const bad=structuredClone(m);bad.projects[0].changes[0].baseRevision='HEAD~1';assert.throws(()=>validatePilotManifest(bad),/immutable/);
   assert.equal(pilot(output,m).projects[0].historicalChanges[0].dependencyCompatible,false);
   const report=pilot(output,m,{execute:true});assert.equal(report.valid,false);assert.match(report.projects[0].changes[0].error,/dependency-or-runtime-drift/);
+  const aggregate=exportPilot(report);assert.equal(aggregate.requestedTrials,1);assert.equal(aggregate.uncompletedTrials,1);assert.equal(aggregate.changeErrors,1);assert.equal(aggregate.sourceCheckoutsVerifiedUnchanged,1);
 });
 test('a native failing case omitted by a deliberately unsound input policy remains a miss in aggregates',t=>{
   const root=fixture(t,{...twoModules,'input.txt':'1','test/a.test.js':"import {a} from '../src/a.js';import fs from 'node:fs';import test from 'node:test';import assert from 'node:assert/strict';test('a',()=>assert.equal(Number(fs.readFileSync(process.cwd()+'/input.txt','utf8')),a));"});commit(root);
@@ -90,4 +92,11 @@ test('historical workspace dependencies load the isolated revision rather than t
   fs.mkdirSync(path.join(root,'node_modules'));fs.symlinkSync(path.join(root,'packages/local'),path.join(root,'node_modules/local-pilot-package'),'dir');
   const m=historical(root,base,head);m.projects[0].changes[0].expectedFailure=true;
   const report=pilot(fixture(t,{}),m,{execute:true});assert.equal(report.valid,true,JSON.stringify(report));assert.equal(report.projects[0].dependencies.isolatedWorkspaceLinks,1);assert.equal(report.projects[0].changes[0].trials[0].fullFailures,1);
+});
+test('aggregate preserves missing worker trials and unknown source/native verification',()=>{
+  const report={schemaVersion:1,executed:true,repetitions:2,projects:[{valid:false,requestedChanges:3,error:'Worker did not finish',changes:[]}]};
+  const aggregate=exportPilot(report);assert.equal(aggregate.trials,0);assert.equal(aggregate.requestedTrials,6);assert.equal(aggregate.uncompletedTrials,6);assert.equal(aggregate.validProjects,0);assert.equal(aggregate.sourceCheckoutsUnverified,1);
+  const old={schemaVersion:1,executed:true,repetitions:1,projects:[{changes:[{trials:[{nativeValid:true}]}]}]};
+  assert.equal(exportPilot(old).nativeValidTrials,0);assert.equal(exportPilot(old).nativeUnverifiedTrials,1);
+  assert.equal(exportPilot({schemaVersion:1,executed:true,projects:[{}]}).uncompletedTrials,null);
 });

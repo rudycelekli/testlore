@@ -79,6 +79,7 @@ export function pilot(root, manifest, options = {}) {
     fs.writeFileSync(path.join(directory, 'worker-log.json'), JSON.stringify({ status: result.status, signal: result.signal, error: result.error?.message, stdout: result.stdout, stderr: result.stderr }, null, 2));
     let receipt;
     try { receipt = JSON.parse(fs.readFileSync(path.join(directory, 'receipt.json'), 'utf8')); } catch { receipt = { name: project.name, framework: project.config.adapter, valid: false, error: 'Worker did not finish; retained workspace and logs', changes: [] }; }
+    receipt.requestedChanges = project.changes.length;
     const unchanged = git(project.root, ['rev-parse', 'HEAD']).trim() === inspected[index].revision && !git(project.root, ['status', '--porcelain']).trim();
     receipt.sourceCheckoutUnchanged = unchanged;
     if (result.status !== 0 || !unchanged) receipt.valid = false;
@@ -97,8 +98,18 @@ export function exportPilot(report) {
   if(trials.length>1200)throw new Error('Pilot trial count exceeds manifest bounds');
   const valid = trials.filter(t => t.valid === true);
   const sum = (key,rows=trials) => rows.reduce((n, t) => n + (Number.isFinite(t[key]) && t[key] >= 0 && t[key] < 1e9 ? t[key] : 0), 0);
+  const changes=report.projects.flatMap(project=>Array.isArray(project.changes)?project.changes:[]);
+  const knownChangeCount=project=>(Number.isInteger(project.requestedChanges)&&project.requestedChanges>=1&&project.requestedChanges<=12)||(Array.isArray(project.changes)&&project.changes.length>=1&&project.changes.length<=12);
+  const unknownTrialCounts=report.projects.filter(project=>!knownChangeCount(project)).length;
+  const requestedChanges=report.projects.reduce((count,project)=>count+(Number.isInteger(project.requestedChanges)&&project.requestedChanges>=1&&project.requestedChanges<=12?project.requestedChanges:Array.isArray(project.changes)?project.changes.length:0),0);
+  const requestedTrials=!unknownTrialCounts&&Number.isInteger(report.repetitions)&&report.repetitions>=1&&report.repetitions<=5?requestedChanges*report.repetitions:null;
   return { schemaVersion: 1, kind: 'local-pilot-aggregate', projects: report.projects.length, validProjects: report.projects.filter(p => p.valid === true).length,
     frameworks: frameworks.filter(f => report.projects.some(p => p.framework === f)), trials: trials.length, validTrials: valid.length,
-    observedFailures: sum('fullFailures'), missedFailures: sum('missedFailures'), unexpectedSubsetFailures: sum('unexpectedSubsetFailures'), nativeValidTrials:trials.filter(t=>t.nativeValid===true).length,nativeMissedFailures:sum('nativeMissedFailures'),nativeUnexpectedFailures:sum('nativeUnexpectedFailures'), invalidTrials:trials.length-valid.length, errorProjects:report.projects.filter(p=>p.error).length, historicalChanges:report.projects.reduce((n,p)=>n+(p.changes||[]).filter(c=>c.kind==='history').length,0), negativeSavings:trials.filter(t=>Number.isFinite(t.netSavingMs)&&t.netSavingMs<0).length, allTrialTimings:{fullMs:sum('fullMs'),testLoreMs:sum('testLoreMs'),nativeMs:sum('nativeMs')}, validTrialTimings:{fullMs:sum('fullMs',valid),subsetMs:sum('subsetMs',valid),planningMs:sum('planningMs',valid),testLoreMs:sum('testLoreMs',valid),nativeMs:sum('nativeMs',valid)},
+    requestedTrials, uncompletedTrials:requestedTrials===null?null:Math.max(0,requestedTrials-trials.length),unknownTrialCounts,changeErrors:changes.filter(change=>change.error).length,
+    sourceCheckoutsVerifiedUnchanged:report.projects.filter(project=>project.sourceCheckoutUnchanged===true).length,
+    sourceCheckoutsUnverified:report.projects.filter(project=>typeof project.sourceCheckoutUnchanged!=='boolean').length,
+    nativeUnverifiedTrials:trials.filter(trial=>typeof trial.nativeScopeComplete!=='boolean'||typeof trial.nativeCasePreservation?.complete!=='boolean').length,
+    caseObservations:{full:sum('fullCases'),testLore:sum('subsetCases'),native:sum('nativeCases')},fileObservations:{full:sum('totalFiles'),testLore:sum('selectedFiles'),native:sum('nativeFiles')},negativeSavingsVsNative:trials.filter(trial=>Number.isFinite(trial.netVsNativeMs)&&trial.netVsNativeMs<0).length,
+    observedFailures: sum('fullFailures'), missedFailures: sum('missedFailures'), unexpectedSubsetFailures: sum('unexpectedSubsetFailures'), nativeValidTrials:trials.filter(t=>t.nativeValid===true&&t.nativeScopeComplete===true&&t.nativeCasePreservation?.complete===true).length,nativeMissedFailures:sum('nativeMissedFailures'),nativeUnexpectedFailures:sum('nativeUnexpectedFailures'), invalidTrials:trials.length-valid.length, errorProjects:report.projects.filter(p=>p.error).length, historicalChanges:changes.filter(change=>change.kind==='history').length, negativeSavings:trials.filter(t=>Number.isFinite(t.netSavingMs)&&t.netSavingMs<0).length, allTrialTimings:{fullMs:sum('fullMs'),testLoreMs:sum('testLoreMs'),nativeMs:sum('nativeMs'),netVsFullMs:sum('fullMs')-sum('testLoreMs'),netVsNativeMs:sum('nativeMs')-sum('testLoreMs')}, validTrialTimings:{fullMs:sum('fullMs',valid),subsetMs:sum('subsetMs',valid),planningMs:sum('planningMs',valid),testLoreMs:sum('testLoreMs',valid),nativeMs:sum('nativeMs',valid)},
     limitation: 'Unauthenticated local aggregates; planted changes, historical revision pairs and declared scopes only. Not an independent leaderboard.' };
 }
