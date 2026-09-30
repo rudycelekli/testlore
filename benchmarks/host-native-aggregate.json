@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "complete": false,
+  "hosts": [
+    {
+      "host": "codex",
+      "status": "not-qualified",
+      "attempts": 1,
+      "defaultCalls": 2,
+      "executionCalls": 0,
+      "reason": "MCP tool call requires approval, but approval policy is never"
+    },
+    {
+      "host": "claude",
+      "status": "not-qualified",
+      "attempts": 2,
+      "defaultCalls": 0,
+      "executionCalls": 0,
+      "connectedServers": 2,
+      "reason": "HTTP401 authentication_failed followed by bounded deadline; no TestLore tool calls were observed"
+    }
+  ],
+  "limitation": "Synthetic fixture only; no native execution-host qualification or deployment authority established."
+}

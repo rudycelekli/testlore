@@ -58,3 +58,7 @@ Merged into main through PR #3: test-closure uncertainty retention and native mo
 ## Historical evidence loop
 
 The [signed observation contract](evidence-loop.md) registers expected results before native full shadow execution, validates receipt integrity and recorder continuity, challenges scoped claims, and retains attributed outcomes as advisory lessons. Independent public-key trust and external checkpoints remain explicit. Optional reviewed-outcome context composes with generation memory; it establishes no measured improvement. The [interactive evidence story](index.html) and README diagram distinguish implemented mechanics from production monitoring, serving-revision verification and learning effectiveness, which remain unestablished.
+
+## September 30 qualification campaign
+
+[Campaign evidence](qualification-campaign.md) adds immutable real Git replay with native scope/case preservation, independently executed review-only mapping qualification, repeated fresh-specification defect evaluation, bounded native host observation, and explicit npm readiness blockers. Real historical timing totals show losses against both full suites and native selectors. No failing cases appeared in that timing corpus, so broader regression recall remains unqualified. Native host execution and registry publication remain blocked by the recorded external conditions. Shipping the harness does not resolve those conditions or establish a learning gain.
