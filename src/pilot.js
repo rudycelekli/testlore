@@ -4,6 +4,7 @@ import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import {digest} from './provenance.js';
 import { git, safePath, validateConfig } from './files.js';
+import { inspectHistoricalChange } from './pilot-history.js';
 
 const worker = fileURLToPath(new URL('./pilot-worker.js', import.meta.url));
 const frameworks = ['node', 'jest', 'vitest', 'playwright'];
@@ -24,7 +25,13 @@ export function validatePilotManifest(value) {
     const changeNames = new Set();
     for (const change of project.changes) {
       if (!/^[a-z][a-z0-9-]{0,47}$/.test(change.name) || changeNames.has(change.name)) throw new Error('Change aliases must be unique');
-      changeNames.add(change.name); safePath(project.root, change.file);
+      changeNames.add(change.name);
+      if (change.kind === 'history') {
+        if (!/^(?:[a-f0-9]{40}|[a-f0-9]{64})$/.test(change.baseRevision || '') || !/^(?:[a-f0-9]{40}|[a-f0-9]{64})$/.test(change.headRevision || '') || change.baseRevision === change.headRevision || typeof change.expectedFailure !== 'boolean' || ['file','before','after'].some(key => key in change)) throw new Error('Historical changes need distinct immutable baseRevision/headRevision and expectedFailure:boolean, without patches');
+        continue;
+      }
+      if (change.kind !== undefined && change.kind !== 'patch') throw new Error('Unknown pilot change kind');
+      safePath(project.root, change.file);
       if (!/\.(?:[cm]?[jt]sx?|html|css|json|md)$/.test(change.file) || /(?:^|\/)(?:package(?:-lock)?\.json|tddswarm\.config\.json)$/.test(change.file)) throw new Error('Pilot changes must target source, not dependencies or analysis configuration');
       if (typeof change.before !== 'string' || !change.before || typeof change.after !== 'string' || change.before === change.after || change.before.length + change.after.length > 65536 || typeof change.expectedFailure !== 'boolean') throw new Error('Each change needs bounded distinct before/after text and expectedFailure:boolean');
     }
@@ -38,11 +45,13 @@ function inspect(project) {
   const repository = fs.realpathSync(git(project.root, ['rev-parse', '--show-toplevel']).trim());
   if (repository !== project.root) throw new Error('Pilot root must be the repository root');
   if (git(project.root, ['status', '--porcelain']).trim()) throw new Error(`Pilot ${project.name} needs a clean source checkout; commit or choose another repository`);
+  const historicalChanges = [];
   for (const change of project.changes) {
+    if (change.kind === 'history') { historicalChanges.push({ name: change.name, ...inspectHistoricalChange(project.root, change, revision) }); continue; }
     const source = fs.readFileSync(safePath(project.root, change.file), 'utf8');
     if (source.split(change.before).length !== 2) throw new Error(`Patch precondition must match exactly once: ${project.name}/${change.name}`);
   }
-  return { name: project.name, revision, framework: project.config.adapter, scope: project.scope, changes: project.changes.length, dependencyMode: fs.existsSync(path.join(project.root, 'node_modules')) ? 'shared-installed-local' : 'none' };
+  return { name: project.name, revision, framework: project.config.adapter, scope: project.scope, changes: project.changes.length, historicalChanges, dependencyMode: fs.existsSync(path.join(project.root, 'node_modules')) ? 'shared-installed-local' : 'none' };
 }
 function environment() {
   const env = {};
@@ -76,7 +85,7 @@ export function pilot(root, manifest, options = {}) {
     projects.push(receipt);
   }
   const report = { schemaVersion: 1, executed: true, output, environment: { node: process.version, platform: process.platform, arch: process.arch }, repetitions: validated.repetitions, projects,
-    valid: projects.every(p => p.valid), implementationHashes:Object.fromEntries(['pilot.js','pilot-worker.js','runner.js','execution.js','selector.js','graph.js','provenance.js'].map(file=>[file,digest(fs.readFileSync(new URL(file,import.meta.url)))])),limitations: ['Local scopes and planted changes only; no production or whole-project certification.', 'Installed dependencies are shared read-only by convention, not an OS sandbox. Native test code may access network or local files.', 'Provider credentials are removed from inherited environment; no dependency installation or agent invocation occurs.', 'Three execution arms rotate order; TestLore discovery, planning, execution, provenance and receipt retention are included. Native related selection runs through the native CLI where available. Timing results are environment-specific.'] };
+    valid: projects.every(p => p.valid), implementationHashes:Object.fromEntries(['pilot.js','pilot-worker.js','pilot-history.js','runner.js','execution.js','selector.js','graph.js','provenance.js'].map(file=>[file,digest(fs.readFileSync(new URL(file,import.meta.url)))])),limitations: ['Local declared scopes, planted changes and bounded historical Git pairs only; no production or whole-project certification.', 'Installed dependencies are shared read-only by convention, not an OS sandbox. Native test code may access network or local files.', 'Provider credentials are removed from inherited environment; no dependency installation or agent invocation occurs.', 'Three execution arms rotate order; TestLore discovery, planning, execution, provenance and receipt retention are included. Native related selection runs through the native CLI where available. Timing results are environment-specific.'] };
   fs.writeFileSync(path.join(output, 'summary.json'), JSON.stringify(report, null, 2));
   return report;
 }
@@ -90,6 +99,6 @@ export function exportPilot(report) {
   const sum = (key,rows=trials) => rows.reduce((n, t) => n + (Number.isFinite(t[key]) && t[key] >= 0 && t[key] < 1e9 ? t[key] : 0), 0);
   return { schemaVersion: 1, kind: 'local-pilot-aggregate', projects: report.projects.length, validProjects: report.projects.filter(p => p.valid === true).length,
     frameworks: frameworks.filter(f => report.projects.some(p => p.framework === f)), trials: trials.length, validTrials: valid.length,
-    observedFailures: sum('fullFailures'), missedFailures: sum('missedFailures'), unexpectedSubsetFailures: sum('unexpectedSubsetFailures'), nativeValidTrials:trials.filter(t=>t.nativeValid===true).length,nativeMissedFailures:sum('nativeMissedFailures'),nativeUnexpectedFailures:sum('nativeUnexpectedFailures'), validTrialTimings:{fullMs:sum('fullMs',valid),subsetMs:sum('subsetMs',valid),planningMs:sum('planningMs',valid),testLoreMs:sum('testLoreMs',valid),nativeMs:sum('nativeMs',valid)},
-    limitation: 'Unauthenticated local aggregates; planted changes and declared scopes only. Not an independent leaderboard.' };
+    observedFailures: sum('fullFailures'), missedFailures: sum('missedFailures'), unexpectedSubsetFailures: sum('unexpectedSubsetFailures'), nativeValidTrials:trials.filter(t=>t.nativeValid===true).length,nativeMissedFailures:sum('nativeMissedFailures'),nativeUnexpectedFailures:sum('nativeUnexpectedFailures'), invalidTrials:trials.length-valid.length, errorProjects:report.projects.filter(p=>p.error).length, historicalChanges:report.projects.reduce((n,p)=>n+(p.changes||[]).filter(c=>c.kind==='history').length,0), negativeSavings:trials.filter(t=>Number.isFinite(t.netSavingMs)&&t.netSavingMs<0).length, allTrialTimings:{fullMs:sum('fullMs'),testLoreMs:sum('testLoreMs'),nativeMs:sum('nativeMs')}, validTrialTimings:{fullMs:sum('fullMs',valid),subsetMs:sum('subsetMs',valid),planningMs:sum('planningMs',valid),testLoreMs:sum('testLoreMs',valid),nativeMs:sum('nativeMs',valid)},
+    limitation: 'Unauthenticated local aggregates; planted changes, historical revision pairs and declared scopes only. Not an independent leaderboard.' };
 }
