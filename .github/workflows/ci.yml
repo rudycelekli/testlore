@@ -86,7 +86,7 @@ jobs:
           cache: npm
       - run: npm ci --ignore-scripts
       - run: npx --no-install playwright install --with-deps chromium
-      - run: TESTLORE_PLAYWRIGHT_BROWSER=1 node --test test/playwright-native.test.js test/browser-evidence.test.js
+      - run: TESTLORE_PLAYWRIGHT_BROWSER=1 node --test --test-concurrency=1 test/playwright-native.test.js test/browser-evidence.test.js test/mapping-qualification.test.js
       - run: node scripts/browser-mapping-proof.js --output .tddswarm/ci-browser-mapping.json
       - run: node scripts/playwright-proof.js --output .tddswarm/ci-playwright.json
       - uses: actions/upload-artifact@v4
