@@ -37,7 +37,7 @@ const proposal = proposeBrowserMappings(process.cwd(), evidence, {
 });
 ```
 
-`urlRoots` use exact redacted HTTP origins and path prefixes ending in `/`. Each observed request must match exactly one root and a safe existing project file. Script and stylesheet files can reference bounded local v3 source maps; their `sources` and relative `sourceRoot` resolve only to safe, tracked local files. URL schemes, indexed maps, remote/data maps, symlinks, escaped paths, missing files, oversized bundles and ambiguous origins remain unresolved. No source-map contents execute and no remote map is fetched. Generated `dist`/`build` outputs excluded from core provenance cannot silently acquire dependency authority; use tracked served assets or an independently validated build manifest.
+`urlRoots` use exact redacted HTTP origins and path prefixes ending in `/`. Each observed request must match exactly one root and a safe existing project file. Script and stylesheet files can reference bounded local v3 source maps; their `sources` and relative `sourceRoot` resolve only to safe, tracked local files. URL schemes, indexed maps, remote/data maps, symlinks, escaped paths, missing files, oversized bundles and ambiguous origins remain unresolved. No source-map contents execute and no remote map is fetched. Generated `dist`/`build` outputs excluded from core provenance cannot silently acquire dependency authority. The explicit inspection API below binds their current bytes and provides source suggestions while preserving unresolved build completeness.
 
 `serverInputs` are explicit review declarations for routes on the known origin. They associate application handlers, templates, loaders and other server-side sources that browser coverage cannot see. Route observations alone cannot infer a handler or a database dependency. External services still require explicit versioned service declarations. Query-dependent routing and other service state need separate review because captured URLs deliberately discard sensitive query values.
 
@@ -62,3 +62,34 @@ The retained [receipt](../benchmarks/browser-mapping-verification.json) was prod
 ## Conservative navigation scope
 
 Native Playwright files are retained on every active change unless an operator explicitly asserts `browser.closedWorld: true` **and** each omitted file belongs to a reviewed route input declaration. Importing a local assertion helper does not make a page's server/browser inputs statically complete. Automatic mappings and generated-build suggestions never set this assertion. Complete route declarations must cover relevant server handlers, templates, scripts, styles, build configuration and service contracts, including unexercised paths; captured JS/CSS ranges cannot establish that guarantee. Missing/unknown declared inputs still widen the whole run. The small two-route proofs assert this policy only because their entire controlled server/asset contract is manually scoped. Normal adoption stays in full shadow validation until maintainers qualify their contracts.
+## Inspect generated application bundles
+
+Real applications commonly serve ignored `dist` or `build` outputs. Inspect selected files explicitly without running a build:
+
+```js
+import {
+  inspectBrowserBuildArtifacts,
+  validateBrowserBuildArtifacts,
+  proposeBrowserMappings
+} from 'testlore';
+
+const buildManifest = inspectBrowserBuildArtifacts(process.cwd(), {
+  artifacts: ['dist/assets/app.js', 'dist/assets/app.css']
+});
+const proposal = proposeBrowserMappings(process.cwd(), evidence, {
+  urlRoots: [{
+    origin: 'http://127.0.0.1:3000',
+    urlPrefix: '/assets/',
+    directory: 'dist/assets'
+  }],
+  buildManifest
+});
+
+// Recheck immediately before accepting any suggestion; source provenance alone
+// cannot detect tampering with ignored generated output.
+validateBrowserBuildArtifacts(process.cwd(), proposal.buildManifest);
+```
+
+The sealed manifest contains source/runner/configuration provenance, raw bundle and map SHA-256 hashes, byte counts and safe tracked source references. Inspection accepts at most 1,000 unique explicit JavaScript/CSS bundle paths, 2 MiB per bundle/map, 16 MiB total and 10,000 source references across maps. Source maps must be local v3 maps with bounded `sources`; unsupported maps, escapes, symlinks, remote references and missing tracked sources remain unresolved. Source files, configuration, bundle bytes and mapping bytes must all stay fresh when the manifest is reused. Inspection does not run builds, execute maps, import an SDK, fetch URLs or write source/configuration. Configured executable service probes are rejected during inspection/revalidation; use fixed or environment-based service declarations for this read-only operation.
+
+For an observed ignored bundle, each case exposes `generatedBuildSuggestions` and `sourceSuggestions`. These are separate from authoritative declared dependencies and from proposed route `inputs`. The request retains `generated-build-completeness-unverified`; the proposal retains `unverified-build-completeness`, `reviewRequired: true`, and `closedWorld: false`. The build manifest is embedded and hashed into the proposal for later byte revalidation. This proves which bytes were inspected and which local sources the map names. It does not prove the map is truthful, that every runtime input appears in it, that output corresponds to the current build, or that unexercised branches are safe to omit. A reviewer must establish complete application/server/build/service scope before asserting a closed world; observed coverage and generated maps cannot make that assertion automatically.

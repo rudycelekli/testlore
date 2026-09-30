@@ -52,22 +52,65 @@ function sourceMapInputs(root,bundle,files,warnings){
   let mapFile;try{mapFile=localFile(root,normalize(path.posix.join(path.posix.dirname(bundle),reference)));const map=JSON.parse(readBounded(safePath(root,mapFile)));if(map.version!==3||!Array.isArray(map.sources)||map.sources.length>2000||typeof(map.sourceRoot||'')!=='string'||map.sections)throw new Error('Invalid or unsupported source map');const inputs=[mapFile];for(const source of map.sources){if(typeof source!=='string'||/^[a-z]+:|^[\/\\]/i.test(source))throw new Error('Unsupported source map source');const relative=normalize(path.posix.join(path.posix.dirname(mapFile),map.sourceRoot||'',source));const file=localFile(root,relative);if(!files.has(file))throw new Error('Source map source outside tracked project scope');inputs.push(file);}return inputs;}catch{warnings.push(`source-map-unresolved:${bundle}`);return [];}
 }
 
+const BUILD_LIMITATIONS=['Build inspection verifies local bytes and source-map references, not that a build truthfully or completely represents source.','Ignored generated bundles are review suggestions only; unverified build completeness and unobserved dependencies require conservative fallback.'];
+function inspectionConfig(root){const config=readConfig(root);if(Object.values(config.services||{}).some(service=>service?.probe!==undefined))throw new Error('Read-only build inspection cannot execute service probes; declare service version/env instead');return config;}
+function artifactPath(root,file){if(typeof file!=='string'||file.split('/').some(segment=>['.git','node_modules','.tddswarm','.firecrawl'].includes(segment)))throw new Error('Build artifact path is unsupported');return localFile(root,file);}
+/** Inspect explicitly selected bundles/maps without running a build or trusting its completeness. */
+export function inspectBrowserBuildArtifacts(root,options={}){
+  const config=inspectionConfig(root),requested=options.artifacts;
+  if(!Array.isArray(requested)||!requested.length||requested.length>1000||new Set(requested).size!==requested.length)throw new Error('artifacts must be 1–1000 unique explicit local bundle paths');
+  const provenance=snapshot(root,config),tracked=new Set(Object.keys(provenance.files)),artifacts=[];let total=0,sourceReferences=0;
+  function bytes(file){const target=safePath(root,file);if(fs.statSync(target).size>MAX_BYTES)throw new Error('Build artifact exceeds size bound');const raw=fs.readFileSync(target);total+=raw.length;if(total>MAX_TOTAL)throw new Error('Build artifact total byte bound exceeded');return {raw,text:raw.toString('utf8')};}
+  for(const requestedPath of requested){
+    const file=artifactPath(root,requestedPath);if(artifacts.some(entry=>entry.path===file))throw new Error('Duplicate normalized build artifact path');if(!/\.(?:[cm]?js|css)$/.test(file))throw new Error('Build artifacts must be JavaScript or CSS bundles');
+    const content=bytes(file),text=content.text,warnings=[],sources=[],entry={path:file,sha256:digest(content.raw),bytes:content.raw.length,generated:!tracked.has(file),map:null,sources,warnings};
+    const reference=[...text.matchAll(/(?:\/\/[#@]|\/\*[#@])\s*sourceMappingURL=([^\s*]+)/g)].at(-1)?.[1];
+    if(!reference)warnings.push('build-source-map-missing');
+    else if(/^[a-z]+:|^[\/\\]/i.test(reference)||reference.includes('?')||reference.includes('#'))warnings.push('build-source-map-reference-unsupported');
+    else {
+      try{
+        const mapPath=artifactPath(root,normalize(path.posix.join(path.posix.dirname(file),reference))),content=bytes(mapPath);entry.map={path:mapPath,sha256:digest(content.raw),bytes:content.raw.length};
+        const map=JSON.parse(content.text);if(map.version!==3||!Array.isArray(map.sources)||map.sources.length>2000||typeof(map.sourceRoot||'')!=='string'||map.sections)throw new Error('Unsupported build source map');
+        sourceReferences+=map.sources.length;if(sourceReferences>10000)throw new Error('Build source reference count exceeds bound');
+        if(/^[a-z]+:|^[\/\\]/i.test(map.sourceRoot||''))throw new Error('Unsupported build source root');
+        for(const source of map.sources){if(typeof source!=='string'||/^[a-z]+:|^[\/\\]/i.test(source))throw new Error('Unsupported build source reference');const sourcePath=artifactPath(root,normalize(path.posix.join(path.posix.dirname(mapPath),map.sourceRoot||'',source)));if(!tracked.has(sourcePath))throw new Error('Build source is outside tracked scope');sources.push({path:sourcePath,sha256:provenance.files[sourcePath]});}
+        entry.sources=[...new Map(sources.map(source=>[source.path,source])).values()].sort((a,b)=>a.path.localeCompare(b.path));if(!sources.length)warnings.push('build-source-map-has-no-sources');
+      }catch(error){entry.sources=[];warnings.push(error.message==='Build artifact total byte bound exceeded'?error.message:'build-source-map-unresolved');if(['Build artifact total byte bound exceeded','Build source reference count exceeds bound'].includes(error.message))throw error;}
+    }
+    artifacts.push(entry);
+  }
+  const after=snapshot(root,config),check=freshness(provenance,after);if(!check.fresh)throw new Error('Source changed during build artifact inspection');
+  // Generated outputs are excluded from ordinary source provenance, so read their bytes again explicitly.
+  for(const entry of artifacts)for(const artifact of [entry,entry.map].filter(Boolean))if(digest(fs.readFileSync(safePath(root,artifact.path)))!==artifact.sha256)throw new Error('Artifact changed during inspection');
+  return seal({schemaVersion:1,type:'browser-build-artifacts',provenance,configurationHash:digest(config),artifacts,totalBytes:total,reviewRequired:true,closedWorld:false,buildComplete:false,warnings:['unverified-build-completeness'],limitations:BUILD_LIMITATIONS});
+}
+export function validateBrowserBuildArtifacts(root,manifest){
+  const config=inspectionConfig(root);
+  if(typeof manifest==='string')manifest=JSON.parse(readBounded(safePath(root,manifest),MAX_TOTAL));verify(manifest,'browser-build-artifacts');
+  if(!Array.isArray(manifest.artifacts)||!manifest.artifacts.length||manifest.artifacts.length>1000||manifest.closedWorld!==false||manifest.buildComplete!==false||manifest.reviewRequired!==true)throw new Error('Invalid build artifact manifest schema');
+  const check=freshness(manifest.provenance,snapshot(root,config));if(!check.fresh||digest(config)!==manifest.configurationHash)throw new Error('Build artifact manifest is stale');
+  const current=inspectBrowserBuildArtifacts(root,{artifacts:manifest.artifacts.map(entry=>entry.path)});
+  if(digest(current.artifacts)!==digest(manifest.artifacts))throw new Error('Build artifact bytes or mapping references changed');
+  return manifest;
+}
+
 /** Produces a review-only proposal. Applying observations never asserts closed-world completeness. */
 export function proposeBrowserMappings(root,evidence,options={}){
   if(typeof evidence==='string')evidence=JSON.parse(readBounded(safePath(root,evidence),MAX_TOTAL));verify(evidence,'browser');if(!Array.isArray(evidence.observations)||evidence.observations.length>MAX_CASES||!Array.isArray(evidence.warnings)||evidence.warnings.length>MAX_CASES*2||typeof evidence.complete!=='boolean')throw new Error('Invalid browser evidence schema');
-  const config=readConfig(root),check=freshness(evidence.provenance,snapshot(root,config));if(!check.fresh||digest(config)!==evidence.configurationHash)throw new Error('Browser evidence is stale');
+  const config=options.buildManifest?inspectionConfig(root):readConfig(root),check=freshness(evidence.provenance,snapshot(root,config));if(!check.fresh||digest(config)!==evidence.configurationHash)throw new Error('Browser evidence is stale');
   const roots=rootsFor(root,options.urlRoots||[]),files=new Set(listFiles(root)),warnings=[...evidence.warnings],routes={},caseMappings=[];const serverInputs=options.serverInputs||{};
+  const buildManifest=options.buildManifest?validateBrowserBuildArtifacts(root,options.buildManifest):null,buildArtifacts=new Map((buildManifest?.artifacts||[]).map(entry=>[entry.path,entry]));if(buildManifest)warnings.push('unverified-build-completeness');
   if(typeof serverInputs!=='object'||Array.isArray(serverInputs)||Object.keys(serverInputs).length>1000)throw new Error('serverInputs must map bounded route paths to local paths');
   for(const [route,inputs]of Object.entries(serverInputs)){if(!route.startsWith('/')||route.includes('?')||route.includes('#')||!Array.isArray(inputs)||inputs.length>1000)throw new Error('Invalid server input mapping');for(const input of inputs){const file=localFile(root,input);if(!files.has(file))throw new Error('Server input outside tracked project scope');}}
-  for(const observation of evidence.observations){const dependencies=new Set([observation.file]);const unresolved=[];
-    for(const request of observation.requests){const mapped=requestFile(root,request.url,roots);if(mapped&&files.has(mapped)){dependencies.add(mapped);if(['script','stylesheet'].includes(request.type))for(const file of sourceMapInputs(root,mapped,files,warnings))dependencies.add(file);}else unresolved.push({url:request.url,type:request.type,reason:request.status>=400?'request-failed':'request-not-mapped'});if(request.status>=400)warnings.push(`browser-request-failed:${request.type}`);}
+  for(const observation of evidence.observations){const dependencies=new Set([observation.file]);const unresolved=[],generatedBuildSuggestions=[];
+    for(const request of observation.requests){const mapped=requestFile(root,request.url,roots);if(mapped&&files.has(mapped)){dependencies.add(mapped);if(['script','stylesheet'].includes(request.type))for(const file of sourceMapInputs(root,mapped,files,warnings))dependencies.add(file);}else {const artifact=buildArtifacts.get(mapped);if(artifact){generatedBuildSuggestions.push({url:request.url,artifact:artifact.path,artifactHash:artifact.sha256,map:artifact.map,trackedSources:artifact.sources,warnings:artifact.warnings,reviewRequired:true,closedWorld:false});unresolved.push({url:request.url,type:request.type,reason:'generated-build-completeness-unverified'});warnings.push(...artifact.warnings);}else unresolved.push({url:request.url,type:request.type,reason:request.status>=400?'request-failed':'request-not-mapped'});}if(request.status>=400)warnings.push(`browser-request-failed:${request.type}`);}
     for(const routeURL of observation.routes){const parsed=url(routeURL),route=parsed.pathname;const knownOrigin=roots.some(entry=>entry.origin===parsed.origin);if(!knownOrigin)warnings.push(`external-browser-route:${observation.file}`);for(const input of knownOrigin?(serverInputs[route]||[]):[])dependencies.add(input);const entry=routes[route]||={tests:[],inputs:[]};entry.tests.push(observation.file);entry.inputs.push(...dependencies);}
     if(unresolved.length)warnings.push(`unmapped-browser-inputs:${observation.file}`);
-    caseMappings.push({caseId:observation.caseId,nativeId:observation.nativeId,repeatEachIndex:observation.repeatEachIndex,file:observation.file,routes:observation.routes,dependencies:[...dependencies].sort(),unresolved});
+    caseMappings.push({caseId:observation.caseId,nativeId:observation.nativeId,repeatEachIndex:observation.repeatEachIndex,file:observation.file,routes:observation.routes,dependencies:[...dependencies].sort(),generatedBuildSuggestions,sourceSuggestions:[...new Set(generatedBuildSuggestions.flatMap(entry=>entry.trackedSources.map(source=>source.path)))].sort(),unresolved});
   }
   for(const [route,entry]of Object.entries(routes)){entry.tests=[...new Set(entry.tests)].sort();entry.inputs=[...new Set(entry.inputs)].sort();if(config.browser?.routes?.[route])warnings.push(`manual-browser-route-preserved:${route}`);}
   const proposedRoutes=Object.fromEntries(Object.entries(routes).filter(([route])=>!Object.hasOwn(config.browser?.routes||{},route)));
-  return seal({schemaVersion:1,type:'browser-mapping-proposal',evidenceHash:digest(evidence),provenance:evidence.provenance,configurationHash:evidence.configurationHash,observationsComplete:evidence.complete,closedWorld:false,reviewRequired:true,caseMappings,proposed:{browser:{routes:proposedRoutes}},manualRoutes:Object.keys(config.browser?.routes||{}).sort(),warnings:[...new Set(warnings)],policy:{urlRoots:roots,serverInputs},limitations:LIMITATIONS});
+  return seal({schemaVersion:1,type:'browser-mapping-proposal',evidenceHash:digest(evidence),provenance:evidence.provenance,configurationHash:evidence.configurationHash,observationsComplete:evidence.complete,closedWorld:false,reviewRequired:true,caseMappings,proposed:{browser:{routes:proposedRoutes}},manualRoutes:Object.keys(config.browser?.routes||{}).sort(),buildManifestHash:buildManifest?digest(buildManifest):null,buildManifest,warnings:[...new Set(warnings)],policy:{urlRoots:roots,serverInputs},limitations:[...LIMITATIONS,...(buildManifest?BUILD_LIMITATIONS:[])]});
 }
 
 /** AST-supported SDK imports only. Returns edits for an improvement branch; never writes tests. */
