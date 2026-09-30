@@ -44,7 +44,7 @@ test('filesystem input tracing observes JSON copy consumed by only one test',asy
 });
 test('runtime capture is supplemental unless user declares a closed-world policy',async t=>{
   const root=fixture(t,{...twoModules,'test/a.test.js':"import test from 'node:test';import assert from 'node:assert/strict';test('a',async()=>{const target='../src/a.js';const {a}=await import(target);assert.equal(a,1);});",'tddswarm.config.json':{runtime:{enabled:true}}});commit(root);
-  await captureRuntime(root);write(root,'src/a.js','export const a=3;');assert.equal(plan(root).mode,'full');
+  await captureRuntime(root);write(root,'src/a.js','export const a=3;');const selection=plan(root);assert.equal(selection.mode,'affected');assert.ok(selection.uncertainty.retainedTests.includes('test/a.test.js'));assert.ok(selection.decisions.find(d=>d.test==='test/a.test.js').reasons.includes('uncertain-dependency-closure'));
 });
 test('repeated actual execution detects an observed alternating failure without calling sleeps flaky',async t=>{
   const root=fixture(t,{'package.json':{type:'module'},'test/a.test.js':"import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';fs.mkdirSync('.tddswarm',{recursive:true});let n=0;try{n=+fs.readFileSync('.tddswarm/counter','utf8')}catch{};fs.writeFileSync('.tddswarm/counter',String(n+1));test('alternates',()=>assert.equal(n%2,0));"});

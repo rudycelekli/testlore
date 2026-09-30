@@ -32,16 +32,16 @@ test('configuration and lockfile changes force a full run', t => {
   const root = fixture(t, twoModules);
   for (const changed of ['package.json', 'pnpm-lock.yaml', 'jest.config.ts', '.env.local', 'test/setup.ts']) assert.equal(plan(root, { changed: [changed] }).mode, 'full');
 });
-test('computed import and runtime filesystem access invalidate selective evidence', t => {
+test('unreachable computed imports and runtime access do not poison independent test closures', t => {
   for (const code of ["const name='x'; import(name);", "require(process.env.MODULE);", "import {readFileSync} from 'node:fs';", "const x = import.meta.glob('./*.js');"]) {
     const root = fixture(t, { ...twoModules, 'src/dynamic.js': code });
-    assert.equal(plan(root, { changed: ['src/a.js'] }).mode, 'full');
+    assert.deepEqual(plan(root, { changed: ['src/a.js'] }).selected, ['test/a.test.js']);
   }
 });
-test('malformed source and unresolved relative imports force full runs', t => {
+test('malformed source and unresolved relative imports retain their consumers', t => {
   for (const code of ['const x = ;', "import './missing.js';"]) {
     const root = fixture(t, { ...twoModules, 'src/a.js': code });
-    assert.equal(plan(root, { changed: ['src/a.js'] }).mode, 'full');
+    assert.deepEqual(plan(root, { changed: ['src/a.js'] }).selected, ['test/a.test.js']);
   }
 });
 test('literal dynamic imports are traced and comments cannot forge an edge', t => {
@@ -62,7 +62,7 @@ test('unresolved internal package imports widen without penalizing unrelated wor
   const root = fixture(t, { ...twoModules, 'package.json': { type:'module',workspaces:['packages/*'] }, 'packages/lib/package.json': {name:'@local/lib'}, 'packages/lib/index.js':'export const x=1;' });
   assert.deepEqual(plan(root,{changed:['src/a.js']}).selected,['test/a.test.js']);
   write(root,'src/a.js',"export {x} from '@local/lib';");
-  assert.equal(plan(root,{changed:['src/a.js']}).mode,'full');
+  assert.deepEqual(plan(root,{changed:['src/a.js']}).selected,['test/a.test.js']);
 });
 test('circular dependencies terminate with a valid shortest path', t => {
   const root = fixture(t, { ...twoModules, 'src/a.js': "import './b.js';", 'src/b.js': "import './a.js';" });

@@ -294,24 +294,28 @@ export function discover(root, config = {}) {
 }
 
 /** Resolve a graph's imports with one framework config/server setup. */
-export function resolveNativeBatch(root, imports, config = {}) {
+export function resolveNativeBatch(root, imports, config = {}, options = {}) {
   const adapter = adapterFor(config);
   if (!['jest', 'vitest'].includes(adapter)) return { resolutions: [], configFiles: [], complete: true, adapter, supported: false };
   const temporary = fs.mkdtempSync(path.join(os.tmpdir(), 'tddswarm-resolution-'));
   const requestFile = path.join(temporary, 'request.json');
   try {
-    fs.writeFileSync(requestFile, JSON.stringify({ root: fs.realpathSync(root), adapter, imports, command: frameworkBase(commandBase(config, adapter), adapter) }));
+    fs.writeFileSync(requestFile, JSON.stringify({ root: fs.realpathSync(root), adapter, imports, transitive: options.transitive === true, roots: options.roots || [], command: frameworkBase(commandBase(config, adapter), adapter) }));
     const script = fileURLToPath(new URL('./reporters/resolve.js', import.meta.url));
     const result = spawn(root, [process.execPath, script, requestFile], config);
     if (result.status !== 0 || result.error) throw new Error(result.error?.message || 'Native resolver failed');
     const value = JSON.parse(result.stdout);
     if (!Array.isArray(value.resolutions) || value.resolutions.length !== imports.length || typeof value.complete !== 'boolean') throw new Error('Invalid native resolver report');
     const resolutions = value.resolutions.map(resolution => ({ ...resolution, paths: (resolution.paths || []).map(file => localFile(root, file)) }));
+    const additionalResolutions = (value.additionalResolutions || []).map(item=>{
+      if(typeof item.file!=='string' || typeof item.specifier!=='string' || !item.resolution || !Array.isArray(item.resolution.paths))throw new Error('Invalid transitive native resolution');
+      return {file:localFile(root,path.resolve(root,item.file)),specifier:item.specifier,resolution:{...item.resolution,paths:item.resolution.paths.map(file=>localFile(root,file))}};
+    });
     const configFiles = (value.configFiles || []).flatMap(file => {
       if(typeof file==='string' && file.split(path.sep).includes('node_modules'))return [];
       try { return [localFile(root, file)]; } catch { value.complete=false; value.error='Native config dependency is outside the observed project'; return []; }
     });
-    return { ...value, resolutions, configFiles, adapter, supported: true };
+    return { ...value, resolutions, additionalResolutions, configFiles, adapter, supported: true };
   } catch (error) {
     return { resolutions: imports.map(() => ({paths: [], unresolved: true})), configFiles: [], adapter, supported: true, complete: false, error: error.message };
   } finally { fs.rmSync(temporary, { recursive: true, force: true }); }

@@ -17,7 +17,7 @@ const routing = result => ({ mode: result.mode, selected: result.selected, reaso
 test('unconfigured graph remains read-only and native source analysis deduplicates in memory', t => {
   const root = fixture(t, { ...twoModules, 'tddswarm.config.json': { adapter: 'node', discovery: 'native' } });
   const graph = buildGraph(root);
-  assert.equal(graph.analysisCache.enabled, false); assert.ok(graph.analysisCache.memoryHits >= 4);
+  assert.equal(graph.analysisCache.enabled, false); assert.ok(graph.analysisCache.memoryHits >= graph.tests.length);
   assert.equal(graph.analysisCache.parses, 4); assert.equal(fs.existsSync(path.join(root, '.tddswarm')), false);
 });
 

@@ -86,7 +86,7 @@ export function buildGraph(root) {
     } catch { graph.warnings.push({file,reason:'invalid-package-json'}); }
   }
   for (const file of files.filter(f => SOURCE.test(f))) graph.sources[file] = fs.readFileSync(safePath(root,file),'utf8');
-  addSources(graph,Object.entries(graph.sources),set);
+  addSources(graph,Object.entries(graph.sources),set,{ roots: [...graph.tests,...graph.configFiles] });
   const declared = declaredInputs(config);
   for (const [test,deps] of Object.entries(config.dependencies || {})) declared[test] = [...(declared[test]||[]),...deps];
   for (const [test, deps] of Object.entries(declared)) {
@@ -98,17 +98,20 @@ export function buildGraph(root) {
   }
   for(const file of [...graph.configFiles]) for(const dep of dependencies(graph,file)) graph.configFiles.add(dep);
   for(const file of graph.configFiles)if(!set.has(file))graph.warnings.push({file,reason:'resolution-config-outside-graph'});
+  classifyWarnings(graph);
   return graph;
 }
 
 // A single native config/server resolves all literal imports, including baseline edges.
-export function addSources(graph, entries, files = new Set(graph.files)) {
+export function addSources(graph, entries, files = new Set(graph.files), options = {}) {
   if(graph.root && (graph.config?.discovery === 'native' || Array.isArray(graph.config?.discovery))) {
-    const imports = entries.flatMap(([file,text]) => sourceSummary(graph,file,text).imports.filter(specifier=>!isBuiltin(specifier)).map(specifier=>({file,specifier})));
-    const batch = resolveNativeBatch(graph.root,imports,graph.config);
+    const relevant = options.roots ? entries.filter(([file])=>options.roots.includes(file)) : entries;
+    const imports = relevant.flatMap(([file,text]) => sourceSummary(graph,file,text).imports.filter(specifier=>!isBuiltin(specifier)).map(specifier=>({file,specifier})));
+    const batch = resolveNativeBatch(graph.root,imports,graph.config,{ transitive: Boolean(options.roots), roots: options.roots });
     if(batch.supported) {
       graph.nativeResolutions ||= new Map();
       imports.forEach((item,i)=>graph.nativeResolutions.set(JSON.stringify([item.file,item.specifier]),batch.resolutions[i]));
+      for(const item of batch.additionalResolutions || [])graph.nativeResolutions.set(JSON.stringify([item.file,item.specifier]),item.resolution);
       for(const file of batch.configFiles) graph.configFiles.add(file);
       if(!batch.complete)graph.warnings.push({file:'configuration',reason:'incomplete-native-resolution'});
     }
@@ -161,8 +164,8 @@ function configurationSeeds(root,config) {
   const argv=config.runner||[];
   for(let i=0;i<argv.length;i++) {
     let file;
-    if(['--config','-c','--tsconfig'].includes(argv[i]))file=argv[i+1];
-    else if(/^(?:--config|-c|--tsconfig)=/.test(argv[i]))file=argv[i].slice(argv[i].indexOf('=')+1);
+    if(['--config','-c','--tsconfig','--import','--require','-r','--loader','--experimental-loader'].includes(argv[i]))file=argv[i+1];
+    else if(/^(?:--config|-c|--tsconfig|--import|--require|-r|--loader|--experimental-loader)=/.test(argv[i]))file=argv[i].slice(argv[i].indexOf('=')+1);
     if(file){const relative=normalize(path.relative(root,path.resolve(root,file)));if(relative.startsWith('../'))seeds.add('__external_runner_config__');else seeds.add(relative);}
   }
   return seeds;
@@ -211,4 +214,21 @@ function resolveGraphImport(graph,file,spec,files) {
     return {paths:[...paths],unresolved};
   }
   return {paths:[...paths],unresolved:unresolved||(!paths.size&&(isInternal||matchesAlias||direct.unresolved))};
+}
+
+/** Unknown source edges retain their consumers on every change; global context is never scoped away. */
+export function classifyWarnings(graph) {
+  const globalReasons = new Set(['runtime-registration','incomplete-native-discovery','discovered-file-outside-graph','external-resolution-config','incomplete-native-resolution','invalid-tsconfig','invalid-tsconfig-resolution','invalid-package-json','unknown-mapped-test','missing-mapped-dependency','resolution-config-outside-graph']);
+  const consumersBySource = new Map();
+  for(const test of graph.tests)for(const file of [test,...dependencies(graph,test)]){
+    const consumers=consumersBySource.get(file) || []; consumers.push(test);consumersBySource.set(file,consumers);
+  }
+  for(const warning of graph.warnings) {
+    const consumers = consumersBySource.get(warning.file) || [];
+    const configContext = graph.configFiles?.has(warning.file);
+    const sourceContext = Object.hasOwn(graph.sources || {}, warning.file);
+    warning.scope = globalReasons.has(warning.reason) || configContext || !sourceContext ? 'global' : consumers.length ? 'test-closure' : 'unreachable-source';
+    warning.tests = warning.scope==='test-closure' ? consumers : [];
+  }
+  return graph.warnings;
 }

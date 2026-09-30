@@ -5,7 +5,7 @@ import { SOURCE, git, normalize, readConfig } from './files.js';
 import { runnerIdentity, snapshot } from './provenance.js';
 import { changedServices } from './inputs.js';
 import { runtimeEvidence } from './evidence.js';
-import { buildGraph, addSources, evidencePath, dependencies } from './graph.js';
+import { buildGraph, addSources, evidencePath, dependencies, classifyWarnings } from './graph.js';
 import { externalPlan } from './integrations.js';
 
 const GLOBAL = /(?:^|\/)(?:package(?:-lock)?\.json|npm-shrinkwrap\.json|pnpm-lock\.yaml|yarn\.lock|bun\.lockb?|tsconfig[^/]*\.json|jsconfig\.json|tddswarm\.config\.json|[^/]*(?:vitest|vite|jest|babel|webpack|rollup|playwright|cypress)[^/]*\.(?:[cm]?[jt]s|json)|(?:setup|globalSetup|globalTeardown)[^/]*\.[cm]?[jt]s|\.env(?:\..*)?|\.gitignore)$/;
@@ -57,8 +57,11 @@ export function plan(root, options = {}) {
   if (options.full) reasons.push('explicit-full-run');
   if (gitError) reasons.push(gitError);
   if (active.some(f => GLOBAL.test(f) || graph.configFiles.has(f))) reasons.push('global-configuration-changed');
+  classifyWarnings(graph);
   const unresolvedWarnings = graph.warnings.filter(w => !(runtime.usable && config.runtime?.closedWorld === true && ['runtime-dependency','dynamic-dependency'].includes(w.reason)));
-  if (active.length && unresolvedWarnings.length) reasons.push('dependency-graph-incomplete');
+  const globalWarnings = unresolvedWarnings.filter(w=>w.scope==='global');
+  const uncertainTests = new Set(unresolvedWarnings.filter(w=>w.scope==='test-closure').flatMap(w=>w.tests));
+  if (active.length && globalWarnings.length) reasons.push('dependency-graph-incomplete');
   const unresolvedChanges = active.filter(f => !graph.files.includes(f) && !Object.values(graph.edges).some(deps => deps.includes(f)));
   if (unresolvedChanges.length) reasons.push('unmapped-or-deleted-input');
   for (const test of config.alwaysRun || []) if (!graph.tests.includes(test)) reasons.push('unknown-always-run-test');
@@ -85,6 +88,7 @@ export function plan(root, options = {}) {
     const policy = [];
     if ((config.alwaysRun || []).includes(test)) policy.push('always-run-policy');
     if (state.failed.includes(test)) policy.push('previous-run-failed');
+    if(active.length && uncertainTests.has(test))policy.push('uncertain-dependency-closure');
     // Browser/server tests may observe runtime state without importing their subject.
     if (!dependencies(graph, test).length && active.length) policy.push('test-without-local-dependencies');
     const selected = mode === 'full' || paths.length > 0 || policy.length > 0;
@@ -95,6 +99,7 @@ export function plan(root, options = {}) {
   return {
     schemaVersion: 1, provenance, serviceTokens: services.values, configurationFiles: [...graph.configFiles].sort(), mode: mode === 'none' && selected.length ? 'policy' : mode, base: baseSha, changed, ignored, selected,
     total: graph.tests.length, omitted: graph.tests.length - selected.length,
+    uncertainty: { global: globalWarnings.length, retainedTests: [...uncertainTests].sort(), unreachableSources: [...new Set(unresolvedWarnings.filter(w=>w.scope==='unreachable-source').map(w=>w.file))].sort() },
     selectionReduction: graph.tests.length ? 1 - selected.length / graph.tests.length : 0,
     reasons: [...new Set(reasons)], warnings: graph.warnings, decisions, fingerprint, discovery: graph.discovery,
     runtime: {usable:runtime.usable,reason:runtime.reason,captureId:runtime.record?.captureId,policy:config.runtime?.closedWorld?'declared-closed-world':'supplement-static-only'},

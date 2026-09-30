@@ -64,7 +64,7 @@ test('source mutation during plan after Git change collection rejects its obsole
 });
 test('Node package self imports resolved only through type declarations cannot authorize omission',t=>{
  const root=fixture(t,{'package.json':{type:'module',name:'subject',exports:{types:'./types/index.d.ts',import:'./src/a.js'}},'types/index.d.ts':'export const a:number;','src/a.js':'export const a=1;','test/alias.test.js':`import test from 'node:test';import {a} from 'subject';test('alias',()=>{});`,'test/direct.test.js':`import test from 'node:test';import {a} from '../src/a.js';test('direct',()=>{});`});
- const selection=plan(root,{changed:['src/a.js']});assert.equal(selection.mode,'full');assert.deepEqual(selection.selected,['test/alias.test.js','test/direct.test.js']);
+ const selection=plan(root,{changed:['src/a.js']});assert.equal(selection.mode,'affected');assert.deepEqual(selection.selected,['test/alias.test.js','test/direct.test.js']);
 });
 if(vitest)test('unsupported Vitest project resolution refuses to certify a static alias',t=>{
  const root=fixture(t,{'package.json':{type:'module'},'src/a.js':'export default 1;','test/a.test.js':`import value from '../src/a.js';`});

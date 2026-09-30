@@ -1,10 +1,16 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import { analyze } from '../graph.js';
+import { isBuiltin } from 'node:module';
 import { createRequire } from 'node:module';
 import { pathToFileURL } from 'node:url';
 import { spawnSync } from 'node:child_process';
 const request = JSON.parse(fs.readFileSync(process.argv[2], 'utf8'));
 const { root, adapter, command, imports } = request;
+const queue = [...imports];
+const seen = new Set(imports.map(item=>JSON.stringify([item.file,item.specifier])));
+const expanded = new Set();
+const initialLength = imports.length;
 const requireProject = createRequire(path.join(root, 'package.json'));
 function loadPath(name) {
   try { return requireProject.resolve(name); } catch {}
@@ -24,7 +30,35 @@ function resolution(paths) {
   const local = found.filter(file => path.isAbsolute(file) && !file.includes(`${path.sep}node_modules${path.sep}`) && file.startsWith(root + path.sep));
   return { paths: local, external: found.length > 0 && local.length === 0, unresolved: found.length === 0 };
 }
-const output = { resolutions: [], configFiles: [], complete: true };
+const output = { resolutions: [], additionalResolutions: [], configFiles: [], complete: true };
+function expand(file) {
+  if(!request.transitive || expanded.has(file) || !file.startsWith(root+path.sep) || file.includes(path.sep+'node_modules'+path.sep) || !/\.[cm]?[jt]sx?$/.test(file))return;
+  expanded.add(file);
+  if(expanded.size>10000)throw new Error('Native graph exceeds bounded source traversal');
+  const relative=path.relative(root,file).split(path.sep).join('/');
+  if(!fs.existsSync(file))return;
+  const physical=fs.realpathSync(file);
+  if(!physical.startsWith(root+path.sep) || physical!==file)throw new Error('Native graph source crosses an unsupported symlink boundary');
+  if(fs.statSync(file).size>8*1024*1024)throw new Error('Native graph source exceeds bounded traversal input');
+  for(const specifier of analyze(relative,fs.readFileSync(file,'utf8')).imports) {
+    const key=JSON.stringify([relative,specifier]);
+    if(isBuiltin(specifier) || seen.has(key))continue;
+    if(queue.length>=50000)throw new Error('Native graph exceeds bounded import traversal');
+    seen.add(key);queue.push({file:relative,specifier});
+  }
+}
+function record(result, item, index) {
+  if(index<initialLength)output.resolutions.push(result);
+  else output.additionalResolutions.push({...item,resolution:result});
+  for(const file of result.paths || [])expand(file);
+}
+function globals(config, keys) {
+  for(const key of keys)for(const item of [config[key] || []].flat()) {
+    if(typeof item!=='string')throw new Error('Unsupported global setup declaration');
+    const file=path.resolve(root,item);output.configFiles.push(file);expand(file);
+  }
+}
+
 try {
   if (adapter === 'jest') {
     const result = spawnSync(command[0], [...command.slice(1), '--showConfig'], { cwd: root, encoding: 'utf8', env: process.env, timeout: 30000, maxBuffer: 16 * 1024 * 1024 });
@@ -32,10 +66,13 @@ try {
     const configs = JSON.parse(result.stdout).configs;
     const module = await import(pathToFileURL(loadPath('jest-resolve')).href);
     const Resolver = module.default.default || module.default;
-    for (const { file, specifier } of imports) {
+    for(const config of configs)globals(config,['setupFiles','setupFilesAfterEnv','globalSetup','globalTeardown']);
+    for(const file of request.roots || [])expand(path.resolve(root,file));
+    for (let index=0;index<queue.length;index++) {
+      const { file, specifier } = queue[index];
       const absolute = path.resolve(root, file);
       const matching = configs.length === 1 ? configs : configs.filter(c => (c.roots || [c.rootDir]).some(r => absolute.startsWith(r + path.sep)));
-      if (matching.length !== 1) { output.resolutions.push({ paths: [], unresolved: true }); continue; }
+      if (matching.length !== 1) { record({ paths: [], unresolved: true },queue[index],index); continue; }
       const config = matching[0];
       let names = [specifier];
       for (const [pattern, replacements] of config.moduleNameMapper || []) {
@@ -44,12 +81,12 @@ try {
       }
       const configuredConditions = config.testEnvironmentOptions?.customExportConditions;
       const environmentConditions = configuredConditions || (config.testEnvironment.includes('jest-environment-node') ? ['node', 'node-addons'] : config.testEnvironment.includes('jest-environment-jsdom') ? ['browser'] : null);
-      if (!environmentConditions) { output.resolutions.push({ paths: [], unresolved: true }); output.complete = false; continue; }
+      if (!environmentConditions) { record({ paths: [], unresolved: true },queue[index],index); output.complete = false; continue; }
       const resolved = [];
       for (const name of names) for (const kind of ['require', 'import']) {
         resolved.push(Resolver.findNodeModule(name, { basedir: path.dirname(absolute), extensions: config.moduleFileExtensions.map(x => '.' + x), moduleDirectory: config.moduleDirectories, paths: config.modulePaths, resolver: config.resolver, rootDir: config.rootDir, conditions: [kind, 'default', ...environmentConditions] }));
       }
-      output.resolutions.push(resolution(resolved));
+      record(resolution(resolved),queue[index],index);
     }
   } else {
     // Match Vitest's config-loading environment, including CLI-supplied mode.
@@ -63,24 +100,29 @@ try {
     const mode = argument('--mode') || 'test';
     const loaded = await vite.loadConfigFromFile({ command: 'serve', mode, isSsrBuild: false, isPreview: false }, configFile, root, 'silent');
     const base = loaded?.config || {};
-    if (base.test?.projects?.length || base.test?.browser?.enabled || base.test?.workspace || base.root && path.resolve(root,base.root)!==root || base.test?.environment && base.test.environment!=='node') throw new Error('Multiple projects/browser resolution requires a native project graph');
+    if (base.test?.isolate === false) throw new Error('Shared test isolation requires a full suite');
+    if (base.test?.projects?.length || base.test?.browser?.enabled || base.test?.workspace || base.root && path.resolve(root,base.root)!==root || base.test?.environment && !['node','jsdom','happy-dom'].includes(base.test.environment)) throw new Error('Multiple projects/browser resolution requires a native project graph');
+    globals(base.test || {},['setupFiles','globalSetup']);
+    for(const file of request.roots || [])expand(path.resolve(root,file));
     output.configFiles.push(...(loaded?.dependencies || []), ...(loaded?.path ? [loaded.path] : []));
     const aliases = value => Array.isArray(value) ? value : Object.entries(value || {}).map(([find, replacement]) => ({ find, replacement }));
     const server = await vite.createServer({ ...base, root, mode, configFile: false, logLevel: 'silent', server: { ...base.server, middlewareMode: true, watch: null }, resolve: { ...base.resolve, alias: [...aliases(base.test?.alias), ...aliases(base.resolve?.alias)] } });
     try {
-      for (const { file, specifier } of imports) {
+      for (let index=0;index<queue.length;index++) {
+        const { file, specifier } = queue[index];
         const resolved = [];
         // Preserve both client and SSR possibilities instead of guessing package conditions.
         for (const ssr of [false, true]) {
           const container = ssr && server.environments?.ssr?.pluginContainer || server.pluginContainer;
           resolved.push((await container.resolveId(specifier, path.resolve(root, file), { ssr }))?.id?.split('?')[0]);
         }
-        output.resolutions.push(resolution(resolved));
+        record(resolution(resolved),queue[index],index);
       }
     } finally { await server.close(); }
   }
 } catch (error) {
   output.complete = false; output.error = error.message;
+  output.additionalResolutions = [];
   output.resolutions = imports.map(() => ({ paths: [], unresolved: true }));
 }
 process.stdout.write(JSON.stringify(output));
