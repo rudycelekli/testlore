@@ -69,10 +69,12 @@ Failed validation retains the proposal and its evidence for inspection. Missing 
 Personalize your project agent:
 
 ```sh
-npx --no-install testlore agent --name "My project quality engineer" --json
+npm exec --yes --package=github:rudycelekli/testlore#feat/full-roadmap -- testlore agent --name "My project quality engineer" --json
 ```
 
 The agent runs when you invoke it or CI; its identity and history persist between runs. Customize `qualityAgent.name` and `qualityAgent.focus` in project configuration.
+
+`npm exec` uses a temporary package for that invocation. Before running any `npx --no-install testlore` commands below, including learning commands, install it locally with `npm install --save-dev github:rudycelekli/testlore#feat/full-roadmap`.
 
 Want a useful report before configuring agents?
 
