@@ -172,7 +172,14 @@ function resolveGraphImport(graph,file,spec,files) {
   if(isBuiltin(spec))return {external:true};
   if(!graph.root)return direct;
   const paths = new Set(direct.path ? [direct.path] : []);
-  const resolved=ts.resolveModuleName(spec,path.join(graph.root,file),graph.compilerOptions||{},ts.sys).resolvedModule?.resolvedFileName;
+  const module=ts.resolveModuleName(spec,path.join(graph.root,file),graph.compilerOptions||{},ts.sys).resolvedModule;
+  const resolved=module?.resolvedFileName;
+  const isInternal=[...(graph.packageNames||[])].some(name=>spec===name||spec.startsWith(name+'/'));
+  const matchesAlias=Object.keys(graph.compilerOptions?.paths||{}).some(pattern=>path.matchesGlob(spec,pattern));
+  const native=graph.nativeResolutions?.get(JSON.stringify([file,spec]));
+  // Package declarations describe external libraries, not a missing local runtime edge.
+  // Internal exports and aliases still require a runtime-capable resolution.
+  const externalDeclaration=!native && direct.external && module?.isExternalLibraryImport === true && !isInternal && !matchesAlias;
   let unresolved = false;
   if(resolved) {
     try {
@@ -181,15 +188,12 @@ function resolveGraphImport(graph,file,spec,files) {
       else if(!relative.startsWith('../')&&!relative.split('/').includes('node_modules'))unresolved=true;
     }catch{unresolved=true;}
   }
-  const native=graph.nativeResolutions?.get(JSON.stringify([file,spec]));
-  if(resolved && /\.d\.[cm]?ts$/.test(resolved) && !native?.external && !native?.paths?.some(file=>!/\.d\.[cm]?ts$/.test(file)))unresolved=true;
+  if(resolved && /\.d\.[cm]?ts$/.test(resolved) && !externalDeclaration && !native?.external && !native?.paths?.some(file=>!/\.d\.[cm]?ts$/.test(file)))unresolved=true;
   if(native) {
     for(const candidate of native.paths||[]) {if(files.has(candidate))paths.add(candidate);else unresolved=true;}
     // Static success cannot certify a native import whose context is unknown.
     unresolved ||= Boolean(native.unresolved);
     return {paths:[...paths],unresolved};
   }
-  const isInternal=[...(graph.packageNames||[])].some(name=>spec===name||spec.startsWith(name+'/'));
-  const matchesAlias=Object.keys(graph.compilerOptions?.paths||{}).some(pattern=>path.matchesGlob(spec,pattern));
   return {paths:[...paths],unresolved:unresolved||(!paths.size&&(isInternal||matchesAlias||direct.unresolved))};
 }
