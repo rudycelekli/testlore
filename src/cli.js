@@ -7,6 +7,7 @@ import { audit, modules, plan, generate, run, snapshot, ingestQuality, measureSt
 import { safePath, readConfig, git } from './files.js';
 import { pluginCatalog, configurePlugin, checkPlugins, configurePluginsAutomatically } from './plugins.js';
 import { recommendPlugins } from './plugin-recommendations.js';
+import { pilot, exportPilot } from './pilot.js';
 
 const help = `TestLore — know why each test runs.
 
@@ -33,6 +34,8 @@ Usage: testlore <command> [options]
   learn       Reflect on validated local outcomes and supported lessons
   recall      Retrieve advisory historical test patterns (--query text)
   learning-export   Export aggregate metadata without source or identifiers
+  pilot       Inspect local repository pilots (--manifest file); --execute runs isolated copies
+  pilot-export Export fixed aggregate pilot metrics (--report local-summary.json)
   demo        Show a copy-only change, a shared change, and a conservative fallback
 
 Options:
@@ -54,7 +57,7 @@ need explicit declarations. No AI account required for audit, plan, or run.
 export function parseArgs(args) {
   const options = {};
   let command = 'help';
-  const values = new Set(['root','base','changed','output','report','type','provenance','repeat','id','patch','target','framework','head','action-ref','base-branch','query','name','enable','disable','select','plugin','settings']);
+  const values = new Set(['root','base','changed','output','report','type','provenance','repeat','id','patch','target','framework','head','action-ref','base-branch','query','name','enable','disable','select','plugin','settings','manifest']);
   const flags = new Set(['json', 'full', 'shadow', 'execute', 'help', 'version', 'local', 'no-ci','check','recommend','auto']);
   if (args[0] && !args[0].startsWith('-')) command = args.shift();
   for (let i = 0; i < args.length; i++) {
@@ -78,7 +81,7 @@ function init(root) {
     const deps = { ...pkg.dependencies, ...pkg.devDependencies };
     const runner = deps.vitest ? ['npx', '--no-install', 'vitest', 'run', '{files}'] : deps.jest ? ['npx', '--no-install', 'jest', '--runTestsByPath', '{files}'] : ['node', '--test', '{files}'];
     const adapter=deps.vitest?'vitest':deps.jest?'jest':'node';
-    fs.writeFileSync(file, JSON.stringify({ runner, adapter, discovery:'native', alwaysRun: [], dependencies: {}, ignoreChanges: [], fullRunEvery: 20 }, null, 2) + '\n', { flag: 'wx' });
+    fs.writeFileSync(file, JSON.stringify({ runner, adapter, discovery:'native', analysisCache:{enabled:true}, alwaysRun: [], dependencies: {}, ignoreChanges: [], fullRunEvery: 20 }, null, 2) + '\n', { flag: 'wx' });
     created = true;
   }
   const ignore = safePath(root, '.gitignore');
@@ -108,13 +111,15 @@ function human(command, result) {
 
 export async function main(args = process.argv.slice(2)) {
   const { command, options } = parseArgs([...args]);
-  if (options.version) { console.log('0.1.0'); return 0; }
+  if (options.version) { console.log(JSON.parse(fs.readFileSync(new URL('../package.json',import.meta.url),'utf8')).version); return 0; }
   if (command === 'help' || options.help) { console.log(help); return 0; }
   const root = path.resolve(options.root || '.');
   if ((options.auto || options.recommend) && command !== 'plugins') throw new Error('--auto and --recommend require the plugins command');
   if (command === 'run' && options.changed) throw new Error('--changed is diagnostic only. run uses Git to discover the complete change set.');
   let result;
   switch (command) {
+    case 'pilot': if(!options.manifest)throw new Error('--manifest is required');result=pilot(root,JSON.parse(fs.readFileSync(path.resolve(root,options.manifest),'utf8')),options);break;
+    case 'pilot-export': if(!options.report)throw new Error('--report is required');result=exportPilot(JSON.parse(fs.readFileSync(path.resolve(root,options.report),'utf8')));break;
     case 'plugins': {
       const mutations = [options.enable, options.disable, options.select].filter(Boolean);
       if (mutations.length + [options.check,options.recommend,options.auto].filter(Boolean).length > 1) throw new Error('Choose one plugin enable, disable, select, check, recommend, or auto operation');
@@ -192,6 +197,7 @@ export async function main(args = process.argv.slice(2)) {
   console.log(options.json ? JSON.stringify(result, null, 2) : human(command, result));
   if(command==='improve')return result.status==='ready-for-review'&&(options.local||result.published)?0:2;
   if(command==='plugins' && options.check)return result.exitCode || 0;
+  if(command==='pilot' && result.executed)return result.valid?0:1;
   if(['plan','run','external-run','external-plan','aqe'].includes(command))return result.exitCode||0;
   if(command==='validate')return result.accepted?0:1;
   if(command==='capture')return result.complete?0:2;

@@ -1,0 +1,1444 @@
+{
+  "fixture": "normalize",
+  "specificationId": "string-normalization",
+  "repetition": 0,
+  "arm": "without_memory",
+  "order": 0,
+  "recalledRecords": 0,
+  "recall": 1,
+  "cases": 23,
+  "generationMs": 37893,
+  "totalMs": 39425,
+  "outputBytes": 2716,
+  "calls": [
+    {
+      "role": "architect",
+      "durationMs": 9831,
+      "input": {
+        "schemaVersion": 1,
+        "role": "architect",
+        "requirements": "normalize accepts a string, trims leading/trailing whitespace, lowercases letters, preserves internal whitespace, and returns empty for all-whitespace strings. Non-string inputs throw TypeError. Use independent exact expectations.",
+        "context": [
+          {
+            "file": "src/normalize.js",
+            "content": "export function normalize(s){if(typeof s!=='string')throw new TypeError();return s.trim().toLowerCase();}"
+          }
+        ],
+        "budget": {
+          "maxTasks": 1,
+          "maxOutputBytes": 65536,
+          "timeoutMs": 115000,
+          "callsPerTrial": 3,
+          "orderSeed": 20260930,
+          "instructions": "Use only supplied context and requirements. No tools or filesystem reads. Return one task, then independent runnable Node tests named test/NAME.test.js (Node test and assert builtins; package type is module). Historical patterns are advisory. Do not infer expected values from current implementation."
+        },
+        "learning": {
+          "records": [],
+          "advisoryOnly": true,
+          "reason": "learning-disabled"
+        },
+        "order": {
+          "subjects": [
+            "src/normalize.js"
+          ],
+          "roles": [
+            "architect",
+            "author",
+            "reviewer"
+          ],
+          "acceptance": [
+            "Independent requirements, deterministic assertions, boundaries and errors."
+          ]
+        }
+      },
+      "output": {
+        "tasks": [
+          {
+            "subject": "src/normalize.js",
+            "instructions": "Create test/normalize.test.js using node:test and node:assert/strict, importing normalize from ../src/normalize.js under the supplied ES module configuration. Use independent exact expectations from the requirements: '  HeLLo  ' → 'hello', '\\tMiXeD\\n' → 'mixed', ' A  B\\tC\\nD ' → 'a  b\\tc\\nd', '' → '', and ' \\t\\r\\n ' → ''. Check that an already normalized string remains unchanged. Assert TypeError for undefined, null, booleans, numbers, bigint, symbols, arrays, objects, functions, and boxed strings. Keep cases deterministic; do not calculate expected strings using trim, toLowerCase, or normalize. Return the complete runnable test file."
+          }
+        ]
+      },
+      "outputBytes": 721
+    },
+    {
+      "role": "author",
+      "durationMs": 19978,
+      "input": {
+        "schemaVersion": 1,
+        "role": "author",
+        "requirements": "normalize accepts a string, trims leading/trailing whitespace, lowercases letters, preserves internal whitespace, and returns empty for all-whitespace strings. Non-string inputs throw TypeError. Use independent exact expectations.",
+        "context": [
+          {
+            "file": "src/normalize.js",
+            "content": "export function normalize(s){if(typeof s!=='string')throw new TypeError();return s.trim().toLowerCase();}"
+          }
+        ],
+        "budget": {
+          "maxTasks": 1,
+          "maxOutputBytes": 65536,
+          "timeoutMs": 115000,
+          "callsPerTrial": 3,
+          "orderSeed": 20260930,
+          "instructions": "Use only supplied context and requirements. No tools or filesystem reads. Return one task, then independent runnable Node tests named test/NAME.test.js (Node test and assert builtins; package type is module). Historical patterns are advisory. Do not infer expected values from current implementation."
+        },
+        "learning": {
+          "records": [],
+          "advisoryOnly": true,
+          "reason": "learning-disabled"
+        },
+        "task": {
+          "subject": "src/normalize.js",
+          "instructions": "Create test/normalize.test.js using node:test and node:assert/strict, importing normalize from ../src/normalize.js under the supplied ES module configuration. Use independent exact expectations from the requirements: '  HeLLo  ' → 'hello', '\\tMiXeD\\n' → 'mixed', ' A  B\\tC\\nD ' → 'a  b\\tc\\nd', '' → '', and ' \\t\\r\\n ' → ''. Check that an already normalized string remains unchanged. Assert TypeError for undefined, null, booleans, numbers, bigint, symbols, arrays, objects, functions, and boxed strings. Keep cases deterministic; do not calculate expected strings using trim, toLowerCase, or normalize. Return the complete runnable test file."
+        }
+      },
+      "output": {
+        "files": [
+          {
+            "path": "test/normalize.test.js",
+            "content": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport { normalize } from '../src/normalize.js';\n\nconst stringCases = [\n  ['trims spaces and lowercases letters', '  HeLLo  ', 'hello'],\n  ['trims tabs and newlines', '\\tMiXeD\\n', 'mixed'],\n  ['preserves internal whitespace', ' A  B\\tC\\nD ', 'a  b\\tc\\nd'],\n  ['accepts an empty string', '', ''],\n  ['returns empty for all-whitespace input', ' \\t\\r\\n ', ''],\n  ['leaves an already normalized string unchanged', 'hello  world', 'hello  world'],\n];\n\nfor (const [description, input, expected] of stringCases) {\n  test(description, () => {\n    assert.equal(normalize(input), expected);\n  });\n}\n\nconst nonStringCases = [\n  ['undefined', undefined],\n  ['null', null],\n  ['false', false],\n  ['true', true],\n  ['zero', 0],\n  ['positive number', 42],\n  ['negative fraction', -1.5],\n  ['NaN', NaN],\n  ['infinity', Infinity],\n  ['bigint', 1n],\n  ['symbol', Symbol('text')],\n  ['empty array', []],\n  ['string array', ['hello']],\n  ['plain object', {}],\n  ['object with string conversion', { toString: () => 'hello' }],\n  ['function', () => 'hello'],\n  ['boxed string', new String('hello')],\n];\n\nfor (const [description, input] of nonStringCases) {\n  test(`rejects ${description} with TypeError`, () => {\n    assert.throws(() => normalize(input), TypeError);\n  });\n}\n"
+          }
+        ]
+      },
+      "outputBytes": 1435
+    },
+    {
+      "role": "reviewer",
+      "durationMs": 8084,
+      "input": {
+        "schemaVersion": 1,
+        "role": "reviewer",
+        "requirements": "normalize accepts a string, trims leading/trailing whitespace, lowercases letters, preserves internal whitespace, and returns empty for all-whitespace strings. Non-string inputs throw TypeError. Use independent exact expectations.",
+        "context": [
+          {
+            "file": "src/normalize.js",
+            "content": "export function normalize(s){if(typeof s!=='string')throw new TypeError();return s.trim().toLowerCase();}"
+          }
+        ],
+        "budget": {
+          "maxTasks": 1,
+          "maxOutputBytes": 65536,
+          "timeoutMs": 115000,
+          "callsPerTrial": 3,
+          "orderSeed": 20260930,
+          "instructions": "Use only supplied context and requirements. No tools or filesystem reads. Return one task, then independent runnable Node tests named test/NAME.test.js (Node test and assert builtins; package type is module). Historical patterns are advisory. Do not infer expected values from current implementation."
+        },
+        "files": [
+          {
+            "path": "test/normalize.test.js",
+            "content": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport { normalize } from '../src/normalize.js';\n\nconst stringCases = [\n  ['trims spaces and lowercases letters', '  HeLLo  ', 'hello'],\n  ['trims tabs and newlines', '\\tMiXeD\\n', 'mixed'],\n  ['preserves internal whitespace', ' A  B\\tC\\nD ', 'a  b\\tc\\nd'],\n  ['accepts an empty string', '', ''],\n  ['returns empty for all-whitespace input', ' \\t\\r\\n ', ''],\n  ['leaves an already normalized string unchanged', 'hello  world', 'hello  world'],\n];\n\nfor (const [description, input, expected] of stringCases) {\n  test(description, () => {\n    assert.equal(normalize(input), expected);\n  });\n}\n\nconst nonStringCases = [\n  ['undefined', undefined],\n  ['null', null],\n  ['false', false],\n  ['true', true],\n  ['zero', 0],\n  ['positive number', 42],\n  ['negative fraction', -1.5],\n  ['NaN', NaN],\n  ['infinity', Infinity],\n  ['bigint', 1n],\n  ['symbol', Symbol('text')],\n  ['empty array', []],\n  ['string array', ['hello']],\n  ['plain object', {}],\n  ['object with string conversion', { toString: () => 'hello' }],\n  ['function', () => 'hello'],\n  ['boxed string', new String('hello')],\n];\n\nfor (const [description, input] of nonStringCases) {\n  test(`rejects ${description} with TypeError`, () => {\n    assert.throws(() => normalize(input), TypeError);\n  });\n}\n"
+          }
+        ],
+        "acceptance": [
+          "Independent current specification, deterministic runnable cases."
+        ]
+      },
+      "output": {
+        "accepted": true,
+        "findings": [],
+        "oracle": {
+          "independent": true,
+          "basis": [
+            "Supplied requirements establish exact expectations for trimming, lowercasing, preserving internal whitespace, and returning empty for empty or all-whitespace strings.",
+            "Supplied requirements require TypeError for non-string inputs; cases cover all non-string primitive types, objects, arrays, functions, and boxed strings.",
+            "Tests use deterministic literal expectations, valid Node built-in imports, and the supplied module export. Acceptance is static review, not execution validation."
+          ]
+        }
+      },
+      "outputBytes": 560
+    }
+  ],
+  "defects": [
+    {
+      "id": "trim-omitted",
+      "detected": true,
+      "result": {
+        "adapter": "node",
+        "exitCode": 1,
+        "durationMs": 121,
+        "tests": [
+          {
+            "file": "test/normalize.test.js",
+            "name": "leaves an already normalized string unchanged",
+            "status": "failed",
+            "durationMs": 1.031083,
+            "line": 15,
+            "column": 3,
+            "id": "148109e8f39cc302d66ea0fdec6d92f2d736f3c0b695eef013916b0775a6de8c"
+          },
+          {
+            "file": "test/normalize.test.js",
+            "name": "leaves an already normalized string unchanged",
+            "status": "failed",
+            "durationMs": 0.105,
+            "line": 15,
+            "column": 3,
+            "id": "52b48645840e01d530a2bb42607f7970cd8d2763ed77c5f8d053abfe48be7343"
+          },
+          {
+            "file": "test/normalize.test.js",
+            "name": "leaves an already normalized string unchanged",
+            "status": "failed",
+            "durationMs": 0.142959,
+            "line": 15,
+            "column": 3,
+            "id": "9a04d30631e5cf3c3405571003bfba1ec2c7754f87bf2ac7939aed042a6135cb"
+          },
+          {
+            "file": "test/normalize.test.js",
+            "name": "leaves an already normalized string unchanged",
+            "status": "passed",
+            "durationMs": 0.06925,
+            "line": 15,
+            "column": 3,
+            "id": "7901b66799c8c2d267a452e1d325b60e5824049d6290156a79503f285db39971"
+          },
+          {
+            "file": "test/normalize.test.js",
+            "name": "leaves an already normalized string unchanged",
+            "status": "failed",
+            "durationMs": 0.085542,
+            "line": 15,
+            "column": 3,
+            "id": "75a840e4aa257648cd53cc58b8a123423941296cbd16b5a2a0af0bdd33207133"
+          },
+          {
+            "file": "test/normalize.test.js",
+            "name": "leaves an already normalized string unchanged",
+            "status": "passed",
+            "durationMs": 0.108208,
+            "line": 15,
+            "column": 3,
+            "id": "2fbca9702480256b99ee0b91f11264c93c31a8ab45b0a8a8dec7d162c5846183"
+          },
+          {
+            "file": "test/normalize.test.js",
+            "name": "rejects boxed string with TypeError",
+            "status": "passed",
+            "durationMs": 0.192208,
+            "line": 41,
+            "column": 3,
+            "id": "980bde3779041e71741911b2606eb1803ee8b380bdc0bf0698f2c109bee8fa74"
+          },
+          {
+            "file": "test/normalize.test.js",
+            "name": "rejects boxed string with TypeError",
+            "status": "passed",
+            "durationMs": 0.045833,
+            "line": 41,
+            "column": 3,
+            "id": "a40bd811aa79d283351a24808f02960194c6359a80e6cae726aa9b5afe69a08e"
+          },
+          {
+            "file": "test/normalize.test.js",
+            "name": "rejects boxed string with TypeError",
+            "status": "passed",
+            "durationMs": 0.281625,
+            "line": 41,
+            "column": 3,
+            "id": "8d3419c3e1a6c084f352f4033f6a9483c277f8488ac7ce5e93ddb29e4683d86d"
+          },
+          {
+            "file": "test/normalize.test.js",
+            "name": "rejects boxed string with TypeError",
+            "status": "passed",
+            "durationMs": 0.299917,
+            "line": 41,
+            "column": 3,
+            "id": "7380d4ed61f5e221deff807cd2ece0b95cb44b2608102c6cc32a1fa1b16be9ee"
+          },
+          {
+            "file": "test/normalize.test.js",
+            "name": "rejects boxed string with TypeError",
+            "status": "passed",
+            "durationMs": 0.101666,
+            "line": 41,
+            "column": 3,
+            "id": "e9843a37c364ce1bebb2a37cac219fae0af094ae64cc3bcaf5a1f17a8e3f8988"
+          },
+          {
+            "file": "test/normalize.test.js",
+            "name": "rejects boxed string with TypeError",
+            "status": "passed",
+            "durationMs": 0.043417,
+            "line": 41,
+            "column": 3,
+            "id": "b36b0d3d3314885049a79899d6a9bf7a0cb8da223847768fce56e8a4f27d510a"
+          },
+          {
+            "file": "test/normalize.test.js",
+            "name": "rejects boxed string with TypeError",
+            "status": "passed",
+            "durationMs": 0.035291,
+            "line": 41,
+            "column": 3,
+            "id": "cfe0f4c3c80dd27e0ec958bd0874eaedb96c43e421b2bfb74f0012206dccae42"
+          },
+          {
+            "file": "test/normalize.test.js",
+            "name": "rejects boxed string with TypeError",
+            "status": "passed",
+            "durationMs": 0.033917,
+            "line": 41,
+            "column": 3,
+            "id": "feae75edc95a5cd0602588702c4480115cd43e82615d57ab87a36960600ad472"
+          },
+          {
+            "file": "test/normalize.test.js",
+            "name": "rejects boxed string with TypeError",
+            "status": "passed",
+            "durationMs": 0.086334,
+            "line": 41,
+            "column": 3,
+            "id": "3636e78813a5a9b8c922088132679a85e79bce5a38301c9255e8e5fb77edb173"
+          },
+          {
+            "file": "test/normalize.test.js",
+            "name": "rejects boxed string with TypeError",
+            "status": "passed",
+            "durationMs": 0.039084,
+            "line": 41,
+            "column": 3,
+            "id": "a2ecf13d7c519d1494246239901af82f65a96a2b1bec41bea39930d5d17da029"
+          },
+          {
+            "file": "test/normalize.test.js",
+            "name": "rejects boxed string with TypeError",
+            "status": "passed",
+            "durationMs": 0.032625,
+            "line": 41,
+            "column": 3,
+            "id": "2316c56d51a3655f0b7ff4973c0595ac0663c104b23b734ceb72d2ac867a7f99"
+          },
+          {
+            "file": "test/normalize.test.js",
+            "name": "rejects boxed string with TypeError",
+            "status": "passed",
+            "durationMs": 0.38175,
+            "line": 41,
+            "column": 3,
+            "id": "b45a8eb5a5cd617a9949a191f8868f7589a0221bb84f15f1b0f5c6df8831d232"
+          },
+          {
+            "file": "test/normalize.test.js",
+            "name": "rejects boxed string with TypeError",
+            "status": "passed",
+            "durationMs": 0.030083,
+            "line": 41,
+            "column": 3,
+            "id": "86ce69db5d2c9bb2d629c0dd12ea09832a822d27ff453e263425eb18d6ccd04c"
+          },
+          {
+            "file": "test/normalize.test.js",
+            "name": "rejects boxed string with TypeError",
+            "status": "passed",
+            "durationMs": 0.027458,
+            "line": 41,
+            "column": 3,
+            "id": "6fd331f423eb9199ab3c861b931ce3ba6ce40c007367dff808513c1737ae0eae"
+          },
+          {
+            "file": "test/normalize.test.js",
+            "name": "rejects boxed string with TypeError",
+            "status": "passed",
+            "durationMs": 0.095833,
+            "line": 41,
+            "column": 3,
+            "id": "08fa5b81c3356ab51ead7a9a5bf4a49348ef1e9049796163bd72b50f8e1cf30c"
+          },
+          {
+            "file": "test/normalize.test.js",
+            "name": "rejects boxed string with TypeError",
+            "status": "passed",
+            "durationMs": 0.03,
+            "line": 41,
+            "column": 3,
+            "id": "fdbb331cdb5bed7a091b4714eeb7508be97bde8e15506f51bfe7c2e2f280ca06"
+          },
+          {
+            "file": "test/normalize.test.js",
+            "name": "rejects boxed string with TypeError",
+            "status": "passed",
+            "durationMs": 0.02775,
+            "line": 41,
+            "column": 3,
+            "id": "0d1412d9fee2f736b86277126c808ceedd47f9c0b30eaa96779c342bc43373ef"
+          }
+        ],
+        "collectionFiles": [
+          "test/normalize.test.js"
+        ],
+        "requestedFiles": [
+          "test/normalize.test.js"
+        ],
+        "executedFiles": [
+          "test/normalize.test.js"
+        ],
+        "missingFiles": [],
+        "unknownFiles": [],
+        "dependencyFiles": [],
+        "complete": true,
+        "command": [
+          "<node>",
+          "--test",
+          "--test-reporter=<repository>src/reporters/node.js",
+          "--test-reporter-destination=<tmp>/tddswarm-report-V89S0c/results.json",
+          "./test/normalize.test.js"
+        ],
+        "stdout": "",
+        "stderr": "",
+        "signal": null,
+        "reportErrors": [],
+        "discovery": {
+          "files": [
+            "test/normalize.test.js"
+          ],
+          "complete": true,
+          "adapter": "node",
+          "warnings": []
+        }
+      }
+    },
+    {
+      "id": "lowercase-omitted",
+      "detected": true,
+      "result": {
+        "adapter": "node",
+        "exitCode": 1,
+        "durationMs": 123,
+        "tests": [
+          {
+            "file": "test/normalize.test.js",
+            "name": "leaves an already normalized string unchanged",
+            "status": "failed",
+            "durationMs": 1.010875,
+            "line": 15,
+            "column": 3,
+            "id": "148109e8f39cc302d66ea0fdec6d92f2d736f3c0b695eef013916b0775a6de8c"
+          },
+          {
+            "file": "test/normalize.test.js",
+            "name": "leaves an already normalized string unchanged",
+            "status": "failed",
+            "durationMs": 0.099583,
+            "line": 15,
+            "column": 3,
+            "id": "52b48645840e01d530a2bb42607f7970cd8d2763ed77c5f8d053abfe48be7343"
+          },
+          {
+            "file": "test/normalize.test.js",
+            "name": "leaves an already normalized string unchanged",
+            "status": "failed",
+            "durationMs": 0.170375,
+            "line": 15,
+            "column": 3,
+            "id": "9a04d30631e5cf3c3405571003bfba1ec2c7754f87bf2ac7939aed042a6135cb"
+          },
+          {
+            "file": "test/normalize.test.js",
+            "name": "leaves an already normalized string unchanged",
+            "status": "passed",
+            "durationMs": 0.068375,
+            "line": 15,
+            "column": 3,
+            "id": "7901b66799c8c2d267a452e1d325b60e5824049d6290156a79503f285db39971"
+          },
+          {
+            "file": "test/normalize.test.js",
+            "name": "leaves an already normalized string unchanged",
+            "status": "passed",
+            "durationMs": 0.051167,
+            "line": 15,
+            "column": 3,
+            "id": "75a840e4aa257648cd53cc58b8a123423941296cbd16b5a2a0af0bdd33207133"
+          },
+          {
+            "file": "test/normalize.test.js",
+            "name": "leaves an already normalized string unchanged",
+            "status": "passed",
+            "durationMs": 0.041709,
+            "line": 15,
+            "column": 3,
+            "id": "2fbca9702480256b99ee0b91f11264c93c31a8ab45b0a8a8dec7d162c5846183"
+          },
+          {
+            "file": "test/normalize.test.js",
+            "name": "rejects boxed string with TypeError",
+            "status": "passed",
+            "durationMs": 0.190625,
+            "line": 41,
+            "column": 3,
+            "id": "980bde3779041e71741911b2606eb1803ee8b380bdc0bf0698f2c109bee8fa74"
+          },
+          {
+            "file": "test/normalize.test.js",
+            "name": "rejects boxed string with TypeError",
+            "status": "passed",
+            "durationMs": 0.045042,
+            "line": 41,
+            "column": 3,
+            "id": "a40bd811aa79d283351a24808f02960194c6359a80e6cae726aa9b5afe69a08e"
+          },
+          {
+            "file": "test/normalize.test.js",
+            "name": "rejects boxed string with TypeError",
+            "status": "passed",
+            "durationMs": 0.231208,
+            "line": 41,
+            "column": 3,
+            "id": "8d3419c3e1a6c084f352f4033f6a9483c277f8488ac7ce5e93ddb29e4683d86d"
+          },
+          {
+            "file": "test/normalize.test.js",
+            "name": "rejects boxed string with TypeError",
+            "status": "passed",
+            "durationMs": 0.310792,
+            "line": 41,
+            "column": 3,
+            "id": "7380d4ed61f5e221deff807cd2ece0b95cb44b2608102c6cc32a1fa1b16be9ee"
+          },
+          {
+            "file": "test/normalize.test.js",
+            "name": "rejects boxed string with TypeError",
+            "status": "passed",
+            "durationMs": 0.104709,
+            "line": 41,
+            "column": 3,
+            "id": "e9843a37c364ce1bebb2a37cac219fae0af094ae64cc3bcaf5a1f17a8e3f8988"
+          },
+          {
+            "file": "test/normalize.test.js",
+            "name": "rejects boxed string with TypeError",
+            "status": "passed",
+            "durationMs": 0.043125,
+            "line": 41,
+            "column": 3,
+            "id": "b36b0d3d3314885049a79899d6a9bf7a0cb8da223847768fce56e8a4f27d510a"
+          },
+          {
+            "file": "test/normalize.test.js",
+            "name": "rejects boxed string with TypeError",
+            "status": "passed",
+            "durationMs": 0.036833,
+            "line": 41,
+            "column": 3,
+            "id": "cfe0f4c3c80dd27e0ec958bd0874eaedb96c43e421b2bfb74f0012206dccae42"
+          },
+          {
+            "file": "test/normalize.test.js",
+            "name": "rejects boxed string with TypeError",
+            "status": "passed",
+            "durationMs": 0.032625,
+            "line": 41,
+            "column": 3,
+            "id": "feae75edc95a5cd0602588702c4480115cd43e82615d57ab87a36960600ad472"
+          },
+          {
+            "file": "test/normalize.test.js",
+            "name": "rejects boxed string with TypeError",
+            "status": "passed",
+            "durationMs": 0.07775,
+            "line": 41,
+            "column": 3,
+            "id": "3636e78813a5a9b8c922088132679a85e79bce5a38301c9255e8e5fb77edb173"
+          },
+          {
+            "file": "test/normalize.test.js",
+            "name": "rejects boxed string with TypeError",
+            "status": "passed",
+            "durationMs": 0.035084,
+            "line": 41,
+            "column": 3,
+            "id": "a2ecf13d7c519d1494246239901af82f65a96a2b1bec41bea39930d5d17da029"
+          },
+          {
+            "file": "test/normalize.test.js",
+            "name": "rejects boxed string with TypeError",
+            "status": "passed",
+            "durationMs": 0.030584,
+            "line": 41,
+            "column": 3,
+            "id": "2316c56d51a3655f0b7ff4973c0595ac0663c104b23b734ceb72d2ac867a7f99"
+          },
+          {
+            "file": "test/normalize.test.js",
+            "name": "rejects boxed string with TypeError",
+            "status": "passed",
+            "durationMs": 0.030042,
+            "line": 41,
+            "column": 3,
+            "id": "b45a8eb5a5cd617a9949a191f8868f7589a0221bb84f15f1b0f5c6df8831d232"
+          },
+          {
+            "file": "test/normalize.test.js",
+            "name": "rejects boxed string with TypeError",
+            "status": "passed",
+            "durationMs": 0.031208,
+            "line": 41,
+            "column": 3,
+            "id": "86ce69db5d2c9bb2d629c0dd12ea09832a822d27ff453e263425eb18d6ccd04c"
+          },
+          {
+            "file": "test/normalize.test.js",
+            "name": "rejects boxed string with TypeError",
+            "status": "passed",
+            "durationMs": 0.027625,
+            "line": 41,
+            "column": 3,
+            "id": "6fd331f423eb9199ab3c861b931ce3ba6ce40c007367dff808513c1737ae0eae"
+          },
+          {
+            "file": "test/normalize.test.js",
+            "name": "rejects boxed string with TypeError",
+            "status": "passed",
+            "durationMs": 0.097458,
+            "line": 41,
+            "column": 3,
+            "id": "08fa5b81c3356ab51ead7a9a5bf4a49348ef1e9049796163bd72b50f8e1cf30c"
+          },
+          {
+            "file": "test/normalize.test.js",
+            "name": "rejects boxed string with TypeError",
+            "status": "passed",
+            "durationMs": 0.030917,
+            "line": 41,
+            "column": 3,
+            "id": "fdbb331cdb5bed7a091b4714eeb7508be97bde8e15506f51bfe7c2e2f280ca06"
+          },
+          {
+            "file": "test/normalize.test.js",
+            "name": "rejects boxed string with TypeError",
+            "status": "passed",
+            "durationMs": 0.027709,
+            "line": 41,
+            "column": 3,
+            "id": "0d1412d9fee2f736b86277126c808ceedd47f9c0b30eaa96779c342bc43373ef"
+          }
+        ],
+        "collectionFiles": [
+          "test/normalize.test.js"
+        ],
+        "requestedFiles": [
+          "test/normalize.test.js"
+        ],
+        "executedFiles": [
+          "test/normalize.test.js"
+        ],
+        "missingFiles": [],
+        "unknownFiles": [],
+        "dependencyFiles": [],
+        "complete": true,
+        "command": [
+          "<node>",
+          "--test",
+          "--test-reporter=<repository>src/reporters/node.js",
+          "--test-reporter-destination=<tmp>/tddswarm-report-F2cqCN/results.json",
+          "./test/normalize.test.js"
+        ],
+        "stdout": "",
+        "stderr": "",
+        "signal": null,
+        "reportErrors": [],
+        "discovery": {
+          "files": [
+            "test/normalize.test.js"
+          ],
+          "complete": true,
+          "adapter": "node",
+          "warnings": []
+        }
+      }
+    },
+    {
+      "id": "type-coercion",
+      "detected": true,
+      "result": {
+        "adapter": "node",
+        "exitCode": 1,
+        "durationMs": 118,
+        "tests": [
+          {
+            "file": "test/normalize.test.js",
+            "name": "leaves an already normalized string unchanged",
+            "status": "passed",
+            "durationMs": 0.606375,
+            "line": 15,
+            "column": 3,
+            "id": "148109e8f39cc302d66ea0fdec6d92f2d736f3c0b695eef013916b0775a6de8c"
+          },
+          {
+            "file": "test/normalize.test.js",
+            "name": "leaves an already normalized string unchanged",
+            "status": "passed",
+            "durationMs": 0.134791,
+            "line": 15,
+            "column": 3,
+            "id": "52b48645840e01d530a2bb42607f7970cd8d2763ed77c5f8d053abfe48be7343"
+          },
+          {
+            "file": "test/normalize.test.js",
+            "name": "leaves an already normalized string unchanged",
+            "status": "passed",
+            "durationMs": 0.04825,
+            "line": 15,
+            "column": 3,
+            "id": "9a04d30631e5cf3c3405571003bfba1ec2c7754f87bf2ac7939aed042a6135cb"
+          },
+          {
+            "file": "test/normalize.test.js",
+            "name": "leaves an already normalized string unchanged",
+            "status": "passed",
+            "durationMs": 0.040125,
+            "line": 15,
+            "column": 3,
+            "id": "7901b66799c8c2d267a452e1d325b60e5824049d6290156a79503f285db39971"
+          },
+          {
+            "file": "test/normalize.test.js",
+            "name": "leaves an already normalized string unchanged",
+            "status": "passed",
+            "durationMs": 0.045917,
+            "line": 15,
+            "column": 3,
+            "id": "75a840e4aa257648cd53cc58b8a123423941296cbd16b5a2a0af0bdd33207133"
+          },
+          {
+            "file": "test/normalize.test.js",
+            "name": "leaves an already normalized string unchanged",
+            "status": "passed",
+            "durationMs": 0.042292,
+            "line": 15,
+            "column": 3,
+            "id": "2fbca9702480256b99ee0b91f11264c93c31a8ab45b0a8a8dec7d162c5846183"
+          },
+          {
+            "file": "test/normalize.test.js",
+            "name": "rejects boxed string with TypeError",
+            "status": "failed",
+            "durationMs": 0.348833,
+            "line": 41,
+            "column": 3,
+            "id": "980bde3779041e71741911b2606eb1803ee8b380bdc0bf0698f2c109bee8fa74"
+          },
+          {
+            "file": "test/normalize.test.js",
+            "name": "rejects boxed string with TypeError",
+            "status": "failed",
+            "durationMs": 0.063209,
+            "line": 41,
+            "column": 3,
+            "id": "a40bd811aa79d283351a24808f02960194c6359a80e6cae726aa9b5afe69a08e"
+          },
+          {
+            "file": "test/normalize.test.js",
+            "name": "rejects boxed string with TypeError",
+            "status": "failed",
+            "durationMs": 0.266041,
+            "line": 41,
+            "column": 3,
+            "id": "8d3419c3e1a6c084f352f4033f6a9483c277f8488ac7ce5e93ddb29e4683d86d"
+          },
+          {
+            "file": "test/normalize.test.js",
+            "name": "rejects boxed string with TypeError",
+            "status": "failed",
+            "durationMs": 0.276459,
+            "line": 41,
+            "column": 3,
+            "id": "7380d4ed61f5e221deff807cd2ece0b95cb44b2608102c6cc32a1fa1b16be9ee"
+          },
+          {
+            "file": "test/normalize.test.js",
+            "name": "rejects boxed string with TypeError",
+            "status": "failed",
+            "durationMs": 0.128916,
+            "line": 41,
+            "column": 3,
+            "id": "e9843a37c364ce1bebb2a37cac219fae0af094ae64cc3bcaf5a1f17a8e3f8988"
+          },
+          {
+            "file": "test/normalize.test.js",
+            "name": "rejects boxed string with TypeError",
+            "status": "failed",
+            "durationMs": 0.060875,
+            "line": 41,
+            "column": 3,
+            "id": "b36b0d3d3314885049a79899d6a9bf7a0cb8da223847768fce56e8a4f27d510a"
+          },
+          {
+            "file": "test/normalize.test.js",
+            "name": "rejects boxed string with TypeError",
+            "status": "failed",
+            "durationMs": 0.049959,
+            "line": 41,
+            "column": 3,
+            "id": "cfe0f4c3c80dd27e0ec958bd0874eaedb96c43e421b2bfb74f0012206dccae42"
+          },
+          {
+            "file": "test/normalize.test.js",
+            "name": "rejects boxed string with TypeError",
+            "status": "failed",
+            "durationMs": 0.044541,
+            "line": 41,
+            "column": 3,
+            "id": "feae75edc95a5cd0602588702c4480115cd43e82615d57ab87a36960600ad472"
+          },
+          {
+            "file": "test/normalize.test.js",
+            "name": "rejects boxed string with TypeError",
+            "status": "failed",
+            "durationMs": 0.163042,
+            "line": 41,
+            "column": 3,
+            "id": "3636e78813a5a9b8c922088132679a85e79bce5a38301c9255e8e5fb77edb173"
+          },
+          {
+            "file": "test/normalize.test.js",
+            "name": "rejects boxed string with TypeError",
+            "status": "failed",
+            "durationMs": 0.058542,
+            "line": 41,
+            "column": 3,
+            "id": "a2ecf13d7c519d1494246239901af82f65a96a2b1bec41bea39930d5d17da029"
+          },
+          {
+            "file": "test/normalize.test.js",
+            "name": "rejects boxed string with TypeError",
+            "status": "failed",
+            "durationMs": 0.049042,
+            "line": 41,
+            "column": 3,
+            "id": "2316c56d51a3655f0b7ff4973c0595ac0663c104b23b734ceb72d2ac867a7f99"
+          },
+          {
+            "file": "test/normalize.test.js",
+            "name": "rejects boxed string with TypeError",
+            "status": "failed",
+            "durationMs": 0.046417,
+            "line": 41,
+            "column": 3,
+            "id": "b45a8eb5a5cd617a9949a191f8868f7589a0221bb84f15f1b0f5c6df8831d232"
+          },
+          {
+            "file": "test/normalize.test.js",
+            "name": "rejects boxed string with TypeError",
+            "status": "failed",
+            "durationMs": 0.0445,
+            "line": 41,
+            "column": 3,
+            "id": "86ce69db5d2c9bb2d629c0dd12ea09832a822d27ff453e263425eb18d6ccd04c"
+          },
+          {
+            "file": "test/normalize.test.js",
+            "name": "rejects boxed string with TypeError",
+            "status": "failed",
+            "durationMs": 0.07225,
+            "line": 41,
+            "column": 3,
+            "id": "6fd331f423eb9199ab3c861b931ce3ba6ce40c007367dff808513c1737ae0eae"
+          },
+          {
+            "file": "test/normalize.test.js",
+            "name": "rejects boxed string with TypeError",
+            "status": "failed",
+            "durationMs": 0.0665,
+            "line": 41,
+            "column": 3,
+            "id": "08fa5b81c3356ab51ead7a9a5bf4a49348ef1e9049796163bd72b50f8e1cf30c"
+          },
+          {
+            "file": "test/normalize.test.js",
+            "name": "rejects boxed string with TypeError",
+            "status": "failed",
+            "durationMs": 0.052875,
+            "line": 41,
+            "column": 3,
+            "id": "fdbb331cdb5bed7a091b4714eeb7508be97bde8e15506f51bfe7c2e2f280ca06"
+          },
+          {
+            "file": "test/normalize.test.js",
+            "name": "rejects boxed string with TypeError",
+            "status": "failed",
+            "durationMs": 0.115083,
+            "line": 41,
+            "column": 3,
+            "id": "0d1412d9fee2f736b86277126c808ceedd47f9c0b30eaa96779c342bc43373ef"
+          }
+        ],
+        "collectionFiles": [
+          "test/normalize.test.js"
+        ],
+        "requestedFiles": [
+          "test/normalize.test.js"
+        ],
+        "executedFiles": [
+          "test/normalize.test.js"
+        ],
+        "missingFiles": [],
+        "unknownFiles": [],
+        "dependencyFiles": [],
+        "complete": true,
+        "command": [
+          "<node>",
+          "--test",
+          "--test-reporter=<repository>src/reporters/node.js",
+          "--test-reporter-destination=<tmp>/tddswarm-report-sORgKJ/results.json",
+          "./test/normalize.test.js"
+        ],
+        "stdout": "",
+        "stderr": "",
+        "signal": null,
+        "reportErrors": [],
+        "discovery": {
+          "files": [
+            "test/normalize.test.js"
+          ],
+          "complete": true,
+          "adapter": "node",
+          "warnings": []
+        }
+      }
+    }
+  ],
+  "validation": {
+    "schemaVersion": 1,
+    "id": "4e259d1d-ead5-4575-8133-a265d648f4a7",
+    "validatedAt": "2026-09-30T06:51:50.076Z",
+    "manifestHash": "c22f31be1edb0cf60de0d46e43b37c841fd740fba3425c0ff8c1d794fb38b6bc",
+    "provenance": {
+      "schemaVersion": 1,
+      "revision": null,
+      "runner": "95d1d6e989702d88178820c89fe25cfa1231ecebbd0f29d4f07fc4bd27e91a86",
+      "environment": {
+        "node": "v22.19.0",
+        "platform": "darwin",
+        "arch": "arm64",
+        "labels": {}
+      },
+      "services": {},
+      "serviceWarnings": [],
+      "files": {
+        "package.json": "6dc1b06d6b093e9cccb20bee06a93836eee0420ae26803ca2ce4065d82f070d1",
+        "src/normalize.js": "996705bd1329dbfaa7b4dbcf61b23dd42c76eda8d004b13220d2ef3dbbd21b90",
+        "tddswarm.config.json": "3fd6ba06c0bd7022b0e49fcf19b5174c7f86d0ab533029aa3f6815909c3e9e43"
+      },
+      "fingerprint": "ba3f305ef1210e7b1b7b6a3d064e474dc03a455254e7eb5137ffa8dcb8f22ffa"
+    },
+    "accepted": true,
+    "reasons": [],
+    "original": {
+      "discovery": {
+        "files": [],
+        "complete": true,
+        "adapter": "node",
+        "warnings": []
+      },
+      "exitCode": 0,
+      "complete": true,
+      "tests": [],
+      "collectionFiles": [],
+      "executedFiles": []
+    },
+    "candidate": {
+      "adapter": "node",
+      "exitCode": 0,
+      "durationMs": 108,
+      "tests": [
+        {
+          "file": "test/normalize.test.js",
+          "name": "leaves an already normalized string unchanged",
+          "status": "passed",
+          "durationMs": 0.589083,
+          "line": 15,
+          "column": 3,
+          "id": "148109e8f39cc302d66ea0fdec6d92f2d736f3c0b695eef013916b0775a6de8c"
+        },
+        {
+          "file": "test/normalize.test.js",
+          "name": "leaves an already normalized string unchanged",
+          "status": "passed",
+          "durationMs": 0.121834,
+          "line": 15,
+          "column": 3,
+          "id": "52b48645840e01d530a2bb42607f7970cd8d2763ed77c5f8d053abfe48be7343"
+        },
+        {
+          "file": "test/normalize.test.js",
+          "name": "leaves an already normalized string unchanged",
+          "status": "passed",
+          "durationMs": 0.047625,
+          "line": 15,
+          "column": 3,
+          "id": "9a04d30631e5cf3c3405571003bfba1ec2c7754f87bf2ac7939aed042a6135cb"
+        },
+        {
+          "file": "test/normalize.test.js",
+          "name": "leaves an already normalized string unchanged",
+          "status": "passed",
+          "durationMs": 0.042125,
+          "line": 15,
+          "column": 3,
+          "id": "7901b66799c8c2d267a452e1d325b60e5824049d6290156a79503f285db39971"
+        },
+        {
+          "file": "test/normalize.test.js",
+          "name": "leaves an already normalized string unchanged",
+          "status": "passed",
+          "durationMs": 0.046708,
+          "line": 15,
+          "column": 3,
+          "id": "75a840e4aa257648cd53cc58b8a123423941296cbd16b5a2a0af0bdd33207133"
+        },
+        {
+          "file": "test/normalize.test.js",
+          "name": "leaves an already normalized string unchanged",
+          "status": "passed",
+          "durationMs": 0.043292,
+          "line": 15,
+          "column": 3,
+          "id": "2fbca9702480256b99ee0b91f11264c93c31a8ab45b0a8a8dec7d162c5846183"
+        },
+        {
+          "file": "test/normalize.test.js",
+          "name": "rejects boxed string with TypeError",
+          "status": "passed",
+          "durationMs": 0.18125,
+          "line": 41,
+          "column": 3,
+          "id": "980bde3779041e71741911b2606eb1803ee8b380bdc0bf0698f2c109bee8fa74"
+        },
+        {
+          "file": "test/normalize.test.js",
+          "name": "rejects boxed string with TypeError",
+          "status": "passed",
+          "durationMs": 0.046041,
+          "line": 41,
+          "column": 3,
+          "id": "a40bd811aa79d283351a24808f02960194c6359a80e6cae726aa9b5afe69a08e"
+        },
+        {
+          "file": "test/normalize.test.js",
+          "name": "rejects boxed string with TypeError",
+          "status": "passed",
+          "durationMs": 0.259833,
+          "line": 41,
+          "column": 3,
+          "id": "8d3419c3e1a6c084f352f4033f6a9483c277f8488ac7ce5e93ddb29e4683d86d"
+        },
+        {
+          "file": "test/normalize.test.js",
+          "name": "rejects boxed string with TypeError",
+          "status": "passed",
+          "durationMs": 0.298208,
+          "line": 41,
+          "column": 3,
+          "id": "7380d4ed61f5e221deff807cd2ece0b95cb44b2608102c6cc32a1fa1b16be9ee"
+        },
+        {
+          "file": "test/normalize.test.js",
+          "name": "rejects boxed string with TypeError",
+          "status": "passed",
+          "durationMs": 0.115916,
+          "line": 41,
+          "column": 3,
+          "id": "e9843a37c364ce1bebb2a37cac219fae0af094ae64cc3bcaf5a1f17a8e3f8988"
+        },
+        {
+          "file": "test/normalize.test.js",
+          "name": "rejects boxed string with TypeError",
+          "status": "passed",
+          "durationMs": 0.041125,
+          "line": 41,
+          "column": 3,
+          "id": "b36b0d3d3314885049a79899d6a9bf7a0cb8da223847768fce56e8a4f27d510a"
+        },
+        {
+          "file": "test/normalize.test.js",
+          "name": "rejects boxed string with TypeError",
+          "status": "passed",
+          "durationMs": 0.03325,
+          "line": 41,
+          "column": 3,
+          "id": "cfe0f4c3c80dd27e0ec958bd0874eaedb96c43e421b2bfb74f0012206dccae42"
+        },
+        {
+          "file": "test/normalize.test.js",
+          "name": "rejects boxed string with TypeError",
+          "status": "passed",
+          "durationMs": 0.036375,
+          "line": 41,
+          "column": 3,
+          "id": "feae75edc95a5cd0602588702c4480115cd43e82615d57ab87a36960600ad472"
+        },
+        {
+          "file": "test/normalize.test.js",
+          "name": "rejects boxed string with TypeError",
+          "status": "passed",
+          "durationMs": 0.031667,
+          "line": 41,
+          "column": 3,
+          "id": "3636e78813a5a9b8c922088132679a85e79bce5a38301c9255e8e5fb77edb173"
+        },
+        {
+          "file": "test/normalize.test.js",
+          "name": "rejects boxed string with TypeError",
+          "status": "passed",
+          "durationMs": 0.032375,
+          "line": 41,
+          "column": 3,
+          "id": "a2ecf13d7c519d1494246239901af82f65a96a2b1bec41bea39930d5d17da029"
+        },
+        {
+          "file": "test/normalize.test.js",
+          "name": "rejects boxed string with TypeError",
+          "status": "passed",
+          "durationMs": 0.029833,
+          "line": 41,
+          "column": 3,
+          "id": "2316c56d51a3655f0b7ff4973c0595ac0663c104b23b734ceb72d2ac867a7f99"
+        },
+        {
+          "file": "test/normalize.test.js",
+          "name": "rejects boxed string with TypeError",
+          "status": "passed",
+          "durationMs": 0.029959,
+          "line": 41,
+          "column": 3,
+          "id": "b45a8eb5a5cd617a9949a191f8868f7589a0221bb84f15f1b0f5c6df8831d232"
+        },
+        {
+          "file": "test/normalize.test.js",
+          "name": "rejects boxed string with TypeError",
+          "status": "passed",
+          "durationMs": 0.439125,
+          "line": 41,
+          "column": 3,
+          "id": "86ce69db5d2c9bb2d629c0dd12ea09832a822d27ff453e263425eb18d6ccd04c"
+        },
+        {
+          "file": "test/normalize.test.js",
+          "name": "rejects boxed string with TypeError",
+          "status": "passed",
+          "durationMs": 0.028875,
+          "line": 41,
+          "column": 3,
+          "id": "6fd331f423eb9199ab3c861b931ce3ba6ce40c007367dff808513c1737ae0eae"
+        },
+        {
+          "file": "test/normalize.test.js",
+          "name": "rejects boxed string with TypeError",
+          "status": "passed",
+          "durationMs": 0.119333,
+          "line": 41,
+          "column": 3,
+          "id": "08fa5b81c3356ab51ead7a9a5bf4a49348ef1e9049796163bd72b50f8e1cf30c"
+        },
+        {
+          "file": "test/normalize.test.js",
+          "name": "rejects boxed string with TypeError",
+          "status": "passed",
+          "durationMs": 0.030917,
+          "line": 41,
+          "column": 3,
+          "id": "fdbb331cdb5bed7a091b4714eeb7508be97bde8e15506f51bfe7c2e2f280ca06"
+        },
+        {
+          "file": "test/normalize.test.js",
+          "name": "rejects boxed string with TypeError",
+          "status": "passed",
+          "durationMs": 0.027375,
+          "line": 41,
+          "column": 3,
+          "id": "0d1412d9fee2f736b86277126c808ceedd47f9c0b30eaa96779c342bc43373ef"
+        }
+      ],
+      "collectionFiles": [
+        "test/normalize.test.js"
+      ],
+      "requestedFiles": [
+        "test/normalize.test.js"
+      ],
+      "executedFiles": [
+        "test/normalize.test.js"
+      ],
+      "missingFiles": [],
+      "unknownFiles": [],
+      "dependencyFiles": [],
+      "complete": true,
+      "command": [
+        "<node>",
+        "--test",
+        "--test-reporter=<repository>src/reporters/node.js",
+        "--test-reporter-destination=<tmp>/tddswarm-report-UScUI8/results.json",
+        "./test/normalize.test.js"
+      ],
+      "stdout": "",
+      "stderr": "",
+      "signal": null,
+      "reportErrors": [],
+      "discovery": {
+        "files": [
+          "test/normalize.test.js"
+        ],
+        "complete": true,
+        "adapter": "node",
+        "warnings": []
+      }
+    },
+    "missingCases": [],
+    "defects": [],
+    "measured": {
+      "execution": true,
+      "heldOutDefects": 0
+    },
+    "isolation": "disposable-file-copy-with-trusted-dependencies",
+    "applied": false,
+    "integrity": "cec0a302505722213e153ca80972e9067f42a8c0f9fc8edd01e343c92c7eeed1"
+  },
+  "baseline": {
+    "adapter": "node",
+    "exitCode": 0,
+    "durationMs": 112,
+    "tests": [
+      {
+        "file": "test/normalize.test.js",
+        "name": "leaves an already normalized string unchanged",
+        "status": "passed",
+        "durationMs": 0.566542,
+        "line": 15,
+        "column": 3,
+        "id": "148109e8f39cc302d66ea0fdec6d92f2d736f3c0b695eef013916b0775a6de8c"
+      },
+      {
+        "file": "test/normalize.test.js",
+        "name": "leaves an already normalized string unchanged",
+        "status": "passed",
+        "durationMs": 0.117209,
+        "line": 15,
+        "column": 3,
+        "id": "52b48645840e01d530a2bb42607f7970cd8d2763ed77c5f8d053abfe48be7343"
+      },
+      {
+        "file": "test/normalize.test.js",
+        "name": "leaves an already normalized string unchanged",
+        "status": "passed",
+        "durationMs": 0.047667,
+        "line": 15,
+        "column": 3,
+        "id": "9a04d30631e5cf3c3405571003bfba1ec2c7754f87bf2ac7939aed042a6135cb"
+      },
+      {
+        "file": "test/normalize.test.js",
+        "name": "leaves an already normalized string unchanged",
+        "status": "passed",
+        "durationMs": 0.04225,
+        "line": 15,
+        "column": 3,
+        "id": "7901b66799c8c2d267a452e1d325b60e5824049d6290156a79503f285db39971"
+      },
+      {
+        "file": "test/normalize.test.js",
+        "name": "leaves an already normalized string unchanged",
+        "status": "passed",
+        "durationMs": 0.04675,
+        "line": 15,
+        "column": 3,
+        "id": "75a840e4aa257648cd53cc58b8a123423941296cbd16b5a2a0af0bdd33207133"
+      },
+      {
+        "file": "test/normalize.test.js",
+        "name": "leaves an already normalized string unchanged",
+        "status": "passed",
+        "durationMs": 0.042791,
+        "line": 15,
+        "column": 3,
+        "id": "2fbca9702480256b99ee0b91f11264c93c31a8ab45b0a8a8dec7d162c5846183"
+      },
+      {
+        "file": "test/normalize.test.js",
+        "name": "rejects boxed string with TypeError",
+        "status": "passed",
+        "durationMs": 0.180208,
+        "line": 41,
+        "column": 3,
+        "id": "980bde3779041e71741911b2606eb1803ee8b380bdc0bf0698f2c109bee8fa74"
+      },
+      {
+        "file": "test/normalize.test.js",
+        "name": "rejects boxed string with TypeError",
+        "status": "passed",
+        "durationMs": 0.047167,
+        "line": 41,
+        "column": 3,
+        "id": "a40bd811aa79d283351a24808f02960194c6359a80e6cae726aa9b5afe69a08e"
+      },
+      {
+        "file": "test/normalize.test.js",
+        "name": "rejects boxed string with TypeError",
+        "status": "passed",
+        "durationMs": 0.258875,
+        "line": 41,
+        "column": 3,
+        "id": "8d3419c3e1a6c084f352f4033f6a9483c277f8488ac7ce5e93ddb29e4683d86d"
+      },
+      {
+        "file": "test/normalize.test.js",
+        "name": "rejects boxed string with TypeError",
+        "status": "passed",
+        "durationMs": 0.30675,
+        "line": 41,
+        "column": 3,
+        "id": "7380d4ed61f5e221deff807cd2ece0b95cb44b2608102c6cc32a1fa1b16be9ee"
+      },
+      {
+        "file": "test/normalize.test.js",
+        "name": "rejects boxed string with TypeError",
+        "status": "passed",
+        "durationMs": 0.115916,
+        "line": 41,
+        "column": 3,
+        "id": "e9843a37c364ce1bebb2a37cac219fae0af094ae64cc3bcaf5a1f17a8e3f8988"
+      },
+      {
+        "file": "test/normalize.test.js",
+        "name": "rejects boxed string with TypeError",
+        "status": "passed",
+        "durationMs": 0.040666,
+        "line": 41,
+        "column": 3,
+        "id": "b36b0d3d3314885049a79899d6a9bf7a0cb8da223847768fce56e8a4f27d510a"
+      },
+      {
+        "file": "test/normalize.test.js",
+        "name": "rejects boxed string with TypeError",
+        "status": "passed",
+        "durationMs": 0.033791,
+        "line": 41,
+        "column": 3,
+        "id": "cfe0f4c3c80dd27e0ec958bd0874eaedb96c43e421b2bfb74f0012206dccae42"
+      },
+      {
+        "file": "test/normalize.test.js",
+        "name": "rejects boxed string with TypeError",
+        "status": "passed",
+        "durationMs": 0.034916,
+        "line": 41,
+        "column": 3,
+        "id": "feae75edc95a5cd0602588702c4480115cd43e82615d57ab87a36960600ad472"
+      },
+      {
+        "file": "test/normalize.test.js",
+        "name": "rejects boxed string with TypeError",
+        "status": "passed",
+        "durationMs": 0.037084,
+        "line": 41,
+        "column": 3,
+        "id": "3636e78813a5a9b8c922088132679a85e79bce5a38301c9255e8e5fb77edb173"
+      },
+      {
+        "file": "test/normalize.test.js",
+        "name": "rejects boxed string with TypeError",
+        "status": "passed",
+        "durationMs": 0.032459,
+        "line": 41,
+        "column": 3,
+        "id": "a2ecf13d7c519d1494246239901af82f65a96a2b1bec41bea39930d5d17da029"
+      },
+      {
+        "file": "test/normalize.test.js",
+        "name": "rejects boxed string with TypeError",
+        "status": "passed",
+        "durationMs": 0.029666,
+        "line": 41,
+        "column": 3,
+        "id": "2316c56d51a3655f0b7ff4973c0595ac0663c104b23b734ceb72d2ac867a7f99"
+      },
+      {
+        "file": "test/normalize.test.js",
+        "name": "rejects boxed string with TypeError",
+        "status": "passed",
+        "durationMs": 0.032166,
+        "line": 41,
+        "column": 3,
+        "id": "b45a8eb5a5cd617a9949a191f8868f7589a0221bb84f15f1b0f5c6df8831d232"
+      },
+      {
+        "file": "test/normalize.test.js",
+        "name": "rejects boxed string with TypeError",
+        "status": "passed",
+        "durationMs": 0.409791,
+        "line": 41,
+        "column": 3,
+        "id": "86ce69db5d2c9bb2d629c0dd12ea09832a822d27ff453e263425eb18d6ccd04c"
+      },
+      {
+        "file": "test/normalize.test.js",
+        "name": "rejects boxed string with TypeError",
+        "status": "passed",
+        "durationMs": 0.029292,
+        "line": 41,
+        "column": 3,
+        "id": "6fd331f423eb9199ab3c861b931ce3ba6ce40c007367dff808513c1737ae0eae"
+      },
+      {
+        "file": "test/normalize.test.js",
+        "name": "rejects boxed string with TypeError",
+        "status": "passed",
+        "durationMs": 0.121375,
+        "line": 41,
+        "column": 3,
+        "id": "08fa5b81c3356ab51ead7a9a5bf4a49348ef1e9049796163bd72b50f8e1cf30c"
+      },
+      {
+        "file": "test/normalize.test.js",
+        "name": "rejects boxed string with TypeError",
+        "status": "passed",
+        "durationMs": 0.030708,
+        "line": 41,
+        "column": 3,
+        "id": "fdbb331cdb5bed7a091b4714eeb7508be97bde8e15506f51bfe7c2e2f280ca06"
+      },
+      {
+        "file": "test/normalize.test.js",
+        "name": "rejects boxed string with TypeError",
+        "status": "passed",
+        "durationMs": 0.027209,
+        "line": 41,
+        "column": 3,
+        "id": "0d1412d9fee2f736b86277126c808ceedd47f9c0b30eaa96779c342bc43373ef"
+      }
+    ],
+    "collectionFiles": [
+      "test/normalize.test.js"
+    ],
+    "requestedFiles": [
+      "test/normalize.test.js"
+    ],
+    "executedFiles": [
+      "test/normalize.test.js"
+    ],
+    "missingFiles": [],
+    "unknownFiles": [],
+    "dependencyFiles": [],
+    "complete": true,
+    "command": [
+      "<node>",
+      "--test",
+      "--test-reporter=<repository>src/reporters/node.js",
+      "--test-reporter-destination=<tmp>/tddswarm-report-EyBzrV/results.json",
+      "./test/normalize.test.js"
+    ],
+    "stdout": "",
+    "stderr": "",
+    "signal": null,
+    "reportErrors": [],
+    "discovery": {
+      "files": [
+        "test/normalize.test.js"
+      ],
+      "complete": true,
+      "adapter": "node",
+      "warnings": []
+    }
+  }
+}

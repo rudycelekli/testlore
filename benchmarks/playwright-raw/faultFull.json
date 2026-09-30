@@ -1,0 +1,117 @@
+{
+  "adapter": "playwright",
+  "exitCode": 1,
+  "durationMs": 2482,
+  "tests": [
+    {
+      "file": "browser/landing.spec.js",
+      "name": "{\"project\":\"chromium\",\"repeat\":0,\"title\":[\"landing heading matches independent copy specification\"]}",
+      "title": "landing heading matches independent copy specification",
+      "project": "chromium",
+      "repeatEachIndex": 0,
+      "nativeId": "3370f39aa0d6cc6ba3dc-97c2ec0f5190a206f43d",
+      "status": "failed",
+      "outcome": "unexpected",
+      "expectedStatus": "passed",
+      "attempts": [
+        {
+          "status": "failed",
+          "retry": 0,
+          "durationMs": 1077,
+          "errors": [
+            {
+              "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByRole('heading')\nExpected: \u001b[32m\"Community tools\"\u001b[39m\nReceived: \u001b[31m\"Incorrect heading\"\u001b[39m\nTimeout:  1000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveText\" getByRole('heading') with timeout 1000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('heading')\u001b[22m\n\u001b[2m    11 × locator resolved to <h1>Incorrect heading</h1>\u001b[22m\n\u001b[2m       - unexpected value \"Incorrect heading\"\u001b[22m\n"
+            }
+          ]
+        }
+      ],
+      "durationMs": 1077,
+      "line": 1,
+      "column": 46,
+      "id": "30315fc74e701d569e3ca132d7f0484d368ffde822c3f13e4516b1a38a6768a7"
+    },
+    {
+      "file": "browser/pricing.spec.js",
+      "name": "{\"project\":\"chromium\",\"repeat\":0,\"title\":[\"pricing heading matches independent copy specification\"]}",
+      "title": "pricing heading matches independent copy specification",
+      "project": "chromium",
+      "repeatEachIndex": 0,
+      "nativeId": "e5c974b4cd75371cdc64-0fccb2ca703fbcb0211f",
+      "status": "passed",
+      "outcome": "expected",
+      "expectedStatus": "passed",
+      "attempts": [
+        {
+          "status": "passed",
+          "retry": 0,
+          "durationMs": 78,
+          "errors": []
+        }
+      ],
+      "durationMs": 78,
+      "line": 1,
+      "column": 46,
+      "id": "c9f306d27c18d3351525250802de584d29eb210bd34590e32525ef14c163935f"
+    }
+  ],
+  "collectionFiles": [
+    "browser/landing.spec.js",
+    "browser/pricing.spec.js"
+  ],
+  "requestedFiles": [
+    "browser/landing.spec.js",
+    "browser/pricing.spec.js"
+  ],
+  "executedFiles": [
+    "browser/landing.spec.js",
+    "browser/pricing.spec.js"
+  ],
+  "missingFiles": [],
+  "unknownFiles": [],
+  "dependencyFiles": [],
+  "complete": true,
+  "command": [
+    "<node>",
+    "node_modules/@playwright/test/cli.js",
+    "test",
+    "--reporter=<testlore>/src/reporters/playwright.cjs",
+    "--forbid-only",
+    "--update-snapshots=none",
+    "--output=<scratch>/artifacts",
+    "<fixture>/browser/landing\\.spec\\.js$",
+    "<fixture>/browser/pricing\\.spec\\.js$"
+  ],
+  "stdout": "",
+  "stderr": "(node:38630) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n(node:38635) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n",
+  "signal": null,
+  "reportErrors": [],
+  "provenance": {
+    "schemaVersion": 1,
+    "revision": null,
+    "runner": "d81a830b445c6e6770b72e22be377664bfd743ff2c3667ff31cae7de0ace168d",
+    "environment": {
+      "node": "v22.19.0",
+      "platform": "darwin",
+      "arch": "arm64",
+      "labels": {}
+    },
+    "services": {},
+    "serviceWarnings": [],
+    "files": {
+      "browser/landing.spec.js": "be0ab9a0db2f2743b588761fe8090d7d37f4d613abca05fbccde66efef361839",
+      "browser/pricing.spec.js": "98a7f6c2251298442bcc8d13d43043bee9bdf8fdbbf956a15771c50be38ebb30",
+      "globalSetup.mjs": "883db17686136d5af0fb193c8d5e271e375781f323705ddee9e0fa75d5f58f09",
+      "package.json": "cb16315b1973cfa6ccb94958bc1fc80371b0f07555f8be0a1c12b6d311cbb18d",
+      "playwright.config.mjs": "4035d10fdab297282d73691fee7c38a1bd84fae724ad5ff3f97891e761d70e45",
+      "routes/landing.html": "f2c07e9544b8128c60f6a3fce50b3ac4a474194071140988ea007d1099f70441",
+      "routes/pricing.html": "f6160a3e2ccc7d2fc418b571a66ff47143649da62a6ca6504e2a4a815379f5c6",
+      "tddswarm.config.json": "d4ba9cdbfb67fadb52ec5bbc3603ee45d53fc94af38c4eee911f5f31bd1fd60b",
+      "tddswarm.requirements.md": "6ba3a1a86258def5a1fd69b414b8992fc0c90b4aa265b7f5ff04be7b62a91692"
+    },
+    "fingerprint": "b04427c198bb2b8fb0caa477409b059cf407c6d4d1353920fdd61f67ab018a1f"
+  },
+  "stable": {
+    "fresh": true,
+    "reasons": []
+  }
+}

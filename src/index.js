@@ -16,3 +16,4 @@ export {rememberValidation, recallLessons, reflectLearning, exportLearning, copy
 export {qualityAgent,ensureQualityAgent,seedRequirements} from './agent-profile.js';
 export {pluginCatalog,configurePlugin,checkPlugins,configurePluginsAutomatically} from './plugins.js';
 export {recommendPlugins} from './plugin-recommendations.js';
+export {pilot,validatePilotManifest,exportPilot} from './pilot.js';

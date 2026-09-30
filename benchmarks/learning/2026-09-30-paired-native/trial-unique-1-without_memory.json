@@ -1,0 +1,1895 @@
+{
+  "fixture": "unique",
+  "specificationId": "stable-deduplication",
+  "repetition": 1,
+  "arm": "without_memory",
+  "order": 4,
+  "recalledRecords": 0,
+  "recall": 1,
+  "cases": 33,
+  "generationMs": 48750,
+  "totalMs": 50309,
+  "outputBytes": 3959,
+  "calls": [
+    {
+      "role": "architect",
+      "durationMs": 9275,
+      "input": {
+        "schemaVersion": 1,
+        "role": "architect",
+        "requirements": "unique takes an array of numbers or strings and returns a new array containing only the first occurrence of each distinct value, in original order. Number 1 and string \"1\" remain distinct. Do not mutate the input. Empty arrays return empty. Non-array inputs throw TypeError.",
+        "context": [
+          {
+            "file": "src/unique.js",
+            "content": "export function unique(xs){if(!Array.isArray(xs))throw new TypeError();return [...new Set(xs)];}"
+          }
+        ],
+        "budget": {
+          "maxTasks": 1,
+          "maxOutputBytes": 65536,
+          "timeoutMs": 115000,
+          "callsPerTrial": 3,
+          "orderSeed": 20260930,
+          "instructions": "Use only supplied context and requirements. No tools or filesystem reads. Return one task, then independent runnable Node tests named test/NAME.test.js (Node test and assert builtins; package type is module). Historical patterns are advisory. Do not infer expected values from current implementation."
+        },
+        "learning": {
+          "records": [],
+          "advisoryOnly": true,
+          "reason": "learning-disabled"
+        },
+        "order": {
+          "subjects": [
+            "src/unique.js"
+          ],
+          "roles": [
+            "architect",
+            "author",
+            "reviewer"
+          ],
+          "acceptance": [
+            "Independent requirements, deterministic assertions, boundaries and errors."
+          ]
+        }
+      },
+      "output": {
+        "tasks": [
+          {
+            "subject": "src/unique.js",
+            "instructions": "Create test/unique.test.js using node:test and node:assert/strict, importing unique from ../src/unique.js. Derive explicit expected arrays from the supplied requirements. Test first-occurrence deduplication and original order with repeated numbers, repeated strings, and mixed values where 1 and \"1\" remain distinct. Cover empty arrays, singleton arrays, all-duplicate arrays, and already-distinct arrays. Assert every successful result is a new array, including empty and already-distinct inputs. Verify input contents remain unchanged and frozen valid arrays are accepted. Assert TypeError for representative non-array inputs: undefined, null, numbers, strings, booleans, plain objects, and array-like objects. Keep tests deterministic and runnable in the supplied ESM project; do not construct expected results using Set or duplicate the implementation."
+          }
+        ]
+      },
+      "outputBytes": 915
+    },
+    {
+      "role": "author",
+      "durationMs": 30260,
+      "input": {
+        "schemaVersion": 1,
+        "role": "author",
+        "requirements": "unique takes an array of numbers or strings and returns a new array containing only the first occurrence of each distinct value, in original order. Number 1 and string \"1\" remain distinct. Do not mutate the input. Empty arrays return empty. Non-array inputs throw TypeError.",
+        "context": [
+          {
+            "file": "src/unique.js",
+            "content": "export function unique(xs){if(!Array.isArray(xs))throw new TypeError();return [...new Set(xs)];}"
+          }
+        ],
+        "budget": {
+          "maxTasks": 1,
+          "maxOutputBytes": 65536,
+          "timeoutMs": 115000,
+          "callsPerTrial": 3,
+          "orderSeed": 20260930,
+          "instructions": "Use only supplied context and requirements. No tools or filesystem reads. Return one task, then independent runnable Node tests named test/NAME.test.js (Node test and assert builtins; package type is module). Historical patterns are advisory. Do not infer expected values from current implementation."
+        },
+        "learning": {
+          "records": [],
+          "advisoryOnly": true,
+          "reason": "learning-disabled"
+        },
+        "task": {
+          "subject": "src/unique.js",
+          "instructions": "Create test/unique.test.js using node:test and node:assert/strict, importing unique from ../src/unique.js. Derive explicit expected arrays from the supplied requirements. Test first-occurrence deduplication and original order with repeated numbers, repeated strings, and mixed values where 1 and \"1\" remain distinct. Cover empty arrays, singleton arrays, all-duplicate arrays, and already-distinct arrays. Assert every successful result is a new array, including empty and already-distinct inputs. Verify input contents remain unchanged and frozen valid arrays are accepted. Assert TypeError for representative non-array inputs: undefined, null, numbers, strings, booleans, plain objects, and array-like objects. Keep tests deterministic and runnable in the supplied ESM project; do not construct expected results using Set or duplicate the implementation."
+        }
+      },
+      "output": {
+        "files": [
+          {
+            "path": "test/unique.test.js",
+            "content": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport { unique } from '../src/unique.js';\n\nconst cases = [\n  { name: 'repeated numbers preserve first-occurrence order', input: [3, 1, 3, 2, 1, 4, 2], expected: [3, 1, 2, 4] },\n  { name: 'repeated strings preserve first-occurrence order', input: ['pear', 'apple', 'pear', 'banana', 'apple'], expected: ['pear', 'apple', 'banana'] },\n  { name: 'mixed values preserve types and order', input: [1, '1', 2, '2', '1', 1, '2', 2, ''], expected: [1, '1', 2, '2', ''] },\n  { name: 'empty array', input: [], expected: [] },\n  { name: 'singleton number', input: [7], expected: [7] },\n  { name: 'singleton string', input: ['hello'], expected: ['hello'] },\n  { name: 'all-duplicate numbers', input: [5, 5, 5, 5], expected: [5] },\n  { name: 'all-duplicate strings', input: ['', '', ''], expected: [''] },\n  { name: 'already-distinct numbers', input: [9, -2, 0, 1.5], expected: [9, -2, 0, 1.5] },\n  { name: 'already-distinct strings', input: ['z', 'a', '', 'A', ' '], expected: ['z', 'a', '', 'A', ' '] },\n  { name: 'already-distinct mixed values', input: ['1', 1, '0', 0], expected: ['1', 1, '0', 0] },\n];\n\nfor (const { name, input, expected } of cases) {\n  for (const frozen of [false, true]) {\n    test(`${name} (${frozen ? 'frozen' : 'mutable'} input)`, () => {\n      const xs = input.slice();\n      const before = xs.slice();\n      if (frozen) Object.freeze(xs);\n\n      const result = unique(xs);\n\n      assert.ok(Array.isArray(result), 'result must be an array');\n      assert.notStrictEqual(result, xs, 'result must be a new array');\n      assert.deepStrictEqual(result, expected);\n      assert.deepStrictEqual(xs, before, 'input contents must remain unchanged');\n    });\n  }\n}\n\nconst invalidCases = [\n  { name: 'undefined', value: undefined },\n  { name: 'null', value: null },\n  { name: 'zero', value: 0 },\n  { name: 'nonzero number', value: 42 },\n  { name: 'empty string', value: '' },\n  { name: 'nonempty string', value: 'aba' },\n  { name: 'false', value: false },\n  { name: 'true', value: true },\n  { name: 'plain object', value: {} },\n  { name: 'empty array-like object', value: { length: 0 } },\n  { name: 'populated array-like object', value: { 0: 'a', 1: 'a', length: 2 } },\n];\n\nfor (const { name, value } of invalidCases) {\n  test(`rejects ${name} with TypeError`, () => {\n    assert.throws(() => unique(value), TypeError);\n  });\n}\n"
+          }
+        ]
+      },
+      "outputBytes": 2514
+    },
+    {
+      "role": "reviewer",
+      "durationMs": 9215,
+      "input": {
+        "schemaVersion": 1,
+        "role": "reviewer",
+        "requirements": "unique takes an array of numbers or strings and returns a new array containing only the first occurrence of each distinct value, in original order. Number 1 and string \"1\" remain distinct. Do not mutate the input. Empty arrays return empty. Non-array inputs throw TypeError.",
+        "context": [
+          {
+            "file": "src/unique.js",
+            "content": "export function unique(xs){if(!Array.isArray(xs))throw new TypeError();return [...new Set(xs)];}"
+          }
+        ],
+        "budget": {
+          "maxTasks": 1,
+          "maxOutputBytes": 65536,
+          "timeoutMs": 115000,
+          "callsPerTrial": 3,
+          "orderSeed": 20260930,
+          "instructions": "Use only supplied context and requirements. No tools or filesystem reads. Return one task, then independent runnable Node tests named test/NAME.test.js (Node test and assert builtins; package type is module). Historical patterns are advisory. Do not infer expected values from current implementation."
+        },
+        "files": [
+          {
+            "path": "test/unique.test.js",
+            "content": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport { unique } from '../src/unique.js';\n\nconst cases = [\n  { name: 'repeated numbers preserve first-occurrence order', input: [3, 1, 3, 2, 1, 4, 2], expected: [3, 1, 2, 4] },\n  { name: 'repeated strings preserve first-occurrence order', input: ['pear', 'apple', 'pear', 'banana', 'apple'], expected: ['pear', 'apple', 'banana'] },\n  { name: 'mixed values preserve types and order', input: [1, '1', 2, '2', '1', 1, '2', 2, ''], expected: [1, '1', 2, '2', ''] },\n  { name: 'empty array', input: [], expected: [] },\n  { name: 'singleton number', input: [7], expected: [7] },\n  { name: 'singleton string', input: ['hello'], expected: ['hello'] },\n  { name: 'all-duplicate numbers', input: [5, 5, 5, 5], expected: [5] },\n  { name: 'all-duplicate strings', input: ['', '', ''], expected: [''] },\n  { name: 'already-distinct numbers', input: [9, -2, 0, 1.5], expected: [9, -2, 0, 1.5] },\n  { name: 'already-distinct strings', input: ['z', 'a', '', 'A', ' '], expected: ['z', 'a', '', 'A', ' '] },\n  { name: 'already-distinct mixed values', input: ['1', 1, '0', 0], expected: ['1', 1, '0', 0] },\n];\n\nfor (const { name, input, expected } of cases) {\n  for (const frozen of [false, true]) {\n    test(`${name} (${frozen ? 'frozen' : 'mutable'} input)`, () => {\n      const xs = input.slice();\n      const before = xs.slice();\n      if (frozen) Object.freeze(xs);\n\n      const result = unique(xs);\n\n      assert.ok(Array.isArray(result), 'result must be an array');\n      assert.notStrictEqual(result, xs, 'result must be a new array');\n      assert.deepStrictEqual(result, expected);\n      assert.deepStrictEqual(xs, before, 'input contents must remain unchanged');\n    });\n  }\n}\n\nconst invalidCases = [\n  { name: 'undefined', value: undefined },\n  { name: 'null', value: null },\n  { name: 'zero', value: 0 },\n  { name: 'nonzero number', value: 42 },\n  { name: 'empty string', value: '' },\n  { name: 'nonempty string', value: 'aba' },\n  { name: 'false', value: false },\n  { name: 'true', value: true },\n  { name: 'plain object', value: {} },\n  { name: 'empty array-like object', value: { length: 0 } },\n  { name: 'populated array-like object', value: { 0: 'a', 1: 'a', length: 2 } },\n];\n\nfor (const { name, value } of invalidCases) {\n  test(`rejects ${name} with TypeError`, () => {\n    assert.throws(() => unique(value), TypeError);\n  });\n}\n"
+          }
+        ],
+        "acceptance": [
+          "Independent current specification, deterministic runnable cases."
+        ]
+      },
+      "output": {
+        "accepted": true,
+        "findings": [],
+        "oracle": {
+          "independent": true,
+          "basis": [
+            "Explicit expected arrays follow the supplied first-occurrence and original-order requirements, including distinct number and string values.",
+            "Identity and content assertions verify a new array and unchanged input, including empty and frozen inputs.",
+            "Non-array cases assert the specified TypeError.",
+            "Tests are deterministic and use valid Node built-in imports and the supplied module export. Acceptance is based on static review, not execution validation."
+          ]
+        }
+      },
+      "outputBytes": 530
+    }
+  ],
+  "defects": [
+    {
+      "id": "duplicate-retention",
+      "detected": true,
+      "result": {
+        "adapter": "node",
+        "exitCode": 1,
+        "durationMs": 126,
+        "tests": [
+          {
+            "file": "test/unique.test.js",
+            "name": "already-distinct mixed values (frozen input)",
+            "status": "failed",
+            "durationMs": 1.584917,
+            "line": 21,
+            "column": 5,
+            "id": "5103edf8f7dc95c9aa0d7ad2931db49f95fd2e54263073ed8bf85d546b6ef752"
+          },
+          {
+            "file": "test/unique.test.js",
+            "name": "already-distinct mixed values (frozen input)",
+            "status": "failed",
+            "durationMs": 0.224375,
+            "line": 21,
+            "column": 5,
+            "id": "9073115483cb5f7b98072c09ca7c4af0f5380680d5760e2bb7f1aa5611ddc5ff"
+          },
+          {
+            "file": "test/unique.test.js",
+            "name": "already-distinct mixed values (frozen input)",
+            "status": "failed",
+            "durationMs": 0.201208,
+            "line": 21,
+            "column": 5,
+            "id": "8b462597e73ae788e293af4d02ec35af1e7488dbc99648647119c63e45edfd1f"
+          },
+          {
+            "file": "test/unique.test.js",
+            "name": "already-distinct mixed values (frozen input)",
+            "status": "failed",
+            "durationMs": 0.086166,
+            "line": 21,
+            "column": 5,
+            "id": "3f80fc50c6e6258721230154b45500b8ceae3153c6e816d536adb475951e4cf0"
+          },
+          {
+            "file": "test/unique.test.js",
+            "name": "already-distinct mixed values (frozen input)",
+            "status": "failed",
+            "durationMs": 0.34975,
+            "line": 21,
+            "column": 5,
+            "id": "5a1e3bb1ef641cc0d460cc71076ae3fc1cd9319c3c1ae2a261522d89c4fcdea8"
+          },
+          {
+            "file": "test/unique.test.js",
+            "name": "already-distinct mixed values (frozen input)",
+            "status": "failed",
+            "durationMs": 0.128375,
+            "line": 21,
+            "column": 5,
+            "id": "ddeb8b22a4fd7e0c190733ee9f60c804a05675922ffa10725fe2749d8b8bc854"
+          },
+          {
+            "file": "test/unique.test.js",
+            "name": "already-distinct mixed values (frozen input)",
+            "status": "passed",
+            "durationMs": 0.120834,
+            "line": 21,
+            "column": 5,
+            "id": "161b784693146e07f095f4591d29bb0ff350b045400eca82a0f879885d604cdc"
+          },
+          {
+            "file": "test/unique.test.js",
+            "name": "already-distinct mixed values (frozen input)",
+            "status": "passed",
+            "durationMs": 0.050084,
+            "line": 21,
+            "column": 5,
+            "id": "5952474623327150e5c94b1c02c11ed3b441fe1aed9ed2a9c64a87c4deab9b3d"
+          },
+          {
+            "file": "test/unique.test.js",
+            "name": "already-distinct mixed values (frozen input)",
+            "status": "passed",
+            "durationMs": 0.341625,
+            "line": 21,
+            "column": 5,
+            "id": "582eed7615da1d0bba7a6e767b9d1f8d71db3dee3928d2440df84f10dd12707c"
+          },
+          {
+            "file": "test/unique.test.js",
+            "name": "already-distinct mixed values (frozen input)",
+            "status": "passed",
+            "durationMs": 0.30425,
+            "line": 21,
+            "column": 5,
+            "id": "5e5fb2af6f3f8c3a5b617974447b6054c73faf79001825d3143e6d1d6e5443b9"
+          },
+          {
+            "file": "test/unique.test.js",
+            "name": "already-distinct mixed values (frozen input)",
+            "status": "passed",
+            "durationMs": 0.137542,
+            "line": 21,
+            "column": 5,
+            "id": "9e2c768dac293e9fe562a581ebd27c07167d8d41fbaaa4de02b1901e99a6c9ea"
+          },
+          {
+            "file": "test/unique.test.js",
+            "name": "already-distinct mixed values (frozen input)",
+            "status": "passed",
+            "durationMs": 0.071666,
+            "line": 21,
+            "column": 5,
+            "id": "83cc3dcbb0c4d4f969b44ab59af2cf7fae8945267643a1bebbcb8b8d0a1dc646"
+          },
+          {
+            "file": "test/unique.test.js",
+            "name": "already-distinct mixed values (frozen input)",
+            "status": "failed",
+            "durationMs": 0.205708,
+            "line": 21,
+            "column": 5,
+            "id": "43e56419cb198bfe9643b8f4ac68e6e01d89fd50be1a3249e146374b509e93e1"
+          },
+          {
+            "file": "test/unique.test.js",
+            "name": "already-distinct mixed values (frozen input)",
+            "status": "failed",
+            "durationMs": 0.080291,
+            "line": 21,
+            "column": 5,
+            "id": "0be89ef98ea6e870e34397198e9627d7b35c6bdb328b9ef187710e7892a4115e"
+          },
+          {
+            "file": "test/unique.test.js",
+            "name": "already-distinct mixed values (frozen input)",
+            "status": "failed",
+            "durationMs": 0.20975,
+            "line": 21,
+            "column": 5,
+            "id": "c67d067c01073e016cf22971206c8723bf91208f8fbba0b60013790b84dfb99e"
+          },
+          {
+            "file": "test/unique.test.js",
+            "name": "already-distinct mixed values (frozen input)",
+            "status": "failed",
+            "durationMs": 0.077875,
+            "line": 21,
+            "column": 5,
+            "id": "c175043475995e9ce7947f90a4ca3b4bd716e21eb842eaf1f2e7a0995f226519"
+          },
+          {
+            "file": "test/unique.test.js",
+            "name": "already-distinct mixed values (frozen input)",
+            "status": "passed",
+            "durationMs": 0.037167,
+            "line": 21,
+            "column": 5,
+            "id": "b2197311e53afc0ad80ebd7fdeabc471a992597c4f0b1960090c0836c23fdd6d"
+          },
+          {
+            "file": "test/unique.test.js",
+            "name": "already-distinct mixed values (frozen input)",
+            "status": "passed",
+            "durationMs": 0.033792,
+            "line": 21,
+            "column": 5,
+            "id": "ccb88a456cb29ba9c130cf9be64328ccb93bf423401d1c68de4bfbe18387d201"
+          },
+          {
+            "file": "test/unique.test.js",
+            "name": "already-distinct mixed values (frozen input)",
+            "status": "passed",
+            "durationMs": 0.075125,
+            "line": 21,
+            "column": 5,
+            "id": "9755088f6f4cd97b04d19366415736ffed1cc16703ef4b6ab88c4fa853d39b8d"
+          },
+          {
+            "file": "test/unique.test.js",
+            "name": "already-distinct mixed values (frozen input)",
+            "status": "passed",
+            "durationMs": 0.031208,
+            "line": 21,
+            "column": 5,
+            "id": "1b07048833be95b9b8508136c66f08e4abe9d6b0b473e9571a418e03d2d05352"
+          },
+          {
+            "file": "test/unique.test.js",
+            "name": "already-distinct mixed values (frozen input)",
+            "status": "passed",
+            "durationMs": 0.024959,
+            "line": 21,
+            "column": 5,
+            "id": "8c5fd9a58d47a075bd88f5b14f53f48f3a2458861c06b9735f01a42943b8fc1f"
+          },
+          {
+            "file": "test/unique.test.js",
+            "name": "already-distinct mixed values (frozen input)",
+            "status": "passed",
+            "durationMs": 0.024667,
+            "line": 21,
+            "column": 5,
+            "id": "256b5147da75a2731b73edcead97d79678f57a461f6e53d5a975b5700d067402"
+          },
+          {
+            "file": "test/unique.test.js",
+            "name": "rejects populated array-like object with TypeError",
+            "status": "passed",
+            "durationMs": 0.178208,
+            "line": 51,
+            "column": 3,
+            "id": "9c65a9e970b528a0b6914a8a4ef6baf3271cc13e79f4050b5b1c308b1fc326f0"
+          },
+          {
+            "file": "test/unique.test.js",
+            "name": "rejects populated array-like object with TypeError",
+            "status": "passed",
+            "durationMs": 0.030667,
+            "line": 51,
+            "column": 3,
+            "id": "18e85efa930504bf3f9075c02e386c6a12e6f0db7e233e5d608085610a2b3dc0"
+          },
+          {
+            "file": "test/unique.test.js",
+            "name": "rejects populated array-like object with TypeError",
+            "status": "passed",
+            "durationMs": 0.027917,
+            "line": 51,
+            "column": 3,
+            "id": "07b72c36e1c484bb80e48fdf4774c546ef3ae140d5da01e7b0ed6a10de4c56e3"
+          },
+          {
+            "file": "test/unique.test.js",
+            "name": "rejects populated array-like object with TypeError",
+            "status": "passed",
+            "durationMs": 0.027167,
+            "line": 51,
+            "column": 3,
+            "id": "ace8f25ebc2a695a87d0391fa200f0b044ca889a1a91b639c3067389723c46b3"
+          },
+          {
+            "file": "test/unique.test.js",
+            "name": "rejects populated array-like object with TypeError",
+            "status": "passed",
+            "durationMs": 0.027125,
+            "line": 51,
+            "column": 3,
+            "id": "5e8cc38c10ced35ab4c3de5d5794dde9ff7beea9e518d32f9d2b5737eb65fdb2"
+          },
+          {
+            "file": "test/unique.test.js",
+            "name": "rejects populated array-like object with TypeError",
+            "status": "passed",
+            "durationMs": 0.030667,
+            "line": 51,
+            "column": 3,
+            "id": "1bea11bb7e68fe73eb577a9d388b3914d344138b7baf958cbb95f53383f51c90"
+          },
+          {
+            "file": "test/unique.test.js",
+            "name": "rejects populated array-like object with TypeError",
+            "status": "passed",
+            "durationMs": 0.026916,
+            "line": 51,
+            "column": 3,
+            "id": "cffeedd06ff0d3834bd8a92a6f0d25bafcfa4a8dfdacb69da8c7ce9325ccde31"
+          },
+          {
+            "file": "test/unique.test.js",
+            "name": "rejects populated array-like object with TypeError",
+            "status": "passed",
+            "durationMs": 0.079542,
+            "line": 51,
+            "column": 3,
+            "id": "ff481801057fa5c59b10507f54faa4e904beb0b96cf17aa19e0b4c4ceb0b7b17"
+          },
+          {
+            "file": "test/unique.test.js",
+            "name": "rejects populated array-like object with TypeError",
+            "status": "passed",
+            "durationMs": 0.031708,
+            "line": 51,
+            "column": 3,
+            "id": "8ec3fc7c9ff77aa8d3296f754bceb6d4bcbb35e1743d4625304223b6d877099f"
+          },
+          {
+            "file": "test/unique.test.js",
+            "name": "rejects populated array-like object with TypeError",
+            "status": "passed",
+            "durationMs": 0.031917,
+            "line": 51,
+            "column": 3,
+            "id": "b7d36e190f2a58ba2f3b304ec0f0924b489db4be1c0ca2d727ff8a32e0a39671"
+          },
+          {
+            "file": "test/unique.test.js",
+            "name": "rejects populated array-like object with TypeError",
+            "status": "passed",
+            "durationMs": 0.027542,
+            "line": 51,
+            "column": 3,
+            "id": "b17c580ccc05bacedb6f8fb8ad88039970ada34a6549bf032017b4026f87df71"
+          }
+        ],
+        "collectionFiles": [
+          "test/unique.test.js"
+        ],
+        "requestedFiles": [
+          "test/unique.test.js"
+        ],
+        "executedFiles": [
+          "test/unique.test.js"
+        ],
+        "missingFiles": [],
+        "unknownFiles": [],
+        "dependencyFiles": [],
+        "complete": true,
+        "command": [
+          "<node>",
+          "--test",
+          "--test-reporter=<repository>src/reporters/node.js",
+          "--test-reporter-destination=<tmp>/tddswarm-report-1ucjB1/results.json",
+          "./test/unique.test.js"
+        ],
+        "stdout": "",
+        "stderr": "",
+        "signal": null,
+        "reportErrors": [],
+        "discovery": {
+          "files": [
+            "test/unique.test.js"
+          ],
+          "complete": true,
+          "adapter": "node",
+          "warnings": []
+        }
+      }
+    },
+    {
+      "id": "type-collapse",
+      "detected": true,
+      "result": {
+        "adapter": "node",
+        "exitCode": 1,
+        "durationMs": 130,
+        "tests": [
+          {
+            "file": "test/unique.test.js",
+            "name": "already-distinct mixed values (frozen input)",
+            "status": "failed",
+            "durationMs": 1.607542,
+            "line": 21,
+            "column": 5,
+            "id": "5103edf8f7dc95c9aa0d7ad2931db49f95fd2e54263073ed8bf85d546b6ef752"
+          },
+          {
+            "file": "test/unique.test.js",
+            "name": "already-distinct mixed values (frozen input)",
+            "status": "failed",
+            "durationMs": 0.308791,
+            "line": 21,
+            "column": 5,
+            "id": "9073115483cb5f7b98072c09ca7c4af0f5380680d5760e2bb7f1aa5611ddc5ff"
+          },
+          {
+            "file": "test/unique.test.js",
+            "name": "already-distinct mixed values (frozen input)",
+            "status": "passed",
+            "durationMs": 0.078416,
+            "line": 21,
+            "column": 5,
+            "id": "8b462597e73ae788e293af4d02ec35af1e7488dbc99648647119c63e45edfd1f"
+          },
+          {
+            "file": "test/unique.test.js",
+            "name": "already-distinct mixed values (frozen input)",
+            "status": "passed",
+            "durationMs": 0.12425,
+            "line": 21,
+            "column": 5,
+            "id": "3f80fc50c6e6258721230154b45500b8ceae3153c6e816d536adb475951e4cf0"
+          },
+          {
+            "file": "test/unique.test.js",
+            "name": "already-distinct mixed values (frozen input)",
+            "status": "failed",
+            "durationMs": 0.172084,
+            "line": 21,
+            "column": 5,
+            "id": "5a1e3bb1ef641cc0d460cc71076ae3fc1cd9319c3c1ae2a261522d89c4fcdea8"
+          },
+          {
+            "file": "test/unique.test.js",
+            "name": "already-distinct mixed values (frozen input)",
+            "status": "failed",
+            "durationMs": 0.086875,
+            "line": 21,
+            "column": 5,
+            "id": "ddeb8b22a4fd7e0c190733ee9f60c804a05675922ffa10725fe2749d8b8bc854"
+          },
+          {
+            "file": "test/unique.test.js",
+            "name": "already-distinct mixed values (frozen input)",
+            "status": "passed",
+            "durationMs": 0.046417,
+            "line": 21,
+            "column": 5,
+            "id": "161b784693146e07f095f4591d29bb0ff350b045400eca82a0f879885d604cdc"
+          },
+          {
+            "file": "test/unique.test.js",
+            "name": "already-distinct mixed values (frozen input)",
+            "status": "passed",
+            "durationMs": 0.116666,
+            "line": 21,
+            "column": 5,
+            "id": "5952474623327150e5c94b1c02c11ed3b441fe1aed9ed2a9c64a87c4deab9b3d"
+          },
+          {
+            "file": "test/unique.test.js",
+            "name": "already-distinct mixed values (frozen input)",
+            "status": "failed",
+            "durationMs": 0.521958,
+            "line": 21,
+            "column": 5,
+            "id": "582eed7615da1d0bba7a6e767b9d1f8d71db3dee3928d2440df84f10dd12707c"
+          },
+          {
+            "file": "test/unique.test.js",
+            "name": "already-distinct mixed values (frozen input)",
+            "status": "failed",
+            "durationMs": 0.30225,
+            "line": 21,
+            "column": 5,
+            "id": "5e5fb2af6f3f8c3a5b617974447b6054c73faf79001825d3143e6d1d6e5443b9"
+          },
+          {
+            "file": "test/unique.test.js",
+            "name": "already-distinct mixed values (frozen input)",
+            "status": "passed",
+            "durationMs": 0.595334,
+            "line": 21,
+            "column": 5,
+            "id": "9e2c768dac293e9fe562a581ebd27c07167d8d41fbaaa4de02b1901e99a6c9ea"
+          },
+          {
+            "file": "test/unique.test.js",
+            "name": "already-distinct mixed values (frozen input)",
+            "status": "passed",
+            "durationMs": 0.062084,
+            "line": 21,
+            "column": 5,
+            "id": "83cc3dcbb0c4d4f969b44ab59af2cf7fae8945267643a1bebbcb8b8d0a1dc646"
+          },
+          {
+            "file": "test/unique.test.js",
+            "name": "already-distinct mixed values (frozen input)",
+            "status": "failed",
+            "durationMs": 0.175792,
+            "line": 21,
+            "column": 5,
+            "id": "43e56419cb198bfe9643b8f4ac68e6e01d89fd50be1a3249e146374b509e93e1"
+          },
+          {
+            "file": "test/unique.test.js",
+            "name": "already-distinct mixed values (frozen input)",
+            "status": "failed",
+            "durationMs": 0.084458,
+            "line": 21,
+            "column": 5,
+            "id": "0be89ef98ea6e870e34397198e9627d7b35c6bdb328b9ef187710e7892a4115e"
+          },
+          {
+            "file": "test/unique.test.js",
+            "name": "already-distinct mixed values (frozen input)",
+            "status": "passed",
+            "durationMs": 0.033833,
+            "line": 21,
+            "column": 5,
+            "id": "c67d067c01073e016cf22971206c8723bf91208f8fbba0b60013790b84dfb99e"
+          },
+          {
+            "file": "test/unique.test.js",
+            "name": "already-distinct mixed values (frozen input)",
+            "status": "passed",
+            "durationMs": 0.031917,
+            "line": 21,
+            "column": 5,
+            "id": "c175043475995e9ce7947f90a4ca3b4bd716e21eb842eaf1f2e7a0995f226519"
+          },
+          {
+            "file": "test/unique.test.js",
+            "name": "already-distinct mixed values (frozen input)",
+            "status": "failed",
+            "durationMs": 0.267209,
+            "line": 21,
+            "column": 5,
+            "id": "b2197311e53afc0ad80ebd7fdeabc471a992597c4f0b1960090c0836c23fdd6d"
+          },
+          {
+            "file": "test/unique.test.js",
+            "name": "already-distinct mixed values (frozen input)",
+            "status": "failed",
+            "durationMs": 0.145458,
+            "line": 21,
+            "column": 5,
+            "id": "ccb88a456cb29ba9c130cf9be64328ccb93bf423401d1c68de4bfbe18387d201"
+          },
+          {
+            "file": "test/unique.test.js",
+            "name": "already-distinct mixed values (frozen input)",
+            "status": "passed",
+            "durationMs": 0.030208,
+            "line": 21,
+            "column": 5,
+            "id": "9755088f6f4cd97b04d19366415736ffed1cc16703ef4b6ab88c4fa853d39b8d"
+          },
+          {
+            "file": "test/unique.test.js",
+            "name": "already-distinct mixed values (frozen input)",
+            "status": "passed",
+            "durationMs": 0.034542,
+            "line": 21,
+            "column": 5,
+            "id": "1b07048833be95b9b8508136c66f08e4abe9d6b0b473e9571a418e03d2d05352"
+          },
+          {
+            "file": "test/unique.test.js",
+            "name": "already-distinct mixed values (frozen input)",
+            "status": "failed",
+            "durationMs": 0.063375,
+            "line": 21,
+            "column": 5,
+            "id": "8c5fd9a58d47a075bd88f5b14f53f48f3a2458861c06b9735f01a42943b8fc1f"
+          },
+          {
+            "file": "test/unique.test.js",
+            "name": "already-distinct mixed values (frozen input)",
+            "status": "failed",
+            "durationMs": 0.057708,
+            "line": 21,
+            "column": 5,
+            "id": "256b5147da75a2731b73edcead97d79678f57a461f6e53d5a975b5700d067402"
+          },
+          {
+            "file": "test/unique.test.js",
+            "name": "rejects populated array-like object with TypeError",
+            "status": "passed",
+            "durationMs": 0.2135,
+            "line": 51,
+            "column": 3,
+            "id": "9c65a9e970b528a0b6914a8a4ef6baf3271cc13e79f4050b5b1c308b1fc326f0"
+          },
+          {
+            "file": "test/unique.test.js",
+            "name": "rejects populated array-like object with TypeError",
+            "status": "passed",
+            "durationMs": 0.032,
+            "line": 51,
+            "column": 3,
+            "id": "18e85efa930504bf3f9075c02e386c6a12e6f0db7e233e5d608085610a2b3dc0"
+          },
+          {
+            "file": "test/unique.test.js",
+            "name": "rejects populated array-like object with TypeError",
+            "status": "passed",
+            "durationMs": 0.028041,
+            "line": 51,
+            "column": 3,
+            "id": "07b72c36e1c484bb80e48fdf4774c546ef3ae140d5da01e7b0ed6a10de4c56e3"
+          },
+          {
+            "file": "test/unique.test.js",
+            "name": "rejects populated array-like object with TypeError",
+            "status": "passed",
+            "durationMs": 0.027958,
+            "line": 51,
+            "column": 3,
+            "id": "ace8f25ebc2a695a87d0391fa200f0b044ca889a1a91b639c3067389723c46b3"
+          },
+          {
+            "file": "test/unique.test.js",
+            "name": "rejects populated array-like object with TypeError",
+            "status": "passed",
+            "durationMs": 0.027,
+            "line": 51,
+            "column": 3,
+            "id": "5e8cc38c10ced35ab4c3de5d5794dde9ff7beea9e518d32f9d2b5737eb65fdb2"
+          },
+          {
+            "file": "test/unique.test.js",
+            "name": "rejects populated array-like object with TypeError",
+            "status": "passed",
+            "durationMs": 0.0265,
+            "line": 51,
+            "column": 3,
+            "id": "1bea11bb7e68fe73eb577a9d388b3914d344138b7baf958cbb95f53383f51c90"
+          },
+          {
+            "file": "test/unique.test.js",
+            "name": "rejects populated array-like object with TypeError",
+            "status": "passed",
+            "durationMs": 0.031166,
+            "line": 51,
+            "column": 3,
+            "id": "cffeedd06ff0d3834bd8a92a6f0d25bafcfa4a8dfdacb69da8c7ce9325ccde31"
+          },
+          {
+            "file": "test/unique.test.js",
+            "name": "rejects populated array-like object with TypeError",
+            "status": "passed",
+            "durationMs": 0.094291,
+            "line": 51,
+            "column": 3,
+            "id": "ff481801057fa5c59b10507f54faa4e904beb0b96cf17aa19e0b4c4ceb0b7b17"
+          },
+          {
+            "file": "test/unique.test.js",
+            "name": "rejects populated array-like object with TypeError",
+            "status": "passed",
+            "durationMs": 0.031792,
+            "line": 51,
+            "column": 3,
+            "id": "8ec3fc7c9ff77aa8d3296f754bceb6d4bcbb35e1743d4625304223b6d877099f"
+          },
+          {
+            "file": "test/unique.test.js",
+            "name": "rejects populated array-like object with TypeError",
+            "status": "passed",
+            "durationMs": 0.030125,
+            "line": 51,
+            "column": 3,
+            "id": "b7d36e190f2a58ba2f3b304ec0f0924b489db4be1c0ca2d727ff8a32e0a39671"
+          },
+          {
+            "file": "test/unique.test.js",
+            "name": "rejects populated array-like object with TypeError",
+            "status": "passed",
+            "durationMs": 0.02725,
+            "line": 51,
+            "column": 3,
+            "id": "b17c580ccc05bacedb6f8fb8ad88039970ada34a6549bf032017b4026f87df71"
+          }
+        ],
+        "collectionFiles": [
+          "test/unique.test.js"
+        ],
+        "requestedFiles": [
+          "test/unique.test.js"
+        ],
+        "executedFiles": [
+          "test/unique.test.js"
+        ],
+        "missingFiles": [],
+        "unknownFiles": [],
+        "dependencyFiles": [],
+        "complete": true,
+        "command": [
+          "<node>",
+          "--test",
+          "--test-reporter=<repository>src/reporters/node.js",
+          "--test-reporter-destination=<tmp>/tddswarm-report-EwUGX0/results.json",
+          "./test/unique.test.js"
+        ],
+        "stdout": "",
+        "stderr": "",
+        "signal": null,
+        "reportErrors": [],
+        "discovery": {
+          "files": [
+            "test/unique.test.js"
+          ],
+          "complete": true,
+          "adapter": "node",
+          "warnings": []
+        }
+      }
+    },
+    {
+      "id": "order-reversal",
+      "detected": true,
+      "result": {
+        "adapter": "node",
+        "exitCode": 1,
+        "durationMs": 129,
+        "tests": [
+          {
+            "file": "test/unique.test.js",
+            "name": "already-distinct mixed values (frozen input)",
+            "status": "failed",
+            "durationMs": 1.583833,
+            "line": 21,
+            "column": 5,
+            "id": "5103edf8f7dc95c9aa0d7ad2931db49f95fd2e54263073ed8bf85d546b6ef752"
+          },
+          {
+            "file": "test/unique.test.js",
+            "name": "already-distinct mixed values (frozen input)",
+            "status": "failed",
+            "durationMs": 0.321917,
+            "line": 21,
+            "column": 5,
+            "id": "9073115483cb5f7b98072c09ca7c4af0f5380680d5760e2bb7f1aa5611ddc5ff"
+          },
+          {
+            "file": "test/unique.test.js",
+            "name": "already-distinct mixed values (frozen input)",
+            "status": "failed",
+            "durationMs": 0.148125,
+            "line": 21,
+            "column": 5,
+            "id": "8b462597e73ae788e293af4d02ec35af1e7488dbc99648647119c63e45edfd1f"
+          },
+          {
+            "file": "test/unique.test.js",
+            "name": "already-distinct mixed values (frozen input)",
+            "status": "failed",
+            "durationMs": 0.155209,
+            "line": 21,
+            "column": 5,
+            "id": "3f80fc50c6e6258721230154b45500b8ceae3153c6e816d536adb475951e4cf0"
+          },
+          {
+            "file": "test/unique.test.js",
+            "name": "already-distinct mixed values (frozen input)",
+            "status": "failed",
+            "durationMs": 0.328917,
+            "line": 21,
+            "column": 5,
+            "id": "5a1e3bb1ef641cc0d460cc71076ae3fc1cd9319c3c1ae2a261522d89c4fcdea8"
+          },
+          {
+            "file": "test/unique.test.js",
+            "name": "already-distinct mixed values (frozen input)",
+            "status": "failed",
+            "durationMs": 0.086292,
+            "line": 21,
+            "column": 5,
+            "id": "ddeb8b22a4fd7e0c190733ee9f60c804a05675922ffa10725fe2749d8b8bc854"
+          },
+          {
+            "file": "test/unique.test.js",
+            "name": "already-distinct mixed values (frozen input)",
+            "status": "passed",
+            "durationMs": 0.125667,
+            "line": 21,
+            "column": 5,
+            "id": "161b784693146e07f095f4591d29bb0ff350b045400eca82a0f879885d604cdc"
+          },
+          {
+            "file": "test/unique.test.js",
+            "name": "already-distinct mixed values (frozen input)",
+            "status": "passed",
+            "durationMs": 0.0915,
+            "line": 21,
+            "column": 5,
+            "id": "5952474623327150e5c94b1c02c11ed3b441fe1aed9ed2a9c64a87c4deab9b3d"
+          },
+          {
+            "file": "test/unique.test.js",
+            "name": "already-distinct mixed values (frozen input)",
+            "status": "passed",
+            "durationMs": 0.314667,
+            "line": 21,
+            "column": 5,
+            "id": "582eed7615da1d0bba7a6e767b9d1f8d71db3dee3928d2440df84f10dd12707c"
+          },
+          {
+            "file": "test/unique.test.js",
+            "name": "already-distinct mixed values (frozen input)",
+            "status": "passed",
+            "durationMs": 0.325792,
+            "line": 21,
+            "column": 5,
+            "id": "5e5fb2af6f3f8c3a5b617974447b6054c73faf79001825d3143e6d1d6e5443b9"
+          },
+          {
+            "file": "test/unique.test.js",
+            "name": "already-distinct mixed values (frozen input)",
+            "status": "passed",
+            "durationMs": 0.107,
+            "line": 21,
+            "column": 5,
+            "id": "9e2c768dac293e9fe562a581ebd27c07167d8d41fbaaa4de02b1901e99a6c9ea"
+          },
+          {
+            "file": "test/unique.test.js",
+            "name": "already-distinct mixed values (frozen input)",
+            "status": "passed",
+            "durationMs": 0.076334,
+            "line": 21,
+            "column": 5,
+            "id": "83cc3dcbb0c4d4f969b44ab59af2cf7fae8945267643a1bebbcb8b8d0a1dc646"
+          },
+          {
+            "file": "test/unique.test.js",
+            "name": "already-distinct mixed values (frozen input)",
+            "status": "passed",
+            "durationMs": 0.05125,
+            "line": 21,
+            "column": 5,
+            "id": "43e56419cb198bfe9643b8f4ac68e6e01d89fd50be1a3249e146374b509e93e1"
+          },
+          {
+            "file": "test/unique.test.js",
+            "name": "already-distinct mixed values (frozen input)",
+            "status": "passed",
+            "durationMs": 0.035584,
+            "line": 21,
+            "column": 5,
+            "id": "0be89ef98ea6e870e34397198e9627d7b35c6bdb328b9ef187710e7892a4115e"
+          },
+          {
+            "file": "test/unique.test.js",
+            "name": "already-distinct mixed values (frozen input)",
+            "status": "passed",
+            "durationMs": 0.092791,
+            "line": 21,
+            "column": 5,
+            "id": "c67d067c01073e016cf22971206c8723bf91208f8fbba0b60013790b84dfb99e"
+          },
+          {
+            "file": "test/unique.test.js",
+            "name": "already-distinct mixed values (frozen input)",
+            "status": "passed",
+            "durationMs": 0.035291,
+            "line": 21,
+            "column": 5,
+            "id": "c175043475995e9ce7947f90a4ca3b4bd716e21eb842eaf1f2e7a0995f226519"
+          },
+          {
+            "file": "test/unique.test.js",
+            "name": "already-distinct mixed values (frozen input)",
+            "status": "failed",
+            "durationMs": 0.197875,
+            "line": 21,
+            "column": 5,
+            "id": "b2197311e53afc0ad80ebd7fdeabc471a992597c4f0b1960090c0836c23fdd6d"
+          },
+          {
+            "file": "test/unique.test.js",
+            "name": "already-distinct mixed values (frozen input)",
+            "status": "failed",
+            "durationMs": 0.091667,
+            "line": 21,
+            "column": 5,
+            "id": "ccb88a456cb29ba9c130cf9be64328ccb93bf423401d1c68de4bfbe18387d201"
+          },
+          {
+            "file": "test/unique.test.js",
+            "name": "already-distinct mixed values (frozen input)",
+            "status": "failed",
+            "durationMs": 0.273,
+            "line": 21,
+            "column": 5,
+            "id": "9755088f6f4cd97b04d19366415736ffed1cc16703ef4b6ab88c4fa853d39b8d"
+          },
+          {
+            "file": "test/unique.test.js",
+            "name": "already-distinct mixed values (frozen input)",
+            "status": "failed",
+            "durationMs": 0.087792,
+            "line": 21,
+            "column": 5,
+            "id": "1b07048833be95b9b8508136c66f08e4abe9d6b0b473e9571a418e03d2d05352"
+          },
+          {
+            "file": "test/unique.test.js",
+            "name": "already-distinct mixed values (frozen input)",
+            "status": "failed",
+            "durationMs": 0.067834,
+            "line": 21,
+            "column": 5,
+            "id": "8c5fd9a58d47a075bd88f5b14f53f48f3a2458861c06b9735f01a42943b8fc1f"
+          },
+          {
+            "file": "test/unique.test.js",
+            "name": "already-distinct mixed values (frozen input)",
+            "status": "failed",
+            "durationMs": 0.062,
+            "line": 21,
+            "column": 5,
+            "id": "256b5147da75a2731b73edcead97d79678f57a461f6e53d5a975b5700d067402"
+          },
+          {
+            "file": "test/unique.test.js",
+            "name": "rejects populated array-like object with TypeError",
+            "status": "passed",
+            "durationMs": 0.213541,
+            "line": 51,
+            "column": 3,
+            "id": "9c65a9e970b528a0b6914a8a4ef6baf3271cc13e79f4050b5b1c308b1fc326f0"
+          },
+          {
+            "file": "test/unique.test.js",
+            "name": "rejects populated array-like object with TypeError",
+            "status": "passed",
+            "durationMs": 0.03075,
+            "line": 51,
+            "column": 3,
+            "id": "18e85efa930504bf3f9075c02e386c6a12e6f0db7e233e5d608085610a2b3dc0"
+          },
+          {
+            "file": "test/unique.test.js",
+            "name": "rejects populated array-like object with TypeError",
+            "status": "passed",
+            "durationMs": 0.028708,
+            "line": 51,
+            "column": 3,
+            "id": "07b72c36e1c484bb80e48fdf4774c546ef3ae140d5da01e7b0ed6a10de4c56e3"
+          },
+          {
+            "file": "test/unique.test.js",
+            "name": "rejects populated array-like object with TypeError",
+            "status": "passed",
+            "durationMs": 0.028292,
+            "line": 51,
+            "column": 3,
+            "id": "ace8f25ebc2a695a87d0391fa200f0b044ca889a1a91b639c3067389723c46b3"
+          },
+          {
+            "file": "test/unique.test.js",
+            "name": "rejects populated array-like object with TypeError",
+            "status": "passed",
+            "durationMs": 0.027458,
+            "line": 51,
+            "column": 3,
+            "id": "5e8cc38c10ced35ab4c3de5d5794dde9ff7beea9e518d32f9d2b5737eb65fdb2"
+          },
+          {
+            "file": "test/unique.test.js",
+            "name": "rejects populated array-like object with TypeError",
+            "status": "passed",
+            "durationMs": 0.026709,
+            "line": 51,
+            "column": 3,
+            "id": "1bea11bb7e68fe73eb577a9d388b3914d344138b7baf958cbb95f53383f51c90"
+          },
+          {
+            "file": "test/unique.test.js",
+            "name": "rejects populated array-like object with TypeError",
+            "status": "passed",
+            "durationMs": 0.026959,
+            "line": 51,
+            "column": 3,
+            "id": "cffeedd06ff0d3834bd8a92a6f0d25bafcfa4a8dfdacb69da8c7ce9325ccde31"
+          },
+          {
+            "file": "test/unique.test.js",
+            "name": "rejects populated array-like object with TypeError",
+            "status": "passed",
+            "durationMs": 0.0995,
+            "line": 51,
+            "column": 3,
+            "id": "ff481801057fa5c59b10507f54faa4e904beb0b96cf17aa19e0b4c4ceb0b7b17"
+          },
+          {
+            "file": "test/unique.test.js",
+            "name": "rejects populated array-like object with TypeError",
+            "status": "passed",
+            "durationMs": 0.030875,
+            "line": 51,
+            "column": 3,
+            "id": "8ec3fc7c9ff77aa8d3296f754bceb6d4bcbb35e1743d4625304223b6d877099f"
+          },
+          {
+            "file": "test/unique.test.js",
+            "name": "rejects populated array-like object with TypeError",
+            "status": "passed",
+            "durationMs": 0.029583,
+            "line": 51,
+            "column": 3,
+            "id": "b7d36e190f2a58ba2f3b304ec0f0924b489db4be1c0ca2d727ff8a32e0a39671"
+          },
+          {
+            "file": "test/unique.test.js",
+            "name": "rejects populated array-like object with TypeError",
+            "status": "passed",
+            "durationMs": 0.0275,
+            "line": 51,
+            "column": 3,
+            "id": "b17c580ccc05bacedb6f8fb8ad88039970ada34a6549bf032017b4026f87df71"
+          }
+        ],
+        "collectionFiles": [
+          "test/unique.test.js"
+        ],
+        "requestedFiles": [
+          "test/unique.test.js"
+        ],
+        "executedFiles": [
+          "test/unique.test.js"
+        ],
+        "missingFiles": [],
+        "unknownFiles": [],
+        "dependencyFiles": [],
+        "complete": true,
+        "command": [
+          "<node>",
+          "--test",
+          "--test-reporter=<repository>src/reporters/node.js",
+          "--test-reporter-destination=<tmp>/tddswarm-report-GXBBMJ/results.json",
+          "./test/unique.test.js"
+        ],
+        "stdout": "",
+        "stderr": "",
+        "signal": null,
+        "reportErrors": [],
+        "discovery": {
+          "files": [
+            "test/unique.test.js"
+          ],
+          "complete": true,
+          "adapter": "node",
+          "warnings": []
+        }
+      }
+    }
+  ],
+  "validation": {
+    "schemaVersion": 1,
+    "id": "6b694539-c59f-44ee-b5de-9f7f681cb371",
+    "validatedAt": "2026-09-30T07:09:55.747Z",
+    "manifestHash": "cc5be456f0394cb899ddf2eefcd04c2b33f8dda5a687d5c745eb778b699031ab",
+    "provenance": {
+      "schemaVersion": 1,
+      "revision": null,
+      "runner": "95d1d6e989702d88178820c89fe25cfa1231ecebbd0f29d4f07fc4bd27e91a86",
+      "environment": {
+        "node": "v22.19.0",
+        "platform": "darwin",
+        "arch": "arm64",
+        "labels": {}
+      },
+      "services": {},
+      "serviceWarnings": [],
+      "files": {
+        "package.json": "6dc1b06d6b093e9cccb20bee06a93836eee0420ae26803ca2ce4065d82f070d1",
+        "src/unique.js": "9dd071445a2802b8952269da09993fc5176b62852e4710bc68114ebd397f3d25",
+        "tddswarm.config.json": "3fd6ba06c0bd7022b0e49fcf19b5174c7f86d0ab533029aa3f6815909c3e9e43"
+      },
+      "fingerprint": "306244b20ce5eb0a4a042c13946578cded9a9ed64c12823b7f55919bd48950a4"
+    },
+    "accepted": true,
+    "reasons": [],
+    "original": {
+      "discovery": {
+        "files": [],
+        "complete": true,
+        "adapter": "node",
+        "warnings": []
+      },
+      "exitCode": 0,
+      "complete": true,
+      "tests": [],
+      "collectionFiles": [],
+      "executedFiles": []
+    },
+    "candidate": {
+      "adapter": "node",
+      "exitCode": 0,
+      "durationMs": 122,
+      "tests": [
+        {
+          "file": "test/unique.test.js",
+          "name": "already-distinct mixed values (frozen input)",
+          "status": "passed",
+          "durationMs": 0.936833,
+          "line": 21,
+          "column": 5,
+          "id": "5103edf8f7dc95c9aa0d7ad2931db49f95fd2e54263073ed8bf85d546b6ef752"
+        },
+        {
+          "file": "test/unique.test.js",
+          "name": "already-distinct mixed values (frozen input)",
+          "status": "passed",
+          "durationMs": 0.17975,
+          "line": 21,
+          "column": 5,
+          "id": "9073115483cb5f7b98072c09ca7c4af0f5380680d5760e2bb7f1aa5611ddc5ff"
+        },
+        {
+          "file": "test/unique.test.js",
+          "name": "already-distinct mixed values (frozen input)",
+          "status": "passed",
+          "durationMs": 0.057291,
+          "line": 21,
+          "column": 5,
+          "id": "8b462597e73ae788e293af4d02ec35af1e7488dbc99648647119c63e45edfd1f"
+        },
+        {
+          "file": "test/unique.test.js",
+          "name": "already-distinct mixed values (frozen input)",
+          "status": "passed",
+          "durationMs": 0.050333,
+          "line": 21,
+          "column": 5,
+          "id": "3f80fc50c6e6258721230154b45500b8ceae3153c6e816d536adb475951e4cf0"
+        },
+        {
+          "file": "test/unique.test.js",
+          "name": "already-distinct mixed values (frozen input)",
+          "status": "passed",
+          "durationMs": 0.146417,
+          "line": 21,
+          "column": 5,
+          "id": "5a1e3bb1ef641cc0d460cc71076ae3fc1cd9319c3c1ae2a261522d89c4fcdea8"
+        },
+        {
+          "file": "test/unique.test.js",
+          "name": "already-distinct mixed values (frozen input)",
+          "status": "passed",
+          "durationMs": 0.045,
+          "line": 21,
+          "column": 5,
+          "id": "ddeb8b22a4fd7e0c190733ee9f60c804a05675922ffa10725fe2749d8b8bc854"
+        },
+        {
+          "file": "test/unique.test.js",
+          "name": "already-distinct mixed values (frozen input)",
+          "status": "passed",
+          "durationMs": 0.09275,
+          "line": 21,
+          "column": 5,
+          "id": "161b784693146e07f095f4591d29bb0ff350b045400eca82a0f879885d604cdc"
+        },
+        {
+          "file": "test/unique.test.js",
+          "name": "already-distinct mixed values (frozen input)",
+          "status": "passed",
+          "durationMs": 0.041,
+          "line": 21,
+          "column": 5,
+          "id": "5952474623327150e5c94b1c02c11ed3b441fe1aed9ed2a9c64a87c4deab9b3d"
+        },
+        {
+          "file": "test/unique.test.js",
+          "name": "already-distinct mixed values (frozen input)",
+          "status": "passed",
+          "durationMs": 0.332083,
+          "line": 21,
+          "column": 5,
+          "id": "582eed7615da1d0bba7a6e767b9d1f8d71db3dee3928d2440df84f10dd12707c"
+        },
+        {
+          "file": "test/unique.test.js",
+          "name": "already-distinct mixed values (frozen input)",
+          "status": "passed",
+          "durationMs": 0.352125,
+          "line": 21,
+          "column": 5,
+          "id": "5e5fb2af6f3f8c3a5b617974447b6054c73faf79001825d3143e6d1d6e5443b9"
+        },
+        {
+          "file": "test/unique.test.js",
+          "name": "already-distinct mixed values (frozen input)",
+          "status": "passed",
+          "durationMs": 0.099333,
+          "line": 21,
+          "column": 5,
+          "id": "9e2c768dac293e9fe562a581ebd27c07167d8d41fbaaa4de02b1901e99a6c9ea"
+        },
+        {
+          "file": "test/unique.test.js",
+          "name": "already-distinct mixed values (frozen input)",
+          "status": "passed",
+          "durationMs": 0.038792,
+          "line": 21,
+          "column": 5,
+          "id": "83cc3dcbb0c4d4f969b44ab59af2cf7fae8945267643a1bebbcb8b8d0a1dc646"
+        },
+        {
+          "file": "test/unique.test.js",
+          "name": "already-distinct mixed values (frozen input)",
+          "status": "passed",
+          "durationMs": 0.030625,
+          "line": 21,
+          "column": 5,
+          "id": "43e56419cb198bfe9643b8f4ac68e6e01d89fd50be1a3249e146374b509e93e1"
+        },
+        {
+          "file": "test/unique.test.js",
+          "name": "already-distinct mixed values (frozen input)",
+          "status": "passed",
+          "durationMs": 0.025375,
+          "line": 21,
+          "column": 5,
+          "id": "0be89ef98ea6e870e34397198e9627d7b35c6bdb328b9ef187710e7892a4115e"
+        },
+        {
+          "file": "test/unique.test.js",
+          "name": "already-distinct mixed values (frozen input)",
+          "status": "passed",
+          "durationMs": 0.030542,
+          "line": 21,
+          "column": 5,
+          "id": "c67d067c01073e016cf22971206c8723bf91208f8fbba0b60013790b84dfb99e"
+        },
+        {
+          "file": "test/unique.test.js",
+          "name": "already-distinct mixed values (frozen input)",
+          "status": "passed",
+          "durationMs": 0.024625,
+          "line": 21,
+          "column": 5,
+          "id": "c175043475995e9ce7947f90a4ca3b4bd716e21eb842eaf1f2e7a0995f226519"
+        },
+        {
+          "file": "test/unique.test.js",
+          "name": "already-distinct mixed values (frozen input)",
+          "status": "passed",
+          "durationMs": 0.031958,
+          "line": 21,
+          "column": 5,
+          "id": "b2197311e53afc0ad80ebd7fdeabc471a992597c4f0b1960090c0836c23fdd6d"
+        },
+        {
+          "file": "test/unique.test.js",
+          "name": "already-distinct mixed values (frozen input)",
+          "status": "passed",
+          "durationMs": 0.024875,
+          "line": 21,
+          "column": 5,
+          "id": "ccb88a456cb29ba9c130cf9be64328ccb93bf423401d1c68de4bfbe18387d201"
+        },
+        {
+          "file": "test/unique.test.js",
+          "name": "already-distinct mixed values (frozen input)",
+          "status": "passed",
+          "durationMs": 0.024041,
+          "line": 21,
+          "column": 5,
+          "id": "9755088f6f4cd97b04d19366415736ffed1cc16703ef4b6ab88c4fa853d39b8d"
+        },
+        {
+          "file": "test/unique.test.js",
+          "name": "already-distinct mixed values (frozen input)",
+          "status": "passed",
+          "durationMs": 0.023542,
+          "line": 21,
+          "column": 5,
+          "id": "1b07048833be95b9b8508136c66f08e4abe9d6b0b473e9571a418e03d2d05352"
+        },
+        {
+          "file": "test/unique.test.js",
+          "name": "already-distinct mixed values (frozen input)",
+          "status": "passed",
+          "durationMs": 0.114667,
+          "line": 21,
+          "column": 5,
+          "id": "8c5fd9a58d47a075bd88f5b14f53f48f3a2458861c06b9735f01a42943b8fc1f"
+        },
+        {
+          "file": "test/unique.test.js",
+          "name": "already-distinct mixed values (frozen input)",
+          "status": "passed",
+          "durationMs": 0.027708,
+          "line": 21,
+          "column": 5,
+          "id": "256b5147da75a2731b73edcead97d79678f57a461f6e53d5a975b5700d067402"
+        },
+        {
+          "file": "test/unique.test.js",
+          "name": "rejects populated array-like object with TypeError",
+          "status": "passed",
+          "durationMs": 0.175208,
+          "line": 51,
+          "column": 3,
+          "id": "9c65a9e970b528a0b6914a8a4ef6baf3271cc13e79f4050b5b1c308b1fc326f0"
+        },
+        {
+          "file": "test/unique.test.js",
+          "name": "rejects populated array-like object with TypeError",
+          "status": "passed",
+          "durationMs": 0.029708,
+          "line": 51,
+          "column": 3,
+          "id": "18e85efa930504bf3f9075c02e386c6a12e6f0db7e233e5d608085610a2b3dc0"
+        },
+        {
+          "file": "test/unique.test.js",
+          "name": "rejects populated array-like object with TypeError",
+          "status": "passed",
+          "durationMs": 0.028,
+          "line": 51,
+          "column": 3,
+          "id": "07b72c36e1c484bb80e48fdf4774c546ef3ae140d5da01e7b0ed6a10de4c56e3"
+        },
+        {
+          "file": "test/unique.test.js",
+          "name": "rejects populated array-like object with TypeError",
+          "status": "passed",
+          "durationMs": 0.026917,
+          "line": 51,
+          "column": 3,
+          "id": "ace8f25ebc2a695a87d0391fa200f0b044ca889a1a91b639c3067389723c46b3"
+        },
+        {
+          "file": "test/unique.test.js",
+          "name": "rejects populated array-like object with TypeError",
+          "status": "passed",
+          "durationMs": 0.026875,
+          "line": 51,
+          "column": 3,
+          "id": "5e8cc38c10ced35ab4c3de5d5794dde9ff7beea9e518d32f9d2b5737eb65fdb2"
+        },
+        {
+          "file": "test/unique.test.js",
+          "name": "rejects populated array-like object with TypeError",
+          "status": "passed",
+          "durationMs": 0.027125,
+          "line": 51,
+          "column": 3,
+          "id": "1bea11bb7e68fe73eb577a9d388b3914d344138b7baf958cbb95f53383f51c90"
+        },
+        {
+          "file": "test/unique.test.js",
+          "name": "rejects populated array-like object with TypeError",
+          "status": "passed",
+          "durationMs": 0.026666,
+          "line": 51,
+          "column": 3,
+          "id": "cffeedd06ff0d3834bd8a92a6f0d25bafcfa4a8dfdacb69da8c7ce9325ccde31"
+        },
+        {
+          "file": "test/unique.test.js",
+          "name": "rejects populated array-like object with TypeError",
+          "status": "passed",
+          "durationMs": 0.027292,
+          "line": 51,
+          "column": 3,
+          "id": "ff481801057fa5c59b10507f54faa4e904beb0b96cf17aa19e0b4c4ceb0b7b17"
+        },
+        {
+          "file": "test/unique.test.js",
+          "name": "rejects populated array-like object with TypeError",
+          "status": "passed",
+          "durationMs": 0.087791,
+          "line": 51,
+          "column": 3,
+          "id": "8ec3fc7c9ff77aa8d3296f754bceb6d4bcbb35e1743d4625304223b6d877099f"
+        },
+        {
+          "file": "test/unique.test.js",
+          "name": "rejects populated array-like object with TypeError",
+          "status": "passed",
+          "durationMs": 0.030084,
+          "line": 51,
+          "column": 3,
+          "id": "b7d36e190f2a58ba2f3b304ec0f0924b489db4be1c0ca2d727ff8a32e0a39671"
+        },
+        {
+          "file": "test/unique.test.js",
+          "name": "rejects populated array-like object with TypeError",
+          "status": "passed",
+          "durationMs": 0.028042,
+          "line": 51,
+          "column": 3,
+          "id": "b17c580ccc05bacedb6f8fb8ad88039970ada34a6549bf032017b4026f87df71"
+        }
+      ],
+      "collectionFiles": [
+        "test/unique.test.js"
+      ],
+      "requestedFiles": [
+        "test/unique.test.js"
+      ],
+      "executedFiles": [
+        "test/unique.test.js"
+      ],
+      "missingFiles": [],
+      "unknownFiles": [],
+      "dependencyFiles": [],
+      "complete": true,
+      "command": [
+        "<node>",
+        "--test",
+        "--test-reporter=<repository>src/reporters/node.js",
+        "--test-reporter-destination=<tmp>/tddswarm-report-JUFzGG/results.json",
+        "./test/unique.test.js"
+      ],
+      "stdout": "",
+      "stderr": "",
+      "signal": null,
+      "reportErrors": [],
+      "discovery": {
+        "files": [
+          "test/unique.test.js"
+        ],
+        "complete": true,
+        "adapter": "node",
+        "warnings": []
+      }
+    },
+    "missingCases": [],
+    "defects": [],
+    "measured": {
+      "execution": true,
+      "heldOutDefects": 0
+    },
+    "isolation": "disposable-file-copy-with-trusted-dependencies",
+    "applied": false,
+    "integrity": "6d82deb766a7fcdee5e0b21abfd153fbe4560955088650ceb3889cbf254a9a7d"
+  },
+  "baseline": {
+    "adapter": "node",
+    "exitCode": 0,
+    "durationMs": 116,
+    "tests": [
+      {
+        "file": "test/unique.test.js",
+        "name": "already-distinct mixed values (frozen input)",
+        "status": "passed",
+        "durationMs": 0.950291,
+        "line": 21,
+        "column": 5,
+        "id": "5103edf8f7dc95c9aa0d7ad2931db49f95fd2e54263073ed8bf85d546b6ef752"
+      },
+      {
+        "file": "test/unique.test.js",
+        "name": "already-distinct mixed values (frozen input)",
+        "status": "passed",
+        "durationMs": 0.194834,
+        "line": 21,
+        "column": 5,
+        "id": "9073115483cb5f7b98072c09ca7c4af0f5380680d5760e2bb7f1aa5611ddc5ff"
+      },
+      {
+        "file": "test/unique.test.js",
+        "name": "already-distinct mixed values (frozen input)",
+        "status": "passed",
+        "durationMs": 0.055375,
+        "line": 21,
+        "column": 5,
+        "id": "8b462597e73ae788e293af4d02ec35af1e7488dbc99648647119c63e45edfd1f"
+      },
+      {
+        "file": "test/unique.test.js",
+        "name": "already-distinct mixed values (frozen input)",
+        "status": "passed",
+        "durationMs": 0.050042,
+        "line": 21,
+        "column": 5,
+        "id": "3f80fc50c6e6258721230154b45500b8ceae3153c6e816d536adb475951e4cf0"
+      },
+      {
+        "file": "test/unique.test.js",
+        "name": "already-distinct mixed values (frozen input)",
+        "status": "passed",
+        "durationMs": 0.123417,
+        "line": 21,
+        "column": 5,
+        "id": "5a1e3bb1ef641cc0d460cc71076ae3fc1cd9319c3c1ae2a261522d89c4fcdea8"
+      },
+      {
+        "file": "test/unique.test.js",
+        "name": "already-distinct mixed values (frozen input)",
+        "status": "passed",
+        "durationMs": 0.054875,
+        "line": 21,
+        "column": 5,
+        "id": "ddeb8b22a4fd7e0c190733ee9f60c804a05675922ffa10725fe2749d8b8bc854"
+      },
+      {
+        "file": "test/unique.test.js",
+        "name": "already-distinct mixed values (frozen input)",
+        "status": "passed",
+        "durationMs": 0.097042,
+        "line": 21,
+        "column": 5,
+        "id": "161b784693146e07f095f4591d29bb0ff350b045400eca82a0f879885d604cdc"
+      },
+      {
+        "file": "test/unique.test.js",
+        "name": "already-distinct mixed values (frozen input)",
+        "status": "passed",
+        "durationMs": 0.040792,
+        "line": 21,
+        "column": 5,
+        "id": "5952474623327150e5c94b1c02c11ed3b441fe1aed9ed2a9c64a87c4deab9b3d"
+      },
+      {
+        "file": "test/unique.test.js",
+        "name": "already-distinct mixed values (frozen input)",
+        "status": "passed",
+        "durationMs": 0.332916,
+        "line": 21,
+        "column": 5,
+        "id": "582eed7615da1d0bba7a6e767b9d1f8d71db3dee3928d2440df84f10dd12707c"
+      },
+      {
+        "file": "test/unique.test.js",
+        "name": "already-distinct mixed values (frozen input)",
+        "status": "passed",
+        "durationMs": 0.336834,
+        "line": 21,
+        "column": 5,
+        "id": "5e5fb2af6f3f8c3a5b617974447b6054c73faf79001825d3143e6d1d6e5443b9"
+      },
+      {
+        "file": "test/unique.test.js",
+        "name": "already-distinct mixed values (frozen input)",
+        "status": "passed",
+        "durationMs": 0.09975,
+        "line": 21,
+        "column": 5,
+        "id": "9e2c768dac293e9fe562a581ebd27c07167d8d41fbaaa4de02b1901e99a6c9ea"
+      },
+      {
+        "file": "test/unique.test.js",
+        "name": "already-distinct mixed values (frozen input)",
+        "status": "passed",
+        "durationMs": 0.037792,
+        "line": 21,
+        "column": 5,
+        "id": "83cc3dcbb0c4d4f969b44ab59af2cf7fae8945267643a1bebbcb8b8d0a1dc646"
+      },
+      {
+        "file": "test/unique.test.js",
+        "name": "already-distinct mixed values (frozen input)",
+        "status": "passed",
+        "durationMs": 0.03075,
+        "line": 21,
+        "column": 5,
+        "id": "43e56419cb198bfe9643b8f4ac68e6e01d89fd50be1a3249e146374b509e93e1"
+      },
+      {
+        "file": "test/unique.test.js",
+        "name": "already-distinct mixed values (frozen input)",
+        "status": "passed",
+        "durationMs": 0.416167,
+        "line": 21,
+        "column": 5,
+        "id": "0be89ef98ea6e870e34397198e9627d7b35c6bdb328b9ef187710e7892a4115e"
+      },
+      {
+        "file": "test/unique.test.js",
+        "name": "already-distinct mixed values (frozen input)",
+        "status": "passed",
+        "durationMs": 0.027333,
+        "line": 21,
+        "column": 5,
+        "id": "c67d067c01073e016cf22971206c8723bf91208f8fbba0b60013790b84dfb99e"
+      },
+      {
+        "file": "test/unique.test.js",
+        "name": "already-distinct mixed values (frozen input)",
+        "status": "passed",
+        "durationMs": 0.023958,
+        "line": 21,
+        "column": 5,
+        "id": "c175043475995e9ce7947f90a4ca3b4bd716e21eb842eaf1f2e7a0995f226519"
+      },
+      {
+        "file": "test/unique.test.js",
+        "name": "already-distinct mixed values (frozen input)",
+        "status": "passed",
+        "durationMs": 0.031542,
+        "line": 21,
+        "column": 5,
+        "id": "b2197311e53afc0ad80ebd7fdeabc471a992597c4f0b1960090c0836c23fdd6d"
+      },
+      {
+        "file": "test/unique.test.js",
+        "name": "already-distinct mixed values (frozen input)",
+        "status": "passed",
+        "durationMs": 0.025208,
+        "line": 21,
+        "column": 5,
+        "id": "ccb88a456cb29ba9c130cf9be64328ccb93bf423401d1c68de4bfbe18387d201"
+      },
+      {
+        "file": "test/unique.test.js",
+        "name": "already-distinct mixed values (frozen input)",
+        "status": "passed",
+        "durationMs": 0.023334,
+        "line": 21,
+        "column": 5,
+        "id": "9755088f6f4cd97b04d19366415736ffed1cc16703ef4b6ab88c4fa853d39b8d"
+      },
+      {
+        "file": "test/unique.test.js",
+        "name": "already-distinct mixed values (frozen input)",
+        "status": "passed",
+        "durationMs": 0.0235,
+        "line": 21,
+        "column": 5,
+        "id": "1b07048833be95b9b8508136c66f08e4abe9d6b0b473e9571a418e03d2d05352"
+      },
+      {
+        "file": "test/unique.test.js",
+        "name": "already-distinct mixed values (frozen input)",
+        "status": "passed",
+        "durationMs": 0.117916,
+        "line": 21,
+        "column": 5,
+        "id": "8c5fd9a58d47a075bd88f5b14f53f48f3a2458861c06b9735f01a42943b8fc1f"
+      },
+      {
+        "file": "test/unique.test.js",
+        "name": "already-distinct mixed values (frozen input)",
+        "status": "passed",
+        "durationMs": 0.027875,
+        "line": 21,
+        "column": 5,
+        "id": "256b5147da75a2731b73edcead97d79678f57a461f6e53d5a975b5700d067402"
+      },
+      {
+        "file": "test/unique.test.js",
+        "name": "rejects populated array-like object with TypeError",
+        "status": "passed",
+        "durationMs": 0.173334,
+        "line": 51,
+        "column": 3,
+        "id": "9c65a9e970b528a0b6914a8a4ef6baf3271cc13e79f4050b5b1c308b1fc326f0"
+      },
+      {
+        "file": "test/unique.test.js",
+        "name": "rejects populated array-like object with TypeError",
+        "status": "passed",
+        "durationMs": 0.029375,
+        "line": 51,
+        "column": 3,
+        "id": "18e85efa930504bf3f9075c02e386c6a12e6f0db7e233e5d608085610a2b3dc0"
+      },
+      {
+        "file": "test/unique.test.js",
+        "name": "rejects populated array-like object with TypeError",
+        "status": "passed",
+        "durationMs": 0.027375,
+        "line": 51,
+        "column": 3,
+        "id": "07b72c36e1c484bb80e48fdf4774c546ef3ae140d5da01e7b0ed6a10de4c56e3"
+      },
+      {
+        "file": "test/unique.test.js",
+        "name": "rejects populated array-like object with TypeError",
+        "status": "passed",
+        "durationMs": 0.026791,
+        "line": 51,
+        "column": 3,
+        "id": "ace8f25ebc2a695a87d0391fa200f0b044ca889a1a91b639c3067389723c46b3"
+      },
+      {
+        "file": "test/unique.test.js",
+        "name": "rejects populated array-like object with TypeError",
+        "status": "passed",
+        "durationMs": 0.0265,
+        "line": 51,
+        "column": 3,
+        "id": "5e8cc38c10ced35ab4c3de5d5794dde9ff7beea9e518d32f9d2b5737eb65fdb2"
+      },
+      {
+        "file": "test/unique.test.js",
+        "name": "rejects populated array-like object with TypeError",
+        "status": "passed",
+        "durationMs": 0.026791,
+        "line": 51,
+        "column": 3,
+        "id": "1bea11bb7e68fe73eb577a9d388b3914d344138b7baf958cbb95f53383f51c90"
+      },
+      {
+        "file": "test/unique.test.js",
+        "name": "rejects populated array-like object with TypeError",
+        "status": "passed",
+        "durationMs": 0.0265,
+        "line": 51,
+        "column": 3,
+        "id": "cffeedd06ff0d3834bd8a92a6f0d25bafcfa4a8dfdacb69da8c7ce9325ccde31"
+      },
+      {
+        "file": "test/unique.test.js",
+        "name": "rejects populated array-like object with TypeError",
+        "status": "passed",
+        "durationMs": 0.027458,
+        "line": 51,
+        "column": 3,
+        "id": "ff481801057fa5c59b10507f54faa4e904beb0b96cf17aa19e0b4c4ceb0b7b17"
+      },
+      {
+        "file": "test/unique.test.js",
+        "name": "rejects populated array-like object with TypeError",
+        "status": "passed",
+        "durationMs": 0.089,
+        "line": 51,
+        "column": 3,
+        "id": "8ec3fc7c9ff77aa8d3296f754bceb6d4bcbb35e1743d4625304223b6d877099f"
+      },
+      {
+        "file": "test/unique.test.js",
+        "name": "rejects populated array-like object with TypeError",
+        "status": "passed",
+        "durationMs": 0.029375,
+        "line": 51,
+        "column": 3,
+        "id": "b7d36e190f2a58ba2f3b304ec0f0924b489db4be1c0ca2d727ff8a32e0a39671"
+      },
+      {
+        "file": "test/unique.test.js",
+        "name": "rejects populated array-like object with TypeError",
+        "status": "passed",
+        "durationMs": 0.026542,
+        "line": 51,
+        "column": 3,
+        "id": "b17c580ccc05bacedb6f8fb8ad88039970ada34a6549bf032017b4026f87df71"
+      }
+    ],
+    "collectionFiles": [
+      "test/unique.test.js"
+    ],
+    "requestedFiles": [
+      "test/unique.test.js"
+    ],
+    "executedFiles": [
+      "test/unique.test.js"
+    ],
+    "missingFiles": [],
+    "unknownFiles": [],
+    "dependencyFiles": [],
+    "complete": true,
+    "command": [
+      "<node>",
+      "--test",
+      "--test-reporter=<repository>src/reporters/node.js",
+      "--test-reporter-destination=<tmp>/tddswarm-report-HsSXj1/results.json",
+      "./test/unique.test.js"
+    ],
+    "stdout": "",
+    "stderr": "",
+    "signal": null,
+    "reportErrors": [],
+    "discovery": {
+      "files": [
+        "test/unique.test.js"
+      ],
+      "complete": true,
+      "adapter": "node",
+      "warnings": []
+    }
+  }
+}

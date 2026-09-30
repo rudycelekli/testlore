@@ -48,6 +48,13 @@ export function readConfig(root) {
 }
 export function validateConfig(raw) {
   const config = resolvePluginConfig(raw);
+  if(config.analysisCache!==undefined){
+    const cache=config.analysisCache;
+    if(!cache || typeof cache!=='object' || Array.isArray(cache) || Object.keys(cache).some(k=>!['enabled','maxEntries','maxBytes'].includes(k)))throw new Error('analysisCache must contain only enabled, maxEntries, maxBytes');
+    if(cache.enabled!==undefined&&typeof cache.enabled!=='boolean')throw new Error('analysisCache.enabled must be boolean');
+    if(cache.maxEntries!==undefined&&(!Number.isInteger(cache.maxEntries)||cache.maxEntries<1||cache.maxEntries>10000))throw new Error('analysisCache.maxEntries must be 1–10000');
+    if(cache.maxBytes!==undefined&&(!Number.isInteger(cache.maxBytes)||cache.maxBytes<4096||cache.maxBytes>67108864))throw new Error('analysisCache.maxBytes must be 4096–67108864');
+  }
   for (const key of ['runner', 'agent']) {
     if (config[key] && (!Array.isArray(config[key]) || !config[key].length || config[key].some(v => typeof v !== 'string' || !v))) throw new Error(`${key} must be a nonempty array of executable and arguments`);
   }

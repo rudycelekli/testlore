@@ -45,3 +45,23 @@ jobs:
           path: .tddswarm/ci-*.json
           include-hidden-files: true
           if-no-files-found: error
+  browser-quality:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-node@v7.0.0
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - run: npx --no-install playwright install --with-deps chromium
+      - run: TESTLORE_PLAYWRIGHT_BROWSER=1 node --test test/playwright-native.test.js
+      - run: node scripts/playwright-proof.js --output .tddswarm/ci-playwright.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: browser-quality-proof
+          path: .tddswarm/ci-playwright.json
+          include-hidden-files: true
+          if-no-files-found: error

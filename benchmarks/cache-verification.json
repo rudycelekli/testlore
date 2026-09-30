@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-09-30T06:35:20.469Z",
+  "kind": "controlled-static-routing-cache-measurement",
+  "runtime": "v22.19.0",
+  "typescript": "6.0.3",
+  "platform": "darwin",
+  "architecture": "arm64",
+  "fixture": {
+    "moduleCount": 120,
+    "declarationsPerModule": 400,
+    "testFiles": 120,
+    "repeats": 5,
+    "deterministic": true
+  },
+  "methodology": "Whole plan() wall time includes source scanning/hashing, metadata I/O, compiler/config loading, graph resolution and cache lock/inventory work. Alternating warm/no-cache order; no tests executed in timed runs. Native collection freshness is a separate untimed check.",
+  "timingsMs": {
+    "uncachedInitial": 370.787708,
+    "cold": 433.18791599999986,
+    "warm": [
+      185.52816699999994,
+      181.65516700000012,
+      178.17766600000004,
+      162.73774999999978,
+      165.96791600000006
+    ],
+    "noCache": [
+      268.48516599999994,
+      234.2349999999999,
+      242.34612500000003,
+      239.81012499999997,
+      236.48300000000017
+    ],
+    "warmMedian": 178.17766600000004,
+    "noCacheMedian": 239.81012499999997
+  },
+  "observedWarmToNoCacheRatio": 0.7429947588743389,
+  "warmStats": {
+    "enabled": true,
+    "engine": "95f6fef779c2e728a28c5ae9e9d6cc7933d31b2448d08bb5d174f1ef02810b86",
+    "memoryHits": 0,
+    "diskHits": 240,
+    "parses": 0,
+    "writes": 0,
+    "corruptions": 0,
+    "evictions": 0,
+    "skipped": 0,
+    "unavailable": false
+  },
+  "checks": {
+    "coldWarmDisabledRoutingEqual": true,
+    "changedSourceRerouted": true,
+    "corruptedCacheRoutingEqual": true,
+    "nativeCollectionFresh": true
+  },
+  "sourceHashes": {
+    "src/graph.js": "d721fb50901a2cba0d7d1806796f044011e52a88f3559a6d3103344323958148",
+    "src/graph-cache.js": "5a17633fa29a98ae8f09b2e6b988ac0c7b9c9958df33aba53ab3ac39d8a08f5c",
+    "scripts/cache-proof.js": "c7d720ebcb9c9a0a61691947691deff14b5a4c26c3d1aa4a7729aaa627f9c171"
+  },
+  "limitations": [
+    "Constructed parser-heavy static Node fixture; no cross-project or native framework speedup implied.",
+    "Cold persisted caching adds writes; small projects or native resolution/collection can dominate total time.",
+    "Cache is rebuildable local optimization, never execution or deployment evidence."
+  ]
+}

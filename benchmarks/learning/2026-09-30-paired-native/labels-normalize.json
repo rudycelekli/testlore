@@ -1,0 +1,206 @@
+{
+  "fixture": "normalize",
+  "base": {
+    "adapter": "node",
+    "exitCode": 0,
+    "durationMs": 103,
+    "tests": [
+      {
+        "file": "test/normalize.test.js",
+        "name": "trim lowercase internal empty type",
+        "status": "passed",
+        "durationMs": 0.500792,
+        "line": 1,
+        "column": 116,
+        "id": "0bb48038bca10960b170d90450858515963eccd89aed449214a51c7e33a5cf6c"
+      }
+    ],
+    "collectionFiles": [
+      "test/normalize.test.js"
+    ],
+    "requestedFiles": [
+      "test/normalize.test.js"
+    ],
+    "executedFiles": [
+      "test/normalize.test.js"
+    ],
+    "missingFiles": [],
+    "unknownFiles": [],
+    "dependencyFiles": [],
+    "complete": true,
+    "command": [
+      "<node>",
+      "--test",
+      "--test-reporter=<repository>src/reporters/node.js",
+      "--test-reporter-destination=<tmp>/tddswarm-report-0tEN4W/results.json",
+      "./test/normalize.test.js"
+    ],
+    "stdout": "",
+    "stderr": "",
+    "signal": null,
+    "reportErrors": [],
+    "discovery": {
+      "files": [
+        "test/normalize.test.js"
+      ],
+      "complete": true,
+      "adapter": "node",
+      "warnings": []
+    }
+  },
+  "defects": [
+    {
+      "id": "trim-omitted",
+      "result": {
+        "adapter": "node",
+        "exitCode": 1,
+        "durationMs": 100,
+        "tests": [
+          {
+            "file": "test/normalize.test.js",
+            "name": "trim lowercase internal empty type",
+            "status": "failed",
+            "durationMs": 0.813375,
+            "line": 1,
+            "column": 116,
+            "id": "0bb48038bca10960b170d90450858515963eccd89aed449214a51c7e33a5cf6c"
+          }
+        ],
+        "collectionFiles": [
+          "test/normalize.test.js"
+        ],
+        "requestedFiles": [
+          "test/normalize.test.js"
+        ],
+        "executedFiles": [
+          "test/normalize.test.js"
+        ],
+        "missingFiles": [],
+        "unknownFiles": [],
+        "dependencyFiles": [],
+        "complete": true,
+        "command": [
+          "<node>",
+          "--test",
+          "--test-reporter=<repository>src/reporters/node.js",
+          "--test-reporter-destination=<tmp>/tddswarm-report-YUYf40/results.json",
+          "./test/normalize.test.js"
+        ],
+        "stdout": "",
+        "stderr": "",
+        "signal": null,
+        "reportErrors": [],
+        "discovery": {
+          "files": [
+            "test/normalize.test.js"
+          ],
+          "complete": true,
+          "adapter": "node",
+          "warnings": []
+        }
+      }
+    },
+    {
+      "id": "lowercase-omitted",
+      "result": {
+        "adapter": "node",
+        "exitCode": 1,
+        "durationMs": 115,
+        "tests": [
+          {
+            "file": "test/normalize.test.js",
+            "name": "trim lowercase internal empty type",
+            "status": "failed",
+            "durationMs": 0.837083,
+            "line": 1,
+            "column": 116,
+            "id": "0bb48038bca10960b170d90450858515963eccd89aed449214a51c7e33a5cf6c"
+          }
+        ],
+        "collectionFiles": [
+          "test/normalize.test.js"
+        ],
+        "requestedFiles": [
+          "test/normalize.test.js"
+        ],
+        "executedFiles": [
+          "test/normalize.test.js"
+        ],
+        "missingFiles": [],
+        "unknownFiles": [],
+        "dependencyFiles": [],
+        "complete": true,
+        "command": [
+          "<node>",
+          "--test",
+          "--test-reporter=<repository>src/reporters/node.js",
+          "--test-reporter-destination=<tmp>/tddswarm-report-kYId8v/results.json",
+          "./test/normalize.test.js"
+        ],
+        "stdout": "",
+        "stderr": "",
+        "signal": null,
+        "reportErrors": [],
+        "discovery": {
+          "files": [
+            "test/normalize.test.js"
+          ],
+          "complete": true,
+          "adapter": "node",
+          "warnings": []
+        }
+      }
+    },
+    {
+      "id": "type-coercion",
+      "result": {
+        "adapter": "node",
+        "exitCode": 1,
+        "durationMs": 109,
+        "tests": [
+          {
+            "file": "test/normalize.test.js",
+            "name": "trim lowercase internal empty type",
+            "status": "failed",
+            "durationMs": 0.699834,
+            "line": 1,
+            "column": 116,
+            "id": "0bb48038bca10960b170d90450858515963eccd89aed449214a51c7e33a5cf6c"
+          }
+        ],
+        "collectionFiles": [
+          "test/normalize.test.js"
+        ],
+        "requestedFiles": [
+          "test/normalize.test.js"
+        ],
+        "executedFiles": [
+          "test/normalize.test.js"
+        ],
+        "missingFiles": [],
+        "unknownFiles": [],
+        "dependencyFiles": [],
+        "complete": true,
+        "command": [
+          "<node>",
+          "--test",
+          "--test-reporter=<repository>src/reporters/node.js",
+          "--test-reporter-destination=<tmp>/tddswarm-report-bhaZ4o/results.json",
+          "./test/normalize.test.js"
+        ],
+        "stdout": "",
+        "stderr": "",
+        "signal": null,
+        "reportErrors": [],
+        "discovery": {
+          "files": [
+            "test/normalize.test.js"
+          ],
+          "complete": true,
+          "adapter": "node",
+          "warnings": []
+        }
+      }
+    }
+  ]
+}

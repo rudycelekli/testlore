@@ -41,10 +41,10 @@ TestLore connects an agent team, your existing test runner, measurable quality e
 From a clean, committed project checkout:
 
 ```sh
-npm exec --yes --package=github:rudycelekli/testlore#feat/full-roadmap -- testlore improve
+npm exec --yes --package=github:rudycelekli/testlore -- testlore improve
 ```
 
-**Preview branch:** the full implementation is in [PR #1](https://github.com/rudycelekli/testlore/pull/1). After merge, use `github:rudycelekli/testlore`; pin a reviewed commit for reproducibility. Distributed through GitHub; not published to npm.
+**Experimental alpha:** the implementation is merged into `main`. Pin a reviewed commit for reproducibility. Install from GitHub; an npm alpha release requires separate publisher setup and exact-artifact qualification. [Adoption and pilots →](docs/adoption.md)
 
 Requires **Node 22.19+ and Git**. It creates your project’s quality-agent identity and local memory immediately. Existing `SPEC.md`, `REQUIREMENTS.md`, or README material can seed a proposed behavior contract on the branch. Commit `tddswarm.requirements.md` for explicit expectations; proposals without meaningful independent behavior must be rejected. Generation uses your configured worker or an installed, authenticated Codex CLI. Automatic PR creation uses your authenticated GitHub CLI. `--local` keeps the result for local review.
 
@@ -69,18 +69,18 @@ Failed validation retains the proposal and its evidence for inspection. Missing 
 Personalize your project agent:
 
 ```sh
-npm exec --yes --package=github:rudycelekli/testlore#feat/full-roadmap -- testlore agent --name "My project quality engineer" --json
+npm exec --yes --package=github:rudycelekli/testlore -- testlore agent --name "My project quality engineer" --json
 ```
 
 The agent runs when you invoke it or CI; its identity and history persist between runs. Customize `qualityAgent.name` and `qualityAgent.focus` in project configuration.
 
-`npm exec` uses a temporary package for that invocation. Before running any `npx --no-install testlore` commands below, including learning commands, install it locally with `npm install --save-dev github:rudycelekli/testlore#feat/full-roadmap`.
+`npm exec` uses a temporary package for that invocation. Before running any `npx --no-install testlore` commands below, including learning commands, install it locally with `npm install --save-dev github:rudycelekli/testlore`.
 
 Want a useful report before configuring agents?
 
 ```sh
-npm exec --yes --package=github:rudycelekli/testlore#feat/full-roadmap -- testlore init
-npm install --save-dev github:rudycelekli/testlore#feat/full-roadmap
+npm exec --yes --package=github:rudycelekli/testlore -- testlore init
+npm install --save-dev github:rudycelekli/testlore
 npx --no-install testlore audit --json
 npx --no-install testlore run --shadow --base HEAD
 ```
@@ -141,7 +141,7 @@ TestLore is a complementary coordination layer. Bring your specialist tools into
 Choose a setup in one command without first installing TestLore locally:
 
 ```sh
-npm exec --yes --package=github:rudycelekli/testlore#feat/full-roadmap -- testlore plugins --auto
+npm exec --yes --package=github:rudycelekli/testlore -- testlore plugins --auto
 ```
 
 Or inspect the choices and manage tools after a local install:
@@ -157,9 +157,9 @@ npm install --save-dev @ruvector/core@0.1.32
 npx --no-install testlore plugins --enable ruvector
 ```
 
-Automatic setup uses explainable project-fit rules, preserves explicit choices, and enables only supported installed tools. Missing tools receive recommendations; ambiguous execution engines require a choice. It performs no downloads or agent calls. Tools are installed separately. Health checks describe availability and supported contracts, not measured quality. All built-in plugins can be enabled together; `executionPlugin` selects the native backend for the project, while other providers run only for their relevant operations. Enabling more tools preserves the current backend. Reviewed branch improvements currently require Node/Jest/Vitest individual-case validation. [Plugin configuration and community contract →](docs/plugins.md) · [RuVector learning →](docs/ruvector.md)
+Automatic setup uses explainable project-fit rules, preserves explicit choices, and enables only supported installed tools. Missing tools receive recommendations; ambiguous execution engines require a choice. It performs no downloads or agent calls. Tools are installed separately. Health checks describe availability and supported contracts, not measured quality. All built-in plugins can be enabled together; `executionPlugin` selects the native backend for the project, while other providers run only for their relevant operations. Enabling more tools preserves the current backend. Reviewed branch improvements support Node/Jest/Vitest/Playwright individual-case validation. [Plugin configuration and community contract →](docs/plugins.md) · [RuVector learning →](docs/ruvector.md)
 
-The next integration seams are browser evidence (Playwright), properties (fast-check), consumer contracts (Pact), service fixtures (Testcontainers), and API exploration (Schemathesis). Each has a distinct role. fast-check already composes inside a supported runner; dedicated adapters for the other shortlisted tools require separate qualification. [Research, admission criteria, and real property proof →](docs/ecosystem.md)
+Playwright now has native discovery, project-aware case reports, and real Chromium qualification for declared browser inputs. fast-check composes inside a supported runner. Consumer contracts (Pact), service fixtures (Testcontainers), and API exploration (Schemathesis) remain researched integration seams awaiting their own qualification. Each has a distinct role. [Browser setup →](docs/playwright.md) · [Research and property proof →](docs/ecosystem.md)
 
 Built to work alongside [Agentic QE](https://github.com/proffesor-for-testing/agentic-qe), [RuVector](https://github.com/ruvnet/ruvector), [pytest-testmon](https://www.testmon.org/), [Nx](https://nx.dev/), [Bazel](https://bazel.build/), [c8](https://github.com/bcoe/c8), and [Stryker](https://stryker-mutator.io/). Each remains an independently maintained project; integration does not imply affiliation or endorsement.
 
@@ -180,9 +180,18 @@ On **12 controlled changes across four Node fixtures**, TestLore caught all 63 o
 | **Live memory comparison** | With memory: 16 passing cases; without: 33. Both caught 4/4 withheld mutations. Memory generation took longer in this single run. | [Raw comparison](benchmarks/learning/2026-09-29-native-ablation/summary.json) |
 | **Native ecosystem adapters** | Actual pytest-testmon, Nx, Bazel and AQE executions, with completeness and upstream-estimate boundaries. | [Integration receipts](docs/integrations.md) |
 | **Optional vector recall** | Real RuVector core 0.1.32: native build/reopen, bounded CLI recall, corrupt-cache fallback, and unchanged canonical memory. | [Native receipt](benchmarks/ruvector-verification.json) · [Method](docs/ruvector.md) |
+| **Real browser composition** | Chromium: one of two declared route files selected; the same heading defect fails in full and subset runs; candidate validation preserves and adds passing cases. | [Raw browser proof](benchmarks/playwright-verification.json) · [Scope](docs/playwright.md) |
+| **Routing cache** | Controlled parser-heavy fixture: 178 ms warm, 240 ms uncached, 433 ms cold. No general project speed claim. | [Samples and checks](benchmarks/cache-verification.json) · [Method](docs/performance.md) |
+| **Repeated live learning** | Two specifications × two repetitions: no memory 12/12 defects; memory 9/12 with one timeout. Inconclusive; no improvement claim. | [Raw paired run](benchmarks/learning/2026-09-30-paired-native/README.md) |
 | **Complementary property library** | Real fast-check 4.10.2: complete base validation; 4/4 scoped defects caught and replayed from seed/path. | [Receipt](benchmarks/property-verification.json) · [Method](docs/ecosystem.md) |
 | **Independent AQE gate** | Actual template author reported score 100; independent review rejected the output. No live LLM claim. | [Composition receipt](benchmarks/aqe-composition-verification.json) |
 | **Packed installation** | Production-only install, native shadow fault detection, runtime capture, and a fully tested improvement branch. | `node scripts/packed-proof.js` |
+
+A [paired repeated learning evaluation](docs/learning-evaluation.md) now controls worker budgets and execution order across independent specifications; no quality gain is established merely by shipping the evaluator.
+
+Local repository pilots independently run proposed subsets and full suites in detached copies, alternate execution order, and include discovery and routing overhead. Raw receipts remain local; aggregate export is explicit. [Run your own pilots →](docs/pilots.md)
+
+An opt-in bounded cache reuses source parsing while native discovery and resolution stay fresh. Initialization enables it for new configurations; existing configurations retain their settings. Controlled warm/cold evidence and its limits are in the [performance guide](docs/performance.md).
 
 These are scoped experiments. The memory comparison confirms that historical recall reaches real agent generation; it does not establish a general quality gain. Tiny suites can run slower after discovery and planning. There is no universal safety, production speedup, or “best overall” claim. Misses, overhead, and counterexamples belong in the results. [Benchmark methodology →](docs/comparison.md)
 

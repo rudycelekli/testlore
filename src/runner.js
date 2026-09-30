@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { plan } from './selector.js';
 import { readConfig, safePath } from './files.js';
-import { execute } from './execution.js';
+import { execute, adapterFor } from './execution.js';
 import { rememberServices, serviceInputs } from './inputs.js';
 import { runnerIdentity, snapshot, freshness } from './provenance.js';
 import { externalRun } from './integrations.js';
@@ -35,15 +35,16 @@ export function run(root, options = {}) {
     return {plan:selection,exitCode:2,executed:false,complete:false,error:'Inputs changed during selection; rerun after source and service versions stabilize.',decisionDrift:[...decisionCheck.reasons,...(plannedServices!==JSON.stringify(before.services||{}) || plannedServices!==JSON.stringify(serviceBefore.values) ? ['planned-service-versions-changed'] : [])]};
   if (!selection.total) return { plan: selection, exitCode: 2, error: 'No test files detected. Run generate or configure a supported project.' };
   if (!selection.selected.length && !options.shadow) return { plan: selection, exitCode: 0, executed: false };
-  if (!config.runner && selection.selected.some(f => !/\.[cm]?js$/.test(f))) return { plan: selection, exitCode: 2, error: 'Configure a TypeScript/JSX-capable runner. See docs/configuration.md.' };
+  if (!config.runner && adapterFor(config)!=='playwright' && selection.selected.some(f => !/\.[cm]?js$/.test(f))) return { plan: selection, exitCode: 2, error: 'Configure a TypeScript/JSX-capable runner. See docs/configuration.md.' };
   const executedTests = options.shadow ? selection.decisions.map(d => d.test) : selection.selected;
   const execution = execute(root, executedTests, config, options);
+  const actualFiles=[...new Set(execution.executedFiles||executedTests)];
   const sourceCheck=freshness(before,snapshot(root,config));
   const serviceAfter=serviceInputs(root,config);
   const servicesStable=!serviceBefore.warnings.length&&!serviceAfter.warnings.length&&JSON.stringify(serviceBefore.values)===JSON.stringify(serviceAfter.values);
   if(!servicesStable){execution.complete=false;execution.error='Service versions changed or became unavailable during execution';if(execution.exitCode===0)execution.exitCode=2;}
   if(!sourceCheck.fresh){execution.complete=false;execution.error='Source changed during execution: '+sourceCheck.reasons.join(', ');if(execution.exitCode===0)execution.exitCode=2;}
-  if(execution.complete && execution.exitCode===0)rememberServices(root,config,executedTests,serviceBefore.values);
+  if(execution.complete && execution.exitCode===0)rememberServices(root,config,actualFiles,serviceBefore.values);
   const directory = safePath(root, '.tddswarm');
   fs.mkdirSync(directory, { recursive: true });
   const runner = runnerIdentity(root, config);
@@ -53,16 +54,16 @@ export function run(root, options = {}) {
   if (!Number.isInteger(history.count) || history.count < 0) history.count = 0;
   if (!Array.isArray(history.failed)) history.failed = [];
   if (!Array.isArray(history.failedCases)) history.failedCases = [];
-  const report = { ...execution, plan: selection, executed: true, shadow: Boolean(options.shadow), executedTests, runner,
+  const report = { ...execution, plan: selection, executed: true, shadow: Boolean(options.shadow), executedTests:actualFiles, runner,
     provenance: before };
   if (options.shadow) report.comparison = compareShadow(selection, execution);
   // Incomplete reporting retains every executed file. Passing a subset cannot erase
   // remembered failures from files that were not executed.
-  const failed = execution.complete ? execution.tests.filter(t => t.status === 'failed').map(t => t.file) : execution.exitCode || !execution.complete ? executedTests : [];
+  const failed = execution.complete ? execution.tests.filter(t => t.status === 'failed').map(t => t.file) : execution.exitCode || !execution.complete ? actualFiles : [];
   const failedCases = execution.tests.filter(t => t.status === 'failed');
   const next = { schemaVersion: 1, runner, count: history.count + 1,
-    failed: [...new Set([...history.failed.filter(f => !executedTests.includes(f)), ...failed])].sort(),
-    failedCases: [...history.failedCases.filter(t => !executedTests.includes(t.file)), ...failedCases],
+    failed: [...new Set([...history.failed.filter(f => !actualFiles.includes(f)), ...failed])].sort(),
+    failedCases: [...history.failedCases.filter(t => !actualFiles.includes(t.file)), ...failedCases],
     complete: execution.complete, provenance: report.provenance };
   fs.writeFileSync(historyFile, JSON.stringify(next, null, 2));
   // Compatibility receipt only; selection treats namespaced history as authority.

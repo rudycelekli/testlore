@@ -1,0 +1,95 @@
+{
+  "schemaVersion": 1,
+  "scope": "Controlled headless Chromium localhost routes, one declared copy change and one planted heading defect; manually authored candidate/oracle",
+  "generatedAt": "2026-09-30T05:59:24.805Z",
+  "passed": true,
+  "applied": false,
+  "unapplied": true,
+  "node": "v22.19.0",
+  "library": {
+    "name": "@playwright/test",
+    "version": "1.63.0",
+    "packageHash": "5587f932b8979b6889654b60e3c28aeb7ca0abbac00eec8c176c939a16149536",
+    "chromium": {
+      "name": "chromium",
+      "revision": "1243",
+      "installByDefault": true,
+      "browserVersion": "153.0.8010.12",
+      "title": "Chrome for Testing"
+    }
+  },
+  "fixtureHash": "81fa3647a1af4dc14be604db8fdd4ad17431d4e5af9c6b53c8d308e96988687a",
+  "routing": {
+    "mode": "affected",
+    "selected": [
+      "browser/landing.spec.js"
+    ],
+    "total": 2,
+    "omitted": 1,
+    "warnings": [],
+    "fullCases": 2,
+    "subsetCases": 1
+  },
+  "fault": {
+    "fullCaught": true,
+    "subsetCaught": true,
+    "sameNamedCase": true,
+    "fullFailed": [
+      "{\"project\":\"chromium\",\"repeat\":0,\"title\":[\"landing heading matches independent copy specification\"]}"
+    ],
+    "subsetFailed": [
+      "{\"project\":\"chromium\",\"repeat\":0,\"title\":[\"landing heading matches independent copy specification\"]}"
+    ]
+  },
+  "candidate": {
+    "accepted": true,
+    "reasons": [],
+    "originalComplete": true,
+    "candidateComplete": true,
+    "originalCases": 2,
+    "candidateCases": 3,
+    "heldOutDefects": [
+      {
+        "name": "incorrect landing heading",
+        "demonstrated": true,
+        "caught": true
+      }
+    ]
+  },
+  "rawArtifacts": {
+    "fixture.json": {
+      "sha256": "d99d053c72a6ba507ea4f84fe4d3c404f2fb596b0a0a6362429a841d279bbde9"
+    },
+    "discovery.json": {
+      "sha256": "e2720fe8a4a443c4e0bdae06b88491f2c35927cc6e66a6184bcb16aa13094165"
+    },
+    "baseline.json": {
+      "sha256": "723554d4f69aea8114220c97da545d73c8a9f4b9bb2d85b3917ae28095127f6f"
+    },
+    "selection.json": {
+      "sha256": "f624596c040026962acd2282024ebf5fd8551d62c7916bc3858b88f29c761794"
+    },
+    "full.json": {
+      "sha256": "19fb7e28afceac5048c3befeb1665d460019e465b00a2ee164f29a29fa4a336d"
+    },
+    "subset.json": {
+      "sha256": "347e75598e55fe53b4b925e2d6459cb34df5a65ce1654083f81bb067a3174a43"
+    },
+    "faultFull.json": {
+      "sha256": "5868aeff3dda146a79c000bf635e33fc2c262b03b876cf40e3c9e94ac3439b98"
+    },
+    "faultSubset.json": {
+      "sha256": "116590f5fb69b3692214e5d5c719c8dd12d4a2fa249ff502ca42a261a649e503"
+    },
+    "validation.json": {
+      "sha256": "27faf1fc9d53d83f283c7509ed94136bf3ec99e1c3b33bf099a19bf32d5cd814"
+    }
+  },
+  "limitations": [
+    "Two controlled routes and one fixed defect do not certify general browser fault recall or deployment safety.",
+    "File selection requires complete declared browser/server/asset inputs; this proof has no external service.",
+    "Candidate/oracle/reviewer fixtures are manually authored; no model or provider API is invoked.",
+    "Trusted project/dependency code executes; disposable file copies are not a security sandbox.",
+    "No wall-clock speed claim; native discovery and browser startup add overhead."
+  ]
+}
