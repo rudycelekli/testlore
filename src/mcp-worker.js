@@ -57,6 +57,8 @@ export function summarizeRun(report, mode, receipts) {
 }
 
 export function boundedSummary(value, maxBytes = 65536) {
+  if (!Number.isInteger(maxBytes) || maxBytes < 4096 || maxBytes > 65536)
+    throw new Error('Agent summary budget must be an integer from 4096 to 65536 bytes');
   let truncated = false;
   function bound(item, depth = 0) {
     if (typeof item === 'string') { if (item.length > 4000) truncated = true; return item.slice(0, 4000); }
@@ -72,18 +74,34 @@ export function boundedSummary(value, maxBytes = 65536) {
   if (Buffer.byteLength(JSON.stringify(result)) <= maxBytes) return result;
   const short = item => typeof item === 'string' ? item.slice(0, 500) : undefined;
   const count = item => Number.isInteger(item) ? item : null;
-  return { kind: short(value.kind) || 'agent-summary', authority: short(value.authority) || 'advisory',
+  let compact = { kind: short(value.kind) || 'agent-summary', authority: short(value.authority) || 'advisory',
     complete: false, observedComplete: value.complete === true, executed: value.executed === true,
     verdict: short(value.verdict), exitCode: count(value.exitCode),
     outcomes: value.outcomes && {available: value.outcomes.available === true,
       passed: count(value.outcomes.passed), failed: count(value.outcomes.failed), skipped: count(value.outcomes.skipped)},
-    failedCases: Array.isArray(value.failedCases) ? value.failedCases.slice(0, 10).map(row => ({id: short(row.id), file: short(row.file), name: short(row.name)})) : [],
+    failedCases: Array.isArray(value.failedCases) ? value.failedCases.slice(0, 10).map(row => ({id: short(row?.id), file: short(row?.file), name: short(row?.name)})) : [],
     failedCaseCount: Array.isArray(value.failedCases) ? value.failedCases.length : null,
     scopeLimitation: short(value.scopeLimitation), executedFileCount: Array.isArray(value.executedFiles) ? value.executedFiles.length : null,
     error: typeof value.error === 'string' ? value.error.slice(0, 1000) : undefined,
     nextAction: short(value.nextAction), deploymentSafety: 'not-established',
     presentation: { truncated: true, maximumBytes: maxBytes, limitation: 'Summary exceeds output bound; inspect project receipts.' },
     receipts: value.receipts ? {json: short(value.receipts.json), markdown: short(value.receipts.markdown)} : null };
+  const fits = () => Buffer.byteLength(JSON.stringify(compact)) <= maxBytes;
+  // Reduce extra failures first, preserving the first identity and durable paths
+  // ahead of optional prose. UTF-8 and JSON escaping both count toward the bound.
+  while (!fits() && compact.failedCases.length > 1) compact.failedCases.pop();
+  if (fits()) return compact;
+  const clip = (item, limit, preservePaths, key = '') => {
+    if (typeof item === 'string') return preservePaths && ['id', 'file', 'json', 'markdown', 'nextAction'].includes(key) ? item : item.slice(0, limit);
+    if (Array.isArray(item)) return item.map(row => clip(row, limit, preservePaths));
+    if (item && typeof item === 'object') return Object.fromEntries(Object.entries(item).map(([name, child]) => [name, clip(child, limit, preservePaths, name)]));
+    return item;
+  };
+  for (const preservePaths of [true, false]) for (const limit of [256, 128, 64, 32]) {
+    compact = clip(compact, limit, preservePaths);
+    if (fits()) return compact;
+  }
+  throw new Error('Agent summary could not fit its validated byte budget');
 }
 
 if (process.send && process.argv[2] === '--internal-mcp-worker') {

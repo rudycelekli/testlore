@@ -114,3 +114,19 @@ test('large agent summaries keep failed identities, scope counts and next action
     assert.equal(incomplete.verdict, 'incomplete'); assert.match(incomplete.nextAction, /Repair.*rerun/);
   }
 });
+
+test('4096-byte agent summaries retain first failure and reject invalid budgets', () => {
+  const failedCases = Array.from({length: 200}, (_, i) => ({id: `failure-${i}`, file: `test/${i}.test.js`, name: '\u0000🚨'.repeat(10000)}));
+  const value = {kind: 'agent-verification-run', authority: 'observed-run', complete: true, executed: true, verdict: 'failed', exitCode: 1,
+    outcomes: {available: true, passed: 0, failed: 200, skipped: 0}, failedCases,
+    error: '\u0000🚨'.repeat(10000), scopeLimitation: '\u0000🚨'.repeat(10000),
+    nextAction: 'Inspect failed identities, repair the independent defect, and rerun the full suite.',
+    receipts: {json: '.tddswarm/last-run.json', markdown: '.tddswarm/last-run.md'}};
+  const summary = boundedSummary(value, 4096);
+  assert.ok(Buffer.byteLength(JSON.stringify(summary)) <= 4096);
+  assert.equal(summary.complete, false); assert.equal(summary.presentation.truncated, true);
+  assert.equal(summary.presentation.maximumBytes, 4096); assert.equal(summary.failedCaseCount, 200);
+  assert.equal(summary.failedCases[0].id, 'failure-0'); assert.equal(summary.failedCases[0].file, 'test/0.test.js');
+  assert.deepEqual(summary.receipts, value.receipts); assert.match(summary.nextAction, /repair/);
+  for (const budget of [0, 4095, 65537, NaN, Infinity, 4096.5, '4096']) assert.throws(() => boundedSummary(value, budget), /4096 to 65536/);
+});
