@@ -14,6 +14,8 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - uses: actions/setup-node@v7.0.0
         with:
           node-version: '24'
@@ -25,7 +27,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: packed-install-${{ github.sha }}
+          name: packed-install-${{ github.event.pull_request.head.sha || github.sha }}
           path: .tddswarm/ci-packed-install/
           include-hidden-files: true
           if-no-files-found: error
@@ -36,6 +38,8 @@ jobs:
         node: [22, 24]
     steps:
       - uses: actions/checkout@v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - uses: actions/setup-node@v7.0.0
         with:
           node-version: ${{ matrix.node }}
@@ -51,6 +55,8 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - uses: actions/setup-node@v7.0.0
         with:
           node-version: '22'
@@ -72,6 +78,8 @@ jobs:
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - uses: actions/setup-node@v7.0.0
         with:
           node-version: '22'
