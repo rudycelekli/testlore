@@ -28,10 +28,10 @@ A passing proposal remains **unapplied**, **review required**, and **closedWorld
 
 Six new authored contracts, eighteen reference-demonstrated conformance faults, three repetitions and two arms produced 36 attempted trials and 100 controller role invocations. Native reference baselines, generated baselines and each fault repeated at least twice. All valid generated-test trials caught all three faults for their specification; fifteen distinct faults were caught. All six version-comparison generation trials timed out.
 
-| Frozen live arm | Qualified fault detections / opportunities | Valid trials | Timeouts | Mean recorded trial time |
+| Frozen live arm | Qualified fault detections / opportunities | Valid trials | Failed attempts | Mean recorded trial time |
 | --- | ---: | ---: | ---: | ---: |
-| Without memory | 42 / 54 | 14 / 18 | 4 | 69.9 seconds |
-| With advisory memory | 39 / 54 | 13 / 18 | 5 | 73.5 seconds |
+| Without memory | 42 / 54 | 14 / 18 | 4 timeouts | 69.9 seconds |
+| With advisory memory | 39 / 54 | 13 / 18 | 4 timeouts + 1 rejection | 73.5 seconds |
 
 The paired inference is **inconclusive**, with incomplete pairs and absent relevant memory disclosed. Learning has no demonstrated improvement and remains advisory. More generated cases did not establish better detection. No timeout was raised, failed attempt rerun, or favorable trial selected.
 

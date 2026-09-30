@@ -431,7 +431,7 @@
   "conclusion": "No demonstrated learning improvement; advisory only.",
   "limitations": [
     "Authored six-contract dataset, not a production corpus or independent competitor leaderboard. Specifications were excluded from history before this run; semantic independence remains a maintainer audit obligation.",
-    "All 36 planned trials were attempted; nine timeouts remain invalid zero-recall trials. No timeout increase, rerun or favorable-only filtering.",
+    "All 36 planned trials were attempted; eight timeouts and one candidate rejection remain invalid zero-recall trials. No timeout increase, rerun or favorable-only filtering.",
     "Reference and generated baselines and each fault repeated at least twice. Fifteen distinct faults were caught by generated tests; all six compareVersion generation trials timed out.",
     "Run executed original evaluator at measuredSourceRevision. Later accounting/preservation fixes were independently tested but were not used by this frozen experiment.",
     "Original totalMs excludes project/memory setup and retrieval. Input/output bytes are normalized JSON payloads before appended transportBudget and after parsed responses, not raw wire sizes or tokens.",
@@ -439,5 +439,11 @@
     "Untouched here means exclusion from historical memory, supplied stdin and trial roots. No OS read confinement or independently observed zero tool use is established; no observed leakage is asserted.",
     "Two frozen labels overstate semantics: duplicate-last is an upper-bound miss; lexical-components rejects valid version strings. Counts are conformance faults, not claimed lexical/last-duplicate coverage.",
     "Other local qualification processes overlapped. Unstable/incomplete trials contribute zero; mean times include failed attempts but exclude the stated setup costs."
-  ]
+  ],
+  "evidenceKind": "live-worker",
+  "seed": 202609302,
+  "failureKinds": {
+    "timeouts": 8,
+    "candidateRejections": 1
+  }
 }
