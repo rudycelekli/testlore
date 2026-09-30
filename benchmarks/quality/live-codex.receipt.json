@@ -1,0 +1,3000 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-09-30T01:34:46.503Z",
+  "scope": "Actual installed Codex architect/author/reviewer calls on one controlled specification; no claim of general model quality",
+  "cli": "codex-cli 0.155.1",
+  "node": "v22.19.0",
+  "source": "export function clamp(value,min,max){if(min>max)throw new RangeError('invalid bounds');return Math.min(max,Math.max(min,value));}\n",
+  "requirements": "For finite numeric values, clamp returns min below the lower bound, max above the upper bound, and the input within the inclusive interval. Equal bounds return that bound. Reversed bounds throw RangeError. Cover negative numbers, zero and boundary values with exact expectations, not implementation-generated values. Use Node test and assert, named runnable cases, and only test paths.",
+  "sourceDigests": {
+    "src/swarm.js": "821d4534df40e3c79e8dab136f6233f6dc3f25588f36d8c54e105f89bff1bc99",
+    "src/adapters/codex.js": "967a895581cbc10de3c404197f916793c80caec00c3add7beca03f278d4374b4",
+    "src/candidates.js": "808aa105185172b4c24c5475b27c10dde74db024a90a631f90865d0f6c10d7af",
+    "scripts/live-generation-proof.js": "8008aac01423b08859f971c221d3c604979f798378371455220fe96be11b7e53"
+  },
+  "files": [
+    {
+      "path": "src/clamp.test.js",
+      "content": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport { clamp } from './clamp.js';\n\nconst cases = [\n  ['positive interval: below', 1, 2, 8, 2],\n  ['positive interval: within', 5, 2, 8, 5],\n  ['positive interval: above', 9, 2, 8, 8],\n  ['positive interval: lower boundary', 2, 2, 8, 2],\n  ['positive interval: upper boundary', 8, 2, 8, 8],\n  ['positive interval: zero input', 0, 2, 8, 2],\n  ['negative interval: below', -9, -8, -2, -8],\n  ['negative interval: within', -5, -8, -2, -5],\n  ['negative interval: above', -1, -8, -2, -2],\n  ['negative interval: lower boundary', -8, -8, -2, -8],\n  ['negative interval: upper boundary', -2, -8, -2, -2],\n  ['negative interval: zero input', 0, -8, -2, -2],\n  ['zero-crossing interval: below', -5, -4, 6, -4],\n  ['zero-crossing interval: negative interior', -2, -4, 6, -2],\n  ['zero-crossing interval: zero interior', 0, -4, 6, 0],\n  ['zero-crossing interval: positive interior', 3, -4, 6, 3],\n  ['zero-crossing interval: above', 7, -4, 6, 6],\n  ['zero-crossing interval: lower boundary', -4, -4, 6, -4],\n  ['zero-crossing interval: upper boundary', 6, -4, 6, 6],\n  ['zero lower bound: below', -1, 0, 4, 0],\n  ['zero lower bound: boundary', 0, 0, 4, 0],\n  ['zero lower bound: within', 2, 0, 4, 2],\n  ['zero lower bound: upper boundary', 4, 0, 4, 4],\n  ['zero lower bound: above', 5, 0, 4, 4],\n  ['zero upper bound: below', -5, -4, 0, -4],\n  ['zero upper bound: lower boundary', -4, -4, 0, -4],\n  ['zero upper bound: within', -2, -4, 0, -2],\n  ['zero upper bound: boundary', 0, -4, 0, 0],\n  ['zero upper bound: above', 1, -4, 0, 0],\n  ['equal negative bounds: below', -4, -3, -3, -3],\n  ['equal negative bounds: equal', -3, -3, -3, -3],\n  ['equal negative bounds: above', -2, -3, -3, -3],\n  ['equal zero bounds: below', -1, 0, 0, 0],\n  ['equal zero bounds: equal', 0, 0, 0, 0],\n  ['equal zero bounds: above', 1, 0, 0, 0],\n  ['equal positive bounds: below', 2, 3, 3, 3],\n  ['equal positive bounds: equal', 3, 3, 3, 3],\n  ['equal positive bounds: above', 4, 3, 3, 3],\n  ['fractional interval: below', -1.5, -0.5, 1.5, -0.5],\n  ['fractional interval: within', 0.25, -0.5, 1.5, 0.25],\n  ['fractional interval: above', 2.5, -0.5, 1.5, 1.5],\n];\n\nfor (const [name, value, min, max, expected] of cases) {\n  test(name, () => {\n    assert.strictEqual(clamp(value, min, max), expected);\n  });\n}\n\nconst reversedCases = [\n  ['positive reversed bounds: below both', 1, 8, 2],\n  ['positive reversed bounds: between endpoints', 5, 8, 2],\n  ['positive reversed bounds: above both', 9, 8, 2],\n  ['positive reversed bounds: at min', 8, 8, 2],\n  ['positive reversed bounds: at max', 2, 8, 2],\n  ['negative reversed bounds: between endpoints', -5, -2, -8],\n  ['zero-crossing reversed bounds: zero input', 0, 6, -4],\n  ['reversed bounds with zero min', -2, 0, -4],\n  ['reversed bounds with zero max', 2, 4, 0],\n];\n\nfor (const [name, value, min, max] of reversedCases) {\n  test(name, () => {\n    assert.throws(() => clamp(value, min, max), RangeError);\n  });\n}\n"
+    }
+  ],
+  "review": {
+    "accepted": true,
+    "findings": [],
+    "oracle": {
+      "independent": true,
+      "basis": [
+        "Explicit requirements define exact results below, within, and above inclusive bounds; tests use fixed expected values across positive, negative, zero, and fractional inputs.",
+        "Equal-bound cases independently require the shared bound for inputs below, equal to, and above it.",
+        "Reversed-bound cases assert the required RangeError across multiple input positions.",
+        "The supplied test path and relative named import match the supplied source. Cases use Node test and strict assertions and are deterministic. Acceptance is based on static review, not execution validation."
+      ]
+    }
+  },
+  "validation": {
+    "schemaVersion": 1,
+    "id": "7d50bd23-b2e2-4989-bf9a-a3c497db140f",
+    "validatedAt": "2026-09-30T01:34:45.742Z",
+    "manifestHash": "1b12d747aae251285a2f2cbe865fcd62e67772e345e7a8dfd2f3d76f106506c3",
+    "provenance": {
+      "schemaVersion": 1,
+      "revision": null,
+      "runner": "61a6b1ec602f68e41ef86d9bb810ea19526d62bb430173cc6e512265a19023ec",
+      "environment": {
+        "node": "v22.19.0",
+        "platform": "darwin",
+        "arch": "arm64",
+        "labels": {}
+      },
+      "services": {},
+      "serviceWarnings": [],
+      "files": {
+        "package.json": "6dc1b06d6b093e9cccb20bee06a93836eee0420ae26803ca2ce4065d82f070d1",
+        "src/clamp.js": "29d21dc4052a14bc05ee7b8010f9c480381c4bf00cb2dad324bdbbcc52a73650",
+        "tddswarm.config.json": "e25d885c91f406e1dce19a5810e48593ea46e6203735e259a18e8670b6d3a250",
+        "tddswarm.requirements.md": "457b1223deb072668a417070f5b7bc3569972c91a411852f802c48af5029725c"
+      },
+      "fingerprint": "88dc36bf099d07594e67ee2a33f756d0b23e850ff2e08d109bf685d1f601fd8a"
+    },
+    "accepted": true,
+    "reasons": [],
+    "original": {
+      "discovery": {
+        "files": [],
+        "complete": true,
+        "adapter": "node",
+        "warnings": []
+      },
+      "exitCode": 0,
+      "complete": true,
+      "tests": [],
+      "collectionFiles": [],
+      "executedFiles": []
+    },
+    "candidate": {
+      "adapter": "node",
+      "exitCode": 0,
+      "durationMs": 124,
+      "tests": [
+        {
+          "file": "src/clamp.test.js",
+          "name": "fractional interval: above",
+          "status": "passed",
+          "durationMs": 0.698417,
+          "line": 50,
+          "column": 3,
+          "id": "ece3525bfffb99559f3bf784d1139ab473e50326187e2cb6c27b1aa49201b837"
+        },
+        {
+          "file": "src/clamp.test.js",
+          "name": "fractional interval: above",
+          "status": "passed",
+          "durationMs": 0.119959,
+          "line": 50,
+          "column": 3,
+          "id": "032a766142f1224571962f6034ced191e516eb1b3ab6b46e11647ca1654ec08b"
+        },
+        {
+          "file": "src/clamp.test.js",
+          "name": "fractional interval: above",
+          "status": "passed",
+          "durationMs": 0.044667,
+          "line": 50,
+          "column": 3,
+          "id": "101e8517fcb79ef45ca28e2f036439e7e36105a3165b1822da5dd7579e4459be"
+        },
+        {
+          "file": "src/clamp.test.js",
+          "name": "fractional interval: above",
+          "status": "passed",
+          "durationMs": 0.048291,
+          "line": 50,
+          "column": 3,
+          "id": "a33d107f68f205851674a0160101a73c57be5243e30ef18186978407770f166e"
+        },
+        {
+          "file": "src/clamp.test.js",
+          "name": "fractional interval: above",
+          "status": "passed",
+          "durationMs": 0.056708,
+          "line": 50,
+          "column": 3,
+          "id": "cc75c1294de2ed690d3ef59e132009a2d7d5464779fe572e0c3bd364b84e92f9"
+        },
+        {
+          "file": "src/clamp.test.js",
+          "name": "fractional interval: above",
+          "status": "passed",
+          "durationMs": 0.038625,
+          "line": 50,
+          "column": 3,
+          "id": "2ce20b1ce4ca528b3a96044c1020b40b2bd6e98d8aaec2f326d546e76f31c35d"
+        },
+        {
+          "file": "src/clamp.test.js",
+          "name": "fractional interval: above",
+          "status": "passed",
+          "durationMs": 0.038125,
+          "line": 50,
+          "column": 3,
+          "id": "7e729b4cd454792e6eb0468d9b7e2a6adbbd7fe7659989417755f4cb598ff2e5"
+        },
+        {
+          "file": "src/clamp.test.js",
+          "name": "fractional interval: above",
+          "status": "passed",
+          "durationMs": 0.44775,
+          "line": 50,
+          "column": 3,
+          "id": "0594aba0c5040814e8f90fd646bba5b00dac9cbb1911cfdb658e89a9ab6615be"
+        },
+        {
+          "file": "src/clamp.test.js",
+          "name": "fractional interval: above",
+          "status": "passed",
+          "durationMs": 0.310417,
+          "line": 50,
+          "column": 3,
+          "id": "7a0e5a522bd144e9effc342998c4cdfaab9133f98d36c39a4ede9b28c7cfa99c"
+        },
+        {
+          "file": "src/clamp.test.js",
+          "name": "fractional interval: above",
+          "status": "passed",
+          "durationMs": 0.330083,
+          "line": 50,
+          "column": 3,
+          "id": "39268ef1ceb1d0471ee65ea905b429dcd906f7e9cd93d6c8b1a2e461f790e86e"
+        },
+        {
+          "file": "src/clamp.test.js",
+          "name": "fractional interval: above",
+          "status": "passed",
+          "durationMs": 0.093958,
+          "line": 50,
+          "column": 3,
+          "id": "d70e2867541ae70bf402dfb1e25fc1003b3ca9a6176d33197ad6ce5cc6e6e12a"
+        },
+        {
+          "file": "src/clamp.test.js",
+          "name": "fractional interval: above",
+          "status": "passed",
+          "durationMs": 0.031291,
+          "line": 50,
+          "column": 3,
+          "id": "beddb6cce62e4be7234d3264d565d9602e74c143dda8d72e279f2410edb488ad"
+        },
+        {
+          "file": "src/clamp.test.js",
+          "name": "fractional interval: above",
+          "status": "passed",
+          "durationMs": 0.024,
+          "line": 50,
+          "column": 3,
+          "id": "77f5e58eb7c26c40387e73159b7591e61441380b81f7fda5ceea1f27a8ad6fcf"
+        },
+        {
+          "file": "src/clamp.test.js",
+          "name": "fractional interval: above",
+          "status": "passed",
+          "durationMs": 0.021916,
+          "line": 50,
+          "column": 3,
+          "id": "ab9cc531b4a297560b9e6213f047e5c73796e1d1fb40d9f95af53deddd56835d"
+        },
+        {
+          "file": "src/clamp.test.js",
+          "name": "fractional interval: above",
+          "status": "passed",
+          "durationMs": 0.021042,
+          "line": 50,
+          "column": 3,
+          "id": "e806b146860edd406ab7f152a5e586bb5a934f58d8dee6a83f88d77ed28da3b9"
+        },
+        {
+          "file": "src/clamp.test.js",
+          "name": "fractional interval: above",
+          "status": "passed",
+          "durationMs": 0.021208,
+          "line": 50,
+          "column": 3,
+          "id": "4a3091d09c40f6503ce92984452b52dd4547e1a2b98a2ed0200aee7acb1cd2b5"
+        },
+        {
+          "file": "src/clamp.test.js",
+          "name": "fractional interval: above",
+          "status": "passed",
+          "durationMs": 0.02075,
+          "line": 50,
+          "column": 3,
+          "id": "e7c2587ebb99a329420906a78c6941e1cbe0f768b6ef17d424c35f04d8656210"
+        },
+        {
+          "file": "src/clamp.test.js",
+          "name": "fractional interval: above",
+          "status": "passed",
+          "durationMs": 0.020417,
+          "line": 50,
+          "column": 3,
+          "id": "65a1368a6af2ac21cdb7be36477bc53da0770de93da4fac842bfaf00ca72d6c8"
+        },
+        {
+          "file": "src/clamp.test.js",
+          "name": "fractional interval: above",
+          "status": "passed",
+          "durationMs": 0.020709,
+          "line": 50,
+          "column": 3,
+          "id": "64bbbc6901c934ee14371d9804442e5b67214f68f98f6f1ea9dd30f976f0abdc"
+        },
+        {
+          "file": "src/clamp.test.js",
+          "name": "fractional interval: above",
+          "status": "passed",
+          "durationMs": 0.02,
+          "line": 50,
+          "column": 3,
+          "id": "1162f4027b8c7e12b98b45323b7cc304b6bc8191aef1adba4e6a6a92613d2bc7"
+        },
+        {
+          "file": "src/clamp.test.js",
+          "name": "fractional interval: above",
+          "status": "passed",
+          "durationMs": 0.02325,
+          "line": 50,
+          "column": 3,
+          "id": "b341e55af66b1c6a03053b1028e2accada4ff253a63c41ab917142baedc7266d"
+        },
+        {
+          "file": "src/clamp.test.js",
+          "name": "fractional interval: above",
+          "status": "passed",
+          "durationMs": 0.023792,
+          "line": 50,
+          "column": 3,
+          "id": "195607cdc7352c63756ff14c344192f41528767e31c3e064146b47f4b18c3294"
+        },
+        {
+          "file": "src/clamp.test.js",
+          "name": "fractional interval: above",
+          "status": "passed",
+          "durationMs": 0.020834,
+          "line": 50,
+          "column": 3,
+          "id": "955163a3fc7221991e5eddc4f9ffbb4f2eb2327971f877f000a8650277aa7dac"
+        },
+        {
+          "file": "src/clamp.test.js",
+          "name": "fractional interval: above",
+          "status": "passed",
+          "durationMs": 0.020417,
+          "line": 50,
+          "column": 3,
+          "id": "6a9bf48a2138edffe4fe8ab67688236c510faf20a6e978d7afec420685157cec"
+        },
+        {
+          "file": "src/clamp.test.js",
+          "name": "fractional interval: above",
+          "status": "passed",
+          "durationMs": 0.022167,
+          "line": 50,
+          "column": 3,
+          "id": "65b6b682d393f68ae690d49c9c475acf45d301e99831f9fedbb2951968116768"
+        },
+        {
+          "file": "src/clamp.test.js",
+          "name": "fractional interval: above",
+          "status": "passed",
+          "durationMs": 0.020709,
+          "line": 50,
+          "column": 3,
+          "id": "4a5d36773ff61b2f4cee8a503a516597bd95c8c8c3e2f5f0518551d59e822686"
+        },
+        {
+          "file": "src/clamp.test.js",
+          "name": "fractional interval: above",
+          "status": "passed",
+          "durationMs": 0.020083,
+          "line": 50,
+          "column": 3,
+          "id": "680262783465cc3f4d622cdb7863085a12562eb50930af9ef939621cb98f8b52"
+        },
+        {
+          "file": "src/clamp.test.js",
+          "name": "fractional interval: above",
+          "status": "passed",
+          "durationMs": 0.02,
+          "line": 50,
+          "column": 3,
+          "id": "b3cea10ba5d998a56f13d95d045bf4ace6cffb35b960e60c26c29470c396272d"
+        },
+        {
+          "file": "src/clamp.test.js",
+          "name": "fractional interval: above",
+          "status": "passed",
+          "durationMs": 0.023042,
+          "line": 50,
+          "column": 3,
+          "id": "ec22cd1054af10765160d4e1ac2fab596af1e236296501e6483f6e80754151f0"
+        },
+        {
+          "file": "src/clamp.test.js",
+          "name": "fractional interval: above",
+          "status": "passed",
+          "durationMs": 0.021833,
+          "line": 50,
+          "column": 3,
+          "id": "3a249d346f1a15903b1c698c6410def05116c14e38474c3114efe5ba04012066"
+        },
+        {
+          "file": "src/clamp.test.js",
+          "name": "fractional interval: above",
+          "status": "passed",
+          "durationMs": 0.022458,
+          "line": 50,
+          "column": 3,
+          "id": "f0edf0641e9c52fbd163e7ec8b7f4ff7af549db572eb9ea1aa21009fc9bfd0cd"
+        },
+        {
+          "file": "src/clamp.test.js",
+          "name": "fractional interval: above",
+          "status": "passed",
+          "durationMs": 0.02075,
+          "line": 50,
+          "column": 3,
+          "id": "7c1bf521da9fb998ca37ef0c8c2935009194d3ea3882f2d1246b3bc05a24db58"
+        },
+        {
+          "file": "src/clamp.test.js",
+          "name": "fractional interval: above",
+          "status": "passed",
+          "durationMs": 0.020834,
+          "line": 50,
+          "column": 3,
+          "id": "fc3418583fc77d11f28c8a4915d7e31bfe6823585ff6b247805653fd7cd1c02e"
+        },
+        {
+          "file": "src/clamp.test.js",
+          "name": "fractional interval: above",
+          "status": "passed",
+          "durationMs": 0.020458,
+          "line": 50,
+          "column": 3,
+          "id": "373a62831da4b9fef6a966733b61d8dea73e5d1cbde39f028e7cfe658fc20054"
+        },
+        {
+          "file": "src/clamp.test.js",
+          "name": "fractional interval: above",
+          "status": "passed",
+          "durationMs": 0.022875,
+          "line": 50,
+          "column": 3,
+          "id": "eb03f189b190f927837e00e008fce17e162aad7143d3d9657ac8e99b65c89439"
+        },
+        {
+          "file": "src/clamp.test.js",
+          "name": "fractional interval: above",
+          "status": "passed",
+          "durationMs": 0.020291,
+          "line": 50,
+          "column": 3,
+          "id": "ea08c84aaeaf3951d006e051b984ab9604f66e3fb3ce26e7f332a5c0e7dbcebf"
+        },
+        {
+          "file": "src/clamp.test.js",
+          "name": "fractional interval: above",
+          "status": "passed",
+          "durationMs": 0.020167,
+          "line": 50,
+          "column": 3,
+          "id": "200ec787b3b30c994ad2a19f7fc214d4ef392ec4138ad724d9ac1490a0dbf230"
+        },
+        {
+          "file": "src/clamp.test.js",
+          "name": "fractional interval: above",
+          "status": "passed",
+          "durationMs": 0.020292,
+          "line": 50,
+          "column": 3,
+          "id": "882acb1e7896cf08a2828bd238a52c2f5959b0b252fc1f43cee4f605a2de2806"
+        },
+        {
+          "file": "src/clamp.test.js",
+          "name": "fractional interval: above",
+          "status": "passed",
+          "durationMs": 0.026083,
+          "line": 50,
+          "column": 3,
+          "id": "606f40c9a9f28451521a27be2f5e98f6e244b8ce1859355acc02ceaf6630191c"
+        },
+        {
+          "file": "src/clamp.test.js",
+          "name": "fractional interval: above",
+          "status": "passed",
+          "durationMs": 0.119375,
+          "line": 50,
+          "column": 3,
+          "id": "4b618021c71001dce6457821a6e3ad4036a8427c0d778ba5575d60ff3a044acd"
+        },
+        {
+          "file": "src/clamp.test.js",
+          "name": "fractional interval: above",
+          "status": "passed",
+          "durationMs": 0.049584,
+          "line": 50,
+          "column": 3,
+          "id": "4348b5a17abfaebb4cab533025cad255c60a683ade11510791640e34809034da"
+        },
+        {
+          "file": "src/clamp.test.js",
+          "name": "reversed bounds with zero max",
+          "status": "passed",
+          "durationMs": 0.2485,
+          "line": 68,
+          "column": 3,
+          "id": "b33e8951de03453ab91c5b86a44373bca08360d84bca32be3c776d60d9eb4618"
+        },
+        {
+          "file": "src/clamp.test.js",
+          "name": "reversed bounds with zero max",
+          "status": "passed",
+          "durationMs": 0.037041,
+          "line": 68,
+          "column": 3,
+          "id": "bda07f4b5a58096392a2be352a18cd561b8ea16b83d53c58c9455a6c51449ede"
+        },
+        {
+          "file": "src/clamp.test.js",
+          "name": "reversed bounds with zero max",
+          "status": "passed",
+          "durationMs": 0.039292,
+          "line": 68,
+          "column": 3,
+          "id": "030128eff1f3354236e49ee6cf3d047b701b59500a332a1e7fe16f2e54f0c3d0"
+        },
+        {
+          "file": "src/clamp.test.js",
+          "name": "reversed bounds with zero max",
+          "status": "passed",
+          "durationMs": 0.028917,
+          "line": 68,
+          "column": 3,
+          "id": "8832490f93c18472db34f8dd4c43efb00342f086beec927dcfb7a08dfc493fd2"
+        },
+        {
+          "file": "src/clamp.test.js",
+          "name": "reversed bounds with zero max",
+          "status": "passed",
+          "durationMs": 0.0305,
+          "line": 68,
+          "column": 3,
+          "id": "97b84a949d4aa6e9c55e1e827a44556f9e114d6d47f80a34b76298da3d6b26f2"
+        },
+        {
+          "file": "src/clamp.test.js",
+          "name": "reversed bounds with zero max",
+          "status": "passed",
+          "durationMs": 0.449167,
+          "line": 68,
+          "column": 3,
+          "id": "3e1c88893603faa56fd3cd859f10920c220e9fd1a3bedfd05b0aa7049e6e775d"
+        },
+        {
+          "file": "src/clamp.test.js",
+          "name": "reversed bounds with zero max",
+          "status": "passed",
+          "durationMs": 0.057,
+          "line": 68,
+          "column": 3,
+          "id": "e5f204f4b16214e21b2646040951f7d786fa550bf96b7fadebf4ba9413aee2a7"
+        },
+        {
+          "file": "src/clamp.test.js",
+          "name": "reversed bounds with zero max",
+          "status": "passed",
+          "durationMs": 0.036333,
+          "line": 68,
+          "column": 3,
+          "id": "8882c51031f1bcecd9f125b5df609acf4e8c52170d65cf3acf66352008c72c9f"
+        },
+        {
+          "file": "src/clamp.test.js",
+          "name": "reversed bounds with zero max",
+          "status": "passed",
+          "durationMs": 0.109084,
+          "line": 68,
+          "column": 3,
+          "id": "c775a21fe3612ebfd51dc4a162709e6b9781bb9dce837f258e83b232e7ebb502"
+        }
+      ],
+      "collectionFiles": [
+        "src/clamp.test.js"
+      ],
+      "requestedFiles": [
+        "src/clamp.test.js"
+      ],
+      "executedFiles": [
+        "src/clamp.test.js"
+      ],
+      "missingFiles": [],
+      "unknownFiles": [],
+      "complete": true,
+      "command": [
+        "<node>",
+        "--test",
+        "--test-reporter=<repository>src/reporters/node.js",
+        "--test-reporter-destination=/var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-report-uVTnJO/results.json",
+        "./src/clamp.test.js"
+      ],
+      "stdout": "",
+      "stderr": "",
+      "signal": null,
+      "reportErrors": [],
+      "discovery": {
+        "files": [
+          "src/clamp.test.js"
+        ],
+        "complete": true,
+        "adapter": "node",
+        "warnings": []
+      }
+    },
+    "missingCases": [],
+    "defects": [],
+    "measured": {
+      "execution": true,
+      "heldOutDefects": 0
+    },
+    "isolation": "disposable-file-copy-with-trusted-dependencies",
+    "applied": false
+  },
+  "baseline": {
+    "adapter": "node",
+    "exitCode": 0,
+    "durationMs": 120,
+    "tests": [
+      {
+        "file": "src/clamp.test.js",
+        "name": "fractional interval: above",
+        "status": "passed",
+        "durationMs": 0.6775,
+        "line": 50,
+        "column": 3,
+        "id": "ece3525bfffb99559f3bf784d1139ab473e50326187e2cb6c27b1aa49201b837"
+      },
+      {
+        "file": "src/clamp.test.js",
+        "name": "fractional interval: above",
+        "status": "passed",
+        "durationMs": 0.11625,
+        "line": 50,
+        "column": 3,
+        "id": "032a766142f1224571962f6034ced191e516eb1b3ab6b46e11647ca1654ec08b"
+      },
+      {
+        "file": "src/clamp.test.js",
+        "name": "fractional interval: above",
+        "status": "passed",
+        "durationMs": 0.045625,
+        "line": 50,
+        "column": 3,
+        "id": "101e8517fcb79ef45ca28e2f036439e7e36105a3165b1822da5dd7579e4459be"
+      },
+      {
+        "file": "src/clamp.test.js",
+        "name": "fractional interval: above",
+        "status": "passed",
+        "durationMs": 0.0435,
+        "line": 50,
+        "column": 3,
+        "id": "a33d107f68f205851674a0160101a73c57be5243e30ef18186978407770f166e"
+      },
+      {
+        "file": "src/clamp.test.js",
+        "name": "fractional interval: above",
+        "status": "passed",
+        "durationMs": 0.051708,
+        "line": 50,
+        "column": 3,
+        "id": "cc75c1294de2ed690d3ef59e132009a2d7d5464779fe572e0c3bd364b84e92f9"
+      },
+      {
+        "file": "src/clamp.test.js",
+        "name": "fractional interval: above",
+        "status": "passed",
+        "durationMs": 0.040708,
+        "line": 50,
+        "column": 3,
+        "id": "2ce20b1ce4ca528b3a96044c1020b40b2bd6e98d8aaec2f326d546e76f31c35d"
+      },
+      {
+        "file": "src/clamp.test.js",
+        "name": "fractional interval: above",
+        "status": "passed",
+        "durationMs": 0.044417,
+        "line": 50,
+        "column": 3,
+        "id": "7e729b4cd454792e6eb0468d9b7e2a6adbbd7fe7659989417755f4cb598ff2e5"
+      },
+      {
+        "file": "src/clamp.test.js",
+        "name": "fractional interval: above",
+        "status": "passed",
+        "durationMs": 0.43725,
+        "line": 50,
+        "column": 3,
+        "id": "0594aba0c5040814e8f90fd646bba5b00dac9cbb1911cfdb658e89a9ab6615be"
+      },
+      {
+        "file": "src/clamp.test.js",
+        "name": "fractional interval: above",
+        "status": "passed",
+        "durationMs": 0.382,
+        "line": 50,
+        "column": 3,
+        "id": "7a0e5a522bd144e9effc342998c4cdfaab9133f98d36c39a4ede9b28c7cfa99c"
+      },
+      {
+        "file": "src/clamp.test.js",
+        "name": "fractional interval: above",
+        "status": "passed",
+        "durationMs": 0.321791,
+        "line": 50,
+        "column": 3,
+        "id": "39268ef1ceb1d0471ee65ea905b429dcd906f7e9cd93d6c8b1a2e461f790e86e"
+      },
+      {
+        "file": "src/clamp.test.js",
+        "name": "fractional interval: above",
+        "status": "passed",
+        "durationMs": 0.099292,
+        "line": 50,
+        "column": 3,
+        "id": "d70e2867541ae70bf402dfb1e25fc1003b3ca9a6176d33197ad6ce5cc6e6e12a"
+      },
+      {
+        "file": "src/clamp.test.js",
+        "name": "fractional interval: above",
+        "status": "passed",
+        "durationMs": 0.033125,
+        "line": 50,
+        "column": 3,
+        "id": "beddb6cce62e4be7234d3264d565d9602e74c143dda8d72e279f2410edb488ad"
+      },
+      {
+        "file": "src/clamp.test.js",
+        "name": "fractional interval: above",
+        "status": "passed",
+        "durationMs": 0.024667,
+        "line": 50,
+        "column": 3,
+        "id": "77f5e58eb7c26c40387e73159b7591e61441380b81f7fda5ceea1f27a8ad6fcf"
+      },
+      {
+        "file": "src/clamp.test.js",
+        "name": "fractional interval: above",
+        "status": "passed",
+        "durationMs": 0.022083,
+        "line": 50,
+        "column": 3,
+        "id": "ab9cc531b4a297560b9e6213f047e5c73796e1d1fb40d9f95af53deddd56835d"
+      },
+      {
+        "file": "src/clamp.test.js",
+        "name": "fractional interval: above",
+        "status": "passed",
+        "durationMs": 0.021375,
+        "line": 50,
+        "column": 3,
+        "id": "e806b146860edd406ab7f152a5e586bb5a934f58d8dee6a83f88d77ed28da3b9"
+      },
+      {
+        "file": "src/clamp.test.js",
+        "name": "fractional interval: above",
+        "status": "passed",
+        "durationMs": 0.020917,
+        "line": 50,
+        "column": 3,
+        "id": "4a3091d09c40f6503ce92984452b52dd4547e1a2b98a2ed0200aee7acb1cd2b5"
+      },
+      {
+        "file": "src/clamp.test.js",
+        "name": "fractional interval: above",
+        "status": "passed",
+        "durationMs": 0.02075,
+        "line": 50,
+        "column": 3,
+        "id": "e7c2587ebb99a329420906a78c6941e1cbe0f768b6ef17d424c35f04d8656210"
+      },
+      {
+        "file": "src/clamp.test.js",
+        "name": "fractional interval: above",
+        "status": "passed",
+        "durationMs": 0.020125,
+        "line": 50,
+        "column": 3,
+        "id": "65a1368a6af2ac21cdb7be36477bc53da0770de93da4fac842bfaf00ca72d6c8"
+      },
+      {
+        "file": "src/clamp.test.js",
+        "name": "fractional interval: above",
+        "status": "passed",
+        "durationMs": 0.020708,
+        "line": 50,
+        "column": 3,
+        "id": "64bbbc6901c934ee14371d9804442e5b67214f68f98f6f1ea9dd30f976f0abdc"
+      },
+      {
+        "file": "src/clamp.test.js",
+        "name": "fractional interval: above",
+        "status": "passed",
+        "durationMs": 0.02,
+        "line": 50,
+        "column": 3,
+        "id": "1162f4027b8c7e12b98b45323b7cc304b6bc8191aef1adba4e6a6a92613d2bc7"
+      },
+      {
+        "file": "src/clamp.test.js",
+        "name": "fractional interval: above",
+        "status": "passed",
+        "durationMs": 0.020083,
+        "line": 50,
+        "column": 3,
+        "id": "b341e55af66b1c6a03053b1028e2accada4ff253a63c41ab917142baedc7266d"
+      },
+      {
+        "file": "src/clamp.test.js",
+        "name": "fractional interval: above",
+        "status": "passed",
+        "durationMs": 0.020417,
+        "line": 50,
+        "column": 3,
+        "id": "195607cdc7352c63756ff14c344192f41528767e31c3e064146b47f4b18c3294"
+      },
+      {
+        "file": "src/clamp.test.js",
+        "name": "fractional interval: above",
+        "status": "passed",
+        "durationMs": 0.021375,
+        "line": 50,
+        "column": 3,
+        "id": "955163a3fc7221991e5eddc4f9ffbb4f2eb2327971f877f000a8650277aa7dac"
+      },
+      {
+        "file": "src/clamp.test.js",
+        "name": "fractional interval: above",
+        "status": "passed",
+        "durationMs": 0.020083,
+        "line": 50,
+        "column": 3,
+        "id": "6a9bf48a2138edffe4fe8ab67688236c510faf20a6e978d7afec420685157cec"
+      },
+      {
+        "file": "src/clamp.test.js",
+        "name": "fractional interval: above",
+        "status": "passed",
+        "durationMs": 0.019916,
+        "line": 50,
+        "column": 3,
+        "id": "65b6b682d393f68ae690d49c9c475acf45d301e99831f9fedbb2951968116768"
+      },
+      {
+        "file": "src/clamp.test.js",
+        "name": "fractional interval: above",
+        "status": "passed",
+        "durationMs": 0.019834,
+        "line": 50,
+        "column": 3,
+        "id": "4a5d36773ff61b2f4cee8a503a516597bd95c8c8c3e2f5f0518551d59e822686"
+      },
+      {
+        "file": "src/clamp.test.js",
+        "name": "fractional interval: above",
+        "status": "passed",
+        "durationMs": 0.019959,
+        "line": 50,
+        "column": 3,
+        "id": "680262783465cc3f4d622cdb7863085a12562eb50930af9ef939621cb98f8b52"
+      },
+      {
+        "file": "src/clamp.test.js",
+        "name": "fractional interval: above",
+        "status": "passed",
+        "durationMs": 0.019958,
+        "line": 50,
+        "column": 3,
+        "id": "b3cea10ba5d998a56f13d95d045bf4ace6cffb35b960e60c26c29470c396272d"
+      },
+      {
+        "file": "src/clamp.test.js",
+        "name": "fractional interval: above",
+        "status": "passed",
+        "durationMs": 0.024375,
+        "line": 50,
+        "column": 3,
+        "id": "ec22cd1054af10765160d4e1ac2fab596af1e236296501e6483f6e80754151f0"
+      },
+      {
+        "file": "src/clamp.test.js",
+        "name": "fractional interval: above",
+        "status": "passed",
+        "durationMs": 0.02125,
+        "line": 50,
+        "column": 3,
+        "id": "3a249d346f1a15903b1c698c6410def05116c14e38474c3114efe5ba04012066"
+      },
+      {
+        "file": "src/clamp.test.js",
+        "name": "fractional interval: above",
+        "status": "passed",
+        "durationMs": 0.026167,
+        "line": 50,
+        "column": 3,
+        "id": "f0edf0641e9c52fbd163e7ec8b7f4ff7af549db572eb9ea1aa21009fc9bfd0cd"
+      },
+      {
+        "file": "src/clamp.test.js",
+        "name": "fractional interval: above",
+        "status": "passed",
+        "durationMs": 0.021584,
+        "line": 50,
+        "column": 3,
+        "id": "7c1bf521da9fb998ca37ef0c8c2935009194d3ea3882f2d1246b3bc05a24db58"
+      },
+      {
+        "file": "src/clamp.test.js",
+        "name": "fractional interval: above",
+        "status": "passed",
+        "durationMs": 0.020333,
+        "line": 50,
+        "column": 3,
+        "id": "fc3418583fc77d11f28c8a4915d7e31bfe6823585ff6b247805653fd7cd1c02e"
+      },
+      {
+        "file": "src/clamp.test.js",
+        "name": "fractional interval: above",
+        "status": "passed",
+        "durationMs": 0.022917,
+        "line": 50,
+        "column": 3,
+        "id": "373a62831da4b9fef6a966733b61d8dea73e5d1cbde39f028e7cfe658fc20054"
+      },
+      {
+        "file": "src/clamp.test.js",
+        "name": "fractional interval: above",
+        "status": "passed",
+        "durationMs": 0.020917,
+        "line": 50,
+        "column": 3,
+        "id": "eb03f189b190f927837e00e008fce17e162aad7143d3d9657ac8e99b65c89439"
+      },
+      {
+        "file": "src/clamp.test.js",
+        "name": "fractional interval: above",
+        "status": "passed",
+        "durationMs": 0.020291,
+        "line": 50,
+        "column": 3,
+        "id": "ea08c84aaeaf3951d006e051b984ab9604f66e3fb3ce26e7f332a5c0e7dbcebf"
+      },
+      {
+        "file": "src/clamp.test.js",
+        "name": "fractional interval: above",
+        "status": "passed",
+        "durationMs": 0.020125,
+        "line": 50,
+        "column": 3,
+        "id": "200ec787b3b30c994ad2a19f7fc214d4ef392ec4138ad724d9ac1490a0dbf230"
+      },
+      {
+        "file": "src/clamp.test.js",
+        "name": "fractional interval: above",
+        "status": "passed",
+        "durationMs": 0.021833,
+        "line": 50,
+        "column": 3,
+        "id": "882acb1e7896cf08a2828bd238a52c2f5959b0b252fc1f43cee4f605a2de2806"
+      },
+      {
+        "file": "src/clamp.test.js",
+        "name": "fractional interval: above",
+        "status": "passed",
+        "durationMs": 0.020333,
+        "line": 50,
+        "column": 3,
+        "id": "606f40c9a9f28451521a27be2f5e98f6e244b8ce1859355acc02ceaf6630191c"
+      },
+      {
+        "file": "src/clamp.test.js",
+        "name": "fractional interval: above",
+        "status": "passed",
+        "durationMs": 0.026417,
+        "line": 50,
+        "column": 3,
+        "id": "4b618021c71001dce6457821a6e3ad4036a8427c0d778ba5575d60ff3a044acd"
+      },
+      {
+        "file": "src/clamp.test.js",
+        "name": "fractional interval: above",
+        "status": "passed",
+        "durationMs": 0.020083,
+        "line": 50,
+        "column": 3,
+        "id": "4348b5a17abfaebb4cab533025cad255c60a683ade11510791640e34809034da"
+      },
+      {
+        "file": "src/clamp.test.js",
+        "name": "reversed bounds with zero max",
+        "status": "passed",
+        "durationMs": 0.216917,
+        "line": 68,
+        "column": 3,
+        "id": "b33e8951de03453ab91c5b86a44373bca08360d84bca32be3c776d60d9eb4618"
+      },
+      {
+        "file": "src/clamp.test.js",
+        "name": "reversed bounds with zero max",
+        "status": "passed",
+        "durationMs": 0.033041,
+        "line": 68,
+        "column": 3,
+        "id": "bda07f4b5a58096392a2be352a18cd561b8ea16b83d53c58c9455a6c51449ede"
+      },
+      {
+        "file": "src/clamp.test.js",
+        "name": "reversed bounds with zero max",
+        "status": "passed",
+        "durationMs": 0.074125,
+        "line": 68,
+        "column": 3,
+        "id": "030128eff1f3354236e49ee6cf3d047b701b59500a332a1e7fe16f2e54f0c3d0"
+      },
+      {
+        "file": "src/clamp.test.js",
+        "name": "reversed bounds with zero max",
+        "status": "passed",
+        "durationMs": 0.0565,
+        "line": 68,
+        "column": 3,
+        "id": "8832490f93c18472db34f8dd4c43efb00342f086beec927dcfb7a08dfc493fd2"
+      },
+      {
+        "file": "src/clamp.test.js",
+        "name": "reversed bounds with zero max",
+        "status": "passed",
+        "durationMs": 0.036083,
+        "line": 68,
+        "column": 3,
+        "id": "97b84a949d4aa6e9c55e1e827a44556f9e114d6d47f80a34b76298da3d6b26f2"
+      },
+      {
+        "file": "src/clamp.test.js",
+        "name": "reversed bounds with zero max",
+        "status": "passed",
+        "durationMs": 0.055125,
+        "line": 68,
+        "column": 3,
+        "id": "3e1c88893603faa56fd3cd859f10920c220e9fd1a3bedfd05b0aa7049e6e775d"
+      },
+      {
+        "file": "src/clamp.test.js",
+        "name": "reversed bounds with zero max",
+        "status": "passed",
+        "durationMs": 0.032084,
+        "line": 68,
+        "column": 3,
+        "id": "e5f204f4b16214e21b2646040951f7d786fa550bf96b7fadebf4ba9413aee2a7"
+      },
+      {
+        "file": "src/clamp.test.js",
+        "name": "reversed bounds with zero max",
+        "status": "passed",
+        "durationMs": 0.028417,
+        "line": 68,
+        "column": 3,
+        "id": "8882c51031f1bcecd9f125b5df609acf4e8c52170d65cf3acf66352008c72c9f"
+      },
+      {
+        "file": "src/clamp.test.js",
+        "name": "reversed bounds with zero max",
+        "status": "passed",
+        "durationMs": 0.104709,
+        "line": 68,
+        "column": 3,
+        "id": "c775a21fe3612ebfd51dc4a162709e6b9781bb9dce837f258e83b232e7ebb502"
+      }
+    ],
+    "collectionFiles": [
+      "src/clamp.test.js"
+    ],
+    "requestedFiles": [
+      "src/clamp.test.js"
+    ],
+    "executedFiles": [
+      "src/clamp.test.js"
+    ],
+    "missingFiles": [],
+    "unknownFiles": [],
+    "complete": true,
+    "command": [
+      "<node>",
+      "--test",
+      "--test-reporter=<repository>src/reporters/node.js",
+      "--test-reporter-destination=/var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-report-779z7z/results.json",
+      "./src/clamp.test.js"
+    ],
+    "stdout": "",
+    "stderr": "",
+    "signal": null,
+    "reportErrors": []
+  },
+  "heldOut": [
+    {
+      "name": "lower-bound",
+      "mutated": "export function clamp(value,min,max){if(min>max)throw new RangeError('invalid bounds');return Math.min(max,value);}\n",
+      "detected": true,
+      "result": {
+        "adapter": "node",
+        "exitCode": 1,
+        "durationMs": 128,
+        "tests": [
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "failed",
+            "durationMs": 1.107625,
+            "line": 50,
+            "column": 3,
+            "id": "ece3525bfffb99559f3bf784d1139ab473e50326187e2cb6c27b1aa49201b837"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.077667,
+            "line": 50,
+            "column": 3,
+            "id": "032a766142f1224571962f6034ced191e516eb1b3ab6b46e11647ca1654ec08b"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.050167,
+            "line": 50,
+            "column": 3,
+            "id": "101e8517fcb79ef45ca28e2f036439e7e36105a3165b1822da5dd7579e4459be"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.046541,
+            "line": 50,
+            "column": 3,
+            "id": "a33d107f68f205851674a0160101a73c57be5243e30ef18186978407770f166e"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.046208,
+            "line": 50,
+            "column": 3,
+            "id": "cc75c1294de2ed690d3ef59e132009a2d7d5464779fe572e0c3bd364b84e92f9"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "failed",
+            "durationMs": 0.092166,
+            "line": 50,
+            "column": 3,
+            "id": "2ce20b1ce4ca528b3a96044c1020b40b2bd6e98d8aaec2f326d546e76f31c35d"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "failed",
+            "durationMs": 0.127541,
+            "line": 50,
+            "column": 3,
+            "id": "7e729b4cd454792e6eb0468d9b7e2a6adbbd7fe7659989417755f4cb598ff2e5"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.469792,
+            "line": 50,
+            "column": 3,
+            "id": "0594aba0c5040814e8f90fd646bba5b00dac9cbb1911cfdb658e89a9ab6615be"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.344291,
+            "line": 50,
+            "column": 3,
+            "id": "7a0e5a522bd144e9effc342998c4cdfaab9133f98d36c39a4ede9b28c7cfa99c"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.36225,
+            "line": 50,
+            "column": 3,
+            "id": "39268ef1ceb1d0471ee65ea905b429dcd906f7e9cd93d6c8b1a2e461f790e86e"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.099875,
+            "line": 50,
+            "column": 3,
+            "id": "d70e2867541ae70bf402dfb1e25fc1003b3ca9a6176d33197ad6ce5cc6e6e12a"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.036417,
+            "line": 50,
+            "column": 3,
+            "id": "beddb6cce62e4be7234d3264d565d9602e74c143dda8d72e279f2410edb488ad"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "failed",
+            "durationMs": 0.093167,
+            "line": 50,
+            "column": 3,
+            "id": "77f5e58eb7c26c40387e73159b7591e61441380b81f7fda5ceea1f27a8ad6fcf"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.028583,
+            "line": 50,
+            "column": 3,
+            "id": "ab9cc531b4a297560b9e6213f047e5c73796e1d1fb40d9f95af53deddd56835d"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.0235,
+            "line": 50,
+            "column": 3,
+            "id": "e806b146860edd406ab7f152a5e586bb5a934f58d8dee6a83f88d77ed28da3b9"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.021792,
+            "line": 50,
+            "column": 3,
+            "id": "4a3091d09c40f6503ce92984452b52dd4547e1a2b98a2ed0200aee7acb1cd2b5"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.021708,
+            "line": 50,
+            "column": 3,
+            "id": "e7c2587ebb99a329420906a78c6941e1cbe0f768b6ef17d424c35f04d8656210"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.021166,
+            "line": 50,
+            "column": 3,
+            "id": "65a1368a6af2ac21cdb7be36477bc53da0770de93da4fac842bfaf00ca72d6c8"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.024125,
+            "line": 50,
+            "column": 3,
+            "id": "64bbbc6901c934ee14371d9804442e5b67214f68f98f6f1ea9dd30f976f0abdc"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "failed",
+            "durationMs": 0.068417,
+            "line": 50,
+            "column": 3,
+            "id": "1162f4027b8c7e12b98b45323b7cc304b6bc8191aef1adba4e6a6a92613d2bc7"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.022125,
+            "line": 50,
+            "column": 3,
+            "id": "b341e55af66b1c6a03053b1028e2accada4ff253a63c41ab917142baedc7266d"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.0225,
+            "line": 50,
+            "column": 3,
+            "id": "195607cdc7352c63756ff14c344192f41528767e31c3e064146b47f4b18c3294"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.020875,
+            "line": 50,
+            "column": 3,
+            "id": "955163a3fc7221991e5eddc4f9ffbb4f2eb2327971f877f000a8650277aa7dac"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.020583,
+            "line": 50,
+            "column": 3,
+            "id": "6a9bf48a2138edffe4fe8ab67688236c510faf20a6e978d7afec420685157cec"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "failed",
+            "durationMs": 0.135667,
+            "line": 50,
+            "column": 3,
+            "id": "65b6b682d393f68ae690d49c9c475acf45d301e99831f9fedbb2951968116768"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.024084,
+            "line": 50,
+            "column": 3,
+            "id": "4a5d36773ff61b2f4cee8a503a516597bd95c8c8c3e2f5f0518551d59e822686"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.021125,
+            "line": 50,
+            "column": 3,
+            "id": "680262783465cc3f4d622cdb7863085a12562eb50930af9ef939621cb98f8b52"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.021167,
+            "line": 50,
+            "column": 3,
+            "id": "b3cea10ba5d998a56f13d95d045bf4ace6cffb35b960e60c26c29470c396272d"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.02075,
+            "line": 50,
+            "column": 3,
+            "id": "ec22cd1054af10765160d4e1ac2fab596af1e236296501e6483f6e80754151f0"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "failed",
+            "durationMs": 0.052791,
+            "line": 50,
+            "column": 3,
+            "id": "3a249d346f1a15903b1c698c6410def05116c14e38474c3114efe5ba04012066"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.026709,
+            "line": 50,
+            "column": 3,
+            "id": "f0edf0641e9c52fbd163e7ec8b7f4ff7af549db572eb9ea1aa21009fc9bfd0cd"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.021375,
+            "line": 50,
+            "column": 3,
+            "id": "7c1bf521da9fb998ca37ef0c8c2935009194d3ea3882f2d1246b3bc05a24db58"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "failed",
+            "durationMs": 0.097334,
+            "line": 50,
+            "column": 3,
+            "id": "fc3418583fc77d11f28c8a4915d7e31bfe6823585ff6b247805653fd7cd1c02e"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.022709,
+            "line": 50,
+            "column": 3,
+            "id": "373a62831da4b9fef6a966733b61d8dea73e5d1cbde39f028e7cfe658fc20054"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.020416,
+            "line": 50,
+            "column": 3,
+            "id": "eb03f189b190f927837e00e008fce17e162aad7143d3d9657ac8e99b65c89439"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "failed",
+            "durationMs": 0.192625,
+            "line": 50,
+            "column": 3,
+            "id": "ea08c84aaeaf3951d006e051b984ab9604f66e3fb3ce26e7f332a5c0e7dbcebf"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.027625,
+            "line": 50,
+            "column": 3,
+            "id": "200ec787b3b30c994ad2a19f7fc214d4ef392ec4138ad724d9ac1490a0dbf230"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.020708,
+            "line": 50,
+            "column": 3,
+            "id": "882acb1e7896cf08a2828bd238a52c2f5959b0b252fc1f43cee4f605a2de2806"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "failed",
+            "durationMs": 0.080084,
+            "line": 50,
+            "column": 3,
+            "id": "606f40c9a9f28451521a27be2f5e98f6e244b8ce1859355acc02ceaf6630191c"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.022292,
+            "line": 50,
+            "column": 3,
+            "id": "4b618021c71001dce6457821a6e3ad4036a8427c0d778ba5575d60ff3a044acd"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.021042,
+            "line": 50,
+            "column": 3,
+            "id": "4348b5a17abfaebb4cab533025cad255c60a683ade11510791640e34809034da"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "reversed bounds with zero max",
+            "status": "passed",
+            "durationMs": 0.232333,
+            "line": 68,
+            "column": 3,
+            "id": "b33e8951de03453ab91c5b86a44373bca08360d84bca32be3c776d60d9eb4618"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "reversed bounds with zero max",
+            "status": "passed",
+            "durationMs": 0.037292,
+            "line": 68,
+            "column": 3,
+            "id": "bda07f4b5a58096392a2be352a18cd561b8ea16b83d53c58c9455a6c51449ede"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "reversed bounds with zero max",
+            "status": "passed",
+            "durationMs": 0.029459,
+            "line": 68,
+            "column": 3,
+            "id": "030128eff1f3354236e49ee6cf3d047b701b59500a332a1e7fe16f2e54f0c3d0"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "reversed bounds with zero max",
+            "status": "passed",
+            "durationMs": 0.027125,
+            "line": 68,
+            "column": 3,
+            "id": "8832490f93c18472db34f8dd4c43efb00342f086beec927dcfb7a08dfc493fd2"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "reversed bounds with zero max",
+            "status": "passed",
+            "durationMs": 0.377459,
+            "line": 68,
+            "column": 3,
+            "id": "97b84a949d4aa6e9c55e1e827a44556f9e114d6d47f80a34b76298da3d6b26f2"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "reversed bounds with zero max",
+            "status": "passed",
+            "durationMs": 0.027417,
+            "line": 68,
+            "column": 3,
+            "id": "3e1c88893603faa56fd3cd859f10920c220e9fd1a3bedfd05b0aa7049e6e775d"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "reversed bounds with zero max",
+            "status": "passed",
+            "durationMs": 0.026708,
+            "line": 68,
+            "column": 3,
+            "id": "e5f204f4b16214e21b2646040951f7d786fa550bf96b7fadebf4ba9413aee2a7"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "reversed bounds with zero max",
+            "status": "passed",
+            "durationMs": 0.027,
+            "line": 68,
+            "column": 3,
+            "id": "8882c51031f1bcecd9f125b5df609acf4e8c52170d65cf3acf66352008c72c9f"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "reversed bounds with zero max",
+            "status": "passed",
+            "durationMs": 0.089292,
+            "line": 68,
+            "column": 3,
+            "id": "c775a21fe3612ebfd51dc4a162709e6b9781bb9dce837f258e83b232e7ebb502"
+          }
+        ],
+        "collectionFiles": [
+          "src/clamp.test.js"
+        ],
+        "requestedFiles": [
+          "src/clamp.test.js"
+        ],
+        "executedFiles": [
+          "src/clamp.test.js"
+        ],
+        "missingFiles": [],
+        "unknownFiles": [],
+        "complete": true,
+        "command": [
+          "<node>",
+          "--test",
+          "--test-reporter=<repository>src/reporters/node.js",
+          "--test-reporter-destination=/var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-report-Itc0ib/results.json",
+          "./src/clamp.test.js"
+        ],
+        "stdout": "",
+        "stderr": "",
+        "signal": null,
+        "reportErrors": []
+      }
+    },
+    {
+      "name": "upper-bound",
+      "mutated": "export function clamp(value,min,max){if(min>max)throw new RangeError('invalid bounds');return Math.max(min,value);}\n",
+      "detected": true,
+      "result": {
+        "adapter": "node",
+        "exitCode": 1,
+        "durationMs": 123,
+        "tests": [
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.674167,
+            "line": 50,
+            "column": 3,
+            "id": "ece3525bfffb99559f3bf784d1139ab473e50326187e2cb6c27b1aa49201b837"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.117958,
+            "line": 50,
+            "column": 3,
+            "id": "032a766142f1224571962f6034ced191e516eb1b3ab6b46e11647ca1654ec08b"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "failed",
+            "durationMs": 0.424833,
+            "line": 50,
+            "column": 3,
+            "id": "101e8517fcb79ef45ca28e2f036439e7e36105a3165b1822da5dd7579e4459be"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.051083,
+            "line": 50,
+            "column": 3,
+            "id": "a33d107f68f205851674a0160101a73c57be5243e30ef18186978407770f166e"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.049042,
+            "line": 50,
+            "column": 3,
+            "id": "cc75c1294de2ed690d3ef59e132009a2d7d5464779fe572e0c3bd364b84e92f9"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.048708,
+            "line": 50,
+            "column": 3,
+            "id": "2ce20b1ce4ca528b3a96044c1020b40b2bd6e98d8aaec2f326d546e76f31c35d"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.037709,
+            "line": 50,
+            "column": 3,
+            "id": "7e729b4cd454792e6eb0468d9b7e2a6adbbd7fe7659989417755f4cb598ff2e5"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.415042,
+            "line": 50,
+            "column": 3,
+            "id": "0594aba0c5040814e8f90fd646bba5b00dac9cbb1911cfdb658e89a9ab6615be"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "failed",
+            "durationMs": 0.401084,
+            "line": 50,
+            "column": 3,
+            "id": "7a0e5a522bd144e9effc342998c4cdfaab9133f98d36c39a4ede9b28c7cfa99c"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.320167,
+            "line": 50,
+            "column": 3,
+            "id": "39268ef1ceb1d0471ee65ea905b429dcd906f7e9cd93d6c8b1a2e461f790e86e"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.096292,
+            "line": 50,
+            "column": 3,
+            "id": "d70e2867541ae70bf402dfb1e25fc1003b3ca9a6176d33197ad6ce5cc6e6e12a"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "failed",
+            "durationMs": 0.088667,
+            "line": 50,
+            "column": 3,
+            "id": "beddb6cce62e4be7234d3264d565d9602e74c143dda8d72e279f2410edb488ad"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.030625,
+            "line": 50,
+            "column": 3,
+            "id": "77f5e58eb7c26c40387e73159b7591e61441380b81f7fda5ceea1f27a8ad6fcf"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.025875,
+            "line": 50,
+            "column": 3,
+            "id": "ab9cc531b4a297560b9e6213f047e5c73796e1d1fb40d9f95af53deddd56835d"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.022125,
+            "line": 50,
+            "column": 3,
+            "id": "e806b146860edd406ab7f152a5e586bb5a934f58d8dee6a83f88d77ed28da3b9"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.021459,
+            "line": 50,
+            "column": 3,
+            "id": "4a3091d09c40f6503ce92984452b52dd4547e1a2b98a2ed0200aee7acb1cd2b5"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "failed",
+            "durationMs": 0.055583,
+            "line": 50,
+            "column": 3,
+            "id": "e7c2587ebb99a329420906a78c6941e1cbe0f768b6ef17d424c35f04d8656210"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.022833,
+            "line": 50,
+            "column": 3,
+            "id": "65a1368a6af2ac21cdb7be36477bc53da0770de93da4fac842bfaf00ca72d6c8"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.022084,
+            "line": 50,
+            "column": 3,
+            "id": "64bbbc6901c934ee14371d9804442e5b67214f68f98f6f1ea9dd30f976f0abdc"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.020792,
+            "line": 50,
+            "column": 3,
+            "id": "1162f4027b8c7e12b98b45323b7cc304b6bc8191aef1adba4e6a6a92613d2bc7"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.02075,
+            "line": 50,
+            "column": 3,
+            "id": "b341e55af66b1c6a03053b1028e2accada4ff253a63c41ab917142baedc7266d"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.02125,
+            "line": 50,
+            "column": 3,
+            "id": "195607cdc7352c63756ff14c344192f41528767e31c3e064146b47f4b18c3294"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.021084,
+            "line": 50,
+            "column": 3,
+            "id": "955163a3fc7221991e5eddc4f9ffbb4f2eb2327971f877f000a8650277aa7dac"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "failed",
+            "durationMs": 0.053709,
+            "line": 50,
+            "column": 3,
+            "id": "6a9bf48a2138edffe4fe8ab67688236c510faf20a6e978d7afec420685157cec"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.021916,
+            "line": 50,
+            "column": 3,
+            "id": "65b6b682d393f68ae690d49c9c475acf45d301e99831f9fedbb2951968116768"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.021,
+            "line": 50,
+            "column": 3,
+            "id": "4a5d36773ff61b2f4cee8a503a516597bd95c8c8c3e2f5f0518551d59e822686"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.020709,
+            "line": 50,
+            "column": 3,
+            "id": "680262783465cc3f4d622cdb7863085a12562eb50930af9ef939621cb98f8b52"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.0205,
+            "line": 50,
+            "column": 3,
+            "id": "b3cea10ba5d998a56f13d95d045bf4ace6cffb35b960e60c26c29470c396272d"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "failed",
+            "durationMs": 0.124416,
+            "line": 50,
+            "column": 3,
+            "id": "ec22cd1054af10765160d4e1ac2fab596af1e236296501e6483f6e80754151f0"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.023625,
+            "line": 50,
+            "column": 3,
+            "id": "3a249d346f1a15903b1c698c6410def05116c14e38474c3114efe5ba04012066"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.023,
+            "line": 50,
+            "column": 3,
+            "id": "f0edf0641e9c52fbd163e7ec8b7f4ff7af549db572eb9ea1aa21009fc9bfd0cd"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "failed",
+            "durationMs": 0.051834,
+            "line": 50,
+            "column": 3,
+            "id": "7c1bf521da9fb998ca37ef0c8c2935009194d3ea3882f2d1246b3bc05a24db58"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.026792,
+            "line": 50,
+            "column": 3,
+            "id": "fc3418583fc77d11f28c8a4915d7e31bfe6823585ff6b247805653fd7cd1c02e"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.022334,
+            "line": 50,
+            "column": 3,
+            "id": "373a62831da4b9fef6a966733b61d8dea73e5d1cbde39f028e7cfe658fc20054"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "failed",
+            "durationMs": 0.0965,
+            "line": 50,
+            "column": 3,
+            "id": "eb03f189b190f927837e00e008fce17e162aad7143d3d9657ac8e99b65c89439"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.02225,
+            "line": 50,
+            "column": 3,
+            "id": "ea08c84aaeaf3951d006e051b984ab9604f66e3fb3ce26e7f332a5c0e7dbcebf"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.021333,
+            "line": 50,
+            "column": 3,
+            "id": "200ec787b3b30c994ad2a19f7fc214d4ef392ec4138ad724d9ac1490a0dbf230"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "failed",
+            "durationMs": 0.19425,
+            "line": 50,
+            "column": 3,
+            "id": "882acb1e7896cf08a2828bd238a52c2f5959b0b252fc1f43cee4f605a2de2806"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.077417,
+            "line": 50,
+            "column": 3,
+            "id": "606f40c9a9f28451521a27be2f5e98f6e244b8ce1859355acc02ceaf6630191c"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.042709,
+            "line": 50,
+            "column": 3,
+            "id": "4b618021c71001dce6457821a6e3ad4036a8427c0d778ba5575d60ff3a044acd"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "failed",
+            "durationMs": 0.122334,
+            "line": 50,
+            "column": 3,
+            "id": "4348b5a17abfaebb4cab533025cad255c60a683ade11510791640e34809034da"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "reversed bounds with zero max",
+            "status": "passed",
+            "durationMs": 0.235166,
+            "line": 68,
+            "column": 3,
+            "id": "b33e8951de03453ab91c5b86a44373bca08360d84bca32be3c776d60d9eb4618"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "reversed bounds with zero max",
+            "status": "passed",
+            "durationMs": 0.040833,
+            "line": 68,
+            "column": 3,
+            "id": "bda07f4b5a58096392a2be352a18cd561b8ea16b83d53c58c9455a6c51449ede"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "reversed bounds with zero max",
+            "status": "passed",
+            "durationMs": 0.047125,
+            "line": 68,
+            "column": 3,
+            "id": "030128eff1f3354236e49ee6cf3d047b701b59500a332a1e7fe16f2e54f0c3d0"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "reversed bounds with zero max",
+            "status": "passed",
+            "durationMs": 0.031542,
+            "line": 68,
+            "column": 3,
+            "id": "8832490f93c18472db34f8dd4c43efb00342f086beec927dcfb7a08dfc493fd2"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "reversed bounds with zero max",
+            "status": "passed",
+            "durationMs": 0.029042,
+            "line": 68,
+            "column": 3,
+            "id": "97b84a949d4aa6e9c55e1e827a44556f9e114d6d47f80a34b76298da3d6b26f2"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "reversed bounds with zero max",
+            "status": "passed",
+            "durationMs": 0.039792,
+            "line": 68,
+            "column": 3,
+            "id": "3e1c88893603faa56fd3cd859f10920c220e9fd1a3bedfd05b0aa7049e6e775d"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "reversed bounds with zero max",
+            "status": "passed",
+            "durationMs": 0.03125,
+            "line": 68,
+            "column": 3,
+            "id": "e5f204f4b16214e21b2646040951f7d786fa550bf96b7fadebf4ba9413aee2a7"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "reversed bounds with zero max",
+            "status": "passed",
+            "durationMs": 0.028666,
+            "line": 68,
+            "column": 3,
+            "id": "8882c51031f1bcecd9f125b5df609acf4e8c52170d65cf3acf66352008c72c9f"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "reversed bounds with zero max",
+            "status": "passed",
+            "durationMs": 0.1055,
+            "line": 68,
+            "column": 3,
+            "id": "c775a21fe3612ebfd51dc4a162709e6b9781bb9dce837f258e83b232e7ebb502"
+          }
+        ],
+        "collectionFiles": [
+          "src/clamp.test.js"
+        ],
+        "requestedFiles": [
+          "src/clamp.test.js"
+        ],
+        "executedFiles": [
+          "src/clamp.test.js"
+        ],
+        "missingFiles": [],
+        "unknownFiles": [],
+        "complete": true,
+        "command": [
+          "<node>",
+          "--test",
+          "--test-reporter=<repository>src/reporters/node.js",
+          "--test-reporter-destination=/var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-report-THrFur/results.json",
+          "./src/clamp.test.js"
+        ],
+        "stdout": "",
+        "stderr": "",
+        "signal": null,
+        "reportErrors": []
+      }
+    },
+    {
+      "name": "interior",
+      "mutated": "export function clamp(value,min,max){if(min>max)throw new RangeError('invalid bounds');return min;}\n",
+      "detected": true,
+      "result": {
+        "adapter": "node",
+        "exitCode": 1,
+        "durationMs": 128,
+        "tests": [
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.689375,
+            "line": 50,
+            "column": 3,
+            "id": "ece3525bfffb99559f3bf784d1139ab473e50326187e2cb6c27b1aa49201b837"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "failed",
+            "durationMs": 0.512542,
+            "line": 50,
+            "column": 3,
+            "id": "032a766142f1224571962f6034ced191e516eb1b3ab6b46e11647ca1654ec08b"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "failed",
+            "durationMs": 0.089167,
+            "line": 50,
+            "column": 3,
+            "id": "101e8517fcb79ef45ca28e2f036439e7e36105a3165b1822da5dd7579e4459be"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.104542,
+            "line": 50,
+            "column": 3,
+            "id": "a33d107f68f205851674a0160101a73c57be5243e30ef18186978407770f166e"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "failed",
+            "durationMs": 0.078083,
+            "line": 50,
+            "column": 3,
+            "id": "cc75c1294de2ed690d3ef59e132009a2d7d5464779fe572e0c3bd364b84e92f9"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.041542,
+            "line": 50,
+            "column": 3,
+            "id": "2ce20b1ce4ca528b3a96044c1020b40b2bd6e98d8aaec2f326d546e76f31c35d"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.11625,
+            "line": 50,
+            "column": 3,
+            "id": "7e729b4cd454792e6eb0468d9b7e2a6adbbd7fe7659989417755f4cb598ff2e5"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "failed",
+            "durationMs": 0.455792,
+            "line": 50,
+            "column": 3,
+            "id": "0594aba0c5040814e8f90fd646bba5b00dac9cbb1911cfdb658e89a9ab6615be"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "failed",
+            "durationMs": 0.298542,
+            "line": 50,
+            "column": 3,
+            "id": "7a0e5a522bd144e9effc342998c4cdfaab9133f98d36c39a4ede9b28c7cfa99c"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.301666,
+            "line": 50,
+            "column": 3,
+            "id": "39268ef1ceb1d0471ee65ea905b429dcd906f7e9cd93d6c8b1a2e461f790e86e"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "failed",
+            "durationMs": 0.140541,
+            "line": 50,
+            "column": 3,
+            "id": "d70e2867541ae70bf402dfb1e25fc1003b3ca9a6176d33197ad6ce5cc6e6e12a"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "failed",
+            "durationMs": 0.060833,
+            "line": 50,
+            "column": 3,
+            "id": "beddb6cce62e4be7234d3264d565d9602e74c143dda8d72e279f2410edb488ad"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.029917,
+            "line": 50,
+            "column": 3,
+            "id": "77f5e58eb7c26c40387e73159b7591e61441380b81f7fda5ceea1f27a8ad6fcf"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "failed",
+            "durationMs": 0.097584,
+            "line": 50,
+            "column": 3,
+            "id": "ab9cc531b4a297560b9e6213f047e5c73796e1d1fb40d9f95af53deddd56835d"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "failed",
+            "durationMs": 0.190291,
+            "line": 50,
+            "column": 3,
+            "id": "e806b146860edd406ab7f152a5e586bb5a934f58d8dee6a83f88d77ed28da3b9"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "failed",
+            "durationMs": 0.064916,
+            "line": 50,
+            "column": 3,
+            "id": "4a3091d09c40f6503ce92984452b52dd4547e1a2b98a2ed0200aee7acb1cd2b5"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "failed",
+            "durationMs": 0.05125,
+            "line": 50,
+            "column": 3,
+            "id": "e7c2587ebb99a329420906a78c6941e1cbe0f768b6ef17d424c35f04d8656210"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.025542,
+            "line": 50,
+            "column": 3,
+            "id": "65a1368a6af2ac21cdb7be36477bc53da0770de93da4fac842bfaf00ca72d6c8"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "failed",
+            "durationMs": 0.10175,
+            "line": 50,
+            "column": 3,
+            "id": "64bbbc6901c934ee14371d9804442e5b67214f68f98f6f1ea9dd30f976f0abdc"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.024083,
+            "line": 50,
+            "column": 3,
+            "id": "1162f4027b8c7e12b98b45323b7cc304b6bc8191aef1adba4e6a6a92613d2bc7"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.023208,
+            "line": 50,
+            "column": 3,
+            "id": "b341e55af66b1c6a03053b1028e2accada4ff253a63c41ab917142baedc7266d"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "failed",
+            "durationMs": 0.055708,
+            "line": 50,
+            "column": 3,
+            "id": "195607cdc7352c63756ff14c344192f41528767e31c3e064146b47f4b18c3294"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "failed",
+            "durationMs": 0.048042,
+            "line": 50,
+            "column": 3,
+            "id": "955163a3fc7221991e5eddc4f9ffbb4f2eb2327971f877f000a8650277aa7dac"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "failed",
+            "durationMs": 0.043834,
+            "line": 50,
+            "column": 3,
+            "id": "6a9bf48a2138edffe4fe8ab67688236c510faf20a6e978d7afec420685157cec"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.024458,
+            "line": 50,
+            "column": 3,
+            "id": "65b6b682d393f68ae690d49c9c475acf45d301e99831f9fedbb2951968116768"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.021916,
+            "line": 50,
+            "column": 3,
+            "id": "4a5d36773ff61b2f4cee8a503a516597bd95c8c8c3e2f5f0518551d59e822686"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "failed",
+            "durationMs": 0.044,
+            "line": 50,
+            "column": 3,
+            "id": "680262783465cc3f4d622cdb7863085a12562eb50930af9ef939621cb98f8b52"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "failed",
+            "durationMs": 0.099625,
+            "line": 50,
+            "column": 3,
+            "id": "b3cea10ba5d998a56f13d95d045bf4ace6cffb35b960e60c26c29470c396272d"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "failed",
+            "durationMs": 0.047333,
+            "line": 50,
+            "column": 3,
+            "id": "ec22cd1054af10765160d4e1ac2fab596af1e236296501e6483f6e80754151f0"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.023875,
+            "line": 50,
+            "column": 3,
+            "id": "3a249d346f1a15903b1c698c6410def05116c14e38474c3114efe5ba04012066"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.023416,
+            "line": 50,
+            "column": 3,
+            "id": "f0edf0641e9c52fbd163e7ec8b7f4ff7af549db572eb9ea1aa21009fc9bfd0cd"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.021291,
+            "line": 50,
+            "column": 3,
+            "id": "7c1bf521da9fb998ca37ef0c8c2935009194d3ea3882f2d1246b3bc05a24db58"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.020625,
+            "line": 50,
+            "column": 3,
+            "id": "fc3418583fc77d11f28c8a4915d7e31bfe6823585ff6b247805653fd7cd1c02e"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.021208,
+            "line": 50,
+            "column": 3,
+            "id": "373a62831da4b9fef6a966733b61d8dea73e5d1cbde39f028e7cfe658fc20054"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.020542,
+            "line": 50,
+            "column": 3,
+            "id": "eb03f189b190f927837e00e008fce17e162aad7143d3d9657ac8e99b65c89439"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.020208,
+            "line": 50,
+            "column": 3,
+            "id": "ea08c84aaeaf3951d006e051b984ab9604f66e3fb3ce26e7f332a5c0e7dbcebf"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.022417,
+            "line": 50,
+            "column": 3,
+            "id": "200ec787b3b30c994ad2a19f7fc214d4ef392ec4138ad724d9ac1490a0dbf230"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.02075,
+            "line": 50,
+            "column": 3,
+            "id": "882acb1e7896cf08a2828bd238a52c2f5959b0b252fc1f43cee4f605a2de2806"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.020625,
+            "line": 50,
+            "column": 3,
+            "id": "606f40c9a9f28451521a27be2f5e98f6e244b8ce1859355acc02ceaf6630191c"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "failed",
+            "durationMs": 0.100917,
+            "line": 50,
+            "column": 3,
+            "id": "4b618021c71001dce6457821a6e3ad4036a8427c0d778ba5575d60ff3a044acd"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "failed",
+            "durationMs": 0.048541,
+            "line": 50,
+            "column": 3,
+            "id": "4348b5a17abfaebb4cab533025cad255c60a683ade11510791640e34809034da"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "reversed bounds with zero max",
+            "status": "passed",
+            "durationMs": 0.171708,
+            "line": 68,
+            "column": 3,
+            "id": "b33e8951de03453ab91c5b86a44373bca08360d84bca32be3c776d60d9eb4618"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "reversed bounds with zero max",
+            "status": "passed",
+            "durationMs": 0.029042,
+            "line": 68,
+            "column": 3,
+            "id": "bda07f4b5a58096392a2be352a18cd561b8ea16b83d53c58c9455a6c51449ede"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "reversed bounds with zero max",
+            "status": "passed",
+            "durationMs": 0.031541,
+            "line": 68,
+            "column": 3,
+            "id": "030128eff1f3354236e49ee6cf3d047b701b59500a332a1e7fe16f2e54f0c3d0"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "reversed bounds with zero max",
+            "status": "passed",
+            "durationMs": 0.027292,
+            "line": 68,
+            "column": 3,
+            "id": "8832490f93c18472db34f8dd4c43efb00342f086beec927dcfb7a08dfc493fd2"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "reversed bounds with zero max",
+            "status": "passed",
+            "durationMs": 0.302541,
+            "line": 68,
+            "column": 3,
+            "id": "97b84a949d4aa6e9c55e1e827a44556f9e114d6d47f80a34b76298da3d6b26f2"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "reversed bounds with zero max",
+            "status": "passed",
+            "durationMs": 0.029083,
+            "line": 68,
+            "column": 3,
+            "id": "3e1c88893603faa56fd3cd859f10920c220e9fd1a3bedfd05b0aa7049e6e775d"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "reversed bounds with zero max",
+            "status": "passed",
+            "durationMs": 0.02675,
+            "line": 68,
+            "column": 3,
+            "id": "e5f204f4b16214e21b2646040951f7d786fa550bf96b7fadebf4ba9413aee2a7"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "reversed bounds with zero max",
+            "status": "passed",
+            "durationMs": 0.026917,
+            "line": 68,
+            "column": 3,
+            "id": "8882c51031f1bcecd9f125b5df609acf4e8c52170d65cf3acf66352008c72c9f"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "reversed bounds with zero max",
+            "status": "passed",
+            "durationMs": 0.027209,
+            "line": 68,
+            "column": 3,
+            "id": "c775a21fe3612ebfd51dc4a162709e6b9781bb9dce837f258e83b232e7ebb502"
+          }
+        ],
+        "collectionFiles": [
+          "src/clamp.test.js"
+        ],
+        "requestedFiles": [
+          "src/clamp.test.js"
+        ],
+        "executedFiles": [
+          "src/clamp.test.js"
+        ],
+        "missingFiles": [],
+        "unknownFiles": [],
+        "complete": true,
+        "command": [
+          "<node>",
+          "--test",
+          "--test-reporter=<repository>src/reporters/node.js",
+          "--test-reporter-destination=/var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-report-uHdR6G/results.json",
+          "./src/clamp.test.js"
+        ],
+        "stdout": "",
+        "stderr": "",
+        "signal": null,
+        "reportErrors": []
+      }
+    },
+    {
+      "name": "reversed-bounds",
+      "mutated": "export function clamp(value,min,max){return Math.min(max,Math.max(min,value));}\n",
+      "detected": true,
+      "result": {
+        "adapter": "node",
+        "exitCode": 1,
+        "durationMs": 124,
+        "tests": [
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.717459,
+            "line": 50,
+            "column": 3,
+            "id": "ece3525bfffb99559f3bf784d1139ab473e50326187e2cb6c27b1aa49201b837"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.132541,
+            "line": 50,
+            "column": 3,
+            "id": "032a766142f1224571962f6034ced191e516eb1b3ab6b46e11647ca1654ec08b"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.046042,
+            "line": 50,
+            "column": 3,
+            "id": "101e8517fcb79ef45ca28e2f036439e7e36105a3165b1822da5dd7579e4459be"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.046709,
+            "line": 50,
+            "column": 3,
+            "id": "a33d107f68f205851674a0160101a73c57be5243e30ef18186978407770f166e"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.06,
+            "line": 50,
+            "column": 3,
+            "id": "cc75c1294de2ed690d3ef59e132009a2d7d5464779fe572e0c3bd364b84e92f9"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.040666,
+            "line": 50,
+            "column": 3,
+            "id": "2ce20b1ce4ca528b3a96044c1020b40b2bd6e98d8aaec2f326d546e76f31c35d"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.0365,
+            "line": 50,
+            "column": 3,
+            "id": "7e729b4cd454792e6eb0468d9b7e2a6adbbd7fe7659989417755f4cb598ff2e5"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.036375,
+            "line": 50,
+            "column": 3,
+            "id": "0594aba0c5040814e8f90fd646bba5b00dac9cbb1911cfdb658e89a9ab6615be"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.329834,
+            "line": 50,
+            "column": 3,
+            "id": "7a0e5a522bd144e9effc342998c4cdfaab9133f98d36c39a4ede9b28c7cfa99c"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.315584,
+            "line": 50,
+            "column": 3,
+            "id": "39268ef1ceb1d0471ee65ea905b429dcd906f7e9cd93d6c8b1a2e461f790e86e"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.100417,
+            "line": 50,
+            "column": 3,
+            "id": "d70e2867541ae70bf402dfb1e25fc1003b3ca9a6176d33197ad6ce5cc6e6e12a"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.032208,
+            "line": 50,
+            "column": 3,
+            "id": "beddb6cce62e4be7234d3264d565d9602e74c143dda8d72e279f2410edb488ad"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.025292,
+            "line": 50,
+            "column": 3,
+            "id": "77f5e58eb7c26c40387e73159b7591e61441380b81f7fda5ceea1f27a8ad6fcf"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.026084,
+            "line": 50,
+            "column": 3,
+            "id": "ab9cc531b4a297560b9e6213f047e5c73796e1d1fb40d9f95af53deddd56835d"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.022834,
+            "line": 50,
+            "column": 3,
+            "id": "e806b146860edd406ab7f152a5e586bb5a934f58d8dee6a83f88d77ed28da3b9"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.02225,
+            "line": 50,
+            "column": 3,
+            "id": "4a3091d09c40f6503ce92984452b52dd4547e1a2b98a2ed0200aee7acb1cd2b5"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.025625,
+            "line": 50,
+            "column": 3,
+            "id": "e7c2587ebb99a329420906a78c6941e1cbe0f768b6ef17d424c35f04d8656210"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.023875,
+            "line": 50,
+            "column": 3,
+            "id": "65a1368a6af2ac21cdb7be36477bc53da0770de93da4fac842bfaf00ca72d6c8"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.020583,
+            "line": 50,
+            "column": 3,
+            "id": "64bbbc6901c934ee14371d9804442e5b67214f68f98f6f1ea9dd30f976f0abdc"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.021417,
+            "line": 50,
+            "column": 3,
+            "id": "1162f4027b8c7e12b98b45323b7cc304b6bc8191aef1adba4e6a6a92613d2bc7"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.023209,
+            "line": 50,
+            "column": 3,
+            "id": "b341e55af66b1c6a03053b1028e2accada4ff253a63c41ab917142baedc7266d"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.020875,
+            "line": 50,
+            "column": 3,
+            "id": "195607cdc7352c63756ff14c344192f41528767e31c3e064146b47f4b18c3294"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.0205,
+            "line": 50,
+            "column": 3,
+            "id": "955163a3fc7221991e5eddc4f9ffbb4f2eb2327971f877f000a8650277aa7dac"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.020167,
+            "line": 50,
+            "column": 3,
+            "id": "6a9bf48a2138edffe4fe8ab67688236c510faf20a6e978d7afec420685157cec"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.020084,
+            "line": 50,
+            "column": 3,
+            "id": "65b6b682d393f68ae690d49c9c475acf45d301e99831f9fedbb2951968116768"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.025958,
+            "line": 50,
+            "column": 3,
+            "id": "4a5d36773ff61b2f4cee8a503a516597bd95c8c8c3e2f5f0518551d59e822686"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.020042,
+            "line": 50,
+            "column": 3,
+            "id": "680262783465cc3f4d622cdb7863085a12562eb50930af9ef939621cb98f8b52"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.020375,
+            "line": 50,
+            "column": 3,
+            "id": "b3cea10ba5d998a56f13d95d045bf4ace6cffb35b960e60c26c29470c396272d"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.022375,
+            "line": 50,
+            "column": 3,
+            "id": "ec22cd1054af10765160d4e1ac2fab596af1e236296501e6483f6e80754151f0"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.023917,
+            "line": 50,
+            "column": 3,
+            "id": "3a249d346f1a15903b1c698c6410def05116c14e38474c3114efe5ba04012066"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.02325,
+            "line": 50,
+            "column": 3,
+            "id": "f0edf0641e9c52fbd163e7ec8b7f4ff7af549db572eb9ea1aa21009fc9bfd0cd"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.021416,
+            "line": 50,
+            "column": 3,
+            "id": "7c1bf521da9fb998ca37ef0c8c2935009194d3ea3882f2d1246b3bc05a24db58"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.020584,
+            "line": 50,
+            "column": 3,
+            "id": "fc3418583fc77d11f28c8a4915d7e31bfe6823585ff6b247805653fd7cd1c02e"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.026417,
+            "line": 50,
+            "column": 3,
+            "id": "373a62831da4b9fef6a966733b61d8dea73e5d1cbde39f028e7cfe658fc20054"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.020125,
+            "line": 50,
+            "column": 3,
+            "id": "eb03f189b190f927837e00e008fce17e162aad7143d3d9657ac8e99b65c89439"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.024084,
+            "line": 50,
+            "column": 3,
+            "id": "ea08c84aaeaf3951d006e051b984ab9604f66e3fb3ce26e7f332a5c0e7dbcebf"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.020416,
+            "line": 50,
+            "column": 3,
+            "id": "200ec787b3b30c994ad2a19f7fc214d4ef392ec4138ad724d9ac1490a0dbf230"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.020667,
+            "line": 50,
+            "column": 3,
+            "id": "882acb1e7896cf08a2828bd238a52c2f5959b0b252fc1f43cee4f605a2de2806"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.020541,
+            "line": 50,
+            "column": 3,
+            "id": "606f40c9a9f28451521a27be2f5e98f6e244b8ce1859355acc02ceaf6630191c"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.025833,
+            "line": 50,
+            "column": 3,
+            "id": "4b618021c71001dce6457821a6e3ad4036a8427c0d778ba5575d60ff3a044acd"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "fractional interval: above",
+            "status": "passed",
+            "durationMs": 0.024083,
+            "line": 50,
+            "column": 3,
+            "id": "4348b5a17abfaebb4cab533025cad255c60a683ade11510791640e34809034da"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "reversed bounds with zero max",
+            "status": "failed",
+            "durationMs": 0.371083,
+            "line": 68,
+            "column": 3,
+            "id": "b33e8951de03453ab91c5b86a44373bca08360d84bca32be3c776d60d9eb4618"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "reversed bounds with zero max",
+            "status": "failed",
+            "durationMs": 0.058917,
+            "line": 68,
+            "column": 3,
+            "id": "bda07f4b5a58096392a2be352a18cd561b8ea16b83d53c58c9455a6c51449ede"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "reversed bounds with zero max",
+            "status": "failed",
+            "durationMs": 0.050667,
+            "line": 68,
+            "column": 3,
+            "id": "030128eff1f3354236e49ee6cf3d047b701b59500a332a1e7fe16f2e54f0c3d0"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "reversed bounds with zero max",
+            "status": "failed",
+            "durationMs": 0.043125,
+            "line": 68,
+            "column": 3,
+            "id": "8832490f93c18472db34f8dd4c43efb00342f086beec927dcfb7a08dfc493fd2"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "reversed bounds with zero max",
+            "status": "failed",
+            "durationMs": 0.043459,
+            "line": 68,
+            "column": 3,
+            "id": "97b84a949d4aa6e9c55e1e827a44556f9e114d6d47f80a34b76298da3d6b26f2"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "reversed bounds with zero max",
+            "status": "failed",
+            "durationMs": 0.041125,
+            "line": 68,
+            "column": 3,
+            "id": "3e1c88893603faa56fd3cd859f10920c220e9fd1a3bedfd05b0aa7049e6e775d"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "reversed bounds with zero max",
+            "status": "failed",
+            "durationMs": 0.045333,
+            "line": 68,
+            "column": 3,
+            "id": "e5f204f4b16214e21b2646040951f7d786fa550bf96b7fadebf4ba9413aee2a7"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "reversed bounds with zero max",
+            "status": "failed",
+            "durationMs": 0.040667,
+            "line": 68,
+            "column": 3,
+            "id": "8882c51031f1bcecd9f125b5df609acf4e8c52170d65cf3acf66352008c72c9f"
+          },
+          {
+            "file": "src/clamp.test.js",
+            "name": "reversed bounds with zero max",
+            "status": "failed",
+            "durationMs": 0.178958,
+            "line": 68,
+            "column": 3,
+            "id": "c775a21fe3612ebfd51dc4a162709e6b9781bb9dce837f258e83b232e7ebb502"
+          }
+        ],
+        "collectionFiles": [
+          "src/clamp.test.js"
+        ],
+        "requestedFiles": [
+          "src/clamp.test.js"
+        ],
+        "executedFiles": [
+          "src/clamp.test.js"
+        ],
+        "missingFiles": [],
+        "unknownFiles": [],
+        "complete": true,
+        "command": [
+          "<node>",
+          "--test",
+          "--test-reporter=<repository>src/reporters/node.js",
+          "--test-reporter-destination=/var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-report-cmqKtW/results.json",
+          "./src/clamp.test.js"
+        ],
+        "stdout": "",
+        "stderr": "",
+        "signal": null,
+        "reportErrors": []
+      }
+    }
+  ],
+  "detected": 4,
+  "total": 4,
+  "limitations": [
+    "One small deterministic specification and one unpinned CLI default model; no general efficacy or vendor-diverse review claim.",
+    "Four mutations are withheld from worker payloads; independent requirements are supplied.",
+    "Installed native credentials/allowance are used; provider API environment keys are stripped by the adapter."
+  ]
+}

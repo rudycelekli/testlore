@@ -1,0 +1,182 @@
+[
+  {
+    "scenario": "leaf-comment",
+    "repetition": 0,
+    "rawReport": "baseline-leaf-comment-0.json"
+  },
+  {
+    "scenario": "leaf-comment",
+    "repetition": 1,
+    "rawReport": "baseline-leaf-comment-1.json"
+  },
+  {
+    "scenario": "leaf-comment",
+    "repetition": 2,
+    "rawReport": "baseline-leaf-comment-2.json"
+  },
+  {
+    "scenario": "leaf-defect",
+    "repetition": 0,
+    "rawReport": "baseline-leaf-defect-0.json"
+  },
+  {
+    "scenario": "leaf-defect",
+    "repetition": 1,
+    "rawReport": "baseline-leaf-defect-1.json"
+  },
+  {
+    "scenario": "leaf-defect",
+    "repetition": 2,
+    "rawReport": "baseline-leaf-defect-2.json"
+  },
+  {
+    "scenario": "shared-defect",
+    "repetition": 0,
+    "rawReport": "baseline-shared-defect-0.json"
+  },
+  {
+    "scenario": "shared-defect",
+    "repetition": 1,
+    "rawReport": "baseline-shared-defect-1.json"
+  },
+  {
+    "scenario": "shared-defect",
+    "repetition": 2,
+    "rawReport": "baseline-shared-defect-2.json"
+  },
+  {
+    "scenario": "removed-import",
+    "repetition": 0,
+    "rawReport": "baseline-removed-import-0.json"
+  },
+  {
+    "scenario": "removed-import",
+    "repetition": 1,
+    "rawReport": "baseline-removed-import-1.json"
+  },
+  {
+    "scenario": "removed-import",
+    "repetition": 2,
+    "rawReport": "baseline-removed-import-2.json"
+  },
+  {
+    "scenario": "paragraph-metadata",
+    "repetition": 0,
+    "rawReport": "baseline-paragraph-metadata-0.json"
+  },
+  {
+    "scenario": "paragraph-metadata",
+    "repetition": 1,
+    "rawReport": "baseline-paragraph-metadata-1.json"
+  },
+  {
+    "scenario": "paragraph-metadata",
+    "repetition": 2,
+    "rawReport": "baseline-paragraph-metadata-2.json"
+  },
+  {
+    "scenario": "locale-defect",
+    "repetition": 0,
+    "rawReport": "baseline-locale-defect-0.json"
+  },
+  {
+    "scenario": "locale-defect",
+    "repetition": 1,
+    "rawReport": "baseline-locale-defect-1.json"
+  },
+  {
+    "scenario": "locale-defect",
+    "repetition": 2,
+    "rawReport": "baseline-locale-defect-2.json"
+  },
+  {
+    "scenario": "template-defect",
+    "repetition": 0,
+    "rawReport": "baseline-template-defect-0.json"
+  },
+  {
+    "scenario": "template-defect",
+    "repetition": 1,
+    "rawReport": "baseline-template-defect-1.json"
+  },
+  {
+    "scenario": "template-defect",
+    "repetition": 2,
+    "rawReport": "baseline-template-defect-2.json"
+  },
+  {
+    "scenario": "unknown-input",
+    "repetition": 0,
+    "rawReport": "baseline-unknown-input-0.json"
+  },
+  {
+    "scenario": "unknown-input",
+    "repetition": 1,
+    "rawReport": "baseline-unknown-input-1.json"
+  },
+  {
+    "scenario": "unknown-input",
+    "repetition": 2,
+    "rawReport": "baseline-unknown-input-2.json"
+  },
+  {
+    "scenario": "dynamic-import-defect",
+    "repetition": 0,
+    "rawReport": "baseline-dynamic-import-defect-0.json"
+  },
+  {
+    "scenario": "dynamic-import-defect",
+    "repetition": 1,
+    "rawReport": "baseline-dynamic-import-defect-1.json"
+  },
+  {
+    "scenario": "dynamic-import-defect",
+    "repetition": 2,
+    "rawReport": "baseline-dynamic-import-defect-2.json"
+  },
+  {
+    "scenario": "deleted-runtime-input",
+    "repetition": 0,
+    "rawReport": "baseline-deleted-runtime-input-0.json"
+  },
+  {
+    "scenario": "deleted-runtime-input",
+    "repetition": 1,
+    "rawReport": "baseline-deleted-runtime-input-1.json"
+  },
+  {
+    "scenario": "deleted-runtime-input",
+    "repetition": 2,
+    "rawReport": "baseline-deleted-runtime-input-2.json"
+  },
+  {
+    "scenario": "preload-defect",
+    "repetition": 0,
+    "rawReport": "baseline-preload-defect-0.json"
+  },
+  {
+    "scenario": "preload-defect",
+    "repetition": 1,
+    "rawReport": "baseline-preload-defect-1.json"
+  },
+  {
+    "scenario": "preload-defect",
+    "repetition": 2,
+    "rawReport": "baseline-preload-defect-2.json"
+  },
+  {
+    "scenario": "global-config-control",
+    "repetition": 0,
+    "rawReport": "baseline-global-config-control-0.json"
+  },
+  {
+    "scenario": "global-config-control",
+    "repetition": 1,
+    "rawReport": "baseline-global-config-control-1.json"
+  },
+  {
+    "scenario": "global-config-control",
+    "repetition": 2,
+    "rawReport": "baseline-global-config-control-2.json"
+  }
+]

@@ -1,0 +1,515 @@
+[
+  {
+    "id": "leaf-comment",
+    "project": "modular",
+    "change": {
+      "file": "src/feature0.js",
+      "append": "// Copy-independent source comment.\n"
+    },
+    "regression": false,
+    "files": {
+      "package.json": "{\"name\":\"testlore-modular-fixture\",\"private\":true,\"type\":\"module\"}",
+      ".gitignore": ".tddswarm/\n",
+      "tddswarm.config.json": "{\"adapter\":\"node\",\"discovery\":\"native\",\"runner\":[\"<node>\",\"--test\",\"{files}\"],\"fullRunEvery\":20}",
+      "src/shared.js": "export const normalize = n => n + 1;\n",
+      "src/feature0.js": "import { normalize } from './shared.js';\nexport const value = () => normalize(0);\n",
+      "test/0.test.js": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport { value } from '../src/feature0.js';\ntest('contract 0', () => assert.equal(value(), 1));\n",
+      "src/feature1.js": "import { normalize } from './shared.js';\nexport const value = () => normalize(1);\n",
+      "test/1.test.js": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport { value } from '../src/feature1.js';\ntest('contract 1', () => assert.equal(value(), 2));\n",
+      "src/feature2.js": "import { normalize } from './shared.js';\nexport const value = () => normalize(2);\n",
+      "test/2.test.js": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport { value } from '../src/feature2.js';\ntest('contract 2', () => assert.equal(value(), 3));\n",
+      "src/feature3.js": "import { normalize } from './shared.js';\nexport const value = () => normalize(3);\n",
+      "test/3.test.js": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport { value } from '../src/feature3.js';\ntest('contract 3', () => assert.equal(value(), 4));\n",
+      "src/feature4.js": "import { normalize } from './shared.js';\nexport const value = () => normalize(4);\n",
+      "test/4.test.js": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport { value } from '../src/feature4.js';\ntest('contract 4', () => assert.equal(value(), 5));\n",
+      "src/feature5.js": "import { normalize } from './shared.js';\nexport const value = () => normalize(5);\n",
+      "test/5.test.js": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport { value } from '../src/feature5.js';\ntest('contract 5', () => assert.equal(value(), 6));\n",
+      "src/feature6.js": "import { normalize } from './shared.js';\nexport const value = () => normalize(6);\n",
+      "test/6.test.js": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport { value } from '../src/feature6.js';\ntest('contract 6', () => assert.equal(value(), 7));\n",
+      "src/feature7.js": "import { normalize } from './shared.js';\nexport const value = () => normalize(7);\n",
+      "test/7.test.js": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport { value } from '../src/feature7.js';\ntest('contract 7', () => assert.equal(value(), 8));\n"
+    },
+    "tests": [
+      "test/0.test.js",
+      "test/1.test.js",
+      "test/2.test.js",
+      "test/3.test.js",
+      "test/4.test.js",
+      "test/5.test.js",
+      "test/6.test.js",
+      "test/7.test.js"
+    ]
+  },
+  {
+    "id": "leaf-defect",
+    "project": "modular",
+    "change": {
+      "file": "src/feature3.js",
+      "replace": [
+        "normalize(3)",
+        "normalize(3) + 1"
+      ]
+    },
+    "regression": true,
+    "files": {
+      "package.json": "{\"name\":\"testlore-modular-fixture\",\"private\":true,\"type\":\"module\"}",
+      ".gitignore": ".tddswarm/\n",
+      "tddswarm.config.json": "{\"adapter\":\"node\",\"discovery\":\"native\",\"runner\":[\"<node>\",\"--test\",\"{files}\"],\"fullRunEvery\":20}",
+      "src/shared.js": "export const normalize = n => n + 1;\n",
+      "src/feature0.js": "import { normalize } from './shared.js';\nexport const value = () => normalize(0);\n",
+      "test/0.test.js": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport { value } from '../src/feature0.js';\ntest('contract 0', () => assert.equal(value(), 1));\n",
+      "src/feature1.js": "import { normalize } from './shared.js';\nexport const value = () => normalize(1);\n",
+      "test/1.test.js": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport { value } from '../src/feature1.js';\ntest('contract 1', () => assert.equal(value(), 2));\n",
+      "src/feature2.js": "import { normalize } from './shared.js';\nexport const value = () => normalize(2);\n",
+      "test/2.test.js": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport { value } from '../src/feature2.js';\ntest('contract 2', () => assert.equal(value(), 3));\n",
+      "src/feature3.js": "import { normalize } from './shared.js';\nexport const value = () => normalize(3);\n",
+      "test/3.test.js": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport { value } from '../src/feature3.js';\ntest('contract 3', () => assert.equal(value(), 4));\n",
+      "src/feature4.js": "import { normalize } from './shared.js';\nexport const value = () => normalize(4);\n",
+      "test/4.test.js": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport { value } from '../src/feature4.js';\ntest('contract 4', () => assert.equal(value(), 5));\n",
+      "src/feature5.js": "import { normalize } from './shared.js';\nexport const value = () => normalize(5);\n",
+      "test/5.test.js": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport { value } from '../src/feature5.js';\ntest('contract 5', () => assert.equal(value(), 6));\n",
+      "src/feature6.js": "import { normalize } from './shared.js';\nexport const value = () => normalize(6);\n",
+      "test/6.test.js": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport { value } from '../src/feature6.js';\ntest('contract 6', () => assert.equal(value(), 7));\n",
+      "src/feature7.js": "import { normalize } from './shared.js';\nexport const value = () => normalize(7);\n",
+      "test/7.test.js": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport { value } from '../src/feature7.js';\ntest('contract 7', () => assert.equal(value(), 8));\n"
+    },
+    "tests": [
+      "test/0.test.js",
+      "test/1.test.js",
+      "test/2.test.js",
+      "test/3.test.js",
+      "test/4.test.js",
+      "test/5.test.js",
+      "test/6.test.js",
+      "test/7.test.js"
+    ]
+  },
+  {
+    "id": "shared-defect",
+    "project": "modular",
+    "change": {
+      "file": "src/shared.js",
+      "replace": [
+        "n + 1",
+        "n + 2"
+      ]
+    },
+    "regression": true,
+    "files": {
+      "package.json": "{\"name\":\"testlore-modular-fixture\",\"private\":true,\"type\":\"module\"}",
+      ".gitignore": ".tddswarm/\n",
+      "tddswarm.config.json": "{\"adapter\":\"node\",\"discovery\":\"native\",\"runner\":[\"<node>\",\"--test\",\"{files}\"],\"fullRunEvery\":20}",
+      "src/shared.js": "export const normalize = n => n + 1;\n",
+      "src/feature0.js": "import { normalize } from './shared.js';\nexport const value = () => normalize(0);\n",
+      "test/0.test.js": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport { value } from '../src/feature0.js';\ntest('contract 0', () => assert.equal(value(), 1));\n",
+      "src/feature1.js": "import { normalize } from './shared.js';\nexport const value = () => normalize(1);\n",
+      "test/1.test.js": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport { value } from '../src/feature1.js';\ntest('contract 1', () => assert.equal(value(), 2));\n",
+      "src/feature2.js": "import { normalize } from './shared.js';\nexport const value = () => normalize(2);\n",
+      "test/2.test.js": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport { value } from '../src/feature2.js';\ntest('contract 2', () => assert.equal(value(), 3));\n",
+      "src/feature3.js": "import { normalize } from './shared.js';\nexport const value = () => normalize(3);\n",
+      "test/3.test.js": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport { value } from '../src/feature3.js';\ntest('contract 3', () => assert.equal(value(), 4));\n",
+      "src/feature4.js": "import { normalize } from './shared.js';\nexport const value = () => normalize(4);\n",
+      "test/4.test.js": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport { value } from '../src/feature4.js';\ntest('contract 4', () => assert.equal(value(), 5));\n",
+      "src/feature5.js": "import { normalize } from './shared.js';\nexport const value = () => normalize(5);\n",
+      "test/5.test.js": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport { value } from '../src/feature5.js';\ntest('contract 5', () => assert.equal(value(), 6));\n",
+      "src/feature6.js": "import { normalize } from './shared.js';\nexport const value = () => normalize(6);\n",
+      "test/6.test.js": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport { value } from '../src/feature6.js';\ntest('contract 6', () => assert.equal(value(), 7));\n",
+      "src/feature7.js": "import { normalize } from './shared.js';\nexport const value = () => normalize(7);\n",
+      "test/7.test.js": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport { value } from '../src/feature7.js';\ntest('contract 7', () => assert.equal(value(), 8));\n"
+    },
+    "tests": [
+      "test/0.test.js",
+      "test/1.test.js",
+      "test/2.test.js",
+      "test/3.test.js",
+      "test/4.test.js",
+      "test/5.test.js",
+      "test/6.test.js",
+      "test/7.test.js"
+    ]
+  },
+  {
+    "id": "removed-import",
+    "project": "modular",
+    "change": {
+      "file": "src/feature4.js",
+      "content": "export const value = () => 5;\n"
+    },
+    "regression": false,
+    "files": {
+      "package.json": "{\"name\":\"testlore-modular-fixture\",\"private\":true,\"type\":\"module\"}",
+      ".gitignore": ".tddswarm/\n",
+      "tddswarm.config.json": "{\"adapter\":\"node\",\"discovery\":\"native\",\"runner\":[\"<node>\",\"--test\",\"{files}\"],\"fullRunEvery\":20}",
+      "src/shared.js": "export const normalize = n => n + 1;\n",
+      "src/feature0.js": "import { normalize } from './shared.js';\nexport const value = () => normalize(0);\n",
+      "test/0.test.js": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport { value } from '../src/feature0.js';\ntest('contract 0', () => assert.equal(value(), 1));\n",
+      "src/feature1.js": "import { normalize } from './shared.js';\nexport const value = () => normalize(1);\n",
+      "test/1.test.js": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport { value } from '../src/feature1.js';\ntest('contract 1', () => assert.equal(value(), 2));\n",
+      "src/feature2.js": "import { normalize } from './shared.js';\nexport const value = () => normalize(2);\n",
+      "test/2.test.js": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport { value } from '../src/feature2.js';\ntest('contract 2', () => assert.equal(value(), 3));\n",
+      "src/feature3.js": "import { normalize } from './shared.js';\nexport const value = () => normalize(3);\n",
+      "test/3.test.js": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport { value } from '../src/feature3.js';\ntest('contract 3', () => assert.equal(value(), 4));\n",
+      "src/feature4.js": "import { normalize } from './shared.js';\nexport const value = () => normalize(4);\n",
+      "test/4.test.js": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport { value } from '../src/feature4.js';\ntest('contract 4', () => assert.equal(value(), 5));\n",
+      "src/feature5.js": "import { normalize } from './shared.js';\nexport const value = () => normalize(5);\n",
+      "test/5.test.js": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport { value } from '../src/feature5.js';\ntest('contract 5', () => assert.equal(value(), 6));\n",
+      "src/feature6.js": "import { normalize } from './shared.js';\nexport const value = () => normalize(6);\n",
+      "test/6.test.js": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport { value } from '../src/feature6.js';\ntest('contract 6', () => assert.equal(value(), 7));\n",
+      "src/feature7.js": "import { normalize } from './shared.js';\nexport const value = () => normalize(7);\n",
+      "test/7.test.js": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport { value } from '../src/feature7.js';\ntest('contract 7', () => assert.equal(value(), 8));\n"
+    },
+    "tests": [
+      "test/0.test.js",
+      "test/1.test.js",
+      "test/2.test.js",
+      "test/3.test.js",
+      "test/4.test.js",
+      "test/5.test.js",
+      "test/6.test.js",
+      "test/7.test.js"
+    ]
+  },
+  {
+    "id": "paragraph-metadata",
+    "project": "assets",
+    "change": {
+      "file": "public/copy.json",
+      "replace": [
+        "Welcome",
+        "Welcome to TestLore"
+      ]
+    },
+    "regression": false,
+    "files": {
+      "package.json": "{\"name\":\"testlore-assets-fixture\",\"private\":true,\"type\":\"module\"}",
+      ".gitignore": ".tddswarm/\n",
+      "tddswarm.config.json": "{\"adapter\":\"node\",\"discovery\":\"native\",\"runner\":[\"<node>\",\"--test\",\"{files}\"],\"browser\":{\"routes\":{\"/landing\":{\"tests\":[\"test/0.test.js\"],\"inputs\":[\"public/copy.json\",\"public/template.json\"]}}},\"fullRunEvery\":20}",
+      "public/copy.json": "{\"value\":1,\"paragraph\":\"Welcome\"}",
+      "test/0.test.js": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport input from '../public/copy.json' with { type: 'json' };\ntest('contract 0', () => assert.equal(input.value, 1));\n",
+      "public/locale.json": "{\"value\":2,\"paragraph\":\"Welcome\"}",
+      "test/1.test.js": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport input from '../public/locale.json' with { type: 'json' };\ntest('contract 1', () => assert.equal(input.value, 2));\n",
+      "public/template.json": "{\"value\":3,\"paragraph\":\"Welcome\"}",
+      "test/2.test.js": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport input from '../public/template.json' with { type: 'json' };\ntest('contract 2', () => assert.equal(input.value, 3));\n",
+      "public/theme.json": "{\"value\":4,\"paragraph\":\"Welcome\"}",
+      "test/3.test.js": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport input from '../public/theme.json' with { type: 'json' };\ntest('contract 3', () => assert.equal(input.value, 4));\n",
+      "public/footer.json": "{\"value\":5,\"paragraph\":\"Welcome\"}",
+      "test/4.test.js": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport input from '../public/footer.json' with { type: 'json' };\ntest('contract 4', () => assert.equal(input.value, 5));\n",
+      "public/help.json": "{\"value\":6,\"paragraph\":\"Welcome\"}",
+      "test/5.test.js": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport input from '../public/help.json' with { type: 'json' };\ntest('contract 5', () => assert.equal(input.value, 6));\n",
+      "public/checkout.json": "{\"value\":7,\"paragraph\":\"Welcome\"}",
+      "test/6.test.js": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport input from '../public/checkout.json' with { type: 'json' };\ntest('contract 6', () => assert.equal(input.value, 7));\n",
+      "public/account.json": "{\"value\":8,\"paragraph\":\"Welcome\"}",
+      "test/7.test.js": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport input from '../public/account.json' with { type: 'json' };\ntest('contract 7', () => assert.equal(input.value, 8));\n"
+    },
+    "tests": [
+      "test/0.test.js",
+      "test/1.test.js",
+      "test/2.test.js",
+      "test/3.test.js",
+      "test/4.test.js",
+      "test/5.test.js",
+      "test/6.test.js",
+      "test/7.test.js"
+    ]
+  },
+  {
+    "id": "locale-defect",
+    "project": "assets",
+    "change": {
+      "file": "public/locale.json",
+      "replace": [
+        "\"value\":2",
+        "\"value\":99"
+      ]
+    },
+    "regression": true,
+    "files": {
+      "package.json": "{\"name\":\"testlore-assets-fixture\",\"private\":true,\"type\":\"module\"}",
+      ".gitignore": ".tddswarm/\n",
+      "tddswarm.config.json": "{\"adapter\":\"node\",\"discovery\":\"native\",\"runner\":[\"<node>\",\"--test\",\"{files}\"],\"browser\":{\"routes\":{\"/landing\":{\"tests\":[\"test/0.test.js\"],\"inputs\":[\"public/copy.json\",\"public/template.json\"]}}},\"fullRunEvery\":20}",
+      "public/copy.json": "{\"value\":1,\"paragraph\":\"Welcome\"}",
+      "test/0.test.js": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport input from '../public/copy.json' with { type: 'json' };\ntest('contract 0', () => assert.equal(input.value, 1));\n",
+      "public/locale.json": "{\"value\":2,\"paragraph\":\"Welcome\"}",
+      "test/1.test.js": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport input from '../public/locale.json' with { type: 'json' };\ntest('contract 1', () => assert.equal(input.value, 2));\n",
+      "public/template.json": "{\"value\":3,\"paragraph\":\"Welcome\"}",
+      "test/2.test.js": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport input from '../public/template.json' with { type: 'json' };\ntest('contract 2', () => assert.equal(input.value, 3));\n",
+      "public/theme.json": "{\"value\":4,\"paragraph\":\"Welcome\"}",
+      "test/3.test.js": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport input from '../public/theme.json' with { type: 'json' };\ntest('contract 3', () => assert.equal(input.value, 4));\n",
+      "public/footer.json": "{\"value\":5,\"paragraph\":\"Welcome\"}",
+      "test/4.test.js": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport input from '../public/footer.json' with { type: 'json' };\ntest('contract 4', () => assert.equal(input.value, 5));\n",
+      "public/help.json": "{\"value\":6,\"paragraph\":\"Welcome\"}",
+      "test/5.test.js": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport input from '../public/help.json' with { type: 'json' };\ntest('contract 5', () => assert.equal(input.value, 6));\n",
+      "public/checkout.json": "{\"value\":7,\"paragraph\":\"Welcome\"}",
+      "test/6.test.js": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport input from '../public/checkout.json' with { type: 'json' };\ntest('contract 6', () => assert.equal(input.value, 7));\n",
+      "public/account.json": "{\"value\":8,\"paragraph\":\"Welcome\"}",
+      "test/7.test.js": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport input from '../public/account.json' with { type: 'json' };\ntest('contract 7', () => assert.equal(input.value, 8));\n"
+    },
+    "tests": [
+      "test/0.test.js",
+      "test/1.test.js",
+      "test/2.test.js",
+      "test/3.test.js",
+      "test/4.test.js",
+      "test/5.test.js",
+      "test/6.test.js",
+      "test/7.test.js"
+    ]
+  },
+  {
+    "id": "template-defect",
+    "project": "assets",
+    "change": {
+      "file": "public/template.json",
+      "replace": [
+        "\"value\":3",
+        "\"value\":99"
+      ]
+    },
+    "regression": true,
+    "files": {
+      "package.json": "{\"name\":\"testlore-assets-fixture\",\"private\":true,\"type\":\"module\"}",
+      ".gitignore": ".tddswarm/\n",
+      "tddswarm.config.json": "{\"adapter\":\"node\",\"discovery\":\"native\",\"runner\":[\"<node>\",\"--test\",\"{files}\"],\"browser\":{\"routes\":{\"/landing\":{\"tests\":[\"test/0.test.js\"],\"inputs\":[\"public/copy.json\",\"public/template.json\"]}}},\"fullRunEvery\":20}",
+      "public/copy.json": "{\"value\":1,\"paragraph\":\"Welcome\"}",
+      "test/0.test.js": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport input from '../public/copy.json' with { type: 'json' };\ntest('contract 0', () => assert.equal(input.value, 1));\n",
+      "public/locale.json": "{\"value\":2,\"paragraph\":\"Welcome\"}",
+      "test/1.test.js": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport input from '../public/locale.json' with { type: 'json' };\ntest('contract 1', () => assert.equal(input.value, 2));\n",
+      "public/template.json": "{\"value\":3,\"paragraph\":\"Welcome\"}",
+      "test/2.test.js": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport input from '../public/template.json' with { type: 'json' };\ntest('contract 2', () => assert.equal(input.value, 3));\n",
+      "public/theme.json": "{\"value\":4,\"paragraph\":\"Welcome\"}",
+      "test/3.test.js": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport input from '../public/theme.json' with { type: 'json' };\ntest('contract 3', () => assert.equal(input.value, 4));\n",
+      "public/footer.json": "{\"value\":5,\"paragraph\":\"Welcome\"}",
+      "test/4.test.js": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport input from '../public/footer.json' with { type: 'json' };\ntest('contract 4', () => assert.equal(input.value, 5));\n",
+      "public/help.json": "{\"value\":6,\"paragraph\":\"Welcome\"}",
+      "test/5.test.js": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport input from '../public/help.json' with { type: 'json' };\ntest('contract 5', () => assert.equal(input.value, 6));\n",
+      "public/checkout.json": "{\"value\":7,\"paragraph\":\"Welcome\"}",
+      "test/6.test.js": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport input from '../public/checkout.json' with { type: 'json' };\ntest('contract 6', () => assert.equal(input.value, 7));\n",
+      "public/account.json": "{\"value\":8,\"paragraph\":\"Welcome\"}",
+      "test/7.test.js": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport input from '../public/account.json' with { type: 'json' };\ntest('contract 7', () => assert.equal(input.value, 8));\n"
+    },
+    "tests": [
+      "test/0.test.js",
+      "test/1.test.js",
+      "test/2.test.js",
+      "test/3.test.js",
+      "test/4.test.js",
+      "test/5.test.js",
+      "test/6.test.js",
+      "test/7.test.js"
+    ]
+  },
+  {
+    "id": "unknown-input",
+    "project": "modular",
+    "change": {
+      "file": "public/unknown.css",
+      "content": "body { color: blue; }\n"
+    },
+    "regression": false,
+    "files": {
+      "package.json": "{\"name\":\"testlore-modular-fixture\",\"private\":true,\"type\":\"module\"}",
+      ".gitignore": ".tddswarm/\n",
+      "tddswarm.config.json": "{\"adapter\":\"node\",\"discovery\":\"native\",\"runner\":[\"<node>\",\"--test\",\"{files}\"],\"fullRunEvery\":20}",
+      "src/shared.js": "export const normalize = n => n + 1;\n",
+      "src/feature0.js": "import { normalize } from './shared.js';\nexport const value = () => normalize(0);\n",
+      "test/0.test.js": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport { value } from '../src/feature0.js';\ntest('contract 0', () => assert.equal(value(), 1));\n",
+      "src/feature1.js": "import { normalize } from './shared.js';\nexport const value = () => normalize(1);\n",
+      "test/1.test.js": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport { value } from '../src/feature1.js';\ntest('contract 1', () => assert.equal(value(), 2));\n",
+      "src/feature2.js": "import { normalize } from './shared.js';\nexport const value = () => normalize(2);\n",
+      "test/2.test.js": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport { value } from '../src/feature2.js';\ntest('contract 2', () => assert.equal(value(), 3));\n",
+      "src/feature3.js": "import { normalize } from './shared.js';\nexport const value = () => normalize(3);\n",
+      "test/3.test.js": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport { value } from '../src/feature3.js';\ntest('contract 3', () => assert.equal(value(), 4));\n",
+      "src/feature4.js": "import { normalize } from './shared.js';\nexport const value = () => normalize(4);\n",
+      "test/4.test.js": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport { value } from '../src/feature4.js';\ntest('contract 4', () => assert.equal(value(), 5));\n",
+      "src/feature5.js": "import { normalize } from './shared.js';\nexport const value = () => normalize(5);\n",
+      "test/5.test.js": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport { value } from '../src/feature5.js';\ntest('contract 5', () => assert.equal(value(), 6));\n",
+      "src/feature6.js": "import { normalize } from './shared.js';\nexport const value = () => normalize(6);\n",
+      "test/6.test.js": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport { value } from '../src/feature6.js';\ntest('contract 6', () => assert.equal(value(), 7));\n",
+      "src/feature7.js": "import { normalize } from './shared.js';\nexport const value = () => normalize(7);\n",
+      "test/7.test.js": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport { value } from '../src/feature7.js';\ntest('contract 7', () => assert.equal(value(), 8));\n"
+    },
+    "tests": [
+      "test/0.test.js",
+      "test/1.test.js",
+      "test/2.test.js",
+      "test/3.test.js",
+      "test/4.test.js",
+      "test/5.test.js",
+      "test/6.test.js",
+      "test/7.test.js"
+    ]
+  },
+  {
+    "id": "dynamic-import-defect",
+    "project": "uncertainty",
+    "change": {
+      "file": "src/feature0.js",
+      "replace": [
+        "() => 1",
+        "() => 99"
+      ]
+    },
+    "regression": true,
+    "files": {
+      "package.json": "{\"name\":\"testlore-uncertainty-fixture\",\"private\":true,\"type\":\"module\"}",
+      ".gitignore": ".tddswarm/\n",
+      "tddswarm.config.json": "{\"adapter\":\"node\",\"discovery\":\"native\",\"runner\":[\"<node>\",\"--test\",\"{files}\"],\"env\":{\"TESTLORE_SLOT\":\"0\"},\"fullRunEvery\":20}",
+      "src/feature0.js": "export const value = () => 1;\n",
+      "test/0.test.js": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nconst { value } = await import('../src/feature' + process.env.TESTLORE_SLOT + '.js');\ntest('contract 0', () => assert.equal(value(), 1));\n",
+      "src/feature1.js": "export const value = () => 2;\n",
+      "test/1.test.js": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport { value } from '../src/feature1.js';\ntest('contract 1', () => assert.equal(value(), 2));\n",
+      "src/feature2.js": "export const value = () => 3;\n",
+      "test/2.test.js": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport { value } from '../src/feature2.js';\ntest('contract 2', () => assert.equal(value(), 3));\n",
+      "src/feature3.js": "export const value = () => 4;\n",
+      "test/3.test.js": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport { value } from '../src/feature3.js';\ntest('contract 3', () => assert.equal(value(), 4));\n",
+      "src/feature4.js": "export const value = () => 5;\n",
+      "test/4.test.js": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport { value } from '../src/feature4.js';\ntest('contract 4', () => assert.equal(value(), 5));\n",
+      "src/feature5.js": "export const value = () => 6;\n",
+      "test/5.test.js": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport { value } from '../src/feature5.js';\ntest('contract 5', () => assert.equal(value(), 6));\n",
+      "src/feature6.js": "import fs from 'node:fs';\nexport const value = () => JSON.parse(fs.readFileSync(new URL('../data/leaf.json', import.meta.url), 'utf8')).value;\n",
+      "test/6.test.js": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport { value } from '../src/feature6.js';\ntest('contract 6', () => assert.equal(value(), 7));\n",
+      "src/feature7.js": "export const value = () => 8;\n",
+      "test/7.test.js": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport { value } from '../src/feature7.js';\ntest('contract 7', () => assert.equal(value(), 8));\n",
+      "data/leaf.json": "{\"value\":7}\n"
+    },
+    "tests": [
+      "test/0.test.js",
+      "test/1.test.js",
+      "test/2.test.js",
+      "test/3.test.js",
+      "test/4.test.js",
+      "test/5.test.js",
+      "test/6.test.js",
+      "test/7.test.js"
+    ]
+  },
+  {
+    "id": "deleted-runtime-input",
+    "project": "uncertainty",
+    "change": {
+      "file": "data/leaf.json",
+      "delete": true
+    },
+    "regression": true,
+    "files": {
+      "package.json": "{\"name\":\"testlore-uncertainty-fixture\",\"private\":true,\"type\":\"module\"}",
+      ".gitignore": ".tddswarm/\n",
+      "tddswarm.config.json": "{\"adapter\":\"node\",\"discovery\":\"native\",\"runner\":[\"<node>\",\"--test\",\"{files}\"],\"env\":{\"TESTLORE_SLOT\":\"0\"},\"fullRunEvery\":20}",
+      "src/feature0.js": "export const value = () => 1;\n",
+      "test/0.test.js": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nconst { value } = await import('../src/feature' + process.env.TESTLORE_SLOT + '.js');\ntest('contract 0', () => assert.equal(value(), 1));\n",
+      "src/feature1.js": "export const value = () => 2;\n",
+      "test/1.test.js": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport { value } from '../src/feature1.js';\ntest('contract 1', () => assert.equal(value(), 2));\n",
+      "src/feature2.js": "export const value = () => 3;\n",
+      "test/2.test.js": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport { value } from '../src/feature2.js';\ntest('contract 2', () => assert.equal(value(), 3));\n",
+      "src/feature3.js": "export const value = () => 4;\n",
+      "test/3.test.js": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport { value } from '../src/feature3.js';\ntest('contract 3', () => assert.equal(value(), 4));\n",
+      "src/feature4.js": "export const value = () => 5;\n",
+      "test/4.test.js": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport { value } from '../src/feature4.js';\ntest('contract 4', () => assert.equal(value(), 5));\n",
+      "src/feature5.js": "export const value = () => 6;\n",
+      "test/5.test.js": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport { value } from '../src/feature5.js';\ntest('contract 5', () => assert.equal(value(), 6));\n",
+      "src/feature6.js": "import fs from 'node:fs';\nexport const value = () => JSON.parse(fs.readFileSync(new URL('../data/leaf.json', import.meta.url), 'utf8')).value;\n",
+      "test/6.test.js": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport { value } from '../src/feature6.js';\ntest('contract 6', () => assert.equal(value(), 7));\n",
+      "src/feature7.js": "export const value = () => 8;\n",
+      "test/7.test.js": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport { value } from '../src/feature7.js';\ntest('contract 7', () => assert.equal(value(), 8));\n",
+      "data/leaf.json": "{\"value\":7}\n"
+    },
+    "tests": [
+      "test/0.test.js",
+      "test/1.test.js",
+      "test/2.test.js",
+      "test/3.test.js",
+      "test/4.test.js",
+      "test/5.test.js",
+      "test/6.test.js",
+      "test/7.test.js"
+    ]
+  },
+  {
+    "id": "preload-defect",
+    "project": "preload",
+    "change": {
+      "file": "setup.js",
+      "replace": [
+        "healthy",
+        "broken"
+      ]
+    },
+    "regression": true,
+    "files": {
+      "package.json": "{\"name\":\"testlore-preload-fixture\",\"private\":true,\"type\":\"module\"}",
+      ".gitignore": ".tddswarm/\n",
+      "tddswarm.config.json": "{\"adapter\":\"node\",\"discovery\":\"native\",\"runner\":[\"<node>\",\"--test\",\"--import\",\"./setup.js\",\"{files}\"],\"fullRunEvery\":20}",
+      "setup.js": "process.env.TESTLORE_TAG = \"healthy\";\n",
+      "src/feature0.js": "export const value = () => 1;\n",
+      "test/0.test.js": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport { value } from '../src/feature0.js';\ntest('contract 0', () => assert.equal((assert.equal(process.env.TESTLORE_TAG, 'healthy'), value()), 1));\n",
+      "src/feature1.js": "export const value = () => 2;\n",
+      "test/1.test.js": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport { value } from '../src/feature1.js';\ntest('contract 1', () => assert.equal((assert.equal(process.env.TESTLORE_TAG, 'healthy'), value()), 2));\n",
+      "src/feature2.js": "export const value = () => 3;\n",
+      "test/2.test.js": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport { value } from '../src/feature2.js';\ntest('contract 2', () => assert.equal((assert.equal(process.env.TESTLORE_TAG, 'healthy'), value()), 3));\n",
+      "src/feature3.js": "export const value = () => 4;\n",
+      "test/3.test.js": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport { value } from '../src/feature3.js';\ntest('contract 3', () => assert.equal((assert.equal(process.env.TESTLORE_TAG, 'healthy'), value()), 4));\n",
+      "src/feature4.js": "export const value = () => 5;\n",
+      "test/4.test.js": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport { value } from '../src/feature4.js';\ntest('contract 4', () => assert.equal((assert.equal(process.env.TESTLORE_TAG, 'healthy'), value()), 5));\n",
+      "src/feature5.js": "export const value = () => 6;\n",
+      "test/5.test.js": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport { value } from '../src/feature5.js';\ntest('contract 5', () => assert.equal((assert.equal(process.env.TESTLORE_TAG, 'healthy'), value()), 6));\n",
+      "src/feature6.js": "export const value = () => 7;\n",
+      "test/6.test.js": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport { value } from '../src/feature6.js';\ntest('contract 6', () => assert.equal((assert.equal(process.env.TESTLORE_TAG, 'healthy'), value()), 7));\n",
+      "src/feature7.js": "export const value = () => 8;\n",
+      "test/7.test.js": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport { value } from '../src/feature7.js';\ntest('contract 7', () => assert.equal((assert.equal(process.env.TESTLORE_TAG, 'healthy'), value()), 8));\n"
+    },
+    "tests": [
+      "test/0.test.js",
+      "test/1.test.js",
+      "test/2.test.js",
+      "test/3.test.js",
+      "test/4.test.js",
+      "test/5.test.js",
+      "test/6.test.js",
+      "test/7.test.js"
+    ]
+  },
+  {
+    "id": "global-config-control",
+    "project": "modular",
+    "change": {
+      "file": "tddswarm.config.json",
+      "replace": [
+        "\"fullRunEvery\":20",
+        "\"fullRunEvery\":21"
+      ]
+    },
+    "regression": false,
+    "files": {
+      "package.json": "{\"name\":\"testlore-modular-fixture\",\"private\":true,\"type\":\"module\"}",
+      ".gitignore": ".tddswarm/\n",
+      "tddswarm.config.json": "{\"adapter\":\"node\",\"discovery\":\"native\",\"runner\":[\"<node>\",\"--test\",\"{files}\"],\"fullRunEvery\":20}",
+      "src/shared.js": "export const normalize = n => n + 1;\n",
+      "src/feature0.js": "import { normalize } from './shared.js';\nexport const value = () => normalize(0);\n",
+      "test/0.test.js": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport { value } from '../src/feature0.js';\ntest('contract 0', () => assert.equal(value(), 1));\n",
+      "src/feature1.js": "import { normalize } from './shared.js';\nexport const value = () => normalize(1);\n",
+      "test/1.test.js": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport { value } from '../src/feature1.js';\ntest('contract 1', () => assert.equal(value(), 2));\n",
+      "src/feature2.js": "import { normalize } from './shared.js';\nexport const value = () => normalize(2);\n",
+      "test/2.test.js": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport { value } from '../src/feature2.js';\ntest('contract 2', () => assert.equal(value(), 3));\n",
+      "src/feature3.js": "import { normalize } from './shared.js';\nexport const value = () => normalize(3);\n",
+      "test/3.test.js": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport { value } from '../src/feature3.js';\ntest('contract 3', () => assert.equal(value(), 4));\n",
+      "src/feature4.js": "import { normalize } from './shared.js';\nexport const value = () => normalize(4);\n",
+      "test/4.test.js": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport { value } from '../src/feature4.js';\ntest('contract 4', () => assert.equal(value(), 5));\n",
+      "src/feature5.js": "import { normalize } from './shared.js';\nexport const value = () => normalize(5);\n",
+      "test/5.test.js": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport { value } from '../src/feature5.js';\ntest('contract 5', () => assert.equal(value(), 6));\n",
+      "src/feature6.js": "import { normalize } from './shared.js';\nexport const value = () => normalize(6);\n",
+      "test/6.test.js": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport { value } from '../src/feature6.js';\ntest('contract 6', () => assert.equal(value(), 7));\n",
+      "src/feature7.js": "import { normalize } from './shared.js';\nexport const value = () => normalize(7);\n",
+      "test/7.test.js": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport { value } from '../src/feature7.js';\ntest('contract 7', () => assert.equal(value(), 8));\n"
+    },
+    "tests": [
+      "test/0.test.js",
+      "test/1.test.js",
+      "test/2.test.js",
+      "test/3.test.js",
+      "test/4.test.js",
+      "test/5.test.js",
+      "test/6.test.js",
+      "test/7.test.js"
+    ]
+  }
+]

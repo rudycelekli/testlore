@@ -1,0 +1,20 @@
+{
+  "command": [
+    "/Users/rudycelekli/.nvm/versions/node/v22.19.0/bin/node",
+    "/private/var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-public-benchmark-t21cjX/tools-defu/node_modules/vitest/vitest.mjs",
+    "related",
+    "--reporter=json",
+    "--outputFile=/Users/rudycelekli/Downloads/tddswarm/benchmarks/results/2026-09-29-final-roadmap/defu/documentation-native.runner.json",
+    "README.md",
+    "--run",
+    "--passWithNoTests"
+  ],
+  "exitCode": 0,
+  "durationMs": 295,
+  "stdout": "JSON report written to /Users/rudycelekli/Downloads/tddswarm/benchmarks/results/2026-09-29-final-roadmap/defu/documentation-native.runner.json\n",
+  "stderr": "",
+  "identities": {
+    "complete": true,
+    "failures": []
+  }
+}

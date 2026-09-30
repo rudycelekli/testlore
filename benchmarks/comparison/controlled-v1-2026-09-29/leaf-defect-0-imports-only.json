@@ -1,0 +1,63 @@
+{
+  "scenario": "leaf-defect",
+  "project": "modular",
+  "regression": true,
+  "repetition": 0,
+  "order": [
+    "testlore",
+    "imports-only",
+    "full-native"
+  ],
+  "method": "imports-only",
+  "totalFiles": 8,
+  "plannedFiles": [
+    "test/3.test.js"
+  ],
+  "executedFiles": [
+    "test/3.test.js"
+  ],
+  "endToEndMs": 103,
+  "executionMs": 101,
+  "result": {
+    "adapter": "node",
+    "exitCode": 1,
+    "durationMs": 101,
+    "tests": [
+      {
+        "file": "test/3.test.js",
+        "name": "contract 3",
+        "status": "failed",
+        "durationMs": 0.724458,
+        "line": 4,
+        "column": 1,
+        "id": "45498eac539cfaf653b9c5dd1b5f883597a4019577897a01dec6e88245b328db"
+      }
+    ],
+    "collectionFiles": [
+      "test/3.test.js"
+    ],
+    "requestedFiles": [
+      "test/3.test.js"
+    ],
+    "executedFiles": [
+      "test/3.test.js"
+    ],
+    "missingFiles": [],
+    "unknownFiles": [],
+    "complete": true,
+    "command": [
+      "<node>",
+      "--test",
+      "--test-reporter=<testlore-source>/src/reporters/node.js",
+      "--test-reporter-destination=/var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-report-sWhrL9/results.json",
+      "./test/3.test.js"
+    ],
+    "stdout": "",
+    "stderr": "",
+    "signal": null,
+    "reportErrors": []
+  },
+  "observedFailures": [
+    "45498eac539cfaf653b9c5dd1b5f883597a4019577897a01dec6e88245b328db"
+  ]
+}

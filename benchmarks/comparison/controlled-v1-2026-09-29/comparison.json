@@ -1,0 +1,4444 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-09-30T02:25:21.570Z",
+  "toolRevision": "48ebe5c4b93dc8b5ff19fcaea1aa0166cb441bb3",
+  "harnessDigest": "32034feda983d0ab85e507654a49983085f48f7e23a8ec4039d094b79f3ddf81",
+  "dataset": {
+    "name": "testlore-routing-controlled-v1",
+    "scope": "12 deterministic changes in four controlled 8-test Node projects; JSON asset contracts, no real browser or external services",
+    "scenarios": 12,
+    "projects": 4,
+    "plantedRegressions": 7,
+    "digest": "2a2ea05cfda34d4d99c9e5d1d35ecf6c38fec6ece35b7b2a971a757c0867cf0c",
+    "setup": "Native discovery; declared browser-route inputs; cold run history before every measured method; baseline setup outside timing."
+  },
+  "repetitions": 3,
+  "environment": {
+    "node": "v22.19.0",
+    "platform": "darwin",
+    "architecture": "arm64",
+    "cpu": "Apple M4 Pro"
+  },
+  "methods": [
+    {
+      "id": "full-native",
+      "name": "Full native Node suite",
+      "kind": "actual-native-runner"
+    },
+    {
+      "id": "testlore",
+      "name": "TestLore routing",
+      "kind": "actual-tool-native-discovery"
+    },
+    {
+      "id": "imports-only",
+      "name": "JS imports only (diagnostic)",
+      "kind": "diagnostic-heuristic-not-a-competitor"
+    }
+  ],
+  "summary": [
+    {
+      "id": "full-native",
+      "name": "Full native Node suite",
+      "kind": "actual-native-runner",
+      "valid": true,
+      "trials": 36,
+      "totalFaults": 63,
+      "detectedFaults": 63,
+      "faultRecall": 1,
+      "faultyScenarioTrials": 21,
+      "detectedScenarioTrials": 21,
+      "faultScenarioRecall": 1,
+      "missedFailures": 0,
+      "executedFiles": 288,
+      "availableFiles": 288,
+      "executedFileFraction": 1,
+      "endToEndMedianMs": 135,
+      "endToEndTotalMs": 4997,
+      "limitations": []
+    },
+    {
+      "id": "testlore",
+      "name": "TestLore routing",
+      "kind": "actual-tool-native-discovery",
+      "valid": true,
+      "trials": 36,
+      "totalFaults": 63,
+      "detectedFaults": 63,
+      "faultRecall": 1,
+      "faultyScenarioTrials": 21,
+      "detectedScenarioTrials": 21,
+      "faultScenarioRecall": 1,
+      "missedFailures": 0,
+      "executedFiles": 165,
+      "availableFiles": 288,
+      "executedFileFraction": 0.5729166666666666,
+      "endToEndMedianMs": 564,
+      "endToEndTotalMs": 20105,
+      "limitations": []
+    },
+    {
+      "id": "imports-only",
+      "name": "JS imports only (diagnostic)",
+      "kind": "diagnostic-heuristic-not-a-competitor",
+      "valid": true,
+      "trials": 36,
+      "totalFaults": 63,
+      "detectedFaults": 27,
+      "faultRecall": 0.42857142857142855,
+      "faultyScenarioTrials": 21,
+      "detectedScenarioTrials": 6,
+      "faultScenarioRecall": 0.2857142857142857,
+      "missedFailures": 36,
+      "executedFiles": 33,
+      "availableFiles": 288,
+      "executedFileFraction": 0.11458333333333333,
+      "endToEndMedianMs": 2,
+      "endToEndTotalMs": 1306,
+      "limitations": [
+        "Deliberately limited diagnostic baseline, not an existing competing product."
+      ]
+    }
+  ],
+  "trials": [
+    {
+      "scenario": "leaf-comment",
+      "project": "modular",
+      "regression": false,
+      "repetition": 0,
+      "order": [
+        "full-native",
+        "testlore",
+        "imports-only"
+      ],
+      "method": "full-native",
+      "totalFiles": 8,
+      "plannedFiles": [
+        "test/0.test.js",
+        "test/1.test.js",
+        "test/2.test.js",
+        "test/3.test.js",
+        "test/4.test.js",
+        "test/5.test.js",
+        "test/6.test.js",
+        "test/7.test.js"
+      ],
+      "executedFiles": [
+        "test/0.test.js",
+        "test/1.test.js",
+        "test/2.test.js",
+        "test/3.test.js",
+        "test/4.test.js",
+        "test/5.test.js",
+        "test/6.test.js",
+        "test/7.test.js"
+      ],
+      "endToEndMs": 131,
+      "executionMs": 131,
+      "observedFailures": [],
+      "groundTruthFailures": [],
+      "detectedFailures": [],
+      "missedFailures": [],
+      "valid": true,
+      "rawReport": "leaf-comment-0-full-native.json"
+    },
+    {
+      "scenario": "leaf-comment",
+      "project": "modular",
+      "regression": false,
+      "repetition": 0,
+      "order": [
+        "full-native",
+        "testlore",
+        "imports-only"
+      ],
+      "method": "testlore",
+      "totalFiles": 8,
+      "plannedFiles": [
+        "test/0.test.js"
+      ],
+      "executedFiles": [
+        "test/0.test.js"
+      ],
+      "endToEndMs": 582,
+      "executionMs": 102,
+      "observedFailures": [],
+      "groundTruthFailures": [],
+      "detectedFailures": [],
+      "missedFailures": [],
+      "valid": true,
+      "rawReport": "leaf-comment-0-testlore.json"
+    },
+    {
+      "scenario": "leaf-comment",
+      "project": "modular",
+      "regression": false,
+      "repetition": 0,
+      "order": [
+        "full-native",
+        "testlore",
+        "imports-only"
+      ],
+      "method": "imports-only",
+      "totalFiles": 8,
+      "plannedFiles": [
+        "test/0.test.js"
+      ],
+      "executedFiles": [
+        "test/0.test.js"
+      ],
+      "endToEndMs": 95,
+      "executionMs": 92,
+      "observedFailures": [],
+      "groundTruthFailures": [],
+      "detectedFailures": [],
+      "missedFailures": [],
+      "valid": true,
+      "rawReport": "leaf-comment-0-imports-only.json"
+    },
+    {
+      "scenario": "leaf-comment",
+      "project": "modular",
+      "regression": false,
+      "repetition": 1,
+      "order": [
+        "testlore",
+        "imports-only",
+        "full-native"
+      ],
+      "method": "testlore",
+      "totalFiles": 8,
+      "plannedFiles": [
+        "test/0.test.js"
+      ],
+      "executedFiles": [
+        "test/0.test.js"
+      ],
+      "endToEndMs": 530,
+      "executionMs": 95,
+      "observedFailures": [],
+      "groundTruthFailures": [],
+      "detectedFailures": [],
+      "missedFailures": [],
+      "valid": true,
+      "rawReport": "leaf-comment-1-testlore.json"
+    },
+    {
+      "scenario": "leaf-comment",
+      "project": "modular",
+      "regression": false,
+      "repetition": 1,
+      "order": [
+        "testlore",
+        "imports-only",
+        "full-native"
+      ],
+      "method": "imports-only",
+      "totalFiles": 8,
+      "plannedFiles": [
+        "test/0.test.js"
+      ],
+      "executedFiles": [
+        "test/0.test.js"
+      ],
+      "endToEndMs": 95,
+      "executionMs": 93,
+      "observedFailures": [],
+      "groundTruthFailures": [],
+      "detectedFailures": [],
+      "missedFailures": [],
+      "valid": true,
+      "rawReport": "leaf-comment-1-imports-only.json"
+    },
+    {
+      "scenario": "leaf-comment",
+      "project": "modular",
+      "regression": false,
+      "repetition": 1,
+      "order": [
+        "testlore",
+        "imports-only",
+        "full-native"
+      ],
+      "method": "full-native",
+      "totalFiles": 8,
+      "plannedFiles": [
+        "test/0.test.js",
+        "test/1.test.js",
+        "test/2.test.js",
+        "test/3.test.js",
+        "test/4.test.js",
+        "test/5.test.js",
+        "test/6.test.js",
+        "test/7.test.js"
+      ],
+      "executedFiles": [
+        "test/0.test.js",
+        "test/1.test.js",
+        "test/2.test.js",
+        "test/3.test.js",
+        "test/4.test.js",
+        "test/5.test.js",
+        "test/6.test.js",
+        "test/7.test.js"
+      ],
+      "endToEndMs": 145,
+      "executionMs": 145,
+      "observedFailures": [],
+      "groundTruthFailures": [],
+      "detectedFailures": [],
+      "missedFailures": [],
+      "valid": true,
+      "rawReport": "leaf-comment-1-full-native.json"
+    },
+    {
+      "scenario": "leaf-comment",
+      "project": "modular",
+      "regression": false,
+      "repetition": 2,
+      "order": [
+        "imports-only",
+        "full-native",
+        "testlore"
+      ],
+      "method": "imports-only",
+      "totalFiles": 8,
+      "plannedFiles": [
+        "test/0.test.js"
+      ],
+      "executedFiles": [
+        "test/0.test.js"
+      ],
+      "endToEndMs": 94,
+      "executionMs": 92,
+      "observedFailures": [],
+      "groundTruthFailures": [],
+      "detectedFailures": [],
+      "missedFailures": [],
+      "valid": true,
+      "rawReport": "leaf-comment-2-imports-only.json"
+    },
+    {
+      "scenario": "leaf-comment",
+      "project": "modular",
+      "regression": false,
+      "repetition": 2,
+      "order": [
+        "imports-only",
+        "full-native",
+        "testlore"
+      ],
+      "method": "full-native",
+      "totalFiles": 8,
+      "plannedFiles": [
+        "test/0.test.js",
+        "test/1.test.js",
+        "test/2.test.js",
+        "test/3.test.js",
+        "test/4.test.js",
+        "test/5.test.js",
+        "test/6.test.js",
+        "test/7.test.js"
+      ],
+      "executedFiles": [
+        "test/0.test.js",
+        "test/1.test.js",
+        "test/2.test.js",
+        "test/3.test.js",
+        "test/4.test.js",
+        "test/5.test.js",
+        "test/6.test.js",
+        "test/7.test.js"
+      ],
+      "endToEndMs": 142,
+      "executionMs": 141,
+      "observedFailures": [],
+      "groundTruthFailures": [],
+      "detectedFailures": [],
+      "missedFailures": [],
+      "valid": true,
+      "rawReport": "leaf-comment-2-full-native.json"
+    },
+    {
+      "scenario": "leaf-comment",
+      "project": "modular",
+      "regression": false,
+      "repetition": 2,
+      "order": [
+        "imports-only",
+        "full-native",
+        "testlore"
+      ],
+      "method": "testlore",
+      "totalFiles": 8,
+      "plannedFiles": [
+        "test/0.test.js"
+      ],
+      "executedFiles": [
+        "test/0.test.js"
+      ],
+      "endToEndMs": 505,
+      "executionMs": 90,
+      "observedFailures": [],
+      "groundTruthFailures": [],
+      "detectedFailures": [],
+      "missedFailures": [],
+      "valid": true,
+      "rawReport": "leaf-comment-2-testlore.json"
+    },
+    {
+      "scenario": "leaf-defect",
+      "project": "modular",
+      "regression": true,
+      "repetition": 0,
+      "order": [
+        "testlore",
+        "imports-only",
+        "full-native"
+      ],
+      "method": "testlore",
+      "totalFiles": 8,
+      "plannedFiles": [
+        "test/3.test.js"
+      ],
+      "executedFiles": [
+        "test/3.test.js"
+      ],
+      "endToEndMs": 538,
+      "executionMs": 93,
+      "observedFailures": [
+        "45498eac539cfaf653b9c5dd1b5f883597a4019577897a01dec6e88245b328db"
+      ],
+      "groundTruthFailures": [
+        "45498eac539cfaf653b9c5dd1b5f883597a4019577897a01dec6e88245b328db"
+      ],
+      "detectedFailures": [
+        "45498eac539cfaf653b9c5dd1b5f883597a4019577897a01dec6e88245b328db"
+      ],
+      "missedFailures": [],
+      "valid": true,
+      "rawReport": "leaf-defect-0-testlore.json"
+    },
+    {
+      "scenario": "leaf-defect",
+      "project": "modular",
+      "regression": true,
+      "repetition": 0,
+      "order": [
+        "testlore",
+        "imports-only",
+        "full-native"
+      ],
+      "method": "imports-only",
+      "totalFiles": 8,
+      "plannedFiles": [
+        "test/3.test.js"
+      ],
+      "executedFiles": [
+        "test/3.test.js"
+      ],
+      "endToEndMs": 103,
+      "executionMs": 101,
+      "observedFailures": [
+        "45498eac539cfaf653b9c5dd1b5f883597a4019577897a01dec6e88245b328db"
+      ],
+      "groundTruthFailures": [
+        "45498eac539cfaf653b9c5dd1b5f883597a4019577897a01dec6e88245b328db"
+      ],
+      "detectedFailures": [
+        "45498eac539cfaf653b9c5dd1b5f883597a4019577897a01dec6e88245b328db"
+      ],
+      "missedFailures": [],
+      "valid": true,
+      "rawReport": "leaf-defect-0-imports-only.json"
+    },
+    {
+      "scenario": "leaf-defect",
+      "project": "modular",
+      "regression": true,
+      "repetition": 0,
+      "order": [
+        "testlore",
+        "imports-only",
+        "full-native"
+      ],
+      "method": "full-native",
+      "totalFiles": 8,
+      "plannedFiles": [
+        "test/0.test.js",
+        "test/1.test.js",
+        "test/2.test.js",
+        "test/3.test.js",
+        "test/4.test.js",
+        "test/5.test.js",
+        "test/6.test.js",
+        "test/7.test.js"
+      ],
+      "executedFiles": [
+        "test/0.test.js",
+        "test/1.test.js",
+        "test/2.test.js",
+        "test/3.test.js",
+        "test/4.test.js",
+        "test/5.test.js",
+        "test/6.test.js",
+        "test/7.test.js"
+      ],
+      "endToEndMs": 138,
+      "executionMs": 138,
+      "observedFailures": [
+        "45498eac539cfaf653b9c5dd1b5f883597a4019577897a01dec6e88245b328db"
+      ],
+      "groundTruthFailures": [
+        "45498eac539cfaf653b9c5dd1b5f883597a4019577897a01dec6e88245b328db"
+      ],
+      "detectedFailures": [
+        "45498eac539cfaf653b9c5dd1b5f883597a4019577897a01dec6e88245b328db"
+      ],
+      "missedFailures": [],
+      "valid": true,
+      "rawReport": "leaf-defect-0-full-native.json"
+    },
+    {
+      "scenario": "leaf-defect",
+      "project": "modular",
+      "regression": true,
+      "repetition": 1,
+      "order": [
+        "imports-only",
+        "full-native",
+        "testlore"
+      ],
+      "method": "imports-only",
+      "totalFiles": 8,
+      "plannedFiles": [
+        "test/3.test.js"
+      ],
+      "executedFiles": [
+        "test/3.test.js"
+      ],
+      "endToEndMs": 97,
+      "executionMs": 95,
+      "observedFailures": [
+        "45498eac539cfaf653b9c5dd1b5f883597a4019577897a01dec6e88245b328db"
+      ],
+      "groundTruthFailures": [
+        "45498eac539cfaf653b9c5dd1b5f883597a4019577897a01dec6e88245b328db"
+      ],
+      "detectedFailures": [
+        "45498eac539cfaf653b9c5dd1b5f883597a4019577897a01dec6e88245b328db"
+      ],
+      "missedFailures": [],
+      "valid": true,
+      "rawReport": "leaf-defect-1-imports-only.json"
+    },
+    {
+      "scenario": "leaf-defect",
+      "project": "modular",
+      "regression": true,
+      "repetition": 1,
+      "order": [
+        "imports-only",
+        "full-native",
+        "testlore"
+      ],
+      "method": "full-native",
+      "totalFiles": 8,
+      "plannedFiles": [
+        "test/0.test.js",
+        "test/1.test.js",
+        "test/2.test.js",
+        "test/3.test.js",
+        "test/4.test.js",
+        "test/5.test.js",
+        "test/6.test.js",
+        "test/7.test.js"
+      ],
+      "executedFiles": [
+        "test/0.test.js",
+        "test/1.test.js",
+        "test/2.test.js",
+        "test/3.test.js",
+        "test/4.test.js",
+        "test/5.test.js",
+        "test/6.test.js",
+        "test/7.test.js"
+      ],
+      "endToEndMs": 134,
+      "executionMs": 134,
+      "observedFailures": [
+        "45498eac539cfaf653b9c5dd1b5f883597a4019577897a01dec6e88245b328db"
+      ],
+      "groundTruthFailures": [
+        "45498eac539cfaf653b9c5dd1b5f883597a4019577897a01dec6e88245b328db"
+      ],
+      "detectedFailures": [
+        "45498eac539cfaf653b9c5dd1b5f883597a4019577897a01dec6e88245b328db"
+      ],
+      "missedFailures": [],
+      "valid": true,
+      "rawReport": "leaf-defect-1-full-native.json"
+    },
+    {
+      "scenario": "leaf-defect",
+      "project": "modular",
+      "regression": true,
+      "repetition": 1,
+      "order": [
+        "imports-only",
+        "full-native",
+        "testlore"
+      ],
+      "method": "testlore",
+      "totalFiles": 8,
+      "plannedFiles": [
+        "test/3.test.js"
+      ],
+      "executedFiles": [
+        "test/3.test.js"
+      ],
+      "endToEndMs": 522,
+      "executionMs": 87,
+      "observedFailures": [
+        "45498eac539cfaf653b9c5dd1b5f883597a4019577897a01dec6e88245b328db"
+      ],
+      "groundTruthFailures": [
+        "45498eac539cfaf653b9c5dd1b5f883597a4019577897a01dec6e88245b328db"
+      ],
+      "detectedFailures": [
+        "45498eac539cfaf653b9c5dd1b5f883597a4019577897a01dec6e88245b328db"
+      ],
+      "missedFailures": [],
+      "valid": true,
+      "rawReport": "leaf-defect-1-testlore.json"
+    },
+    {
+      "scenario": "leaf-defect",
+      "project": "modular",
+      "regression": true,
+      "repetition": 2,
+      "order": [
+        "full-native",
+        "testlore",
+        "imports-only"
+      ],
+      "method": "full-native",
+      "totalFiles": 8,
+      "plannedFiles": [
+        "test/0.test.js",
+        "test/1.test.js",
+        "test/2.test.js",
+        "test/3.test.js",
+        "test/4.test.js",
+        "test/5.test.js",
+        "test/6.test.js",
+        "test/7.test.js"
+      ],
+      "executedFiles": [
+        "test/0.test.js",
+        "test/1.test.js",
+        "test/2.test.js",
+        "test/3.test.js",
+        "test/4.test.js",
+        "test/5.test.js",
+        "test/6.test.js",
+        "test/7.test.js"
+      ],
+      "endToEndMs": 127,
+      "executionMs": 126,
+      "observedFailures": [
+        "45498eac539cfaf653b9c5dd1b5f883597a4019577897a01dec6e88245b328db"
+      ],
+      "groundTruthFailures": [
+        "45498eac539cfaf653b9c5dd1b5f883597a4019577897a01dec6e88245b328db"
+      ],
+      "detectedFailures": [
+        "45498eac539cfaf653b9c5dd1b5f883597a4019577897a01dec6e88245b328db"
+      ],
+      "missedFailures": [],
+      "valid": true,
+      "rawReport": "leaf-defect-2-full-native.json"
+    },
+    {
+      "scenario": "leaf-defect",
+      "project": "modular",
+      "regression": true,
+      "repetition": 2,
+      "order": [
+        "full-native",
+        "testlore",
+        "imports-only"
+      ],
+      "method": "testlore",
+      "totalFiles": 8,
+      "plannedFiles": [
+        "test/3.test.js"
+      ],
+      "executedFiles": [
+        "test/3.test.js"
+      ],
+      "endToEndMs": 531,
+      "executionMs": 90,
+      "observedFailures": [
+        "45498eac539cfaf653b9c5dd1b5f883597a4019577897a01dec6e88245b328db"
+      ],
+      "groundTruthFailures": [
+        "45498eac539cfaf653b9c5dd1b5f883597a4019577897a01dec6e88245b328db"
+      ],
+      "detectedFailures": [
+        "45498eac539cfaf653b9c5dd1b5f883597a4019577897a01dec6e88245b328db"
+      ],
+      "missedFailures": [],
+      "valid": true,
+      "rawReport": "leaf-defect-2-testlore.json"
+    },
+    {
+      "scenario": "leaf-defect",
+      "project": "modular",
+      "regression": true,
+      "repetition": 2,
+      "order": [
+        "full-native",
+        "testlore",
+        "imports-only"
+      ],
+      "method": "imports-only",
+      "totalFiles": 8,
+      "plannedFiles": [
+        "test/3.test.js"
+      ],
+      "executedFiles": [
+        "test/3.test.js"
+      ],
+      "endToEndMs": 111,
+      "executionMs": 109,
+      "observedFailures": [
+        "45498eac539cfaf653b9c5dd1b5f883597a4019577897a01dec6e88245b328db"
+      ],
+      "groundTruthFailures": [
+        "45498eac539cfaf653b9c5dd1b5f883597a4019577897a01dec6e88245b328db"
+      ],
+      "detectedFailures": [
+        "45498eac539cfaf653b9c5dd1b5f883597a4019577897a01dec6e88245b328db"
+      ],
+      "missedFailures": [],
+      "valid": true,
+      "rawReport": "leaf-defect-2-imports-only.json"
+    },
+    {
+      "scenario": "shared-defect",
+      "project": "modular",
+      "regression": true,
+      "repetition": 0,
+      "order": [
+        "imports-only",
+        "full-native",
+        "testlore"
+      ],
+      "method": "imports-only",
+      "totalFiles": 8,
+      "plannedFiles": [
+        "test/0.test.js",
+        "test/1.test.js",
+        "test/2.test.js",
+        "test/3.test.js",
+        "test/4.test.js",
+        "test/5.test.js",
+        "test/6.test.js",
+        "test/7.test.js"
+      ],
+      "executedFiles": [
+        "test/0.test.js",
+        "test/1.test.js",
+        "test/2.test.js",
+        "test/3.test.js",
+        "test/4.test.js",
+        "test/5.test.js",
+        "test/6.test.js",
+        "test/7.test.js"
+      ],
+      "endToEndMs": 130,
+      "executionMs": 128,
+      "observedFailures": [
+        "31d6b4e3834249106de4173f8b8afaa6fe516cd10a1066da59307a221a4c04f0",
+        "d45d09ad8d68369391d1f3eb865f4612605ea29b84c9f6b870b39922f1bf0d47",
+        "7ec72062b69b9635a8728dc7d8012ef81512433c35af6deea50bb2a3f1a8d6e4",
+        "45498eac539cfaf653b9c5dd1b5f883597a4019577897a01dec6e88245b328db",
+        "60a74ffb2d4dbf89f2c7319119d0eaaf90ff8a5a2588c22e22e48ad206f13199",
+        "17067766ae5f51b48b47d93dda12d81e117dfff3000540f3309ed82e694cdf7f",
+        "02bfab99dbef9256eb45cfc2908439572b2f95e97d4d7359407c69850b958943",
+        "0455927407ebb0ec334070a34fd73cc1736fa20095b52974969f1873031d2bbd"
+      ],
+      "groundTruthFailures": [
+        "31d6b4e3834249106de4173f8b8afaa6fe516cd10a1066da59307a221a4c04f0",
+        "d45d09ad8d68369391d1f3eb865f4612605ea29b84c9f6b870b39922f1bf0d47",
+        "7ec72062b69b9635a8728dc7d8012ef81512433c35af6deea50bb2a3f1a8d6e4",
+        "45498eac539cfaf653b9c5dd1b5f883597a4019577897a01dec6e88245b328db",
+        "60a74ffb2d4dbf89f2c7319119d0eaaf90ff8a5a2588c22e22e48ad206f13199",
+        "17067766ae5f51b48b47d93dda12d81e117dfff3000540f3309ed82e694cdf7f",
+        "02bfab99dbef9256eb45cfc2908439572b2f95e97d4d7359407c69850b958943",
+        "0455927407ebb0ec334070a34fd73cc1736fa20095b52974969f1873031d2bbd"
+      ],
+      "detectedFailures": [
+        "31d6b4e3834249106de4173f8b8afaa6fe516cd10a1066da59307a221a4c04f0",
+        "d45d09ad8d68369391d1f3eb865f4612605ea29b84c9f6b870b39922f1bf0d47",
+        "7ec72062b69b9635a8728dc7d8012ef81512433c35af6deea50bb2a3f1a8d6e4",
+        "45498eac539cfaf653b9c5dd1b5f883597a4019577897a01dec6e88245b328db",
+        "60a74ffb2d4dbf89f2c7319119d0eaaf90ff8a5a2588c22e22e48ad206f13199",
+        "17067766ae5f51b48b47d93dda12d81e117dfff3000540f3309ed82e694cdf7f",
+        "02bfab99dbef9256eb45cfc2908439572b2f95e97d4d7359407c69850b958943",
+        "0455927407ebb0ec334070a34fd73cc1736fa20095b52974969f1873031d2bbd"
+      ],
+      "missedFailures": [],
+      "valid": true,
+      "rawReport": "shared-defect-0-imports-only.json"
+    },
+    {
+      "scenario": "shared-defect",
+      "project": "modular",
+      "regression": true,
+      "repetition": 0,
+      "order": [
+        "imports-only",
+        "full-native",
+        "testlore"
+      ],
+      "method": "full-native",
+      "totalFiles": 8,
+      "plannedFiles": [
+        "test/0.test.js",
+        "test/1.test.js",
+        "test/2.test.js",
+        "test/3.test.js",
+        "test/4.test.js",
+        "test/5.test.js",
+        "test/6.test.js",
+        "test/7.test.js"
+      ],
+      "executedFiles": [
+        "test/0.test.js",
+        "test/1.test.js",
+        "test/2.test.js",
+        "test/3.test.js",
+        "test/4.test.js",
+        "test/5.test.js",
+        "test/6.test.js",
+        "test/7.test.js"
+      ],
+      "endToEndMs": 134,
+      "executionMs": 134,
+      "observedFailures": [
+        "31d6b4e3834249106de4173f8b8afaa6fe516cd10a1066da59307a221a4c04f0",
+        "d45d09ad8d68369391d1f3eb865f4612605ea29b84c9f6b870b39922f1bf0d47",
+        "7ec72062b69b9635a8728dc7d8012ef81512433c35af6deea50bb2a3f1a8d6e4",
+        "45498eac539cfaf653b9c5dd1b5f883597a4019577897a01dec6e88245b328db",
+        "60a74ffb2d4dbf89f2c7319119d0eaaf90ff8a5a2588c22e22e48ad206f13199",
+        "17067766ae5f51b48b47d93dda12d81e117dfff3000540f3309ed82e694cdf7f",
+        "02bfab99dbef9256eb45cfc2908439572b2f95e97d4d7359407c69850b958943",
+        "0455927407ebb0ec334070a34fd73cc1736fa20095b52974969f1873031d2bbd"
+      ],
+      "groundTruthFailures": [
+        "31d6b4e3834249106de4173f8b8afaa6fe516cd10a1066da59307a221a4c04f0",
+        "d45d09ad8d68369391d1f3eb865f4612605ea29b84c9f6b870b39922f1bf0d47",
+        "7ec72062b69b9635a8728dc7d8012ef81512433c35af6deea50bb2a3f1a8d6e4",
+        "45498eac539cfaf653b9c5dd1b5f883597a4019577897a01dec6e88245b328db",
+        "60a74ffb2d4dbf89f2c7319119d0eaaf90ff8a5a2588c22e22e48ad206f13199",
+        "17067766ae5f51b48b47d93dda12d81e117dfff3000540f3309ed82e694cdf7f",
+        "02bfab99dbef9256eb45cfc2908439572b2f95e97d4d7359407c69850b958943",
+        "0455927407ebb0ec334070a34fd73cc1736fa20095b52974969f1873031d2bbd"
+      ],
+      "detectedFailures": [
+        "31d6b4e3834249106de4173f8b8afaa6fe516cd10a1066da59307a221a4c04f0",
+        "d45d09ad8d68369391d1f3eb865f4612605ea29b84c9f6b870b39922f1bf0d47",
+        "7ec72062b69b9635a8728dc7d8012ef81512433c35af6deea50bb2a3f1a8d6e4",
+        "45498eac539cfaf653b9c5dd1b5f883597a4019577897a01dec6e88245b328db",
+        "60a74ffb2d4dbf89f2c7319119d0eaaf90ff8a5a2588c22e22e48ad206f13199",
+        "17067766ae5f51b48b47d93dda12d81e117dfff3000540f3309ed82e694cdf7f",
+        "02bfab99dbef9256eb45cfc2908439572b2f95e97d4d7359407c69850b958943",
+        "0455927407ebb0ec334070a34fd73cc1736fa20095b52974969f1873031d2bbd"
+      ],
+      "missedFailures": [],
+      "valid": true,
+      "rawReport": "shared-defect-0-full-native.json"
+    },
+    {
+      "scenario": "shared-defect",
+      "project": "modular",
+      "regression": true,
+      "repetition": 0,
+      "order": [
+        "imports-only",
+        "full-native",
+        "testlore"
+      ],
+      "method": "testlore",
+      "totalFiles": 8,
+      "plannedFiles": [
+        "test/0.test.js",
+        "test/1.test.js",
+        "test/2.test.js",
+        "test/3.test.js",
+        "test/4.test.js",
+        "test/5.test.js",
+        "test/6.test.js",
+        "test/7.test.js"
+      ],
+      "executedFiles": [
+        "test/0.test.js",
+        "test/1.test.js",
+        "test/2.test.js",
+        "test/3.test.js",
+        "test/4.test.js",
+        "test/5.test.js",
+        "test/6.test.js",
+        "test/7.test.js"
+      ],
+      "endToEndMs": 547,
+      "executionMs": 131,
+      "observedFailures": [
+        "31d6b4e3834249106de4173f8b8afaa6fe516cd10a1066da59307a221a4c04f0",
+        "d45d09ad8d68369391d1f3eb865f4612605ea29b84c9f6b870b39922f1bf0d47",
+        "7ec72062b69b9635a8728dc7d8012ef81512433c35af6deea50bb2a3f1a8d6e4",
+        "45498eac539cfaf653b9c5dd1b5f883597a4019577897a01dec6e88245b328db",
+        "60a74ffb2d4dbf89f2c7319119d0eaaf90ff8a5a2588c22e22e48ad206f13199",
+        "17067766ae5f51b48b47d93dda12d81e117dfff3000540f3309ed82e694cdf7f",
+        "02bfab99dbef9256eb45cfc2908439572b2f95e97d4d7359407c69850b958943",
+        "0455927407ebb0ec334070a34fd73cc1736fa20095b52974969f1873031d2bbd"
+      ],
+      "groundTruthFailures": [
+        "31d6b4e3834249106de4173f8b8afaa6fe516cd10a1066da59307a221a4c04f0",
+        "d45d09ad8d68369391d1f3eb865f4612605ea29b84c9f6b870b39922f1bf0d47",
+        "7ec72062b69b9635a8728dc7d8012ef81512433c35af6deea50bb2a3f1a8d6e4",
+        "45498eac539cfaf653b9c5dd1b5f883597a4019577897a01dec6e88245b328db",
+        "60a74ffb2d4dbf89f2c7319119d0eaaf90ff8a5a2588c22e22e48ad206f13199",
+        "17067766ae5f51b48b47d93dda12d81e117dfff3000540f3309ed82e694cdf7f",
+        "02bfab99dbef9256eb45cfc2908439572b2f95e97d4d7359407c69850b958943",
+        "0455927407ebb0ec334070a34fd73cc1736fa20095b52974969f1873031d2bbd"
+      ],
+      "detectedFailures": [
+        "31d6b4e3834249106de4173f8b8afaa6fe516cd10a1066da59307a221a4c04f0",
+        "d45d09ad8d68369391d1f3eb865f4612605ea29b84c9f6b870b39922f1bf0d47",
+        "7ec72062b69b9635a8728dc7d8012ef81512433c35af6deea50bb2a3f1a8d6e4",
+        "45498eac539cfaf653b9c5dd1b5f883597a4019577897a01dec6e88245b328db",
+        "60a74ffb2d4dbf89f2c7319119d0eaaf90ff8a5a2588c22e22e48ad206f13199",
+        "17067766ae5f51b48b47d93dda12d81e117dfff3000540f3309ed82e694cdf7f",
+        "02bfab99dbef9256eb45cfc2908439572b2f95e97d4d7359407c69850b958943",
+        "0455927407ebb0ec334070a34fd73cc1736fa20095b52974969f1873031d2bbd"
+      ],
+      "missedFailures": [],
+      "valid": true,
+      "rawReport": "shared-defect-0-testlore.json"
+    },
+    {
+      "scenario": "shared-defect",
+      "project": "modular",
+      "regression": true,
+      "repetition": 1,
+      "order": [
+        "full-native",
+        "testlore",
+        "imports-only"
+      ],
+      "method": "full-native",
+      "totalFiles": 8,
+      "plannedFiles": [
+        "test/0.test.js",
+        "test/1.test.js",
+        "test/2.test.js",
+        "test/3.test.js",
+        "test/4.test.js",
+        "test/5.test.js",
+        "test/6.test.js",
+        "test/7.test.js"
+      ],
+      "executedFiles": [
+        "test/0.test.js",
+        "test/1.test.js",
+        "test/2.test.js",
+        "test/3.test.js",
+        "test/4.test.js",
+        "test/5.test.js",
+        "test/6.test.js",
+        "test/7.test.js"
+      ],
+      "endToEndMs": 161,
+      "executionMs": 161,
+      "observedFailures": [
+        "31d6b4e3834249106de4173f8b8afaa6fe516cd10a1066da59307a221a4c04f0",
+        "d45d09ad8d68369391d1f3eb865f4612605ea29b84c9f6b870b39922f1bf0d47",
+        "7ec72062b69b9635a8728dc7d8012ef81512433c35af6deea50bb2a3f1a8d6e4",
+        "45498eac539cfaf653b9c5dd1b5f883597a4019577897a01dec6e88245b328db",
+        "60a74ffb2d4dbf89f2c7319119d0eaaf90ff8a5a2588c22e22e48ad206f13199",
+        "17067766ae5f51b48b47d93dda12d81e117dfff3000540f3309ed82e694cdf7f",
+        "02bfab99dbef9256eb45cfc2908439572b2f95e97d4d7359407c69850b958943",
+        "0455927407ebb0ec334070a34fd73cc1736fa20095b52974969f1873031d2bbd"
+      ],
+      "groundTruthFailures": [
+        "31d6b4e3834249106de4173f8b8afaa6fe516cd10a1066da59307a221a4c04f0",
+        "d45d09ad8d68369391d1f3eb865f4612605ea29b84c9f6b870b39922f1bf0d47",
+        "7ec72062b69b9635a8728dc7d8012ef81512433c35af6deea50bb2a3f1a8d6e4",
+        "45498eac539cfaf653b9c5dd1b5f883597a4019577897a01dec6e88245b328db",
+        "60a74ffb2d4dbf89f2c7319119d0eaaf90ff8a5a2588c22e22e48ad206f13199",
+        "17067766ae5f51b48b47d93dda12d81e117dfff3000540f3309ed82e694cdf7f",
+        "02bfab99dbef9256eb45cfc2908439572b2f95e97d4d7359407c69850b958943",
+        "0455927407ebb0ec334070a34fd73cc1736fa20095b52974969f1873031d2bbd"
+      ],
+      "detectedFailures": [
+        "31d6b4e3834249106de4173f8b8afaa6fe516cd10a1066da59307a221a4c04f0",
+        "d45d09ad8d68369391d1f3eb865f4612605ea29b84c9f6b870b39922f1bf0d47",
+        "7ec72062b69b9635a8728dc7d8012ef81512433c35af6deea50bb2a3f1a8d6e4",
+        "45498eac539cfaf653b9c5dd1b5f883597a4019577897a01dec6e88245b328db",
+        "60a74ffb2d4dbf89f2c7319119d0eaaf90ff8a5a2588c22e22e48ad206f13199",
+        "17067766ae5f51b48b47d93dda12d81e117dfff3000540f3309ed82e694cdf7f",
+        "02bfab99dbef9256eb45cfc2908439572b2f95e97d4d7359407c69850b958943",
+        "0455927407ebb0ec334070a34fd73cc1736fa20095b52974969f1873031d2bbd"
+      ],
+      "missedFailures": [],
+      "valid": true,
+      "rawReport": "shared-defect-1-full-native.json"
+    },
+    {
+      "scenario": "shared-defect",
+      "project": "modular",
+      "regression": true,
+      "repetition": 1,
+      "order": [
+        "full-native",
+        "testlore",
+        "imports-only"
+      ],
+      "method": "testlore",
+      "totalFiles": 8,
+      "plannedFiles": [
+        "test/0.test.js",
+        "test/1.test.js",
+        "test/2.test.js",
+        "test/3.test.js",
+        "test/4.test.js",
+        "test/5.test.js",
+        "test/6.test.js",
+        "test/7.test.js"
+      ],
+      "executedFiles": [
+        "test/0.test.js",
+        "test/1.test.js",
+        "test/2.test.js",
+        "test/3.test.js",
+        "test/4.test.js",
+        "test/5.test.js",
+        "test/6.test.js",
+        "test/7.test.js"
+      ],
+      "endToEndMs": 545,
+      "executionMs": 128,
+      "observedFailures": [
+        "31d6b4e3834249106de4173f8b8afaa6fe516cd10a1066da59307a221a4c04f0",
+        "d45d09ad8d68369391d1f3eb865f4612605ea29b84c9f6b870b39922f1bf0d47",
+        "7ec72062b69b9635a8728dc7d8012ef81512433c35af6deea50bb2a3f1a8d6e4",
+        "45498eac539cfaf653b9c5dd1b5f883597a4019577897a01dec6e88245b328db",
+        "60a74ffb2d4dbf89f2c7319119d0eaaf90ff8a5a2588c22e22e48ad206f13199",
+        "17067766ae5f51b48b47d93dda12d81e117dfff3000540f3309ed82e694cdf7f",
+        "02bfab99dbef9256eb45cfc2908439572b2f95e97d4d7359407c69850b958943",
+        "0455927407ebb0ec334070a34fd73cc1736fa20095b52974969f1873031d2bbd"
+      ],
+      "groundTruthFailures": [
+        "31d6b4e3834249106de4173f8b8afaa6fe516cd10a1066da59307a221a4c04f0",
+        "d45d09ad8d68369391d1f3eb865f4612605ea29b84c9f6b870b39922f1bf0d47",
+        "7ec72062b69b9635a8728dc7d8012ef81512433c35af6deea50bb2a3f1a8d6e4",
+        "45498eac539cfaf653b9c5dd1b5f883597a4019577897a01dec6e88245b328db",
+        "60a74ffb2d4dbf89f2c7319119d0eaaf90ff8a5a2588c22e22e48ad206f13199",
+        "17067766ae5f51b48b47d93dda12d81e117dfff3000540f3309ed82e694cdf7f",
+        "02bfab99dbef9256eb45cfc2908439572b2f95e97d4d7359407c69850b958943",
+        "0455927407ebb0ec334070a34fd73cc1736fa20095b52974969f1873031d2bbd"
+      ],
+      "detectedFailures": [
+        "31d6b4e3834249106de4173f8b8afaa6fe516cd10a1066da59307a221a4c04f0",
+        "d45d09ad8d68369391d1f3eb865f4612605ea29b84c9f6b870b39922f1bf0d47",
+        "7ec72062b69b9635a8728dc7d8012ef81512433c35af6deea50bb2a3f1a8d6e4",
+        "45498eac539cfaf653b9c5dd1b5f883597a4019577897a01dec6e88245b328db",
+        "60a74ffb2d4dbf89f2c7319119d0eaaf90ff8a5a2588c22e22e48ad206f13199",
+        "17067766ae5f51b48b47d93dda12d81e117dfff3000540f3309ed82e694cdf7f",
+        "02bfab99dbef9256eb45cfc2908439572b2f95e97d4d7359407c69850b958943",
+        "0455927407ebb0ec334070a34fd73cc1736fa20095b52974969f1873031d2bbd"
+      ],
+      "missedFailures": [],
+      "valid": true,
+      "rawReport": "shared-defect-1-testlore.json"
+    },
+    {
+      "scenario": "shared-defect",
+      "project": "modular",
+      "regression": true,
+      "repetition": 1,
+      "order": [
+        "full-native",
+        "testlore",
+        "imports-only"
+      ],
+      "method": "imports-only",
+      "totalFiles": 8,
+      "plannedFiles": [
+        "test/0.test.js",
+        "test/1.test.js",
+        "test/2.test.js",
+        "test/3.test.js",
+        "test/4.test.js",
+        "test/5.test.js",
+        "test/6.test.js",
+        "test/7.test.js"
+      ],
+      "executedFiles": [
+        "test/0.test.js",
+        "test/1.test.js",
+        "test/2.test.js",
+        "test/3.test.js",
+        "test/4.test.js",
+        "test/5.test.js",
+        "test/6.test.js",
+        "test/7.test.js"
+      ],
+      "endToEndMs": 130,
+      "executionMs": 128,
+      "observedFailures": [
+        "31d6b4e3834249106de4173f8b8afaa6fe516cd10a1066da59307a221a4c04f0",
+        "d45d09ad8d68369391d1f3eb865f4612605ea29b84c9f6b870b39922f1bf0d47",
+        "7ec72062b69b9635a8728dc7d8012ef81512433c35af6deea50bb2a3f1a8d6e4",
+        "45498eac539cfaf653b9c5dd1b5f883597a4019577897a01dec6e88245b328db",
+        "60a74ffb2d4dbf89f2c7319119d0eaaf90ff8a5a2588c22e22e48ad206f13199",
+        "17067766ae5f51b48b47d93dda12d81e117dfff3000540f3309ed82e694cdf7f",
+        "02bfab99dbef9256eb45cfc2908439572b2f95e97d4d7359407c69850b958943",
+        "0455927407ebb0ec334070a34fd73cc1736fa20095b52974969f1873031d2bbd"
+      ],
+      "groundTruthFailures": [
+        "31d6b4e3834249106de4173f8b8afaa6fe516cd10a1066da59307a221a4c04f0",
+        "d45d09ad8d68369391d1f3eb865f4612605ea29b84c9f6b870b39922f1bf0d47",
+        "7ec72062b69b9635a8728dc7d8012ef81512433c35af6deea50bb2a3f1a8d6e4",
+        "45498eac539cfaf653b9c5dd1b5f883597a4019577897a01dec6e88245b328db",
+        "60a74ffb2d4dbf89f2c7319119d0eaaf90ff8a5a2588c22e22e48ad206f13199",
+        "17067766ae5f51b48b47d93dda12d81e117dfff3000540f3309ed82e694cdf7f",
+        "02bfab99dbef9256eb45cfc2908439572b2f95e97d4d7359407c69850b958943",
+        "0455927407ebb0ec334070a34fd73cc1736fa20095b52974969f1873031d2bbd"
+      ],
+      "detectedFailures": [
+        "31d6b4e3834249106de4173f8b8afaa6fe516cd10a1066da59307a221a4c04f0",
+        "d45d09ad8d68369391d1f3eb865f4612605ea29b84c9f6b870b39922f1bf0d47",
+        "7ec72062b69b9635a8728dc7d8012ef81512433c35af6deea50bb2a3f1a8d6e4",
+        "45498eac539cfaf653b9c5dd1b5f883597a4019577897a01dec6e88245b328db",
+        "60a74ffb2d4dbf89f2c7319119d0eaaf90ff8a5a2588c22e22e48ad206f13199",
+        "17067766ae5f51b48b47d93dda12d81e117dfff3000540f3309ed82e694cdf7f",
+        "02bfab99dbef9256eb45cfc2908439572b2f95e97d4d7359407c69850b958943",
+        "0455927407ebb0ec334070a34fd73cc1736fa20095b52974969f1873031d2bbd"
+      ],
+      "missedFailures": [],
+      "valid": true,
+      "rawReport": "shared-defect-1-imports-only.json"
+    },
+    {
+      "scenario": "shared-defect",
+      "project": "modular",
+      "regression": true,
+      "repetition": 2,
+      "order": [
+        "testlore",
+        "imports-only",
+        "full-native"
+      ],
+      "method": "testlore",
+      "totalFiles": 8,
+      "plannedFiles": [
+        "test/0.test.js",
+        "test/1.test.js",
+        "test/2.test.js",
+        "test/3.test.js",
+        "test/4.test.js",
+        "test/5.test.js",
+        "test/6.test.js",
+        "test/7.test.js"
+      ],
+      "executedFiles": [
+        "test/0.test.js",
+        "test/1.test.js",
+        "test/2.test.js",
+        "test/3.test.js",
+        "test/4.test.js",
+        "test/5.test.js",
+        "test/6.test.js",
+        "test/7.test.js"
+      ],
+      "endToEndMs": 568,
+      "executionMs": 145,
+      "observedFailures": [
+        "31d6b4e3834249106de4173f8b8afaa6fe516cd10a1066da59307a221a4c04f0",
+        "d45d09ad8d68369391d1f3eb865f4612605ea29b84c9f6b870b39922f1bf0d47",
+        "7ec72062b69b9635a8728dc7d8012ef81512433c35af6deea50bb2a3f1a8d6e4",
+        "45498eac539cfaf653b9c5dd1b5f883597a4019577897a01dec6e88245b328db",
+        "60a74ffb2d4dbf89f2c7319119d0eaaf90ff8a5a2588c22e22e48ad206f13199",
+        "17067766ae5f51b48b47d93dda12d81e117dfff3000540f3309ed82e694cdf7f",
+        "02bfab99dbef9256eb45cfc2908439572b2f95e97d4d7359407c69850b958943",
+        "0455927407ebb0ec334070a34fd73cc1736fa20095b52974969f1873031d2bbd"
+      ],
+      "groundTruthFailures": [
+        "31d6b4e3834249106de4173f8b8afaa6fe516cd10a1066da59307a221a4c04f0",
+        "d45d09ad8d68369391d1f3eb865f4612605ea29b84c9f6b870b39922f1bf0d47",
+        "7ec72062b69b9635a8728dc7d8012ef81512433c35af6deea50bb2a3f1a8d6e4",
+        "45498eac539cfaf653b9c5dd1b5f883597a4019577897a01dec6e88245b328db",
+        "60a74ffb2d4dbf89f2c7319119d0eaaf90ff8a5a2588c22e22e48ad206f13199",
+        "17067766ae5f51b48b47d93dda12d81e117dfff3000540f3309ed82e694cdf7f",
+        "02bfab99dbef9256eb45cfc2908439572b2f95e97d4d7359407c69850b958943",
+        "0455927407ebb0ec334070a34fd73cc1736fa20095b52974969f1873031d2bbd"
+      ],
+      "detectedFailures": [
+        "31d6b4e3834249106de4173f8b8afaa6fe516cd10a1066da59307a221a4c04f0",
+        "d45d09ad8d68369391d1f3eb865f4612605ea29b84c9f6b870b39922f1bf0d47",
+        "7ec72062b69b9635a8728dc7d8012ef81512433c35af6deea50bb2a3f1a8d6e4",
+        "45498eac539cfaf653b9c5dd1b5f883597a4019577897a01dec6e88245b328db",
+        "60a74ffb2d4dbf89f2c7319119d0eaaf90ff8a5a2588c22e22e48ad206f13199",
+        "17067766ae5f51b48b47d93dda12d81e117dfff3000540f3309ed82e694cdf7f",
+        "02bfab99dbef9256eb45cfc2908439572b2f95e97d4d7359407c69850b958943",
+        "0455927407ebb0ec334070a34fd73cc1736fa20095b52974969f1873031d2bbd"
+      ],
+      "missedFailures": [],
+      "valid": true,
+      "rawReport": "shared-defect-2-testlore.json"
+    },
+    {
+      "scenario": "shared-defect",
+      "project": "modular",
+      "regression": true,
+      "repetition": 2,
+      "order": [
+        "testlore",
+        "imports-only",
+        "full-native"
+      ],
+      "method": "imports-only",
+      "totalFiles": 8,
+      "plannedFiles": [
+        "test/0.test.js",
+        "test/1.test.js",
+        "test/2.test.js",
+        "test/3.test.js",
+        "test/4.test.js",
+        "test/5.test.js",
+        "test/6.test.js",
+        "test/7.test.js"
+      ],
+      "executedFiles": [
+        "test/0.test.js",
+        "test/1.test.js",
+        "test/2.test.js",
+        "test/3.test.js",
+        "test/4.test.js",
+        "test/5.test.js",
+        "test/6.test.js",
+        "test/7.test.js"
+      ],
+      "endToEndMs": 137,
+      "executionMs": 134,
+      "observedFailures": [
+        "31d6b4e3834249106de4173f8b8afaa6fe516cd10a1066da59307a221a4c04f0",
+        "d45d09ad8d68369391d1f3eb865f4612605ea29b84c9f6b870b39922f1bf0d47",
+        "7ec72062b69b9635a8728dc7d8012ef81512433c35af6deea50bb2a3f1a8d6e4",
+        "45498eac539cfaf653b9c5dd1b5f883597a4019577897a01dec6e88245b328db",
+        "60a74ffb2d4dbf89f2c7319119d0eaaf90ff8a5a2588c22e22e48ad206f13199",
+        "17067766ae5f51b48b47d93dda12d81e117dfff3000540f3309ed82e694cdf7f",
+        "02bfab99dbef9256eb45cfc2908439572b2f95e97d4d7359407c69850b958943",
+        "0455927407ebb0ec334070a34fd73cc1736fa20095b52974969f1873031d2bbd"
+      ],
+      "groundTruthFailures": [
+        "31d6b4e3834249106de4173f8b8afaa6fe516cd10a1066da59307a221a4c04f0",
+        "d45d09ad8d68369391d1f3eb865f4612605ea29b84c9f6b870b39922f1bf0d47",
+        "7ec72062b69b9635a8728dc7d8012ef81512433c35af6deea50bb2a3f1a8d6e4",
+        "45498eac539cfaf653b9c5dd1b5f883597a4019577897a01dec6e88245b328db",
+        "60a74ffb2d4dbf89f2c7319119d0eaaf90ff8a5a2588c22e22e48ad206f13199",
+        "17067766ae5f51b48b47d93dda12d81e117dfff3000540f3309ed82e694cdf7f",
+        "02bfab99dbef9256eb45cfc2908439572b2f95e97d4d7359407c69850b958943",
+        "0455927407ebb0ec334070a34fd73cc1736fa20095b52974969f1873031d2bbd"
+      ],
+      "detectedFailures": [
+        "31d6b4e3834249106de4173f8b8afaa6fe516cd10a1066da59307a221a4c04f0",
+        "d45d09ad8d68369391d1f3eb865f4612605ea29b84c9f6b870b39922f1bf0d47",
+        "7ec72062b69b9635a8728dc7d8012ef81512433c35af6deea50bb2a3f1a8d6e4",
+        "45498eac539cfaf653b9c5dd1b5f883597a4019577897a01dec6e88245b328db",
+        "60a74ffb2d4dbf89f2c7319119d0eaaf90ff8a5a2588c22e22e48ad206f13199",
+        "17067766ae5f51b48b47d93dda12d81e117dfff3000540f3309ed82e694cdf7f",
+        "02bfab99dbef9256eb45cfc2908439572b2f95e97d4d7359407c69850b958943",
+        "0455927407ebb0ec334070a34fd73cc1736fa20095b52974969f1873031d2bbd"
+      ],
+      "missedFailures": [],
+      "valid": true,
+      "rawReport": "shared-defect-2-imports-only.json"
+    },
+    {
+      "scenario": "shared-defect",
+      "project": "modular",
+      "regression": true,
+      "repetition": 2,
+      "order": [
+        "testlore",
+        "imports-only",
+        "full-native"
+      ],
+      "method": "full-native",
+      "totalFiles": 8,
+      "plannedFiles": [
+        "test/0.test.js",
+        "test/1.test.js",
+        "test/2.test.js",
+        "test/3.test.js",
+        "test/4.test.js",
+        "test/5.test.js",
+        "test/6.test.js",
+        "test/7.test.js"
+      ],
+      "executedFiles": [
+        "test/0.test.js",
+        "test/1.test.js",
+        "test/2.test.js",
+        "test/3.test.js",
+        "test/4.test.js",
+        "test/5.test.js",
+        "test/6.test.js",
+        "test/7.test.js"
+      ],
+      "endToEndMs": 133,
+      "executionMs": 132,
+      "observedFailures": [
+        "31d6b4e3834249106de4173f8b8afaa6fe516cd10a1066da59307a221a4c04f0",
+        "d45d09ad8d68369391d1f3eb865f4612605ea29b84c9f6b870b39922f1bf0d47",
+        "7ec72062b69b9635a8728dc7d8012ef81512433c35af6deea50bb2a3f1a8d6e4",
+        "45498eac539cfaf653b9c5dd1b5f883597a4019577897a01dec6e88245b328db",
+        "60a74ffb2d4dbf89f2c7319119d0eaaf90ff8a5a2588c22e22e48ad206f13199",
+        "17067766ae5f51b48b47d93dda12d81e117dfff3000540f3309ed82e694cdf7f",
+        "02bfab99dbef9256eb45cfc2908439572b2f95e97d4d7359407c69850b958943",
+        "0455927407ebb0ec334070a34fd73cc1736fa20095b52974969f1873031d2bbd"
+      ],
+      "groundTruthFailures": [
+        "31d6b4e3834249106de4173f8b8afaa6fe516cd10a1066da59307a221a4c04f0",
+        "d45d09ad8d68369391d1f3eb865f4612605ea29b84c9f6b870b39922f1bf0d47",
+        "7ec72062b69b9635a8728dc7d8012ef81512433c35af6deea50bb2a3f1a8d6e4",
+        "45498eac539cfaf653b9c5dd1b5f883597a4019577897a01dec6e88245b328db",
+        "60a74ffb2d4dbf89f2c7319119d0eaaf90ff8a5a2588c22e22e48ad206f13199",
+        "17067766ae5f51b48b47d93dda12d81e117dfff3000540f3309ed82e694cdf7f",
+        "02bfab99dbef9256eb45cfc2908439572b2f95e97d4d7359407c69850b958943",
+        "0455927407ebb0ec334070a34fd73cc1736fa20095b52974969f1873031d2bbd"
+      ],
+      "detectedFailures": [
+        "31d6b4e3834249106de4173f8b8afaa6fe516cd10a1066da59307a221a4c04f0",
+        "d45d09ad8d68369391d1f3eb865f4612605ea29b84c9f6b870b39922f1bf0d47",
+        "7ec72062b69b9635a8728dc7d8012ef81512433c35af6deea50bb2a3f1a8d6e4",
+        "45498eac539cfaf653b9c5dd1b5f883597a4019577897a01dec6e88245b328db",
+        "60a74ffb2d4dbf89f2c7319119d0eaaf90ff8a5a2588c22e22e48ad206f13199",
+        "17067766ae5f51b48b47d93dda12d81e117dfff3000540f3309ed82e694cdf7f",
+        "02bfab99dbef9256eb45cfc2908439572b2f95e97d4d7359407c69850b958943",
+        "0455927407ebb0ec334070a34fd73cc1736fa20095b52974969f1873031d2bbd"
+      ],
+      "missedFailures": [],
+      "valid": true,
+      "rawReport": "shared-defect-2-full-native.json"
+    },
+    {
+      "scenario": "removed-import",
+      "project": "modular",
+      "regression": false,
+      "repetition": 0,
+      "order": [
+        "full-native",
+        "testlore",
+        "imports-only"
+      ],
+      "method": "full-native",
+      "totalFiles": 8,
+      "plannedFiles": [
+        "test/0.test.js",
+        "test/1.test.js",
+        "test/2.test.js",
+        "test/3.test.js",
+        "test/4.test.js",
+        "test/5.test.js",
+        "test/6.test.js",
+        "test/7.test.js"
+      ],
+      "executedFiles": [
+        "test/0.test.js",
+        "test/1.test.js",
+        "test/2.test.js",
+        "test/3.test.js",
+        "test/4.test.js",
+        "test/5.test.js",
+        "test/6.test.js",
+        "test/7.test.js"
+      ],
+      "endToEndMs": 132,
+      "executionMs": 132,
+      "observedFailures": [],
+      "groundTruthFailures": [],
+      "detectedFailures": [],
+      "missedFailures": [],
+      "valid": true,
+      "rawReport": "removed-import-0-full-native.json"
+    },
+    {
+      "scenario": "removed-import",
+      "project": "modular",
+      "regression": false,
+      "repetition": 0,
+      "order": [
+        "full-native",
+        "testlore",
+        "imports-only"
+      ],
+      "method": "testlore",
+      "totalFiles": 8,
+      "plannedFiles": [
+        "test/4.test.js"
+      ],
+      "executedFiles": [
+        "test/4.test.js"
+      ],
+      "endToEndMs": 569,
+      "executionMs": 96,
+      "observedFailures": [],
+      "groundTruthFailures": [],
+      "detectedFailures": [],
+      "missedFailures": [],
+      "valid": true,
+      "rawReport": "removed-import-0-testlore.json"
+    },
+    {
+      "scenario": "removed-import",
+      "project": "modular",
+      "regression": false,
+      "repetition": 0,
+      "order": [
+        "full-native",
+        "testlore",
+        "imports-only"
+      ],
+      "method": "imports-only",
+      "totalFiles": 8,
+      "plannedFiles": [
+        "test/4.test.js"
+      ],
+      "executedFiles": [
+        "test/4.test.js"
+      ],
+      "endToEndMs": 98,
+      "executionMs": 96,
+      "observedFailures": [],
+      "groundTruthFailures": [],
+      "detectedFailures": [],
+      "missedFailures": [],
+      "valid": true,
+      "rawReport": "removed-import-0-imports-only.json"
+    },
+    {
+      "scenario": "removed-import",
+      "project": "modular",
+      "regression": false,
+      "repetition": 1,
+      "order": [
+        "testlore",
+        "imports-only",
+        "full-native"
+      ],
+      "method": "testlore",
+      "totalFiles": 8,
+      "plannedFiles": [
+        "test/4.test.js"
+      ],
+      "executedFiles": [
+        "test/4.test.js"
+      ],
+      "endToEndMs": 529,
+      "executionMs": 102,
+      "observedFailures": [],
+      "groundTruthFailures": [],
+      "detectedFailures": [],
+      "missedFailures": [],
+      "valid": true,
+      "rawReport": "removed-import-1-testlore.json"
+    },
+    {
+      "scenario": "removed-import",
+      "project": "modular",
+      "regression": false,
+      "repetition": 1,
+      "order": [
+        "testlore",
+        "imports-only",
+        "full-native"
+      ],
+      "method": "imports-only",
+      "totalFiles": 8,
+      "plannedFiles": [
+        "test/4.test.js"
+      ],
+      "executedFiles": [
+        "test/4.test.js"
+      ],
+      "endToEndMs": 91,
+      "executionMs": 89,
+      "observedFailures": [],
+      "groundTruthFailures": [],
+      "detectedFailures": [],
+      "missedFailures": [],
+      "valid": true,
+      "rawReport": "removed-import-1-imports-only.json"
+    },
+    {
+      "scenario": "removed-import",
+      "project": "modular",
+      "regression": false,
+      "repetition": 1,
+      "order": [
+        "testlore",
+        "imports-only",
+        "full-native"
+      ],
+      "method": "full-native",
+      "totalFiles": 8,
+      "plannedFiles": [
+        "test/0.test.js",
+        "test/1.test.js",
+        "test/2.test.js",
+        "test/3.test.js",
+        "test/4.test.js",
+        "test/5.test.js",
+        "test/6.test.js",
+        "test/7.test.js"
+      ],
+      "executedFiles": [
+        "test/0.test.js",
+        "test/1.test.js",
+        "test/2.test.js",
+        "test/3.test.js",
+        "test/4.test.js",
+        "test/5.test.js",
+        "test/6.test.js",
+        "test/7.test.js"
+      ],
+      "endToEndMs": 144,
+      "executionMs": 144,
+      "observedFailures": [],
+      "groundTruthFailures": [],
+      "detectedFailures": [],
+      "missedFailures": [],
+      "valid": true,
+      "rawReport": "removed-import-1-full-native.json"
+    },
+    {
+      "scenario": "removed-import",
+      "project": "modular",
+      "regression": false,
+      "repetition": 2,
+      "order": [
+        "imports-only",
+        "full-native",
+        "testlore"
+      ],
+      "method": "imports-only",
+      "totalFiles": 8,
+      "plannedFiles": [
+        "test/4.test.js"
+      ],
+      "executedFiles": [
+        "test/4.test.js"
+      ],
+      "endToEndMs": 92,
+      "executionMs": 90,
+      "observedFailures": [],
+      "groundTruthFailures": [],
+      "detectedFailures": [],
+      "missedFailures": [],
+      "valid": true,
+      "rawReport": "removed-import-2-imports-only.json"
+    },
+    {
+      "scenario": "removed-import",
+      "project": "modular",
+      "regression": false,
+      "repetition": 2,
+      "order": [
+        "imports-only",
+        "full-native",
+        "testlore"
+      ],
+      "method": "full-native",
+      "totalFiles": 8,
+      "plannedFiles": [
+        "test/0.test.js",
+        "test/1.test.js",
+        "test/2.test.js",
+        "test/3.test.js",
+        "test/4.test.js",
+        "test/5.test.js",
+        "test/6.test.js",
+        "test/7.test.js"
+      ],
+      "executedFiles": [
+        "test/0.test.js",
+        "test/1.test.js",
+        "test/2.test.js",
+        "test/3.test.js",
+        "test/4.test.js",
+        "test/5.test.js",
+        "test/6.test.js",
+        "test/7.test.js"
+      ],
+      "endToEndMs": 139,
+      "executionMs": 139,
+      "observedFailures": [],
+      "groundTruthFailures": [],
+      "detectedFailures": [],
+      "missedFailures": [],
+      "valid": true,
+      "rawReport": "removed-import-2-full-native.json"
+    },
+    {
+      "scenario": "removed-import",
+      "project": "modular",
+      "regression": false,
+      "repetition": 2,
+      "order": [
+        "imports-only",
+        "full-native",
+        "testlore"
+      ],
+      "method": "testlore",
+      "totalFiles": 8,
+      "plannedFiles": [
+        "test/4.test.js"
+      ],
+      "executedFiles": [
+        "test/4.test.js"
+      ],
+      "endToEndMs": 531,
+      "executionMs": 102,
+      "observedFailures": [],
+      "groundTruthFailures": [],
+      "detectedFailures": [],
+      "missedFailures": [],
+      "valid": true,
+      "rawReport": "removed-import-2-testlore.json"
+    },
+    {
+      "scenario": "paragraph-metadata",
+      "project": "assets",
+      "regression": false,
+      "repetition": 0,
+      "order": [
+        "testlore",
+        "imports-only",
+        "full-native"
+      ],
+      "method": "testlore",
+      "totalFiles": 8,
+      "plannedFiles": [
+        "test/0.test.js"
+      ],
+      "executedFiles": [
+        "test/0.test.js"
+      ],
+      "endToEndMs": 540,
+      "executionMs": 106,
+      "observedFailures": [],
+      "groundTruthFailures": [],
+      "detectedFailures": [],
+      "missedFailures": [],
+      "valid": true,
+      "rawReport": "paragraph-metadata-0-testlore.json"
+    },
+    {
+      "scenario": "paragraph-metadata",
+      "project": "assets",
+      "regression": false,
+      "repetition": 0,
+      "order": [
+        "testlore",
+        "imports-only",
+        "full-native"
+      ],
+      "method": "imports-only",
+      "totalFiles": 8,
+      "plannedFiles": [],
+      "executedFiles": [],
+      "endToEndMs": 1,
+      "executionMs": 0,
+      "observedFailures": [],
+      "groundTruthFailures": [],
+      "detectedFailures": [],
+      "missedFailures": [],
+      "valid": true,
+      "rawReport": "paragraph-metadata-0-imports-only.json"
+    },
+    {
+      "scenario": "paragraph-metadata",
+      "project": "assets",
+      "regression": false,
+      "repetition": 0,
+      "order": [
+        "testlore",
+        "imports-only",
+        "full-native"
+      ],
+      "method": "full-native",
+      "totalFiles": 8,
+      "plannedFiles": [
+        "test/0.test.js",
+        "test/1.test.js",
+        "test/2.test.js",
+        "test/3.test.js",
+        "test/4.test.js",
+        "test/5.test.js",
+        "test/6.test.js",
+        "test/7.test.js"
+      ],
+      "executedFiles": [
+        "test/0.test.js",
+        "test/1.test.js",
+        "test/2.test.js",
+        "test/3.test.js",
+        "test/4.test.js",
+        "test/5.test.js",
+        "test/6.test.js",
+        "test/7.test.js"
+      ],
+      "endToEndMs": 151,
+      "executionMs": 151,
+      "observedFailures": [],
+      "groundTruthFailures": [],
+      "detectedFailures": [],
+      "missedFailures": [],
+      "valid": true,
+      "rawReport": "paragraph-metadata-0-full-native.json"
+    },
+    {
+      "scenario": "paragraph-metadata",
+      "project": "assets",
+      "regression": false,
+      "repetition": 1,
+      "order": [
+        "imports-only",
+        "full-native",
+        "testlore"
+      ],
+      "method": "imports-only",
+      "totalFiles": 8,
+      "plannedFiles": [],
+      "executedFiles": [],
+      "endToEndMs": 1,
+      "executionMs": 0,
+      "observedFailures": [],
+      "groundTruthFailures": [],
+      "detectedFailures": [],
+      "missedFailures": [],
+      "valid": true,
+      "rawReport": "paragraph-metadata-1-imports-only.json"
+    },
+    {
+      "scenario": "paragraph-metadata",
+      "project": "assets",
+      "regression": false,
+      "repetition": 1,
+      "order": [
+        "imports-only",
+        "full-native",
+        "testlore"
+      ],
+      "method": "full-native",
+      "totalFiles": 8,
+      "plannedFiles": [
+        "test/0.test.js",
+        "test/1.test.js",
+        "test/2.test.js",
+        "test/3.test.js",
+        "test/4.test.js",
+        "test/5.test.js",
+        "test/6.test.js",
+        "test/7.test.js"
+      ],
+      "executedFiles": [
+        "test/0.test.js",
+        "test/1.test.js",
+        "test/2.test.js",
+        "test/3.test.js",
+        "test/4.test.js",
+        "test/5.test.js",
+        "test/6.test.js",
+        "test/7.test.js"
+      ],
+      "endToEndMs": 130,
+      "executionMs": 130,
+      "observedFailures": [],
+      "groundTruthFailures": [],
+      "detectedFailures": [],
+      "missedFailures": [],
+      "valid": true,
+      "rawReport": "paragraph-metadata-1-full-native.json"
+    },
+    {
+      "scenario": "paragraph-metadata",
+      "project": "assets",
+      "regression": false,
+      "repetition": 1,
+      "order": [
+        "imports-only",
+        "full-native",
+        "testlore"
+      ],
+      "method": "testlore",
+      "totalFiles": 8,
+      "plannedFiles": [
+        "test/0.test.js"
+      ],
+      "executedFiles": [
+        "test/0.test.js"
+      ],
+      "endToEndMs": 526,
+      "executionMs": 102,
+      "observedFailures": [],
+      "groundTruthFailures": [],
+      "detectedFailures": [],
+      "missedFailures": [],
+      "valid": true,
+      "rawReport": "paragraph-metadata-1-testlore.json"
+    },
+    {
+      "scenario": "paragraph-metadata",
+      "project": "assets",
+      "regression": false,
+      "repetition": 2,
+      "order": [
+        "full-native",
+        "testlore",
+        "imports-only"
+      ],
+      "method": "full-native",
+      "totalFiles": 8,
+      "plannedFiles": [
+        "test/0.test.js",
+        "test/1.test.js",
+        "test/2.test.js",
+        "test/3.test.js",
+        "test/4.test.js",
+        "test/5.test.js",
+        "test/6.test.js",
+        "test/7.test.js"
+      ],
+      "executedFiles": [
+        "test/0.test.js",
+        "test/1.test.js",
+        "test/2.test.js",
+        "test/3.test.js",
+        "test/4.test.js",
+        "test/5.test.js",
+        "test/6.test.js",
+        "test/7.test.js"
+      ],
+      "endToEndMs": 131,
+      "executionMs": 131,
+      "observedFailures": [],
+      "groundTruthFailures": [],
+      "detectedFailures": [],
+      "missedFailures": [],
+      "valid": true,
+      "rawReport": "paragraph-metadata-2-full-native.json"
+    },
+    {
+      "scenario": "paragraph-metadata",
+      "project": "assets",
+      "regression": false,
+      "repetition": 2,
+      "order": [
+        "full-native",
+        "testlore",
+        "imports-only"
+      ],
+      "method": "testlore",
+      "totalFiles": 8,
+      "plannedFiles": [
+        "test/0.test.js"
+      ],
+      "executedFiles": [
+        "test/0.test.js"
+      ],
+      "endToEndMs": 522,
+      "executionMs": 107,
+      "observedFailures": [],
+      "groundTruthFailures": [],
+      "detectedFailures": [],
+      "missedFailures": [],
+      "valid": true,
+      "rawReport": "paragraph-metadata-2-testlore.json"
+    },
+    {
+      "scenario": "paragraph-metadata",
+      "project": "assets",
+      "regression": false,
+      "repetition": 2,
+      "order": [
+        "full-native",
+        "testlore",
+        "imports-only"
+      ],
+      "method": "imports-only",
+      "totalFiles": 8,
+      "plannedFiles": [],
+      "executedFiles": [],
+      "endToEndMs": 1,
+      "executionMs": 0,
+      "observedFailures": [],
+      "groundTruthFailures": [],
+      "detectedFailures": [],
+      "missedFailures": [],
+      "valid": true,
+      "rawReport": "paragraph-metadata-2-imports-only.json"
+    },
+    {
+      "scenario": "locale-defect",
+      "project": "assets",
+      "regression": true,
+      "repetition": 0,
+      "order": [
+        "imports-only",
+        "full-native",
+        "testlore"
+      ],
+      "method": "imports-only",
+      "totalFiles": 8,
+      "plannedFiles": [],
+      "executedFiles": [],
+      "endToEndMs": 1,
+      "executionMs": 0,
+      "observedFailures": [],
+      "groundTruthFailures": [
+        "d45d09ad8d68369391d1f3eb865f4612605ea29b84c9f6b870b39922f1bf0d47"
+      ],
+      "detectedFailures": [],
+      "missedFailures": [
+        "d45d09ad8d68369391d1f3eb865f4612605ea29b84c9f6b870b39922f1bf0d47"
+      ],
+      "valid": true,
+      "rawReport": "locale-defect-0-imports-only.json"
+    },
+    {
+      "scenario": "locale-defect",
+      "project": "assets",
+      "regression": true,
+      "repetition": 0,
+      "order": [
+        "imports-only",
+        "full-native",
+        "testlore"
+      ],
+      "method": "full-native",
+      "totalFiles": 8,
+      "plannedFiles": [
+        "test/0.test.js",
+        "test/1.test.js",
+        "test/2.test.js",
+        "test/3.test.js",
+        "test/4.test.js",
+        "test/5.test.js",
+        "test/6.test.js",
+        "test/7.test.js"
+      ],
+      "executedFiles": [
+        "test/0.test.js",
+        "test/1.test.js",
+        "test/2.test.js",
+        "test/3.test.js",
+        "test/4.test.js",
+        "test/5.test.js",
+        "test/6.test.js",
+        "test/7.test.js"
+      ],
+      "endToEndMs": 140,
+      "executionMs": 140,
+      "observedFailures": [
+        "d45d09ad8d68369391d1f3eb865f4612605ea29b84c9f6b870b39922f1bf0d47"
+      ],
+      "groundTruthFailures": [
+        "d45d09ad8d68369391d1f3eb865f4612605ea29b84c9f6b870b39922f1bf0d47"
+      ],
+      "detectedFailures": [
+        "d45d09ad8d68369391d1f3eb865f4612605ea29b84c9f6b870b39922f1bf0d47"
+      ],
+      "missedFailures": [],
+      "valid": true,
+      "rawReport": "locale-defect-0-full-native.json"
+    },
+    {
+      "scenario": "locale-defect",
+      "project": "assets",
+      "regression": true,
+      "repetition": 0,
+      "order": [
+        "imports-only",
+        "full-native",
+        "testlore"
+      ],
+      "method": "testlore",
+      "totalFiles": 8,
+      "plannedFiles": [
+        "test/1.test.js"
+      ],
+      "executedFiles": [
+        "test/1.test.js"
+      ],
+      "endToEndMs": 542,
+      "executionMs": 104,
+      "observedFailures": [
+        "d45d09ad8d68369391d1f3eb865f4612605ea29b84c9f6b870b39922f1bf0d47"
+      ],
+      "groundTruthFailures": [
+        "d45d09ad8d68369391d1f3eb865f4612605ea29b84c9f6b870b39922f1bf0d47"
+      ],
+      "detectedFailures": [
+        "d45d09ad8d68369391d1f3eb865f4612605ea29b84c9f6b870b39922f1bf0d47"
+      ],
+      "missedFailures": [],
+      "valid": true,
+      "rawReport": "locale-defect-0-testlore.json"
+    },
+    {
+      "scenario": "locale-defect",
+      "project": "assets",
+      "regression": true,
+      "repetition": 1,
+      "order": [
+        "full-native",
+        "testlore",
+        "imports-only"
+      ],
+      "method": "full-native",
+      "totalFiles": 8,
+      "plannedFiles": [
+        "test/0.test.js",
+        "test/1.test.js",
+        "test/2.test.js",
+        "test/3.test.js",
+        "test/4.test.js",
+        "test/5.test.js",
+        "test/6.test.js",
+        "test/7.test.js"
+      ],
+      "executedFiles": [
+        "test/0.test.js",
+        "test/1.test.js",
+        "test/2.test.js",
+        "test/3.test.js",
+        "test/4.test.js",
+        "test/5.test.js",
+        "test/6.test.js",
+        "test/7.test.js"
+      ],
+      "endToEndMs": 142,
+      "executionMs": 141,
+      "observedFailures": [
+        "d45d09ad8d68369391d1f3eb865f4612605ea29b84c9f6b870b39922f1bf0d47"
+      ],
+      "groundTruthFailures": [
+        "d45d09ad8d68369391d1f3eb865f4612605ea29b84c9f6b870b39922f1bf0d47"
+      ],
+      "detectedFailures": [
+        "d45d09ad8d68369391d1f3eb865f4612605ea29b84c9f6b870b39922f1bf0d47"
+      ],
+      "missedFailures": [],
+      "valid": true,
+      "rawReport": "locale-defect-1-full-native.json"
+    },
+    {
+      "scenario": "locale-defect",
+      "project": "assets",
+      "regression": true,
+      "repetition": 1,
+      "order": [
+        "full-native",
+        "testlore",
+        "imports-only"
+      ],
+      "method": "testlore",
+      "totalFiles": 8,
+      "plannedFiles": [
+        "test/1.test.js"
+      ],
+      "executedFiles": [
+        "test/1.test.js"
+      ],
+      "endToEndMs": 540,
+      "executionMs": 99,
+      "observedFailures": [
+        "d45d09ad8d68369391d1f3eb865f4612605ea29b84c9f6b870b39922f1bf0d47"
+      ],
+      "groundTruthFailures": [
+        "d45d09ad8d68369391d1f3eb865f4612605ea29b84c9f6b870b39922f1bf0d47"
+      ],
+      "detectedFailures": [
+        "d45d09ad8d68369391d1f3eb865f4612605ea29b84c9f6b870b39922f1bf0d47"
+      ],
+      "missedFailures": [],
+      "valid": true,
+      "rawReport": "locale-defect-1-testlore.json"
+    },
+    {
+      "scenario": "locale-defect",
+      "project": "assets",
+      "regression": true,
+      "repetition": 1,
+      "order": [
+        "full-native",
+        "testlore",
+        "imports-only"
+      ],
+      "method": "imports-only",
+      "totalFiles": 8,
+      "plannedFiles": [],
+      "executedFiles": [],
+      "endToEndMs": 1,
+      "executionMs": 0,
+      "observedFailures": [],
+      "groundTruthFailures": [
+        "d45d09ad8d68369391d1f3eb865f4612605ea29b84c9f6b870b39922f1bf0d47"
+      ],
+      "detectedFailures": [],
+      "missedFailures": [
+        "d45d09ad8d68369391d1f3eb865f4612605ea29b84c9f6b870b39922f1bf0d47"
+      ],
+      "valid": true,
+      "rawReport": "locale-defect-1-imports-only.json"
+    },
+    {
+      "scenario": "locale-defect",
+      "project": "assets",
+      "regression": true,
+      "repetition": 2,
+      "order": [
+        "testlore",
+        "imports-only",
+        "full-native"
+      ],
+      "method": "testlore",
+      "totalFiles": 8,
+      "plannedFiles": [
+        "test/1.test.js"
+      ],
+      "executedFiles": [
+        "test/1.test.js"
+      ],
+      "endToEndMs": 577,
+      "executionMs": 114,
+      "observedFailures": [
+        "d45d09ad8d68369391d1f3eb865f4612605ea29b84c9f6b870b39922f1bf0d47"
+      ],
+      "groundTruthFailures": [
+        "d45d09ad8d68369391d1f3eb865f4612605ea29b84c9f6b870b39922f1bf0d47"
+      ],
+      "detectedFailures": [
+        "d45d09ad8d68369391d1f3eb865f4612605ea29b84c9f6b870b39922f1bf0d47"
+      ],
+      "missedFailures": [],
+      "valid": true,
+      "rawReport": "locale-defect-2-testlore.json"
+    },
+    {
+      "scenario": "locale-defect",
+      "project": "assets",
+      "regression": true,
+      "repetition": 2,
+      "order": [
+        "testlore",
+        "imports-only",
+        "full-native"
+      ],
+      "method": "imports-only",
+      "totalFiles": 8,
+      "plannedFiles": [],
+      "executedFiles": [],
+      "endToEndMs": 1,
+      "executionMs": 0,
+      "observedFailures": [],
+      "groundTruthFailures": [
+        "d45d09ad8d68369391d1f3eb865f4612605ea29b84c9f6b870b39922f1bf0d47"
+      ],
+      "detectedFailures": [],
+      "missedFailures": [
+        "d45d09ad8d68369391d1f3eb865f4612605ea29b84c9f6b870b39922f1bf0d47"
+      ],
+      "valid": true,
+      "rawReport": "locale-defect-2-imports-only.json"
+    },
+    {
+      "scenario": "locale-defect",
+      "project": "assets",
+      "regression": true,
+      "repetition": 2,
+      "order": [
+        "testlore",
+        "imports-only",
+        "full-native"
+      ],
+      "method": "full-native",
+      "totalFiles": 8,
+      "plannedFiles": [
+        "test/0.test.js",
+        "test/1.test.js",
+        "test/2.test.js",
+        "test/3.test.js",
+        "test/4.test.js",
+        "test/5.test.js",
+        "test/6.test.js",
+        "test/7.test.js"
+      ],
+      "executedFiles": [
+        "test/0.test.js",
+        "test/1.test.js",
+        "test/2.test.js",
+        "test/3.test.js",
+        "test/4.test.js",
+        "test/5.test.js",
+        "test/6.test.js",
+        "test/7.test.js"
+      ],
+      "endToEndMs": 158,
+      "executionMs": 157,
+      "observedFailures": [
+        "d45d09ad8d68369391d1f3eb865f4612605ea29b84c9f6b870b39922f1bf0d47"
+      ],
+      "groundTruthFailures": [
+        "d45d09ad8d68369391d1f3eb865f4612605ea29b84c9f6b870b39922f1bf0d47"
+      ],
+      "detectedFailures": [
+        "d45d09ad8d68369391d1f3eb865f4612605ea29b84c9f6b870b39922f1bf0d47"
+      ],
+      "missedFailures": [],
+      "valid": true,
+      "rawReport": "locale-defect-2-full-native.json"
+    },
+    {
+      "scenario": "template-defect",
+      "project": "assets",
+      "regression": true,
+      "repetition": 0,
+      "order": [
+        "full-native",
+        "testlore",
+        "imports-only"
+      ],
+      "method": "full-native",
+      "totalFiles": 8,
+      "plannedFiles": [
+        "test/0.test.js",
+        "test/1.test.js",
+        "test/2.test.js",
+        "test/3.test.js",
+        "test/4.test.js",
+        "test/5.test.js",
+        "test/6.test.js",
+        "test/7.test.js"
+      ],
+      "executedFiles": [
+        "test/0.test.js",
+        "test/1.test.js",
+        "test/2.test.js",
+        "test/3.test.js",
+        "test/4.test.js",
+        "test/5.test.js",
+        "test/6.test.js",
+        "test/7.test.js"
+      ],
+      "endToEndMs": 133,
+      "executionMs": 132,
+      "observedFailures": [
+        "7ec72062b69b9635a8728dc7d8012ef81512433c35af6deea50bb2a3f1a8d6e4"
+      ],
+      "groundTruthFailures": [
+        "7ec72062b69b9635a8728dc7d8012ef81512433c35af6deea50bb2a3f1a8d6e4"
+      ],
+      "detectedFailures": [
+        "7ec72062b69b9635a8728dc7d8012ef81512433c35af6deea50bb2a3f1a8d6e4"
+      ],
+      "missedFailures": [],
+      "valid": true,
+      "rawReport": "template-defect-0-full-native.json"
+    },
+    {
+      "scenario": "template-defect",
+      "project": "assets",
+      "regression": true,
+      "repetition": 0,
+      "order": [
+        "full-native",
+        "testlore",
+        "imports-only"
+      ],
+      "method": "testlore",
+      "totalFiles": 8,
+      "plannedFiles": [
+        "test/0.test.js",
+        "test/2.test.js"
+      ],
+      "executedFiles": [
+        "test/0.test.js",
+        "test/2.test.js"
+      ],
+      "endToEndMs": 584,
+      "executionMs": 148,
+      "observedFailures": [
+        "7ec72062b69b9635a8728dc7d8012ef81512433c35af6deea50bb2a3f1a8d6e4"
+      ],
+      "groundTruthFailures": [
+        "7ec72062b69b9635a8728dc7d8012ef81512433c35af6deea50bb2a3f1a8d6e4"
+      ],
+      "detectedFailures": [
+        "7ec72062b69b9635a8728dc7d8012ef81512433c35af6deea50bb2a3f1a8d6e4"
+      ],
+      "missedFailures": [],
+      "valid": true,
+      "rawReport": "template-defect-0-testlore.json"
+    },
+    {
+      "scenario": "template-defect",
+      "project": "assets",
+      "regression": true,
+      "repetition": 0,
+      "order": [
+        "full-native",
+        "testlore",
+        "imports-only"
+      ],
+      "method": "imports-only",
+      "totalFiles": 8,
+      "plannedFiles": [],
+      "executedFiles": [],
+      "endToEndMs": 1,
+      "executionMs": 0,
+      "observedFailures": [],
+      "groundTruthFailures": [
+        "7ec72062b69b9635a8728dc7d8012ef81512433c35af6deea50bb2a3f1a8d6e4"
+      ],
+      "detectedFailures": [],
+      "missedFailures": [
+        "7ec72062b69b9635a8728dc7d8012ef81512433c35af6deea50bb2a3f1a8d6e4"
+      ],
+      "valid": true,
+      "rawReport": "template-defect-0-imports-only.json"
+    },
+    {
+      "scenario": "template-defect",
+      "project": "assets",
+      "regression": true,
+      "repetition": 1,
+      "order": [
+        "testlore",
+        "imports-only",
+        "full-native"
+      ],
+      "method": "testlore",
+      "totalFiles": 8,
+      "plannedFiles": [
+        "test/0.test.js",
+        "test/2.test.js"
+      ],
+      "executedFiles": [
+        "test/0.test.js",
+        "test/2.test.js"
+      ],
+      "endToEndMs": 568,
+      "executionMs": 112,
+      "observedFailures": [
+        "7ec72062b69b9635a8728dc7d8012ef81512433c35af6deea50bb2a3f1a8d6e4"
+      ],
+      "groundTruthFailures": [
+        "7ec72062b69b9635a8728dc7d8012ef81512433c35af6deea50bb2a3f1a8d6e4"
+      ],
+      "detectedFailures": [
+        "7ec72062b69b9635a8728dc7d8012ef81512433c35af6deea50bb2a3f1a8d6e4"
+      ],
+      "missedFailures": [],
+      "valid": true,
+      "rawReport": "template-defect-1-testlore.json"
+    },
+    {
+      "scenario": "template-defect",
+      "project": "assets",
+      "regression": true,
+      "repetition": 1,
+      "order": [
+        "testlore",
+        "imports-only",
+        "full-native"
+      ],
+      "method": "imports-only",
+      "totalFiles": 8,
+      "plannedFiles": [],
+      "executedFiles": [],
+      "endToEndMs": 1,
+      "executionMs": 0,
+      "observedFailures": [],
+      "groundTruthFailures": [
+        "7ec72062b69b9635a8728dc7d8012ef81512433c35af6deea50bb2a3f1a8d6e4"
+      ],
+      "detectedFailures": [],
+      "missedFailures": [
+        "7ec72062b69b9635a8728dc7d8012ef81512433c35af6deea50bb2a3f1a8d6e4"
+      ],
+      "valid": true,
+      "rawReport": "template-defect-1-imports-only.json"
+    },
+    {
+      "scenario": "template-defect",
+      "project": "assets",
+      "regression": true,
+      "repetition": 1,
+      "order": [
+        "testlore",
+        "imports-only",
+        "full-native"
+      ],
+      "method": "full-native",
+      "totalFiles": 8,
+      "plannedFiles": [
+        "test/0.test.js",
+        "test/1.test.js",
+        "test/2.test.js",
+        "test/3.test.js",
+        "test/4.test.js",
+        "test/5.test.js",
+        "test/6.test.js",
+        "test/7.test.js"
+      ],
+      "executedFiles": [
+        "test/0.test.js",
+        "test/1.test.js",
+        "test/2.test.js",
+        "test/3.test.js",
+        "test/4.test.js",
+        "test/5.test.js",
+        "test/6.test.js",
+        "test/7.test.js"
+      ],
+      "endToEndMs": 194,
+      "executionMs": 194,
+      "observedFailures": [
+        "7ec72062b69b9635a8728dc7d8012ef81512433c35af6deea50bb2a3f1a8d6e4"
+      ],
+      "groundTruthFailures": [
+        "7ec72062b69b9635a8728dc7d8012ef81512433c35af6deea50bb2a3f1a8d6e4"
+      ],
+      "detectedFailures": [
+        "7ec72062b69b9635a8728dc7d8012ef81512433c35af6deea50bb2a3f1a8d6e4"
+      ],
+      "missedFailures": [],
+      "valid": true,
+      "rawReport": "template-defect-1-full-native.json"
+    },
+    {
+      "scenario": "template-defect",
+      "project": "assets",
+      "regression": true,
+      "repetition": 2,
+      "order": [
+        "imports-only",
+        "full-native",
+        "testlore"
+      ],
+      "method": "imports-only",
+      "totalFiles": 8,
+      "plannedFiles": [],
+      "executedFiles": [],
+      "endToEndMs": 1,
+      "executionMs": 0,
+      "observedFailures": [],
+      "groundTruthFailures": [
+        "7ec72062b69b9635a8728dc7d8012ef81512433c35af6deea50bb2a3f1a8d6e4"
+      ],
+      "detectedFailures": [],
+      "missedFailures": [
+        "7ec72062b69b9635a8728dc7d8012ef81512433c35af6deea50bb2a3f1a8d6e4"
+      ],
+      "valid": true,
+      "rawReport": "template-defect-2-imports-only.json"
+    },
+    {
+      "scenario": "template-defect",
+      "project": "assets",
+      "regression": true,
+      "repetition": 2,
+      "order": [
+        "imports-only",
+        "full-native",
+        "testlore"
+      ],
+      "method": "full-native",
+      "totalFiles": 8,
+      "plannedFiles": [
+        "test/0.test.js",
+        "test/1.test.js",
+        "test/2.test.js",
+        "test/3.test.js",
+        "test/4.test.js",
+        "test/5.test.js",
+        "test/6.test.js",
+        "test/7.test.js"
+      ],
+      "executedFiles": [
+        "test/0.test.js",
+        "test/1.test.js",
+        "test/2.test.js",
+        "test/3.test.js",
+        "test/4.test.js",
+        "test/5.test.js",
+        "test/6.test.js",
+        "test/7.test.js"
+      ],
+      "endToEndMs": 135,
+      "executionMs": 135,
+      "observedFailures": [
+        "7ec72062b69b9635a8728dc7d8012ef81512433c35af6deea50bb2a3f1a8d6e4"
+      ],
+      "groundTruthFailures": [
+        "7ec72062b69b9635a8728dc7d8012ef81512433c35af6deea50bb2a3f1a8d6e4"
+      ],
+      "detectedFailures": [
+        "7ec72062b69b9635a8728dc7d8012ef81512433c35af6deea50bb2a3f1a8d6e4"
+      ],
+      "missedFailures": [],
+      "valid": true,
+      "rawReport": "template-defect-2-full-native.json"
+    },
+    {
+      "scenario": "template-defect",
+      "project": "assets",
+      "regression": true,
+      "repetition": 2,
+      "order": [
+        "imports-only",
+        "full-native",
+        "testlore"
+      ],
+      "method": "testlore",
+      "totalFiles": 8,
+      "plannedFiles": [
+        "test/0.test.js",
+        "test/2.test.js"
+      ],
+      "executedFiles": [
+        "test/0.test.js",
+        "test/2.test.js"
+      ],
+      "endToEndMs": 527,
+      "executionMs": 111,
+      "observedFailures": [
+        "7ec72062b69b9635a8728dc7d8012ef81512433c35af6deea50bb2a3f1a8d6e4"
+      ],
+      "groundTruthFailures": [
+        "7ec72062b69b9635a8728dc7d8012ef81512433c35af6deea50bb2a3f1a8d6e4"
+      ],
+      "detectedFailures": [
+        "7ec72062b69b9635a8728dc7d8012ef81512433c35af6deea50bb2a3f1a8d6e4"
+      ],
+      "missedFailures": [],
+      "valid": true,
+      "rawReport": "template-defect-2-testlore.json"
+    },
+    {
+      "scenario": "unknown-input",
+      "project": "modular",
+      "regression": false,
+      "repetition": 0,
+      "order": [
+        "testlore",
+        "imports-only",
+        "full-native"
+      ],
+      "method": "testlore",
+      "totalFiles": 8,
+      "plannedFiles": [
+        "test/0.test.js",
+        "test/1.test.js",
+        "test/2.test.js",
+        "test/3.test.js",
+        "test/4.test.js",
+        "test/5.test.js",
+        "test/6.test.js",
+        "test/7.test.js"
+      ],
+      "executedFiles": [
+        "test/0.test.js",
+        "test/1.test.js",
+        "test/2.test.js",
+        "test/3.test.js",
+        "test/4.test.js",
+        "test/5.test.js",
+        "test/6.test.js",
+        "test/7.test.js"
+      ],
+      "endToEndMs": 572,
+      "executionMs": 149,
+      "observedFailures": [],
+      "groundTruthFailures": [],
+      "detectedFailures": [],
+      "missedFailures": [],
+      "valid": true,
+      "rawReport": "unknown-input-0-testlore.json"
+    },
+    {
+      "scenario": "unknown-input",
+      "project": "modular",
+      "regression": false,
+      "repetition": 0,
+      "order": [
+        "testlore",
+        "imports-only",
+        "full-native"
+      ],
+      "method": "imports-only",
+      "totalFiles": 8,
+      "plannedFiles": [],
+      "executedFiles": [],
+      "endToEndMs": 1,
+      "executionMs": 0,
+      "observedFailures": [],
+      "groundTruthFailures": [],
+      "detectedFailures": [],
+      "missedFailures": [],
+      "valid": true,
+      "rawReport": "unknown-input-0-imports-only.json"
+    },
+    {
+      "scenario": "unknown-input",
+      "project": "modular",
+      "regression": false,
+      "repetition": 0,
+      "order": [
+        "testlore",
+        "imports-only",
+        "full-native"
+      ],
+      "method": "full-native",
+      "totalFiles": 8,
+      "plannedFiles": [
+        "test/0.test.js",
+        "test/1.test.js",
+        "test/2.test.js",
+        "test/3.test.js",
+        "test/4.test.js",
+        "test/5.test.js",
+        "test/6.test.js",
+        "test/7.test.js"
+      ],
+      "executedFiles": [
+        "test/0.test.js",
+        "test/1.test.js",
+        "test/2.test.js",
+        "test/3.test.js",
+        "test/4.test.js",
+        "test/5.test.js",
+        "test/6.test.js",
+        "test/7.test.js"
+      ],
+      "endToEndMs": 127,
+      "executionMs": 127,
+      "observedFailures": [],
+      "groundTruthFailures": [],
+      "detectedFailures": [],
+      "missedFailures": [],
+      "valid": true,
+      "rawReport": "unknown-input-0-full-native.json"
+    },
+    {
+      "scenario": "unknown-input",
+      "project": "modular",
+      "regression": false,
+      "repetition": 1,
+      "order": [
+        "imports-only",
+        "full-native",
+        "testlore"
+      ],
+      "method": "imports-only",
+      "totalFiles": 8,
+      "plannedFiles": [],
+      "executedFiles": [],
+      "endToEndMs": 2,
+      "executionMs": 0,
+      "observedFailures": [],
+      "groundTruthFailures": [],
+      "detectedFailures": [],
+      "missedFailures": [],
+      "valid": true,
+      "rawReport": "unknown-input-1-imports-only.json"
+    },
+    {
+      "scenario": "unknown-input",
+      "project": "modular",
+      "regression": false,
+      "repetition": 1,
+      "order": [
+        "imports-only",
+        "full-native",
+        "testlore"
+      ],
+      "method": "full-native",
+      "totalFiles": 8,
+      "plannedFiles": [
+        "test/0.test.js",
+        "test/1.test.js",
+        "test/2.test.js",
+        "test/3.test.js",
+        "test/4.test.js",
+        "test/5.test.js",
+        "test/6.test.js",
+        "test/7.test.js"
+      ],
+      "executedFiles": [
+        "test/0.test.js",
+        "test/1.test.js",
+        "test/2.test.js",
+        "test/3.test.js",
+        "test/4.test.js",
+        "test/5.test.js",
+        "test/6.test.js",
+        "test/7.test.js"
+      ],
+      "endToEndMs": 155,
+      "executionMs": 155,
+      "observedFailures": [],
+      "groundTruthFailures": [],
+      "detectedFailures": [],
+      "missedFailures": [],
+      "valid": true,
+      "rawReport": "unknown-input-1-full-native.json"
+    },
+    {
+      "scenario": "unknown-input",
+      "project": "modular",
+      "regression": false,
+      "repetition": 1,
+      "order": [
+        "imports-only",
+        "full-native",
+        "testlore"
+      ],
+      "method": "testlore",
+      "totalFiles": 8,
+      "plannedFiles": [
+        "test/0.test.js",
+        "test/1.test.js",
+        "test/2.test.js",
+        "test/3.test.js",
+        "test/4.test.js",
+        "test/5.test.js",
+        "test/6.test.js",
+        "test/7.test.js"
+      ],
+      "executedFiles": [
+        "test/0.test.js",
+        "test/1.test.js",
+        "test/2.test.js",
+        "test/3.test.js",
+        "test/4.test.js",
+        "test/5.test.js",
+        "test/6.test.js",
+        "test/7.test.js"
+      ],
+      "endToEndMs": 530,
+      "executionMs": 137,
+      "observedFailures": [],
+      "groundTruthFailures": [],
+      "detectedFailures": [],
+      "missedFailures": [],
+      "valid": true,
+      "rawReport": "unknown-input-1-testlore.json"
+    },
+    {
+      "scenario": "unknown-input",
+      "project": "modular",
+      "regression": false,
+      "repetition": 2,
+      "order": [
+        "full-native",
+        "testlore",
+        "imports-only"
+      ],
+      "method": "full-native",
+      "totalFiles": 8,
+      "plannedFiles": [
+        "test/0.test.js",
+        "test/1.test.js",
+        "test/2.test.js",
+        "test/3.test.js",
+        "test/4.test.js",
+        "test/5.test.js",
+        "test/6.test.js",
+        "test/7.test.js"
+      ],
+      "executedFiles": [
+        "test/0.test.js",
+        "test/1.test.js",
+        "test/2.test.js",
+        "test/3.test.js",
+        "test/4.test.js",
+        "test/5.test.js",
+        "test/6.test.js",
+        "test/7.test.js"
+      ],
+      "endToEndMs": 128,
+      "executionMs": 128,
+      "observedFailures": [],
+      "groundTruthFailures": [],
+      "detectedFailures": [],
+      "missedFailures": [],
+      "valid": true,
+      "rawReport": "unknown-input-2-full-native.json"
+    },
+    {
+      "scenario": "unknown-input",
+      "project": "modular",
+      "regression": false,
+      "repetition": 2,
+      "order": [
+        "full-native",
+        "testlore",
+        "imports-only"
+      ],
+      "method": "testlore",
+      "totalFiles": 8,
+      "plannedFiles": [
+        "test/0.test.js",
+        "test/1.test.js",
+        "test/2.test.js",
+        "test/3.test.js",
+        "test/4.test.js",
+        "test/5.test.js",
+        "test/6.test.js",
+        "test/7.test.js"
+      ],
+      "executedFiles": [
+        "test/0.test.js",
+        "test/1.test.js",
+        "test/2.test.js",
+        "test/3.test.js",
+        "test/4.test.js",
+        "test/5.test.js",
+        "test/6.test.js",
+        "test/7.test.js"
+      ],
+      "endToEndMs": 560,
+      "executionMs": 146,
+      "observedFailures": [],
+      "groundTruthFailures": [],
+      "detectedFailures": [],
+      "missedFailures": [],
+      "valid": true,
+      "rawReport": "unknown-input-2-testlore.json"
+    },
+    {
+      "scenario": "unknown-input",
+      "project": "modular",
+      "regression": false,
+      "repetition": 2,
+      "order": [
+        "full-native",
+        "testlore",
+        "imports-only"
+      ],
+      "method": "imports-only",
+      "totalFiles": 8,
+      "plannedFiles": [],
+      "executedFiles": [],
+      "endToEndMs": 1,
+      "executionMs": 0,
+      "observedFailures": [],
+      "groundTruthFailures": [],
+      "detectedFailures": [],
+      "missedFailures": [],
+      "valid": true,
+      "rawReport": "unknown-input-2-imports-only.json"
+    },
+    {
+      "scenario": "dynamic-import-defect",
+      "project": "uncertainty",
+      "regression": true,
+      "repetition": 0,
+      "order": [
+        "imports-only",
+        "full-native",
+        "testlore"
+      ],
+      "method": "imports-only",
+      "totalFiles": 8,
+      "plannedFiles": [],
+      "executedFiles": [],
+      "endToEndMs": 2,
+      "executionMs": 0,
+      "observedFailures": [],
+      "groundTruthFailures": [
+        "31d6b4e3834249106de4173f8b8afaa6fe516cd10a1066da59307a221a4c04f0"
+      ],
+      "detectedFailures": [],
+      "missedFailures": [
+        "31d6b4e3834249106de4173f8b8afaa6fe516cd10a1066da59307a221a4c04f0"
+      ],
+      "valid": true,
+      "rawReport": "dynamic-import-defect-0-imports-only.json"
+    },
+    {
+      "scenario": "dynamic-import-defect",
+      "project": "uncertainty",
+      "regression": true,
+      "repetition": 0,
+      "order": [
+        "imports-only",
+        "full-native",
+        "testlore"
+      ],
+      "method": "full-native",
+      "totalFiles": 8,
+      "plannedFiles": [
+        "test/0.test.js",
+        "test/1.test.js",
+        "test/2.test.js",
+        "test/3.test.js",
+        "test/4.test.js",
+        "test/5.test.js",
+        "test/6.test.js",
+        "test/7.test.js"
+      ],
+      "executedFiles": [
+        "test/0.test.js",
+        "test/1.test.js",
+        "test/2.test.js",
+        "test/3.test.js",
+        "test/4.test.js",
+        "test/5.test.js",
+        "test/6.test.js",
+        "test/7.test.js"
+      ],
+      "endToEndMs": 129,
+      "executionMs": 128,
+      "observedFailures": [
+        "31d6b4e3834249106de4173f8b8afaa6fe516cd10a1066da59307a221a4c04f0"
+      ],
+      "groundTruthFailures": [
+        "31d6b4e3834249106de4173f8b8afaa6fe516cd10a1066da59307a221a4c04f0"
+      ],
+      "detectedFailures": [
+        "31d6b4e3834249106de4173f8b8afaa6fe516cd10a1066da59307a221a4c04f0"
+      ],
+      "missedFailures": [],
+      "valid": true,
+      "rawReport": "dynamic-import-defect-0-full-native.json"
+    },
+    {
+      "scenario": "dynamic-import-defect",
+      "project": "uncertainty",
+      "regression": true,
+      "repetition": 0,
+      "order": [
+        "imports-only",
+        "full-native",
+        "testlore"
+      ],
+      "method": "testlore",
+      "totalFiles": 8,
+      "plannedFiles": [
+        "test/0.test.js",
+        "test/1.test.js",
+        "test/2.test.js",
+        "test/3.test.js",
+        "test/4.test.js",
+        "test/5.test.js",
+        "test/6.test.js",
+        "test/7.test.js"
+      ],
+      "executedFiles": [
+        "test/0.test.js",
+        "test/1.test.js",
+        "test/2.test.js",
+        "test/3.test.js",
+        "test/4.test.js",
+        "test/5.test.js",
+        "test/6.test.js",
+        "test/7.test.js"
+      ],
+      "endToEndMs": 585,
+      "executionMs": 149,
+      "observedFailures": [
+        "31d6b4e3834249106de4173f8b8afaa6fe516cd10a1066da59307a221a4c04f0"
+      ],
+      "groundTruthFailures": [
+        "31d6b4e3834249106de4173f8b8afaa6fe516cd10a1066da59307a221a4c04f0"
+      ],
+      "detectedFailures": [
+        "31d6b4e3834249106de4173f8b8afaa6fe516cd10a1066da59307a221a4c04f0"
+      ],
+      "missedFailures": [],
+      "valid": true,
+      "rawReport": "dynamic-import-defect-0-testlore.json"
+    },
+    {
+      "scenario": "dynamic-import-defect",
+      "project": "uncertainty",
+      "regression": true,
+      "repetition": 1,
+      "order": [
+        "full-native",
+        "testlore",
+        "imports-only"
+      ],
+      "method": "full-native",
+      "totalFiles": 8,
+      "plannedFiles": [
+        "test/0.test.js",
+        "test/1.test.js",
+        "test/2.test.js",
+        "test/3.test.js",
+        "test/4.test.js",
+        "test/5.test.js",
+        "test/6.test.js",
+        "test/7.test.js"
+      ],
+      "executedFiles": [
+        "test/0.test.js",
+        "test/1.test.js",
+        "test/2.test.js",
+        "test/3.test.js",
+        "test/4.test.js",
+        "test/5.test.js",
+        "test/6.test.js",
+        "test/7.test.js"
+      ],
+      "endToEndMs": 128,
+      "executionMs": 128,
+      "observedFailures": [
+        "31d6b4e3834249106de4173f8b8afaa6fe516cd10a1066da59307a221a4c04f0"
+      ],
+      "groundTruthFailures": [
+        "31d6b4e3834249106de4173f8b8afaa6fe516cd10a1066da59307a221a4c04f0"
+      ],
+      "detectedFailures": [
+        "31d6b4e3834249106de4173f8b8afaa6fe516cd10a1066da59307a221a4c04f0"
+      ],
+      "missedFailures": [],
+      "valid": true,
+      "rawReport": "dynamic-import-defect-1-full-native.json"
+    },
+    {
+      "scenario": "dynamic-import-defect",
+      "project": "uncertainty",
+      "regression": true,
+      "repetition": 1,
+      "order": [
+        "full-native",
+        "testlore",
+        "imports-only"
+      ],
+      "method": "testlore",
+      "totalFiles": 8,
+      "plannedFiles": [
+        "test/0.test.js",
+        "test/1.test.js",
+        "test/2.test.js",
+        "test/3.test.js",
+        "test/4.test.js",
+        "test/5.test.js",
+        "test/6.test.js",
+        "test/7.test.js"
+      ],
+      "executedFiles": [
+        "test/0.test.js",
+        "test/1.test.js",
+        "test/2.test.js",
+        "test/3.test.js",
+        "test/4.test.js",
+        "test/5.test.js",
+        "test/6.test.js",
+        "test/7.test.js"
+      ],
+      "endToEndMs": 584,
+      "executionMs": 146,
+      "observedFailures": [
+        "31d6b4e3834249106de4173f8b8afaa6fe516cd10a1066da59307a221a4c04f0"
+      ],
+      "groundTruthFailures": [
+        "31d6b4e3834249106de4173f8b8afaa6fe516cd10a1066da59307a221a4c04f0"
+      ],
+      "detectedFailures": [
+        "31d6b4e3834249106de4173f8b8afaa6fe516cd10a1066da59307a221a4c04f0"
+      ],
+      "missedFailures": [],
+      "valid": true,
+      "rawReport": "dynamic-import-defect-1-testlore.json"
+    },
+    {
+      "scenario": "dynamic-import-defect",
+      "project": "uncertainty",
+      "regression": true,
+      "repetition": 1,
+      "order": [
+        "full-native",
+        "testlore",
+        "imports-only"
+      ],
+      "method": "imports-only",
+      "totalFiles": 8,
+      "plannedFiles": [],
+      "executedFiles": [],
+      "endToEndMs": 2,
+      "executionMs": 0,
+      "observedFailures": [],
+      "groundTruthFailures": [
+        "31d6b4e3834249106de4173f8b8afaa6fe516cd10a1066da59307a221a4c04f0"
+      ],
+      "detectedFailures": [],
+      "missedFailures": [
+        "31d6b4e3834249106de4173f8b8afaa6fe516cd10a1066da59307a221a4c04f0"
+      ],
+      "valid": true,
+      "rawReport": "dynamic-import-defect-1-imports-only.json"
+    },
+    {
+      "scenario": "dynamic-import-defect",
+      "project": "uncertainty",
+      "regression": true,
+      "repetition": 2,
+      "order": [
+        "testlore",
+        "imports-only",
+        "full-native"
+      ],
+      "method": "testlore",
+      "totalFiles": 8,
+      "plannedFiles": [
+        "test/0.test.js",
+        "test/1.test.js",
+        "test/2.test.js",
+        "test/3.test.js",
+        "test/4.test.js",
+        "test/5.test.js",
+        "test/6.test.js",
+        "test/7.test.js"
+      ],
+      "executedFiles": [
+        "test/0.test.js",
+        "test/1.test.js",
+        "test/2.test.js",
+        "test/3.test.js",
+        "test/4.test.js",
+        "test/5.test.js",
+        "test/6.test.js",
+        "test/7.test.js"
+      ],
+      "endToEndMs": 605,
+      "executionMs": 139,
+      "observedFailures": [
+        "31d6b4e3834249106de4173f8b8afaa6fe516cd10a1066da59307a221a4c04f0"
+      ],
+      "groundTruthFailures": [
+        "31d6b4e3834249106de4173f8b8afaa6fe516cd10a1066da59307a221a4c04f0"
+      ],
+      "detectedFailures": [
+        "31d6b4e3834249106de4173f8b8afaa6fe516cd10a1066da59307a221a4c04f0"
+      ],
+      "missedFailures": [],
+      "valid": true,
+      "rawReport": "dynamic-import-defect-2-testlore.json"
+    },
+    {
+      "scenario": "dynamic-import-defect",
+      "project": "uncertainty",
+      "regression": true,
+      "repetition": 2,
+      "order": [
+        "testlore",
+        "imports-only",
+        "full-native"
+      ],
+      "method": "imports-only",
+      "totalFiles": 8,
+      "plannedFiles": [],
+      "executedFiles": [],
+      "endToEndMs": 2,
+      "executionMs": 0,
+      "observedFailures": [],
+      "groundTruthFailures": [
+        "31d6b4e3834249106de4173f8b8afaa6fe516cd10a1066da59307a221a4c04f0"
+      ],
+      "detectedFailures": [],
+      "missedFailures": [
+        "31d6b4e3834249106de4173f8b8afaa6fe516cd10a1066da59307a221a4c04f0"
+      ],
+      "valid": true,
+      "rawReport": "dynamic-import-defect-2-imports-only.json"
+    },
+    {
+      "scenario": "dynamic-import-defect",
+      "project": "uncertainty",
+      "regression": true,
+      "repetition": 2,
+      "order": [
+        "testlore",
+        "imports-only",
+        "full-native"
+      ],
+      "method": "full-native",
+      "totalFiles": 8,
+      "plannedFiles": [
+        "test/0.test.js",
+        "test/1.test.js",
+        "test/2.test.js",
+        "test/3.test.js",
+        "test/4.test.js",
+        "test/5.test.js",
+        "test/6.test.js",
+        "test/7.test.js"
+      ],
+      "executedFiles": [
+        "test/0.test.js",
+        "test/1.test.js",
+        "test/2.test.js",
+        "test/3.test.js",
+        "test/4.test.js",
+        "test/5.test.js",
+        "test/6.test.js",
+        "test/7.test.js"
+      ],
+      "endToEndMs": 135,
+      "executionMs": 135,
+      "observedFailures": [
+        "31d6b4e3834249106de4173f8b8afaa6fe516cd10a1066da59307a221a4c04f0"
+      ],
+      "groundTruthFailures": [
+        "31d6b4e3834249106de4173f8b8afaa6fe516cd10a1066da59307a221a4c04f0"
+      ],
+      "detectedFailures": [
+        "31d6b4e3834249106de4173f8b8afaa6fe516cd10a1066da59307a221a4c04f0"
+      ],
+      "missedFailures": [],
+      "valid": true,
+      "rawReport": "dynamic-import-defect-2-full-native.json"
+    },
+    {
+      "scenario": "deleted-runtime-input",
+      "project": "uncertainty",
+      "regression": true,
+      "repetition": 0,
+      "order": [
+        "full-native",
+        "testlore",
+        "imports-only"
+      ],
+      "method": "full-native",
+      "totalFiles": 8,
+      "plannedFiles": [
+        "test/0.test.js",
+        "test/1.test.js",
+        "test/2.test.js",
+        "test/3.test.js",
+        "test/4.test.js",
+        "test/5.test.js",
+        "test/6.test.js",
+        "test/7.test.js"
+      ],
+      "executedFiles": [
+        "test/0.test.js",
+        "test/1.test.js",
+        "test/2.test.js",
+        "test/3.test.js",
+        "test/4.test.js",
+        "test/5.test.js",
+        "test/6.test.js",
+        "test/7.test.js"
+      ],
+      "endToEndMs": 153,
+      "executionMs": 153,
+      "observedFailures": [
+        "02bfab99dbef9256eb45cfc2908439572b2f95e97d4d7359407c69850b958943"
+      ],
+      "groundTruthFailures": [
+        "02bfab99dbef9256eb45cfc2908439572b2f95e97d4d7359407c69850b958943"
+      ],
+      "detectedFailures": [
+        "02bfab99dbef9256eb45cfc2908439572b2f95e97d4d7359407c69850b958943"
+      ],
+      "missedFailures": [],
+      "valid": true,
+      "rawReport": "deleted-runtime-input-0-full-native.json"
+    },
+    {
+      "scenario": "deleted-runtime-input",
+      "project": "uncertainty",
+      "regression": true,
+      "repetition": 0,
+      "order": [
+        "full-native",
+        "testlore",
+        "imports-only"
+      ],
+      "method": "testlore",
+      "totalFiles": 8,
+      "plannedFiles": [
+        "test/0.test.js",
+        "test/1.test.js",
+        "test/2.test.js",
+        "test/3.test.js",
+        "test/4.test.js",
+        "test/5.test.js",
+        "test/6.test.js",
+        "test/7.test.js"
+      ],
+      "executedFiles": [
+        "test/0.test.js",
+        "test/1.test.js",
+        "test/2.test.js",
+        "test/3.test.js",
+        "test/4.test.js",
+        "test/5.test.js",
+        "test/6.test.js",
+        "test/7.test.js"
+      ],
+      "endToEndMs": 578,
+      "executionMs": 158,
+      "observedFailures": [
+        "02bfab99dbef9256eb45cfc2908439572b2f95e97d4d7359407c69850b958943"
+      ],
+      "groundTruthFailures": [
+        "02bfab99dbef9256eb45cfc2908439572b2f95e97d4d7359407c69850b958943"
+      ],
+      "detectedFailures": [
+        "02bfab99dbef9256eb45cfc2908439572b2f95e97d4d7359407c69850b958943"
+      ],
+      "missedFailures": [],
+      "valid": true,
+      "rawReport": "deleted-runtime-input-0-testlore.json"
+    },
+    {
+      "scenario": "deleted-runtime-input",
+      "project": "uncertainty",
+      "regression": true,
+      "repetition": 0,
+      "order": [
+        "full-native",
+        "testlore",
+        "imports-only"
+      ],
+      "method": "imports-only",
+      "totalFiles": 8,
+      "plannedFiles": [],
+      "executedFiles": [],
+      "endToEndMs": 2,
+      "executionMs": 0,
+      "observedFailures": [],
+      "groundTruthFailures": [
+        "02bfab99dbef9256eb45cfc2908439572b2f95e97d4d7359407c69850b958943"
+      ],
+      "detectedFailures": [],
+      "missedFailures": [
+        "02bfab99dbef9256eb45cfc2908439572b2f95e97d4d7359407c69850b958943"
+      ],
+      "valid": true,
+      "rawReport": "deleted-runtime-input-0-imports-only.json"
+    },
+    {
+      "scenario": "deleted-runtime-input",
+      "project": "uncertainty",
+      "regression": true,
+      "repetition": 1,
+      "order": [
+        "testlore",
+        "imports-only",
+        "full-native"
+      ],
+      "method": "testlore",
+      "totalFiles": 8,
+      "plannedFiles": [
+        "test/0.test.js",
+        "test/1.test.js",
+        "test/2.test.js",
+        "test/3.test.js",
+        "test/4.test.js",
+        "test/5.test.js",
+        "test/6.test.js",
+        "test/7.test.js"
+      ],
+      "executedFiles": [
+        "test/0.test.js",
+        "test/1.test.js",
+        "test/2.test.js",
+        "test/3.test.js",
+        "test/4.test.js",
+        "test/5.test.js",
+        "test/6.test.js",
+        "test/7.test.js"
+      ],
+      "endToEndMs": 592,
+      "executionMs": 153,
+      "observedFailures": [
+        "02bfab99dbef9256eb45cfc2908439572b2f95e97d4d7359407c69850b958943"
+      ],
+      "groundTruthFailures": [
+        "02bfab99dbef9256eb45cfc2908439572b2f95e97d4d7359407c69850b958943"
+      ],
+      "detectedFailures": [
+        "02bfab99dbef9256eb45cfc2908439572b2f95e97d4d7359407c69850b958943"
+      ],
+      "missedFailures": [],
+      "valid": true,
+      "rawReport": "deleted-runtime-input-1-testlore.json"
+    },
+    {
+      "scenario": "deleted-runtime-input",
+      "project": "uncertainty",
+      "regression": true,
+      "repetition": 1,
+      "order": [
+        "testlore",
+        "imports-only",
+        "full-native"
+      ],
+      "method": "imports-only",
+      "totalFiles": 8,
+      "plannedFiles": [],
+      "executedFiles": [],
+      "endToEndMs": 2,
+      "executionMs": 0,
+      "observedFailures": [],
+      "groundTruthFailures": [
+        "02bfab99dbef9256eb45cfc2908439572b2f95e97d4d7359407c69850b958943"
+      ],
+      "detectedFailures": [],
+      "missedFailures": [
+        "02bfab99dbef9256eb45cfc2908439572b2f95e97d4d7359407c69850b958943"
+      ],
+      "valid": true,
+      "rawReport": "deleted-runtime-input-1-imports-only.json"
+    },
+    {
+      "scenario": "deleted-runtime-input",
+      "project": "uncertainty",
+      "regression": true,
+      "repetition": 1,
+      "order": [
+        "testlore",
+        "imports-only",
+        "full-native"
+      ],
+      "method": "full-native",
+      "totalFiles": 8,
+      "plannedFiles": [
+        "test/0.test.js",
+        "test/1.test.js",
+        "test/2.test.js",
+        "test/3.test.js",
+        "test/4.test.js",
+        "test/5.test.js",
+        "test/6.test.js",
+        "test/7.test.js"
+      ],
+      "executedFiles": [
+        "test/0.test.js",
+        "test/1.test.js",
+        "test/2.test.js",
+        "test/3.test.js",
+        "test/4.test.js",
+        "test/5.test.js",
+        "test/6.test.js",
+        "test/7.test.js"
+      ],
+      "endToEndMs": 138,
+      "executionMs": 138,
+      "observedFailures": [
+        "02bfab99dbef9256eb45cfc2908439572b2f95e97d4d7359407c69850b958943"
+      ],
+      "groundTruthFailures": [
+        "02bfab99dbef9256eb45cfc2908439572b2f95e97d4d7359407c69850b958943"
+      ],
+      "detectedFailures": [
+        "02bfab99dbef9256eb45cfc2908439572b2f95e97d4d7359407c69850b958943"
+      ],
+      "missedFailures": [],
+      "valid": true,
+      "rawReport": "deleted-runtime-input-1-full-native.json"
+    },
+    {
+      "scenario": "deleted-runtime-input",
+      "project": "uncertainty",
+      "regression": true,
+      "repetition": 2,
+      "order": [
+        "imports-only",
+        "full-native",
+        "testlore"
+      ],
+      "method": "imports-only",
+      "totalFiles": 8,
+      "plannedFiles": [],
+      "executedFiles": [],
+      "endToEndMs": 1,
+      "executionMs": 0,
+      "observedFailures": [],
+      "groundTruthFailures": [
+        "02bfab99dbef9256eb45cfc2908439572b2f95e97d4d7359407c69850b958943"
+      ],
+      "detectedFailures": [],
+      "missedFailures": [
+        "02bfab99dbef9256eb45cfc2908439572b2f95e97d4d7359407c69850b958943"
+      ],
+      "valid": true,
+      "rawReport": "deleted-runtime-input-2-imports-only.json"
+    },
+    {
+      "scenario": "deleted-runtime-input",
+      "project": "uncertainty",
+      "regression": true,
+      "repetition": 2,
+      "order": [
+        "imports-only",
+        "full-native",
+        "testlore"
+      ],
+      "method": "full-native",
+      "totalFiles": 8,
+      "plannedFiles": [
+        "test/0.test.js",
+        "test/1.test.js",
+        "test/2.test.js",
+        "test/3.test.js",
+        "test/4.test.js",
+        "test/5.test.js",
+        "test/6.test.js",
+        "test/7.test.js"
+      ],
+      "executedFiles": [
+        "test/0.test.js",
+        "test/1.test.js",
+        "test/2.test.js",
+        "test/3.test.js",
+        "test/4.test.js",
+        "test/5.test.js",
+        "test/6.test.js",
+        "test/7.test.js"
+      ],
+      "endToEndMs": 130,
+      "executionMs": 130,
+      "observedFailures": [
+        "02bfab99dbef9256eb45cfc2908439572b2f95e97d4d7359407c69850b958943"
+      ],
+      "groundTruthFailures": [
+        "02bfab99dbef9256eb45cfc2908439572b2f95e97d4d7359407c69850b958943"
+      ],
+      "detectedFailures": [
+        "02bfab99dbef9256eb45cfc2908439572b2f95e97d4d7359407c69850b958943"
+      ],
+      "missedFailures": [],
+      "valid": true,
+      "rawReport": "deleted-runtime-input-2-full-native.json"
+    },
+    {
+      "scenario": "deleted-runtime-input",
+      "project": "uncertainty",
+      "regression": true,
+      "repetition": 2,
+      "order": [
+        "imports-only",
+        "full-native",
+        "testlore"
+      ],
+      "method": "testlore",
+      "totalFiles": 8,
+      "plannedFiles": [
+        "test/0.test.js",
+        "test/1.test.js",
+        "test/2.test.js",
+        "test/3.test.js",
+        "test/4.test.js",
+        "test/5.test.js",
+        "test/6.test.js",
+        "test/7.test.js"
+      ],
+      "executedFiles": [
+        "test/0.test.js",
+        "test/1.test.js",
+        "test/2.test.js",
+        "test/3.test.js",
+        "test/4.test.js",
+        "test/5.test.js",
+        "test/6.test.js",
+        "test/7.test.js"
+      ],
+      "endToEndMs": 540,
+      "executionMs": 143,
+      "observedFailures": [
+        "02bfab99dbef9256eb45cfc2908439572b2f95e97d4d7359407c69850b958943"
+      ],
+      "groundTruthFailures": [
+        "02bfab99dbef9256eb45cfc2908439572b2f95e97d4d7359407c69850b958943"
+      ],
+      "detectedFailures": [
+        "02bfab99dbef9256eb45cfc2908439572b2f95e97d4d7359407c69850b958943"
+      ],
+      "missedFailures": [],
+      "valid": true,
+      "rawReport": "deleted-runtime-input-2-testlore.json"
+    },
+    {
+      "scenario": "preload-defect",
+      "project": "preload",
+      "regression": true,
+      "repetition": 0,
+      "order": [
+        "testlore",
+        "imports-only",
+        "full-native"
+      ],
+      "method": "testlore",
+      "totalFiles": 8,
+      "plannedFiles": [
+        "test/0.test.js",
+        "test/1.test.js",
+        "test/2.test.js",
+        "test/3.test.js",
+        "test/4.test.js",
+        "test/5.test.js",
+        "test/6.test.js",
+        "test/7.test.js"
+      ],
+      "executedFiles": [
+        "test/0.test.js",
+        "test/1.test.js",
+        "test/2.test.js",
+        "test/3.test.js",
+        "test/4.test.js",
+        "test/5.test.js",
+        "test/6.test.js",
+        "test/7.test.js"
+      ],
+      "endToEndMs": 601,
+      "executionMs": 144,
+      "observedFailures": [
+        "31d6b4e3834249106de4173f8b8afaa6fe516cd10a1066da59307a221a4c04f0",
+        "d45d09ad8d68369391d1f3eb865f4612605ea29b84c9f6b870b39922f1bf0d47",
+        "7ec72062b69b9635a8728dc7d8012ef81512433c35af6deea50bb2a3f1a8d6e4",
+        "45498eac539cfaf653b9c5dd1b5f883597a4019577897a01dec6e88245b328db",
+        "60a74ffb2d4dbf89f2c7319119d0eaaf90ff8a5a2588c22e22e48ad206f13199",
+        "17067766ae5f51b48b47d93dda12d81e117dfff3000540f3309ed82e694cdf7f",
+        "02bfab99dbef9256eb45cfc2908439572b2f95e97d4d7359407c69850b958943",
+        "0455927407ebb0ec334070a34fd73cc1736fa20095b52974969f1873031d2bbd"
+      ],
+      "groundTruthFailures": [
+        "31d6b4e3834249106de4173f8b8afaa6fe516cd10a1066da59307a221a4c04f0",
+        "d45d09ad8d68369391d1f3eb865f4612605ea29b84c9f6b870b39922f1bf0d47",
+        "7ec72062b69b9635a8728dc7d8012ef81512433c35af6deea50bb2a3f1a8d6e4",
+        "45498eac539cfaf653b9c5dd1b5f883597a4019577897a01dec6e88245b328db",
+        "60a74ffb2d4dbf89f2c7319119d0eaaf90ff8a5a2588c22e22e48ad206f13199",
+        "17067766ae5f51b48b47d93dda12d81e117dfff3000540f3309ed82e694cdf7f",
+        "02bfab99dbef9256eb45cfc2908439572b2f95e97d4d7359407c69850b958943",
+        "0455927407ebb0ec334070a34fd73cc1736fa20095b52974969f1873031d2bbd"
+      ],
+      "detectedFailures": [
+        "31d6b4e3834249106de4173f8b8afaa6fe516cd10a1066da59307a221a4c04f0",
+        "d45d09ad8d68369391d1f3eb865f4612605ea29b84c9f6b870b39922f1bf0d47",
+        "7ec72062b69b9635a8728dc7d8012ef81512433c35af6deea50bb2a3f1a8d6e4",
+        "45498eac539cfaf653b9c5dd1b5f883597a4019577897a01dec6e88245b328db",
+        "60a74ffb2d4dbf89f2c7319119d0eaaf90ff8a5a2588c22e22e48ad206f13199",
+        "17067766ae5f51b48b47d93dda12d81e117dfff3000540f3309ed82e694cdf7f",
+        "02bfab99dbef9256eb45cfc2908439572b2f95e97d4d7359407c69850b958943",
+        "0455927407ebb0ec334070a34fd73cc1736fa20095b52974969f1873031d2bbd"
+      ],
+      "missedFailures": [],
+      "valid": true,
+      "rawReport": "preload-defect-0-testlore.json"
+    },
+    {
+      "scenario": "preload-defect",
+      "project": "preload",
+      "regression": true,
+      "repetition": 0,
+      "order": [
+        "testlore",
+        "imports-only",
+        "full-native"
+      ],
+      "method": "imports-only",
+      "totalFiles": 8,
+      "plannedFiles": [],
+      "executedFiles": [],
+      "endToEndMs": 1,
+      "executionMs": 0,
+      "observedFailures": [],
+      "groundTruthFailures": [
+        "31d6b4e3834249106de4173f8b8afaa6fe516cd10a1066da59307a221a4c04f0",
+        "d45d09ad8d68369391d1f3eb865f4612605ea29b84c9f6b870b39922f1bf0d47",
+        "7ec72062b69b9635a8728dc7d8012ef81512433c35af6deea50bb2a3f1a8d6e4",
+        "45498eac539cfaf653b9c5dd1b5f883597a4019577897a01dec6e88245b328db",
+        "60a74ffb2d4dbf89f2c7319119d0eaaf90ff8a5a2588c22e22e48ad206f13199",
+        "17067766ae5f51b48b47d93dda12d81e117dfff3000540f3309ed82e694cdf7f",
+        "02bfab99dbef9256eb45cfc2908439572b2f95e97d4d7359407c69850b958943",
+        "0455927407ebb0ec334070a34fd73cc1736fa20095b52974969f1873031d2bbd"
+      ],
+      "detectedFailures": [],
+      "missedFailures": [
+        "31d6b4e3834249106de4173f8b8afaa6fe516cd10a1066da59307a221a4c04f0",
+        "d45d09ad8d68369391d1f3eb865f4612605ea29b84c9f6b870b39922f1bf0d47",
+        "7ec72062b69b9635a8728dc7d8012ef81512433c35af6deea50bb2a3f1a8d6e4",
+        "45498eac539cfaf653b9c5dd1b5f883597a4019577897a01dec6e88245b328db",
+        "60a74ffb2d4dbf89f2c7319119d0eaaf90ff8a5a2588c22e22e48ad206f13199",
+        "17067766ae5f51b48b47d93dda12d81e117dfff3000540f3309ed82e694cdf7f",
+        "02bfab99dbef9256eb45cfc2908439572b2f95e97d4d7359407c69850b958943",
+        "0455927407ebb0ec334070a34fd73cc1736fa20095b52974969f1873031d2bbd"
+      ],
+      "valid": true,
+      "rawReport": "preload-defect-0-imports-only.json"
+    },
+    {
+      "scenario": "preload-defect",
+      "project": "preload",
+      "regression": true,
+      "repetition": 0,
+      "order": [
+        "testlore",
+        "imports-only",
+        "full-native"
+      ],
+      "method": "full-native",
+      "totalFiles": 8,
+      "plannedFiles": [
+        "test/0.test.js",
+        "test/1.test.js",
+        "test/2.test.js",
+        "test/3.test.js",
+        "test/4.test.js",
+        "test/5.test.js",
+        "test/6.test.js",
+        "test/7.test.js"
+      ],
+      "executedFiles": [
+        "test/0.test.js",
+        "test/1.test.js",
+        "test/2.test.js",
+        "test/3.test.js",
+        "test/4.test.js",
+        "test/5.test.js",
+        "test/6.test.js",
+        "test/7.test.js"
+      ],
+      "endToEndMs": 136,
+      "executionMs": 136,
+      "observedFailures": [
+        "31d6b4e3834249106de4173f8b8afaa6fe516cd10a1066da59307a221a4c04f0",
+        "d45d09ad8d68369391d1f3eb865f4612605ea29b84c9f6b870b39922f1bf0d47",
+        "7ec72062b69b9635a8728dc7d8012ef81512433c35af6deea50bb2a3f1a8d6e4",
+        "45498eac539cfaf653b9c5dd1b5f883597a4019577897a01dec6e88245b328db",
+        "60a74ffb2d4dbf89f2c7319119d0eaaf90ff8a5a2588c22e22e48ad206f13199",
+        "17067766ae5f51b48b47d93dda12d81e117dfff3000540f3309ed82e694cdf7f",
+        "02bfab99dbef9256eb45cfc2908439572b2f95e97d4d7359407c69850b958943",
+        "0455927407ebb0ec334070a34fd73cc1736fa20095b52974969f1873031d2bbd"
+      ],
+      "groundTruthFailures": [
+        "31d6b4e3834249106de4173f8b8afaa6fe516cd10a1066da59307a221a4c04f0",
+        "d45d09ad8d68369391d1f3eb865f4612605ea29b84c9f6b870b39922f1bf0d47",
+        "7ec72062b69b9635a8728dc7d8012ef81512433c35af6deea50bb2a3f1a8d6e4",
+        "45498eac539cfaf653b9c5dd1b5f883597a4019577897a01dec6e88245b328db",
+        "60a74ffb2d4dbf89f2c7319119d0eaaf90ff8a5a2588c22e22e48ad206f13199",
+        "17067766ae5f51b48b47d93dda12d81e117dfff3000540f3309ed82e694cdf7f",
+        "02bfab99dbef9256eb45cfc2908439572b2f95e97d4d7359407c69850b958943",
+        "0455927407ebb0ec334070a34fd73cc1736fa20095b52974969f1873031d2bbd"
+      ],
+      "detectedFailures": [
+        "31d6b4e3834249106de4173f8b8afaa6fe516cd10a1066da59307a221a4c04f0",
+        "d45d09ad8d68369391d1f3eb865f4612605ea29b84c9f6b870b39922f1bf0d47",
+        "7ec72062b69b9635a8728dc7d8012ef81512433c35af6deea50bb2a3f1a8d6e4",
+        "45498eac539cfaf653b9c5dd1b5f883597a4019577897a01dec6e88245b328db",
+        "60a74ffb2d4dbf89f2c7319119d0eaaf90ff8a5a2588c22e22e48ad206f13199",
+        "17067766ae5f51b48b47d93dda12d81e117dfff3000540f3309ed82e694cdf7f",
+        "02bfab99dbef9256eb45cfc2908439572b2f95e97d4d7359407c69850b958943",
+        "0455927407ebb0ec334070a34fd73cc1736fa20095b52974969f1873031d2bbd"
+      ],
+      "missedFailures": [],
+      "valid": true,
+      "rawReport": "preload-defect-0-full-native.json"
+    },
+    {
+      "scenario": "preload-defect",
+      "project": "preload",
+      "regression": true,
+      "repetition": 1,
+      "order": [
+        "imports-only",
+        "full-native",
+        "testlore"
+      ],
+      "method": "imports-only",
+      "totalFiles": 8,
+      "plannedFiles": [],
+      "executedFiles": [],
+      "endToEndMs": 2,
+      "executionMs": 0,
+      "observedFailures": [],
+      "groundTruthFailures": [
+        "31d6b4e3834249106de4173f8b8afaa6fe516cd10a1066da59307a221a4c04f0",
+        "d45d09ad8d68369391d1f3eb865f4612605ea29b84c9f6b870b39922f1bf0d47",
+        "7ec72062b69b9635a8728dc7d8012ef81512433c35af6deea50bb2a3f1a8d6e4",
+        "45498eac539cfaf653b9c5dd1b5f883597a4019577897a01dec6e88245b328db",
+        "60a74ffb2d4dbf89f2c7319119d0eaaf90ff8a5a2588c22e22e48ad206f13199",
+        "17067766ae5f51b48b47d93dda12d81e117dfff3000540f3309ed82e694cdf7f",
+        "02bfab99dbef9256eb45cfc2908439572b2f95e97d4d7359407c69850b958943",
+        "0455927407ebb0ec334070a34fd73cc1736fa20095b52974969f1873031d2bbd"
+      ],
+      "detectedFailures": [],
+      "missedFailures": [
+        "31d6b4e3834249106de4173f8b8afaa6fe516cd10a1066da59307a221a4c04f0",
+        "d45d09ad8d68369391d1f3eb865f4612605ea29b84c9f6b870b39922f1bf0d47",
+        "7ec72062b69b9635a8728dc7d8012ef81512433c35af6deea50bb2a3f1a8d6e4",
+        "45498eac539cfaf653b9c5dd1b5f883597a4019577897a01dec6e88245b328db",
+        "60a74ffb2d4dbf89f2c7319119d0eaaf90ff8a5a2588c22e22e48ad206f13199",
+        "17067766ae5f51b48b47d93dda12d81e117dfff3000540f3309ed82e694cdf7f",
+        "02bfab99dbef9256eb45cfc2908439572b2f95e97d4d7359407c69850b958943",
+        "0455927407ebb0ec334070a34fd73cc1736fa20095b52974969f1873031d2bbd"
+      ],
+      "valid": true,
+      "rawReport": "preload-defect-1-imports-only.json"
+    },
+    {
+      "scenario": "preload-defect",
+      "project": "preload",
+      "regression": true,
+      "repetition": 1,
+      "order": [
+        "imports-only",
+        "full-native",
+        "testlore"
+      ],
+      "method": "full-native",
+      "totalFiles": 8,
+      "plannedFiles": [
+        "test/0.test.js",
+        "test/1.test.js",
+        "test/2.test.js",
+        "test/3.test.js",
+        "test/4.test.js",
+        "test/5.test.js",
+        "test/6.test.js",
+        "test/7.test.js"
+      ],
+      "executedFiles": [
+        "test/0.test.js",
+        "test/1.test.js",
+        "test/2.test.js",
+        "test/3.test.js",
+        "test/4.test.js",
+        "test/5.test.js",
+        "test/6.test.js",
+        "test/7.test.js"
+      ],
+      "endToEndMs": 130,
+      "executionMs": 130,
+      "observedFailures": [
+        "31d6b4e3834249106de4173f8b8afaa6fe516cd10a1066da59307a221a4c04f0",
+        "d45d09ad8d68369391d1f3eb865f4612605ea29b84c9f6b870b39922f1bf0d47",
+        "7ec72062b69b9635a8728dc7d8012ef81512433c35af6deea50bb2a3f1a8d6e4",
+        "45498eac539cfaf653b9c5dd1b5f883597a4019577897a01dec6e88245b328db",
+        "60a74ffb2d4dbf89f2c7319119d0eaaf90ff8a5a2588c22e22e48ad206f13199",
+        "17067766ae5f51b48b47d93dda12d81e117dfff3000540f3309ed82e694cdf7f",
+        "02bfab99dbef9256eb45cfc2908439572b2f95e97d4d7359407c69850b958943",
+        "0455927407ebb0ec334070a34fd73cc1736fa20095b52974969f1873031d2bbd"
+      ],
+      "groundTruthFailures": [
+        "31d6b4e3834249106de4173f8b8afaa6fe516cd10a1066da59307a221a4c04f0",
+        "d45d09ad8d68369391d1f3eb865f4612605ea29b84c9f6b870b39922f1bf0d47",
+        "7ec72062b69b9635a8728dc7d8012ef81512433c35af6deea50bb2a3f1a8d6e4",
+        "45498eac539cfaf653b9c5dd1b5f883597a4019577897a01dec6e88245b328db",
+        "60a74ffb2d4dbf89f2c7319119d0eaaf90ff8a5a2588c22e22e48ad206f13199",
+        "17067766ae5f51b48b47d93dda12d81e117dfff3000540f3309ed82e694cdf7f",
+        "02bfab99dbef9256eb45cfc2908439572b2f95e97d4d7359407c69850b958943",
+        "0455927407ebb0ec334070a34fd73cc1736fa20095b52974969f1873031d2bbd"
+      ],
+      "detectedFailures": [
+        "31d6b4e3834249106de4173f8b8afaa6fe516cd10a1066da59307a221a4c04f0",
+        "d45d09ad8d68369391d1f3eb865f4612605ea29b84c9f6b870b39922f1bf0d47",
+        "7ec72062b69b9635a8728dc7d8012ef81512433c35af6deea50bb2a3f1a8d6e4",
+        "45498eac539cfaf653b9c5dd1b5f883597a4019577897a01dec6e88245b328db",
+        "60a74ffb2d4dbf89f2c7319119d0eaaf90ff8a5a2588c22e22e48ad206f13199",
+        "17067766ae5f51b48b47d93dda12d81e117dfff3000540f3309ed82e694cdf7f",
+        "02bfab99dbef9256eb45cfc2908439572b2f95e97d4d7359407c69850b958943",
+        "0455927407ebb0ec334070a34fd73cc1736fa20095b52974969f1873031d2bbd"
+      ],
+      "missedFailures": [],
+      "valid": true,
+      "rawReport": "preload-defect-1-full-native.json"
+    },
+    {
+      "scenario": "preload-defect",
+      "project": "preload",
+      "regression": true,
+      "repetition": 1,
+      "order": [
+        "imports-only",
+        "full-native",
+        "testlore"
+      ],
+      "method": "testlore",
+      "totalFiles": 8,
+      "plannedFiles": [
+        "test/0.test.js",
+        "test/1.test.js",
+        "test/2.test.js",
+        "test/3.test.js",
+        "test/4.test.js",
+        "test/5.test.js",
+        "test/6.test.js",
+        "test/7.test.js"
+      ],
+      "executedFiles": [
+        "test/0.test.js",
+        "test/1.test.js",
+        "test/2.test.js",
+        "test/3.test.js",
+        "test/4.test.js",
+        "test/5.test.js",
+        "test/6.test.js",
+        "test/7.test.js"
+      ],
+      "endToEndMs": 599,
+      "executionMs": 146,
+      "observedFailures": [
+        "31d6b4e3834249106de4173f8b8afaa6fe516cd10a1066da59307a221a4c04f0",
+        "d45d09ad8d68369391d1f3eb865f4612605ea29b84c9f6b870b39922f1bf0d47",
+        "7ec72062b69b9635a8728dc7d8012ef81512433c35af6deea50bb2a3f1a8d6e4",
+        "45498eac539cfaf653b9c5dd1b5f883597a4019577897a01dec6e88245b328db",
+        "60a74ffb2d4dbf89f2c7319119d0eaaf90ff8a5a2588c22e22e48ad206f13199",
+        "17067766ae5f51b48b47d93dda12d81e117dfff3000540f3309ed82e694cdf7f",
+        "02bfab99dbef9256eb45cfc2908439572b2f95e97d4d7359407c69850b958943",
+        "0455927407ebb0ec334070a34fd73cc1736fa20095b52974969f1873031d2bbd"
+      ],
+      "groundTruthFailures": [
+        "31d6b4e3834249106de4173f8b8afaa6fe516cd10a1066da59307a221a4c04f0",
+        "d45d09ad8d68369391d1f3eb865f4612605ea29b84c9f6b870b39922f1bf0d47",
+        "7ec72062b69b9635a8728dc7d8012ef81512433c35af6deea50bb2a3f1a8d6e4",
+        "45498eac539cfaf653b9c5dd1b5f883597a4019577897a01dec6e88245b328db",
+        "60a74ffb2d4dbf89f2c7319119d0eaaf90ff8a5a2588c22e22e48ad206f13199",
+        "17067766ae5f51b48b47d93dda12d81e117dfff3000540f3309ed82e694cdf7f",
+        "02bfab99dbef9256eb45cfc2908439572b2f95e97d4d7359407c69850b958943",
+        "0455927407ebb0ec334070a34fd73cc1736fa20095b52974969f1873031d2bbd"
+      ],
+      "detectedFailures": [
+        "31d6b4e3834249106de4173f8b8afaa6fe516cd10a1066da59307a221a4c04f0",
+        "d45d09ad8d68369391d1f3eb865f4612605ea29b84c9f6b870b39922f1bf0d47",
+        "7ec72062b69b9635a8728dc7d8012ef81512433c35af6deea50bb2a3f1a8d6e4",
+        "45498eac539cfaf653b9c5dd1b5f883597a4019577897a01dec6e88245b328db",
+        "60a74ffb2d4dbf89f2c7319119d0eaaf90ff8a5a2588c22e22e48ad206f13199",
+        "17067766ae5f51b48b47d93dda12d81e117dfff3000540f3309ed82e694cdf7f",
+        "02bfab99dbef9256eb45cfc2908439572b2f95e97d4d7359407c69850b958943",
+        "0455927407ebb0ec334070a34fd73cc1736fa20095b52974969f1873031d2bbd"
+      ],
+      "missedFailures": [],
+      "valid": true,
+      "rawReport": "preload-defect-1-testlore.json"
+    },
+    {
+      "scenario": "preload-defect",
+      "project": "preload",
+      "regression": true,
+      "repetition": 2,
+      "order": [
+        "full-native",
+        "testlore",
+        "imports-only"
+      ],
+      "method": "full-native",
+      "totalFiles": 8,
+      "plannedFiles": [
+        "test/0.test.js",
+        "test/1.test.js",
+        "test/2.test.js",
+        "test/3.test.js",
+        "test/4.test.js",
+        "test/5.test.js",
+        "test/6.test.js",
+        "test/7.test.js"
+      ],
+      "executedFiles": [
+        "test/0.test.js",
+        "test/1.test.js",
+        "test/2.test.js",
+        "test/3.test.js",
+        "test/4.test.js",
+        "test/5.test.js",
+        "test/6.test.js",
+        "test/7.test.js"
+      ],
+      "endToEndMs": 132,
+      "executionMs": 131,
+      "observedFailures": [
+        "31d6b4e3834249106de4173f8b8afaa6fe516cd10a1066da59307a221a4c04f0",
+        "d45d09ad8d68369391d1f3eb865f4612605ea29b84c9f6b870b39922f1bf0d47",
+        "7ec72062b69b9635a8728dc7d8012ef81512433c35af6deea50bb2a3f1a8d6e4",
+        "45498eac539cfaf653b9c5dd1b5f883597a4019577897a01dec6e88245b328db",
+        "60a74ffb2d4dbf89f2c7319119d0eaaf90ff8a5a2588c22e22e48ad206f13199",
+        "17067766ae5f51b48b47d93dda12d81e117dfff3000540f3309ed82e694cdf7f",
+        "02bfab99dbef9256eb45cfc2908439572b2f95e97d4d7359407c69850b958943",
+        "0455927407ebb0ec334070a34fd73cc1736fa20095b52974969f1873031d2bbd"
+      ],
+      "groundTruthFailures": [
+        "31d6b4e3834249106de4173f8b8afaa6fe516cd10a1066da59307a221a4c04f0",
+        "d45d09ad8d68369391d1f3eb865f4612605ea29b84c9f6b870b39922f1bf0d47",
+        "7ec72062b69b9635a8728dc7d8012ef81512433c35af6deea50bb2a3f1a8d6e4",
+        "45498eac539cfaf653b9c5dd1b5f883597a4019577897a01dec6e88245b328db",
+        "60a74ffb2d4dbf89f2c7319119d0eaaf90ff8a5a2588c22e22e48ad206f13199",
+        "17067766ae5f51b48b47d93dda12d81e117dfff3000540f3309ed82e694cdf7f",
+        "02bfab99dbef9256eb45cfc2908439572b2f95e97d4d7359407c69850b958943",
+        "0455927407ebb0ec334070a34fd73cc1736fa20095b52974969f1873031d2bbd"
+      ],
+      "detectedFailures": [
+        "31d6b4e3834249106de4173f8b8afaa6fe516cd10a1066da59307a221a4c04f0",
+        "d45d09ad8d68369391d1f3eb865f4612605ea29b84c9f6b870b39922f1bf0d47",
+        "7ec72062b69b9635a8728dc7d8012ef81512433c35af6deea50bb2a3f1a8d6e4",
+        "45498eac539cfaf653b9c5dd1b5f883597a4019577897a01dec6e88245b328db",
+        "60a74ffb2d4dbf89f2c7319119d0eaaf90ff8a5a2588c22e22e48ad206f13199",
+        "17067766ae5f51b48b47d93dda12d81e117dfff3000540f3309ed82e694cdf7f",
+        "02bfab99dbef9256eb45cfc2908439572b2f95e97d4d7359407c69850b958943",
+        "0455927407ebb0ec334070a34fd73cc1736fa20095b52974969f1873031d2bbd"
+      ],
+      "missedFailures": [],
+      "valid": true,
+      "rawReport": "preload-defect-2-full-native.json"
+    },
+    {
+      "scenario": "preload-defect",
+      "project": "preload",
+      "regression": true,
+      "repetition": 2,
+      "order": [
+        "full-native",
+        "testlore",
+        "imports-only"
+      ],
+      "method": "testlore",
+      "totalFiles": 8,
+      "plannedFiles": [
+        "test/0.test.js",
+        "test/1.test.js",
+        "test/2.test.js",
+        "test/3.test.js",
+        "test/4.test.js",
+        "test/5.test.js",
+        "test/6.test.js",
+        "test/7.test.js"
+      ],
+      "executedFiles": [
+        "test/0.test.js",
+        "test/1.test.js",
+        "test/2.test.js",
+        "test/3.test.js",
+        "test/4.test.js",
+        "test/5.test.js",
+        "test/6.test.js",
+        "test/7.test.js"
+      ],
+      "endToEndMs": 603,
+      "executionMs": 146,
+      "observedFailures": [
+        "31d6b4e3834249106de4173f8b8afaa6fe516cd10a1066da59307a221a4c04f0",
+        "d45d09ad8d68369391d1f3eb865f4612605ea29b84c9f6b870b39922f1bf0d47",
+        "7ec72062b69b9635a8728dc7d8012ef81512433c35af6deea50bb2a3f1a8d6e4",
+        "45498eac539cfaf653b9c5dd1b5f883597a4019577897a01dec6e88245b328db",
+        "60a74ffb2d4dbf89f2c7319119d0eaaf90ff8a5a2588c22e22e48ad206f13199",
+        "17067766ae5f51b48b47d93dda12d81e117dfff3000540f3309ed82e694cdf7f",
+        "02bfab99dbef9256eb45cfc2908439572b2f95e97d4d7359407c69850b958943",
+        "0455927407ebb0ec334070a34fd73cc1736fa20095b52974969f1873031d2bbd"
+      ],
+      "groundTruthFailures": [
+        "31d6b4e3834249106de4173f8b8afaa6fe516cd10a1066da59307a221a4c04f0",
+        "d45d09ad8d68369391d1f3eb865f4612605ea29b84c9f6b870b39922f1bf0d47",
+        "7ec72062b69b9635a8728dc7d8012ef81512433c35af6deea50bb2a3f1a8d6e4",
+        "45498eac539cfaf653b9c5dd1b5f883597a4019577897a01dec6e88245b328db",
+        "60a74ffb2d4dbf89f2c7319119d0eaaf90ff8a5a2588c22e22e48ad206f13199",
+        "17067766ae5f51b48b47d93dda12d81e117dfff3000540f3309ed82e694cdf7f",
+        "02bfab99dbef9256eb45cfc2908439572b2f95e97d4d7359407c69850b958943",
+        "0455927407ebb0ec334070a34fd73cc1736fa20095b52974969f1873031d2bbd"
+      ],
+      "detectedFailures": [
+        "31d6b4e3834249106de4173f8b8afaa6fe516cd10a1066da59307a221a4c04f0",
+        "d45d09ad8d68369391d1f3eb865f4612605ea29b84c9f6b870b39922f1bf0d47",
+        "7ec72062b69b9635a8728dc7d8012ef81512433c35af6deea50bb2a3f1a8d6e4",
+        "45498eac539cfaf653b9c5dd1b5f883597a4019577897a01dec6e88245b328db",
+        "60a74ffb2d4dbf89f2c7319119d0eaaf90ff8a5a2588c22e22e48ad206f13199",
+        "17067766ae5f51b48b47d93dda12d81e117dfff3000540f3309ed82e694cdf7f",
+        "02bfab99dbef9256eb45cfc2908439572b2f95e97d4d7359407c69850b958943",
+        "0455927407ebb0ec334070a34fd73cc1736fa20095b52974969f1873031d2bbd"
+      ],
+      "missedFailures": [],
+      "valid": true,
+      "rawReport": "preload-defect-2-testlore.json"
+    },
+    {
+      "scenario": "preload-defect",
+      "project": "preload",
+      "regression": true,
+      "repetition": 2,
+      "order": [
+        "full-native",
+        "testlore",
+        "imports-only"
+      ],
+      "method": "imports-only",
+      "totalFiles": 8,
+      "plannedFiles": [],
+      "executedFiles": [],
+      "endToEndMs": 2,
+      "executionMs": 0,
+      "observedFailures": [],
+      "groundTruthFailures": [
+        "31d6b4e3834249106de4173f8b8afaa6fe516cd10a1066da59307a221a4c04f0",
+        "d45d09ad8d68369391d1f3eb865f4612605ea29b84c9f6b870b39922f1bf0d47",
+        "7ec72062b69b9635a8728dc7d8012ef81512433c35af6deea50bb2a3f1a8d6e4",
+        "45498eac539cfaf653b9c5dd1b5f883597a4019577897a01dec6e88245b328db",
+        "60a74ffb2d4dbf89f2c7319119d0eaaf90ff8a5a2588c22e22e48ad206f13199",
+        "17067766ae5f51b48b47d93dda12d81e117dfff3000540f3309ed82e694cdf7f",
+        "02bfab99dbef9256eb45cfc2908439572b2f95e97d4d7359407c69850b958943",
+        "0455927407ebb0ec334070a34fd73cc1736fa20095b52974969f1873031d2bbd"
+      ],
+      "detectedFailures": [],
+      "missedFailures": [
+        "31d6b4e3834249106de4173f8b8afaa6fe516cd10a1066da59307a221a4c04f0",
+        "d45d09ad8d68369391d1f3eb865f4612605ea29b84c9f6b870b39922f1bf0d47",
+        "7ec72062b69b9635a8728dc7d8012ef81512433c35af6deea50bb2a3f1a8d6e4",
+        "45498eac539cfaf653b9c5dd1b5f883597a4019577897a01dec6e88245b328db",
+        "60a74ffb2d4dbf89f2c7319119d0eaaf90ff8a5a2588c22e22e48ad206f13199",
+        "17067766ae5f51b48b47d93dda12d81e117dfff3000540f3309ed82e694cdf7f",
+        "02bfab99dbef9256eb45cfc2908439572b2f95e97d4d7359407c69850b958943",
+        "0455927407ebb0ec334070a34fd73cc1736fa20095b52974969f1873031d2bbd"
+      ],
+      "valid": true,
+      "rawReport": "preload-defect-2-imports-only.json"
+    },
+    {
+      "scenario": "global-config-control",
+      "project": "modular",
+      "regression": false,
+      "repetition": 0,
+      "order": [
+        "imports-only",
+        "full-native",
+        "testlore"
+      ],
+      "method": "imports-only",
+      "totalFiles": 8,
+      "plannedFiles": [],
+      "executedFiles": [],
+      "endToEndMs": 1,
+      "executionMs": 0,
+      "observedFailures": [],
+      "groundTruthFailures": [],
+      "detectedFailures": [],
+      "missedFailures": [],
+      "valid": true,
+      "rawReport": "global-config-control-0-imports-only.json"
+    },
+    {
+      "scenario": "global-config-control",
+      "project": "modular",
+      "regression": false,
+      "repetition": 0,
+      "order": [
+        "imports-only",
+        "full-native",
+        "testlore"
+      ],
+      "method": "full-native",
+      "totalFiles": 8,
+      "plannedFiles": [
+        "test/0.test.js",
+        "test/1.test.js",
+        "test/2.test.js",
+        "test/3.test.js",
+        "test/4.test.js",
+        "test/5.test.js",
+        "test/6.test.js",
+        "test/7.test.js"
+      ],
+      "executedFiles": [
+        "test/0.test.js",
+        "test/1.test.js",
+        "test/2.test.js",
+        "test/3.test.js",
+        "test/4.test.js",
+        "test/5.test.js",
+        "test/6.test.js",
+        "test/7.test.js"
+      ],
+      "endToEndMs": 135,
+      "executionMs": 135,
+      "observedFailures": [],
+      "groundTruthFailures": [],
+      "detectedFailures": [],
+      "missedFailures": [],
+      "valid": true,
+      "rawReport": "global-config-control-0-full-native.json"
+    },
+    {
+      "scenario": "global-config-control",
+      "project": "modular",
+      "regression": false,
+      "repetition": 0,
+      "order": [
+        "imports-only",
+        "full-native",
+        "testlore"
+      ],
+      "method": "testlore",
+      "totalFiles": 8,
+      "plannedFiles": [
+        "test/0.test.js",
+        "test/1.test.js",
+        "test/2.test.js",
+        "test/3.test.js",
+        "test/4.test.js",
+        "test/5.test.js",
+        "test/6.test.js",
+        "test/7.test.js"
+      ],
+      "executedFiles": [
+        "test/0.test.js",
+        "test/1.test.js",
+        "test/2.test.js",
+        "test/3.test.js",
+        "test/4.test.js",
+        "test/5.test.js",
+        "test/6.test.js",
+        "test/7.test.js"
+      ],
+      "endToEndMs": 581,
+      "executionMs": 151,
+      "observedFailures": [],
+      "groundTruthFailures": [],
+      "detectedFailures": [],
+      "missedFailures": [],
+      "valid": true,
+      "rawReport": "global-config-control-0-testlore.json"
+    },
+    {
+      "scenario": "global-config-control",
+      "project": "modular",
+      "regression": false,
+      "repetition": 1,
+      "order": [
+        "full-native",
+        "testlore",
+        "imports-only"
+      ],
+      "method": "full-native",
+      "totalFiles": 8,
+      "plannedFiles": [
+        "test/0.test.js",
+        "test/1.test.js",
+        "test/2.test.js",
+        "test/3.test.js",
+        "test/4.test.js",
+        "test/5.test.js",
+        "test/6.test.js",
+        "test/7.test.js"
+      ],
+      "executedFiles": [
+        "test/0.test.js",
+        "test/1.test.js",
+        "test/2.test.js",
+        "test/3.test.js",
+        "test/4.test.js",
+        "test/5.test.js",
+        "test/6.test.js",
+        "test/7.test.js"
+      ],
+      "endToEndMs": 130,
+      "executionMs": 130,
+      "observedFailures": [],
+      "groundTruthFailures": [],
+      "detectedFailures": [],
+      "missedFailures": [],
+      "valid": true,
+      "rawReport": "global-config-control-1-full-native.json"
+    },
+    {
+      "scenario": "global-config-control",
+      "project": "modular",
+      "regression": false,
+      "repetition": 1,
+      "order": [
+        "full-native",
+        "testlore",
+        "imports-only"
+      ],
+      "method": "testlore",
+      "totalFiles": 8,
+      "plannedFiles": [
+        "test/0.test.js",
+        "test/1.test.js",
+        "test/2.test.js",
+        "test/3.test.js",
+        "test/4.test.js",
+        "test/5.test.js",
+        "test/6.test.js",
+        "test/7.test.js"
+      ],
+      "executedFiles": [
+        "test/0.test.js",
+        "test/1.test.js",
+        "test/2.test.js",
+        "test/3.test.js",
+        "test/4.test.js",
+        "test/5.test.js",
+        "test/6.test.js",
+        "test/7.test.js"
+      ],
+      "endToEndMs": 580,
+      "executionMs": 143,
+      "observedFailures": [],
+      "groundTruthFailures": [],
+      "detectedFailures": [],
+      "missedFailures": [],
+      "valid": true,
+      "rawReport": "global-config-control-1-testlore.json"
+    },
+    {
+      "scenario": "global-config-control",
+      "project": "modular",
+      "regression": false,
+      "repetition": 1,
+      "order": [
+        "full-native",
+        "testlore",
+        "imports-only"
+      ],
+      "method": "imports-only",
+      "totalFiles": 8,
+      "plannedFiles": [],
+      "executedFiles": [],
+      "endToEndMs": 1,
+      "executionMs": 0,
+      "observedFailures": [],
+      "groundTruthFailures": [],
+      "detectedFailures": [],
+      "missedFailures": [],
+      "valid": true,
+      "rawReport": "global-config-control-1-imports-only.json"
+    },
+    {
+      "scenario": "global-config-control",
+      "project": "modular",
+      "regression": false,
+      "repetition": 2,
+      "order": [
+        "testlore",
+        "imports-only",
+        "full-native"
+      ],
+      "method": "testlore",
+      "totalFiles": 8,
+      "plannedFiles": [
+        "test/0.test.js",
+        "test/1.test.js",
+        "test/2.test.js",
+        "test/3.test.js",
+        "test/4.test.js",
+        "test/5.test.js",
+        "test/6.test.js",
+        "test/7.test.js"
+      ],
+      "executedFiles": [
+        "test/0.test.js",
+        "test/1.test.js",
+        "test/2.test.js",
+        "test/3.test.js",
+        "test/4.test.js",
+        "test/5.test.js",
+        "test/6.test.js",
+        "test/7.test.js"
+      ],
+      "endToEndMs": 572,
+      "executionMs": 146,
+      "observedFailures": [],
+      "groundTruthFailures": [],
+      "detectedFailures": [],
+      "missedFailures": [],
+      "valid": true,
+      "rawReport": "global-config-control-2-testlore.json"
+    },
+    {
+      "scenario": "global-config-control",
+      "project": "modular",
+      "regression": false,
+      "repetition": 2,
+      "order": [
+        "testlore",
+        "imports-only",
+        "full-native"
+      ],
+      "method": "imports-only",
+      "totalFiles": 8,
+      "plannedFiles": [],
+      "executedFiles": [],
+      "endToEndMs": 2,
+      "executionMs": 0,
+      "observedFailures": [],
+      "groundTruthFailures": [],
+      "detectedFailures": [],
+      "missedFailures": [],
+      "valid": true,
+      "rawReport": "global-config-control-2-imports-only.json"
+    },
+    {
+      "scenario": "global-config-control",
+      "project": "modular",
+      "regression": false,
+      "repetition": 2,
+      "order": [
+        "testlore",
+        "imports-only",
+        "full-native"
+      ],
+      "method": "full-native",
+      "totalFiles": 8,
+      "plannedFiles": [
+        "test/0.test.js",
+        "test/1.test.js",
+        "test/2.test.js",
+        "test/3.test.js",
+        "test/4.test.js",
+        "test/5.test.js",
+        "test/6.test.js",
+        "test/7.test.js"
+      ],
+      "executedFiles": [
+        "test/0.test.js",
+        "test/1.test.js",
+        "test/2.test.js",
+        "test/3.test.js",
+        "test/4.test.js",
+        "test/5.test.js",
+        "test/6.test.js",
+        "test/7.test.js"
+      ],
+      "endToEndMs": 137,
+      "executionMs": 137,
+      "observedFailures": [],
+      "groundTruthFailures": [],
+      "detectedFailures": [],
+      "missedFailures": [],
+      "valid": true,
+      "rawReport": "global-config-control-2-full-native.json"
+    }
+  ],
+  "limitations": [
+    "Controlled synthetic fixtures are not a community leaderboard or independent evaluation.",
+    "No named competitors, agent memory, LongMemEval or learning results are measured.",
+    "JSON contract tests represent declared asset inputs, not actual browser rendering or visual regressions.",
+    "Native discovery executes module loading; it is included in TestLore end-to-end cost.",
+    "Latency is local single-machine wall-clock, not production speed; balanced method order reduces but does not remove warm-up noise.",
+    "No installation cost is measured. Test files, not individual cases, are routing units.",
+    "JS imports-only is deliberately limited diagnostic code, not a competitor and not a production-safe selector.",
+    "Scores describe exactly the listed planted regressions; untested defects and external dependencies remain unknown."
+  ]
+}

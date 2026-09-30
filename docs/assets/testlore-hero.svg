@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="440" viewBox="0 0 1200 440" role="img" aria-labelledby="title description">
+<title id="title">TestLore — the quality engineer that learns your codebase</title><desc id="description">Build better tests, run what matters, and remember what worked. TestLore connects reviewed agent proposals, full validation, explainable routing, and local learning.</desc>
+<rect width="1200" height="440" rx="24" fill="#102a2a"/>
+<path d="M1050 0v440M0 355h1200" stroke="#244444" stroke-width="1"/>
+<g font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Arial,sans-serif">
+<path d="M64 52h37l13 12v47H77L64 99z" fill="none" stroke="#bcf4b5" stroke-width="3"/><path d="M77 65h24M77 76h19M77 87h24" stroke="#bcf4b5" stroke-width="3"/>
+<text x="130" y="101" font-size="60" font-weight="750" letter-spacing="-2" fill="#f7f8eb">TestLore<tspan fill="#bcf4b5">.</tspan></text>
+<text x="64" y="190" font-size="42" font-weight="600" letter-spacing="-1" fill="#f7f8eb">The quality engineer</text>
+<text x="64" y="245" font-size="42" font-weight="600" letter-spacing="-1" fill="#f7f8eb">that learns your codebase.</text>
+<text x="64" y="299" font-size="20" fill="#a6c4bd">Build better tests. Run what matters. Remember what worked.</text>
+<g font-size="17">
+<path d="M752 101v193" stroke="#5b8881" stroke-width="2" stroke-dasharray="5 5"/>
+<g fill="#1a3a39" stroke="#45635d"><rect x="705" y="54" width="426" height="60" rx="14"/><rect x="705" y="126" width="426" height="60" rx="14"/><rect x="705" y="198" width="426" height="60" rx="14"/><rect x="705" y="270" width="426" height="60" rx="14"/></g>
+<g fill="#bcf4b5"><circle cx="738" cy="84" r="5"/><circle cx="738" cy="156" r="5"/><circle cx="738" cy="228" r="5"/><circle cx="738" cy="300" r="5"/></g>
+<g fill="#eef3e9" font-weight="600"><text x="761" y="91">Propose reviewed tests</text><text x="761" y="163">Validate the full suite</text><text x="761" y="235">Explain the affected tests</text><text x="761" y="307">Recall what worked</text></g>
+<path d="M1148 301h16V83h-16" fill="none" stroke="#bcf4b5" stroke-width="2"/><path d="m1150 78-7 5 7 5" fill="none" stroke="#bcf4b5" stroke-width="2"/>
+</g>
+<text x="64" y="402" font-size="16" font-weight="650" letter-spacing="3" fill="#bcf4b5">CREATE · MEASURE · MODULARIZE · ROUTE · LEARN</text>
+<text x="1128" y="402" text-anchor="end" font-size="15" fill="#a6c4bd">OPEN SOURCE / MIT</text>
+</g></svg>

@@ -1,0 +1,96 @@
+{
+  "schemaVersion": 1,
+  "id": "4777d7c6-1165-426a-8e20-092153aea16e",
+  "validatedAt": "2026-09-30T02:29:01.562Z",
+  "manifestHash": "f3ec745ca2a79308465e639e0ea25b04f9c792e85178cc35e56cdebd60b29597",
+  "provenance": {
+    "schemaVersion": 1,
+    "revision": null,
+    "runner": "95d1d6e989702d88178820c89fe25cfa1231ecebbd0f29d4f07fc4bd27e91a86",
+    "environment": {
+      "node": "v22.19.0",
+      "platform": "darwin",
+      "arch": "arm64",
+      "labels": {}
+    },
+    "services": {},
+    "serviceWarnings": [],
+    "files": {
+      "package.json": "6dc1b06d6b093e9cccb20bee06a93836eee0420ae26803ca2ce4065d82f070d1",
+      "src/prior.js": "1812c36db52acde3c66b85b0ea4f73d85dde05da020e9d0fc4fefa74c0a1f44e",
+      "tddswarm.config.json": "0730298aae53acc8b6e5952b59cc5142614d08aa57a7096c3fdb20b8b344090e"
+    },
+    "fingerprint": "350954790e7c93e161c8a21074c8f0e4e3b40efcbee2b0e0b3a5c5b46322276e"
+  },
+  "accepted": true,
+  "reasons": [],
+  "original": {
+    "discovery": {
+      "files": [],
+      "complete": true,
+      "adapter": "node",
+      "warnings": []
+    },
+    "exitCode": 0,
+    "complete": true,
+    "tests": [],
+    "collectionFiles": [],
+    "executedFiles": []
+  },
+  "candidate": {
+    "adapter": "node",
+    "exitCode": 0,
+    "durationMs": 186,
+    "tests": [
+      {
+        "file": "test/prior.test.js",
+        "name": "clamp boundary lower upper interior equal negative zero",
+        "status": "passed",
+        "durationMs": 0.845417,
+        "line": 1,
+        "column": 108,
+        "id": "0931ca0c77e0eb34379a7adc2646f2117ab3206252d52c048da8268242d32d29"
+      }
+    ],
+    "collectionFiles": [
+      "test/prior.test.js"
+    ],
+    "requestedFiles": [
+      "test/prior.test.js"
+    ],
+    "executedFiles": [
+      "test/prior.test.js"
+    ],
+    "missingFiles": [],
+    "unknownFiles": [],
+    "complete": true,
+    "command": [
+      "<node>",
+      "--test",
+      "--test-reporter=<repository>src/reporters/node.js",
+      "--test-reporter-destination=/var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-report-YeLG8Y/results.json",
+      "./test/prior.test.js"
+    ],
+    "stdout": "",
+    "stderr": "",
+    "signal": null,
+    "reportErrors": [],
+    "discovery": {
+      "files": [
+        "test/prior.test.js"
+      ],
+      "complete": true,
+      "adapter": "node",
+      "warnings": []
+    }
+  },
+  "missingCases": [],
+  "defects": [],
+  "measured": {
+    "execution": true,
+    "heldOutDefects": 0
+  },
+  "isolation": "disposable-file-copy-with-trusted-dependencies",
+  "applied": false,
+  "integrity": "de053896ee17a75a316357d0773dfe3ab50e4cf0ceede1c651e336aa121bfb6f"
+}

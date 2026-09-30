@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/rudycelekli/testlore/benchmarks/comparison/report.schema.json",
+  "title": "TestLore controlled routing comparison",
+  "type": "object",
+  "required": ["schemaVersion", "generatedAt", "toolRevision", "harnessDigest", "dataset", "repetitions", "environment", "methods", "summary", "trials", "limitations"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "generatedAt": { "type": "string" },
+    "toolRevision": { "type": ["string", "null"] },
+    "harnessDigest": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "dataset": { "type": "object", "required": ["name", "scope", "scenarios", "projects", "plantedRegressions", "digest", "setup"] },
+    "repetitions": { "type": "integer", "minimum": 1, "maximum": 9 },
+    "environment": { "type": "object", "required": ["node", "platform", "architecture", "cpu"] },
+    "methods": { "type": "array", "minItems": 3 },
+    "summary": {
+      "type": "array", "minItems": 3,
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "kind", "valid", "trials", "totalFaults", "detectedFaults", "faultRecall", "missedFailures", "executedFiles", "availableFiles", "executedFileFraction", "endToEndMedianMs", "endToEndTotalMs"],
+        "properties": {
+          "id": { "enum": ["full-native", "testlore", "imports-only"] },
+          "valid": { "type": "boolean" },
+          "faultRecall": { "type": ["number", "null"], "minimum": 0, "maximum": 1 },
+          "executedFileFraction": { "type": ["number", "null"], "minimum": 0, "maximum": 1 },
+          "endToEndMedianMs": { "type": ["number", "null"], "minimum": 0 }
+        }
+      }
+    },
+    "trials": { "type": "array", "minItems": 36, "items": { "type": "object", "required": ["scenario", "project", "regression", "repetition", "method", "executedFiles", "endToEndMs", "groundTruthFailures", "detectedFailures", "missedFailures", "valid", "rawReport"] } },
+    "limitations": { "type": "array", "minItems": 1, "items": { "type": "string" } }
+  }
+}

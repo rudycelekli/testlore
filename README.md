@@ -1,105 +1,240 @@
-# TDDSwarm
+<p align="center">
+  <img src="docs/assets/testlore-hero.svg" alt="TestLore — the quality engineer that learns your codebase. Build better tests. Run what matters. Remember what worked." width="1200" />
+</p>
 
-**Know why each test runs. Improve the tests that matter.**
+<p align="center">
+  <strong>Create tests. Measure quality. Explain every run. Learn from experience.</strong><br />
+  An open-source testing intelligence layer for developers and coding agents.
+</p>
 
-An open source, local-first test intelligence layer for JavaScript and TypeScript. Audit existing tests, propose modular boundaries, stage tests with an agent team, and explain which test files a change affects.
+<p align="center">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-133e3a?style=flat-square" alt="MIT license" /></a>
+  <a href="package.json"><img src="https://img.shields.io/badge/Node.js-22.19%2B-133e3a?style=flat-square" alt="Node 22.19 or later" /></a>
+  <a href="https://github.com/rudycelekli/testlore/actions/workflows/ci.yml"><img src="https://github.com/rudycelekli/testlore/actions/workflows/ci.yml/badge.svg" alt="Actual CI status" /></a>
+  <a href="docs/roadmap.md"><img src="https://img.shields.io/badge/status-experimental_alpha-e8b76a?style=flat-square" alt="Experimental alpha" /></a>
+</p>
 
-**Experimental alpha.** The deterministic CLI works without AI credentials. Agent-generated candidates require a configured worker and independent requirements. Static grades describe visible structure; they do not certify test effectiveness or deployment readiness.
+<p align="center">
+  <a href="#start-in-one-command">Quick start</a> ·
+  <a href="#a-quality-engineer-inside-your-repository">How it works</a> ·
+  <a href="#learning-that-stays-with-your-project">Learning</a> ·
+  <a href="#show-the-evidence">Benchmarks</a> ·
+  <a href="docs/configuration.md">Documentation</a> ·
+  <a href="CONTRIBUTING.md">Contribute</a>
+</p>
 
-## One-line setup
+## A quality engineer inside your repository
 
-Requires Node.js 22+ and Git. Run inside your project:
+Your code changes constantly. Your tests should keep up.
+
+TestLore connects an agent team, your existing test runner, measurable quality evidence, and persistent project memory. It proposes better tests on a new branch, validates them against the original suite, explains which tests each change affects, and remembers useful patterns for the next improvement.
+
+| Your starting point | What TestLore does |
+| --- | --- |
+| **No tests yet** | An architect, bounded author team, and independent reviewer propose runnable tests from your behavioral requirements. |
+| **Tests exist, confidence is unclear** | Audit structure, import actual coverage and mutation results, measure stability, and surface gaps with their evidence. |
+| **A growing suite slows development** | Follow static, declared, and observed dependencies to select affected test files, with reasons and conservative fallbacks. |
+| **Knowledge disappears between sessions** | Retain validated examples and rejection signals; retrieve useful historical patterns for future agents. |
+
+## Start in one command
+
+From a clean, committed project checkout:
 
 ```sh
-npm exec --yes --package=github:rudycelekli/tddswarm -- tddswarm init
+npm exec --yes --package=github:rudycelekli/testlore#feat/full-roadmap -- testlore improve
 ```
 
-This creates configuration, adds `.tddswarm/` to `.gitignore`, and saves a local health report. Existing configuration is preserved. Nothing is uploaded and no agent is invoked by `init`, `audit`, `modules`, `plan`, or `run`. Installation downloads this package and its dependency; your chosen test runner still has its usual behavior.
+**Preview branch:** the full implementation is in [PR #1](https://github.com/rudycelekli/testlore/pull/1). After merge, use `github:rudycelekli/testlore`; pin a reviewed commit for reproducibility. Distributed through GitHub; not published to npm.
 
-For ongoing use, install in the project:
+Requires **Node 22.19+ and Git**. It creates your project’s quality-agent identity and local memory immediately. Existing `SPEC.md`, `REQUIREMENTS.md`, or README material can seed a proposed behavior contract on the branch. Commit `tddswarm.requirements.md` for explicit expectations; proposals without meaningful independent behavior must be rejected. Generation uses your configured worker or an installed, authenticated Codex CLI. Automatic PR creation uses your authenticated GitHub CLI. `--local` keeps the result for local review.
 
-```sh
-npm install --save-dev github:rudycelekli/tddswarm
-npx --no-install tddswarm audit
-npx --no-install tddswarm plan --base HEAD
-npx --no-install tddswarm run --shadow --base HEAD
-```
-
-The package is currently distributed through GitHub, **not published to npm**. `npx tddswarm` without a local installation is not the install command. Pin the Git dependency to a reviewed commit for reproducibility.
-
-## A small change should have an understandable test plan
+The default flow:
 
 ```text
-Landing-page copy
-AFFECTED · 1/2 test files selected
-SKIP test/checkout.test.js — no-known-dependency-on-change
-RUN  test/landing.test.js — dependency-path
-     test/landing.test.js → src/copy.json
-
-Shared helper
-AFFECTED · 2/2 test files selected
-     test/landing.test.js → src/landing.js → src/shared.js
-     test/checkout.test.js → src/checkout.js → src/shared.js
-
-Unknown runtime input
-FULL · 2/2 test files selected
-Reasons: unmapped-or-deleted-input, change-without-test-evidence
+Your repository
+    ↓
+Isolated improvement branch
+    ↓
+Architect → Authors → Independent reviewer
+    ↓
+Original suite + candidate suite + full branch validation
+    ↓
+GitHub pull request for your review
+    ↓ after you merge
+Audit + affected tests on PRs · full tests on default-branch pushes
 ```
 
-Run the synthetic demo with `npx --no-install tddswarm demo` after installation, or `npm run demo` from this repository. These are illustrative fixtures, not production performance results.
+Failed validation retains the proposal and its evidence for inspection. Missing requirements or a worker produces a concrete work order. Merging remains your decision. [Full workflow →](docs/improvement.md)
 
-Copy, CSS, templates, localization, and schemas can affect visual, accessibility, or integration tests. Declare dependencies when static imports cannot represent them. A paragraph change does not automatically bypass tests.
-
-## What is implemented
-
-| Command | Result |
-| --- | --- |
-| `init` | Detect Node/Vitest/Jest runner configuration; create a health report |
-| `audit` | Static A–F triage grade, findings with lines, missing import relationships, and explicit unmeasured dimensions |
-| `plan --base <ref>` | Git changes → import/declaration graph → selected test files, dependency paths, uncertainty reasons |
-| `run` | Execute selected files, preserve exit status, record elapsed time and retry files from failed runs |
-| `run --shadow` | Execute the full discovered suite while recording the proposed subset |
-| `run --full` | Force the full discovered suite |
-| `modules` | Propose subject-based groups and flag broad dependencies; no automatic rewrite |
-| `generate` | Export an architect/author/reviewer work order without invoking agents |
-| `generate --execute` | Invoke configured workers; run up to three authors concurrently; stage reviewed or rejected candidates |
-
-Selection works at **test-file granularity**. It uses AST-parsed imports/re-exports, literal `require`/`import`, previous edges for changed files, and explicit asset dependencies. The graph is rebuilt each time; there is no stale graph cache. Unknown changed inputs, missing imports, computed imports, runtime filesystem access, config changes, and unsupported resolution widen selection to all discovered tests. Tests with no local dependencies are retained when inputs change. Explicit policy retains smoke tests, prior failed files, and periodic full runs.
-
-The built-in runner is Node's test runner. `init` detects installed Vitest/Jest dependencies and writes their CLI commands. TypeScript/JSX tests require a capable configured runner. Native runner discovery can be broader than TDDSwarm's naming convention; review the discovered files before enabling selective execution. See [configuration and limitations](docs/configuration.md).
-
-## Optional agent team
-
-Use your installed Codex CLI, or supply any JSON worker implementing the [agent protocol](docs/agents.md). The included Codex adapter uses separate architect, author, and reviewer calls with structured outputs. It does not use Agentic QE internally or claim its capabilities. The worker interface allows future integration without coupling routing to an LLM.
-
-1. Install TDDSwarm locally and authenticate your Codex CLI.
-2. Write `tddswarm.requirements.md` with independent expected behaviors.
-3. Add `"agent": ["npx", "--no-install", "tddswarm-codex-agent"]` to configuration.
-4. Run `npx --no-install tddswarm generate --execute`.
-5. Review `.tddswarm/candidates/<id>/`, copy desired changes, and validate with your runner and mutation tooling.
-
-`--execute` sends the bounded source/test context and requirements to the configured worker. A remote worker may upload that context and consume usage allowance. There are at most 14 worker calls, each with a timeout; this bounds calls, not tokens or money. Source can contain embedded secrets; inspect it before opting in. Candidates never overwrite project files or execute automatically. Reviewer acceptance is separate from runtime validation. The orchestration protocol is verified with deterministic workers; live model quality has not been benchmarked.
-
-## Why another testing tool?
-
-The problem is established. [pytest-testmon](https://www.testmon.org/), [Jest](https://jestjs.io/docs/30.0/cli), [Vitest](https://vitest.dev/guide/cli.html), [Nx](https://nx.dev/docs/features/ci-features/affected), and commercial products already select tests. [Agentic QE](https://github.com/proffesor-for-testing/agentic-qe) already covers test generation, quality assessment, and change impact.
-
-TDDSwarm's proposed contribution is an approachable open layer linking **test health → modular boundaries → explicit dependency evidence → understandable execution decisions**. It aims to interoperate with mature tools. This is an integration opportunity, not a claim to have invented test selection or AI testing. Read the [primary-source landscape research](docs/landscape.md).
-
-## Evidence, not a speedup slogan
+Personalize your project agent:
 
 ```sh
-npm ci
-npm test
-npm run benchmark
+npm exec --yes --package=github:rudycelekli/testlore#feat/full-roadmap -- testlore agent --name "My project quality engineer" --json
 ```
 
-The benchmark creates 1,000 deliberately independent test files and measures planning, then compares selected and full execution on six small change fixtures. Raw sample outcomes and hardware information are in [synthetic.json](docs/benchmarks/synthetic.json). Test-count reduction is not wall-clock savings. This is not a production repository benchmark.
+The agent runs when you invoke it or CI; its identity and history persist between runs. Customize `qualityAgent.name` and `qualityAgent.focus` in project configuration.
 
-Next milestones are runtime/coverage evidence, measured mutation and flake reports, browser dependency adapters, automatic shadow-result comparison, and reproducible public-repository benchmarks. See [roadmap](docs/roadmap.md) and [architecture](docs/architecture.md).
+`npm exec` uses a temporary package for that invocation. Before running any `npx --no-install testlore` commands below, including learning commands, install it locally with `npm install --save-dev github:rudycelekli/testlore#feat/full-roadmap`.
 
-## Contribute
+Want a useful report before configuring agents?
 
-Bring a reproducible missed dependency, a runner discovery fixture, an independent test-quality metric, or a public benchmark. See [CONTRIBUTING.md](CONTRIBUTING.md). Issues and pull requests are welcome. We will publish misses and overhead alongside improvements.
+```sh
+npm exec --yes --package=github:rudycelekli/testlore#feat/full-roadmap -- testlore init
+npm install --save-dev github:rudycelekli/testlore#feat/full-roadmap
+npx --no-install testlore audit --json
+npx --no-install testlore run --shadow --base HEAD
+```
 
-MIT licensed. No telemetry in the core CLI.
+Local analysis and routing require no AI account. Generation may consume your selected worker's allowance.
+
+## A paragraph edit deserves an understandable plan
+
+```text
+AFFECTED · 1/2 test files selected
+
+RUN   test/landing.test.js
+      test/landing.test.js → public/copy.json
+      reason: dependency-path
+
+SKIP  test/checkout.test.js
+      reason: no-known-dependency-on-change
+```
+
+Copy, styles, templates, localization, schemas, fixtures, and services can all affect behavior. Declare their relationships or capture runtime reads. TestLore combines these with static dependencies and explains its choices. Unknown inputs, unresolved paths, and stale evidence widen the run.
+
+Run `npm run demo` for a selective copy edit, a shared dependency, and an uncertain change. Selection works at **test-file granularity**; native execution reports individual cases. Shadow mode runs the full suite while checking the proposed selection against observed failures. [Routing configuration →](docs/configuration.md)
+
+## Learning that stays with your project
+
+```text
+RETAIN                        RECALL                        REFLECT
+Validated test patterns  →   Relevant historical examples → Supported recommendations
+Rejection signals             Source compatibility labels   Evidence IDs and counts
+       ↑                              │                           │
+       └────────────── future reviewed, validated proposals ──────┘
+```
+
+Every validated proposal can contribute to local memory. Architects and authors retrieve bounded examples with framework, source, environment, outcome, and age metadata. Independent reviewers receive requirements and candidates separately. Reflections point to the records supporting them.
+
+```sh
+npx --no-install testlore learn --json
+npx --no-install testlore recall --query "boundary validation" --json
+npx --no-install testlore learning-export --json
+```
+
+The default learning loop uses deterministic lexical retrieval and evidence-backed recommendations. An optional RuVector plugin adds native vector retrieval over the same validated lessons. Its default feature vectors are lexical; semantic embeddings require an explicitly configured model provider. Historical snippets are advisory; current requirements and execution determine acceptance. It does not train model weights. Memory stays local, including across improvement branches. Explicit aggregate export contains fixed counts without source, paths, or project identifiers. Disable learning with `"learning": {"enabled": false}`.
+
+Inspired by Hindsight's retain/recall/reflect cycle, implemented around testing evidence. [Learning →](docs/learning.md) · [Hindsight research →](docs/hindsight-research.md)
+
+## Grow with optional tools
+
+TestLore is a complementary coordination layer. Bring your specialist tools into one quality workflow: their engines supply expertise, and TestLore connects modularity, routing, independent validation, and retained lessons. Enable capabilities as your project grows.
+
+| Optional plugin | Contribution |
+| --- | --- |
+| **Agentic QE** | Draft tests for architect tasks; an independent worker reviews them before isolated validation. |
+| **pytest-testmon · Nx · Bazel** | Native selection and execution through the ordinary `plan` and `run` commands. |
+| **c8 · Stryker** | Genuine coverage and mutation reports through the existing measured-evidence pipeline. |
+| **RuVector** | Optional local vector retrieval of validated historical lessons; JSON memory remains authoritative. |
+| **Your team's worker** | Register an installed executable implementing the versioned generation protocol. |
+
+Choose a setup in one command without first installing TestLore locally:
+
+```sh
+npm exec --yes --package=github:rudycelekli/testlore#feat/full-roadmap -- testlore plugins --auto
+```
+
+Or inspect the choices and manage tools after a local install:
+
+```sh
+npx --no-install testlore plugins --recommend --json  # Explain project-fit choices
+npx --no-install testlore plugins --auto             # Enable compatible installed tools
+npx --no-install testlore plugins --json
+npx --no-install testlore plugins --enable agentic-qe
+npx --no-install testlore plugins --check --plugin agentic-qe --json
+# Optional native vector backend:
+npm install --save-dev @ruvector/core@0.1.32
+npx --no-install testlore plugins --enable ruvector
+```
+
+Automatic setup uses explainable project-fit rules, preserves explicit choices, and enables only supported installed tools. Missing tools receive recommendations; ambiguous execution engines require a choice. It performs no downloads or agent calls. Tools are installed separately. Health checks describe availability and supported contracts, not measured quality. All built-in plugins can be enabled together; `executionPlugin` selects the native backend for the project, while other providers run only for their relevant operations. Enabling more tools preserves the current backend. Reviewed branch improvements currently require Node/Jest/Vitest individual-case validation. [Plugin configuration and community contract →](docs/plugins.md) · [RuVector learning →](docs/ruvector.md)
+
+The next integration seams are browser evidence (Playwright), properties (fast-check), consumer contracts (Pact), service fixtures (Testcontainers), and API exploration (Schemathesis). Each has a distinct role. fast-check already composes inside a supported runner; dedicated adapters for the other shortlisted tools require separate qualification. [Research, admission criteria, and real property proof →](docs/ecosystem.md)
+
+Built to work alongside [Agentic QE](https://github.com/proffesor-for-testing/agentic-qe), [RuVector](https://github.com/ruvnet/ruvector), [pytest-testmon](https://www.testmon.org/), [Nx](https://nx.dev/), [Bazel](https://bazel.build/), [c8](https://github.com/bcoe/c8), and [Stryker](https://stryker-mutator.io/). Each remains an independently maintained project; integration does not imply affiliation or endorsement.
+
+## Show the evidence
+
+Reproducible results, raw outcomes, and stated scope accompany the claims. The comparison chart below is generated from actual test executions; raw outcomes and methodology accompany every comparison.
+
+[![TestLore controlled comparison: fault recall, executed test files and total time](benchmarks/comparison/controlled-v1-2026-09-29-clarified/comparison.svg)](docs/comparison.md)
+
+On **12 controlled changes across four Node fixtures**, TestLore caught all 63 observed failing-case results across three repetitions of seven distinct planted regressions. It executed **42.7% fewer callback-bearing test files** than the full suite. Median total time was **559 ms versus 133 ms**: discovery overhead outweighed savings on these tiny fixtures. The imports-only diagnostic missed failures. [Raw comparison →](benchmarks/comparison/controlled-v1-2026-09-29-clarified/comparison.json)
+
+| Experiment | Observed result | Reproduce / inspect |
+| --- | --- | --- |
+| **Costly callback workload** | Fixed 64-file, 200 ms async-delay fixture: 64 → 1 callback files; same planted failure caught. Median total time 4,269 → 1,487 ms (65.2% less). | [Raw results](benchmarks/workload/constructed-64-200-4-2026-09-29/workload.json) · [Method](docs/workload.md) |
+| **Pinned public projects** | Both planted nanoid/defu regressions caught; zero observed misses. Conservative full-scope selection; no speedup established. | [Raw results](benchmarks/results/2026-09-29-final-roadmap/summary.json) · [Method](docs/public-benchmarks.md) |
+| **Actual coverage + mutations** | Controlled c8/Stryker fixture: 6/8 covered lines, 11/13 detected valid mutants. Tampered reports and changed inputs rejected. | [Quality proof](docs/quality-proof.md) |
+| **Live agent generation** | Three actual Codex role calls generated 50 passing cases and caught four withheld mutations on one specification. | [Raw receipt](benchmarks/quality/live-codex.receipt.json) |
+| **Live memory comparison** | With memory: 16 passing cases; without: 33. Both caught 4/4 withheld mutations. Memory generation took longer in this single run. | [Raw comparison](benchmarks/learning/2026-09-29-native-ablation/summary.json) |
+| **Native ecosystem adapters** | Actual pytest-testmon, Nx, Bazel and AQE executions, with completeness and upstream-estimate boundaries. | [Integration receipts](docs/integrations.md) |
+| **Optional vector recall** | Real RuVector core 0.1.32: native build/reopen, bounded CLI recall, corrupt-cache fallback, and unchanged canonical memory. | [Native receipt](benchmarks/ruvector-verification.json) · [Method](docs/ruvector.md) |
+| **Complementary property library** | Real fast-check 4.10.2: complete base validation; 4/4 scoped defects caught and replayed from seed/path. | [Receipt](benchmarks/property-verification.json) · [Method](docs/ecosystem.md) |
+| **Independent AQE gate** | Actual template author reported score 100; independent review rejected the output. No live LLM claim. | [Composition receipt](benchmarks/aqe-composition-verification.json) |
+| **Packed installation** | Production-only install, native shadow fault detection, runtime capture, and a fully tested improvement branch. | `node scripts/packed-proof.js` |
+
+These are scoped experiments. The memory comparison confirms that historical recall reaches real agent generation; it does not establish a general quality gain. Tiny suites can run slower after discovery and planning. There is no universal safety, production speedup, or “best overall” claim. Misses, overhead, and counterexamples belong in the results. [Benchmark methodology →](docs/comparison.md)
+
+[![Measured constructed workload: full-suite and TestLore total time and callback-file count](docs/assets/workload.svg)](docs/workload.md)
+
+The workload chart uses **64 independent files, a constructed 200 ms asynchronous delay per callback, concurrency four, and three repetitions**. TestLore caught the same one planted failure in every repetition. The observed savings apply to this specified condition. Real projects need their own measurements. [Reproduce this workload →](docs/workload.md)
+
+## Keep your runners
+
+| Ecosystem | Integration |
+| --- | --- |
+| **Node · Jest · Vitest** | Native discovery, configured resolution, per-case results, shadow comparison and failure retention. |
+| **pytest-testmon · Nx · Bazel** | Delegate to the ecosystem's native dependency engine and preserve its measured scope. |
+| **Istanbul / c8 · Stryker** | Import genuine coverage and mutation reports bound to pre-run provenance. |
+| **Codex · custom workers · Agentic QE** | Bounded worker protocol, included native Codex adapter, and a genuine optional AQE bridge. |
+| **Browser routes · contracts · services** | Explicit asset/contract relationships and version/probe-based invalidation. |
+
+Source/service changes, incomplete reports, and altered receipts invalidate evidence. Runtime traces supplement static dependencies. Quality grades label unavailable measurements. [Native runners →](docs/runners.md) · [Evidence →](docs/evidence.md) · [Candidates →](docs/candidates.md)
+
+<details>
+<summary><strong>Explore all commands</strong></summary>
+
+| Commands | Purpose |
+| --- | --- |
+| `agent` | Create or inspect your project’s named quality agent. |
+| `plugins` | Recommend a project-fit setup, enable it with `--auto`, or manage and check tools explicitly. |
+| `improve` | New branch, reviewed candidates, full validation, automatic PR. |
+| `init`, `audit`, `modules` | Setup, quality triage and modular group proposals. |
+| `plan`, `run`, `run --shadow`, `run --full` | Explain and execute test selections; compare with full outcomes. |
+| `snapshot`, `evidence`, `stability`, `capture` | Bind and collect measured quality and runtime evidence. |
+| `generate`, `modularize`, `validate`, `apply` | Stage and validate generated or modular patches. |
+| `learn`, `recall`, `learning-export` | Inspect lessons, retrieve history, explicitly export aggregates. |
+| `external-plan`, `external-run`, `aqe` | Native ecosystem and Agentic QE integration. |
+
+The `tddswarm` command remains an alias. Existing `tddswarm.config.json`, `tddswarm.requirements.md`, and `.tddswarm/` paths remain compatible.
+
+</details>
+
+## Build the standard together
+
+TestLore is MIT-licensed and experimental. The [engineering roadmap](docs/roadmap.md) is implemented with tests and integration seams; broader real-project qualification continues. Existing tools established generation, mutation testing and selective execution. TestLore connects them into an inspectable workflow. [Prior art →](docs/landscape.md)
+
+Bring a reproducible missed dependency, a public change corpus, an independent quality metric, a runner adapter, or a learning counterexample. [Contribution guide →](CONTRIBUTING.md) · [Open an issue →](https://github.com/rudycelekli/testlore/issues/new)
+
+```sh
+npm ci --ignore-scripts
+npm test
+npm run demo
+npm run benchmark
+npm run benchmark:public
+node scripts/quality-proof.js
+node scripts/packed-proof.js
+```
+
+<p align="center"><strong>Better tests. Clearer decisions. Knowledge that compounds.</strong></p>

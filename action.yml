@@ -1,0 +1,97 @@
+name: TestLore shadow and affected tests
+description: Explainable test selection, full-suite shadow comparison, and retained evidence
+inputs:
+  base:
+    description: Git revision to compare against the working tree (checkout must fetch it)
+    required: true
+  mode:
+    description: shadow (default), affected, or full
+    default: shadow
+  root:
+    description: Project path relative to the checkout
+    default: '.'
+  environment:
+    description: Stable identifier for the test environment (include service/browser versions)
+    default: default
+  adapter:
+    description: auto, node, jest, vitest, pytest-testmon, nx, or bazel; must match project configuration
+    default: auto
+  audit:
+    description: Save a scoped quality audit alongside execution evidence
+    default: 'true'
+outputs:
+  exit-code:
+    description: Test runner exit code
+    value: ${{ steps.run.outputs.exit-code }}
+  report:
+    description: Absolute path to machine-readable execution report
+    value: ${{ steps.run.outputs.report }}
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-node@v4
+      with:
+        node-version: '22'
+    - name: Install action dependencies from its lockfile
+      shell: bash
+      env:
+        TDDSWARM_ACTION_PATH: ${{ github.action_path }}
+      run: npm ci --ignore-scripts --omit=dev --prefix "$TDDSWARM_ACTION_PATH"
+    - name: Restore test history for matching environment and configuration
+      uses: actions/cache@v4
+      with:
+        path: ${{ inputs.root }}/.tddswarm/history*.json
+        key: tddswarm-v2-${{ runner.os }}-${{ runner.arch }}-node22-${{ inputs.adapter }}-${{ inputs.environment }}-${{ hashFiles('**/tddswarm.config.json', '**/package-lock.json', '**/pnpm-lock.yaml', '**/yarn.lock', '**/pytest.ini', '**/pyproject.toml', '**/nx.json', '**/MODULE.bazel') }}-${{ github.sha }}
+        restore-keys: |
+          tddswarm-v2-${{ runner.os }}-${{ runner.arch }}-node22-${{ inputs.adapter }}-${{ inputs.environment }}-${{ hashFiles('**/tddswarm.config.json', '**/package-lock.json', '**/pnpm-lock.yaml', '**/yarn.lock', '**/pytest.ini', '**/pyproject.toml', '**/nx.json', '**/MODULE.bazel') }}-
+    - name: Run test selection
+      id: run
+      shell: bash
+      env:
+        TDDSWARM_ACTION_PATH: ${{ github.action_path }}
+        TDDSWARM_PROJECT: ${{ inputs.root }}
+        TDDSWARM_BASE: ${{ inputs.base }}
+        TDDSWARM_MODE: ${{ inputs.mode }}
+        TDDSWARM_ADAPTER: ${{ inputs.adapter }}
+        TDDSWARM_ENVIRONMENT: ${{ inputs.environment }}
+        TDDSWARM_AUDIT: ${{ inputs.audit }}
+      run: |
+        node --input-type=module <<'JS'
+        import fs from 'node:fs';
+        import path from 'node:path';
+        import { pathToFileURL } from 'node:url';
+        const load = file => import(pathToFileURL(path.join(process.env.TDDSWARM_ACTION_PATH, 'src', file)).href);
+        const { run } = await load('runner.js');
+        const { audit } = await load('audit.js');
+        const { externalRun } = await load('integrations.js');
+        const { adapterFor } = await load('execution.js');
+        const { readConfig } = await load('files.js');
+        const checkout = fs.realpathSync(process.env.GITHUB_WORKSPACE);
+        const root = fs.realpathSync(path.resolve(checkout, process.env.TDDSWARM_PROJECT));
+        if (root !== checkout && !root.startsWith(checkout + path.sep)) throw new Error('Project must be inside the checkout');
+        const mode = process.env.TDDSWARM_MODE;
+        if (!['shadow', 'affected', 'full'].includes(mode)) throw new Error('mode must be shadow, affected, or full');
+        const config = readConfig(root);
+        const adapter = process.env.TDDSWARM_ADAPTER;
+        const actual = config.integration?.type || adapterFor(config);
+        if (adapter !== 'auto' && adapter !== actual) throw new Error('adapter input must match project configuration');
+        const options = { base: process.env.TDDSWARM_BASE, shadow: mode === 'shadow', full: mode === 'full', capture: true, environment: process.env.TDDSWARM_ENVIRONMENT };
+        const result = config.integration ? externalRun(root, config, options) : run(root, options);
+        const directory = path.join(root, '.tddswarm'); fs.mkdirSync(directory, { recursive: true });
+        if (process.env.TDDSWARM_AUDIT === 'true') fs.writeFileSync(path.join(directory,'audit.json'), JSON.stringify(audit(root),null,2));
+        const report = path.join(directory, 'action-report.json');
+        fs.writeFileSync(report, JSON.stringify({ ...result, action: { sha: process.env.GITHUB_SHA, environment: process.env.TDDSWARM_ENVIRONMENT, mode, adapter: actual } }, null, 2));
+        fs.appendFileSync(process.env.GITHUB_OUTPUT, `exit-code=${result.exitCode}\nreport=${report}\n`);
+        console.log(JSON.stringify(result, null, 2));
+        process.exitCode = result.exitCode;
+        JS
+    - name: Upload execution evidence
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: tddswarm-${{ github.job }}-${{ inputs.adapter }}-${{ inputs.environment }}
+        path: |
+          ${{ inputs.root }}/.tddswarm/action-report.json
+          ${{ inputs.root }}/.tddswarm/audit.json
+        include-hidden-files: true
+        if-no-files-found: warn

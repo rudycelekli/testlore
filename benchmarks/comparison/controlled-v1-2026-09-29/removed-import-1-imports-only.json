@@ -1,0 +1,61 @@
+{
+  "scenario": "removed-import",
+  "project": "modular",
+  "regression": false,
+  "repetition": 1,
+  "order": [
+    "testlore",
+    "imports-only",
+    "full-native"
+  ],
+  "method": "imports-only",
+  "totalFiles": 8,
+  "plannedFiles": [
+    "test/4.test.js"
+  ],
+  "executedFiles": [
+    "test/4.test.js"
+  ],
+  "endToEndMs": 91,
+  "executionMs": 89,
+  "result": {
+    "adapter": "node",
+    "exitCode": 0,
+    "durationMs": 89,
+    "tests": [
+      {
+        "file": "test/4.test.js",
+        "name": "contract 4",
+        "status": "passed",
+        "durationMs": 0.380792,
+        "line": 4,
+        "column": 1,
+        "id": "60a74ffb2d4dbf89f2c7319119d0eaaf90ff8a5a2588c22e22e48ad206f13199"
+      }
+    ],
+    "collectionFiles": [
+      "test/4.test.js"
+    ],
+    "requestedFiles": [
+      "test/4.test.js"
+    ],
+    "executedFiles": [
+      "test/4.test.js"
+    ],
+    "missingFiles": [],
+    "unknownFiles": [],
+    "complete": true,
+    "command": [
+      "<node>",
+      "--test",
+      "--test-reporter=<testlore-source>/src/reporters/node.js",
+      "--test-reporter-destination=/var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-report-EV8vxn/results.json",
+      "./test/4.test.js"
+    ],
+    "stdout": "",
+    "stderr": "",
+    "signal": null,
+    "reportErrors": []
+  },
+  "observedFailures": []
+}

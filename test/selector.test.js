@@ -52,12 +52,17 @@ test('TypeScript emitted JS specifiers resolve to source TS and re-exports are t
   const root = fixture(t, { 'src/a.ts': "export { x } from './b.js';", 'src/b.ts': 'export const x:number=1;', 'test/a.test.ts': "import {x} from '../src/a.js';" });
   assert.deepEqual(evidencePath(buildGraph(root), 'test/a.test.ts', 'src/b.ts'), ['test/a.test.ts', 'src/a.ts', 'src/b.ts']);
 });
-test('aliases and package/workspace resolution widen until supported', t => {
-  const root = fixture(t, { ...twoModules, 'tsconfig.json': { compilerOptions: { paths: { '@app/*': ['src/*'] } } } });
+test('TypeScript aliases resolve through extended configuration while missing aliases widen', t => {
+  const root = fixture(t, { ...twoModules, 'tsconfig.base.json': { compilerOptions: { baseUrl: '.', paths: { '@app/*': ['src/*'] } } }, 'tsconfig.json': {extends:'./tsconfig.base.json'}, 'test/a.test.js': "import {a} from '@app/a.js';" });
+  assert.deepEqual(plan(root, { changed: ['src/a.js'] }).selected, ['test/a.test.js']);
+  write(root, 'test/a.test.js', "import '@app/missing.js';");
   assert.equal(plan(root, { changed: ['src/a.js'] }).mode, 'full');
-  write(root, 'tsconfig.json', {});
-  write(root, 'package.json', { type: 'module', workspaces: ['packages/*'] });
-  assert.equal(plan(root, { changed: ['src/a.js'] }).mode, 'full');
+});
+test('unresolved internal package imports widen without penalizing unrelated workspace declarations', t => {
+  const root = fixture(t, { ...twoModules, 'package.json': { type:'module',workspaces:['packages/*'] }, 'packages/lib/package.json': {name:'@local/lib'}, 'packages/lib/index.js':'export const x=1;' });
+  assert.deepEqual(plan(root,{changed:['src/a.js']}).selected,['test/a.test.js']);
+  write(root,'src/a.js',"export {x} from '@local/lib';");
+  assert.equal(plan(root,{changed:['src/a.js']}).mode,'full');
 });
 test('circular dependencies terminate with a valid shortest path', t => {
   const root = fixture(t, { ...twoModules, 'src/a.js': "import './b.js';", 'src/b.js': "import './a.js';" });

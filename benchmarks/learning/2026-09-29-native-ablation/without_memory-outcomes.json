@@ -1,0 +1,2065 @@
+{
+  "variant": "without_memory",
+  "durationMs": 57941,
+  "recalledRecords": 0,
+  "calls": 3,
+  "review": {
+    "accepted": true,
+    "findings": [],
+    "oracle": {
+      "independent": true,
+      "basis": [
+        "Supplied requirements establish exact clamping expectations below, within, and above inclusive bounds; tests use literal expected values.",
+        "Negative values, zero, both boundaries, interior values, and equal bounds are covered.",
+        "Reversed bounds must throw RangeError; tests check values below, at, between, and above those bounds.",
+        "Tests use deterministic named Node test/assert cases and a relative import matching the supplied source export. Acceptance does not establish execution or mutation quality."
+      ]
+    }
+  },
+  "validation": {
+    "schemaVersion": 1,
+    "id": "3aa990a4-6087-418b-a853-b66895c0a6d2",
+    "validatedAt": "2026-09-30T02:28:49.585Z",
+    "manifestHash": "c2c9507371075202921584d1eaa94e69e74f162e06b662b3052cde13388e726f",
+    "provenance": {
+      "schemaVersion": 1,
+      "revision": null,
+      "runner": "95d1d6e989702d88178820c89fe25cfa1231ecebbd0f29d4f07fc4bd27e91a86",
+      "environment": {
+        "node": "v22.19.0",
+        "platform": "darwin",
+        "arch": "arm64",
+        "labels": {}
+      },
+      "services": {},
+      "serviceWarnings": [],
+      "files": {
+        "package.json": "6dc1b06d6b093e9cccb20bee06a93836eee0420ae26803ca2ce4065d82f070d1",
+        "src/bounded.js": "0546e5f649c25c0c81dc9f197ca116c95b2e533b57d92c79f5a2e67dca38d58f",
+        "tddswarm.config.json": "b36cd881c617357e1192bd30f0f72e460cd4406a53f0711c102653bdc2d7adbf",
+        "tddswarm.requirements.md": "c822b7f84478af607d35f8dabd59dad1466dc88667ce3c41ef3df7d71b5f4ea2"
+      },
+      "fingerprint": "899f189d6fd18dfc8627f0f847121d3ce447488db4f1380b102ea99d124b2826"
+    },
+    "accepted": true,
+    "reasons": [],
+    "original": {
+      "discovery": {
+        "files": [],
+        "complete": true,
+        "adapter": "node",
+        "warnings": []
+      },
+      "exitCode": 0,
+      "complete": true,
+      "tests": [],
+      "collectionFiles": [],
+      "executedFiles": []
+    },
+    "candidate": {
+      "adapter": "node",
+      "exitCode": 0,
+      "durationMs": 308,
+      "tests": [
+        {
+          "file": "src/bounded.test.js",
+          "name": "equal zero bounds: value above",
+          "status": "passed",
+          "durationMs": 2.333334,
+          "line": 37,
+          "column": 3,
+          "id": "d001ca08bd2f6f77ed175ad4edd14cd6545a12c42ceebb5be7c1dc1b877c6866"
+        },
+        {
+          "file": "src/bounded.test.js",
+          "name": "equal zero bounds: value above",
+          "status": "passed",
+          "durationMs": 0.594625,
+          "line": 37,
+          "column": 3,
+          "id": "503670637f52e322739043f892efa1bf4107792a5671f9849a2e19065a8db936"
+        },
+        {
+          "file": "src/bounded.test.js",
+          "name": "equal zero bounds: value above",
+          "status": "passed",
+          "durationMs": 0.123708,
+          "line": 37,
+          "column": 3,
+          "id": "ca5ec315dcad03a8b3ecd4b1e9785c248daecfcdd58c11093599604444628311"
+        },
+        {
+          "file": "src/bounded.test.js",
+          "name": "equal zero bounds: value above",
+          "status": "passed",
+          "durationMs": 0.088709,
+          "line": 37,
+          "column": 3,
+          "id": "cc4339dc80a1e20e3cad62c49bb591b7944a4f0e3d1daba3081f83230bb66d12"
+        },
+        {
+          "file": "src/bounded.test.js",
+          "name": "equal zero bounds: value above",
+          "status": "passed",
+          "durationMs": 0.104417,
+          "line": 37,
+          "column": 3,
+          "id": "88683b34678b4d082e0c42c1843876e8ad133438f81b38876278028550ca40ee"
+        },
+        {
+          "file": "src/bounded.test.js",
+          "name": "equal zero bounds: value above",
+          "status": "passed",
+          "durationMs": 0.080125,
+          "line": 37,
+          "column": 3,
+          "id": "bab24c13930b28211274dfe81c02d7cab5670c2206fea3bfc47f662f96946da5"
+        },
+        {
+          "file": "src/bounded.test.js",
+          "name": "equal zero bounds: value above",
+          "status": "passed",
+          "durationMs": 0.065,
+          "line": 37,
+          "column": 3,
+          "id": "91ce073464d22c233a0b7b639922605420d213fbb3a9c62daae159930159df6d"
+        },
+        {
+          "file": "src/bounded.test.js",
+          "name": "equal zero bounds: value above",
+          "status": "passed",
+          "durationMs": 0.060542,
+          "line": 37,
+          "column": 3,
+          "id": "833b3f43c3ce0f75805056a3ec6a7b6d27899a6bd361be034e79661adf0c046e"
+        },
+        {
+          "file": "src/bounded.test.js",
+          "name": "equal zero bounds: value above",
+          "status": "passed",
+          "durationMs": 0.691833,
+          "line": 37,
+          "column": 3,
+          "id": "c69ee34b734b5a28251fa2842bbf0e9df6361245bab8e9ecd0f8e8d293d0519c"
+        },
+        {
+          "file": "src/bounded.test.js",
+          "name": "equal zero bounds: value above",
+          "status": "passed",
+          "durationMs": 1.464459,
+          "line": 37,
+          "column": 3,
+          "id": "e609e4a04041c39015de99bfd69beabba89eff8f879c04302fff74546cbd72da"
+        },
+        {
+          "file": "src/bounded.test.js",
+          "name": "equal zero bounds: value above",
+          "status": "passed",
+          "durationMs": 0.202875,
+          "line": 37,
+          "column": 3,
+          "id": "e2bbefd8209e7bbb574e97a3d65c016c8e6ccbc1f1d8962f43f680f5fe73520e"
+        },
+        {
+          "file": "src/bounded.test.js",
+          "name": "equal zero bounds: value above",
+          "status": "passed",
+          "durationMs": 0.065875,
+          "line": 37,
+          "column": 3,
+          "id": "9fd2c35d077eba385bbbf0b1771eb2a55c60d93d0bf4eb97b0030b694da140da"
+        },
+        {
+          "file": "src/bounded.test.js",
+          "name": "equal zero bounds: value above",
+          "status": "passed",
+          "durationMs": 0.04625,
+          "line": 37,
+          "column": 3,
+          "id": "2b35f7e67b4597e1aa75807ef823fc45bf3046cc79dd29f2325be64cf350289a"
+        },
+        {
+          "file": "src/bounded.test.js",
+          "name": "equal zero bounds: value above",
+          "status": "passed",
+          "durationMs": 0.099875,
+          "line": 37,
+          "column": 3,
+          "id": "43fa55dde5bdd236dc0c2edd47d3ecc9aa68906e914cc8349758192f6092fc91"
+        },
+        {
+          "file": "src/bounded.test.js",
+          "name": "equal zero bounds: value above",
+          "status": "passed",
+          "durationMs": 0.042792,
+          "line": 37,
+          "column": 3,
+          "id": "88d2bf47376128040f1b2712854f409a5fa6d0686fee5bc1fa08930025db5036"
+        },
+        {
+          "file": "src/bounded.test.js",
+          "name": "equal zero bounds: value above",
+          "status": "passed",
+          "durationMs": 0.037916,
+          "line": 37,
+          "column": 3,
+          "id": "432dad7fb81f325e82551fdbad000dc7d4ebc5a1a6f65377965d8c33b0630644"
+        },
+        {
+          "file": "src/bounded.test.js",
+          "name": "equal zero bounds: value above",
+          "status": "passed",
+          "durationMs": 0.045042,
+          "line": 37,
+          "column": 3,
+          "id": "a058f58f00b30cfc9e35f5439886464fe706ef5a4e21cccb03d0c60c38ebce6e"
+        },
+        {
+          "file": "src/bounded.test.js",
+          "name": "equal zero bounds: value above",
+          "status": "passed",
+          "durationMs": 0.036667,
+          "line": 37,
+          "column": 3,
+          "id": "3269d5e6934b98f9ee7d6eacd0e8d541180047e8261e6468ab0c3b8c936e1d8b"
+        },
+        {
+          "file": "src/bounded.test.js",
+          "name": "equal zero bounds: value above",
+          "status": "passed",
+          "durationMs": 0.035959,
+          "line": 37,
+          "column": 3,
+          "id": "44e12a3d9b1ec05547a48e693ec29a32be312a8c4d93c7a52a0217b9501c02a5"
+        },
+        {
+          "file": "src/bounded.test.js",
+          "name": "equal zero bounds: value above",
+          "status": "passed",
+          "durationMs": 0.039291,
+          "line": 37,
+          "column": 3,
+          "id": "f2ee48d6123e4695ff590d5024aaf5ef828abc1121f745f615917841fce776ac"
+        },
+        {
+          "file": "src/bounded.test.js",
+          "name": "equal zero bounds: value above",
+          "status": "passed",
+          "durationMs": 0.036375,
+          "line": 37,
+          "column": 3,
+          "id": "ccc09025eaf831af9648ba760fcc759b2f23db59a35196816d9b3d07a353c201"
+        },
+        {
+          "file": "src/bounded.test.js",
+          "name": "equal zero bounds: value above",
+          "status": "passed",
+          "durationMs": 0.038833,
+          "line": 37,
+          "column": 3,
+          "id": "45d93f8a810c3262abc08fe5df19ed1d069756d6884aae7fb1c99d74097dafef"
+        },
+        {
+          "file": "src/bounded.test.js",
+          "name": "equal zero bounds: value above",
+          "status": "passed",
+          "durationMs": 0.037375,
+          "line": 37,
+          "column": 3,
+          "id": "3f195b302d08073c0bb9c14a47de2c2d722c53c2faeccadc147dbcab352d1a5a"
+        },
+        {
+          "file": "src/bounded.test.js",
+          "name": "equal zero bounds: value above",
+          "status": "passed",
+          "durationMs": 0.050125,
+          "line": 37,
+          "column": 3,
+          "id": "2ac20c6e5c0cb2d14d648cc929a1c0ec5f0e8223a2d94563d6f8ae091492dd56"
+        },
+        {
+          "file": "src/bounded.test.js",
+          "name": "equal zero bounds: value above",
+          "status": "passed",
+          "durationMs": 0.037208,
+          "line": 37,
+          "column": 3,
+          "id": "cb8a91f6a2fbf02de8586fe832dd5405b851157fe34f7f392621963c0d14b59d"
+        },
+        {
+          "file": "src/bounded.test.js",
+          "name": "equal zero bounds: value above",
+          "status": "passed",
+          "durationMs": 0.035583,
+          "line": 37,
+          "column": 3,
+          "id": "a5c4b37d66207d04cbe4034b6ddedc5e5bfdb951eb7f68b0ebd1d4a605eede69"
+        },
+        {
+          "file": "src/bounded.test.js",
+          "name": "equal zero bounds: value above",
+          "status": "passed",
+          "durationMs": 0.036,
+          "line": 37,
+          "column": 3,
+          "id": "90c7dc060bbdbb44fec0144d394255e2d4ae77fd8cf350d85891e099f24fad39"
+        },
+        {
+          "file": "src/bounded.test.js",
+          "name": "equal zero bounds: value above",
+          "status": "passed",
+          "durationMs": 0.036125,
+          "line": 37,
+          "column": 3,
+          "id": "06a0582f36992cc29c76ea6751ff33714e1b0aae559fc73b66a7715fea23cc41"
+        },
+        {
+          "file": "src/bounded.test.js",
+          "name": "reversed bounds: value above both bounds",
+          "status": "passed",
+          "durationMs": 0.394625,
+          "line": 51,
+          "column": 3,
+          "id": "afa3549ede00f60372b2095712e003d3f7ed84f7b54a4d7a50b234ccdfaf5d65"
+        },
+        {
+          "file": "src/bounded.test.js",
+          "name": "reversed bounds: value above both bounds",
+          "status": "passed",
+          "durationMs": 0.061625,
+          "line": 51,
+          "column": 3,
+          "id": "dc88cc37ab44b0642f5387144f7df302d32666f580db10b6779a677f114c1e2a"
+        },
+        {
+          "file": "src/bounded.test.js",
+          "name": "reversed bounds: value above both bounds",
+          "status": "passed",
+          "durationMs": 0.055417,
+          "line": 51,
+          "column": 3,
+          "id": "377d50adb607877e8fcfa9f05b7fed8d77b05de1cab9defcef48e3fdf10d5b88"
+        },
+        {
+          "file": "src/bounded.test.js",
+          "name": "reversed bounds: value above both bounds",
+          "status": "passed",
+          "durationMs": 0.049958,
+          "line": 51,
+          "column": 3,
+          "id": "11b396f67169a874c4bfbbe87bb4a4d96acdb139aba776e48664c6862700844f"
+        },
+        {
+          "file": "src/bounded.test.js",
+          "name": "reversed bounds: value above both bounds",
+          "status": "passed",
+          "durationMs": 0.0455,
+          "line": 51,
+          "column": 3,
+          "id": "38fd430afa19924fd58051070787f5aa67dde85711d08cc0498d299752275759"
+        }
+      ],
+      "collectionFiles": [
+        "src/bounded.test.js"
+      ],
+      "requestedFiles": [
+        "src/bounded.test.js"
+      ],
+      "executedFiles": [
+        "src/bounded.test.js"
+      ],
+      "missingFiles": [],
+      "unknownFiles": [],
+      "complete": true,
+      "command": [
+        "<node>",
+        "--test",
+        "--test-reporter=<repository>src/reporters/node.js",
+        "--test-reporter-destination=/var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-report-0Q0rd4/results.json",
+        "./src/bounded.test.js"
+      ],
+      "stdout": "",
+      "stderr": "",
+      "signal": null,
+      "reportErrors": [],
+      "discovery": {
+        "files": [
+          "src/bounded.test.js"
+        ],
+        "complete": true,
+        "adapter": "node",
+        "warnings": []
+      }
+    },
+    "missingCases": [],
+    "defects": [],
+    "measured": {
+      "execution": true,
+      "heldOutDefects": 0
+    },
+    "isolation": "disposable-file-copy-with-trusted-dependencies",
+    "applied": false,
+    "integrity": "57c821fee2977083e90cad47c00d95bdc93e9e0ace641744bdb9fb2d5bbeed08"
+  },
+  "baseline": {
+    "adapter": "node",
+    "exitCode": 0,
+    "durationMs": 303,
+    "tests": [
+      {
+        "file": "src/bounded.test.js",
+        "name": "equal zero bounds: value above",
+        "status": "passed",
+        "durationMs": 1.179083,
+        "line": 37,
+        "column": 3,
+        "id": "d001ca08bd2f6f77ed175ad4edd14cd6545a12c42ceebb5be7c1dc1b877c6866"
+      },
+      {
+        "file": "src/bounded.test.js",
+        "name": "equal zero bounds: value above",
+        "status": "passed",
+        "durationMs": 0.213375,
+        "line": 37,
+        "column": 3,
+        "id": "503670637f52e322739043f892efa1bf4107792a5671f9849a2e19065a8db936"
+      },
+      {
+        "file": "src/bounded.test.js",
+        "name": "equal zero bounds: value above",
+        "status": "passed",
+        "durationMs": 0.079583,
+        "line": 37,
+        "column": 3,
+        "id": "ca5ec315dcad03a8b3ecd4b1e9785c248daecfcdd58c11093599604444628311"
+      },
+      {
+        "file": "src/bounded.test.js",
+        "name": "equal zero bounds: value above",
+        "status": "passed",
+        "durationMs": 0.074375,
+        "line": 37,
+        "column": 3,
+        "id": "cc4339dc80a1e20e3cad62c49bb591b7944a4f0e3d1daba3081f83230bb66d12"
+      },
+      {
+        "file": "src/bounded.test.js",
+        "name": "equal zero bounds: value above",
+        "status": "passed",
+        "durationMs": 0.079125,
+        "line": 37,
+        "column": 3,
+        "id": "88683b34678b4d082e0c42c1843876e8ad133438f81b38876278028550ca40ee"
+      },
+      {
+        "file": "src/bounded.test.js",
+        "name": "equal zero bounds: value above",
+        "status": "passed",
+        "durationMs": 0.07175,
+        "line": 37,
+        "column": 3,
+        "id": "bab24c13930b28211274dfe81c02d7cab5670c2206fea3bfc47f662f96946da5"
+      },
+      {
+        "file": "src/bounded.test.js",
+        "name": "equal zero bounds: value above",
+        "status": "passed",
+        "durationMs": 0.058417,
+        "line": 37,
+        "column": 3,
+        "id": "91ce073464d22c233a0b7b639922605420d213fbb3a9c62daae159930159df6d"
+      },
+      {
+        "file": "src/bounded.test.js",
+        "name": "equal zero bounds: value above",
+        "status": "passed",
+        "durationMs": 0.061333,
+        "line": 37,
+        "column": 3,
+        "id": "833b3f43c3ce0f75805056a3ec6a7b6d27899a6bd361be034e79661adf0c046e"
+      },
+      {
+        "file": "src/bounded.test.js",
+        "name": "equal zero bounds: value above",
+        "status": "passed",
+        "durationMs": 0.478584,
+        "line": 37,
+        "column": 3,
+        "id": "c69ee34b734b5a28251fa2842bbf0e9df6361245bab8e9ecd0f8e8d293d0519c"
+      },
+      {
+        "file": "src/bounded.test.js",
+        "name": "equal zero bounds: value above",
+        "status": "passed",
+        "durationMs": 0.54425,
+        "line": 37,
+        "column": 3,
+        "id": "e609e4a04041c39015de99bfd69beabba89eff8f879c04302fff74546cbd72da"
+      },
+      {
+        "file": "src/bounded.test.js",
+        "name": "equal zero bounds: value above",
+        "status": "passed",
+        "durationMs": 0.158125,
+        "line": 37,
+        "column": 3,
+        "id": "e2bbefd8209e7bbb574e97a3d65c016c8e6ccbc1f1d8962f43f680f5fe73520e"
+      },
+      {
+        "file": "src/bounded.test.js",
+        "name": "equal zero bounds: value above",
+        "status": "passed",
+        "durationMs": 0.05625,
+        "line": 37,
+        "column": 3,
+        "id": "9fd2c35d077eba385bbbf0b1771eb2a55c60d93d0bf4eb97b0030b694da140da"
+      },
+      {
+        "file": "src/bounded.test.js",
+        "name": "equal zero bounds: value above",
+        "status": "passed",
+        "durationMs": 0.043042,
+        "line": 37,
+        "column": 3,
+        "id": "2b35f7e67b4597e1aa75807ef823fc45bf3046cc79dd29f2325be64cf350289a"
+      },
+      {
+        "file": "src/bounded.test.js",
+        "name": "equal zero bounds: value above",
+        "status": "passed",
+        "durationMs": 0.039667,
+        "line": 37,
+        "column": 3,
+        "id": "43fa55dde5bdd236dc0c2edd47d3ecc9aa68906e914cc8349758192f6092fc91"
+      },
+      {
+        "file": "src/bounded.test.js",
+        "name": "equal zero bounds: value above",
+        "status": "passed",
+        "durationMs": 0.437,
+        "line": 37,
+        "column": 3,
+        "id": "88d2bf47376128040f1b2712854f409a5fa6d0686fee5bc1fa08930025db5036"
+      },
+      {
+        "file": "src/bounded.test.js",
+        "name": "equal zero bounds: value above",
+        "status": "passed",
+        "durationMs": 0.098792,
+        "line": 37,
+        "column": 3,
+        "id": "432dad7fb81f325e82551fdbad000dc7d4ebc5a1a6f65377965d8c33b0630644"
+      },
+      {
+        "file": "src/bounded.test.js",
+        "name": "equal zero bounds: value above",
+        "status": "passed",
+        "durationMs": 0.180375,
+        "line": 37,
+        "column": 3,
+        "id": "a058f58f00b30cfc9e35f5439886464fe706ef5a4e21cccb03d0c60c38ebce6e"
+      },
+      {
+        "file": "src/bounded.test.js",
+        "name": "equal zero bounds: value above",
+        "status": "passed",
+        "durationMs": 0.050542,
+        "line": 37,
+        "column": 3,
+        "id": "3269d5e6934b98f9ee7d6eacd0e8d541180047e8261e6468ab0c3b8c936e1d8b"
+      },
+      {
+        "file": "src/bounded.test.js",
+        "name": "equal zero bounds: value above",
+        "status": "passed",
+        "durationMs": 0.036792,
+        "line": 37,
+        "column": 3,
+        "id": "44e12a3d9b1ec05547a48e693ec29a32be312a8c4d93c7a52a0217b9501c02a5"
+      },
+      {
+        "file": "src/bounded.test.js",
+        "name": "equal zero bounds: value above",
+        "status": "passed",
+        "durationMs": 0.036166,
+        "line": 37,
+        "column": 3,
+        "id": "f2ee48d6123e4695ff590d5024aaf5ef828abc1121f745f615917841fce776ac"
+      },
+      {
+        "file": "src/bounded.test.js",
+        "name": "equal zero bounds: value above",
+        "status": "passed",
+        "durationMs": 0.187208,
+        "line": 37,
+        "column": 3,
+        "id": "ccc09025eaf831af9648ba760fcc759b2f23db59a35196816d9b3d07a353c201"
+      },
+      {
+        "file": "src/bounded.test.js",
+        "name": "equal zero bounds: value above",
+        "status": "passed",
+        "durationMs": 0.079916,
+        "line": 37,
+        "column": 3,
+        "id": "45d93f8a810c3262abc08fe5df19ed1d069756d6884aae7fb1c99d74097dafef"
+      },
+      {
+        "file": "src/bounded.test.js",
+        "name": "equal zero bounds: value above",
+        "status": "passed",
+        "durationMs": 0.047875,
+        "line": 37,
+        "column": 3,
+        "id": "3f195b302d08073c0bb9c14a47de2c2d722c53c2faeccadc147dbcab352d1a5a"
+      },
+      {
+        "file": "src/bounded.test.js",
+        "name": "equal zero bounds: value above",
+        "status": "passed",
+        "durationMs": 0.038209,
+        "line": 37,
+        "column": 3,
+        "id": "2ac20c6e5c0cb2d14d648cc929a1c0ec5f0e8223a2d94563d6f8ae091492dd56"
+      },
+      {
+        "file": "src/bounded.test.js",
+        "name": "equal zero bounds: value above",
+        "status": "passed",
+        "durationMs": 0.042667,
+        "line": 37,
+        "column": 3,
+        "id": "cb8a91f6a2fbf02de8586fe832dd5405b851157fe34f7f392621963c0d14b59d"
+      },
+      {
+        "file": "src/bounded.test.js",
+        "name": "equal zero bounds: value above",
+        "status": "passed",
+        "durationMs": 0.034458,
+        "line": 37,
+        "column": 3,
+        "id": "a5c4b37d66207d04cbe4034b6ddedc5e5bfdb951eb7f68b0ebd1d4a605eede69"
+      },
+      {
+        "file": "src/bounded.test.js",
+        "name": "equal zero bounds: value above",
+        "status": "passed",
+        "durationMs": 0.125542,
+        "line": 37,
+        "column": 3,
+        "id": "90c7dc060bbdbb44fec0144d394255e2d4ae77fd8cf350d85891e099f24fad39"
+      },
+      {
+        "file": "src/bounded.test.js",
+        "name": "equal zero bounds: value above",
+        "status": "passed",
+        "durationMs": 0.075166,
+        "line": 37,
+        "column": 3,
+        "id": "06a0582f36992cc29c76ea6751ff33714e1b0aae559fc73b66a7715fea23cc41"
+      },
+      {
+        "file": "src/bounded.test.js",
+        "name": "reversed bounds: value above both bounds",
+        "status": "passed",
+        "durationMs": 0.385791,
+        "line": 51,
+        "column": 3,
+        "id": "afa3549ede00f60372b2095712e003d3f7ed84f7b54a4d7a50b234ccdfaf5d65"
+      },
+      {
+        "file": "src/bounded.test.js",
+        "name": "reversed bounds: value above both bounds",
+        "status": "passed",
+        "durationMs": 0.059625,
+        "line": 51,
+        "column": 3,
+        "id": "dc88cc37ab44b0642f5387144f7df302d32666f580db10b6779a677f114c1e2a"
+      },
+      {
+        "file": "src/bounded.test.js",
+        "name": "reversed bounds: value above both bounds",
+        "status": "passed",
+        "durationMs": 0.054083,
+        "line": 51,
+        "column": 3,
+        "id": "377d50adb607877e8fcfa9f05b7fed8d77b05de1cab9defcef48e3fdf10d5b88"
+      },
+      {
+        "file": "src/bounded.test.js",
+        "name": "reversed bounds: value above both bounds",
+        "status": "passed",
+        "durationMs": 0.050291,
+        "line": 51,
+        "column": 3,
+        "id": "11b396f67169a874c4bfbbe87bb4a4d96acdb139aba776e48664c6862700844f"
+      },
+      {
+        "file": "src/bounded.test.js",
+        "name": "reversed bounds: value above both bounds",
+        "status": "passed",
+        "durationMs": 0.045209,
+        "line": 51,
+        "column": 3,
+        "id": "38fd430afa19924fd58051070787f5aa67dde85711d08cc0498d299752275759"
+      }
+    ],
+    "collectionFiles": [
+      "src/bounded.test.js"
+    ],
+    "requestedFiles": [
+      "src/bounded.test.js"
+    ],
+    "executedFiles": [
+      "src/bounded.test.js"
+    ],
+    "missingFiles": [],
+    "unknownFiles": [],
+    "complete": true,
+    "command": [
+      "<node>",
+      "--test",
+      "--test-reporter=<repository>src/reporters/node.js",
+      "--test-reporter-destination=/var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-report-7pOhnH/results.json",
+      "./src/bounded.test.js"
+    ],
+    "stdout": "",
+    "stderr": "",
+    "signal": null,
+    "reportErrors": []
+  },
+  "heldOut": [
+    {
+      "name": "lower",
+      "detected": true,
+      "result": {
+        "adapter": "node",
+        "exitCode": 1,
+        "durationMs": 264,
+        "tests": [
+          {
+            "file": "src/bounded.test.js",
+            "name": "equal zero bounds: value above",
+            "status": "failed",
+            "durationMs": 2.62975,
+            "line": 37,
+            "column": 3,
+            "id": "d001ca08bd2f6f77ed175ad4edd14cd6545a12c42ceebb5be7c1dc1b877c6866"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "equal zero bounds: value above",
+            "status": "passed",
+            "durationMs": 0.162709,
+            "line": 37,
+            "column": 3,
+            "id": "503670637f52e322739043f892efa1bf4107792a5671f9849a2e19065a8db936"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "equal zero bounds: value above",
+            "status": "passed",
+            "durationMs": 0.086834,
+            "line": 37,
+            "column": 3,
+            "id": "ca5ec315dcad03a8b3ecd4b1e9785c248daecfcdd58c11093599604444628311"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "equal zero bounds: value above",
+            "status": "passed",
+            "durationMs": 0.082542,
+            "line": 37,
+            "column": 3,
+            "id": "cc4339dc80a1e20e3cad62c49bb591b7944a4f0e3d1daba3081f83230bb66d12"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "equal zero bounds: value above",
+            "status": "passed",
+            "durationMs": 0.078959,
+            "line": 37,
+            "column": 3,
+            "id": "88683b34678b4d082e0c42c1843876e8ad133438f81b38876278028550ca40ee"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "equal zero bounds: value above",
+            "status": "failed",
+            "durationMs": 0.374792,
+            "line": 37,
+            "column": 3,
+            "id": "bab24c13930b28211274dfe81c02d7cab5670c2206fea3bfc47f662f96946da5"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "equal zero bounds: value above",
+            "status": "passed",
+            "durationMs": 0.197042,
+            "line": 37,
+            "column": 3,
+            "id": "91ce073464d22c233a0b7b639922605420d213fbb3a9c62daae159930159df6d"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "equal zero bounds: value above",
+            "status": "passed",
+            "durationMs": 0.062458,
+            "line": 37,
+            "column": 3,
+            "id": "833b3f43c3ce0f75805056a3ec6a7b6d27899a6bd361be034e79661adf0c046e"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "equal zero bounds: value above",
+            "status": "passed",
+            "durationMs": 0.463125,
+            "line": 37,
+            "column": 3,
+            "id": "c69ee34b734b5a28251fa2842bbf0e9df6361245bab8e9ecd0f8e8d293d0519c"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "equal zero bounds: value above",
+            "status": "passed",
+            "durationMs": 0.493125,
+            "line": 37,
+            "column": 3,
+            "id": "e609e4a04041c39015de99bfd69beabba89eff8f879c04302fff74546cbd72da"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "equal zero bounds: value above",
+            "status": "passed",
+            "durationMs": 0.164167,
+            "line": 37,
+            "column": 3,
+            "id": "e2bbefd8209e7bbb574e97a3d65c016c8e6ccbc1f1d8962f43f680f5fe73520e"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "equal zero bounds: value above",
+            "status": "passed",
+            "durationMs": 0.064708,
+            "line": 37,
+            "column": 3,
+            "id": "9fd2c35d077eba385bbbf0b1771eb2a55c60d93d0bf4eb97b0030b694da140da"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "equal zero bounds: value above",
+            "status": "failed",
+            "durationMs": 0.164167,
+            "line": 37,
+            "column": 3,
+            "id": "2b35f7e67b4597e1aa75807ef823fc45bf3046cc79dd29f2325be64cf350289a"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "equal zero bounds: value above",
+            "status": "passed",
+            "durationMs": 1.114417,
+            "line": 37,
+            "column": 3,
+            "id": "43fa55dde5bdd236dc0c2edd47d3ecc9aa68906e914cc8349758192f6092fc91"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "equal zero bounds: value above",
+            "status": "passed",
+            "durationMs": 0.048958,
+            "line": 37,
+            "column": 3,
+            "id": "88d2bf47376128040f1b2712854f409a5fa6d0686fee5bc1fa08930025db5036"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "equal zero bounds: value above",
+            "status": "passed",
+            "durationMs": 0.037,
+            "line": 37,
+            "column": 3,
+            "id": "432dad7fb81f325e82551fdbad000dc7d4ebc5a1a6f65377965d8c33b0630644"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "equal zero bounds: value above",
+            "status": "passed",
+            "durationMs": 0.099458,
+            "line": 37,
+            "column": 3,
+            "id": "a058f58f00b30cfc9e35f5439886464fe706ef5a4e21cccb03d0c60c38ebce6e"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "equal zero bounds: value above",
+            "status": "failed",
+            "durationMs": 0.166041,
+            "line": 37,
+            "column": 3,
+            "id": "3269d5e6934b98f9ee7d6eacd0e8d541180047e8261e6468ab0c3b8c936e1d8b"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "equal zero bounds: value above",
+            "status": "passed",
+            "durationMs": 0.048834,
+            "line": 37,
+            "column": 3,
+            "id": "44e12a3d9b1ec05547a48e693ec29a32be312a8c4d93c7a52a0217b9501c02a5"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "equal zero bounds: value above",
+            "status": "passed",
+            "durationMs": 0.037917,
+            "line": 37,
+            "column": 3,
+            "id": "f2ee48d6123e4695ff590d5024aaf5ef828abc1121f745f615917841fce776ac"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "equal zero bounds: value above",
+            "status": "passed",
+            "durationMs": 0.035208,
+            "line": 37,
+            "column": 3,
+            "id": "ccc09025eaf831af9648ba760fcc759b2f23db59a35196816d9b3d07a353c201"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "equal zero bounds: value above",
+            "status": "passed",
+            "durationMs": 0.034583,
+            "line": 37,
+            "column": 3,
+            "id": "45d93f8a810c3262abc08fe5df19ed1d069756d6884aae7fb1c99d74097dafef"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "equal zero bounds: value above",
+            "status": "failed",
+            "durationMs": 0.114583,
+            "line": 37,
+            "column": 3,
+            "id": "3f195b302d08073c0bb9c14a47de2c2d722c53c2faeccadc147dbcab352d1a5a"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "equal zero bounds: value above",
+            "status": "passed",
+            "durationMs": 0.036625,
+            "line": 37,
+            "column": 3,
+            "id": "2ac20c6e5c0cb2d14d648cc929a1c0ec5f0e8223a2d94563d6f8ae091492dd56"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "equal zero bounds: value above",
+            "status": "passed",
+            "durationMs": 0.041208,
+            "line": 37,
+            "column": 3,
+            "id": "cb8a91f6a2fbf02de8586fe832dd5405b851157fe34f7f392621963c0d14b59d"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "equal zero bounds: value above",
+            "status": "failed",
+            "durationMs": 0.262209,
+            "line": 37,
+            "column": 3,
+            "id": "a5c4b37d66207d04cbe4034b6ddedc5e5bfdb951eb7f68b0ebd1d4a605eede69"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "equal zero bounds: value above",
+            "status": "passed",
+            "durationMs": 0.0395,
+            "line": 37,
+            "column": 3,
+            "id": "90c7dc060bbdbb44fec0144d394255e2d4ae77fd8cf350d85891e099f24fad39"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "equal zero bounds: value above",
+            "status": "passed",
+            "durationMs": 0.034125,
+            "line": 37,
+            "column": 3,
+            "id": "06a0582f36992cc29c76ea6751ff33714e1b0aae559fc73b66a7715fea23cc41"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "reversed bounds: value above both bounds",
+            "status": "passed",
+            "durationMs": 1.953458,
+            "line": 51,
+            "column": 3,
+            "id": "afa3549ede00f60372b2095712e003d3f7ed84f7b54a4d7a50b234ccdfaf5d65"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "reversed bounds: value above both bounds",
+            "status": "passed",
+            "durationMs": 0.130375,
+            "line": 51,
+            "column": 3,
+            "id": "dc88cc37ab44b0642f5387144f7df302d32666f580db10b6779a677f114c1e2a"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "reversed bounds: value above both bounds",
+            "status": "passed",
+            "durationMs": 0.065084,
+            "line": 51,
+            "column": 3,
+            "id": "377d50adb607877e8fcfa9f05b7fed8d77b05de1cab9defcef48e3fdf10d5b88"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "reversed bounds: value above both bounds",
+            "status": "passed",
+            "durationMs": 0.053417,
+            "line": 51,
+            "column": 3,
+            "id": "11b396f67169a874c4bfbbe87bb4a4d96acdb139aba776e48664c6862700844f"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "reversed bounds: value above both bounds",
+            "status": "passed",
+            "durationMs": 0.049417,
+            "line": 51,
+            "column": 3,
+            "id": "38fd430afa19924fd58051070787f5aa67dde85711d08cc0498d299752275759"
+          }
+        ],
+        "collectionFiles": [
+          "src/bounded.test.js"
+        ],
+        "requestedFiles": [
+          "src/bounded.test.js"
+        ],
+        "executedFiles": [
+          "src/bounded.test.js"
+        ],
+        "missingFiles": [],
+        "unknownFiles": [],
+        "complete": true,
+        "command": [
+          "<node>",
+          "--test",
+          "--test-reporter=<repository>src/reporters/node.js",
+          "--test-reporter-destination=/var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-report-zHtl0V/results.json",
+          "./src/bounded.test.js"
+        ],
+        "stdout": "",
+        "stderr": "",
+        "signal": null,
+        "reportErrors": []
+      }
+    },
+    {
+      "name": "upper",
+      "detected": true,
+      "result": {
+        "adapter": "node",
+        "exitCode": 1,
+        "durationMs": 315,
+        "tests": [
+          {
+            "file": "src/bounded.test.js",
+            "name": "equal zero bounds: value above",
+            "status": "passed",
+            "durationMs": 1.890125,
+            "line": 37,
+            "column": 3,
+            "id": "d001ca08bd2f6f77ed175ad4edd14cd6545a12c42ceebb5be7c1dc1b877c6866"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "equal zero bounds: value above",
+            "status": "passed",
+            "durationMs": 0.303917,
+            "line": 37,
+            "column": 3,
+            "id": "503670637f52e322739043f892efa1bf4107792a5671f9849a2e19065a8db936"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "equal zero bounds: value above",
+            "status": "passed",
+            "durationMs": 0.102667,
+            "line": 37,
+            "column": 3,
+            "id": "ca5ec315dcad03a8b3ecd4b1e9785c248daecfcdd58c11093599604444628311"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "equal zero bounds: value above",
+            "status": "passed",
+            "durationMs": 0.075791,
+            "line": 37,
+            "column": 3,
+            "id": "cc4339dc80a1e20e3cad62c49bb591b7944a4f0e3d1daba3081f83230bb66d12"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "equal zero bounds: value above",
+            "status": "failed",
+            "durationMs": 0.780375,
+            "line": 37,
+            "column": 3,
+            "id": "88683b34678b4d082e0c42c1843876e8ad133438f81b38876278028550ca40ee"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "equal zero bounds: value above",
+            "status": "passed",
+            "durationMs": 0.097875,
+            "line": 37,
+            "column": 3,
+            "id": "bab24c13930b28211274dfe81c02d7cab5670c2206fea3bfc47f662f96946da5"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "equal zero bounds: value above",
+            "status": "passed",
+            "durationMs": 0.068083,
+            "line": 37,
+            "column": 3,
+            "id": "91ce073464d22c233a0b7b639922605420d213fbb3a9c62daae159930159df6d"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "equal zero bounds: value above",
+            "status": "passed",
+            "durationMs": 0.062958,
+            "line": 37,
+            "column": 3,
+            "id": "833b3f43c3ce0f75805056a3ec6a7b6d27899a6bd361be034e79661adf0c046e"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "equal zero bounds: value above",
+            "status": "passed",
+            "durationMs": 1.920417,
+            "line": 37,
+            "column": 3,
+            "id": "c69ee34b734b5a28251fa2842bbf0e9df6361245bab8e9ecd0f8e8d293d0519c"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "equal zero bounds: value above",
+            "status": "passed",
+            "durationMs": 0.602584,
+            "line": 37,
+            "column": 3,
+            "id": "e609e4a04041c39015de99bfd69beabba89eff8f879c04302fff74546cbd72da"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "equal zero bounds: value above",
+            "status": "passed",
+            "durationMs": 0.7975,
+            "line": 37,
+            "column": 3,
+            "id": "e2bbefd8209e7bbb574e97a3d65c016c8e6ccbc1f1d8962f43f680f5fe73520e"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "equal zero bounds: value above",
+            "status": "failed",
+            "durationMs": 0.2125,
+            "line": 37,
+            "column": 3,
+            "id": "9fd2c35d077eba385bbbf0b1771eb2a55c60d93d0bf4eb97b0030b694da140da"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "equal zero bounds: value above",
+            "status": "passed",
+            "durationMs": 0.052875,
+            "line": 37,
+            "column": 3,
+            "id": "2b35f7e67b4597e1aa75807ef823fc45bf3046cc79dd29f2325be64cf350289a"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "equal zero bounds: value above",
+            "status": "passed",
+            "durationMs": 0.041958,
+            "line": 37,
+            "column": 3,
+            "id": "43fa55dde5bdd236dc0c2edd47d3ecc9aa68906e914cc8349758192f6092fc91"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "equal zero bounds: value above",
+            "status": "passed",
+            "durationMs": 0.063083,
+            "line": 37,
+            "column": 3,
+            "id": "88d2bf47376128040f1b2712854f409a5fa6d0686fee5bc1fa08930025db5036"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "equal zero bounds: value above",
+            "status": "passed",
+            "durationMs": 0.038,
+            "line": 37,
+            "column": 3,
+            "id": "432dad7fb81f325e82551fdbad000dc7d4ebc5a1a6f65377965d8c33b0630644"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "equal zero bounds: value above",
+            "status": "failed",
+            "durationMs": 0.144667,
+            "line": 37,
+            "column": 3,
+            "id": "a058f58f00b30cfc9e35f5439886464fe706ef5a4e21cccb03d0c60c38ebce6e"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "equal zero bounds: value above",
+            "status": "passed",
+            "durationMs": 0.038333,
+            "line": 37,
+            "column": 3,
+            "id": "3269d5e6934b98f9ee7d6eacd0e8d541180047e8261e6468ab0c3b8c936e1d8b"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "equal zero bounds: value above",
+            "status": "passed",
+            "durationMs": 0.040166,
+            "line": 37,
+            "column": 3,
+            "id": "44e12a3d9b1ec05547a48e693ec29a32be312a8c4d93c7a52a0217b9501c02a5"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "equal zero bounds: value above",
+            "status": "passed",
+            "durationMs": 0.038292,
+            "line": 37,
+            "column": 3,
+            "id": "f2ee48d6123e4695ff590d5024aaf5ef828abc1121f745f615917841fce776ac"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "equal zero bounds: value above",
+            "status": "passed",
+            "durationMs": 0.033083,
+            "line": 37,
+            "column": 3,
+            "id": "ccc09025eaf831af9648ba760fcc759b2f23db59a35196816d9b3d07a353c201"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "equal zero bounds: value above",
+            "status": "failed",
+            "durationMs": 0.184375,
+            "line": 37,
+            "column": 3,
+            "id": "45d93f8a810c3262abc08fe5df19ed1d069756d6884aae7fb1c99d74097dafef"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "equal zero bounds: value above",
+            "status": "passed",
+            "durationMs": 0.035792,
+            "line": 37,
+            "column": 3,
+            "id": "3f195b302d08073c0bb9c14a47de2c2d722c53c2faeccadc147dbcab352d1a5a"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "equal zero bounds: value above",
+            "status": "passed",
+            "durationMs": 0.032666,
+            "line": 37,
+            "column": 3,
+            "id": "2ac20c6e5c0cb2d14d648cc929a1c0ec5f0e8223a2d94563d6f8ae091492dd56"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "equal zero bounds: value above",
+            "status": "failed",
+            "durationMs": 0.088833,
+            "line": 37,
+            "column": 3,
+            "id": "cb8a91f6a2fbf02de8586fe832dd5405b851157fe34f7f392621963c0d14b59d"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "equal zero bounds: value above",
+            "status": "passed",
+            "durationMs": 0.035208,
+            "line": 37,
+            "column": 3,
+            "id": "a5c4b37d66207d04cbe4034b6ddedc5e5bfdb951eb7f68b0ebd1d4a605eede69"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "equal zero bounds: value above",
+            "status": "passed",
+            "durationMs": 0.037083,
+            "line": 37,
+            "column": 3,
+            "id": "90c7dc060bbdbb44fec0144d394255e2d4ae77fd8cf350d85891e099f24fad39"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "equal zero bounds: value above",
+            "status": "failed",
+            "durationMs": 0.228291,
+            "line": 37,
+            "column": 3,
+            "id": "06a0582f36992cc29c76ea6751ff33714e1b0aae559fc73b66a7715fea23cc41"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "reversed bounds: value above both bounds",
+            "status": "passed",
+            "durationMs": 0.564792,
+            "line": 51,
+            "column": 3,
+            "id": "afa3549ede00f60372b2095712e003d3f7ed84f7b54a4d7a50b234ccdfaf5d65"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "reversed bounds: value above both bounds",
+            "status": "passed",
+            "durationMs": 0.085834,
+            "line": 51,
+            "column": 3,
+            "id": "dc88cc37ab44b0642f5387144f7df302d32666f580db10b6779a677f114c1e2a"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "reversed bounds: value above both bounds",
+            "status": "passed",
+            "durationMs": 0.133333,
+            "line": 51,
+            "column": 3,
+            "id": "377d50adb607877e8fcfa9f05b7fed8d77b05de1cab9defcef48e3fdf10d5b88"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "reversed bounds: value above both bounds",
+            "status": "passed",
+            "durationMs": 0.061083,
+            "line": 51,
+            "column": 3,
+            "id": "11b396f67169a874c4bfbbe87bb4a4d96acdb139aba776e48664c6862700844f"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "reversed bounds: value above both bounds",
+            "status": "passed",
+            "durationMs": 0.117375,
+            "line": 51,
+            "column": 3,
+            "id": "38fd430afa19924fd58051070787f5aa67dde85711d08cc0498d299752275759"
+          }
+        ],
+        "collectionFiles": [
+          "src/bounded.test.js"
+        ],
+        "requestedFiles": [
+          "src/bounded.test.js"
+        ],
+        "executedFiles": [
+          "src/bounded.test.js"
+        ],
+        "missingFiles": [],
+        "unknownFiles": [],
+        "complete": true,
+        "command": [
+          "<node>",
+          "--test",
+          "--test-reporter=<repository>src/reporters/node.js",
+          "--test-reporter-destination=/var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-report-t8KkCJ/results.json",
+          "./src/bounded.test.js"
+        ],
+        "stdout": "",
+        "stderr": "",
+        "signal": null,
+        "reportErrors": []
+      }
+    },
+    {
+      "name": "interior",
+      "detected": true,
+      "result": {
+        "adapter": "node",
+        "exitCode": 1,
+        "durationMs": 390,
+        "tests": [
+          {
+            "file": "src/bounded.test.js",
+            "name": "equal zero bounds: value above",
+            "status": "passed",
+            "durationMs": 1.008875,
+            "line": 37,
+            "column": 3,
+            "id": "d001ca08bd2f6f77ed175ad4edd14cd6545a12c42ceebb5be7c1dc1b877c6866"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "equal zero bounds: value above",
+            "status": "passed",
+            "durationMs": 0.197875,
+            "line": 37,
+            "column": 3,
+            "id": "503670637f52e322739043f892efa1bf4107792a5671f9849a2e19065a8db936"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "equal zero bounds: value above",
+            "status": "failed",
+            "durationMs": 0.703708,
+            "line": 37,
+            "column": 3,
+            "id": "ca5ec315dcad03a8b3ecd4b1e9785c248daecfcdd58c11093599604444628311"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "equal zero bounds: value above",
+            "status": "failed",
+            "durationMs": 0.246708,
+            "line": 37,
+            "column": 3,
+            "id": "cc4339dc80a1e20e3cad62c49bb591b7944a4f0e3d1daba3081f83230bb66d12"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "equal zero bounds: value above",
+            "status": "failed",
+            "durationMs": 0.159542,
+            "line": 37,
+            "column": 3,
+            "id": "88683b34678b4d082e0c42c1843876e8ad133438f81b38876278028550ca40ee"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "equal zero bounds: value above",
+            "status": "passed",
+            "durationMs": 0.078292,
+            "line": 37,
+            "column": 3,
+            "id": "bab24c13930b28211274dfe81c02d7cab5670c2206fea3bfc47f662f96946da5"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "equal zero bounds: value above",
+            "status": "passed",
+            "durationMs": 0.06425,
+            "line": 37,
+            "column": 3,
+            "id": "91ce073464d22c233a0b7b639922605420d213fbb3a9c62daae159930159df6d"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "equal zero bounds: value above",
+            "status": "failed",
+            "durationMs": 0.099416,
+            "line": 37,
+            "column": 3,
+            "id": "833b3f43c3ce0f75805056a3ec6a7b6d27899a6bd361be034e79661adf0c046e"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "equal zero bounds: value above",
+            "status": "failed",
+            "durationMs": 0.461708,
+            "line": 37,
+            "column": 3,
+            "id": "c69ee34b734b5a28251fa2842bbf0e9df6361245bab8e9ecd0f8e8d293d0519c"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "equal zero bounds: value above",
+            "status": "failed",
+            "durationMs": 0.502458,
+            "line": 37,
+            "column": 3,
+            "id": "e609e4a04041c39015de99bfd69beabba89eff8f879c04302fff74546cbd72da"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "equal zero bounds: value above",
+            "status": "failed",
+            "durationMs": 0.211625,
+            "line": 37,
+            "column": 3,
+            "id": "e2bbefd8209e7bbb574e97a3d65c016c8e6ccbc1f1d8962f43f680f5fe73520e"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "equal zero bounds: value above",
+            "status": "failed",
+            "durationMs": 0.167833,
+            "line": 37,
+            "column": 3,
+            "id": "9fd2c35d077eba385bbbf0b1771eb2a55c60d93d0bf4eb97b0030b694da140da"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "equal zero bounds: value above",
+            "status": "passed",
+            "durationMs": 0.057833,
+            "line": 37,
+            "column": 3,
+            "id": "2b35f7e67b4597e1aa75807ef823fc45bf3046cc79dd29f2325be64cf350289a"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "equal zero bounds: value above",
+            "status": "passed",
+            "durationMs": 0.046958,
+            "line": 37,
+            "column": 3,
+            "id": "43fa55dde5bdd236dc0c2edd47d3ecc9aa68906e914cc8349758192f6092fc91"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "equal zero bounds: value above",
+            "status": "failed",
+            "durationMs": 0.542208,
+            "line": 37,
+            "column": 3,
+            "id": "88d2bf47376128040f1b2712854f409a5fa6d0686fee5bc1fa08930025db5036"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "equal zero bounds: value above",
+            "status": "failed",
+            "durationMs": 0.227959,
+            "line": 37,
+            "column": 3,
+            "id": "432dad7fb81f325e82551fdbad000dc7d4ebc5a1a6f65377965d8c33b0630644"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "equal zero bounds: value above",
+            "status": "failed",
+            "durationMs": 0.222417,
+            "line": 37,
+            "column": 3,
+            "id": "a058f58f00b30cfc9e35f5439886464fe706ef5a4e21cccb03d0c60c38ebce6e"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "equal zero bounds: value above",
+            "status": "passed",
+            "durationMs": 0.090792,
+            "line": 37,
+            "column": 3,
+            "id": "3269d5e6934b98f9ee7d6eacd0e8d541180047e8261e6468ab0c3b8c936e1d8b"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "equal zero bounds: value above",
+            "status": "passed",
+            "durationMs": 0.0575,
+            "line": 37,
+            "column": 3,
+            "id": "44e12a3d9b1ec05547a48e693ec29a32be312a8c4d93c7a52a0217b9501c02a5"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "equal zero bounds: value above",
+            "status": "failed",
+            "durationMs": 0.382625,
+            "line": 37,
+            "column": 3,
+            "id": "f2ee48d6123e4695ff590d5024aaf5ef828abc1121f745f615917841fce776ac"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "equal zero bounds: value above",
+            "status": "failed",
+            "durationMs": 0.147458,
+            "line": 37,
+            "column": 3,
+            "id": "ccc09025eaf831af9648ba760fcc759b2f23db59a35196816d9b3d07a353c201"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "equal zero bounds: value above",
+            "status": "failed",
+            "durationMs": 0.098667,
+            "line": 37,
+            "column": 3,
+            "id": "45d93f8a810c3262abc08fe5df19ed1d069756d6884aae7fb1c99d74097dafef"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "equal zero bounds: value above",
+            "status": "passed",
+            "durationMs": 0.055417,
+            "line": 37,
+            "column": 3,
+            "id": "3f195b302d08073c0bb9c14a47de2c2d722c53c2faeccadc147dbcab352d1a5a"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "equal zero bounds: value above",
+            "status": "passed",
+            "durationMs": 0.04775,
+            "line": 37,
+            "column": 3,
+            "id": "2ac20c6e5c0cb2d14d648cc929a1c0ec5f0e8223a2d94563d6f8ae091492dd56"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "equal zero bounds: value above",
+            "status": "passed",
+            "durationMs": 0.039666,
+            "line": 37,
+            "column": 3,
+            "id": "cb8a91f6a2fbf02de8586fe832dd5405b851157fe34f7f392621963c0d14b59d"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "equal zero bounds: value above",
+            "status": "passed",
+            "durationMs": 0.036625,
+            "line": 37,
+            "column": 3,
+            "id": "a5c4b37d66207d04cbe4034b6ddedc5e5bfdb951eb7f68b0ebd1d4a605eede69"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "equal zero bounds: value above",
+            "status": "passed",
+            "durationMs": 0.035125,
+            "line": 37,
+            "column": 3,
+            "id": "90c7dc060bbdbb44fec0144d394255e2d4ae77fd8cf350d85891e099f24fad39"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "equal zero bounds: value above",
+            "status": "passed",
+            "durationMs": 0.034958,
+            "line": 37,
+            "column": 3,
+            "id": "06a0582f36992cc29c76ea6751ff33714e1b0aae559fc73b66a7715fea23cc41"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "reversed bounds: value above both bounds",
+            "status": "passed",
+            "durationMs": 0.383167,
+            "line": 51,
+            "column": 3,
+            "id": "afa3549ede00f60372b2095712e003d3f7ed84f7b54a4d7a50b234ccdfaf5d65"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "reversed bounds: value above both bounds",
+            "status": "passed",
+            "durationMs": 0.182916,
+            "line": 51,
+            "column": 3,
+            "id": "dc88cc37ab44b0642f5387144f7df302d32666f580db10b6779a677f114c1e2a"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "reversed bounds: value above both bounds",
+            "status": "passed",
+            "durationMs": 0.052583,
+            "line": 51,
+            "column": 3,
+            "id": "377d50adb607877e8fcfa9f05b7fed8d77b05de1cab9defcef48e3fdf10d5b88"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "reversed bounds: value above both bounds",
+            "status": "passed",
+            "durationMs": 0.046625,
+            "line": 51,
+            "column": 3,
+            "id": "11b396f67169a874c4bfbbe87bb4a4d96acdb139aba776e48664c6862700844f"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "reversed bounds: value above both bounds",
+            "status": "passed",
+            "durationMs": 0.05625,
+            "line": 51,
+            "column": 3,
+            "id": "38fd430afa19924fd58051070787f5aa67dde85711d08cc0498d299752275759"
+          }
+        ],
+        "collectionFiles": [
+          "src/bounded.test.js"
+        ],
+        "requestedFiles": [
+          "src/bounded.test.js"
+        ],
+        "executedFiles": [
+          "src/bounded.test.js"
+        ],
+        "missingFiles": [],
+        "unknownFiles": [],
+        "complete": true,
+        "command": [
+          "<node>",
+          "--test",
+          "--test-reporter=<repository>src/reporters/node.js",
+          "--test-reporter-destination=/var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-report-hFjQWx/results.json",
+          "./src/bounded.test.js"
+        ],
+        "stdout": "",
+        "stderr": "",
+        "signal": null,
+        "reportErrors": []
+      }
+    },
+    {
+      "name": "reversed",
+      "detected": true,
+      "result": {
+        "adapter": "node",
+        "exitCode": 1,
+        "durationMs": 298,
+        "tests": [
+          {
+            "file": "src/bounded.test.js",
+            "name": "equal zero bounds: value above",
+            "status": "passed",
+            "durationMs": 1.01525,
+            "line": 37,
+            "column": 3,
+            "id": "d001ca08bd2f6f77ed175ad4edd14cd6545a12c42ceebb5be7c1dc1b877c6866"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "equal zero bounds: value above",
+            "status": "passed",
+            "durationMs": 0.202166,
+            "line": 37,
+            "column": 3,
+            "id": "503670637f52e322739043f892efa1bf4107792a5671f9849a2e19065a8db936"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "equal zero bounds: value above",
+            "status": "passed",
+            "durationMs": 0.081208,
+            "line": 37,
+            "column": 3,
+            "id": "ca5ec315dcad03a8b3ecd4b1e9785c248daecfcdd58c11093599604444628311"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "equal zero bounds: value above",
+            "status": "passed",
+            "durationMs": 0.068791,
+            "line": 37,
+            "column": 3,
+            "id": "cc4339dc80a1e20e3cad62c49bb591b7944a4f0e3d1daba3081f83230bb66d12"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "equal zero bounds: value above",
+            "status": "passed",
+            "durationMs": 0.07675,
+            "line": 37,
+            "column": 3,
+            "id": "88683b34678b4d082e0c42c1843876e8ad133438f81b38876278028550ca40ee"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "equal zero bounds: value above",
+            "status": "passed",
+            "durationMs": 0.065458,
+            "line": 37,
+            "column": 3,
+            "id": "bab24c13930b28211274dfe81c02d7cab5670c2206fea3bfc47f662f96946da5"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "equal zero bounds: value above",
+            "status": "passed",
+            "durationMs": 0.057583,
+            "line": 37,
+            "column": 3,
+            "id": "91ce073464d22c233a0b7b639922605420d213fbb3a9c62daae159930159df6d"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "equal zero bounds: value above",
+            "status": "passed",
+            "durationMs": 0.061208,
+            "line": 37,
+            "column": 3,
+            "id": "833b3f43c3ce0f75805056a3ec6a7b6d27899a6bd361be034e79661adf0c046e"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "equal zero bounds: value above",
+            "status": "passed",
+            "durationMs": 0.472459,
+            "line": 37,
+            "column": 3,
+            "id": "c69ee34b734b5a28251fa2842bbf0e9df6361245bab8e9ecd0f8e8d293d0519c"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "equal zero bounds: value above",
+            "status": "passed",
+            "durationMs": 0.52725,
+            "line": 37,
+            "column": 3,
+            "id": "e609e4a04041c39015de99bfd69beabba89eff8f879c04302fff74546cbd72da"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "equal zero bounds: value above",
+            "status": "passed",
+            "durationMs": 0.158292,
+            "line": 37,
+            "column": 3,
+            "id": "e2bbefd8209e7bbb574e97a3d65c016c8e6ccbc1f1d8962f43f680f5fe73520e"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "equal zero bounds: value above",
+            "status": "passed",
+            "durationMs": 0.055542,
+            "line": 37,
+            "column": 3,
+            "id": "9fd2c35d077eba385bbbf0b1771eb2a55c60d93d0bf4eb97b0030b694da140da"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "equal zero bounds: value above",
+            "status": "passed",
+            "durationMs": 0.043458,
+            "line": 37,
+            "column": 3,
+            "id": "2b35f7e67b4597e1aa75807ef823fc45bf3046cc79dd29f2325be64cf350289a"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "equal zero bounds: value above",
+            "status": "passed",
+            "durationMs": 1.048125,
+            "line": 37,
+            "column": 3,
+            "id": "43fa55dde5bdd236dc0c2edd47d3ecc9aa68906e914cc8349758192f6092fc91"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "equal zero bounds: value above",
+            "status": "passed",
+            "durationMs": 0.073083,
+            "line": 37,
+            "column": 3,
+            "id": "88d2bf47376128040f1b2712854f409a5fa6d0686fee5bc1fa08930025db5036"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "equal zero bounds: value above",
+            "status": "passed",
+            "durationMs": 0.040917,
+            "line": 37,
+            "column": 3,
+            "id": "432dad7fb81f325e82551fdbad000dc7d4ebc5a1a6f65377965d8c33b0630644"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "equal zero bounds: value above",
+            "status": "passed",
+            "durationMs": 0.037916,
+            "line": 37,
+            "column": 3,
+            "id": "a058f58f00b30cfc9e35f5439886464fe706ef5a4e21cccb03d0c60c38ebce6e"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "equal zero bounds: value above",
+            "status": "passed",
+            "durationMs": 0.037791,
+            "line": 37,
+            "column": 3,
+            "id": "3269d5e6934b98f9ee7d6eacd0e8d541180047e8261e6468ab0c3b8c936e1d8b"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "equal zero bounds: value above",
+            "status": "passed",
+            "durationMs": 0.038042,
+            "line": 37,
+            "column": 3,
+            "id": "44e12a3d9b1ec05547a48e693ec29a32be312a8c4d93c7a52a0217b9501c02a5"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "equal zero bounds: value above",
+            "status": "passed",
+            "durationMs": 0.035584,
+            "line": 37,
+            "column": 3,
+            "id": "f2ee48d6123e4695ff590d5024aaf5ef828abc1121f745f615917841fce776ac"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "equal zero bounds: value above",
+            "status": "passed",
+            "durationMs": 0.035375,
+            "line": 37,
+            "column": 3,
+            "id": "ccc09025eaf831af9648ba760fcc759b2f23db59a35196816d9b3d07a353c201"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "equal zero bounds: value above",
+            "status": "passed",
+            "durationMs": 0.038,
+            "line": 37,
+            "column": 3,
+            "id": "45d93f8a810c3262abc08fe5df19ed1d069756d6884aae7fb1c99d74097dafef"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "equal zero bounds: value above",
+            "status": "passed",
+            "durationMs": 0.034916,
+            "line": 37,
+            "column": 3,
+            "id": "3f195b302d08073c0bb9c14a47de2c2d722c53c2faeccadc147dbcab352d1a5a"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "equal zero bounds: value above",
+            "status": "passed",
+            "durationMs": 0.039833,
+            "line": 37,
+            "column": 3,
+            "id": "2ac20c6e5c0cb2d14d648cc929a1c0ec5f0e8223a2d94563d6f8ae091492dd56"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "equal zero bounds: value above",
+            "status": "passed",
+            "durationMs": 0.045125,
+            "line": 37,
+            "column": 3,
+            "id": "cb8a91f6a2fbf02de8586fe832dd5405b851157fe34f7f392621963c0d14b59d"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "equal zero bounds: value above",
+            "status": "passed",
+            "durationMs": 0.037208,
+            "line": 37,
+            "column": 3,
+            "id": "a5c4b37d66207d04cbe4034b6ddedc5e5bfdb951eb7f68b0ebd1d4a605eede69"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "equal zero bounds: value above",
+            "status": "passed",
+            "durationMs": 0.036667,
+            "line": 37,
+            "column": 3,
+            "id": "90c7dc060bbdbb44fec0144d394255e2d4ae77fd8cf350d85891e099f24fad39"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "equal zero bounds: value above",
+            "status": "passed",
+            "durationMs": 0.037042,
+            "line": 37,
+            "column": 3,
+            "id": "06a0582f36992cc29c76ea6751ff33714e1b0aae559fc73b66a7715fea23cc41"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "reversed bounds: value above both bounds",
+            "status": "failed",
+            "durationMs": 0.711458,
+            "line": 51,
+            "column": 3,
+            "id": "afa3549ede00f60372b2095712e003d3f7ed84f7b54a4d7a50b234ccdfaf5d65"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "reversed bounds: value above both bounds",
+            "status": "failed",
+            "durationMs": 0.114417,
+            "line": 51,
+            "column": 3,
+            "id": "dc88cc37ab44b0642f5387144f7df302d32666f580db10b6779a677f114c1e2a"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "reversed bounds: value above both bounds",
+            "status": "failed",
+            "durationMs": 0.249083,
+            "line": 51,
+            "column": 3,
+            "id": "377d50adb607877e8fcfa9f05b7fed8d77b05de1cab9defcef48e3fdf10d5b88"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "reversed bounds: value above both bounds",
+            "status": "failed",
+            "durationMs": 0.114167,
+            "line": 51,
+            "column": 3,
+            "id": "11b396f67169a874c4bfbbe87bb4a4d96acdb139aba776e48664c6862700844f"
+          },
+          {
+            "file": "src/bounded.test.js",
+            "name": "reversed bounds: value above both bounds",
+            "status": "failed",
+            "durationMs": 0.083583,
+            "line": 51,
+            "column": 3,
+            "id": "38fd430afa19924fd58051070787f5aa67dde85711d08cc0498d299752275759"
+          }
+        ],
+        "collectionFiles": [
+          "src/bounded.test.js"
+        ],
+        "requestedFiles": [
+          "src/bounded.test.js"
+        ],
+        "executedFiles": [
+          "src/bounded.test.js"
+        ],
+        "missingFiles": [],
+        "unknownFiles": [],
+        "complete": true,
+        "command": [
+          "<node>",
+          "--test",
+          "--test-reporter=<repository>src/reporters/node.js",
+          "--test-reporter-destination=/var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-report-G1726k/results.json",
+          "./src/bounded.test.js"
+        ],
+        "stdout": "",
+        "stderr": "",
+        "signal": null,
+        "reportErrors": []
+      }
+    }
+  ],
+  "detected": 4,
+  "total": 4,
+  "generatedFiles": [
+    {
+      "path": "src/bounded.test.js",
+      "content": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport { bounded } from './bounded.js';\n\nconst cases = [\n  ['negative interval: below lower bound', -12, -10, -2, -10],\n  ['negative interval: at lower bound', -10, -10, -2, -10],\n  ['negative interval: inside bounds', -6, -10, -2, -6],\n  ['negative interval: at upper bound', -2, -10, -2, -2],\n  ['negative interval: above upper bound', -1, -10, -2, -2],\n  ['zero-crossing interval: below lower bound', -7, -5, 4, -5],\n  ['zero-crossing interval: at lower bound', -5, -5, 4, -5],\n  ['zero-crossing interval: negative interior value', -2, -5, 4, -2],\n  ['zero-crossing interval: zero interior value', 0, -5, 4, 0],\n  ['zero-crossing interval: positive interior value', 2, -5, 4, 2],\n  ['zero-crossing interval: at upper bound', 4, -5, 4, 4],\n  ['zero-crossing interval: above upper bound', 7, -5, 4, 4],\n  ['zero lower bound: below bounds', -1, 0, 5, 0],\n  ['zero lower bound: at lower bound', 0, 0, 5, 0],\n  ['zero lower bound: inside bounds', 2, 0, 5, 2],\n  ['zero lower bound: at upper bound', 5, 0, 5, 5],\n  ['zero lower bound: above bounds', 6, 0, 5, 5],\n  ['zero upper bound: below bounds', -6, -5, 0, -5],\n  ['zero upper bound: at lower bound', -5, -5, 0, -5],\n  ['zero upper bound: inside bounds', -2, -5, 0, -2],\n  ['zero upper bound: at upper bound', 0, -5, 0, 0],\n  ['zero upper bound: above bounds', 1, -5, 0, 0],\n  ['equal negative bounds: value below', -4, -3, -3, -3],\n  ['equal negative bounds: value equal', -3, -3, -3, -3],\n  ['equal negative bounds: value above', -2, -3, -3, -3],\n  ['equal zero bounds: value below', -1, 0, 0, 0],\n  ['equal zero bounds: value equal', 0, 0, 0, 0],\n  ['equal zero bounds: value above', 1, 0, 0, 0],\n];\n\nfor (const [name, value, lower, upper, expected] of cases) {\n  test(name, () => {\n    assert.strictEqual(bounded(value, lower, upper), expected);\n  });\n}\n\nconst reversedCases = [\n  ['reversed bounds: value below both bounds', -5],\n  ['reversed bounds: value at smaller bound', -4],\n  ['reversed bounds: value between bounds', 0],\n  ['reversed bounds: value at larger bound', 3],\n  ['reversed bounds: value above both bounds', 4],\n];\n\nfor (const [name, value] of reversedCases) {\n  test(name, () => {\n    assert.throws(() => bounded(value, 3, -4), RangeError);\n  });\n}\n"
+    }
+  ]
+}

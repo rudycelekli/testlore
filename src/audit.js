@@ -1,6 +1,10 @@
 import ts from 'typescript';
 import { buildGraph, analyze, dependencies } from './graph.js';
-import { TEST } from './files.js';
+import fs from 'node:fs';
+import path from 'node:path';
+import { snapshot, freshness } from './provenance.js';
+import { qualityEvidence } from './evidence.js';
+import { readConfig, TEST } from './files.js';
 
 export function inspectTest(file, text) {
   const { ast } = analyze(file, text);
@@ -42,7 +46,7 @@ export function inspectTest(file, text) {
 
 export function audit(root) {
   const graph = buildGraph(root);
-  const files = graph.tests.map(file => inspectTest(file, graph.sources[file]));
+  const files = graph.tests.map(file => inspectTest(file, graph.sources[file] || ''));
   const count = files.length;
   const totals = files.reduce((sum, f) => { for (const [k, v] of Object.entries(f.metrics)) sum[k] = (sum[k] || 0) + v; return sum; }, {});
   const sources = Object.keys(graph.sources).filter(f => !TEST.test(f));
@@ -56,12 +60,16 @@ export function audit(root) {
     dependencyVisibility: graph.warnings.length ? 0 : 10
   } : null;
   const score = dimensions ? Object.values(dimensions).reduce((a, b) => a + b, 0) : null;
+  const evidence=qualityEvidence(root);
+  let execution={measured:false,reason:'not-measured'};
+  try {const last=JSON.parse(fs.readFileSync(path.join(root,'.tddswarm/last-run.json'),'utf8'));const check=freshness(last.provenance,snapshot(root,readConfig(root)));execution={measured:check.fresh && last.complete,scope:last.executedTests,exitCode:last.exitCode,durationMs:last.durationMs,comparison:last.comparison,reasons:check.reasons};}catch{}
   return {
     schemaVersion: 1, grade: score === null ? 'ungraded' : score >= 90 ? 'A' : score >= 75 ? 'B' : score >= 60 ? 'C' : score >= 40 ? 'D' : 'F',
     score, label: 'Static triage grade — not a test-effectiveness score', dimensions,
     testFiles: count, sourceFiles: sources.length, totals, files, sourcesWithoutImportingTests: uncovered,
     warnings: graph.warnings,
-    measured: { execution: false, coverage: false, mutation: false, flakiness: false, speed: false },
+    evidence: {...evidence,execution},
+    measured: { execution: execution.measured, coverage: evidence.coverage.measured, mutation: evidence.mutation.measured, flakiness: evidence.stability.measured, speed: execution.measured },
     suggestions: count ? ['Review findings with custom assertion helpers in mind.', 'Measure coverage and mutation results before judging effectiveness.', 'Use modules to review broad dependency boundaries.'] : ['No tests detected. Run generate to prepare an agent work order.', 'Add requirements and independent expected behaviors before generating tests.']
   };
 }

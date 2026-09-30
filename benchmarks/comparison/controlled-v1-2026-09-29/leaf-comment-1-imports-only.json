@@ -1,0 +1,61 @@
+{
+  "scenario": "leaf-comment",
+  "project": "modular",
+  "regression": false,
+  "repetition": 1,
+  "order": [
+    "testlore",
+    "imports-only",
+    "full-native"
+  ],
+  "method": "imports-only",
+  "totalFiles": 8,
+  "plannedFiles": [
+    "test/0.test.js"
+  ],
+  "executedFiles": [
+    "test/0.test.js"
+  ],
+  "endToEndMs": 95,
+  "executionMs": 93,
+  "result": {
+    "adapter": "node",
+    "exitCode": 0,
+    "durationMs": 93,
+    "tests": [
+      {
+        "file": "test/0.test.js",
+        "name": "contract 0",
+        "status": "passed",
+        "durationMs": 0.360708,
+        "line": 4,
+        "column": 1,
+        "id": "31d6b4e3834249106de4173f8b8afaa6fe516cd10a1066da59307a221a4c04f0"
+      }
+    ],
+    "collectionFiles": [
+      "test/0.test.js"
+    ],
+    "requestedFiles": [
+      "test/0.test.js"
+    ],
+    "executedFiles": [
+      "test/0.test.js"
+    ],
+    "missingFiles": [],
+    "unknownFiles": [],
+    "complete": true,
+    "command": [
+      "<node>",
+      "--test",
+      "--test-reporter=<testlore-source>/src/reporters/node.js",
+      "--test-reporter-destination=/var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-report-ax4dCo/results.json",
+      "./test/0.test.js"
+    ],
+    "stdout": "",
+    "stderr": "",
+    "signal": null,
+    "reportErrors": []
+  },
+  "observedFailures": []
+}

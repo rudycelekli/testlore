@@ -1,9 +1,10 @@
 {
-  "name": "tddswarm",
+  "name": "testlore",
   "version": "0.1.0",
-  "description": "An explainable, local-first test intelligence layer: audit, modularize, and run impacted tests.",
+  "description": "A learning quality engineer: improve, measure, and intelligently route tests with reviewable evidence.",
   "type": "module",
   "bin": {
+    "testlore": "src/cli.js",
     "tddswarm": "src/cli.js",
     "tddswarm-codex-agent": "src/adapters/codex.js"
   },
@@ -18,13 +19,15 @@
     "examples/demo"
   ],
   "engines": {
-    "node": ">=22"
+    "node": ">=22.19.0"
   },
   "scripts": {
     "test": "node --test test/*.test.js",
     "check": "node scripts/check.js",
     "demo": "node src/cli.js demo",
-    "benchmark": "node scripts/benchmark.js"
+    "benchmark": "node scripts/benchmark.js",
+    "benchmark:public": "node scripts/public-benchmark.js",
+    "benchmark:defects": "node scripts/generated-defects.js"
   },
   "dependencies": {
     "typescript": "6.0.3"
@@ -32,10 +35,10 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/rudycelekli/tddswarm.git"
+    "url": "https://github.com/rudycelekli/testlore.git"
   },
   "bugs": {
-    "url": "https://github.com/rudycelekli/tddswarm/issues"
+    "url": "https://github.com/rudycelekli/testlore/issues"
   },
   "keywords": [
     "testing",
@@ -45,5 +48,15 @@
     "vitest",
     "jest",
     "developer-tools"
-  ]
+  ],
+  "devDependencies": {
+    "@bazel/bazelisk": "1.28.1",
+    "@stryker-mutator/core": "10.0.0",
+    "c8": "12.0.0",
+    "jest": "30.2.0",
+    "vitest": "5.0.2"
+  },
+  "overrides": {
+    "qs": "6.16.0"
+  }
 }

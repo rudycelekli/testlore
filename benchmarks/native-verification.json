@@ -1,0 +1,226 @@
+{
+  "date": "2026-09-30T00:58:13.522Z",
+  "environment": {
+    "node": "v22.19.0",
+    "platform": "darwin",
+    "architecture": "arm64"
+  },
+  "pytest": {
+    "versions": {
+      "python": "3.9.6",
+      "pytest": "8.4.2",
+      "testmon": "2.1.4"
+    },
+    "initial": {
+      "adapter": "pytest-testmon",
+      "command": [
+        "/tmp/tddswarm-testmon-venv/bin/pytest",
+        "--testmon"
+      ],
+      "exitCode": 0,
+      "stdout": "============================= test session starts ==============================\nplatform darwin -- Python 3.9.6, pytest-8.4.2, pluggy-1.6.0\ntestmon: new DB, environment: default\nWe'd like to hear from testmon users! Please go to https://testmon.org/survey to leave feedback.\nrootdir: /private/var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-testmon-receipt-SlawHq\nplugins: testmon-2.1.4\ncollected 2 items\n\ntest_mathlib.py .                                                        [ 50%]\ntest_unrelated.py .                                                      [100%]\n\n============================== 2 passed in 0.08s ===============================\n",
+      "stderr": "",
+      "durationMs": 350,
+      "plan": {
+        "adapter": "pytest-testmon",
+        "exitCode": 0,
+        "complete": false,
+        "delegated": true,
+        "mode": "initial-full",
+        "targets": null,
+        "reasons": [
+          "pytest-testmon selects during pytest execution; no invented static collection"
+        ],
+        "command": [
+          "/tmp/tddswarm-testmon-venv/bin/pytest",
+          "--testmon"
+        ]
+      },
+      "complete": true,
+      "executed": true,
+      "shadow": false,
+      "delegated": true,
+      "initialFull": true
+    },
+    "unchanged": {
+      "adapter": "pytest-testmon",
+      "command": [
+        "/tmp/tddswarm-testmon-venv/bin/pytest",
+        "--testmon"
+      ],
+      "exitCode": 0,
+      "stdout": "============================= test session starts ==============================\nplatform darwin -- Python 3.9.6, pytest-8.4.2, pluggy-1.6.0\ntestmon: changed files: 0, unchanged files: 3, environment: default\nrootdir: /private/var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-testmon-receipt-SlawHq\nplugins: testmon-2.1.4\ncollected 0 items\n\n============================ no tests ran in 0.00s =============================\n",
+      "stderr": "",
+      "durationMs": 255,
+      "plan": {
+        "adapter": "pytest-testmon",
+        "exitCode": 0,
+        "complete": false,
+        "delegated": true,
+        "mode": "testmon",
+        "targets": null,
+        "reasons": [
+          "pytest-testmon selects during pytest execution; no invented static collection"
+        ],
+        "command": [
+          "/tmp/tddswarm-testmon-venv/bin/pytest",
+          "--testmon"
+        ]
+      },
+      "complete": true,
+      "executed": true,
+      "shadow": false,
+      "delegated": true,
+      "initialFull": false
+    },
+    "regression": {
+      "adapter": "pytest-testmon",
+      "command": [
+        "/tmp/tddswarm-testmon-venv/bin/pytest",
+        "--testmon"
+      ],
+      "exitCode": 1,
+      "stdout": "============================= test session starts ==============================\nplatform darwin -- Python 3.9.6, pytest-8.4.2, pluggy-1.6.0\ntestmon: changed files: test_mathlib.py, unchanged files: 2, environment: default\nrootdir: /private/var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-testmon-receipt-SlawHq\nplugins: testmon-2.1.4\ncollected 1 item\n\ntest_mathlib.py F                                                        [100%]\n\n=================================== FAILURES ===================================\n___________________________________ test_add ___________________________________\n\n>   def test_add(): assert add(2,3)==5\nE   assert 6 == 5\nE    +  where 6 = add(2, 3)\n\ntest_mathlib.py:2: AssertionError\n=========================== short test summary info ============================\nFAILED test_mathlib.py::test_add - assert 6 == 5\n============================== 1 failed in 0.04s ===============================\n",
+      "stderr": "",
+      "durationMs": 277,
+      "plan": {
+        "adapter": "pytest-testmon",
+        "exitCode": 0,
+        "complete": false,
+        "delegated": true,
+        "mode": "testmon",
+        "targets": null,
+        "reasons": [
+          "pytest-testmon selects during pytest execution; no invented static collection"
+        ],
+        "command": [
+          "/tmp/tddswarm-testmon-venv/bin/pytest",
+          "--testmon"
+        ]
+      },
+      "complete": true,
+      "executed": true,
+      "shadow": false,
+      "delegated": true,
+      "initialFull": false
+    },
+    "shadow": {
+      "adapter": "pytest-testmon",
+      "command": [
+        "/tmp/tddswarm-testmon-venv/bin/pytest",
+        "--testmon",
+        "--testmon-noselect"
+      ],
+      "exitCode": 1,
+      "stdout": "============================= test session starts ==============================\nplatform darwin -- Python 3.9.6, pytest-8.4.2, pluggy-1.6.0\ntestmon: selection deactivated, environment: default\nrootdir: /private/var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-testmon-receipt-SlawHq\nplugins: testmon-2.1.4\ncollected 2 items\n\ntest_mathlib.py F                                                        [ 50%]\ntest_unrelated.py .                                                      [100%]\n\n=================================== FAILURES ===================================\n___________________________________ test_add ___________________________________\n\n>   def test_add(): assert add(2,3)==5\nE   assert 6 == 5\nE    +  where 6 = add(2, 3)\n\ntest_mathlib.py:2: AssertionError\n=========================== short test summary info ============================\nFAILED test_mathlib.py::test_add - assert 6 == 5\n========================= 1 failed, 1 passed in 0.04s ==========================\n",
+      "stderr": "",
+      "durationMs": 277,
+      "plan": {
+        "adapter": "pytest-testmon",
+        "exitCode": 0,
+        "complete": false,
+        "delegated": true,
+        "mode": "testmon",
+        "targets": null,
+        "reasons": [
+          "pytest-testmon selects during pytest execution; no invented static collection"
+        ],
+        "command": [
+          "/tmp/tddswarm-testmon-venv/bin/pytest",
+          "--testmon"
+        ]
+      },
+      "complete": true,
+      "executed": true,
+      "shadow": true,
+      "delegated": true,
+      "initialFull": false
+    }
+  },
+  "nx": {
+    "version": "22.7.12",
+    "discovery": {
+      "adapter": "nx",
+      "command": [
+        "/tmp/tddswarm-nx-fixture/node_modules/.bin/nx",
+        "show",
+        "projects",
+        "--affected",
+        "--files=apps/demo/project.json",
+        "--withTarget=test",
+        "--json"
+      ],
+      "exitCode": 0,
+      "stdout": "[\"demo\"]\n",
+      "stderr": "",
+      "durationMs": 443,
+      "base": "53d3ae09221cc92276aad07cf681067e6f77d7e7",
+      "head": "53d3ae09221cc92276aad07cf681067e6f77d7e7",
+      "complete": true,
+      "targets": [
+        "demo"
+      ],
+      "mode": "affected",
+      "evidence": "nx-project-graph"
+    },
+    "execution": {
+      "adapter": "nx",
+      "command": [
+        "/tmp/tddswarm-nx-fixture/node_modules/.bin/nx",
+        "run-many",
+        "-t",
+        "test",
+        "--projects=demo"
+      ],
+      "exitCode": 0,
+      "stdout": "\n NX   Running target test for project demo:\n\n- demo\n\n\n\n> nx run demo:test\n\n> node -e \"require('assert').equal(2+3,5)\"\r\n\r\n(node:92298) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n\n\n\n NX   Successfully ran target test for project demo\n\n\n",
+      "stderr": "",
+      "durationMs": 503,
+      "plan": {
+        "adapter": "nx",
+        "command": [
+          "/tmp/tddswarm-nx-fixture/node_modules/.bin/nx",
+          "show",
+          "projects",
+          "--withTarget=test",
+          "--json"
+        ],
+        "exitCode": 0,
+        "stdout": "[\"demo\"]\n",
+        "stderr": "",
+        "durationMs": 190,
+        "base": "53d3ae09221cc92276aad07cf681067e6f77d7e7",
+        "head": "53d3ae09221cc92276aad07cf681067e6f77d7e7",
+        "complete": true,
+        "targets": [
+          "demo"
+        ],
+        "mode": "full",
+        "evidence": "nx-project-graph"
+      },
+      "complete": true,
+      "executed": true,
+      "shadow": false,
+      "delegated": true,
+      "initialFull": false
+    }
+  },
+  "aqe": {
+    "version": "3.14.6",
+    "capabilities": {
+      "adapter": "agentic-qe-cli",
+      "available": true,
+      "generation": true,
+      "workerRoles": [],
+      "command": [
+        "/Users/rudycelekli/.npm/_npx/8a75981b6d9e4825/node_modules/.bin/aqe"
+      ],
+      "exitCode": 0
+    },
+    "generation": "aqe-observation/raw-generation.json"
+  },
+  "bazel": {
+    "available": false,
+    "verification": "protocol tests only"
+  }
+}

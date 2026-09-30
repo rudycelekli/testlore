@@ -1,0 +1,63 @@
+{
+  "scenario": "leaf-defect",
+  "project": "modular",
+  "regression": true,
+  "repetition": 1,
+  "order": [
+    "imports-only",
+    "full-native",
+    "testlore"
+  ],
+  "method": "imports-only",
+  "totalFiles": 8,
+  "plannedFiles": [
+    "test/3.test.js"
+  ],
+  "executedFiles": [
+    "test/3.test.js"
+  ],
+  "endToEndMs": 93,
+  "executionMs": 91,
+  "result": {
+    "adapter": "node",
+    "exitCode": 1,
+    "durationMs": 91,
+    "tests": [
+      {
+        "file": "test/3.test.js",
+        "name": "contract 3",
+        "status": "failed",
+        "durationMs": 0.718875,
+        "line": 4,
+        "column": 1,
+        "id": "45498eac539cfaf653b9c5dd1b5f883597a4019577897a01dec6e88245b328db"
+      }
+    ],
+    "collectionFiles": [
+      "test/3.test.js"
+    ],
+    "requestedFiles": [
+      "test/3.test.js"
+    ],
+    "executedFiles": [
+      "test/3.test.js"
+    ],
+    "missingFiles": [],
+    "unknownFiles": [],
+    "complete": true,
+    "command": [
+      "<node>",
+      "--test",
+      "--test-reporter=<testlore-source>/src/reporters/node.js",
+      "--test-reporter-destination=/var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-report-QBJ8DM/results.json",
+      "./test/3.test.js"
+    ],
+    "stdout": "",
+    "stderr": "",
+    "signal": null,
+    "reportErrors": []
+  },
+  "observedFailures": [
+    "45498eac539cfaf653b9c5dd1b5f883597a4019577897a01dec6e88245b328db"
+  ]
+}

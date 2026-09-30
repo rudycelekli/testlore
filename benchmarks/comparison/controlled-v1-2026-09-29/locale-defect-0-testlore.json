@@ -1,0 +1,256 @@
+{
+  "scenario": "locale-defect",
+  "project": "assets",
+  "regression": true,
+  "repetition": 0,
+  "order": [
+    "imports-only",
+    "full-native",
+    "testlore"
+  ],
+  "method": "testlore",
+  "totalFiles": 8,
+  "plannedFiles": [
+    "test/1.test.js"
+  ],
+  "executedFiles": [
+    "test/1.test.js"
+  ],
+  "endToEndMs": 542,
+  "executionMs": 104,
+  "result": {
+    "adapter": "node",
+    "exitCode": 1,
+    "durationMs": 104,
+    "tests": [
+      {
+        "file": "test/1.test.js",
+        "name": "contract 1",
+        "status": "failed",
+        "durationMs": 0.81075,
+        "line": 4,
+        "column": 1,
+        "id": "d45d09ad8d68369391d1f3eb865f4612605ea29b84c9f6b870b39922f1bf0d47"
+      }
+    ],
+    "collectionFiles": [
+      "test/1.test.js"
+    ],
+    "requestedFiles": [
+      "test/1.test.js"
+    ],
+    "executedFiles": [
+      "test/1.test.js"
+    ],
+    "missingFiles": [],
+    "unknownFiles": [],
+    "complete": true,
+    "command": [
+      "<node>",
+      "--test",
+      "--test-reporter=<testlore-source>/src/reporters/node.js",
+      "--test-reporter-destination=/var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-report-PlpmAc/results.json",
+      "./test/1.test.js"
+    ],
+    "stdout": "",
+    "stderr": "",
+    "signal": null,
+    "reportErrors": [],
+    "plan": {
+      "schemaVersion": 1,
+      "provenance": {
+        "schemaVersion": 1,
+        "revision": "23030f60b99c2607fd735b19ef9e4fb7d7f6e505",
+        "runner": "0893ec101ed320ea0682c33b29e13a7ae4e8bd18870f28d9f472ecfd864d4441",
+        "environment": {
+          "node": "v22.19.0",
+          "platform": "darwin",
+          "arch": "arm64",
+          "labels": {}
+        },
+        "services": {},
+        "serviceWarnings": [],
+        "files": {
+          ".gitignore": "7fb44527b443495e92c61dccfc6b3adf4400dae72a66af52820f7a7b0827527c",
+          "package.json": "970a22e40947d40a50475829aed328e696c9507b317facf6446db24d9fe9ea6e",
+          "public/account.json": "80502553f3313de35025ae92e317734cb5aa357a9ea1392b549b8ef1d32f5e89",
+          "public/checkout.json": "427aa16a443830e84c1bb4785f9680df6100c30fbcdff15e905e675ce6c0ce76",
+          "public/copy.json": "79580ea656af5d7b5ec961b9abfd85ad71031fd088e4ffb50b4de542f65f67d5",
+          "public/footer.json": "5c6d6d10ba4b42275e393d9cb696963bc635c67908b895b81c1d167aea160c57",
+          "public/help.json": "5096cbec960854bd874af12f390e12c048e10d17b4c79e556a233a3d9bdb6499",
+          "public/locale.json": "f384e3f8ab3d394b1ba3572bc71aa3e558201f945112478bbf11014a0cfbd2f5",
+          "public/template.json": "690cb0f237309afb194af3f788cc4992b10c348da175893e2626f1e968556ab4",
+          "public/theme.json": "d0b8d95c35efb283a81531eef5f3da94638e2149bdd1350811d9ebdbf47530ec",
+          "tddswarm.config.json": "f0b122a59104494cbb5eb83a1123e507ceca12d8792faed20d5ae6374fcbb78f",
+          "test/0.test.js": "eba55539efff65c396d65164c33c8dc20a72b80a03f56024032870346847076b",
+          "test/1.test.js": "ff1ee86fdcbaccec649abb56ec5407c0d14e45cb0132e002c626bac992af4f7d",
+          "test/2.test.js": "744c4258001317dec8f5979d053a8b155f5e149ebfc4e1dd2263d62e299532ca",
+          "test/3.test.js": "c15fc8258ca153ac3e9bfaa2699edf5e79674035d37ec95ae6d3a3a41d58caae",
+          "test/4.test.js": "d862e413b7da34031a06a592adb023e9626425558bd47f7c26608ec9035b4b24",
+          "test/5.test.js": "c830d678fc6d0f5ca6feeb6e55a0f42d95c2e18d205418fa167d61f9ac024e79",
+          "test/6.test.js": "ba92484fcf3129ef0426a68b51ada7aaa4592445c37d15cd38e9fe5995150d32",
+          "test/7.test.js": "68dad1a859d3e7b7594d256a98d4d3deb793737a49715ff24c5a660370de20c8"
+        },
+        "fingerprint": "6057a3993277f1fd75e2f269479f70f37b7be378c9f8169c476fd67755eac449"
+      },
+      "serviceTokens": {},
+      "configurationFiles": [],
+      "mode": "affected",
+      "base": "23030f60b99c2607fd735b19ef9e4fb7d7f6e505",
+      "changed": [
+        "public/locale.json"
+      ],
+      "ignored": [],
+      "selected": [
+        "test/1.test.js"
+      ],
+      "total": 8,
+      "omitted": 7,
+      "selectionReduction": 0.875,
+      "reasons": [],
+      "warnings": [],
+      "decisions": [
+        {
+          "test": "test/0.test.js",
+          "selected": false,
+          "reasons": [
+            "no-known-dependency-on-change"
+          ],
+          "paths": []
+        },
+        {
+          "test": "test/1.test.js",
+          "selected": true,
+          "reasons": [
+            "dependency-path"
+          ],
+          "paths": [
+            [
+              "test/1.test.js",
+              "public/locale.json"
+            ]
+          ]
+        },
+        {
+          "test": "test/2.test.js",
+          "selected": false,
+          "reasons": [
+            "no-known-dependency-on-change"
+          ],
+          "paths": []
+        },
+        {
+          "test": "test/3.test.js",
+          "selected": false,
+          "reasons": [
+            "no-known-dependency-on-change"
+          ],
+          "paths": []
+        },
+        {
+          "test": "test/4.test.js",
+          "selected": false,
+          "reasons": [
+            "no-known-dependency-on-change"
+          ],
+          "paths": []
+        },
+        {
+          "test": "test/5.test.js",
+          "selected": false,
+          "reasons": [
+            "no-known-dependency-on-change"
+          ],
+          "paths": []
+        },
+        {
+          "test": "test/6.test.js",
+          "selected": false,
+          "reasons": [
+            "no-known-dependency-on-change"
+          ],
+          "paths": []
+        },
+        {
+          "test": "test/7.test.js",
+          "selected": false,
+          "reasons": [
+            "no-known-dependency-on-change"
+          ],
+          "paths": []
+        }
+      ],
+      "fingerprint": "f6ce148d7e86b73a0493c1e6d3ba9088fb5e131f8367f473fe372163cb8e37a6",
+      "discovery": {
+        "files": [
+          "test/0.test.js",
+          "test/1.test.js",
+          "test/2.test.js",
+          "test/3.test.js",
+          "test/4.test.js",
+          "test/5.test.js",
+          "test/6.test.js",
+          "test/7.test.js"
+        ],
+        "complete": true,
+        "adapter": "node",
+        "warnings": []
+      },
+      "runtime": {
+        "usable": false,
+        "reason": "runtime-disabled",
+        "policy": "supplement-static-only"
+      },
+      "evidence": "static-imports-and-declared-dependencies",
+      "limitations": [
+        "Runtime observations cover exercised inputs; external services require declared versions.",
+        "Selection operates at test-file granularity.",
+        "No deployment safety or measured wall-clock savings are implied."
+      ]
+    },
+    "executed": true,
+    "shadow": false,
+    "executedTests": [
+      "test/1.test.js"
+    ],
+    "runner": "0893ec101ed320ea0682c33b29e13a7ae4e8bd18870f28d9f472ecfd864d4441",
+    "provenance": {
+      "schemaVersion": 1,
+      "revision": "23030f60b99c2607fd735b19ef9e4fb7d7f6e505",
+      "runner": "0893ec101ed320ea0682c33b29e13a7ae4e8bd18870f28d9f472ecfd864d4441",
+      "environment": {
+        "node": "v22.19.0",
+        "platform": "darwin",
+        "arch": "arm64",
+        "labels": {}
+      },
+      "services": {},
+      "serviceWarnings": [],
+      "files": {
+        ".gitignore": "7fb44527b443495e92c61dccfc6b3adf4400dae72a66af52820f7a7b0827527c",
+        "package.json": "970a22e40947d40a50475829aed328e696c9507b317facf6446db24d9fe9ea6e",
+        "public/account.json": "80502553f3313de35025ae92e317734cb5aa357a9ea1392b549b8ef1d32f5e89",
+        "public/checkout.json": "427aa16a443830e84c1bb4785f9680df6100c30fbcdff15e905e675ce6c0ce76",
+        "public/copy.json": "79580ea656af5d7b5ec961b9abfd85ad71031fd088e4ffb50b4de542f65f67d5",
+        "public/footer.json": "5c6d6d10ba4b42275e393d9cb696963bc635c67908b895b81c1d167aea160c57",
+        "public/help.json": "5096cbec960854bd874af12f390e12c048e10d17b4c79e556a233a3d9bdb6499",
+        "public/locale.json": "f384e3f8ab3d394b1ba3572bc71aa3e558201f945112478bbf11014a0cfbd2f5",
+        "public/template.json": "690cb0f237309afb194af3f788cc4992b10c348da175893e2626f1e968556ab4",
+        "public/theme.json": "d0b8d95c35efb283a81531eef5f3da94638e2149bdd1350811d9ebdbf47530ec",
+        "tddswarm.config.json": "f0b122a59104494cbb5eb83a1123e507ceca12d8792faed20d5ae6374fcbb78f",
+        "test/0.test.js": "eba55539efff65c396d65164c33c8dc20a72b80a03f56024032870346847076b",
+        "test/1.test.js": "ff1ee86fdcbaccec649abb56ec5407c0d14e45cb0132e002c626bac992af4f7d",
+        "test/2.test.js": "744c4258001317dec8f5979d053a8b155f5e149ebfc4e1dd2263d62e299532ca",
+        "test/3.test.js": "c15fc8258ca153ac3e9bfaa2699edf5e79674035d37ec95ae6d3a3a41d58caae",
+        "test/4.test.js": "d862e413b7da34031a06a592adb023e9626425558bd47f7c26608ec9035b4b24",
+        "test/5.test.js": "c830d678fc6d0f5ca6feeb6e55a0f42d95c2e18d205418fa167d61f9ac024e79",
+        "test/6.test.js": "ba92484fcf3129ef0426a68b51ada7aaa4592445c37d15cd38e9fe5995150d32",
+        "test/7.test.js": "68dad1a859d3e7b7594d256a98d4d3deb793737a49715ff24c5a660370de20c8"
+      },
+      "fingerprint": "6057a3993277f1fd75e2f269479f70f37b7be378c9f8169c476fd67755eac449"
+    }
+  },
+  "observedFailures": [
+    "d45d09ad8d68369391d1f3eb865f4612605ea29b84c9f6b870b39922f1bf0d47"
+  ]
+}

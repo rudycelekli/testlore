@@ -1,0 +1,63 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-09-30T03:52:09.904Z",
+  "kind": "controlled-native-integration-verification",
+  "sdk": {
+    "name": "@ruvector/core",
+    "version": "0.1.32",
+    "platform": "darwin",
+    "architecture": "arm64",
+    "nativePackages": [
+      {
+        "name": "ruvector-core-darwin-arm64",
+        "version": "0.1.30"
+      }
+    ],
+    "upstream": "https://github.com/ruvnet/ruvector/tree/main/npm/packages/core"
+  },
+  "command": "node scripts/ruvector-proof.js --sdk-root <isolated-project-with-@ruvector/core@0.1.32>",
+  "embedding": {
+    "mode": "lexical-vector",
+    "dimensions": 128,
+    "modelTraining": false,
+    "bundledSemanticModel": false
+  },
+  "validation": {
+    "accepted": {
+      "accepted": true,
+      "complete": true,
+      "originalCases": 1,
+      "candidateCases": 2
+    },
+    "rejected": {
+      "accepted": false,
+      "complete": true,
+      "originalCases": 1,
+      "candidateCases": 2
+    }
+  },
+  "checks": {
+    "nativeBuild": "built",
+    "nativeReopen": "reused",
+    "cliBackend": "ruvector",
+    "cliRecords": 2,
+    "acceptedRanksFirst": true,
+    "rejectedContainsNoPatterns": true,
+    "historicalEvidenceAdvisory": true,
+    "crossFrameworkRecords": 0,
+    "corruptCacheFallback": "deterministic-lexical",
+    "learningDisableOverridesPlugin": true,
+    "canonicalStoreUnchanged": true
+  },
+  "sourceHashes": {
+    "src/learning.js": "719c3bcef675229ad2c78ff98bc747252f83356ecae14d2f899c94b0b3b6726c",
+    "src/adapters/ruvector.js": "d306a37df25e47b864c42211dc1b17a191f36f3518e979b1a5442a555569ad71",
+    "src/adapters/ruvector-worker.js": "80c8a6dcaf3014adc5e8fc3d01a50493af4679ea2b3713226ae08a97e5d34a07",
+    "scripts/ruvector-proof.js": "b9a8979dd235a1ecff8ec2ba5f96ca48d58ec23858f3370323cfc051b8f76120"
+  },
+  "limitations": [
+    "Controlled arithmetic fixture, not evidence of improved generated-test quality or speed.",
+    "Default vectors encode lexical features; no semantic model or model-weight training.",
+    "Disposable project and local worker are not a security sandbox for installed SDKs or embedding commands."
+  ]
+}

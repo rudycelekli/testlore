@@ -1,0 +1,122 @@
+{
+  "schemaVersion": 1,
+  "provenance": {
+    "schemaVersion": 1,
+    "revision": "82632b66f5914e9946edce300e10633a3d5c0cb7",
+    "runner": "f62813c788ae125d6d3c0721e17d3b5a054511a422e565116154592efb853b2c",
+    "environment": {
+      "node": "v22.19.0",
+      "platform": "darwin",
+      "arch": "arm64",
+      "labels": {}
+    },
+    "services": {},
+    "serviceWarnings": [],
+    "files": {
+      ".editorconfig": "b7e66239e90c0d75c06bc7042dbc8192106de56b6d83c444324c68020381f31d",
+      ".github/banner.svg": "9f8a912deeb076730ea23b44dec7db6626e26c9b36fd99cfd81a2441ab97ff6d",
+      ".github/workflows/ci.yml": "b9cf2bf02818b27cae9410eec34447964d4dd6c84cda4fcbb4395b0b889ecc70",
+      ".gitignore": "6965126dc479d8f51bc92696d6d343067f85c5bfe50ac80a78d99d18c783f508",
+      ".oxfmtrc.json": "c69c6c37e10be0970bd4ffb40e82f64c5921a78708082518fe5f80c69914a87d",
+      ".oxlintrc.json": "5098cf80f97099bec85ca30e8b2a65a93c32d900215f3a5f590399da2c427546",
+      "CHANGELOG.md": "a4f8dd905ba654d9373ad61d0369728a6a817d4fe6da86ed69598c65eec0d531",
+      "LICENSE": "46231df5a7733c3f52f11b71f3df61813007745b62b09031acfb45fb42d75082",
+      "README.md": "0df91b5e08d0feb114a5e16028fab80b0e10318ba5108de2c4a5d972d2238727",
+      "lib/defu.cjs": "497cf64b88503ca9b49c383befb398b3fdd5d88ee28d20206d03118eb7ad2aae",
+      "lib/defu.d.cts": "bffa269fbd9cbfe8845ae8e83875356ae624fae3fe707e78a017fca3e4527a8d",
+      "package.json": "e043bcea9f9ab2c50ede779f6118a6aa67d3a9a1aa99c8daea65b7432cafb316",
+      "pnpm-lock.yaml": "1eef046935000595029ee01b325b374012c571845d420efe8f0f6a1d7b2bd01b",
+      "renovate.json": "a4609dc8c41c05feb86e780758cd3fb011fcd21a2de1d54dbfd4755bb87644cb",
+      "src/_utils.ts": "8b52fa19c1f1b29a8c26b5d13e979f8042b8a817e4481f9249785805916e15c4",
+      "src/defu.ts": "3ac1d2adc4b97158839c078e32e03c86f5d01239c82fe290d1401474805d84dd",
+      "src/types.ts": "4dc8c0f4fbf8580f192da5cf757cd402fec12cdb8570da0a9316e13fe89a6ef4",
+      "tddswarm.config.json": "308dbefd64e18641b2cdc754f9d92a271f20133aa82d44cecdb605e34e336c2f",
+      "tea.yaml": "c1cd68e9d8057ef6d0a72f053210fbf17ea77d8fa2e638eaa74b5ebbac645c51",
+      "test/defu.test.ts": "abfe579ac2a0f10280bc11efc3ece9c2012f5fa7dde0259ee604b85a5118b145",
+      "test/fixtures/index.ts": "5c009ae48d6fb89b7bc8109f01dadbbf633fe32b18ad75d7c1de8345ca96a020",
+      "test/fixtures/nested.ts": "d99c787c62cef62f6856e16d03432375a78eb47e053d037e5c5e22b6b02b9ad2",
+      "test/utils.test.ts": "87dc4337bc29da96aac6eb3c08a52383f1d24c5562e260218e435334a8bc7353",
+      "tsconfig.json": "28ad4e54b6d8bbb9134bdf31a4a77553081ed9509e2716d74e5ebbd020f1a8a6"
+    },
+    "fingerprint": "d83a43e439f8714f8e773baea6c12faf8678a1ad440043970c501bc6cc1049d2"
+  },
+  "serviceTokens": {},
+  "configurationFiles": [
+    "tsconfig.json"
+  ],
+  "mode": "full",
+  "base": null,
+  "changed": [
+    "README.md"
+  ],
+  "ignored": [],
+  "selected": [
+    "test/defu.test.ts",
+    "test/utils.test.ts"
+  ],
+  "total": 2,
+  "omitted": 0,
+  "selectionReduction": 0,
+  "reasons": [
+    "dependency-graph-incomplete",
+    "change-without-test-evidence"
+  ],
+  "warnings": [
+    {
+      "file": "lib/defu.cjs",
+      "reason": "unresolved-import:../dist/defu.cjs"
+    },
+    {
+      "file": "lib/defu.d.cts",
+      "reason": "unresolved-import:../dist/defu.mts"
+    },
+    {
+      "file": "test/defu.test.ts",
+      "reason": "unresolved-import:expect-type"
+    },
+    {
+      "file": "test/defu.test.ts",
+      "reason": "unresolved-import:vitest"
+    },
+    {
+      "file": "test/utils.test.ts",
+      "reason": "unresolved-import:vitest"
+    }
+  ],
+  "decisions": [
+    {
+      "test": "test/defu.test.ts",
+      "selected": true,
+      "reasons": [
+        "dependency-graph-incomplete",
+        "change-without-test-evidence"
+      ],
+      "paths": []
+    },
+    {
+      "test": "test/utils.test.ts",
+      "selected": true,
+      "reasons": [
+        "dependency-graph-incomplete",
+        "change-without-test-evidence"
+      ],
+      "paths": []
+    }
+  ],
+  "fingerprint": "0f48506efb7b163b548d0013a030c6680ea2e2ae83cdf14f596e908aee5fa14b",
+  "discovery": {
+    "complete": true,
+    "method": "configured-static-conventions"
+  },
+  "runtime": {
+    "usable": false,
+    "reason": "runtime-disabled",
+    "policy": "supplement-static-only"
+  },
+  "evidence": "static-imports-and-declared-dependencies",
+  "limitations": [
+    "Runtime observations cover exercised inputs; external services require declared versions.",
+    "Selection operates at test-file granularity.",
+    "No deployment safety or measured wall-clock savings are implied."
+  ]
+}

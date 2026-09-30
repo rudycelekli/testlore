@@ -1,0 +1,61 @@
+{
+  "scenario": "leaf-comment",
+  "project": "modular",
+  "regression": false,
+  "repetition": 0,
+  "order": [
+    "full-native",
+    "testlore",
+    "imports-only"
+  ],
+  "method": "imports-only",
+  "totalFiles": 8,
+  "plannedFiles": [
+    "test/0.test.js"
+  ],
+  "executedFiles": [
+    "test/0.test.js"
+  ],
+  "endToEndMs": 95,
+  "executionMs": 92,
+  "result": {
+    "adapter": "node",
+    "exitCode": 0,
+    "durationMs": 92,
+    "tests": [
+      {
+        "file": "test/0.test.js",
+        "name": "contract 0",
+        "status": "passed",
+        "durationMs": 0.364166,
+        "line": 4,
+        "column": 1,
+        "id": "31d6b4e3834249106de4173f8b8afaa6fe516cd10a1066da59307a221a4c04f0"
+      }
+    ],
+    "collectionFiles": [
+      "test/0.test.js"
+    ],
+    "requestedFiles": [
+      "test/0.test.js"
+    ],
+    "executedFiles": [
+      "test/0.test.js"
+    ],
+    "missingFiles": [],
+    "unknownFiles": [],
+    "complete": true,
+    "command": [
+      "<node>",
+      "--test",
+      "--test-reporter=<testlore-source>/src/reporters/node.js",
+      "--test-reporter-destination=/var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-report-zwiuVb/results.json",
+      "./test/0.test.js"
+    ],
+    "stdout": "",
+    "stderr": "",
+    "signal": null,
+    "reportErrors": []
+  },
+  "observedFailures": []
+}

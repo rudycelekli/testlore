@@ -1,0 +1,54 @@
+{
+  "schemaVersion": 1,
+  "scope": "Actual AQE3.14.6 credential-free template author composed with controlled architect/reviewer fixtures; no live LLM quality claim",
+  "upstream": {
+    "project": "Agentic QE",
+    "version": "3.14.6",
+    "repository": "https://github.com/proffesor-for-testing/agentic-qe",
+    "coverageEstimate": 6.8,
+    "llmEnhanced": false,
+    "qualityGates": [
+      {
+        "passed": true,
+        "issues": [],
+        "score": 100
+      }
+    ]
+  },
+  "worker": {
+    "kind": "controlled JSON protocol fixture; no model invoked",
+    "calls": 2,
+    "roles": [
+      "architect",
+      "reviewer"
+    ]
+  },
+  "author": {
+    "kind": "actual installed AQE CLI",
+    "calls": 1,
+    "status": "unreviewed-candidates",
+    "sourceHash": "c99848d14cea98a7348b6873b689c7c8c74ca1425f1ccde85402554f28c396cf",
+    "candidateHash": "d517b42d7134aabc90fba753d88bbd4d090fc5ca4be62b8ebea0175b0405ca63",
+    "file": "src/add.test.js",
+    "candidateCode": "import { describe, it, expect, beforeEach, vi } from 'vitest';\nimport { add } from './add';\n\ndescribe('add', () => {\n  it('should handle valid input correctly', () => {\n    const result = add({} /* TODO: provide a: unknown */, {} /* TODO: provide b: unknown */);\n    expect(result).toBeDefined();\n  });\n\n});\n\n"
+  },
+  "testlore": {
+    "status": "rejected-candidates",
+    "applied": false,
+    "measured": {
+      "execution": false,
+      "mutation": false
+    },
+    "review": {
+      "accepted": false,
+      "findings": [
+        "Credential-free protocol reviewer fixture: generated TODO placeholders and weak oracles require human/model review."
+      ]
+    }
+  },
+  "limitations": [
+    "Template output and upstream estimates do not establish effective tests.",
+    "No provider API or live architect/reviewer model was invoked.",
+    "This retained rejection is not an execution, mutation or performance measurement."
+  ]
+}

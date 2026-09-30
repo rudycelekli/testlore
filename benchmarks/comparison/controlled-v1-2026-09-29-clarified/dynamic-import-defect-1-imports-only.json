@@ -1,0 +1,31 @@
+{
+  "scenario": "dynamic-import-defect",
+  "project": "uncertainty",
+  "regression": true,
+  "repetition": 1,
+  "order": [
+    "full-native",
+    "testlore",
+    "imports-only"
+  ],
+  "method": "imports-only",
+  "totalFiles": 8,
+  "plannedFiles": [],
+  "executedFiles": [],
+  "endToEndMs": 1,
+  "executionMs": 0,
+  "result": {
+    "adapter": "node",
+    "exitCode": 0,
+    "tests": [],
+    "collectionFiles": [],
+    "requestedFiles": [],
+    "executedFiles": [],
+    "complete": true,
+    "durationMs": 0,
+    "command": [],
+    "stdout": "",
+    "stderr": ""
+  },
+  "observedFailures": []
+}

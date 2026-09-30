@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
+import { resolvePluginConfig } from './plugin-config.js';
 
 export const SOURCE = /\.(?:[cm]?[jt]sx?)$/;
 export const TEST = /(?:^|\/)(?:[^/]+\.)?(?:test|spec)\.[cm]?[jt]sx?$|(?:^|\/)(?:__tests__)\/.*\.[cm]?[jt]sx?$/;
@@ -42,8 +43,11 @@ export function listFiles(root) {
   }).sort();
 }
 export function readConfig(root) {
-  const file = path.join(root, 'tddswarm.config.json');
-  const config = fs.existsSync(file) ? JSON.parse(fs.readFileSync(file, 'utf8')) : {};
+  const file = safePath(root, 'tddswarm.config.json');
+  return validateConfig(fs.existsSync(file) ? JSON.parse(fs.readFileSync(file, 'utf8')) : {});
+}
+export function validateConfig(raw) {
+  const config = resolvePluginConfig(raw);
   for (const key of ['runner', 'agent']) {
     if (config[key] && (!Array.isArray(config[key]) || !config[key].length || config[key].some(v => typeof v !== 'string' || !v))) throw new Error(`${key} must be a nonempty array of executable and arguments`);
   }
@@ -52,5 +56,9 @@ export function readConfig(root) {
   if (config.alwaysRun && (!Array.isArray(config.alwaysRun) || config.alwaysRun.some(v => typeof v !== 'string'))) throw new Error('alwaysRun must be an array of test paths');
   if (config.dependencies && (typeof config.dependencies !== 'object' || Array.isArray(config.dependencies) || Object.values(config.dependencies).some(v => !Array.isArray(v) || v.some(x => typeof x !== 'string')))) throw new Error('dependencies must map test paths to arrays of project paths');
   if (config.fullRunEvery !== undefined && (!Number.isInteger(config.fullRunEvery) || config.fullRunEvery < 1)) throw new Error('fullRunEvery must be a positive integer');
+  for (const key of ['testMatch', 'testExclude']) if (config[key] && (!Array.isArray(config[key]) || config[key].some(p => typeof p !== 'string'))) throw new Error(`${key} must be an array of glob patterns`);
+  if (config.discovery && !['static','native'].includes(config.discovery) && (!Array.isArray(config.discovery) || !config.discovery.length || config.discovery.some(v=>typeof v!=='string'))) throw new Error('discovery must be static, native, or an argv array');
+  for (const key of ['environment','env']) if (config[key] && (typeof config[key] !== 'object' || Array.isArray(config[key]) || Object.values(config[key]).some(v => typeof v !== 'string'))) throw new Error(`${key} must map names to strings`);
+  for (const key of ['runtime','browser','contracts','services','integration']) if (config[key] && (typeof config[key] !== 'object' || Array.isArray(config[key]))) throw new Error(`${key} must be an object`);
   return config;
 }

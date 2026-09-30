@@ -1,0 +1,109 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-09-30T00:53:34.468Z",
+  "environment": {
+    "node": "v22.19.0",
+    "platform": "darwin",
+    "architecture": "arm64"
+  },
+  "repetitions": 1,
+  "projects": [
+    {
+      "project": {
+        "name": "nanoid",
+        "url": "https://github.com/ai/nanoid.git",
+        "commit": "bb68abcd59ebb86a849d634320726add6be54d47",
+        "framework": "node",
+        "scope": "Upstream runtime tests test/*.test.js; lint, size, prebuild, type and version checks excluded",
+        "changes": [
+          {
+            "name": "non-secure-default-length",
+            "file": "non-secure/index.js",
+            "before": "export let nanoid = (size = 21)",
+            "after": "export let nanoid = (size = 20)",
+            "regression": true
+          },
+          {
+            "name": "documentation",
+            "file": "README.md",
+            "append": "\n<!-- TDDSwarm benchmark documentation edit -->\n",
+            "regression": false
+          }
+        ]
+      },
+      "baseline": {
+        "durationMs": 514,
+        "exitCode": 0
+      },
+      "changes": [
+        {
+          "change": {
+            "name": "non-secure-default-length",
+            "file": "non-secure/index.js",
+            "before": "export let nanoid = (size = 21)",
+            "after": "export let nanoid = (size = 20)",
+            "regression": true
+          },
+          "valid": true,
+          "selectionMs": 61,
+          "selected": [
+            "test/bin.test.js",
+            "test/index.test.js",
+            "test/non-secure.test.js",
+            "test/pool.test.js"
+          ],
+          "totalFiles": 4,
+          "groundTruthFailures": [
+            "test/non-secure.test.js:generates URL-friendly IDs:12"
+          ],
+          "missed": [],
+          "nativeMissed": [],
+          "decisionRecall": 1,
+          "fullMs": 543,
+          "subsetMs": 466,
+          "nativeMs": 538,
+          "netSavingMs": 16,
+          "nativeBaseline": "Node has no native dependency selection; full runtime suite",
+          "fullExitCode": 1,
+          "subsetExitCode": 1,
+          "nativeExitCode": 1
+        },
+        {
+          "change": {
+            "name": "documentation",
+            "file": "README.md",
+            "append": "\n<!-- TDDSwarm benchmark documentation edit -->\n",
+            "regression": false
+          },
+          "valid": true,
+          "selectionMs": 42,
+          "selected": [
+            "test/bin.test.js",
+            "test/index.test.js",
+            "test/non-secure.test.js",
+            "test/pool.test.js"
+          ],
+          "totalFiles": 4,
+          "groundTruthFailures": [],
+          "missed": [],
+          "nativeMissed": [],
+          "decisionRecall": null,
+          "fullMs": 535,
+          "subsetMs": 527,
+          "nativeMs": 545,
+          "netSavingMs": -34,
+          "nativeBaseline": "Node has no native dependency selection; full runtime suite",
+          "fullExitCode": 0,
+          "subsetExitCode": 0,
+          "nativeExitCode": 0
+        }
+      ]
+    }
+  ],
+  "limitations": [
+    "Single runs; timing noise and stochastic upstream tests are not controlled.",
+    "Only listed deterministic patches and runtime test scope measured.",
+    "Selection is a diagnostic working-tree plan; generated config is excluded from changed inputs.",
+    "No release safety, whole-project quality, or general production speedup claim."
+  ]
+}
