@@ -137,9 +137,12 @@ export async function evaluateLearning({ output, agent, identity, dataset = defa
       async function request(role, payload) {
         if (++calls > maxCalls) throw new Error('Worker call budget exceeded');
         const sent = { schemaVersion: 1, role, requirements: f.requirements, context, budget, ...payload };
-        const start = performance.now(), result = await callAgent(agent, sent, root, timeoutMs), bytes = Buffer.byteLength(JSON.stringify(result));
-        if (f.files.some(file => fs.readFileSync(path.join(root,file.path),'utf8') !== file.content) || fs.existsSync(path.join(root,'test'))) throw new Error('Worker changed the source or installed tests outside the JSON protocol');
+        const start = performance.now(); let result;
+        try { result = await callAgent(agent, sent, root, timeoutMs); }
+        catch (error) { row.calls.push({ role, durationMs: Math.round(performance.now() - start), input: sent, error: error.message }); throw error; }
+        const bytes = Buffer.byteLength(JSON.stringify(result));
         row.outputBytes += bytes; row.calls.push({ role, durationMs: Math.round(performance.now() - start), input: sent, output: result, outputBytes: bytes });
+        if (f.files.some(file => fs.readFileSync(path.join(root,file.path),'utf8') !== file.content) || fs.existsSync(path.join(root,'test'))) throw new Error('Worker changed the source or installed tests outside the JSON protocol');
         if (bytes > maxOutputBytes) throw new Error('Worker response exceeds declared output budget'); return result;
       }
       try {

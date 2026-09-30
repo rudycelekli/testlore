@@ -27,6 +27,9 @@ test('paired controller executes withheld defects, retains raw outputs, and neve
   const warm = JSON.parse(fs.readFileSync(path.join(output,'trial-normalize-0-with_memory.json'))); const cold = JSON.parse(fs.readFileSync(path.join(output,'trial-normalize-0-without_memory.json')));
   assert.ok(warm.recalledRecords>0); assert.equal(cold.recalledRecords,0); assert.equal(warm.calls.length,3); assert.equal(warm.calls[2].input.learning,undefined); assert.equal(warm.defects[0].detected,true); assert.equal(warm.defects[0].result.tests.some(t => t.status==='failed' && t.name!=='<file-load>'),true);
   await assert.rejects(evaluateLearning({output,agent:[process.execPath,worker],identity:'fixture',dataset,repeat:1,maxCalls:12}),/new directory/);
+  const failureOutput=path.join(root,'failed-receipt'); const failed=await evaluateLearning({output:failureOutput,agent:[process.execPath,'-e','process.exit(9)'],identity:'failed-protocol-fixture',dataset,repeat:1,maxCalls:12,evidenceKind:'protocol-fixture'});
+  assert.equal(failed.calls,4); assert.equal(failed.comparison.complete,false); assert.equal(failed.arms.every(arm=>arm.detected===0&&arm.failedTrials===2),true);
+  const attempted=JSON.parse(fs.readFileSync(path.join(failureOutput,'trial-normalize-0-with_memory.json'))); assert.equal(attempted.calls[0].role,'architect'); assert.match(attempted.calls[0].error,/exited 9/); assert.ok(attempted.calls[0].input.requirements);
 });
 test('call budget fails before any output directory or worker invocation', async t => {
   const root = temporary(t), output = path.join(root,'budget-receipt');
