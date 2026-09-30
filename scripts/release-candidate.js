@@ -13,6 +13,7 @@ function revision(){return invoke(['git','rev-parse','HEAD']).trim();}
 const args=process.argv.slice(2), options={};
 for(let i=0;i<args.length;i++){const key=args[i];if(key==='--publish-check'){options.publish=true;continue;}if(!['--output','--verify','--revision'].includes(key)||!args[i+1]||options[key])throw new Error('Expected --output NEW_DIR or --verify RECEIPT [--publish-check] [--revision SHA]');options[key]=args[++i];}
 if(options['--verify']){
+ if(invoke(['git','status','--porcelain']).trim())throw new Error('Verification requires a clean immutable source checkout');
  const file=path.resolve(options['--verify']),receipt=JSON.parse(fs.readFileSync(file,'utf8'));
  if(receipt.schemaVersion!==1||receipt.sourceRevision!==revision()||!/^testlore-[A-Za-z0-9.+_-]+\.tgz$/.test(receipt.archive)||!receipt.qualified||!receipt.archiveSha256||!receipt.proofSha256)throw new Error('Release receipt is invalid or belongs to another source revision');
  if(JSON.parse(fs.readFileSync(path.join(root,'package.json'),'utf8')).version!==receipt.version)throw new Error('Release version differs from checked-out source');
