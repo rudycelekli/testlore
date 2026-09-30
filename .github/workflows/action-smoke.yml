@@ -13,6 +13,9 @@ jobs:
   shadow-action:
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    env:
+      # A disposable fixture must not inherit another run's runner history.
+      TDDSWARM_SMOKE_ENVIRONMENT: smoke-node22-linux-${{ github.run_id }}-${{ github.run_attempt }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -59,7 +62,7 @@ jobs:
           base: ${{ steps.fixture.outputs.base }}
           mode: shadow
           adapter: node
-          environment: smoke-node22-linux-v1
+          environment: ${{ env.TDDSWARM_SMOKE_ENVIRONMENT }}
       - name: Verify full shadow evidence and the proposed subset
         env:
           TDDSWARM_SMOKE_REPORT: ${{ steps.tddswarm.outputs.report }}
@@ -77,6 +80,8 @@ jobs:
           assert.equal(report.shadow, true);
           assert.equal(report.plan.base, process.env.TDDSWARM_SMOKE_BASE);
           assert.equal(report.plan.discovery.complete, true);
+          assert.equal(report.plan.mode, 'affected');
+          assert.deepEqual(report.plan.reasons, []);
           assert.deepEqual(report.plan.selected, ['test/landing.js']);
           assert.equal(report.plan.total, 2);
           assert.equal(report.plan.omitted, 1);
@@ -89,7 +94,7 @@ jobs:
           assert.deepEqual(report.comparison.omittedFailures, []);
           assert.equal(report.action.mode, 'shadow');
           assert.equal(report.action.adapter, 'node');
-          assert.equal(report.action.environment, 'smoke-node22-linux-v1');
+          assert.equal(report.action.environment, process.env.TDDSWARM_SMOKE_ENVIRONMENT);
           const directory = path.dirname(process.env.TDDSWARM_SMOKE_REPORT);
           const history = JSON.parse(fs.readFileSync(path.join(directory, `history-${report.runner}.json`), 'utf8'));
           assert.equal(history.runner, report.runner);
