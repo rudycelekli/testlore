@@ -24,29 +24,34 @@ export function workOrder(root) {
   };
 }
 
-export function callAgent(command, payload, root, timeout = 120000) {
+export function callAgent(command, payload, root, timeout = 120000, options = {}) {
+  const maxOutputBytes = options.maxOutputBytes ?? 2 * 1024 * 1024;
+  if (!Number.isInteger(timeout) || timeout < 1 || timeout > 3600000 || !Number.isInteger(maxOutputBytes) || maxOutputBytes < 1024 || maxOutputBytes > 2 * 1024 * 1024) return Promise.reject(new Error('Invalid agent transport budget'));
+  const deadlineAt = Date.now() + timeout, monotonicDeadline = performance.now() + timeout;
   return new Promise((resolve, reject) => {
     // argv-only execution; no shell interpolation of prompts or filenames.
     const child = spawn(command[0], command.slice(1), { cwd: root, stdio: ['pipe', 'pipe', 'pipe'], shell: false, detached: process.platform !== 'win32' });
     let out = '', err = '', settled = false;
     const finish = (error, value) => {
-      if (settled) return; settled = true; clearTimeout(timer);
+      if (settled) return; if(!error && (Date.now() >= deadlineAt || performance.now() >= monotonicDeadline))error=new Error('Agent timed out (late response rejected)'); settled = true; clearTimeout(timer);
       error ? reject(error) : resolve(value);
     };
     const kill = () => { try { process.platform === 'win32' ? child.kill('SIGKILL') : process.kill(-child.pid, 'SIGKILL'); } catch {} };
     const timer = setTimeout(() => { kill(); finish(new Error('Agent timed out')); }, timeout);
     child.stdout.on('data', data => {
       out += data;
-      if (Buffer.byteLength(out) > 2 * 1024 * 1024) { kill(); finish(new Error('Agent output exceeds 2 MB')); }
+      if (Buffer.byteLength(out) > maxOutputBytes) { kill(); finish(new Error('Agent output exceeds declared byte budget')); }
     });
     child.stderr.on('data', data => { if (err.length < 2000) err += data; });
-    child.on('error', finish);
+    child.on('error', error => { kill(); finish(error); });
     child.stdin.on('error', () => {});
     child.on('close', code => {
+      kill(); // Successful parent exit must not leave a background worker changing the repository.
+      if (Date.now() >= deadlineAt || performance.now() >= monotonicDeadline) { kill(); return finish(new Error('Agent timed out (late response rejected)')); }
       if (code !== 0) return finish(new Error(`Agent exited ${code}: ${err.slice(0, 2000)}`));
-      try { finish(null, JSON.parse(out)); } catch { finish(new Error('Agent must return one JSON object on stdout')); }
+      try { const value=JSON.parse(out); if(!value||typeof value!=='object'||Array.isArray(value))throw new Error('shape'); finish(null, value); } catch { finish(new Error('Agent must return one JSON object on stdout')); }
     });
-    child.stdin.end(JSON.stringify(payload));
+    child.stdin.end(JSON.stringify({ ...payload, transportBudget: { deadlineAt, timeoutMs: timeout, maxOutputBytes, ...(process.platform !== 'win32' ? {processGroupId:child.pid} : {}) } }));
   });
 }
 
@@ -75,8 +80,9 @@ export async function generate(root, options = {}) {
     if(!Array.isArray(plugin.envNames)||plugin.envNames.some(name=>!allowed.has(name)))throw new Error('AQE envNames must contain supported provider variable names');
     for(const name of plugin.envNames){if(typeof process.env[name]!=='string'||!process.env[name].trim())throw new Error('AQE provider variable is unavailable: '+name);authorEnvironment[name]=process.env[name];}
   }
-  const learning = recallLessons(root, (requirements+' '+order.subjects.join(' ')).slice(0,4096), {limit:5,maxChars:12000,config});
-  const architectural = await callAgent(agent, { schemaVersion: 1, role: 'architect', order, requirements, context, learning }, root);
+  const learning = recallLessons(root, (requirements+' '+order.subjects.join(' ')).slice(0,4096), {limit:5,maxChars:12000,config,contract:requirements});
+  const timeoutMs = options.timeoutMs ?? 120000, transport = {maxOutputBytes: options.maxOutputBytes ?? 2 * 1024 * 1024};
+  const architectural = await callAgent(agent, { schemaVersion: 1, role: 'architect', order, requirements, context, learning }, root, timeoutMs, transport);
   if (!Array.isArray(architectural.tasks) || !architectural.tasks.length || architectural.tasks.length > 12) throw new Error('Architect must return 1–12 tasks');
   for (const task of architectural.tasks) {
     if (typeof task.subject !== 'string' || !graph.sources[task.subject] || (plugin && (TEST.test(task.subject) || graph.tests.includes(task.subject))) || !context.some(file=>file.file===task.subject) || typeof task.instructions !== 'string' || task.instructions.length > 20000) throw new Error('Invalid architect task');
@@ -105,7 +111,7 @@ export async function generate(root, options = {}) {
   } else {
     // Three authors at a time; maximum 12 tasks + architect + reviewer = 14 calls.
     for (let offset = 0; offset < architectural.tasks.length; offset += 3) {
-      const batch = await Promise.all(architectural.tasks.slice(offset, offset + 3).map(task => callAgent(agent, { schemaVersion: 1, role: 'author', agentProfile:order.agentProfile, task, requirements, context, learning:recallLessons(root,(task.subject+' '+task.instructions+' '+requirements).slice(0,4096),{limit:3,maxChars:8000,config}) }, root)));
+      const batch = await Promise.all(architectural.tasks.slice(offset, offset + 3).map(task => callAgent(agent, { schemaVersion: 1, role: 'author', agentProfile:order.agentProfile, task, requirements, context, learning:recallLessons(root,(task.subject+' '+task.instructions+' '+requirements).slice(0,4096),{limit:3,maxChars:8000,config,contract:requirements}) }, root, timeoutMs, transport)));
       drafts.push(...batch);
     }
   }
@@ -126,7 +132,7 @@ export async function generate(root, options = {}) {
     if (paths.has(f.path)) throw new Error(`Duplicate candidate path: ${f.path}`);
     paths.add(f.path);
   }
-  const review = await callAgent(agent, { schemaVersion: 1, role: 'reviewer', requirements, context, files: candidates, acceptance: order.acceptance }, root);
+  const review = await callAgent(agent, { schemaVersion: 1, role: 'reviewer', requirements, context, files: candidates, acceptance: order.acceptance }, root, timeoutMs, transport);
   if (typeof review.accepted !== 'boolean' || !Array.isArray(review.findings) || review.findings.some(f => typeof f !== 'string')) throw new Error('Reviewer must return accepted:boolean and findings:string[]');
   const staged=stagePatch(root,{files:candidates,delete:[],review,requirements,provenance,purpose:order.purpose});
   const result = { ...order, ...staged, executed: true, calls: plugin?2:architectural.tasks.length + 2, ...(plugin?{generation:{provider:'agentic-qe',authorCalls:artifacts.length,artifacts}}:{}) };

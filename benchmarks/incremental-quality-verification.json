@@ -1,0 +1,2132 @@
+{
+  "schemaVersion": 1,
+  "verified": true,
+  "scope": "Real installed Stryker 10 command-runner fixture; same independent clamp oracle retained. Not production/model effectiveness evidence.",
+  "first": {
+    "schemaVersion": 1,
+    "kind": "executed-stryker",
+    "complete": true,
+    "measured": true,
+    "key": "50a2ea716a520ef5d00f2f2bb9cf59585b86b321bad21b59a7185527a0885d96",
+    "producer": {
+      "tool": "@stryker-mutator/core",
+      "version": "10.0.0",
+      "toolIdentity": "29c5e07a47a608aeca6940dc4e36824eb7fd9700b2c767b91778a31c6d9b0108",
+      "implementation": "abec0904417033892b075f9a06c4f6ac1ebce670b48776fc830bd214d2215adf"
+    },
+    "provenance": {
+      "schemaVersion": 1,
+      "revision": null,
+      "runner": "5d255d220fe22aecda8f77f4c0751885a78b53c8144ad56d4d5ee5fa8cde561b",
+      "environment": {
+        "node": "v22.19.0",
+        "platform": "darwin",
+        "arch": "arm64",
+        "labels": {}
+      },
+      "services": {},
+      "serviceWarnings": [],
+      "files": {
+        "package.json": "6dc1b06d6b093e9cccb20bee06a93836eee0420ae26803ca2ce4065d82f070d1",
+        "src/clamp.js": "74eaa8a3c97cf8fc2be6dc7bb13197e4e1b06ba540002ae674727757f08b7c91",
+        "src/helper.js": "d603cc0a8da7b2a017fa5b831e838ddb288dac047047a2092dc12efe681e66ef",
+        "tddswarm.config.json": "8803d6c1c3fa401906cc7c8d36cc3a720b345d018e55fcbbbe8b9249425d6cfe",
+        "test/clamp.test.js": "28faf79977dba11052989c5c148adc320c16971570c51e9bb297282aa0a596a8"
+      },
+      "fingerprint": "d3d4723f6723d71615fe522894064be018cad845060d74d9faf5c6d1f90a72a0"
+    },
+    "scope": [
+      "src/clamp.js"
+    ],
+    "configuration": {
+      "mutate": [
+        "src/clamp.js"
+      ],
+      "testRunner": "command",
+      "commandRunner": {
+        "command": "'<node>' '--test' 'test/clamp.test.js'"
+      },
+      "coverageAnalysis": "off",
+      "concurrency": 1,
+      "reporters": [
+        "json"
+      ],
+      "jsonReporter": {
+        "fileName": ".tddswarm/mutation/report.json"
+      },
+      "tempDirName": ".tddswarm/stryker-tmp",
+      "cleanTempDir": "always",
+      "symlinkNodeModules": true,
+      "timeoutMS": 5000,
+      "logLevel": "info",
+      "fileLogLevel": "off",
+      "plugins": [],
+      "ignorePatterns": [
+        ".tddswarm"
+      ],
+      "thresholds": {
+        "high": 100,
+        "low": 0,
+        "break": 0
+      },
+      "incremental": true,
+      "incrementalFile": ".tddswarm/mutation/incremental.json"
+    },
+    "reusedBaseline": false,
+    "cacheReason": "no-complete-baseline",
+    "execution": {
+      "exitCode": 0,
+      "error": null,
+      "durationMs": 1182,
+      "stdout": "\u001b[32m11:26:27 (98078) INFO ProjectReader\u001b[39m No incremental result file found at .tddswarm/mutation/incremental.json, a full mutation testing run will be performed.\n\u001b[32m11:26:27 (98078) INFO ProjectReader\u001b[39m Found 1 of 5 file(s) to be mutated.\n\u001b[32m11:26:27 (98078) INFO Instrumenter\u001b[39m Instrumented 1 source file(s) with 3 mutant(s)\n\u001b[32m11:26:27 (98078) INFO ConcurrencyTokenProvider\u001b[39m Creating 1 test runner process(es).\n\u001b[32m11:26:27 (98078) INFO DryRunExecutor\u001b[39m Starting initial test run (command test runner with \"off\" coverage analysis). This may take a while.\n\u001b[32m11:26:27 (98078) INFO DryRunExecutor\u001b[39m Initial test run succeeded. Ran 1 tests in 0 seconds (net 117 ms, overhead 1 ms).\n\u001b[32m11:26:27 (98078) INFO MutationTestReportHelper\u001b[39m Final mutation score of 100.00 is greater than or equal to break threshold 0\n\u001b[32m11:26:27 (98078) INFO JsonReporter\u001b[39m Your report can be found at: file://<measurement>/.tddswarm/mutation/report.json\n\u001b[32m11:26:27 (98078) INFO MutationTestExecutor\u001b[39m Done in 0 seconds.\n",
+      "stderr": "",
+      "deadlineMs": 179721
+    },
+    "baseline": {
+      "adapter": "node",
+      "exitCode": 0,
+      "durationMs": 109,
+      "tests": [
+        {
+          "file": "test/clamp.test.js",
+          "name": "independent clamp lower bound zero",
+          "status": "passed",
+          "durationMs": 0.379792,
+          "line": 1,
+          "column": 167,
+          "id": "76114fb079803fc248f8612a21e3244887c2af7f26023d347a4886575c4d7f96"
+        },
+        {
+          "file": "test/clamp.test.js",
+          "name": "independent upper bound ten",
+          "status": "passed",
+          "durationMs": 0.11175,
+          "line": 1,
+          "column": 240,
+          "id": "64940287583f0d6b424d5bf65a20c95a623df9b71c3ab81847bcf586fcf995d9"
+        },
+        {
+          "file": "test/clamp.test.js",
+          "name": "independent in-range identity",
+          "status": "passed",
+          "durationMs": 0.053292,
+          "line": 1,
+          "column": 307,
+          "id": "afb64daa4ce3ce2becb5c4cf70287b7fcd942391587d39502486eee747ea0a03"
+        }
+      ],
+      "collectionFiles": [
+        "test/clamp.test.js"
+      ],
+      "requestedFiles": [
+        "test/clamp.test.js"
+      ],
+      "executedFiles": [
+        "test/clamp.test.js"
+      ],
+      "missingFiles": [],
+      "unknownFiles": [],
+      "dependencyFiles": [],
+      "complete": true,
+      "command": [
+        "node",
+        "--test",
+        "--test-reporter=<repository>/src/reporters/node.js",
+        "--test-reporter-destination=<measurement>/results.json",
+        "./test/clamp.test.js"
+      ],
+      "stdout": "",
+      "stderr": "",
+      "signal": null,
+      "reportErrors": [],
+      "discovery": {
+        "files": [
+          "test/clamp.test.js"
+        ],
+        "complete": true,
+        "adapter": "filesystem",
+        "warnings": []
+      },
+      "totalDurationMs": 138
+    },
+    "metrics": {
+      "counts": {
+        "Killed": 3
+      },
+      "total": 3,
+      "valid": 3,
+      "killed": 3,
+      "effectiveness": 1
+    },
+    "cost": {
+      "totalMs": 1555,
+      "providerTokens": null,
+      "providerDollars": null
+    },
+    "reasons": [],
+    "incrementalHash": "4f6b4c1d4c1489f279fd69c4d9eb47c4c02f62865aee91de6acbd89a8f091be5",
+    "reportHash": "57ec8f5c0f120ee47400d78d9083c60e6e6286a4988bd404e920876c59c9f564",
+    "limitations": [
+      "Command runner has no per-test mutation coverage. Exact complete input baseline reuse only; any input or environment change discards it.",
+      "Dependencies are shared read-only by convention; installed package identity and tools lock recorded, not every installed dependency byte.",
+      "Timeout is a requested wall-clock deadline; host suspension may delay timers. Late responses are rejected."
+    ],
+    "integrity": "b4738082242d77bd3942bcc5273741136e0a0aefa04a3e52dc175448add6e1d6",
+    "receiptPath": ".tddswarm/measurements/mutation/4b613259-9bdf-42fc-8c12-f358275ef711.json",
+    "rawPath": ".tddswarm/measurements/mutation/4b613259-9bdf-42fc-8c12-f358275ef711.raw.json"
+  },
+  "warm": {
+    "schemaVersion": 1,
+    "kind": "executed-stryker",
+    "complete": true,
+    "measured": true,
+    "key": "50a2ea716a520ef5d00f2f2bb9cf59585b86b321bad21b59a7185527a0885d96",
+    "producer": {
+      "tool": "@stryker-mutator/core",
+      "version": "10.0.0",
+      "toolIdentity": "29c5e07a47a608aeca6940dc4e36824eb7fd9700b2c767b91778a31c6d9b0108",
+      "implementation": "abec0904417033892b075f9a06c4f6ac1ebce670b48776fc830bd214d2215adf"
+    },
+    "provenance": {
+      "schemaVersion": 1,
+      "revision": null,
+      "runner": "5d255d220fe22aecda8f77f4c0751885a78b53c8144ad56d4d5ee5fa8cde561b",
+      "environment": {
+        "node": "v22.19.0",
+        "platform": "darwin",
+        "arch": "arm64",
+        "labels": {}
+      },
+      "services": {},
+      "serviceWarnings": [],
+      "files": {
+        "package.json": "6dc1b06d6b093e9cccb20bee06a93836eee0420ae26803ca2ce4065d82f070d1",
+        "src/clamp.js": "74eaa8a3c97cf8fc2be6dc7bb13197e4e1b06ba540002ae674727757f08b7c91",
+        "src/helper.js": "d603cc0a8da7b2a017fa5b831e838ddb288dac047047a2092dc12efe681e66ef",
+        "tddswarm.config.json": "8803d6c1c3fa401906cc7c8d36cc3a720b345d018e55fcbbbe8b9249425d6cfe",
+        "test/clamp.test.js": "28faf79977dba11052989c5c148adc320c16971570c51e9bb297282aa0a596a8"
+      },
+      "fingerprint": "d3d4723f6723d71615fe522894064be018cad845060d74d9faf5c6d1f90a72a0"
+    },
+    "scope": [
+      "src/clamp.js"
+    ],
+    "configuration": {
+      "mutate": [
+        "src/clamp.js"
+      ],
+      "testRunner": "command",
+      "commandRunner": {
+        "command": "'<node>' '--test' 'test/clamp.test.js'"
+      },
+      "coverageAnalysis": "off",
+      "concurrency": 1,
+      "reporters": [
+        "json"
+      ],
+      "jsonReporter": {
+        "fileName": ".tddswarm/mutation/report.json"
+      },
+      "tempDirName": ".tddswarm/stryker-tmp",
+      "cleanTempDir": "always",
+      "symlinkNodeModules": true,
+      "timeoutMS": 5000,
+      "logLevel": "info",
+      "fileLogLevel": "off",
+      "plugins": [],
+      "ignorePatterns": [
+        ".tddswarm"
+      ],
+      "thresholds": {
+        "high": 100,
+        "low": 0,
+        "break": 0
+      },
+      "incremental": true,
+      "incrementalFile": ".tddswarm/mutation/incremental.json"
+    },
+    "reusedBaseline": true,
+    "cacheReason": "exact-complete-baseline",
+    "execution": {
+      "exitCode": 0,
+      "error": null,
+      "durationMs": 778,
+      "stdout": "\u001b[32m11:26:28 (98139) INFO ProjectReader\u001b[39m Found 1 of 5 file(s) to be mutated using incremental report with 3 mutant(s), and 1 test(s).\n\u001b[32m11:26:28 (98139) INFO Instrumenter\u001b[39m Instrumented 1 source file(s) with 3 mutant(s)\n\u001b[32m11:26:28 (98139) INFO ConcurrencyTokenProvider\u001b[39m Creating 1 test runner process(es).\n\u001b[32m11:26:28 (98139) INFO DryRunExecutor\u001b[39m Starting initial test run (command test runner with \"off\" coverage analysis). This may take a while.\n\u001b[32m11:26:28 (98139) INFO DryRunExecutor\u001b[39m Initial test run succeeded. Ran 1 tests in 0 seconds (net 124 ms, overhead 0 ms).\n\u001b[32m11:26:28 (98139) INFO IncrementalDiffer\u001b[39m Incremental report:\n\tMutants:\t0 files changed (+0 -0)\n\tResult:\t\t3 of 3 mutant result(s) are reused.\n\u001b[32m11:26:28 (98139) INFO MutationTestReportHelper\u001b[39m Final mutation score of 100.00 is greater than or equal to break threshold 0\n\u001b[32m11:26:28 (98139) INFO JsonReporter\u001b[39m Your report can be found at: file://<measurement>/.tddswarm/mutation/report.json\n\u001b[32m11:26:28 (98139) INFO MutationTestExecutor\u001b[39m Done in 0 seconds.\n",
+      "stderr": "",
+      "deadlineMs": 179738
+    },
+    "baseline": {
+      "adapter": "node",
+      "exitCode": 0,
+      "durationMs": 109,
+      "tests": [
+        {
+          "file": "test/clamp.test.js",
+          "name": "independent clamp lower bound zero",
+          "status": "passed",
+          "durationMs": 0.416959,
+          "line": 1,
+          "column": 167,
+          "id": "76114fb079803fc248f8612a21e3244887c2af7f26023d347a4886575c4d7f96"
+        },
+        {
+          "file": "test/clamp.test.js",
+          "name": "independent upper bound ten",
+          "status": "passed",
+          "durationMs": 0.114417,
+          "line": 1,
+          "column": 240,
+          "id": "64940287583f0d6b424d5bf65a20c95a623df9b71c3ab81847bcf586fcf995d9"
+        },
+        {
+          "file": "test/clamp.test.js",
+          "name": "independent in-range identity",
+          "status": "passed",
+          "durationMs": 0.053084,
+          "line": 1,
+          "column": 307,
+          "id": "afb64daa4ce3ce2becb5c4cf70287b7fcd942391587d39502486eee747ea0a03"
+        }
+      ],
+      "collectionFiles": [
+        "test/clamp.test.js"
+      ],
+      "requestedFiles": [
+        "test/clamp.test.js"
+      ],
+      "executedFiles": [
+        "test/clamp.test.js"
+      ],
+      "missingFiles": [],
+      "unknownFiles": [],
+      "dependencyFiles": [],
+      "complete": true,
+      "command": [
+        "node",
+        "--test",
+        "--test-reporter=<repository>/src/reporters/node.js",
+        "--test-reporter-destination=<measurement>/results.json",
+        "./test/clamp.test.js"
+      ],
+      "stdout": "",
+      "stderr": "",
+      "signal": null,
+      "reportErrors": [],
+      "discovery": {
+        "files": [
+          "test/clamp.test.js"
+        ],
+        "complete": true,
+        "adapter": "filesystem",
+        "warnings": []
+      },
+      "totalDurationMs": 133
+    },
+    "metrics": {
+      "counts": {
+        "Killed": 3
+      },
+      "total": 3,
+      "valid": 3,
+      "killed": 3,
+      "effectiveness": 1
+    },
+    "cost": {
+      "totalMs": 1150,
+      "providerTokens": null,
+      "providerDollars": null
+    },
+    "reasons": [],
+    "incrementalHash": "88729ab4ac0c43f7b9f72f97785459e1e25321e3d58aad7ef41385ac1e5dda0e",
+    "reportHash": "2431ace7dbd32149da064afa50c05a516197681e031e67a5224e646bbdb4c859",
+    "limitations": [
+      "Command runner has no per-test mutation coverage. Exact complete input baseline reuse only; any input or environment change discards it.",
+      "Dependencies are shared read-only by convention; installed package identity and tools lock recorded, not every installed dependency byte.",
+      "Timeout is a requested wall-clock deadline; host suspension may delay timers. Late responses are rejected."
+    ],
+    "integrity": "9780c4b92920bd3a0f4e41c7307df81b030a0fcfca88d25d8acfd29df034afdc",
+    "receiptPath": ".tddswarm/measurements/mutation/332b2984-bf65-4fd4-9959-d01482cd1ea9.json",
+    "rawPath": ".tddswarm/measurements/mutation/332b2984-bf65-4fd4-9959-d01482cd1ea9.raw.json"
+  },
+  "helperInvalidation": {
+    "schemaVersion": 1,
+    "kind": "executed-stryker",
+    "complete": true,
+    "measured": true,
+    "key": "8c81b0e4a8b84ce389f91704c97aeb370e1145f661d3969d87ca833ff724dd10",
+    "producer": {
+      "tool": "@stryker-mutator/core",
+      "version": "10.0.0",
+      "toolIdentity": "29c5e07a47a608aeca6940dc4e36824eb7fd9700b2c767b91778a31c6d9b0108",
+      "implementation": "abec0904417033892b075f9a06c4f6ac1ebce670b48776fc830bd214d2215adf"
+    },
+    "provenance": {
+      "schemaVersion": 1,
+      "revision": null,
+      "runner": "5d255d220fe22aecda8f77f4c0751885a78b53c8144ad56d4d5ee5fa8cde561b",
+      "environment": {
+        "node": "v22.19.0",
+        "platform": "darwin",
+        "arch": "arm64",
+        "labels": {}
+      },
+      "services": {},
+      "serviceWarnings": [],
+      "files": {
+        "package.json": "6dc1b06d6b093e9cccb20bee06a93836eee0420ae26803ca2ce4065d82f070d1",
+        "src/clamp.js": "74eaa8a3c97cf8fc2be6dc7bb13197e4e1b06ba540002ae674727757f08b7c91",
+        "src/helper.js": "865bc3e4cf028be803664cf57b5f96b37321128cf30c19f260149ba2091efb73",
+        "tddswarm.config.json": "8803d6c1c3fa401906cc7c8d36cc3a720b345d018e55fcbbbe8b9249425d6cfe",
+        "test/clamp.test.js": "28faf79977dba11052989c5c148adc320c16971570c51e9bb297282aa0a596a8"
+      },
+      "fingerprint": "61b9295a9469e776d7e3c80403663986b574329640fac6ea0e946aaa08916b25"
+    },
+    "scope": [
+      "src/clamp.js"
+    ],
+    "configuration": {
+      "mutate": [
+        "src/clamp.js"
+      ],
+      "testRunner": "command",
+      "commandRunner": {
+        "command": "'<node>' '--test' 'test/clamp.test.js'"
+      },
+      "coverageAnalysis": "off",
+      "concurrency": 1,
+      "reporters": [
+        "json"
+      ],
+      "jsonReporter": {
+        "fileName": ".tddswarm/mutation/report.json"
+      },
+      "tempDirName": ".tddswarm/stryker-tmp",
+      "cleanTempDir": "always",
+      "symlinkNodeModules": true,
+      "timeoutMS": 5000,
+      "logLevel": "info",
+      "fileLogLevel": "off",
+      "plugins": [],
+      "ignorePatterns": [
+        ".tddswarm"
+      ],
+      "thresholds": {
+        "high": 100,
+        "low": 0,
+        "break": 0
+      },
+      "incremental": true,
+      "incrementalFile": ".tddswarm/mutation/incremental.json"
+    },
+    "reusedBaseline": false,
+    "cacheReason": "baseline-inputs-or-integrity-changed",
+    "execution": {
+      "exitCode": 0,
+      "error": null,
+      "durationMs": 1118,
+      "stdout": "\u001b[32m11:26:29 (98213) INFO ProjectReader\u001b[39m No incremental result file found at .tddswarm/mutation/incremental.json, a full mutation testing run will be performed.\n\u001b[32m11:26:29 (98213) INFO ProjectReader\u001b[39m Found 1 of 5 file(s) to be mutated.\n\u001b[32m11:26:29 (98213) INFO Instrumenter\u001b[39m Instrumented 1 source file(s) with 3 mutant(s)\n\u001b[32m11:26:29 (98213) INFO ConcurrencyTokenProvider\u001b[39m Creating 1 test runner process(es).\n\u001b[32m11:26:30 (98213) INFO DryRunExecutor\u001b[39m Starting initial test run (command test runner with \"off\" coverage analysis). This may take a while.\n\u001b[32m11:26:30 (98213) INFO DryRunExecutor\u001b[39m Initial test run succeeded. Ran 1 tests in 0 seconds (net 131 ms, overhead 1 ms).\n\u001b[32m11:26:30 (98213) INFO JsonReporter\u001b[39m Your report can be found at: file://<measurement>/.tddswarm/mutation/report.json\n\u001b[32m11:26:30 (98213) INFO MutationTestReportHelper\u001b[39m Final mutation score of 100.00 is greater than or equal to break threshold 0\n\u001b[32m11:26:30 (98213) INFO MutationTestExecutor\u001b[39m Done in 0 seconds.\n",
+      "stderr": "",
+      "deadlineMs": 179586
+    },
+    "baseline": {
+      "adapter": "node",
+      "exitCode": 0,
+      "durationMs": 105,
+      "tests": [
+        {
+          "file": "test/clamp.test.js",
+          "name": "independent clamp lower bound zero",
+          "status": "passed",
+          "durationMs": 0.380833,
+          "line": 1,
+          "column": 167,
+          "id": "76114fb079803fc248f8612a21e3244887c2af7f26023d347a4886575c4d7f96"
+        },
+        {
+          "file": "test/clamp.test.js",
+          "name": "independent upper bound ten",
+          "status": "passed",
+          "durationMs": 0.110708,
+          "line": 1,
+          "column": 240,
+          "id": "64940287583f0d6b424d5bf65a20c95a623df9b71c3ab81847bcf586fcf995d9"
+        },
+        {
+          "file": "test/clamp.test.js",
+          "name": "independent in-range identity",
+          "status": "passed",
+          "durationMs": 0.05175,
+          "line": 1,
+          "column": 307,
+          "id": "afb64daa4ce3ce2becb5c4cf70287b7fcd942391587d39502486eee747ea0a03"
+        }
+      ],
+      "collectionFiles": [
+        "test/clamp.test.js"
+      ],
+      "requestedFiles": [
+        "test/clamp.test.js"
+      ],
+      "executedFiles": [
+        "test/clamp.test.js"
+      ],
+      "missingFiles": [],
+      "unknownFiles": [],
+      "dependencyFiles": [],
+      "complete": true,
+      "command": [
+        "node",
+        "--test",
+        "--test-reporter=<repository>/src/reporters/node.js",
+        "--test-reporter-destination=<measurement>/results.json",
+        "./test/clamp.test.js"
+      ],
+      "stdout": "",
+      "stderr": "",
+      "signal": null,
+      "reportErrors": [],
+      "discovery": {
+        "files": [
+          "test/clamp.test.js"
+        ],
+        "complete": true,
+        "adapter": "filesystem",
+        "warnings": []
+      },
+      "totalDurationMs": 140
+    },
+    "metrics": {
+      "counts": {
+        "Killed": 3
+      },
+      "total": 3,
+      "valid": 3,
+      "killed": 3,
+      "effectiveness": 1
+    },
+    "cost": {
+      "totalMs": 1642,
+      "providerTokens": null,
+      "providerDollars": null
+    },
+    "reasons": [],
+    "incrementalHash": "99e1d2d32fb9c9bbaeeeb954804cc41cbbb3a79d0b721cb9d45924d6175a608f",
+    "reportHash": "56e348e511e473cef0576abe43703b43323a1153435f492c18311330cfb6ece1",
+    "limitations": [
+      "Command runner has no per-test mutation coverage. Exact complete input baseline reuse only; any input or environment change discards it.",
+      "Dependencies are shared read-only by convention; installed package identity and tools lock recorded, not every installed dependency byte.",
+      "Timeout is a requested wall-clock deadline; host suspension may delay timers. Late responses are rejected."
+    ],
+    "integrity": "393cec9c1e794d9aed4c161788875fbf5790d97434f56cfdd7108876204554df",
+    "receiptPath": ".tddswarm/measurements/mutation/529be6cb-463d-4498-93fb-807d06064889.json",
+    "rawPath": ".tddswarm/measurements/mutation/529be6cb-463d-4498-93fb-807d06064889.raw.json"
+  },
+  "lockInvalidation": {
+    "schemaVersion": 1,
+    "kind": "executed-stryker",
+    "complete": true,
+    "measured": true,
+    "key": "c665f8c1fc52fb9ad204a72778f08e5b71a4ff8b135d195a5909425376ac39c5",
+    "producer": {
+      "tool": "@stryker-mutator/core",
+      "version": "10.0.0",
+      "toolIdentity": "29c5e07a47a608aeca6940dc4e36824eb7fd9700b2c767b91778a31c6d9b0108",
+      "implementation": "abec0904417033892b075f9a06c4f6ac1ebce670b48776fc830bd214d2215adf"
+    },
+    "provenance": {
+      "schemaVersion": 1,
+      "revision": null,
+      "runner": "ce27a53d64bdd3cf093cb2fcd441e2117a1f76ee2b68e5b58e0dbe4823dadf9d",
+      "environment": {
+        "node": "v22.19.0",
+        "platform": "darwin",
+        "arch": "arm64",
+        "labels": {}
+      },
+      "services": {},
+      "serviceWarnings": [],
+      "files": {
+        "package-lock.json": "92a2ed68a33e56e253fab7c99eca72a8e9f1967cae4048b90a02172df9b9dd80",
+        "package.json": "6dc1b06d6b093e9cccb20bee06a93836eee0420ae26803ca2ce4065d82f070d1",
+        "src/clamp.js": "74eaa8a3c97cf8fc2be6dc7bb13197e4e1b06ba540002ae674727757f08b7c91",
+        "src/helper.js": "865bc3e4cf028be803664cf57b5f96b37321128cf30c19f260149ba2091efb73",
+        "tddswarm.config.json": "8803d6c1c3fa401906cc7c8d36cc3a720b345d018e55fcbbbe8b9249425d6cfe",
+        "test/clamp.test.js": "28faf79977dba11052989c5c148adc320c16971570c51e9bb297282aa0a596a8"
+      },
+      "fingerprint": "66a273f35328957d7308956fdf261a901741ad7edb6552f19bad6da47bf2f75f"
+    },
+    "scope": [
+      "src/clamp.js"
+    ],
+    "configuration": {
+      "mutate": [
+        "src/clamp.js"
+      ],
+      "testRunner": "command",
+      "commandRunner": {
+        "command": "'<node>' '--test' 'test/clamp.test.js'"
+      },
+      "coverageAnalysis": "off",
+      "concurrency": 1,
+      "reporters": [
+        "json"
+      ],
+      "jsonReporter": {
+        "fileName": ".tddswarm/mutation/report.json"
+      },
+      "tempDirName": ".tddswarm/stryker-tmp",
+      "cleanTempDir": "always",
+      "symlinkNodeModules": true,
+      "timeoutMS": 5000,
+      "logLevel": "info",
+      "fileLogLevel": "off",
+      "plugins": [],
+      "ignorePatterns": [
+        ".tddswarm"
+      ],
+      "thresholds": {
+        "high": 100,
+        "low": 0,
+        "break": 0
+      },
+      "incremental": true,
+      "incrementalFile": ".tddswarm/mutation/incremental.json"
+    },
+    "reusedBaseline": false,
+    "cacheReason": "baseline-inputs-or-integrity-changed",
+    "execution": {
+      "exitCode": 0,
+      "error": null,
+      "durationMs": 1099,
+      "stdout": "\u001b[32m11:26:31 (98270) INFO ProjectReader\u001b[39m No incremental result file found at .tddswarm/mutation/incremental.json, a full mutation testing run will be performed.\n\u001b[32m11:26:31 (98270) INFO ProjectReader\u001b[39m Found 1 of 6 file(s) to be mutated.\n\u001b[32m11:26:31 (98270) INFO Instrumenter\u001b[39m Instrumented 1 source file(s) with 3 mutant(s)\n\u001b[32m11:26:31 (98270) INFO ConcurrencyTokenProvider\u001b[39m Creating 1 test runner process(es).\n\u001b[32m11:26:31 (98270) INFO DryRunExecutor\u001b[39m Starting initial test run (command test runner with \"off\" coverage analysis). This may take a while.\n\u001b[32m11:26:31 (98270) INFO DryRunExecutor\u001b[39m Initial test run succeeded. Ran 1 tests in 0 seconds (net 123 ms, overhead 0 ms).\n\u001b[32m11:26:32 (98270) INFO MutationTestReportHelper\u001b[39m Final mutation score of 100.00 is greater than or equal to break threshold 0\n\u001b[32m11:26:32 (98270) INFO JsonReporter\u001b[39m Your report can be found at: file://<measurement>/.tddswarm/mutation/report.json\n\u001b[32m11:26:32 (98270) INFO MutationTestExecutor\u001b[39m Done in 0 seconds.\n",
+      "stderr": "",
+      "deadlineMs": 179719
+    },
+    "baseline": {
+      "adapter": "node",
+      "exitCode": 0,
+      "durationMs": 107,
+      "tests": [
+        {
+          "file": "test/clamp.test.js",
+          "name": "independent clamp lower bound zero",
+          "status": "passed",
+          "durationMs": 0.507333,
+          "line": 1,
+          "column": 167,
+          "id": "76114fb079803fc248f8612a21e3244887c2af7f26023d347a4886575c4d7f96"
+        },
+        {
+          "file": "test/clamp.test.js",
+          "name": "independent upper bound ten",
+          "status": "passed",
+          "durationMs": 0.1425,
+          "line": 1,
+          "column": 240,
+          "id": "64940287583f0d6b424d5bf65a20c95a623df9b71c3ab81847bcf586fcf995d9"
+        },
+        {
+          "file": "test/clamp.test.js",
+          "name": "independent in-range identity",
+          "status": "passed",
+          "durationMs": 0.0545,
+          "line": 1,
+          "column": 307,
+          "id": "afb64daa4ce3ce2becb5c4cf70287b7fcd942391587d39502486eee747ea0a03"
+        }
+      ],
+      "collectionFiles": [
+        "test/clamp.test.js"
+      ],
+      "requestedFiles": [
+        "test/clamp.test.js"
+      ],
+      "executedFiles": [
+        "test/clamp.test.js"
+      ],
+      "missingFiles": [],
+      "unknownFiles": [],
+      "dependencyFiles": [],
+      "complete": true,
+      "command": [
+        "node",
+        "--test",
+        "--test-reporter=<repository>/src/reporters/node.js",
+        "--test-reporter-destination=<measurement>/results.json",
+        "./test/clamp.test.js"
+      ],
+      "stdout": "",
+      "stderr": "",
+      "signal": null,
+      "reportErrors": [],
+      "discovery": {
+        "files": [
+          "test/clamp.test.js"
+        ],
+        "complete": true,
+        "adapter": "filesystem",
+        "warnings": []
+      },
+      "totalDurationMs": 135
+    },
+    "metrics": {
+      "counts": {
+        "Killed": 3
+      },
+      "total": 3,
+      "valid": 3,
+      "killed": 3,
+      "effectiveness": 1
+    },
+    "cost": {
+      "totalMs": 1485,
+      "providerTokens": null,
+      "providerDollars": null
+    },
+    "reasons": [],
+    "incrementalHash": "dadb6de1459bb7b1c0d54b53f346439c09b5b2cd1260e8aac6aae661519f723d",
+    "reportHash": "1783104eb6a3bc3d44b61f6456929adffe37e4e1193bda4753b0ae02250026dc",
+    "limitations": [
+      "Command runner has no per-test mutation coverage. Exact complete input baseline reuse only; any input or environment change discards it.",
+      "Dependencies are shared read-only by convention; installed package identity and tools lock recorded, not every installed dependency byte.",
+      "Timeout is a requested wall-clock deadline; host suspension may delay timers. Late responses are rejected."
+    ],
+    "integrity": "c122a250063334bc55b4de5e66e70c81c047daa16d201852c4f2cf6b7fde80ce",
+    "receiptPath": ".tddswarm/measurements/mutation/07cfcb3c-db44-4cdd-ab90-d02cc59752b0.json",
+    "rawPath": ".tddswarm/measurements/mutation/07cfcb3c-db44-4cdd-ab90-d02cc59752b0.raw.json"
+  },
+  "configInvalidation": {
+    "schemaVersion": 1,
+    "kind": "executed-stryker",
+    "complete": true,
+    "measured": true,
+    "key": "013507c83f8e646657589a4224e4d1592e4cc4d82c08dfe8864aa4bdf8dee18b",
+    "producer": {
+      "tool": "@stryker-mutator/core",
+      "version": "10.0.0",
+      "toolIdentity": "29c5e07a47a608aeca6940dc4e36824eb7fd9700b2c767b91778a31c6d9b0108",
+      "implementation": "abec0904417033892b075f9a06c4f6ac1ebce670b48776fc830bd214d2215adf"
+    },
+    "provenance": {
+      "schemaVersion": 1,
+      "revision": null,
+      "runner": "634ac68e7a68627b7d55d1095f31d076678654d49f92dc610336f022b467adf9",
+      "environment": {
+        "node": "v22.19.0",
+        "platform": "darwin",
+        "arch": "arm64",
+        "labels": {
+          "contract": "proof-v2"
+        }
+      },
+      "services": {},
+      "serviceWarnings": [],
+      "files": {
+        "package-lock.json": "92a2ed68a33e56e253fab7c99eca72a8e9f1967cae4048b90a02172df9b9dd80",
+        "package.json": "6dc1b06d6b093e9cccb20bee06a93836eee0420ae26803ca2ce4065d82f070d1",
+        "src/clamp.js": "74eaa8a3c97cf8fc2be6dc7bb13197e4e1b06ba540002ae674727757f08b7c91",
+        "src/helper.js": "865bc3e4cf028be803664cf57b5f96b37321128cf30c19f260149ba2091efb73",
+        "tddswarm.config.json": "368500eed55371810616836a51b9118cf9383d1f512bd7e3d7cadea6ecd8c84f",
+        "test/clamp.test.js": "28faf79977dba11052989c5c148adc320c16971570c51e9bb297282aa0a596a8"
+      },
+      "fingerprint": "13eee300403bc0e807d2f94ef5613d5e032c5c4df05f94c6287527d5068cdea1"
+    },
+    "scope": [
+      "src/clamp.js"
+    ],
+    "configuration": {
+      "mutate": [
+        "src/clamp.js"
+      ],
+      "testRunner": "command",
+      "commandRunner": {
+        "command": "'<node>' '--test' 'test/clamp.test.js'"
+      },
+      "coverageAnalysis": "off",
+      "concurrency": 1,
+      "reporters": [
+        "json"
+      ],
+      "jsonReporter": {
+        "fileName": ".tddswarm/mutation/report.json"
+      },
+      "tempDirName": ".tddswarm/stryker-tmp",
+      "cleanTempDir": "always",
+      "symlinkNodeModules": true,
+      "timeoutMS": 5000,
+      "logLevel": "info",
+      "fileLogLevel": "off",
+      "plugins": [],
+      "ignorePatterns": [
+        ".tddswarm"
+      ],
+      "thresholds": {
+        "high": 100,
+        "low": 0,
+        "break": 0
+      },
+      "incremental": true,
+      "incrementalFile": ".tddswarm/mutation/incremental.json"
+    },
+    "reusedBaseline": false,
+    "cacheReason": "baseline-inputs-or-integrity-changed",
+    "execution": {
+      "exitCode": 0,
+      "error": null,
+      "durationMs": 1114,
+      "stdout": "\u001b[32m11:26:32 (98327) INFO ProjectReader\u001b[39m No incremental result file found at .tddswarm/mutation/incremental.json, a full mutation testing run will be performed.\n\u001b[32m11:26:32 (98327) INFO ProjectReader\u001b[39m Found 1 of 6 file(s) to be mutated.\n\u001b[32m11:26:32 (98327) INFO Instrumenter\u001b[39m Instrumented 1 source file(s) with 3 mutant(s)\n\u001b[32m11:26:32 (98327) INFO ConcurrencyTokenProvider\u001b[39m Creating 1 test runner process(es).\n\u001b[32m11:26:33 (98327) INFO DryRunExecutor\u001b[39m Starting initial test run (command test runner with \"off\" coverage analysis). This may take a while.\n\u001b[32m11:26:33 (98327) INFO DryRunExecutor\u001b[39m Initial test run succeeded. Ran 1 tests in 0 seconds (net 121 ms, overhead 1 ms).\n\u001b[32m11:26:33 (98327) INFO MutationTestReportHelper\u001b[39m Final mutation score of 100.00 is greater than or equal to break threshold 0\n\u001b[32m11:26:33 (98327) INFO JsonReporter\u001b[39m Your report can be found at: file://<measurement>/.tddswarm/mutation/report.json\n\u001b[32m11:26:33 (98327) INFO MutationTestExecutor\u001b[39m Done in 0 seconds.\n",
+      "stderr": "",
+      "deadlineMs": 179735
+    },
+    "baseline": {
+      "adapter": "node",
+      "exitCode": 0,
+      "durationMs": 101,
+      "tests": [
+        {
+          "file": "test/clamp.test.js",
+          "name": "independent clamp lower bound zero",
+          "status": "passed",
+          "durationMs": 0.372583,
+          "line": 1,
+          "column": 167,
+          "id": "76114fb079803fc248f8612a21e3244887c2af7f26023d347a4886575c4d7f96"
+        },
+        {
+          "file": "test/clamp.test.js",
+          "name": "independent upper bound ten",
+          "status": "passed",
+          "durationMs": 0.110792,
+          "line": 1,
+          "column": 240,
+          "id": "64940287583f0d6b424d5bf65a20c95a623df9b71c3ab81847bcf586fcf995d9"
+        },
+        {
+          "file": "test/clamp.test.js",
+          "name": "independent in-range identity",
+          "status": "passed",
+          "durationMs": 0.051209,
+          "line": 1,
+          "column": 307,
+          "id": "afb64daa4ce3ce2becb5c4cf70287b7fcd942391587d39502486eee747ea0a03"
+        }
+      ],
+      "collectionFiles": [
+        "test/clamp.test.js"
+      ],
+      "requestedFiles": [
+        "test/clamp.test.js"
+      ],
+      "executedFiles": [
+        "test/clamp.test.js"
+      ],
+      "missingFiles": [],
+      "unknownFiles": [],
+      "dependencyFiles": [],
+      "complete": true,
+      "command": [
+        "node",
+        "--test",
+        "--test-reporter=<repository>/src/reporters/node.js",
+        "--test-reporter-destination=<measurement>/results.json",
+        "./test/clamp.test.js"
+      ],
+      "stdout": "",
+      "stderr": "",
+      "signal": null,
+      "reportErrors": [],
+      "discovery": {
+        "files": [
+          "test/clamp.test.js"
+        ],
+        "complete": true,
+        "adapter": "filesystem",
+        "warnings": []
+      },
+      "totalDurationMs": 126
+    },
+    "metrics": {
+      "counts": {
+        "Killed": 3
+      },
+      "total": 3,
+      "valid": 3,
+      "killed": 3,
+      "effectiveness": 1
+    },
+    "cost": {
+      "totalMs": 1493,
+      "providerTokens": null,
+      "providerDollars": null
+    },
+    "reasons": [],
+    "incrementalHash": "0780c1da1aeeccacbf47119072bc35f8423bb6952f5308f0f8dc50a9ba5cf753",
+    "reportHash": "a8447e0cc388cecf4a9b3afeb2e297176076a42f77b34373c910a78879b912c5",
+    "limitations": [
+      "Command runner has no per-test mutation coverage. Exact complete input baseline reuse only; any input or environment change discards it.",
+      "Dependencies are shared read-only by convention; installed package identity and tools lock recorded, not every installed dependency byte.",
+      "Timeout is a requested wall-clock deadline; host suspension may delay timers. Late responses are rejected."
+    ],
+    "integrity": "792789eb0b3d715b01787cb5cbf25a99915f01e7b250017f8cf64ac105fde187",
+    "receiptPath": ".tddswarm/measurements/mutation/da162b28-10b7-448d-b7f0-aefc49db51b4.json",
+    "rawPath": ".tddswarm/measurements/mutation/da162b28-10b7-448d-b7f0-aefc49db51b4.raw.json"
+  },
+  "environmentInvalidation": {
+    "schemaVersion": 1,
+    "kind": "executed-stryker",
+    "complete": true,
+    "measured": true,
+    "key": "bd6f744adf9cbf9577af43a200c4d2d1a37a75729e87fc84b795c6537e6c77b8",
+    "producer": {
+      "tool": "@stryker-mutator/core",
+      "version": "10.0.0",
+      "toolIdentity": "29c5e07a47a608aeca6940dc4e36824eb7fd9700b2c767b91778a31c6d9b0108",
+      "implementation": "abec0904417033892b075f9a06c4f6ac1ebce670b48776fc830bd214d2215adf"
+    },
+    "provenance": {
+      "schemaVersion": 1,
+      "revision": null,
+      "runner": "634ac68e7a68627b7d55d1095f31d076678654d49f92dc610336f022b467adf9",
+      "environment": {
+        "node": "v22.19.0",
+        "platform": "darwin",
+        "arch": "arm64",
+        "labels": {
+          "contract": "proof-v2"
+        }
+      },
+      "services": {},
+      "serviceWarnings": [],
+      "files": {
+        "package-lock.json": "92a2ed68a33e56e253fab7c99eca72a8e9f1967cae4048b90a02172df9b9dd80",
+        "package.json": "6dc1b06d6b093e9cccb20bee06a93836eee0420ae26803ca2ce4065d82f070d1",
+        "src/clamp.js": "74eaa8a3c97cf8fc2be6dc7bb13197e4e1b06ba540002ae674727757f08b7c91",
+        "src/helper.js": "865bc3e4cf028be803664cf57b5f96b37321128cf30c19f260149ba2091efb73",
+        "tddswarm.config.json": "368500eed55371810616836a51b9118cf9383d1f512bd7e3d7cadea6ecd8c84f",
+        "test/clamp.test.js": "28faf79977dba11052989c5c148adc320c16971570c51e9bb297282aa0a596a8"
+      },
+      "fingerprint": "13eee300403bc0e807d2f94ef5613d5e032c5c4df05f94c6287527d5068cdea1"
+    },
+    "scope": [
+      "src/clamp.js"
+    ],
+    "configuration": {
+      "mutate": [
+        "src/clamp.js"
+      ],
+      "testRunner": "command",
+      "commandRunner": {
+        "command": "'<node>' '--test' 'test/clamp.test.js'"
+      },
+      "coverageAnalysis": "off",
+      "concurrency": 1,
+      "reporters": [
+        "json"
+      ],
+      "jsonReporter": {
+        "fileName": ".tddswarm/mutation/report.json"
+      },
+      "tempDirName": ".tddswarm/stryker-tmp",
+      "cleanTempDir": "always",
+      "symlinkNodeModules": true,
+      "timeoutMS": 5000,
+      "logLevel": "info",
+      "fileLogLevel": "off",
+      "plugins": [],
+      "ignorePatterns": [
+        ".tddswarm"
+      ],
+      "thresholds": {
+        "high": 100,
+        "low": 0,
+        "break": 0
+      },
+      "incremental": true,
+      "incrementalFile": ".tddswarm/mutation/incremental.json"
+    },
+    "reusedBaseline": false,
+    "cacheReason": "baseline-inputs-or-integrity-changed",
+    "execution": {
+      "exitCode": 0,
+      "error": null,
+      "durationMs": 1105,
+      "stdout": "\u001b[32m11:26:34 (98383) INFO ProjectReader\u001b[39m No incremental result file found at .tddswarm/mutation/incremental.json, a full mutation testing run will be performed.\n\u001b[32m11:26:34 (98383) INFO ProjectReader\u001b[39m Found 1 of 6 file(s) to be mutated.\n\u001b[32m11:26:34 (98383) INFO Instrumenter\u001b[39m Instrumented 1 source file(s) with 3 mutant(s)\n\u001b[32m11:26:34 (98383) INFO ConcurrencyTokenProvider\u001b[39m Creating 1 test runner process(es).\n\u001b[32m11:26:34 (98383) INFO DryRunExecutor\u001b[39m Starting initial test run (command test runner with \"off\" coverage analysis). This may take a while.\n\u001b[32m11:26:34 (98383) INFO DryRunExecutor\u001b[39m Initial test run succeeded. Ran 1 tests in 0 seconds (net 128 ms, overhead 0 ms).\n\u001b[32m11:26:35 (98383) INFO JsonReporter\u001b[39m Your report can be found at: file://<measurement>/.tddswarm/mutation/report.json\n\u001b[32m11:26:35 (98383) INFO MutationTestReportHelper\u001b[39m Final mutation score of 100.00 is greater than or equal to break threshold 0\n\u001b[32m11:26:35 (98383) INFO MutationTestExecutor\u001b[39m Done in 0 seconds.\n",
+      "stderr": "",
+      "deadlineMs": 179732
+    },
+    "baseline": {
+      "adapter": "node",
+      "exitCode": 0,
+      "durationMs": 108,
+      "tests": [
+        {
+          "file": "test/clamp.test.js",
+          "name": "independent clamp lower bound zero",
+          "status": "passed",
+          "durationMs": 0.396541,
+          "line": 1,
+          "column": 167,
+          "id": "76114fb079803fc248f8612a21e3244887c2af7f26023d347a4886575c4d7f96"
+        },
+        {
+          "file": "test/clamp.test.js",
+          "name": "independent upper bound ten",
+          "status": "passed",
+          "durationMs": 0.115583,
+          "line": 1,
+          "column": 240,
+          "id": "64940287583f0d6b424d5bf65a20c95a623df9b71c3ab81847bcf586fcf995d9"
+        },
+        {
+          "file": "test/clamp.test.js",
+          "name": "independent in-range identity",
+          "status": "passed",
+          "durationMs": 0.054208,
+          "line": 1,
+          "column": 307,
+          "id": "afb64daa4ce3ce2becb5c4cf70287b7fcd942391587d39502486eee747ea0a03"
+        }
+      ],
+      "collectionFiles": [
+        "test/clamp.test.js"
+      ],
+      "requestedFiles": [
+        "test/clamp.test.js"
+      ],
+      "executedFiles": [
+        "test/clamp.test.js"
+      ],
+      "missingFiles": [],
+      "unknownFiles": [],
+      "dependencyFiles": [],
+      "complete": true,
+      "command": [
+        "node",
+        "--test",
+        "--test-reporter=<repository>/src/reporters/node.js",
+        "--test-reporter-destination=<measurement>/results.json",
+        "./test/clamp.test.js"
+      ],
+      "stdout": "",
+      "stderr": "",
+      "signal": null,
+      "reportErrors": [],
+      "discovery": {
+        "files": [
+          "test/clamp.test.js"
+        ],
+        "complete": true,
+        "adapter": "filesystem",
+        "warnings": []
+      },
+      "totalDurationMs": 134
+    },
+    "metrics": {
+      "counts": {
+        "Killed": 3
+      },
+      "total": 3,
+      "valid": 3,
+      "killed": 3,
+      "effectiveness": 1
+    },
+    "cost": {
+      "totalMs": 1481,
+      "providerTokens": null,
+      "providerDollars": null
+    },
+    "reasons": [],
+    "incrementalHash": "5f52f74a953ed7bc6b8125b37181b6ced403722c829db239a6d8721f33ebc5b7",
+    "reportHash": "a6f263138694ac2782c92f27e7d6333c128c9a21cdef1f10c56332c49d60613c",
+    "limitations": [
+      "Command runner has no per-test mutation coverage. Exact complete input baseline reuse only; any input or environment change discards it.",
+      "Dependencies are shared read-only by convention; installed package identity and tools lock recorded, not every installed dependency byte.",
+      "Timeout is a requested wall-clock deadline; host suspension may delay timers. Late responses are rejected."
+    ],
+    "integrity": "20a547af61ce8c2a49a691b73eeedc2e28737d65ea6bfaddf799d8317f6d79a6",
+    "receiptPath": ".tddswarm/measurements/mutation/0d70b51a-d520-4db9-be3d-2104f9eb4dc3.json",
+    "rawPath": ".tddswarm/measurements/mutation/0d70b51a-d520-4db9-be3d-2104f9eb4dc3.raw.json"
+  },
+  "raw": {
+    "first": {
+      "files": {
+        "src/clamp.js": {
+          "language": "javascript",
+          "mutants": [
+            {
+              "id": "0",
+              "mutatorName": "BlockStatement",
+              "replacement": "{}",
+              "statusReason": "TAP version 13\n\n# Subtest: independent clamp lower bound zero\n\nnot ok 1 - independent clamp lower bound zero\n\n  ---\n  duration_ms: 0.823041\n  type: 'test'\n  location: '<measurement>/.tddswarm/stryker-tmp/sandbox-sltidI/test/clamp.test.js:2:167'\n  failureType: 'testCodeFailure'\n  error: |-\n    Expected values to be strictly equal:\n    \n    undefined !== 0\n    \n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: 0\n  operator: 'strictEqual'\n  stack: |-\n    TestContext.<anonymous> (file://<measurement>/.tddswarm/stryker-tmp/sandbox-sltidI/test/clamp.test.js:2:220)\n    Test.runInAsyncScope (node:async_hooks:214:14)\n    Test.run (node:internal/test_runner/test:1047:25)\n    Test.start (node:internal/test_runner/test:944:17)\n    startSubtestAfterBootstrap (node:internal/test_runner/harness:296:17)\n  ...\n\n# Subtest: independent upper bound ten\n\nnot ok 2 - independent upper bound ten\n\n  ---\n  duration_ms: 0.11975\n  type: 'test'\n  location: '<measurement>/.tddswarm/stryker-tmp/sandbox-sltidI/test/clamp.test.js:2:240'\n  failureType: 'testCodeFailure'\n  error: |-\n    Expected values to be strictly equal:\n    \n    undefined !== 10\n    \n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: 10\n  operator: 'strictEqual'\n  stack: |-\n    TestContext.<anonymous> (file://<measurement>/.tddswarm/stryker-tmp/sandbox-sltidI/test/clamp.test.js:2:286)\n    Test.runInAsyncScope (node:async_hooks:214:14)\n    Test.run (node:internal/test_runner/test:1047:25)\n    Test.processPendingSubtests (node:internal/test_runner/test:744:18)\n    Test.postRun (node:internal/test_runner/test:1173:19)\n    Test.run (node:internal/test_runner/test:1101:12)\n    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)\n  ...\n\n# Subtest: independent in-range identity\n\nnot ok 3 - independent in-range identity\n\n  ---\n  duration_ms: 0.573667\n  type: 'test'\n  location: '<measurement>/.tddswarm/stryker-tmp/sandbox-sltidI/test/clamp.test.js:2:307'\n  failureType: 'testCodeFailure'\n  error: |-\n    Expected values to be strictly equal:\n    \n    undefined !== 4\n    \n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: 4\n  operator: 'strictEqual'\n  stack: |-\n    TestContext.<anonymous> (file://<measurement>/.tddswarm/stryker-tmp/sandbox-sltidI/test/clamp.test.js:2:355)\n    Test.runInAsyncScope (node:async_hooks:214:14)\n    Test.run (node:internal/test_runner/test:1047:25)\n    Test.processPendingSubtests (node:internal/test_runner/test:744:18)\n    Test.postRun (node:internal/test_runner/test:1173:19)\n    Test.run (node:internal/test_runner/test:1101:12)\n    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)\n  ...\n\n1..3\n\n# tests 3\n# suites 0\n\n# pass 0\n# fail 3\n# cancelled 0\n# skipped 0\n# todo 0\n\n# duration_ms 58.24725\n",
+              "status": "Killed",
+              "testsCompleted": 1,
+              "killedBy": [
+                "0"
+              ],
+              "location": {
+                "end": {
+                  "column": 98,
+                  "line": 1
+                },
+                "start": {
+                  "column": 59,
+                  "line": 1
+                }
+              }
+            },
+            {
+              "id": "1",
+              "mutatorName": "MethodExpression",
+              "replacement": "Math.min(0, Math.min(limit, x))",
+              "statusReason": "TAP version 13\n\n# Subtest: independent clamp lower bound zero\n\nnot ok 1 - independent clamp lower bound zero\n\n  ---\n  duration_ms: 1.334708\n  type: 'test'\n  location: '<measurement>/.tddswarm/stryker-tmp/sandbox-sltidI/test/clamp.test.js:2:167'\n  failureType: 'testCodeFailure'\n  error: |-\n    Expected values to be strictly equal:\n    \n    -1 !== 0\n    \n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: 0\n  actual: -1\n  operator: 'strictEqual'\n  stack: |-\n    TestContext.<anonymous> (file://<measurement>/.tddswarm/stryker-tmp/sandbox-sltidI/test/clamp.test.js:2:220)\n    Test.runInAsyncScope (node:async_hooks:214:14)\n    Test.run (node:internal/test_runner/test:1047:25)\n    Test.start (node:internal/test_runner/test:944:17)\n    startSubtestAfterBootstrap (node:internal/test_runner/harness:296:17)\n  ...\n\n# Subtest: independent upper bound ten\n\nnot ok 2 - independent upper bound ten\n\n  ---\n  duration_ms: 0.238292\n  type: 'test'\n  location: '<measurement>/.tddswarm/stryker-tmp/sandbox-sltidI/test/clamp.test.js:2:240'\n  failureType: 'testCodeFailure'\n  error: |-\n    Expected values to be strictly equal:\n    \n    0 !== 10\n    \n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: 10\n  actual: 0\n  operator: 'strictEqual'\n  stack: |-\n    TestContext.<anonymous> (file://<measurement>/.tddswarm/stryker-tmp/sandbox-sltidI/test/clamp.test.js:2:286)\n    Test.runInAsyncScope (node:async_hooks:214:14)\n    Test.run (node:internal/test_runner/test:1047:25)\n    Test.processPendingSubtests (node:internal/test_runner/test:744:18)\n    Test.postRun (node:internal/test_runner/test:1173:19)\n    Test.run (node:internal/test_runner/test:1101:12)\n    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)\n  ...\n\n# Subtest: independent in-range identity\n\nnot ok 3 - independent in-range identity\n\n  ---\n  duration_ms: 0.89725\n  type: 'test'\n  location: '<measurement>/.tddswarm/stryker-tmp/sandbox-sltidI/test/clamp.test.js:2:307'\n  failureType: 'testCodeFailure'\n  error: |-\n    Expected values to be strictly equal:\n    \n    0 !== 4\n    \n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: 4\n  actual: 0\n  operator: 'strictEqual'\n  stack: |-\n    TestContext.<anonymous> (file://<measurement>/.tddswarm/stryker-tmp/sandbox-sltidI/test/clamp.test.js:2:355)\n    Test.runInAsyncScope (node:async_hooks:214:14)\n    Test.run (node:internal/test_runner/test:1047:25)\n    Test.processPendingSubtests (node:internal/test_runner/test:744:18)\n    Test.postRun (node:internal/test_runner/test:1173:19)\n    Test.run (node:internal/test_runner/test:1101:12)\n    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)\n  ...\n\n1..3\n\n# tests 3\n\n# suites 0\n\n# pass 0\n\n# fail 3\n\n# cancelled 0\n\n# skipped 0\n\n# todo 0\n\n# duration_ms 79.567667\n",
+              "status": "Killed",
+              "testsCompleted": 1,
+              "killedBy": [
+                "0"
+              ],
+              "location": {
+                "end": {
+                  "column": 96,
+                  "line": 1
+                },
+                "start": {
+                  "column": 67,
+                  "line": 1
+                }
+              }
+            },
+            {
+              "id": "2",
+              "mutatorName": "MethodExpression",
+              "replacement": "Math.max(limit, x)",
+              "statusReason": "TAP version 13\n\n# Subtest: independent clamp lower bound zero\n\nnot ok 1 - independent clamp lower bound zero\n\n  ---\n  duration_ms: 1.148209\n  type: 'test'\n  location: '<measurement>/.tddswarm/stryker-tmp/sandbox-sltidI/test/clamp.test.js:2:167'\n  failureType: 'testCodeFailure'\n  error: |-\n    Expected values to be strictly equal:\n    \n    10 !== 0\n    \n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: 0\n  actual: 10\n  operator: 'strictEqual'\n  stack: |-\n    TestContext.<anonymous> (file://<measurement>/.tddswarm/stryker-tmp/sandbox-sltidI/test/clamp.test.js:2:220)\n    Test.runInAsyncScope (node:async_hooks:214:14)\n    Test.run (node:internal/test_runner/test:1047:25)\n    Test.start (node:internal/test_runner/test:944:17)\n    startSubtestAfterBootstrap (node:internal/test_runner/harness:296:17)\n  ...\n\n# Subtest: independent upper bound ten\n\nnot ok 2 - independent upper bound ten\n\n  ---\n  duration_ms: 0.163708\n  type: 'test'\n  location: '<measurement>/.tddswarm/stryker-tmp/sandbox-sltidI/test/clamp.test.js:2:240'\n  failureType: 'testCodeFailure'\n  error: |-\n    Expected values to be strictly equal:\n    \n    20 !== 10\n    \n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: 10\n  actual: 20\n  operator: 'strictEqual'\n  stack: |-\n    TestContext.<anonymous> (file://<measurement>/.tddswarm/stryker-tmp/sandbox-sltidI/test/clamp.test.js:2:286)\n    Test.runInAsyncScope (node:async_hooks:214:14)\n    Test.run (node:internal/test_runner/test:1047:25)\n    Test.processPendingSubtests (node:internal/test_runner/test:744:18)\n    Test.postRun (node:internal/test_runner/test:1173:19)\n    Test.run (node:internal/test_runner/test:1101:12)\n    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)\n  ...\n\n# Subtest: independent in-range identity\n\nnot ok 3 - independent in-range identity\n\n  ---\n  duration_ms: 0.693667\n  type: 'test'\n  location: '<measurement>/.tddswarm/stryker-tmp/sandbox-sltidI/test/clamp.test.js:2:307'\n  failureType: 'testCodeFailure'\n  error: |-\n    Expected values to be strictly equal:\n    \n    10 !== 4\n    \n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: 4\n  actual: 10\n  operator: 'strictEqual'\n  stack: |-\n    TestContext.<anonymous> (file://<measurement>/.tddswarm/stryker-tmp/sandbox-sltidI/test/clamp.test.js:2:355)\n    Test.runInAsyncScope (node:async_hooks:214:14)\n    Test.run (node:internal/test_runner/test:1047:25)\n    Test.processPendingSubtests (node:internal/test_runner/test:744:18)\n    Test.postRun (node:internal/test_runner/test:1173:19)\n    Test.run (node:internal/test_runner/test:1101:12)\n    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)\n  ...\n\n1..3\n\n# tests 3\n\n# suites 0\n\n# pass 0\n\n# fail 3\n\n# cancelled 0\n\n# skipped 0\n\n# todo 0\n\n# duration_ms 75.725333\n",
+              "status": "Killed",
+              "testsCompleted": 1,
+              "killedBy": [
+                "0"
+              ],
+              "location": {
+                "end": {
+                  "column": 95,
+                  "line": 1
+                },
+                "start": {
+                  "column": 78,
+                  "line": 1
+                }
+              }
+            }
+          ],
+          "source": "import {limit} from './helper.js';export function clamp(x){return Math.max(0,Math.min(limit,x));}\n"
+        }
+      },
+      "schemaVersion": "1.0",
+      "thresholds": {
+        "high": 100,
+        "low": 0,
+        "break": 0
+      },
+      "testFiles": {
+        "": {
+          "tests": [
+            {
+              "id": "0",
+              "name": "All tests"
+            }
+          ]
+        }
+      },
+      "projectRoot": "<measurement>",
+      "config": {
+        "mutate": [
+          "src/clamp.js"
+        ],
+        "testRunner": "command",
+        "commandRunner": {
+          "command": "'<node>' '--test' 'test/clamp.test.js'"
+        },
+        "coverageAnalysis": "off",
+        "concurrency": 1,
+        "reporters": [
+          "json"
+        ],
+        "jsonReporter": {
+          "fileName": ".tddswarm/mutation/report.json"
+        },
+        "tempDirName": ".tddswarm/stryker-tmp",
+        "cleanTempDir": "always",
+        "symlinkNodeModules": true,
+        "timeoutMS": 5000,
+        "logLevel": "info",
+        "fileLogLevel": "off",
+        "plugins": [],
+        "ignorePatterns": [
+          ".tddswarm"
+        ],
+        "thresholds": {
+          "high": 100,
+          "low": 0,
+          "break": 0
+        },
+        "incremental": true,
+        "incrementalFile": ".tddswarm/mutation/incremental.json",
+        "configFile": ".tddswarm/mutation/config.json",
+        "allowConsoleColors": true,
+        "checkers": [],
+        "checkerNodeArgs": [],
+        "clearTextReporter": {
+          "allowColor": true,
+          "allowEmojis": false,
+          "logTests": true,
+          "maxTestsToLog": 3,
+          "reportTests": true,
+          "reportMutants": true,
+          "reportScoreTable": true,
+          "skipFull": false
+        },
+        "dashboard": {
+          "baseUrl": "https://dashboard.stryker-mutator.io/api/reports",
+          "reportType": "full"
+        },
+        "dryRunOnly": false,
+        "eventReporter": {
+          "baseDir": "reports/mutation/events"
+        },
+        "ignoreStatic": false,
+        "force": false,
+        "inPlace": false,
+        "maxConcurrentTestRunners": 9007199254740991,
+        "maxTestRunnerReuse": 0,
+        "mutator": {
+          "plugins": null,
+          "excludedMutations": []
+        },
+        "appendPlugins": [],
+        "htmlReporter": {
+          "fileName": "reports/mutation/mutation.html"
+        },
+        "disableTypeChecks": true,
+        "testRunnerNodeArgs": [],
+        "timeoutFactor": 1.5,
+        "dryRunTimeoutMinutes": 5,
+        "tsconfigFile": "tsconfig.json",
+        "warnings": true,
+        "disableBail": false,
+        "allowEmpty": false,
+        "ignorers": [],
+        "testFiles": []
+      },
+      "framework": {
+        "name": "StrykerJS",
+        "version": "10.0.0",
+        "branding": {
+          "homepageUrl": "https://stryker-mutator.io",
+          "imageUrl": "data:image/svg+xml;utf8,%3Csvg viewBox='0 0 1458 1458' xmlns='http://www.w3.org/2000/svg' fill-rule='evenodd' clip-rule='evenodd' stroke-linejoin='round' stroke-miterlimit='2'%3E%3Cpath fill='none' d='M0 0h1458v1458H0z'/%3E%3CclipPath id='a'%3E%3Cpath d='M0 0h1458v1458H0z'/%3E%3C/clipPath%3E%3Cg clip-path='url(%23a)'%3E%3Cpath d='M1458 729c0 402.655-326.345 729-729 729S0 1131.655 0 729C0 326.445 326.345 0 729 0s729 326.345 729 729' fill='%23e74c3c' fill-rule='nonzero'/%3E%3Cpath d='M778.349 1456.15L576.6 1254.401l233-105 85-78.668v-64.332l-257-257-44-187-50-208 251.806-82.793L1076.6 389.401l380.14 379.15c-19.681 367.728-311.914 663.049-678.391 687.599z' fill-opacity='.3'/%3E%3Cpath d='M753.4 329.503c41.79 0 74.579 7.83 97.925 25.444 23.571 18.015 41.69 43.956 55.167 77.097l11.662 28.679 165.733-58.183-14.137-32.13c-26.688-60.655-64.896-108.61-114.191-144.011-49.329-35.423-117.458-54.302-204.859-54.302-50.78 0-95.646 7.376-134.767 21.542-40.093 14.671-74.09 34.79-102.239 60.259-28.84 26.207-50.646 57.06-65.496 92.701-14.718 35.052-22.101 72.538-22.101 112.401 0 72.536 20.667 133.294 61.165 182.704 38.624 47.255 98.346 88.037 179.861 121.291 42.257 17.475 78.715 33.125 109.227 46.994 27.193 12.361 49.294 26.124 66.157 41.751 15.309 14.186 26.497 30.584 33.63 49.258 7.721 20.214 11.16 45.69 11.16 76.402 0 28.021-4.251 51.787-13.591 71.219-8.832 18.374-20.171 33.178-34.523 44.219-14.787 11.374-31.193 19.591-49.393 24.466-19.68 5.359-39.14 7.993-58.69 7.993-29.359 0-54.387-3.407-75.182-10.747-20.112-7.013-37.144-16.144-51.259-27.486-13.618-11.009-24.971-23.766-33.744-38.279-9.64-15.8-17.272-31.924-23.032-48.408l-10.965-31.376-161.669 60.585 10.734 30.124c10.191 28.601 24.197 56.228 42.059 82.748 18.208 27.144 41.322 51.369 69.525 72.745 27.695 21.075 60.904 38.218 99.481 51.041 37.777 12.664 82.004 19.159 132.552 19.159 49.998 0 95.818-8.321 137.611-24.622 42.228-16.471 78.436-38.992 108.835-67.291 30.719-28.597 54.631-62.103 71.834-100.642 17.263-38.56 25.923-79.392 25.923-122.248 0-54.339-8.368-100.37-24.208-138.32-16.29-38.759-38.252-71.661-65.948-98.797-26.965-26.418-58.269-48.835-93.858-67.175-33.655-17.241-69.196-33.11-106.593-47.533-35.934-13.429-65.822-26.601-89.948-39.525-22.153-11.868-40.009-24.21-53.547-37.309-11.429-11.13-19.83-23.678-24.718-37.664-5.413-15.49-7.98-33.423-7.98-53.577 0-40.883 11.293-71.522 37.086-90.539 28.443-20.825 64.985-30.658 109.311-30.658z' fill='%23f1c40f' fill-rule='nonzero'/%3E%3Cpath d='M720 0h18v113h-18zM1458 738v-18h-113v18h113zM720 1345h18v113h-18zM113 738v-18H0v18h113z'/%3E%3C/g%3E%3C/svg%3E"
+        },
+        "dependencies": {}
+      }
+    },
+    "warm": {
+      "files": {
+        "src/clamp.js": {
+          "language": "javascript",
+          "mutants": [
+            {
+              "id": "0",
+              "mutatorName": "BlockStatement",
+              "replacement": "{}",
+              "statusReason": "TAP version 13\n\n# Subtest: independent clamp lower bound zero\n\nnot ok 1 - independent clamp lower bound zero\n\n  ---\n  duration_ms: 0.823041\n  type: 'test'\n  location: '<measurement>/.tddswarm/stryker-tmp/sandbox-sltidI/test/clamp.test.js:2:167'\n  failureType: 'testCodeFailure'\n  error: |-\n    Expected values to be strictly equal:\n    \n    undefined !== 0\n    \n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: 0\n  operator: 'strictEqual'\n  stack: |-\n    TestContext.<anonymous> (file://<measurement>/.tddswarm/stryker-tmp/sandbox-sltidI/test/clamp.test.js:2:220)\n    Test.runInAsyncScope (node:async_hooks:214:14)\n    Test.run (node:internal/test_runner/test:1047:25)\n    Test.start (node:internal/test_runner/test:944:17)\n    startSubtestAfterBootstrap (node:internal/test_runner/harness:296:17)\n  ...\n\n# Subtest: independent upper bound ten\n\nnot ok 2 - independent upper bound ten\n\n  ---\n  duration_ms: 0.11975\n  type: 'test'\n  location: '<measurement>/.tddswarm/stryker-tmp/sandbox-sltidI/test/clamp.test.js:2:240'\n  failureType: 'testCodeFailure'\n  error: |-\n    Expected values to be strictly equal:\n    \n    undefined !== 10\n    \n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: 10\n  operator: 'strictEqual'\n  stack: |-\n    TestContext.<anonymous> (file://<measurement>/.tddswarm/stryker-tmp/sandbox-sltidI/test/clamp.test.js:2:286)\n    Test.runInAsyncScope (node:async_hooks:214:14)\n    Test.run (node:internal/test_runner/test:1047:25)\n    Test.processPendingSubtests (node:internal/test_runner/test:744:18)\n    Test.postRun (node:internal/test_runner/test:1173:19)\n    Test.run (node:internal/test_runner/test:1101:12)\n    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)\n  ...\n\n# Subtest: independent in-range identity\n\nnot ok 3 - independent in-range identity\n\n  ---\n  duration_ms: 0.573667\n  type: 'test'\n  location: '<measurement>/.tddswarm/stryker-tmp/sandbox-sltidI/test/clamp.test.js:2:307'\n  failureType: 'testCodeFailure'\n  error: |-\n    Expected values to be strictly equal:\n    \n    undefined !== 4\n    \n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: 4\n  operator: 'strictEqual'\n  stack: |-\n    TestContext.<anonymous> (file://<measurement>/.tddswarm/stryker-tmp/sandbox-sltidI/test/clamp.test.js:2:355)\n    Test.runInAsyncScope (node:async_hooks:214:14)\n    Test.run (node:internal/test_runner/test:1047:25)\n    Test.processPendingSubtests (node:internal/test_runner/test:744:18)\n    Test.postRun (node:internal/test_runner/test:1173:19)\n    Test.run (node:internal/test_runner/test:1101:12)\n    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)\n  ...\n\n1..3\n\n# tests 3\n# suites 0\n\n# pass 0\n# fail 3\n# cancelled 0\n# skipped 0\n# todo 0\n\n# duration_ms 58.24725\n",
+              "status": "Killed",
+              "testsCompleted": 1,
+              "static": false,
+              "killedBy": [
+                "0"
+              ],
+              "coveredBy": [],
+              "location": {
+                "end": {
+                  "column": 98,
+                  "line": 1
+                },
+                "start": {
+                  "column": 59,
+                  "line": 1
+                }
+              }
+            },
+            {
+              "id": "1",
+              "mutatorName": "MethodExpression",
+              "replacement": "Math.min(0, Math.min(limit, x))",
+              "statusReason": "TAP version 13\n\n# Subtest: independent clamp lower bound zero\n\nnot ok 1 - independent clamp lower bound zero\n\n  ---\n  duration_ms: 1.334708\n  type: 'test'\n  location: '<measurement>/.tddswarm/stryker-tmp/sandbox-sltidI/test/clamp.test.js:2:167'\n  failureType: 'testCodeFailure'\n  error: |-\n    Expected values to be strictly equal:\n    \n    -1 !== 0\n    \n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: 0\n  actual: -1\n  operator: 'strictEqual'\n  stack: |-\n    TestContext.<anonymous> (file://<measurement>/.tddswarm/stryker-tmp/sandbox-sltidI/test/clamp.test.js:2:220)\n    Test.runInAsyncScope (node:async_hooks:214:14)\n    Test.run (node:internal/test_runner/test:1047:25)\n    Test.start (node:internal/test_runner/test:944:17)\n    startSubtestAfterBootstrap (node:internal/test_runner/harness:296:17)\n  ...\n\n# Subtest: independent upper bound ten\n\nnot ok 2 - independent upper bound ten\n\n  ---\n  duration_ms: 0.238292\n  type: 'test'\n  location: '<measurement>/.tddswarm/stryker-tmp/sandbox-sltidI/test/clamp.test.js:2:240'\n  failureType: 'testCodeFailure'\n  error: |-\n    Expected values to be strictly equal:\n    \n    0 !== 10\n    \n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: 10\n  actual: 0\n  operator: 'strictEqual'\n  stack: |-\n    TestContext.<anonymous> (file://<measurement>/.tddswarm/stryker-tmp/sandbox-sltidI/test/clamp.test.js:2:286)\n    Test.runInAsyncScope (node:async_hooks:214:14)\n    Test.run (node:internal/test_runner/test:1047:25)\n    Test.processPendingSubtests (node:internal/test_runner/test:744:18)\n    Test.postRun (node:internal/test_runner/test:1173:19)\n    Test.run (node:internal/test_runner/test:1101:12)\n    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)\n  ...\n\n# Subtest: independent in-range identity\n\nnot ok 3 - independent in-range identity\n\n  ---\n  duration_ms: 0.89725\n  type: 'test'\n  location: '<measurement>/.tddswarm/stryker-tmp/sandbox-sltidI/test/clamp.test.js:2:307'\n  failureType: 'testCodeFailure'\n  error: |-\n    Expected values to be strictly equal:\n    \n    0 !== 4\n    \n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: 4\n  actual: 0\n  operator: 'strictEqual'\n  stack: |-\n    TestContext.<anonymous> (file://<measurement>/.tddswarm/stryker-tmp/sandbox-sltidI/test/clamp.test.js:2:355)\n    Test.runInAsyncScope (node:async_hooks:214:14)\n    Test.run (node:internal/test_runner/test:1047:25)\n    Test.processPendingSubtests (node:internal/test_runner/test:744:18)\n    Test.postRun (node:internal/test_runner/test:1173:19)\n    Test.run (node:internal/test_runner/test:1101:12)\n    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)\n  ...\n\n1..3\n\n# tests 3\n\n# suites 0\n\n# pass 0\n\n# fail 3\n\n# cancelled 0\n\n# skipped 0\n\n# todo 0\n\n# duration_ms 79.567667\n",
+              "status": "Killed",
+              "testsCompleted": 1,
+              "static": false,
+              "killedBy": [
+                "0"
+              ],
+              "coveredBy": [],
+              "location": {
+                "end": {
+                  "column": 96,
+                  "line": 1
+                },
+                "start": {
+                  "column": 67,
+                  "line": 1
+                }
+              }
+            },
+            {
+              "id": "2",
+              "mutatorName": "MethodExpression",
+              "replacement": "Math.max(limit, x)",
+              "statusReason": "TAP version 13\n\n# Subtest: independent clamp lower bound zero\n\nnot ok 1 - independent clamp lower bound zero\n\n  ---\n  duration_ms: 1.148209\n  type: 'test'\n  location: '<measurement>/.tddswarm/stryker-tmp/sandbox-sltidI/test/clamp.test.js:2:167'\n  failureType: 'testCodeFailure'\n  error: |-\n    Expected values to be strictly equal:\n    \n    10 !== 0\n    \n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: 0\n  actual: 10\n  operator: 'strictEqual'\n  stack: |-\n    TestContext.<anonymous> (file://<measurement>/.tddswarm/stryker-tmp/sandbox-sltidI/test/clamp.test.js:2:220)\n    Test.runInAsyncScope (node:async_hooks:214:14)\n    Test.run (node:internal/test_runner/test:1047:25)\n    Test.start (node:internal/test_runner/test:944:17)\n    startSubtestAfterBootstrap (node:internal/test_runner/harness:296:17)\n  ...\n\n# Subtest: independent upper bound ten\n\nnot ok 2 - independent upper bound ten\n\n  ---\n  duration_ms: 0.163708\n  type: 'test'\n  location: '<measurement>/.tddswarm/stryker-tmp/sandbox-sltidI/test/clamp.test.js:2:240'\n  failureType: 'testCodeFailure'\n  error: |-\n    Expected values to be strictly equal:\n    \n    20 !== 10\n    \n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: 10\n  actual: 20\n  operator: 'strictEqual'\n  stack: |-\n    TestContext.<anonymous> (file://<measurement>/.tddswarm/stryker-tmp/sandbox-sltidI/test/clamp.test.js:2:286)\n    Test.runInAsyncScope (node:async_hooks:214:14)\n    Test.run (node:internal/test_runner/test:1047:25)\n    Test.processPendingSubtests (node:internal/test_runner/test:744:18)\n    Test.postRun (node:internal/test_runner/test:1173:19)\n    Test.run (node:internal/test_runner/test:1101:12)\n    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)\n  ...\n\n# Subtest: independent in-range identity\n\nnot ok 3 - independent in-range identity\n\n  ---\n  duration_ms: 0.693667\n  type: 'test'\n  location: '<measurement>/.tddswarm/stryker-tmp/sandbox-sltidI/test/clamp.test.js:2:307'\n  failureType: 'testCodeFailure'\n  error: |-\n    Expected values to be strictly equal:\n    \n    10 !== 4\n    \n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: 4\n  actual: 10\n  operator: 'strictEqual'\n  stack: |-\n    TestContext.<anonymous> (file://<measurement>/.tddswarm/stryker-tmp/sandbox-sltidI/test/clamp.test.js:2:355)\n    Test.runInAsyncScope (node:async_hooks:214:14)\n    Test.run (node:internal/test_runner/test:1047:25)\n    Test.processPendingSubtests (node:internal/test_runner/test:744:18)\n    Test.postRun (node:internal/test_runner/test:1173:19)\n    Test.run (node:internal/test_runner/test:1101:12)\n    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)\n  ...\n\n1..3\n\n# tests 3\n\n# suites 0\n\n# pass 0\n\n# fail 3\n\n# cancelled 0\n\n# skipped 0\n\n# todo 0\n\n# duration_ms 75.725333\n",
+              "status": "Killed",
+              "testsCompleted": 1,
+              "static": false,
+              "killedBy": [
+                "0"
+              ],
+              "coveredBy": [],
+              "location": {
+                "end": {
+                  "column": 95,
+                  "line": 1
+                },
+                "start": {
+                  "column": 78,
+                  "line": 1
+                }
+              }
+            }
+          ],
+          "source": "import {limit} from './helper.js';export function clamp(x){return Math.max(0,Math.min(limit,x));}\n"
+        }
+      },
+      "schemaVersion": "1.0",
+      "thresholds": {
+        "high": 100,
+        "low": 0,
+        "break": 0
+      },
+      "testFiles": {
+        "": {
+          "tests": [
+            {
+              "id": "0",
+              "name": "All tests"
+            }
+          ]
+        }
+      },
+      "projectRoot": "<measurement>",
+      "config": {
+        "mutate": [
+          "src/clamp.js"
+        ],
+        "testRunner": "command",
+        "commandRunner": {
+          "command": "'<node>' '--test' 'test/clamp.test.js'"
+        },
+        "coverageAnalysis": "off",
+        "concurrency": 1,
+        "reporters": [
+          "json"
+        ],
+        "jsonReporter": {
+          "fileName": ".tddswarm/mutation/report.json"
+        },
+        "tempDirName": ".tddswarm/stryker-tmp",
+        "cleanTempDir": "always",
+        "symlinkNodeModules": true,
+        "timeoutMS": 5000,
+        "logLevel": "info",
+        "fileLogLevel": "off",
+        "plugins": [],
+        "ignorePatterns": [
+          ".tddswarm"
+        ],
+        "thresholds": {
+          "high": 100,
+          "low": 0,
+          "break": 0
+        },
+        "incremental": true,
+        "incrementalFile": ".tddswarm/mutation/incremental.json",
+        "configFile": ".tddswarm/mutation/config.json",
+        "allowConsoleColors": true,
+        "checkers": [],
+        "checkerNodeArgs": [],
+        "clearTextReporter": {
+          "allowColor": true,
+          "allowEmojis": false,
+          "logTests": true,
+          "maxTestsToLog": 3,
+          "reportTests": true,
+          "reportMutants": true,
+          "reportScoreTable": true,
+          "skipFull": false
+        },
+        "dashboard": {
+          "baseUrl": "https://dashboard.stryker-mutator.io/api/reports",
+          "reportType": "full"
+        },
+        "dryRunOnly": false,
+        "eventReporter": {
+          "baseDir": "reports/mutation/events"
+        },
+        "ignoreStatic": false,
+        "force": false,
+        "inPlace": false,
+        "maxConcurrentTestRunners": 9007199254740991,
+        "maxTestRunnerReuse": 0,
+        "mutator": {
+          "plugins": null,
+          "excludedMutations": []
+        },
+        "appendPlugins": [],
+        "htmlReporter": {
+          "fileName": "reports/mutation/mutation.html"
+        },
+        "disableTypeChecks": true,
+        "testRunnerNodeArgs": [],
+        "timeoutFactor": 1.5,
+        "dryRunTimeoutMinutes": 5,
+        "tsconfigFile": "tsconfig.json",
+        "warnings": true,
+        "disableBail": false,
+        "allowEmpty": false,
+        "ignorers": [],
+        "testFiles": []
+      },
+      "framework": {
+        "name": "StrykerJS",
+        "version": "10.0.0",
+        "branding": {
+          "homepageUrl": "https://stryker-mutator.io",
+          "imageUrl": "data:image/svg+xml;utf8,%3Csvg viewBox='0 0 1458 1458' xmlns='http://www.w3.org/2000/svg' fill-rule='evenodd' clip-rule='evenodd' stroke-linejoin='round' stroke-miterlimit='2'%3E%3Cpath fill='none' d='M0 0h1458v1458H0z'/%3E%3CclipPath id='a'%3E%3Cpath d='M0 0h1458v1458H0z'/%3E%3C/clipPath%3E%3Cg clip-path='url(%23a)'%3E%3Cpath d='M1458 729c0 402.655-326.345 729-729 729S0 1131.655 0 729C0 326.445 326.345 0 729 0s729 326.345 729 729' fill='%23e74c3c' fill-rule='nonzero'/%3E%3Cpath d='M778.349 1456.15L576.6 1254.401l233-105 85-78.668v-64.332l-257-257-44-187-50-208 251.806-82.793L1076.6 389.401l380.14 379.15c-19.681 367.728-311.914 663.049-678.391 687.599z' fill-opacity='.3'/%3E%3Cpath d='M753.4 329.503c41.79 0 74.579 7.83 97.925 25.444 23.571 18.015 41.69 43.956 55.167 77.097l11.662 28.679 165.733-58.183-14.137-32.13c-26.688-60.655-64.896-108.61-114.191-144.011-49.329-35.423-117.458-54.302-204.859-54.302-50.78 0-95.646 7.376-134.767 21.542-40.093 14.671-74.09 34.79-102.239 60.259-28.84 26.207-50.646 57.06-65.496 92.701-14.718 35.052-22.101 72.538-22.101 112.401 0 72.536 20.667 133.294 61.165 182.704 38.624 47.255 98.346 88.037 179.861 121.291 42.257 17.475 78.715 33.125 109.227 46.994 27.193 12.361 49.294 26.124 66.157 41.751 15.309 14.186 26.497 30.584 33.63 49.258 7.721 20.214 11.16 45.69 11.16 76.402 0 28.021-4.251 51.787-13.591 71.219-8.832 18.374-20.171 33.178-34.523 44.219-14.787 11.374-31.193 19.591-49.393 24.466-19.68 5.359-39.14 7.993-58.69 7.993-29.359 0-54.387-3.407-75.182-10.747-20.112-7.013-37.144-16.144-51.259-27.486-13.618-11.009-24.971-23.766-33.744-38.279-9.64-15.8-17.272-31.924-23.032-48.408l-10.965-31.376-161.669 60.585 10.734 30.124c10.191 28.601 24.197 56.228 42.059 82.748 18.208 27.144 41.322 51.369 69.525 72.745 27.695 21.075 60.904 38.218 99.481 51.041 37.777 12.664 82.004 19.159 132.552 19.159 49.998 0 95.818-8.321 137.611-24.622 42.228-16.471 78.436-38.992 108.835-67.291 30.719-28.597 54.631-62.103 71.834-100.642 17.263-38.56 25.923-79.392 25.923-122.248 0-54.339-8.368-100.37-24.208-138.32-16.29-38.759-38.252-71.661-65.948-98.797-26.965-26.418-58.269-48.835-93.858-67.175-33.655-17.241-69.196-33.11-106.593-47.533-35.934-13.429-65.822-26.601-89.948-39.525-22.153-11.868-40.009-24.21-53.547-37.309-11.429-11.13-19.83-23.678-24.718-37.664-5.413-15.49-7.98-33.423-7.98-53.577 0-40.883 11.293-71.522 37.086-90.539 28.443-20.825 64.985-30.658 109.311-30.658z' fill='%23f1c40f' fill-rule='nonzero'/%3E%3Cpath d='M720 0h18v113h-18zM1458 738v-18h-113v18h113zM720 1345h18v113h-18zM113 738v-18H0v18h113z'/%3E%3C/g%3E%3C/svg%3E"
+        },
+        "dependencies": {}
+      }
+    },
+    "helper": {
+      "files": {
+        "src/clamp.js": {
+          "language": "javascript",
+          "mutants": [
+            {
+              "id": "0",
+              "mutatorName": "BlockStatement",
+              "replacement": "{}",
+              "statusReason": "TAP version 13\n\n# Subtest: independent clamp lower bound zero\n\nnot ok 1 - independent clamp lower bound zero\n\n  ---\n  duration_ms: 0.796375\n  type: 'test'\n  location: '<measurement>/.tddswarm/stryker-tmp/sandbox-DCYenF/test/clamp.test.js:2:167'\n  failureType: 'testCodeFailure'\n  error: |-\n    Expected values to be strictly equal:\n    \n    undefined !== 0\n    \n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: 0\n  operator: 'strictEqual'\n  stack: |-\n    TestContext.<anonymous> (file://<measurement>/.tddswarm/stryker-tmp/sandbox-DCYenF/test/clamp.test.js:2:220)\n    Test.runInAsyncScope (node:async_hooks:214:14)\n    Test.run (node:internal/test_runner/test:1047:25)\n    Test.start (node:internal/test_runner/test:944:17)\n    startSubtestAfterBootstrap (node:internal/test_runner/harness:296:17)\n  ...\n\n# Subtest: independent upper bound ten\n\nnot ok 2 - independent upper bound ten\n\n  ---\n  duration_ms: 0.110333\n  type: 'test'\n  location: '<measurement>/.tddswarm/stryker-tmp/sandbox-DCYenF/test/clamp.test.js:2:240'\n  failureType: 'testCodeFailure'\n  error: |-\n    Expected values to be strictly equal:\n    \n    undefined !== 10\n    \n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: 10\n  operator: 'strictEqual'\n  stack: |-\n    TestContext.<anonymous> (file://<measurement>/.tddswarm/stryker-tmp/sandbox-DCYenF/test/clamp.test.js:2:286)\n    Test.runInAsyncScope (node:async_hooks:214:14)\n    Test.run (node:internal/test_runner/test:1047:25)\n    Test.processPendingSubtests (node:internal/test_runner/test:744:18)\n    Test.postRun (node:internal/test_runner/test:1173:19)\n    Test.run (node:internal/test_runner/test:1101:12)\n    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)\n  ...\n\n# Subtest: independent in-range identity\n\nnot ok 3 - independent in-range identity\n\n  ---\n  duration_ms: 0.508042\n  type: 'test'\n  location: '<measurement>/.tddswarm/stryker-tmp/sandbox-DCYenF/test/clamp.test.js:2:307'\n  failureType: 'testCodeFailure'\n  error: |-\n    Expected values to be strictly equal:\n    \n    undefined !== 4\n    \n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: 4\n  operator: 'strictEqual'\n  stack: |-\n    TestContext.<anonymous> (file://<measurement>/.tddswarm/stryker-tmp/sandbox-DCYenF/test/clamp.test.js:2:355)\n    Test.runInAsyncScope (node:async_hooks:214:14)\n    Test.run (node:internal/test_runner/test:1047:25)\n    Test.processPendingSubtests (node:internal/test_runner/test:744:18)\n    Test.postRun (node:internal/test_runner/test:1173:19)\n    Test.run (node:internal/test_runner/test:1101:12)\n    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)\n  ...\n\n1..3\n\n# tests 3\n\n# suites 0\n# pass 0\n# fail 3\n# cancelled 0\n\n# skipped 0\n\n# todo 0\n\n# duration_ms 60.377208\n",
+              "status": "Killed",
+              "testsCompleted": 1,
+              "killedBy": [
+                "0"
+              ],
+              "location": {
+                "end": {
+                  "column": 98,
+                  "line": 1
+                },
+                "start": {
+                  "column": 59,
+                  "line": 1
+                }
+              }
+            },
+            {
+              "id": "1",
+              "mutatorName": "MethodExpression",
+              "replacement": "Math.min(0, Math.min(limit, x))",
+              "statusReason": "TAP version 13\n\n# Subtest: independent clamp lower bound zero\n\nnot ok 1 - independent clamp lower bound zero\n\n  ---\n  duration_ms: 0.831042\n  type: 'test'\n  location: '<measurement>/.tddswarm/stryker-tmp/sandbox-DCYenF/test/clamp.test.js:2:167'\n  failureType: 'testCodeFailure'\n  error: |-\n    Expected values to be strictly equal:\n    \n    -1 !== 0\n    \n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: 0\n  actual: -1\n  operator: 'strictEqual'\n  stack: |-\n    TestContext.<anonymous> (file://<measurement>/.tddswarm/stryker-tmp/sandbox-DCYenF/test/clamp.test.js:2:220)\n    Test.runInAsyncScope (node:async_hooks:214:14)\n    Test.run (node:internal/test_runner/test:1047:25)\n    Test.start (node:internal/test_runner/test:944:17)\n    startSubtestAfterBootstrap (node:internal/test_runner/harness:296:17)\n  ...\n\n# Subtest: independent upper bound ten\n\nnot ok 2 - independent upper bound ten\n\n  ---\n  duration_ms: 0.117875\n  type: 'test'\n  location: '<measurement>/.tddswarm/stryker-tmp/sandbox-DCYenF/test/clamp.test.js:2:240'\n  failureType: 'testCodeFailure'\n  error: |-\n    Expected values to be strictly equal:\n    \n    0 !== 10\n    \n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: 10\n  actual: 0\n  operator: 'strictEqual'\n  stack: |-\n    TestContext.<anonymous> (file://<measurement>/.tddswarm/stryker-tmp/sandbox-DCYenF/test/clamp.test.js:2:286)\n    Test.runInAsyncScope (node:async_hooks:214:14)\n    Test.run (node:internal/test_runner/test:1047:25)\n    Test.processPendingSubtests (node:internal/test_runner/test:744:18)\n    Test.postRun (node:internal/test_runner/test:1173:19)\n    Test.run (node:internal/test_runner/test:1101:12)\n    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)\n  ...\n\n# Subtest: independent in-range identity\n\nnot ok 3 - independent in-range identity\n\n  ---\n  duration_ms: 0.446042\n  type: 'test'\n  location: '<measurement>/.tddswarm/stryker-tmp/sandbox-DCYenF/test/clamp.test.js:2:307'\n  failureType: 'testCodeFailure'\n  error: |-\n    Expected values to be strictly equal:\n    \n    0 !== 4\n    \n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: 4\n  actual: 0\n  operator: 'strictEqual'\n  stack: |-\n    TestContext.<anonymous> (file://<measurement>/.tddswarm/stryker-tmp/sandbox-DCYenF/test/clamp.test.js:2:355)\n    Test.runInAsyncScope (node:async_hooks:214:14)\n    Test.run (node:internal/test_runner/test:1047:25)\n    Test.processPendingSubtests (node:internal/test_runner/test:744:18)\n    Test.postRun (node:internal/test_runner/test:1173:19)\n    Test.run (node:internal/test_runner/test:1101:12)\n    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)\n  ...\n\n1..3\n\n# tests 3\n\n# suites 0\n\n# pass 0\n\n# fail 3\n\n# cancelled 0\n\n# skipped 0\n\n# todo 0\n\n# duration_ms 56.450917\n",
+              "status": "Killed",
+              "testsCompleted": 1,
+              "killedBy": [
+                "0"
+              ],
+              "location": {
+                "end": {
+                  "column": 96,
+                  "line": 1
+                },
+                "start": {
+                  "column": 67,
+                  "line": 1
+                }
+              }
+            },
+            {
+              "id": "2",
+              "mutatorName": "MethodExpression",
+              "replacement": "Math.max(limit, x)",
+              "statusReason": "TAP version 13\n\n# Subtest: independent clamp lower bound zero\n\nnot ok 1 - independent clamp lower bound zero\n\n  ---\n  duration_ms: 0.853125\n  type: 'test'\n  location: '<measurement>/.tddswarm/stryker-tmp/sandbox-DCYenF/test/clamp.test.js:2:167'\n  failureType: 'testCodeFailure'\n  error: |-\n    Expected values to be strictly equal:\n    \n    10 !== 0\n    \n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: 0\n  actual: 10\n  operator: 'strictEqual'\n  stack: |-\n    TestContext.<anonymous> (file://<measurement>/.tddswarm/stryker-tmp/sandbox-DCYenF/test/clamp.test.js:2:220)\n    Test.runInAsyncScope (node:async_hooks:214:14)\n    Test.run (node:internal/test_runner/test:1047:25)\n    Test.start (node:internal/test_runner/test:944:17)\n    startSubtestAfterBootstrap (node:internal/test_runner/harness:296:17)\n  ...\n\n# Subtest: independent upper bound ten\n\nnot ok 2 - independent upper bound ten\n\n  ---\n  duration_ms: 0.1115\n  type: 'test'\n  location: '<measurement>/.tddswarm/stryker-tmp/sandbox-DCYenF/test/clamp.test.js:2:240'\n  failureType: 'testCodeFailure'\n  error: |-\n    Expected values to be strictly equal:\n    \n    20 !== 10\n    \n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: 10\n  actual: 20\n  operator: 'strictEqual'\n  stack: |-\n    TestContext.<anonymous> (file://<measurement>/.tddswarm/stryker-tmp/sandbox-DCYenF/test/clamp.test.js:2:286)\n    Test.runInAsyncScope (node:async_hooks:214:14)\n    Test.run (node:internal/test_runner/test:1047:25)\n    Test.processPendingSubtests (node:internal/test_runner/test:744:18)\n    Test.postRun (node:internal/test_runner/test:1173:19)\n    Test.run (node:internal/test_runner/test:1101:12)\n    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)\n  ...\n\n# Subtest: independent in-range identity\n\nnot ok 3 - independent in-range identity\n\n  ---\n  duration_ms: 0.565375\n  type: 'test'\n  location: '<measurement>/.tddswarm/stryker-tmp/sandbox-DCYenF/test/clamp.test.js:2:307'\n  failureType: 'testCodeFailure'\n  error: |-\n    Expected values to be strictly equal:\n    \n    10 !== 4\n    \n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: 4\n  actual: 10\n  operator: 'strictEqual'\n  stack: |-\n    TestContext.<anonymous> (file://<measurement>/.tddswarm/stryker-tmp/sandbox-DCYenF/test/clamp.test.js:2:355)\n    Test.runInAsyncScope (node:async_hooks:214:14)\n    Test.run (node:internal/test_runner/test:1047:25)\n    Test.processPendingSubtests (node:internal/test_runner/test:744:18)\n    Test.postRun (node:internal/test_runner/test:1173:19)\n    Test.run (node:internal/test_runner/test:1101:12)\n    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)\n  ...\n\n1..3\n\n# tests 3\n# suites 0\n\n# pass 0\n\n# fail 3\n\n# cancelled 0\n\n# skipped 0\n\n# todo 0\n\n# duration_ms 60.075791\n",
+              "status": "Killed",
+              "testsCompleted": 1,
+              "killedBy": [
+                "0"
+              ],
+              "location": {
+                "end": {
+                  "column": 95,
+                  "line": 1
+                },
+                "start": {
+                  "column": 78,
+                  "line": 1
+                }
+              }
+            }
+          ],
+          "source": "import {limit} from './helper.js';export function clamp(x){return Math.max(0,Math.min(limit,x));}\n"
+        }
+      },
+      "schemaVersion": "1.0",
+      "thresholds": {
+        "high": 100,
+        "low": 0,
+        "break": 0
+      },
+      "testFiles": {
+        "": {
+          "tests": [
+            {
+              "id": "0",
+              "name": "All tests"
+            }
+          ]
+        }
+      },
+      "projectRoot": "<measurement>",
+      "config": {
+        "mutate": [
+          "src/clamp.js"
+        ],
+        "testRunner": "command",
+        "commandRunner": {
+          "command": "'<node>' '--test' 'test/clamp.test.js'"
+        },
+        "coverageAnalysis": "off",
+        "concurrency": 1,
+        "reporters": [
+          "json"
+        ],
+        "jsonReporter": {
+          "fileName": ".tddswarm/mutation/report.json"
+        },
+        "tempDirName": ".tddswarm/stryker-tmp",
+        "cleanTempDir": "always",
+        "symlinkNodeModules": true,
+        "timeoutMS": 5000,
+        "logLevel": "info",
+        "fileLogLevel": "off",
+        "plugins": [],
+        "ignorePatterns": [
+          ".tddswarm"
+        ],
+        "thresholds": {
+          "high": 100,
+          "low": 0,
+          "break": 0
+        },
+        "incremental": true,
+        "incrementalFile": ".tddswarm/mutation/incremental.json",
+        "configFile": ".tddswarm/mutation/config.json",
+        "allowConsoleColors": true,
+        "checkers": [],
+        "checkerNodeArgs": [],
+        "clearTextReporter": {
+          "allowColor": true,
+          "allowEmojis": false,
+          "logTests": true,
+          "maxTestsToLog": 3,
+          "reportTests": true,
+          "reportMutants": true,
+          "reportScoreTable": true,
+          "skipFull": false
+        },
+        "dashboard": {
+          "baseUrl": "https://dashboard.stryker-mutator.io/api/reports",
+          "reportType": "full"
+        },
+        "dryRunOnly": false,
+        "eventReporter": {
+          "baseDir": "reports/mutation/events"
+        },
+        "ignoreStatic": false,
+        "force": false,
+        "inPlace": false,
+        "maxConcurrentTestRunners": 9007199254740991,
+        "maxTestRunnerReuse": 0,
+        "mutator": {
+          "plugins": null,
+          "excludedMutations": []
+        },
+        "appendPlugins": [],
+        "htmlReporter": {
+          "fileName": "reports/mutation/mutation.html"
+        },
+        "disableTypeChecks": true,
+        "testRunnerNodeArgs": [],
+        "timeoutFactor": 1.5,
+        "dryRunTimeoutMinutes": 5,
+        "tsconfigFile": "tsconfig.json",
+        "warnings": true,
+        "disableBail": false,
+        "allowEmpty": false,
+        "ignorers": [],
+        "testFiles": []
+      },
+      "framework": {
+        "name": "StrykerJS",
+        "version": "10.0.0",
+        "branding": {
+          "homepageUrl": "https://stryker-mutator.io",
+          "imageUrl": "data:image/svg+xml;utf8,%3Csvg viewBox='0 0 1458 1458' xmlns='http://www.w3.org/2000/svg' fill-rule='evenodd' clip-rule='evenodd' stroke-linejoin='round' stroke-miterlimit='2'%3E%3Cpath fill='none' d='M0 0h1458v1458H0z'/%3E%3CclipPath id='a'%3E%3Cpath d='M0 0h1458v1458H0z'/%3E%3C/clipPath%3E%3Cg clip-path='url(%23a)'%3E%3Cpath d='M1458 729c0 402.655-326.345 729-729 729S0 1131.655 0 729C0 326.445 326.345 0 729 0s729 326.345 729 729' fill='%23e74c3c' fill-rule='nonzero'/%3E%3Cpath d='M778.349 1456.15L576.6 1254.401l233-105 85-78.668v-64.332l-257-257-44-187-50-208 251.806-82.793L1076.6 389.401l380.14 379.15c-19.681 367.728-311.914 663.049-678.391 687.599z' fill-opacity='.3'/%3E%3Cpath d='M753.4 329.503c41.79 0 74.579 7.83 97.925 25.444 23.571 18.015 41.69 43.956 55.167 77.097l11.662 28.679 165.733-58.183-14.137-32.13c-26.688-60.655-64.896-108.61-114.191-144.011-49.329-35.423-117.458-54.302-204.859-54.302-50.78 0-95.646 7.376-134.767 21.542-40.093 14.671-74.09 34.79-102.239 60.259-28.84 26.207-50.646 57.06-65.496 92.701-14.718 35.052-22.101 72.538-22.101 112.401 0 72.536 20.667 133.294 61.165 182.704 38.624 47.255 98.346 88.037 179.861 121.291 42.257 17.475 78.715 33.125 109.227 46.994 27.193 12.361 49.294 26.124 66.157 41.751 15.309 14.186 26.497 30.584 33.63 49.258 7.721 20.214 11.16 45.69 11.16 76.402 0 28.021-4.251 51.787-13.591 71.219-8.832 18.374-20.171 33.178-34.523 44.219-14.787 11.374-31.193 19.591-49.393 24.466-19.68 5.359-39.14 7.993-58.69 7.993-29.359 0-54.387-3.407-75.182-10.747-20.112-7.013-37.144-16.144-51.259-27.486-13.618-11.009-24.971-23.766-33.744-38.279-9.64-15.8-17.272-31.924-23.032-48.408l-10.965-31.376-161.669 60.585 10.734 30.124c10.191 28.601 24.197 56.228 42.059 82.748 18.208 27.144 41.322 51.369 69.525 72.745 27.695 21.075 60.904 38.218 99.481 51.041 37.777 12.664 82.004 19.159 132.552 19.159 49.998 0 95.818-8.321 137.611-24.622 42.228-16.471 78.436-38.992 108.835-67.291 30.719-28.597 54.631-62.103 71.834-100.642 17.263-38.56 25.923-79.392 25.923-122.248 0-54.339-8.368-100.37-24.208-138.32-16.29-38.759-38.252-71.661-65.948-98.797-26.965-26.418-58.269-48.835-93.858-67.175-33.655-17.241-69.196-33.11-106.593-47.533-35.934-13.429-65.822-26.601-89.948-39.525-22.153-11.868-40.009-24.21-53.547-37.309-11.429-11.13-19.83-23.678-24.718-37.664-5.413-15.49-7.98-33.423-7.98-53.577 0-40.883 11.293-71.522 37.086-90.539 28.443-20.825 64.985-30.658 109.311-30.658z' fill='%23f1c40f' fill-rule='nonzero'/%3E%3Cpath d='M720 0h18v113h-18zM1458 738v-18h-113v18h113zM720 1345h18v113h-18zM113 738v-18H0v18h113z'/%3E%3C/g%3E%3C/svg%3E"
+        },
+        "dependencies": {}
+      }
+    },
+    "lock": {
+      "files": {
+        "src/clamp.js": {
+          "language": "javascript",
+          "mutants": [
+            {
+              "id": "0",
+              "mutatorName": "BlockStatement",
+              "replacement": "{}",
+              "statusReason": "TAP version 13\n\n# Subtest: independent clamp lower bound zero\n\nnot ok 1 - independent clamp lower bound zero\n\n  ---\n  duration_ms: 0.7975\n  type: 'test'\n  location: '<measurement>/.tddswarm/stryker-tmp/sandbox-aM5suF/test/clamp.test.js:2:167'\n  failureType: 'testCodeFailure'\n  error: |-\n    Expected values to be strictly equal:\n    \n    undefined !== 0\n    \n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: 0\n  operator: 'strictEqual'\n  stack: |-\n    TestContext.<anonymous> (file://<measurement>/.tddswarm/stryker-tmp/sandbox-aM5suF/test/clamp.test.js:2:220)\n    Test.runInAsyncScope (node:async_hooks:214:14)\n    Test.run (node:internal/test_runner/test:1047:25)\n    Test.start (node:internal/test_runner/test:944:17)\n    startSubtestAfterBootstrap (node:internal/test_runner/harness:296:17)\n  ...\n\n# Subtest: independent upper bound ten\n\nnot ok 2 - independent upper bound ten\n\n  ---\n  duration_ms: 0.106209\n  type: 'test'\n  location: '<measurement>/.tddswarm/stryker-tmp/sandbox-aM5suF/test/clamp.test.js:2:240'\n  failureType: 'testCodeFailure'\n  error: |-\n    Expected values to be strictly equal:\n    \n    undefined !== 10\n    \n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: 10\n  operator: 'strictEqual'\n  stack: |-\n    TestContext.<anonymous> (file://<measurement>/.tddswarm/stryker-tmp/sandbox-aM5suF/test/clamp.test.js:2:286)\n    Test.runInAsyncScope (node:async_hooks:214:14)\n    Test.run (node:internal/test_runner/test:1047:25)\n    Test.processPendingSubtests (node:internal/test_runner/test:744:18)\n    Test.postRun (node:internal/test_runner/test:1173:19)\n    Test.run (node:internal/test_runner/test:1101:12)\n    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)\n  ...\n\n# Subtest: independent in-range identity\n\nnot ok 3 - independent in-range identity\n\n  ---\n  duration_ms: 0.465041\n  type: 'test'\n  location: '<measurement>/.tddswarm/stryker-tmp/sandbox-aM5suF/test/clamp.test.js:2:307'\n  failureType: 'testCodeFailure'\n  error: |-\n    Expected values to be strictly equal:\n    \n    undefined !== 4\n    \n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: 4\n  operator: 'strictEqual'\n  stack: |-\n    TestContext.<anonymous> (file://<measurement>/.tddswarm/stryker-tmp/sandbox-aM5suF/test/clamp.test.js:2:355)\n    Test.runInAsyncScope (node:async_hooks:214:14)\n    Test.run (node:internal/test_runner/test:1047:25)\n    Test.processPendingSubtests (node:internal/test_runner/test:744:18)\n    Test.postRun (node:internal/test_runner/test:1173:19)\n    Test.run (node:internal/test_runner/test:1101:12)\n    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)\n  ...\n\n1..3\n\n# tests 3\n\n# suites 0\n# pass 0\n# fail 3\n# cancelled 0\n\n# skipped 0\n\n# todo 0\n\n# duration_ms 57.239459\n",
+              "status": "Killed",
+              "testsCompleted": 1,
+              "killedBy": [
+                "0"
+              ],
+              "location": {
+                "end": {
+                  "column": 98,
+                  "line": 1
+                },
+                "start": {
+                  "column": 59,
+                  "line": 1
+                }
+              }
+            },
+            {
+              "id": "1",
+              "mutatorName": "MethodExpression",
+              "replacement": "Math.min(0, Math.min(limit, x))",
+              "statusReason": "TAP version 13\n\n# Subtest: independent clamp lower bound zero\n\nnot ok 1 - independent clamp lower bound zero\n\n  ---\n  duration_ms: 0.830583\n  type: 'test'\n  location: '<measurement>/.tddswarm/stryker-tmp/sandbox-aM5suF/test/clamp.test.js:2:167'\n  failureType: 'testCodeFailure'\n  error: |-\n    Expected values to be strictly equal:\n    \n    -1 !== 0\n    \n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: 0\n  actual: -1\n  operator: 'strictEqual'\n  stack: |-\n    TestContext.<anonymous> (file://<measurement>/.tddswarm/stryker-tmp/sandbox-aM5suF/test/clamp.test.js:2:220)\n    Test.runInAsyncScope (node:async_hooks:214:14)\n    Test.run (node:internal/test_runner/test:1047:25)\n    Test.start (node:internal/test_runner/test:944:17)\n    startSubtestAfterBootstrap (node:internal/test_runner/harness:296:17)\n  ...\n\n# Subtest: independent upper bound ten\n\nnot ok 2 - independent upper bound ten\n\n  ---\n  duration_ms: 0.110083\n  type: 'test'\n  location: '<measurement>/.tddswarm/stryker-tmp/sandbox-aM5suF/test/clamp.test.js:2:240'\n  failureType: 'testCodeFailure'\n  error: |-\n    Expected values to be strictly equal:\n    \n    0 !== 10\n    \n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: 10\n  actual: 0\n  operator: 'strictEqual'\n  stack: |-\n    TestContext.<anonymous> (file://<measurement>/.tddswarm/stryker-tmp/sandbox-aM5suF/test/clamp.test.js:2:286)\n    Test.runInAsyncScope (node:async_hooks:214:14)\n    Test.run (node:internal/test_runner/test:1047:25)\n    Test.processPendingSubtests (node:internal/test_runner/test:744:18)\n    Test.postRun (node:internal/test_runner/test:1173:19)\n    Test.run (node:internal/test_runner/test:1101:12)\n    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)\n  ...\n\n# Subtest: independent in-range identity\n\nnot ok 3 - independent in-range identity\n\n  ---\n  duration_ms: 0.529333\n  type: 'test'\n  location: '<measurement>/.tddswarm/stryker-tmp/sandbox-aM5suF/test/clamp.test.js:2:307'\n  failureType: 'testCodeFailure'\n  error: |-\n    Expected values to be strictly equal:\n    \n    0 !== 4\n    \n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: 4\n  actual: 0\n  operator: 'strictEqual'\n  stack: |-\n    TestContext.<anonymous> (file://<measurement>/.tddswarm/stryker-tmp/sandbox-aM5suF/test/clamp.test.js:2:355)\n    Test.runInAsyncScope (node:async_hooks:214:14)\n    Test.run (node:internal/test_runner/test:1047:25)\n    Test.processPendingSubtests (node:internal/test_runner/test:744:18)\n    Test.postRun (node:internal/test_runner/test:1173:19)\n    Test.run (node:internal/test_runner/test:1101:12)\n    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)\n  ...\n\n1..3\n\n# tests 3\n\n# suites 0\n\n# pass 0\n\n# fail 3\n\n# cancelled 0\n\n# skipped 0\n\n# todo 0\n\n# duration_ms 58.31825\n",
+              "status": "Killed",
+              "testsCompleted": 1,
+              "killedBy": [
+                "0"
+              ],
+              "location": {
+                "end": {
+                  "column": 96,
+                  "line": 1
+                },
+                "start": {
+                  "column": 67,
+                  "line": 1
+                }
+              }
+            },
+            {
+              "id": "2",
+              "mutatorName": "MethodExpression",
+              "replacement": "Math.max(limit, x)",
+              "statusReason": "TAP version 13\n\n# Subtest: independent clamp lower bound zero\n\nnot ok 1 - independent clamp lower bound zero\n\n  ---\n  duration_ms: 0.865917\n  type: 'test'\n  location: '<measurement>/.tddswarm/stryker-tmp/sandbox-aM5suF/test/clamp.test.js:2:167'\n  failureType: 'testCodeFailure'\n  error: |-\n    Expected values to be strictly equal:\n    \n    10 !== 0\n    \n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: 0\n  actual: 10\n  operator: 'strictEqual'\n  stack: |-\n    TestContext.<anonymous> (file://<measurement>/.tddswarm/stryker-tmp/sandbox-aM5suF/test/clamp.test.js:2:220)\n    Test.runInAsyncScope (node:async_hooks:214:14)\n    Test.run (node:internal/test_runner/test:1047:25)\n    Test.start (node:internal/test_runner/test:944:17)\n    startSubtestAfterBootstrap (node:internal/test_runner/harness:296:17)\n  ...\n\n# Subtest: independent upper bound ten\n\nnot ok 2 - independent upper bound ten\n\n  ---\n  duration_ms: 0.107375\n  type: 'test'\n  location: '<measurement>/.tddswarm/stryker-tmp/sandbox-aM5suF/test/clamp.test.js:2:240'\n  failureType: 'testCodeFailure'\n  error: |-\n    Expected values to be strictly equal:\n    \n    20 !== 10\n    \n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: 10\n  actual: 20\n  operator: 'strictEqual'\n  stack: |-\n    TestContext.<anonymous> (file://<measurement>/.tddswarm/stryker-tmp/sandbox-aM5suF/test/clamp.test.js:2:286)\n    Test.runInAsyncScope (node:async_hooks:214:14)\n    Test.run (node:internal/test_runner/test:1047:25)\n    Test.processPendingSubtests (node:internal/test_runner/test:744:18)\n    Test.postRun (node:internal/test_runner/test:1173:19)\n    Test.run (node:internal/test_runner/test:1101:12)\n    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)\n  ...\n\n# Subtest: independent in-range identity\n\nnot ok 3 - independent in-range identity\n\n  ---\n  duration_ms: 0.525167\n  type: 'test'\n  location: '<measurement>/.tddswarm/stryker-tmp/sandbox-aM5suF/test/clamp.test.js:2:307'\n  failureType: 'testCodeFailure'\n  error: |-\n    Expected values to be strictly equal:\n    \n    10 !== 4\n    \n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: 4\n  actual: 10\n  operator: 'strictEqual'\n  stack: |-\n    TestContext.<anonymous> (file://<measurement>/.tddswarm/stryker-tmp/sandbox-aM5suF/test/clamp.test.js:2:355)\n    Test.runInAsyncScope (node:async_hooks:214:14)\n    Test.run (node:internal/test_runner/test:1047:25)\n    Test.processPendingSubtests (node:internal/test_runner/test:744:18)\n    Test.postRun (node:internal/test_runner/test:1173:19)\n    Test.run (node:internal/test_runner/test:1101:12)\n    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)\n  ...\n\n1..3\n\n# tests 3\n\n# suites 0\n\n# pass 0\n\n# fail 3\n\n# cancelled 0\n\n# skipped 0\n\n# todo 0\n\n# duration_ms 64.377167\n",
+              "status": "Killed",
+              "testsCompleted": 1,
+              "killedBy": [
+                "0"
+              ],
+              "location": {
+                "end": {
+                  "column": 95,
+                  "line": 1
+                },
+                "start": {
+                  "column": 78,
+                  "line": 1
+                }
+              }
+            }
+          ],
+          "source": "import {limit} from './helper.js';export function clamp(x){return Math.max(0,Math.min(limit,x));}\n"
+        }
+      },
+      "schemaVersion": "1.0",
+      "thresholds": {
+        "high": 100,
+        "low": 0,
+        "break": 0
+      },
+      "testFiles": {
+        "": {
+          "tests": [
+            {
+              "id": "0",
+              "name": "All tests"
+            }
+          ]
+        }
+      },
+      "projectRoot": "<measurement>",
+      "config": {
+        "mutate": [
+          "src/clamp.js"
+        ],
+        "testRunner": "command",
+        "commandRunner": {
+          "command": "'<node>' '--test' 'test/clamp.test.js'"
+        },
+        "coverageAnalysis": "off",
+        "concurrency": 1,
+        "reporters": [
+          "json"
+        ],
+        "jsonReporter": {
+          "fileName": ".tddswarm/mutation/report.json"
+        },
+        "tempDirName": ".tddswarm/stryker-tmp",
+        "cleanTempDir": "always",
+        "symlinkNodeModules": true,
+        "timeoutMS": 5000,
+        "logLevel": "info",
+        "fileLogLevel": "off",
+        "plugins": [],
+        "ignorePatterns": [
+          ".tddswarm"
+        ],
+        "thresholds": {
+          "high": 100,
+          "low": 0,
+          "break": 0
+        },
+        "incremental": true,
+        "incrementalFile": ".tddswarm/mutation/incremental.json",
+        "configFile": ".tddswarm/mutation/config.json",
+        "allowConsoleColors": true,
+        "checkers": [],
+        "checkerNodeArgs": [],
+        "clearTextReporter": {
+          "allowColor": true,
+          "allowEmojis": false,
+          "logTests": true,
+          "maxTestsToLog": 3,
+          "reportTests": true,
+          "reportMutants": true,
+          "reportScoreTable": true,
+          "skipFull": false
+        },
+        "dashboard": {
+          "baseUrl": "https://dashboard.stryker-mutator.io/api/reports",
+          "reportType": "full"
+        },
+        "dryRunOnly": false,
+        "eventReporter": {
+          "baseDir": "reports/mutation/events"
+        },
+        "ignoreStatic": false,
+        "force": false,
+        "inPlace": false,
+        "maxConcurrentTestRunners": 9007199254740991,
+        "maxTestRunnerReuse": 0,
+        "mutator": {
+          "plugins": null,
+          "excludedMutations": []
+        },
+        "appendPlugins": [],
+        "htmlReporter": {
+          "fileName": "reports/mutation/mutation.html"
+        },
+        "disableTypeChecks": true,
+        "testRunnerNodeArgs": [],
+        "timeoutFactor": 1.5,
+        "dryRunTimeoutMinutes": 5,
+        "tsconfigFile": "tsconfig.json",
+        "warnings": true,
+        "disableBail": false,
+        "allowEmpty": false,
+        "ignorers": [],
+        "testFiles": []
+      },
+      "framework": {
+        "name": "StrykerJS",
+        "version": "10.0.0",
+        "branding": {
+          "homepageUrl": "https://stryker-mutator.io",
+          "imageUrl": "data:image/svg+xml;utf8,%3Csvg viewBox='0 0 1458 1458' xmlns='http://www.w3.org/2000/svg' fill-rule='evenodd' clip-rule='evenodd' stroke-linejoin='round' stroke-miterlimit='2'%3E%3Cpath fill='none' d='M0 0h1458v1458H0z'/%3E%3CclipPath id='a'%3E%3Cpath d='M0 0h1458v1458H0z'/%3E%3C/clipPath%3E%3Cg clip-path='url(%23a)'%3E%3Cpath d='M1458 729c0 402.655-326.345 729-729 729S0 1131.655 0 729C0 326.445 326.345 0 729 0s729 326.345 729 729' fill='%23e74c3c' fill-rule='nonzero'/%3E%3Cpath d='M778.349 1456.15L576.6 1254.401l233-105 85-78.668v-64.332l-257-257-44-187-50-208 251.806-82.793L1076.6 389.401l380.14 379.15c-19.681 367.728-311.914 663.049-678.391 687.599z' fill-opacity='.3'/%3E%3Cpath d='M753.4 329.503c41.79 0 74.579 7.83 97.925 25.444 23.571 18.015 41.69 43.956 55.167 77.097l11.662 28.679 165.733-58.183-14.137-32.13c-26.688-60.655-64.896-108.61-114.191-144.011-49.329-35.423-117.458-54.302-204.859-54.302-50.78 0-95.646 7.376-134.767 21.542-40.093 14.671-74.09 34.79-102.239 60.259-28.84 26.207-50.646 57.06-65.496 92.701-14.718 35.052-22.101 72.538-22.101 112.401 0 72.536 20.667 133.294 61.165 182.704 38.624 47.255 98.346 88.037 179.861 121.291 42.257 17.475 78.715 33.125 109.227 46.994 27.193 12.361 49.294 26.124 66.157 41.751 15.309 14.186 26.497 30.584 33.63 49.258 7.721 20.214 11.16 45.69 11.16 76.402 0 28.021-4.251 51.787-13.591 71.219-8.832 18.374-20.171 33.178-34.523 44.219-14.787 11.374-31.193 19.591-49.393 24.466-19.68 5.359-39.14 7.993-58.69 7.993-29.359 0-54.387-3.407-75.182-10.747-20.112-7.013-37.144-16.144-51.259-27.486-13.618-11.009-24.971-23.766-33.744-38.279-9.64-15.8-17.272-31.924-23.032-48.408l-10.965-31.376-161.669 60.585 10.734 30.124c10.191 28.601 24.197 56.228 42.059 82.748 18.208 27.144 41.322 51.369 69.525 72.745 27.695 21.075 60.904 38.218 99.481 51.041 37.777 12.664 82.004 19.159 132.552 19.159 49.998 0 95.818-8.321 137.611-24.622 42.228-16.471 78.436-38.992 108.835-67.291 30.719-28.597 54.631-62.103 71.834-100.642 17.263-38.56 25.923-79.392 25.923-122.248 0-54.339-8.368-100.37-24.208-138.32-16.29-38.759-38.252-71.661-65.948-98.797-26.965-26.418-58.269-48.835-93.858-67.175-33.655-17.241-69.196-33.11-106.593-47.533-35.934-13.429-65.822-26.601-89.948-39.525-22.153-11.868-40.009-24.21-53.547-37.309-11.429-11.13-19.83-23.678-24.718-37.664-5.413-15.49-7.98-33.423-7.98-53.577 0-40.883 11.293-71.522 37.086-90.539 28.443-20.825 64.985-30.658 109.311-30.658z' fill='%23f1c40f' fill-rule='nonzero'/%3E%3Cpath d='M720 0h18v113h-18zM1458 738v-18h-113v18h113zM720 1345h18v113h-18zM113 738v-18H0v18h113z'/%3E%3C/g%3E%3C/svg%3E"
+        },
+        "dependencies": {}
+      }
+    },
+    "config": {
+      "files": {
+        "src/clamp.js": {
+          "language": "javascript",
+          "mutants": [
+            {
+              "id": "0",
+              "mutatorName": "BlockStatement",
+              "replacement": "{}",
+              "statusReason": "TAP version 13\n\n# Subtest: independent clamp lower bound zero\n\nnot ok 1 - independent clamp lower bound zero\n\n  ---\n  duration_ms: 0.818125\n  type: 'test'\n  location: '<measurement>/.tddswarm/stryker-tmp/sandbox-BdXT7C/test/clamp.test.js:2:167'\n  failureType: 'testCodeFailure'\n  error: |-\n    Expected values to be strictly equal:\n    \n    undefined !== 0\n    \n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: 0\n  operator: 'strictEqual'\n  stack: |-\n    TestContext.<anonymous> (file://<measurement>/.tddswarm/stryker-tmp/sandbox-BdXT7C/test/clamp.test.js:2:220)\n    Test.runInAsyncScope (node:async_hooks:214:14)\n    Test.run (node:internal/test_runner/test:1047:25)\n    Test.start (node:internal/test_runner/test:944:17)\n    startSubtestAfterBootstrap (node:internal/test_runner/harness:296:17)\n  ...\n\n# Subtest: independent upper bound ten\n\nnot ok 2 - independent upper bound ten\n\n  ---\n  duration_ms: 0.106833\n  type: 'test'\n  location: '<measurement>/.tddswarm/stryker-tmp/sandbox-BdXT7C/test/clamp.test.js:2:240'\n  failureType: 'testCodeFailure'\n  error: |-\n    Expected values to be strictly equal:\n    \n    undefined !== 10\n    \n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: 10\n  operator: 'strictEqual'\n  stack: |-\n    TestContext.<anonymous> (file://<measurement>/.tddswarm/stryker-tmp/sandbox-BdXT7C/test/clamp.test.js:2:286)\n    Test.runInAsyncScope (node:async_hooks:214:14)\n    Test.run (node:internal/test_runner/test:1047:25)\n    Test.processPendingSubtests (node:internal/test_runner/test:744:18)\n    Test.postRun (node:internal/test_runner/test:1173:19)\n    Test.run (node:internal/test_runner/test:1101:12)\n    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)\n  ...\n\n# Subtest: independent in-range identity\n\nnot ok 3 - independent in-range identity\n\n  ---\n  duration_ms: 0.523583\n  type: 'test'\n  location: '<measurement>/.tddswarm/stryker-tmp/sandbox-BdXT7C/test/clamp.test.js:2:307'\n  failureType: 'testCodeFailure'\n  error: |-\n    Expected values to be strictly equal:\n    \n    undefined !== 4\n    \n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: 4\n  operator: 'strictEqual'\n  stack: |-\n    TestContext.<anonymous> (file://<measurement>/.tddswarm/stryker-tmp/sandbox-BdXT7C/test/clamp.test.js:2:355)\n    Test.runInAsyncScope (node:async_hooks:214:14)\n    Test.run (node:internal/test_runner/test:1047:25)\n    Test.processPendingSubtests (node:internal/test_runner/test:744:18)\n    Test.postRun (node:internal/test_runner/test:1173:19)\n    Test.run (node:internal/test_runner/test:1101:12)\n    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)\n  ...\n\n1..3\n\n# tests 3\n# suites 0\n# pass 0\n# fail 3\n\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 63.339666\n",
+              "status": "Killed",
+              "testsCompleted": 1,
+              "killedBy": [
+                "0"
+              ],
+              "location": {
+                "end": {
+                  "column": 98,
+                  "line": 1
+                },
+                "start": {
+                  "column": 59,
+                  "line": 1
+                }
+              }
+            },
+            {
+              "id": "1",
+              "mutatorName": "MethodExpression",
+              "replacement": "Math.min(0, Math.min(limit, x))",
+              "statusReason": "TAP version 13\n\n# Subtest: independent clamp lower bound zero\n\nnot ok 1 - independent clamp lower bound zero\n\n  ---\n  duration_ms: 0.840916\n  type: 'test'\n  location: '<measurement>/.tddswarm/stryker-tmp/sandbox-BdXT7C/test/clamp.test.js:2:167'\n  failureType: 'testCodeFailure'\n  error: |-\n    Expected values to be strictly equal:\n    \n    -1 !== 0\n    \n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: 0\n  actual: -1\n  operator: 'strictEqual'\n  stack: |-\n    TestContext.<anonymous> (file://<measurement>/.tddswarm/stryker-tmp/sandbox-BdXT7C/test/clamp.test.js:2:220)\n    Test.runInAsyncScope (node:async_hooks:214:14)\n    Test.run (node:internal/test_runner/test:1047:25)\n    Test.start (node:internal/test_runner/test:944:17)\n    startSubtestAfterBootstrap (node:internal/test_runner/harness:296:17)\n  ...\n\n# Subtest: independent upper bound ten\n\nnot ok 2 - independent upper bound ten\n\n  ---\n  duration_ms: 0.10575\n  type: 'test'\n  location: '<measurement>/.tddswarm/stryker-tmp/sandbox-BdXT7C/test/clamp.test.js:2:240'\n  failureType: 'testCodeFailure'\n  error: |-\n    Expected values to be strictly equal:\n    \n    0 !== 10\n    \n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: 10\n  actual: 0\n  operator: 'strictEqual'\n  stack: |-\n    TestContext.<anonymous> (file://<measurement>/.tddswarm/stryker-tmp/sandbox-BdXT7C/test/clamp.test.js:2:286)\n    Test.runInAsyncScope (node:async_hooks:214:14)\n    Test.run (node:internal/test_runner/test:1047:25)\n    Test.processPendingSubtests (node:internal/test_runner/test:744:18)\n    Test.postRun (node:internal/test_runner/test:1173:19)\n    Test.run (node:internal/test_runner/test:1101:12)\n    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)\n  ...\n\n# Subtest: independent in-range identity\n\nnot ok 3 - independent in-range identity\n\n  ---\n  duration_ms: 0.597958\n  type: 'test'\n  location: '<measurement>/.tddswarm/stryker-tmp/sandbox-BdXT7C/test/clamp.test.js:2:307'\n  failureType: 'testCodeFailure'\n  error: |-\n    Expected values to be strictly equal:\n    \n    0 !== 4\n    \n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: 4\n  actual: 0\n  operator: 'strictEqual'\n  stack: |-\n    TestContext.<anonymous> (file://<measurement>/.tddswarm/stryker-tmp/sandbox-BdXT7C/test/clamp.test.js:2:355)\n    Test.runInAsyncScope (node:async_hooks:214:14)\n    Test.run (node:internal/test_runner/test:1047:25)\n    Test.processPendingSubtests (node:internal/test_runner/test:744:18)\n    Test.postRun (node:internal/test_runner/test:1173:19)\n    Test.run (node:internal/test_runner/test:1101:12)\n    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)\n  ...\n\n1..3\n\n# tests 3\n# suites 0\n\n# pass 0\n\n# fail 3\n\n# cancelled 0\n\n# skipped 0\n\n# todo 0\n\n# duration_ms 60.383041\n",
+              "status": "Killed",
+              "testsCompleted": 1,
+              "killedBy": [
+                "0"
+              ],
+              "location": {
+                "end": {
+                  "column": 96,
+                  "line": 1
+                },
+                "start": {
+                  "column": 67,
+                  "line": 1
+                }
+              }
+            },
+            {
+              "id": "2",
+              "mutatorName": "MethodExpression",
+              "replacement": "Math.max(limit, x)",
+              "statusReason": "TAP version 13\n\n# Subtest: independent clamp lower bound zero\n\nnot ok 1 - independent clamp lower bound zero\n\n  ---\n  duration_ms: 0.832833\n  type: 'test'\n  location: '<measurement>/.tddswarm/stryker-tmp/sandbox-BdXT7C/test/clamp.test.js:2:167'\n  failureType: 'testCodeFailure'\n  error: |-\n    Expected values to be strictly equal:\n    \n    10 !== 0\n    \n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: 0\n  actual: 10\n  operator: 'strictEqual'\n  stack: |-\n    TestContext.<anonymous> (file://<measurement>/.tddswarm/stryker-tmp/sandbox-BdXT7C/test/clamp.test.js:2:220)\n    Test.runInAsyncScope (node:async_hooks:214:14)\n    Test.run (node:internal/test_runner/test:1047:25)\n    Test.start (node:internal/test_runner/test:944:17)\n    startSubtestAfterBootstrap (node:internal/test_runner/harness:296:17)\n  ...\n\n# Subtest: independent upper bound ten\n\nnot ok 2 - independent upper bound ten\n\n  ---\n  duration_ms: 0.1065\n  type: 'test'\n  location: '<measurement>/.tddswarm/stryker-tmp/sandbox-BdXT7C/test/clamp.test.js:2:240'\n  failureType: 'testCodeFailure'\n  error: |-\n    Expected values to be strictly equal:\n    \n    20 !== 10\n    \n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: 10\n  actual: 20\n  operator: 'strictEqual'\n  stack: |-\n    TestContext.<anonymous> (file://<measurement>/.tddswarm/stryker-tmp/sandbox-BdXT7C/test/clamp.test.js:2:286)\n    Test.runInAsyncScope (node:async_hooks:214:14)\n    Test.run (node:internal/test_runner/test:1047:25)\n    Test.processPendingSubtests (node:internal/test_runner/test:744:18)\n    Test.postRun (node:internal/test_runner/test:1173:19)\n    Test.run (node:internal/test_runner/test:1101:12)\n    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)\n  ...\n\n# Subtest: independent in-range identity\n\nnot ok 3 - independent in-range identity\n\n  ---\n  duration_ms: 0.483583\n  type: 'test'\n  location: '<measurement>/.tddswarm/stryker-tmp/sandbox-BdXT7C/test/clamp.test.js:2:307'\n  failureType: 'testCodeFailure'\n  error: |-\n    Expected values to be strictly equal:\n    \n    10 !== 4\n    \n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: 4\n  actual: 10\n  operator: 'strictEqual'\n  stack: |-\n    TestContext.<anonymous> (file://<measurement>/.tddswarm/stryker-tmp/sandbox-BdXT7C/test/clamp.test.js:2:355)\n    Test.runInAsyncScope (node:async_hooks:214:14)\n    Test.run (node:internal/test_runner/test:1047:25)\n    Test.processPendingSubtests (node:internal/test_runner/test:744:18)\n    Test.postRun (node:internal/test_runner/test:1173:19)\n    Test.run (node:internal/test_runner/test:1101:12)\n    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)\n  ...\n\n1..3\n\n# tests 3\n\n# suites 0\n\n# pass 0\n\n# fail 3\n\n# cancelled 0\n\n# skipped 0\n\n# todo 0\n\n# duration_ms 59.656375\n",
+              "status": "Killed",
+              "testsCompleted": 1,
+              "killedBy": [
+                "0"
+              ],
+              "location": {
+                "end": {
+                  "column": 95,
+                  "line": 1
+                },
+                "start": {
+                  "column": 78,
+                  "line": 1
+                }
+              }
+            }
+          ],
+          "source": "import {limit} from './helper.js';export function clamp(x){return Math.max(0,Math.min(limit,x));}\n"
+        }
+      },
+      "schemaVersion": "1.0",
+      "thresholds": {
+        "high": 100,
+        "low": 0,
+        "break": 0
+      },
+      "testFiles": {
+        "": {
+          "tests": [
+            {
+              "id": "0",
+              "name": "All tests"
+            }
+          ]
+        }
+      },
+      "projectRoot": "<measurement>",
+      "config": {
+        "mutate": [
+          "src/clamp.js"
+        ],
+        "testRunner": "command",
+        "commandRunner": {
+          "command": "'<node>' '--test' 'test/clamp.test.js'"
+        },
+        "coverageAnalysis": "off",
+        "concurrency": 1,
+        "reporters": [
+          "json"
+        ],
+        "jsonReporter": {
+          "fileName": ".tddswarm/mutation/report.json"
+        },
+        "tempDirName": ".tddswarm/stryker-tmp",
+        "cleanTempDir": "always",
+        "symlinkNodeModules": true,
+        "timeoutMS": 5000,
+        "logLevel": "info",
+        "fileLogLevel": "off",
+        "plugins": [],
+        "ignorePatterns": [
+          ".tddswarm"
+        ],
+        "thresholds": {
+          "high": 100,
+          "low": 0,
+          "break": 0
+        },
+        "incremental": true,
+        "incrementalFile": ".tddswarm/mutation/incremental.json",
+        "configFile": ".tddswarm/mutation/config.json",
+        "allowConsoleColors": true,
+        "checkers": [],
+        "checkerNodeArgs": [],
+        "clearTextReporter": {
+          "allowColor": true,
+          "allowEmojis": false,
+          "logTests": true,
+          "maxTestsToLog": 3,
+          "reportTests": true,
+          "reportMutants": true,
+          "reportScoreTable": true,
+          "skipFull": false
+        },
+        "dashboard": {
+          "baseUrl": "https://dashboard.stryker-mutator.io/api/reports",
+          "reportType": "full"
+        },
+        "dryRunOnly": false,
+        "eventReporter": {
+          "baseDir": "reports/mutation/events"
+        },
+        "ignoreStatic": false,
+        "force": false,
+        "inPlace": false,
+        "maxConcurrentTestRunners": 9007199254740991,
+        "maxTestRunnerReuse": 0,
+        "mutator": {
+          "plugins": null,
+          "excludedMutations": []
+        },
+        "appendPlugins": [],
+        "htmlReporter": {
+          "fileName": "reports/mutation/mutation.html"
+        },
+        "disableTypeChecks": true,
+        "testRunnerNodeArgs": [],
+        "timeoutFactor": 1.5,
+        "dryRunTimeoutMinutes": 5,
+        "tsconfigFile": "tsconfig.json",
+        "warnings": true,
+        "disableBail": false,
+        "allowEmpty": false,
+        "ignorers": [],
+        "testFiles": []
+      },
+      "framework": {
+        "name": "StrykerJS",
+        "version": "10.0.0",
+        "branding": {
+          "homepageUrl": "https://stryker-mutator.io",
+          "imageUrl": "data:image/svg+xml;utf8,%3Csvg viewBox='0 0 1458 1458' xmlns='http://www.w3.org/2000/svg' fill-rule='evenodd' clip-rule='evenodd' stroke-linejoin='round' stroke-miterlimit='2'%3E%3Cpath fill='none' d='M0 0h1458v1458H0z'/%3E%3CclipPath id='a'%3E%3Cpath d='M0 0h1458v1458H0z'/%3E%3C/clipPath%3E%3Cg clip-path='url(%23a)'%3E%3Cpath d='M1458 729c0 402.655-326.345 729-729 729S0 1131.655 0 729C0 326.445 326.345 0 729 0s729 326.345 729 729' fill='%23e74c3c' fill-rule='nonzero'/%3E%3Cpath d='M778.349 1456.15L576.6 1254.401l233-105 85-78.668v-64.332l-257-257-44-187-50-208 251.806-82.793L1076.6 389.401l380.14 379.15c-19.681 367.728-311.914 663.049-678.391 687.599z' fill-opacity='.3'/%3E%3Cpath d='M753.4 329.503c41.79 0 74.579 7.83 97.925 25.444 23.571 18.015 41.69 43.956 55.167 77.097l11.662 28.679 165.733-58.183-14.137-32.13c-26.688-60.655-64.896-108.61-114.191-144.011-49.329-35.423-117.458-54.302-204.859-54.302-50.78 0-95.646 7.376-134.767 21.542-40.093 14.671-74.09 34.79-102.239 60.259-28.84 26.207-50.646 57.06-65.496 92.701-14.718 35.052-22.101 72.538-22.101 112.401 0 72.536 20.667 133.294 61.165 182.704 38.624 47.255 98.346 88.037 179.861 121.291 42.257 17.475 78.715 33.125 109.227 46.994 27.193 12.361 49.294 26.124 66.157 41.751 15.309 14.186 26.497 30.584 33.63 49.258 7.721 20.214 11.16 45.69 11.16 76.402 0 28.021-4.251 51.787-13.591 71.219-8.832 18.374-20.171 33.178-34.523 44.219-14.787 11.374-31.193 19.591-49.393 24.466-19.68 5.359-39.14 7.993-58.69 7.993-29.359 0-54.387-3.407-75.182-10.747-20.112-7.013-37.144-16.144-51.259-27.486-13.618-11.009-24.971-23.766-33.744-38.279-9.64-15.8-17.272-31.924-23.032-48.408l-10.965-31.376-161.669 60.585 10.734 30.124c10.191 28.601 24.197 56.228 42.059 82.748 18.208 27.144 41.322 51.369 69.525 72.745 27.695 21.075 60.904 38.218 99.481 51.041 37.777 12.664 82.004 19.159 132.552 19.159 49.998 0 95.818-8.321 137.611-24.622 42.228-16.471 78.436-38.992 108.835-67.291 30.719-28.597 54.631-62.103 71.834-100.642 17.263-38.56 25.923-79.392 25.923-122.248 0-54.339-8.368-100.37-24.208-138.32-16.29-38.759-38.252-71.661-65.948-98.797-26.965-26.418-58.269-48.835-93.858-67.175-33.655-17.241-69.196-33.11-106.593-47.533-35.934-13.429-65.822-26.601-89.948-39.525-22.153-11.868-40.009-24.21-53.547-37.309-11.429-11.13-19.83-23.678-24.718-37.664-5.413-15.49-7.98-33.423-7.98-53.577 0-40.883 11.293-71.522 37.086-90.539 28.443-20.825 64.985-30.658 109.311-30.658z' fill='%23f1c40f' fill-rule='nonzero'/%3E%3Cpath d='M720 0h18v113h-18zM1458 738v-18h-113v18h113zM720 1345h18v113h-18zM113 738v-18H0v18h113z'/%3E%3C/g%3E%3C/svg%3E"
+        },
+        "dependencies": {}
+      }
+    },
+    "environment": {
+      "files": {
+        "src/clamp.js": {
+          "language": "javascript",
+          "mutants": [
+            {
+              "id": "0",
+              "mutatorName": "BlockStatement",
+              "replacement": "{}",
+              "statusReason": "TAP version 13\n\n# Subtest: independent clamp lower bound zero\n\nnot ok 1 - independent clamp lower bound zero\n\n  ---\n  duration_ms: 0.792292\n  type: 'test'\n  location: '<measurement>/.tddswarm/stryker-tmp/sandbox-gUZFI0/test/clamp.test.js:2:167'\n  failureType: 'testCodeFailure'\n  error: |-\n    Expected values to be strictly equal:\n    \n    undefined !== 0\n    \n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: 0\n  operator: 'strictEqual'\n  stack: |-\n    TestContext.<anonymous> (file://<measurement>/.tddswarm/stryker-tmp/sandbox-gUZFI0/test/clamp.test.js:2:220)\n    Test.runInAsyncScope (node:async_hooks:214:14)\n    Test.run (node:internal/test_runner/test:1047:25)\n    Test.start (node:internal/test_runner/test:944:17)\n    startSubtestAfterBootstrap (node:internal/test_runner/harness:296:17)\n  ...\n\n# Subtest: independent upper bound ten\n\nnot ok 2 - independent upper bound ten\n\n  ---\n  duration_ms: 0.106459\n  type: 'test'\n  location: '<measurement>/.tddswarm/stryker-tmp/sandbox-gUZFI0/test/clamp.test.js:2:240'\n  failureType: 'testCodeFailure'\n  error: |-\n    Expected values to be strictly equal:\n    \n    undefined !== 10\n    \n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: 10\n  operator: 'strictEqual'\n  stack: |-\n    TestContext.<anonymous> (file://<measurement>/.tddswarm/stryker-tmp/sandbox-gUZFI0/test/clamp.test.js:2:286)\n    Test.runInAsyncScope (node:async_hooks:214:14)\n    Test.run (node:internal/test_runner/test:1047:25)\n    Test.processPendingSubtests (node:internal/test_runner/test:744:18)\n    Test.postRun (node:internal/test_runner/test:1173:19)\n    Test.run (node:internal/test_runner/test:1101:12)\n    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)\n  ...\n\n# Subtest: independent in-range identity\n\nnot ok 3 - independent in-range identity\n\n  ---\n  duration_ms: 0.493459\n  type: 'test'\n  location: '<measurement>/.tddswarm/stryker-tmp/sandbox-gUZFI0/test/clamp.test.js:2:307'\n  failureType: 'testCodeFailure'\n  error: |-\n    Expected values to be strictly equal:\n    \n    undefined !== 4\n    \n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: 4\n  operator: 'strictEqual'\n  stack: |-\n    TestContext.<anonymous> (file://<measurement>/.tddswarm/stryker-tmp/sandbox-gUZFI0/test/clamp.test.js:2:355)\n    Test.runInAsyncScope (node:async_hooks:214:14)\n    Test.run (node:internal/test_runner/test:1047:25)\n    Test.processPendingSubtests (node:internal/test_runner/test:744:18)\n    Test.postRun (node:internal/test_runner/test:1173:19)\n    Test.run (node:internal/test_runner/test:1101:12)\n    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)\n  ...\n\n1..3\n\n# tests 3\n\n# suites 0\n\n# pass 0\n\n# fail 3\n\n# cancelled 0\n\n# skipped 0\n\n# todo 0\n\n# duration_ms 58.133625\n",
+              "status": "Killed",
+              "testsCompleted": 1,
+              "killedBy": [
+                "0"
+              ],
+              "location": {
+                "end": {
+                  "column": 98,
+                  "line": 1
+                },
+                "start": {
+                  "column": 59,
+                  "line": 1
+                }
+              }
+            },
+            {
+              "id": "1",
+              "mutatorName": "MethodExpression",
+              "replacement": "Math.min(0, Math.min(limit, x))",
+              "statusReason": "TAP version 13\n\n# Subtest: independent clamp lower bound zero\n\nnot ok 1 - independent clamp lower bound zero\n\n  ---\n  duration_ms: 0.822334\n  type: 'test'\n  location: '<measurement>/.tddswarm/stryker-tmp/sandbox-gUZFI0/test/clamp.test.js:2:167'\n  failureType: 'testCodeFailure'\n  error: |-\n    Expected values to be strictly equal:\n    \n    -1 !== 0\n    \n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: 0\n  actual: -1\n  operator: 'strictEqual'\n  stack: |-\n    TestContext.<anonymous> (file://<measurement>/.tddswarm/stryker-tmp/sandbox-gUZFI0/test/clamp.test.js:2:220)\n    Test.runInAsyncScope (node:async_hooks:214:14)\n    Test.run (node:internal/test_runner/test:1047:25)\n    Test.start (node:internal/test_runner/test:944:17)\n    startSubtestAfterBootstrap (node:internal/test_runner/harness:296:17)\n  ...\n\n# Subtest: independent upper bound ten\n\nnot ok 2 - independent upper bound ten\n\n  ---\n  duration_ms: 0.10575\n  type: 'test'\n  location: '<measurement>/.tddswarm/stryker-tmp/sandbox-gUZFI0/test/clamp.test.js:2:240'\n  failureType: 'testCodeFailure'\n  error: |-\n    Expected values to be strictly equal:\n    \n    0 !== 10\n    \n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: 10\n  actual: 0\n  operator: 'strictEqual'\n  stack: |-\n    TestContext.<anonymous> (file://<measurement>/.tddswarm/stryker-tmp/sandbox-gUZFI0/test/clamp.test.js:2:286)\n    Test.runInAsyncScope (node:async_hooks:214:14)\n    Test.run (node:internal/test_runner/test:1047:25)\n    Test.processPendingSubtests (node:internal/test_runner/test:744:18)\n    Test.postRun (node:internal/test_runner/test:1173:19)\n    Test.run (node:internal/test_runner/test:1101:12)\n    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)\n  ...\n\n# Subtest: independent in-range identity\n\nnot ok 3 - independent in-range identity\n\n  ---\n  duration_ms: 0.503958\n  type: 'test'\n  location: '<measurement>/.tddswarm/stryker-tmp/sandbox-gUZFI0/test/clamp.test.js:2:307'\n  failureType: 'testCodeFailure'\n  error: |-\n    Expected values to be strictly equal:\n    \n    0 !== 4\n    \n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: 4\n  actual: 0\n  operator: 'strictEqual'\n  stack: |-\n    TestContext.<anonymous> (file://<measurement>/.tddswarm/stryker-tmp/sandbox-gUZFI0/test/clamp.test.js:2:355)\n    Test.runInAsyncScope (node:async_hooks:214:14)\n    Test.run (node:internal/test_runner/test:1047:25)\n    Test.processPendingSubtests (node:internal/test_runner/test:744:18)\n    Test.postRun (node:internal/test_runner/test:1173:19)\n    Test.run (node:internal/test_runner/test:1101:12)\n    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)\n  ...\n\n1..3\n\n# tests 3\n\n# suites 0\n\n# pass 0\n\n# fail 3\n\n# cancelled 0\n\n# skipped 0\n\n# todo 0\n\n# duration_ms 55.599375\n",
+              "status": "Killed",
+              "testsCompleted": 1,
+              "killedBy": [
+                "0"
+              ],
+              "location": {
+                "end": {
+                  "column": 96,
+                  "line": 1
+                },
+                "start": {
+                  "column": 67,
+                  "line": 1
+                }
+              }
+            },
+            {
+              "id": "2",
+              "mutatorName": "MethodExpression",
+              "replacement": "Math.max(limit, x)",
+              "statusReason": "TAP version 13\n\n# Subtest: independent clamp lower bound zero\n\nnot ok 1 - independent clamp lower bound zero\n\n  ---\n  duration_ms: 0.854375\n  type: 'test'\n  location: '<measurement>/.tddswarm/stryker-tmp/sandbox-gUZFI0/test/clamp.test.js:2:167'\n  failureType: 'testCodeFailure'\n  error: |-\n    Expected values to be strictly equal:\n    \n    10 !== 0\n    \n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: 0\n  actual: 10\n  operator: 'strictEqual'\n  stack: |-\n    TestContext.<anonymous> (file://<measurement>/.tddswarm/stryker-tmp/sandbox-gUZFI0/test/clamp.test.js:2:220)\n    Test.runInAsyncScope (node:async_hooks:214:14)\n    Test.run (node:internal/test_runner/test:1047:25)\n    Test.start (node:internal/test_runner/test:944:17)\n    startSubtestAfterBootstrap (node:internal/test_runner/harness:296:17)\n  ...\n\n# Subtest: independent upper bound ten\n\nnot ok 2 - independent upper bound ten\n\n  ---\n  duration_ms: 0.108833\n  type: 'test'\n  location: '<measurement>/.tddswarm/stryker-tmp/sandbox-gUZFI0/test/clamp.test.js:2:240'\n  failureType: 'testCodeFailure'\n  error: |-\n    Expected values to be strictly equal:\n    \n    20 !== 10\n    \n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: 10\n  actual: 20\n  operator: 'strictEqual'\n  stack: |-\n    TestContext.<anonymous> (file://<measurement>/.tddswarm/stryker-tmp/sandbox-gUZFI0/test/clamp.test.js:2:286)\n    Test.runInAsyncScope (node:async_hooks:214:14)\n    Test.run (node:internal/test_runner/test:1047:25)\n    Test.processPendingSubtests (node:internal/test_runner/test:744:18)\n    Test.postRun (node:internal/test_runner/test:1173:19)\n    Test.run (node:internal/test_runner/test:1101:12)\n    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)\n  ...\n\n# Subtest: independent in-range identity\n\nnot ok 3 - independent in-range identity\n\n  ---\n  duration_ms: 0.569625\n  type: 'test'\n  location: '<measurement>/.tddswarm/stryker-tmp/sandbox-gUZFI0/test/clamp.test.js:2:307'\n  failureType: 'testCodeFailure'\n  error: |-\n    Expected values to be strictly equal:\n    \n    10 !== 4\n    \n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: 4\n  actual: 10\n  operator: 'strictEqual'\n  stack: |-\n    TestContext.<anonymous> (file://<measurement>/.tddswarm/stryker-tmp/sandbox-gUZFI0/test/clamp.test.js:2:355)\n    Test.runInAsyncScope (node:async_hooks:214:14)\n    Test.run (node:internal/test_runner/test:1047:25)\n    Test.processPendingSubtests (node:internal/test_runner/test:744:18)\n    Test.postRun (node:internal/test_runner/test:1173:19)\n    Test.run (node:internal/test_runner/test:1101:12)\n    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)\n  ...\n\n1..3\n\n# tests 3\n\n# suites 0\n\n# pass 0\n\n# fail 3\n\n# cancelled 0\n\n# skipped 0\n\n# todo 0\n\n# duration_ms 56.123208\n",
+              "status": "Killed",
+              "testsCompleted": 1,
+              "killedBy": [
+                "0"
+              ],
+              "location": {
+                "end": {
+                  "column": 95,
+                  "line": 1
+                },
+                "start": {
+                  "column": 78,
+                  "line": 1
+                }
+              }
+            }
+          ],
+          "source": "import {limit} from './helper.js';export function clamp(x){return Math.max(0,Math.min(limit,x));}\n"
+        }
+      },
+      "schemaVersion": "1.0",
+      "thresholds": {
+        "high": 100,
+        "low": 0,
+        "break": 0
+      },
+      "testFiles": {
+        "": {
+          "tests": [
+            {
+              "id": "0",
+              "name": "All tests"
+            }
+          ]
+        }
+      },
+      "projectRoot": "<measurement>",
+      "config": {
+        "mutate": [
+          "src/clamp.js"
+        ],
+        "testRunner": "command",
+        "commandRunner": {
+          "command": "'<node>' '--test' 'test/clamp.test.js'"
+        },
+        "coverageAnalysis": "off",
+        "concurrency": 1,
+        "reporters": [
+          "json"
+        ],
+        "jsonReporter": {
+          "fileName": ".tddswarm/mutation/report.json"
+        },
+        "tempDirName": ".tddswarm/stryker-tmp",
+        "cleanTempDir": "always",
+        "symlinkNodeModules": true,
+        "timeoutMS": 5000,
+        "logLevel": "info",
+        "fileLogLevel": "off",
+        "plugins": [],
+        "ignorePatterns": [
+          ".tddswarm"
+        ],
+        "thresholds": {
+          "high": 100,
+          "low": 0,
+          "break": 0
+        },
+        "incremental": true,
+        "incrementalFile": ".tddswarm/mutation/incremental.json",
+        "configFile": ".tddswarm/mutation/config.json",
+        "allowConsoleColors": true,
+        "checkers": [],
+        "checkerNodeArgs": [],
+        "clearTextReporter": {
+          "allowColor": true,
+          "allowEmojis": false,
+          "logTests": true,
+          "maxTestsToLog": 3,
+          "reportTests": true,
+          "reportMutants": true,
+          "reportScoreTable": true,
+          "skipFull": false
+        },
+        "dashboard": {
+          "baseUrl": "https://dashboard.stryker-mutator.io/api/reports",
+          "reportType": "full"
+        },
+        "dryRunOnly": false,
+        "eventReporter": {
+          "baseDir": "reports/mutation/events"
+        },
+        "ignoreStatic": false,
+        "force": false,
+        "inPlace": false,
+        "maxConcurrentTestRunners": 9007199254740991,
+        "maxTestRunnerReuse": 0,
+        "mutator": {
+          "plugins": null,
+          "excludedMutations": []
+        },
+        "appendPlugins": [],
+        "htmlReporter": {
+          "fileName": "reports/mutation/mutation.html"
+        },
+        "disableTypeChecks": true,
+        "testRunnerNodeArgs": [],
+        "timeoutFactor": 1.5,
+        "dryRunTimeoutMinutes": 5,
+        "tsconfigFile": "tsconfig.json",
+        "warnings": true,
+        "disableBail": false,
+        "allowEmpty": false,
+        "ignorers": [],
+        "testFiles": []
+      },
+      "framework": {
+        "name": "StrykerJS",
+        "version": "10.0.0",
+        "branding": {
+          "homepageUrl": "https://stryker-mutator.io",
+          "imageUrl": "data:image/svg+xml;utf8,%3Csvg viewBox='0 0 1458 1458' xmlns='http://www.w3.org/2000/svg' fill-rule='evenodd' clip-rule='evenodd' stroke-linejoin='round' stroke-miterlimit='2'%3E%3Cpath fill='none' d='M0 0h1458v1458H0z'/%3E%3CclipPath id='a'%3E%3Cpath d='M0 0h1458v1458H0z'/%3E%3C/clipPath%3E%3Cg clip-path='url(%23a)'%3E%3Cpath d='M1458 729c0 402.655-326.345 729-729 729S0 1131.655 0 729C0 326.445 326.345 0 729 0s729 326.345 729 729' fill='%23e74c3c' fill-rule='nonzero'/%3E%3Cpath d='M778.349 1456.15L576.6 1254.401l233-105 85-78.668v-64.332l-257-257-44-187-50-208 251.806-82.793L1076.6 389.401l380.14 379.15c-19.681 367.728-311.914 663.049-678.391 687.599z' fill-opacity='.3'/%3E%3Cpath d='M753.4 329.503c41.79 0 74.579 7.83 97.925 25.444 23.571 18.015 41.69 43.956 55.167 77.097l11.662 28.679 165.733-58.183-14.137-32.13c-26.688-60.655-64.896-108.61-114.191-144.011-49.329-35.423-117.458-54.302-204.859-54.302-50.78 0-95.646 7.376-134.767 21.542-40.093 14.671-74.09 34.79-102.239 60.259-28.84 26.207-50.646 57.06-65.496 92.701-14.718 35.052-22.101 72.538-22.101 112.401 0 72.536 20.667 133.294 61.165 182.704 38.624 47.255 98.346 88.037 179.861 121.291 42.257 17.475 78.715 33.125 109.227 46.994 27.193 12.361 49.294 26.124 66.157 41.751 15.309 14.186 26.497 30.584 33.63 49.258 7.721 20.214 11.16 45.69 11.16 76.402 0 28.021-4.251 51.787-13.591 71.219-8.832 18.374-20.171 33.178-34.523 44.219-14.787 11.374-31.193 19.591-49.393 24.466-19.68 5.359-39.14 7.993-58.69 7.993-29.359 0-54.387-3.407-75.182-10.747-20.112-7.013-37.144-16.144-51.259-27.486-13.618-11.009-24.971-23.766-33.744-38.279-9.64-15.8-17.272-31.924-23.032-48.408l-10.965-31.376-161.669 60.585 10.734 30.124c10.191 28.601 24.197 56.228 42.059 82.748 18.208 27.144 41.322 51.369 69.525 72.745 27.695 21.075 60.904 38.218 99.481 51.041 37.777 12.664 82.004 19.159 132.552 19.159 49.998 0 95.818-8.321 137.611-24.622 42.228-16.471 78.436-38.992 108.835-67.291 30.719-28.597 54.631-62.103 71.834-100.642 17.263-38.56 25.923-79.392 25.923-122.248 0-54.339-8.368-100.37-24.208-138.32-16.29-38.759-38.252-71.661-65.948-98.797-26.965-26.418-58.269-48.835-93.858-67.175-33.655-17.241-69.196-33.11-106.593-47.533-35.934-13.429-65.822-26.601-89.948-39.525-22.153-11.868-40.009-24.21-53.547-37.309-11.429-11.13-19.83-23.678-24.718-37.664-5.413-15.49-7.98-33.423-7.98-53.577 0-40.883 11.293-71.522 37.086-90.539 28.443-20.825 64.985-30.658 109.311-30.658z' fill='%23f1c40f' fill-rule='nonzero'/%3E%3Cpath d='M720 0h18v113h-18zM1458 738v-18h-113v18h113zM720 1345h18v113h-18zM113 738v-18H0v18h113z'/%3E%3C/g%3E%3C/svg%3E"
+        },
+        "dependencies": {}
+      }
+    }
+  },
+  "limits": [
+    "Exact-input reuse; mutated source and tests changes also force full measurement for command-runner safety.",
+    "Six executions measure a tiny fixture; timings cannot establish production speedup."
+  ],
+  "sanitized": true,
+  "authority": "reproduction-fixture-display-only"
+}

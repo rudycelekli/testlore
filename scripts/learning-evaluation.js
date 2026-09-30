@@ -72,6 +72,19 @@ function install(root, files) { for (const f of files) write(root, f.path, f.con
 function configuration(enabled) { return { adapter: 'node', discovery: 'native', runner: [process.execPath, '--test', '{files}'], runnerTimeoutMs: 10000, learning: { enabled } }; }
 function project(root, files, enabled) { fs.mkdirSync(root); write(root, 'package.json', { type: 'module' }); write(root, 'tddswarm.config.json', configuration(enabled)); install(root, files); }
 function collect(root, config) { const discovery = discover(root, config); if (!discovery.complete || !discovery.files.length) throw new Error('Incomplete or empty native discovery'); return { ...execute(root, discovery.files, config, { capture: true, timeoutMs: 10000 }), discovery }; }
+function workerInventory(root) {
+  const entries = [], queue = ['']; let bytes = 0;
+  while (queue.length) {
+    const directory = queue.pop();
+    for (const name of fs.readdirSync(path.join(root,directory)).sort()) {
+      const file = directory ? directory+'/'+name : name, stat = fs.lstatSync(path.join(root,file));
+      if (entries.length >= 4096 || stat.isSymbolicLink() || (!stat.isDirectory() && !stat.isFile())) throw new Error('Worker filesystem inventory exceeded scope or encountered unsafe entry');
+      if (stat.isDirectory()) { entries.push([file,'directory']); queue.push(file); }
+      else { bytes += stat.size; if (bytes > 32*1024*1024) throw new Error('Worker filesystem inventory exceeds 32 MB'); entries.push([file,digest(fs.readFileSync(path.join(root,file))),stat.mode]); }
+    }
+  }
+  return digest(entries.sort(([a],[b])=>a.localeCompare(b)));
+}
 export function evaluationSchedule(fixtures, repeat, seed) {
   let state = seed >>> 0 || 1;
   const random = () => { state ^= state << 13; state ^= state >>> 17; state ^= state << 5; return (state >>> 0) / 4294967296; };
@@ -96,9 +109,10 @@ export function summarizeEvaluation(trials, fixtures, repeat) {
   const positive = independent.filter(p => p.recallDelta > 0).length, negative = independent.filter(p => p.recallDelta < 0).length, n = positive + negative;
   let probability = 1;
   if (n) { let term = 1, sum = 1; for (let k = 1; k <= Math.min(positive, negative); k++) { term = term * (n - k + 1) / k; sum += term; } probability = Math.min(1, 2 * sum / 2 ** n); }
+  const applicable = trials.filter(row => row.arm === 'with_memory').every(row => !row.noApplicableMemory);
   const complete = pairs.length === fixtures.length * repeat && pairs.every(p => p.complete);
-  const sufficient = fixtures.length >= 6 && repeat >= 3 && complete;
-  return { pairs, independentSpecificationUnits: independent, complete, inference: sufficient && probability < 0.05 ? (positive > negative ? 'positive-scoped-recall-difference' : 'negative-scoped-recall-difference') : 'inconclusive', exactTwoSidedSignTest: { unit: 'independent specification mean across repetitions; ties excluded', positive, negative, ties: independent.length - n, p: probability }, pairedMeans: Object.fromEntries(['recallDelta','caseDelta','generationMsDelta','outputBytesDelta'].map(key => [key, pairs.length ? mean(pairs.map(p => p[key])) : null])) };
+  const sufficient = fixtures.length >= 6 && repeat >= 3 && complete && applicable;
+  return { pairs, applicableMemoryInAllTrials: applicable, independentSpecificationUnits: independent, complete, inference: sufficient && probability < 0.05 ? (positive > negative ? 'positive-scoped-recall-difference' : 'negative-scoped-recall-difference') : 'inconclusive', exactTwoSidedSignTest: { unit: 'independent specification mean across repetitions; ties excluded', positive, negative, ties: independent.length - n, p: probability }, pairedMeans: Object.fromEntries(['recallDelta','caseDelta','generationMsDelta','outputBytesDelta'].map(key => [key, pairs.length ? mean(pairs.map(p => p[key])) : null])) };
 }
 
 export async function evaluateLearning({ output, agent, identity, dataset = defaultDataset(), repeat = 3, seed = 20260930, timeoutMs = 115000, maxOutputBytes = 65536, maxCalls = 54, evidenceKind = 'live-worker' }) {
@@ -130,7 +144,7 @@ export async function evaluateLearning({ output, agent, identity, dataset = defa
     for (const pair of schedule) for (const arm of pair.arms) {
       const f = dataset.fixtures.find(item => item.id === pair.fixture), root = path.join(workspace, `${f.id}-${pair.repetition}-${arm}`), config = configuration(arm === 'with_memory'); project(root, f.files, config.learning.enabled);
       write(root, '.tddswarm/learning/index.json', memory.toString('utf8'));
-      const learning = recallLessons(root, ('boundary error independent assertion ' + f.requirements).slice(0,4096), { config, limit: 5, maxChars: 12000 });
+      const learning = recallLessons(root, f.requirements.slice(0,4096), { config, limit: 5, maxChars: 12000, contract: f.requirements });
       const row = { fixture: f.id, specificationId: f.specificationId, repetition: pair.repetition, arm, order: trials.length, recalledRecords: learning.records.length, recall: 0, cases: 0, generationMs: 0, totalMs: 0, outputBytes: 0, calls: [], defects: [] };
       const totalStart = performance.now(), generationStart = performance.now();
       const context = f.files.map(file => ({ file: file.path, content: file.content }));
@@ -138,16 +152,16 @@ export async function evaluateLearning({ output, agent, identity, dataset = defa
       async function request(role, payload) {
         if (++calls > maxCalls) throw new Error('Worker call budget exceeded');
         const sent = { schemaVersion: 1, role, requirements: f.requirements, context, budget, ...payload };
-        const start = performance.now(),workerBefore=snapshot(root,config); let result;
-        try { result = await callAgent(agent, sent, root, timeoutMs); }
+        const start = performance.now(),workerBefore=snapshot(root,config),inventoryBefore=workerInventory(root); let result;
+        try { result = await callAgent(agent, sent, root, timeoutMs, {maxOutputBytes}); }
         catch (error) { row.calls.push({ role, durationMs: Math.round(performance.now() - start), input: sent, error: error.message }); throw error; }
         const bytes = Buffer.byteLength(JSON.stringify(result));
         row.outputBytes += bytes; row.calls.push({ role, durationMs: Math.round(performance.now() - start), input: sent, output: result, outputBytes: bytes });
-        if (!freshness(workerBefore,snapshot(root,config)).fresh) throw new Error('Worker changed the source or installed tests outside the JSON protocol');
+        if (!freshness(workerBefore,snapshot(root,config)).fresh || inventoryBefore !== workerInventory(root)) throw new Error('Worker changed the source or installed tests outside the JSON protocol');
         if (bytes > maxOutputBytes) throw new Error('Worker response exceeds declared output budget'); return result;
       }
       try {
-        if (arm === 'with_memory' && !learning.records.length) throw new Error('Memory treatment retrieved no historical records');
+        if (arm === 'with_memory' && !learning.records.length) row.noApplicableMemory = true;
         const architecture = await request('architect', { learning, order: { subjects: f.files.map(file => file.path), roles: ['architect','author','reviewer'], acceptance: ['Independent requirements, deterministic assertions, boundaries and errors.'] } });
         if (!Array.isArray(architecture.tasks) || architecture.tasks.length !== 1 || !f.files.some(file => file.path === architecture.tasks[0]?.subject) || !boundedText(architecture.tasks[0]?.instructions, 16000)) throw new Error('Paired budget requires exactly one valid architect task');
         const draft = await request('author', { learning, task: architecture.tasks[0] }); fileList(draft.files, 'test');
@@ -161,7 +175,7 @@ export async function evaluateLearning({ output, agent, identity, dataset = defa
       } catch (error) { row.error = error.message; row.generationMs ||= Math.round(performance.now() - generationStart); }
       row.totalMs = Math.round(performance.now() - totalStart); trials.push(row); persist(`trial-${f.id}-${pair.repetition}-${arm}.json`, row);
     }
-    const summary = { schemaVersion: 1, dataset: dataset.id, datasetHash: digest(dataset), sourceRevision, evidenceKind, identity, repeat, seed, calls, budget: { maxCalls, timeoutMs, maxOutputBytes }, arms: ['without_memory','with_memory'].map(arm => { const rows = trials.filter(row => row.arm === arm); return { arm, trials: rows.length, failedTrials: rows.filter(row => row.error).length, detected: rows.reduce((n,row) => n + row.defects.filter(d => d.detected).length, 0), totalDefects: dataset.fixtures.reduce((n,f) => n + f.defects.length, 0) * repeat, meanCases: mean(rows.map(row => row.cases)), meanGenerationMs: mean(rows.map(row => row.generationMs)), meanOutputBytes: mean(rows.map(row => row.outputBytes)) }; }), comparison: summarizeEvaluation(trials, dataset.fixtures, repeat), limitations: ['Constructed authored contract dataset; different IDs/hashes prevent exact overlap, but maintainers must audit semantic independence. No production-corpus or competitor claim.', 'Repeated outputs are clustered by specification, not treated as independent samples.', 'Worker identity is operator-declared; model version/seed and provider token billing are not verified by this protocol.', 'Fixed three calls per successful arm; identical argv, time and response-byte limits. Input size increases with memory.', 'Output byte budget is checked after each response; it is not a provider token or dollar cap. Core transport still enforces its 2 MB ceiling.', 'Hold-out reference tests and defect payloads are absent from agent stdin and trial roots; trusted custom workers are not a security sandbox.', 'Generation time covers architect/author/reviewer; total time also covers candidate validation and defect execution.', 'Failures and incomplete trials remain visible and contribute zero recall; raw receipts stay local until explicitly reviewed for publication.', ...(evidenceKind === 'protocol-fixture' ? ['Protocol fixture workers are orchestration tests, not live AI or learning-quality evidence.'] : [])] };
+    const summary = { schemaVersion: 1, dataset: dataset.id, datasetHash: digest(dataset), sourceRevision, evidenceKind, identity, repeat, seed, calls, budget: { maxCalls, timeoutMs, maxOutputBytes }, arms: ['without_memory','with_memory'].map(arm => { const rows = trials.filter(row => row.arm === arm); return { arm, trials: rows.length, failedTrials: rows.filter(row => row.error).length, detected: rows.reduce((n,row) => n + row.defects.filter(d => d.detected).length, 0), totalDefects: dataset.fixtures.reduce((n,f) => n + f.defects.length, 0) * repeat, meanCases: mean(rows.map(row => row.cases)), meanGenerationMs: mean(rows.map(row => row.generationMs)), meanOutputBytes: mean(rows.map(row => row.outputBytes)) }; }), comparison: summarizeEvaluation(trials, dataset.fixtures, repeat), limitations: ['Constructed authored contract dataset; different IDs/hashes prevent exact overlap, but maintainers must audit semantic independence. No production-corpus or competitor claim.', 'Repeated outputs are clustered by specification, not treated as independent samples.', 'Worker identity is operator-declared; model version/seed and provider token billing are not verified by this protocol.', 'Fixed three calls per successful arm; identical argv, time and response-byte limits. Input size increases with memory.', 'Transport rejects responses exceeding the identical declared byte budget in both arms; this is not a provider token or dollar cap. Requested deadlines propagate to adapters; host suspension can delay timers and late successes are rejected.', 'Hold-out reference tests and defect payloads are absent from agent stdin and trial roots; trusted custom workers are not a security sandbox.', 'Generation time covers architect/author/reviewer; total time also covers candidate validation and defect execution.', 'Failures and incomplete trials remain visible and contribute zero recall; raw receipts stay local until explicitly reviewed for publication.', ...(evidenceKind === 'protocol-fixture' ? ['Protocol fixture workers are orchestration tests, not live AI or learning-quality evidence.'] : [])] };
     if (evidenceKind === 'protocol-fixture') summary.comparison.inference = 'inconclusive-protocol-fixture';
     persist('summary.json', summary); return summary;
   } finally { fs.rmSync(workspace, { recursive: true, force: true }); }

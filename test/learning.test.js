@@ -198,3 +198,10 @@ test('record-count and byte bounds reject oversized stores without replacing the
   fs.writeFileSync(storePath(root), 'x'.repeat(4 * 1024 * 1024 + 1));
   assert.equal(exportLearning(root).exported, false); assert.equal(rememberValidation(root, manifest, validation).remembered, false);
 });
+
+test('contract filtering excludes generic unrelated patterns but retains relevant compatible historical lessons',t=>{
+ const root=rootFor(t), {manifest,validation}=proof(root,{content:good.replace('zero boundary','ledger boundary')});rememberValidation(root,manifest,validation);
+ assert.equal(recallLessons(root,'boundary assertion',{contract:'Normalize Unicode strings and trim surrounding whitespace.'}).records.length,0);
+ const result=recallLessons(root,'ledger boundary',{contract:'Ledger amounts retain the independent ledger boundary contract.'});assert.equal(result.records.length,1);assert.equal(result.contractFiltered,true);assert.equal(result.advisoryOnly,true);
+ assert.equal(recallLessons(root,'ledger',{contract:'Ledger amounts',config:{adapter:'vitest'}}).records.length,0);
+});

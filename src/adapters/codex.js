@@ -2,7 +2,7 @@
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { spawnSync } from 'node:child_process';
+import { spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 
 const string = { type: 'string' };
@@ -27,6 +27,24 @@ Reviewer: independently reject weak assertions, implementation-mirroring oracles
 Payload:\n${JSON.stringify(payload)}`;
   return { args, prompt, output };
 }
+export function runCodex(args, prompt, directory, env, budget = {}) {
+  const deadlineAt = Math.min(budget.deadlineAt ?? Date.now() + 110000, Date.now() + 110000);
+  const maxOutputBytes = Math.min(budget.maxOutputBytes ?? 2 * 1024 * 1024, 2 * 1024 * 1024);
+  if (!Number.isFinite(deadlineAt) || deadlineAt <= Date.now() || !Number.isInteger(maxOutputBytes) || maxOutputBytes < 1024) return Promise.reject(new Error('Codex deadline exhausted or invalid transport budget'));
+  return new Promise((resolve, reject) => {
+    const monotonicDeadline = performance.now() + Math.max(1,deadlineAt-Date.now());
+    const child = spawn('codex', args, {cwd:directory, env, shell:false, stdio:['pipe','pipe','pipe']});
+    let bytes = 0, stderr = '', settled = false;
+    const kill = () => { try { if(process.platform !== 'win32' && budget.processGroupId===process.pid){process.stderr.write('Codex deadline/output budget exhausted; terminating agent process group\n');process.kill(-process.pid,'SIGKILL');}else child.kill('SIGKILL'); } catch {} };
+    const finish = error => { if (settled) return; settled=true; clearTimeout(timer); error ? reject(error) : resolve(); };
+    const timer = setTimeout(() => {kill(); finish(new Error('Codex deadline exhausted'));}, Math.max(1, deadlineAt-Date.now()));
+    child.stdout.on('data', data => { bytes += data.length; if(bytes > 2*1024*1024){kill();finish(new Error('Codex output exceeds transport limit'));} });
+    child.stderr.on('data', data => { if(stderr.length < 1000)stderr+=data.toString().slice(0,1000-stderr.length); });
+    child.on('error', error => {kill();finish(error);}); child.stdin.on('error',()=>{});
+    child.on('close', code => {if(Date.now() >= deadlineAt || performance.now() >= monotonicDeadline)return finish(new Error('Codex late response rejected')); finish(code===0 ? null : new Error(`Codex exited ${code}: ${stderr}`));});
+    child.stdin.end(prompt);
+  });
+}
 export async function main() {
   let input = '';
   for await (const data of process.stdin) {
@@ -40,8 +58,8 @@ export async function main() {
     const env = { ...process.env };
     for (const name of ['OPENAI_API_KEY', 'CODEX_API_KEY', 'AZURE_OPENAI_API_KEY', 'ANTHROPIC_API_KEY', 'OPENROUTER_API_KEY']) delete env[name];
     // Requires existing Codex login. No API-key fallback and no selected model override.
-    const result = spawnSync('codex', args, { cwd: directory, input: prompt, encoding: 'utf8', env, timeout: 110000, maxBuffer: 2 * 1024 * 1024, shell: false });
-    if (result.error || result.status !== 0) throw new Error(result.error?.message || `Codex exited ${result.status}: ${(result.stderr || '').slice(-1000)}`);
+    await runCodex(args, prompt, directory, env, payload.transportBudget);
+    if (fs.statSync(output).size > (payload.transportBudget?.maxOutputBytes ?? 2 * 1024 * 1024)) throw new Error('Codex response exceeds declared byte budget');
     const value = JSON.parse(fs.readFileSync(output, 'utf8'));
     process.stdout.write(JSON.stringify(value));
   } finally { fs.rmSync(directory, { recursive: true, force: true }); }
