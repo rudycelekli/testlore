@@ -13,6 +13,7 @@ import { routingProposals } from './routing-proposals.js';
 import { captureBrowserEvidence, proposeBrowserMappings, proposeBrowserInstrumentation, inspectBrowserBuildArtifacts } from './browser-evidence.js';
 import { pilot, exportPilot } from './pilot.js';
 import {verificationBrief} from './agent-contract.js';
+import {qualifyRoutingMappings} from './mapping-qualification.js';
 
 const help = `TestLore — know why each test runs.
 
@@ -23,6 +24,7 @@ Usage: testlore <command> [options]
   mcp         Serve project quality tools over MCP stdio (inspection only by default)
   report      Explain the last execution and every proposed omission
   mappings    Propose local runtime mappings for review (no automatic changes)
+  mapping-qualify  Independently validate a proposal (--report, --changed, --execute)
   browser-capture   Collect native browser inputs using the opt-in fixture
   browser-mappings  Propose reviewed URL/source-map mappings (--report, --settings)
   browser-build Inspect explicit generated bundles/maps (--settings with artifacts)
@@ -199,6 +201,12 @@ export async function main(args = process.argv.slice(2)) {
     }
     case 'report': result=JSON.parse(fs.readFileSync(safePath(root,options.report||'.tddswarm/last-run.json'),'utf8'));if(!options.json){console.log(renderRunReport(result));return result.exitCode||0;}break;
     case 'mappings': result=routingProposals(root);break;
+    case 'mapping-qualify': {
+      if(Object.keys(options).some(key=>!['root','report','changed','execute','json'].includes(key)))throw new Error('mapping-qualify accepts only --root, --report, --changed, --execute and --json');
+      if(!options.execute||!options.report||!options.changed?.length)throw new Error('mapping-qualify requires --report, --changed and --execute; native project code runs in disposable source copies');
+      const file=safePath(root,options.report);if(fs.statSync(file).size>2*1024*1024)throw new Error('Mapping proposal exceeds 2 MiB');
+      result=qualifyRoutingMappings(root,JSON.parse(fs.readFileSync(file,'utf8')),{changed:options.changed});break;
+    }
     case 'browser-build': {if(!options.settings)throw new Error('--settings JSON with explicit artifacts is required');result=inspectBrowserBuildArtifacts(root,JSON.parse(fs.readFileSync(safePath(root,options.settings),'utf8')));break;}
     case 'browser-instrument': result=await proposeBrowserInstrumentation(root);break;
     case 'browser-capture': result=await captureBrowserEvidence(root,options);break;
@@ -304,6 +312,7 @@ export async function main(args = process.argv.slice(2)) {
   if(command==='mutation')return result.complete?0:2;
   if(command==='effectiveness')return !result.complete?2:result.dimensions.defectDetection.demonstrated>result.dimensions.defectDetection.caught?1:0;
   if(command==='browser-capture')return result.complete?0:2;
+  if(command==='mapping-qualify')return !result.complete?2:result.qualified?0:1;
   if(command==='capture')return result.complete?0:2;
   if(command==='stability')return !result.complete?2:result.metrics.unstable?1:0;
   return 0;

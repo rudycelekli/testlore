@@ -138,3 +138,14 @@ TESTLORE_BROWSER_CHANNEL=chrome TESTLORE_PLAYWRIGHT_BROWSER=1 \
 The correct proposal must preserve the same failing landing case in independent full/subset runs. The misrouted proposal must report the omitted landing failure and require full fallback. These are controlled native qualification fixtures, not a claim of general application recall.
 
 `timeoutMs` is a per-native-process deadline, not a total wall-clock promise. `overallTimeoutMs` adds a monotonic evaluation budget of 1–600 seconds (by default six times the process deadline, capped at 600 seconds). The evaluator checks this budget before native phases and rejects a result that finishes late with `overall-evaluation-budget-exceeded`; it cannot forcibly interrupt synchronous source copies, snapshots or planning. The report's `budget` records both limits and elapsed evaluation time, and explicitly sets `hardWallClockBound: false`. Final report sealing is additional work. An expired budget requires full fallback even when an earlier native phase returned a complete report.
+
+## Qualify from the CLI
+
+Save the output of `testlore mappings --json` or `testlore browser-mappings --report OBSERVATIONS --settings URL_MAPPING --json` under `.tddswarm/`, then explicitly execute the review-only check:
+
+```sh
+testlore mapping-qualify --report .tddswarm/proposal.json \
+  --changed public/landing.html --execute --json
+```
+
+The command requires a provenance-bound proposal (at most 2 MiB) and a diagnostic change scenario. It independently runs native full and proposed scopes in disposable source copies. Exit 0 means qualification in that observed scenario; exit 1 means complete evidence disagreed or remained insufficient, and exit 2 means incomplete execution or invalid input. It leaves mappings unapplied. Fault challenges are available through the API's explicit `defects` option; this CLI command alone does not plant bugs or measure defect recall.
