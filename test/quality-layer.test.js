@@ -21,3 +21,11 @@ test('local onboarding can omit CI and preserve ignore content',t=>{
 test('workflow references cannot introduce YAML or command interpolation',t=>{
  const root=fixture(t,twoModules);assert.throws(()=>installQualityLayer(root,{actionRef:'main\nanything:'}),/Invalid action reference/);
 });
+
+test('Git installations pin the recorded TestLore commit and retain the former repository alias',async t=>{
+ const root=fixture(t,{'node_modules/testlore/package.json':{type:'module'}});const pkg=path.join(root,'node_modules/testlore');fs.mkdirSync(path.join(pkg,'src'));
+ for(const file of ['quality-layer.js','files.js','provenance.js','inputs.js'])fs.copyFileSync(new URL('../src/'+file,import.meta.url),path.join(pkg,'src',file));
+ const {installedActionReference}=await import(new URL('file://'+path.join(pkg,'src/quality-layer.js')));
+ const sha='a'.repeat(40);
+ for(const repository of ['testlore','tddswarm']){write(root,'node_modules/.package-lock.json',{packages:{'node_modules/testlore':{resolved:`git+ssh://git@github.com/rudycelekli/${repository}.git#${sha}`}}});assert.equal(installedActionReference(),sha);}
+});

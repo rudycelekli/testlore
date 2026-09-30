@@ -134,6 +134,7 @@ On **12 controlled changes across four Node fixtures**, TestLore caught all 63 o
 
 | Experiment | Observed result | Reproduce / inspect |
 | --- | --- | --- |
+| **Costly callback workload** | Fixed 64-file, 200 ms async-delay fixture: 64 → 1 callback files; same planted failure caught. Median total time 4,269 → 1,487 ms (65.2% less). | [Raw results](benchmarks/workload/constructed-64-200-4-2026-09-29/workload.json) · [Method](docs/workload.md) |
 | **Pinned public projects** | Both planted nanoid/defu regressions caught; zero observed misses. Conservative full-scope selection; no speedup established. | [Raw results](benchmarks/results/2026-09-29-final-roadmap/summary.json) · [Method](docs/public-benchmarks.md) |
 | **Actual coverage + mutations** | Controlled c8/Stryker fixture: 6/8 covered lines, 11/13 detected valid mutants. Tampered reports and changed inputs rejected. | [Quality proof](docs/quality-proof.md) |
 | **Live agent generation** | Three actual Codex role calls generated 50 passing cases and caught four withheld mutations on one specification. | [Raw receipt](benchmarks/quality/live-codex.receipt.json) |
@@ -142,6 +143,10 @@ On **12 controlled changes across four Node fixtures**, TestLore caught all 63 o
 | **Packed installation** | Production-only install, native shadow fault detection, runtime capture, and a fully tested improvement branch. | `node scripts/packed-proof.js` |
 
 These are scoped experiments. The memory comparison confirms that historical recall reaches real agent generation; it does not establish a general quality gain. Tiny suites can run slower after discovery and planning. There is no universal safety, production speedup, or “best overall” claim. Misses, overhead, and counterexamples belong in the results. [Benchmark methodology →](docs/comparison.md)
+
+[![Measured constructed workload: full-suite and TestLore total time and callback-file count](docs/assets/workload.svg)](docs/workload.md)
+
+The workload chart uses **64 independent files, a constructed 200 ms asynchronous delay per callback, concurrency four, and three repetitions**. TestLore caught the same one planted failure in every repetition. The observed savings apply to this specified condition. Real projects need their own measurements. [Reproduce this workload →](docs/workload.md)
 
 ## Keep your runners
 

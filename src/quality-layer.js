@@ -12,7 +12,7 @@ export function installedActionReference(){
   if(path.basename(parent)==='node_modules'){
    const lock=JSON.parse(fs.readFileSync(path.join(parent,'.package-lock.json'),'utf8'));
    const resolved=lock.packages?.['node_modules/'+path.basename(packageRoot)]?.resolved;
-   const match=typeof resolved==='string'&&resolved.match(/github\.com[/:]rudycelekli\/tddswarm(?:\.git)?#([a-f0-9]{40})$/);if(match)return match[1];
+   const match=typeof resolved==='string'&&resolved.match(/github\.com[/:]rudycelekli\/(?:testlore|tddswarm)(?:\.git)?#([a-f0-9]{40})$/);if(match)return match[1];
   }
  }catch{}
  try{if(fs.realpathSync(git(packageRoot,['rev-parse','--show-toplevel']).trim())===fs.realpathSync(packageRoot)&&!git(packageRoot,['status','--porcelain']).trim())return git(packageRoot,['rev-parse','HEAD']).trim();}catch{}
