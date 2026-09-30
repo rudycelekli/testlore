@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
   "type": "browser",
-  "captureId": "507f40c8-7910-49af-9b4d-a540181e03de",
+  "captureId": "21b8df95-664a-45ec-a06d-64804e22217a",
   "provenance": {
     "schemaVersion": 1,
     "revision": null,
-    "runner": "ab5f3808dcb26a7b22d32b75fe6788610665059d8e79a261a59970bdb241f870",
+    "runner": "a39ecef040a760b6afea5544e40567d548e805b3f7bfa25c19a27bd8310f0678",
     "environment": {
-      "node": "v22.19.0",
+      "node": "v24.5.0",
       "platform": "darwin",
       "arch": "arm64",
       "labels": {}
@@ -30,11 +30,11 @@
       "public/pricing.js.map": "96282908e56e70b0a3bd28ba700ab80c2de8acedf2b642f172b80f7c54b41317",
       "source/landing.js": "dedb3a007fbd41b75be60a404a1c75806d0c8475ac564b6ab1423eb8290f2637",
       "source/pricing.js": "dedb3a007fbd41b75be60a404a1c75806d0c8475ac564b6ab1423eb8290f2637",
-      "tddswarm.config.json": "e3f73825f5edbe34ac50da2543e6f8f16f22fe9fcd0fbe9088cc68e439109a74"
+      "tddswarm.config.json": "8560550860cba30adec3704a03adc61b6fa44f08a7e6d7cdd61ef8a24c205e79"
     },
-    "fingerprint": "9c0d68d1f41edd989ee0da4114feb2433cbaa58cb8260bda9c54fe1c185e814b"
+    "fingerprint": "aaee623dfe01674f4adcc652932f14892f839fdbdd990900bc990f9c450771f7"
   },
-  "configurationHash": "07027aaeddae6110de6ca3ca9a3cc89b2b57919c4242c78b8697713c6bd5f03c",
+  "configurationHash": "34dc80c0d14193bb54f62d1e1c284239d9a7711127fdb2874ac54b69ede3baef",
   "instrumentationHash": "5dce6ad7342cf298af5cf798330b7c3110fc2372aa435543a4e4495b001ce855",
   "complete": true,
   "inventory": {
@@ -179,13 +179,13 @@
   "execution": {
     "complete": true,
     "exitCode": 0,
-    "durationMs": 10387
+    "durationMs": 1772
   },
-  "createdAt": "2026-09-30T13:27:29.197Z",
+  "createdAt": "2026-09-30T16:29:01.976Z",
   "limitations": [
     "Browser requests and executed coverage are observations, not proof of unexercised branches or a complete closed world.",
     "Only an explicitly configured URL root or server input declaration gives a request authority to map to project files.",
     "Coverage is Chromium only; additional pages, external services, unknown source maps and missing instrumentation require review and conservative fallback."
   ],
-  "integrity": "0e3ce895c7bf9a22635bf90162e4bb4444483e9e7f1178feb708f4fba7134386"
+  "integrity": "566ebc0f5ff4d4700fb4c6fd9812f5771fb9037d72acf81e37d9cd939f14beb8"
 }

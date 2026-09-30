@@ -4,7 +4,7 @@
     "full": {
       "adapter": "playwright",
       "exitCode": 1,
-      "durationMs": 12795,
+      "durationMs": 3224,
       "tests": [
         {
           "file": "browser/landing.spec.js",
@@ -20,15 +20,15 @@
             {
               "status": "failed",
               "retry": 0,
-              "durationMs": 2320,
+              "durationMs": 1229,
               "errors": [
                 {
-                  "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByRole('heading')\nExpected: \u001b[32m\"Community tools\"\u001b[39m\nReceived: \u001b[31m\"Wrong heading\"\u001b[39m\nTimeout:  1000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveText\" getByRole('heading') with timeout 1000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('heading')\u001b[22m\n\u001b[2m    10 × locator resolved to <h1>Wrong heading</h1>\u001b[22m\n\u001b[2m       - unexpected value \"Wrong heading\"\u001b[22m\n"
+                  "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByRole('heading')\nExpected: \u001b[32m\"Community tools\"\u001b[39m\nReceived: \u001b[31m\"Wrong heading\"\u001b[39m\nTimeout:  1000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveText\" getByRole('heading') with timeout 1000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('heading')\u001b[22m\n\u001b[2m    11 × locator resolved to <h1>Wrong heading</h1>\u001b[22m\n\u001b[2m       - unexpected value \"Wrong heading\"\u001b[22m\n"
                 }
               ]
             }
           ],
-          "durationMs": 2320,
+          "durationMs": 1229,
           "line": 1,
           "column": 143,
           "id": "0a16f0637e7b21eb65fffafeb26e3de21ccf6c236ac09f7f12001f9f890cc2e5"
@@ -47,11 +47,11 @@
             {
               "status": "passed",
               "retry": 0,
-              "durationMs": 1473,
+              "durationMs": 220,
               "errors": []
             }
           ],
-          "durationMs": 1473,
+          "durationMs": 220,
           "line": 1,
           "column": 143,
           "id": "83d14df8d2c6ea8d187efa9734fbafbbdb91a076c8e21f8ce772234e2ebe58a9"
@@ -94,14 +94,14 @@
         "<fixture>/browser/pricing\\.spec\\.js$"
       ],
       "stdout": "",
-      "stderr": "(node:87212) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n(node:87795) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n",
+      "stderr": "(node:82473) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n(node:83331) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n",
       "signal": null,
       "reportErrors": []
     },
     "subset": {
       "adapter": "playwright",
       "exitCode": 1,
-      "durationMs": 7911,
+      "durationMs": 2265,
       "tests": [
         {
           "file": "browser/landing.spec.js",
@@ -117,15 +117,15 @@
             {
               "status": "failed",
               "retry": 0,
-              "durationMs": 2220,
+              "durationMs": 1201,
               "errors": [
                 {
-                  "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByRole('heading')\nExpected: \u001b[32m\"Community tools\"\u001b[39m\nReceived: \u001b[31m\"Wrong heading\"\u001b[39m\nTimeout:  1000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveText\" getByRole('heading') with timeout 1000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('heading')\u001b[22m\n\u001b[2m    9 × locator resolved to <h1>Wrong heading</h1>\u001b[22m\n\u001b[2m      - unexpected value \"Wrong heading\"\u001b[22m\n"
+                  "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByRole('heading')\nExpected: \u001b[32m\"Community tools\"\u001b[39m\nReceived: \u001b[31m\"Wrong heading\"\u001b[39m\nTimeout:  1000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveText\" getByRole('heading') with timeout 1000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('heading')\u001b[22m\n\u001b[2m    11 × locator resolved to <h1>Wrong heading</h1>\u001b[22m\n\u001b[2m       - unexpected value \"Wrong heading\"\u001b[22m\n"
                 }
               ]
             }
           ],
-          "durationMs": 2220,
+          "durationMs": 1201,
           "line": 1,
           "column": 143,
           "id": "0a16f0637e7b21eb65fffafeb26e3de21ccf6c236ac09f7f12001f9f890cc2e5"
@@ -164,7 +164,7 @@
         "<fixture>/browser/landing\\.spec\\.js$"
       ],
       "stdout": "",
-      "stderr": "(node:88108) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n",
+      "stderr": "(node:84162) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n",
       "signal": null,
       "reportErrors": []
     },
@@ -173,9 +173,9 @@
       "provenance": {
         "schemaVersion": 1,
         "revision": null,
-        "runner": "ab5f3808dcb26a7b22d32b75fe6788610665059d8e79a261a59970bdb241f870",
+        "runner": "a39ecef040a760b6afea5544e40567d548e805b3f7bfa25c19a27bd8310f0678",
         "environment": {
-          "node": "v22.19.0",
+          "node": "v24.5.0",
           "platform": "darwin",
           "arch": "arm64",
           "labels": {}
@@ -198,9 +198,9 @@
           "public/pricing.js.map": "96282908e56e70b0a3bd28ba700ab80c2de8acedf2b642f172b80f7c54b41317",
           "source/landing.js": "dedb3a007fbd41b75be60a404a1c75806d0c8475ac564b6ab1423eb8290f2637",
           "source/pricing.js": "dedb3a007fbd41b75be60a404a1c75806d0c8475ac564b6ab1423eb8290f2637",
-          "tddswarm.config.json": "023d39d63b3a38e8a984fa13bbf782dfce6fd78ea2bd1aba711c20e425159903"
+          "tddswarm.config.json": "f3a57aca817fbc3259e01d55ee9806bf4ecb8cdde655b533dc05b78446bc609f"
         },
-        "fingerprint": "f244f4722778bd75cc73b0c01981f978fd50c9e09957607f2a6fa6b687aa636e"
+        "fingerprint": "ea0b53c740716510172c60efdfe806a61e45189f56e43bfe4bf294f3f701c9c0"
       },
       "serviceTokens": {},
       "configurationFiles": [
@@ -217,6 +217,11 @@
       ],
       "total": 2,
       "omitted": 1,
+      "uncertainty": {
+        "global": 0,
+        "retainedTests": [],
+        "unreachableSources": []
+      },
       "selectionReduction": 0.5,
       "reasons": [],
       "warnings": [],
@@ -243,7 +248,7 @@
           "paths": []
         }
       ],
-      "fingerprint": "dbe2e9af9cf129d2253940aa02164a2feaeb04eae6773d08ab122fd9cca3890a",
+      "fingerprint": "839cfe49bd591bec6465aae169f9529af9c5a2146d699a815dca4bb5bc193891",
       "discovery": {
         "files": [
           "browser/landing.spec.js",
@@ -271,7 +276,7 @@
     "full": {
       "adapter": "playwright",
       "exitCode": 1,
-      "durationMs": 16184,
+      "durationMs": 3200,
       "tests": [
         {
           "file": "browser/landing.spec.js",
@@ -287,15 +292,15 @@
             {
               "status": "failed",
               "retry": 0,
-              "durationMs": 2751,
+              "durationMs": 1215,
               "errors": [
                 {
-                  "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCSS\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByRole('heading')\nExpected: \u001b[32m\"rgb(\u001b[7m0, 128\u001b[27m, 0)\"\u001b[39m\nReceived: \u001b[31m\"rgb(\u001b[7m255, 0\u001b[27m, 0)\"\u001b[39m\nTimeout:  1000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveCSS\" getByRole('heading') with timeout 1000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('heading')\u001b[22m\n\u001b[2m    10 × locator resolved to <h1>Community tools</h1>\u001b[22m\n\u001b[2m       - unexpected value \"rgb(255, 0, 0)\"\u001b[22m\n"
+                  "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCSS\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByRole('heading')\nExpected: \u001b[32m\"rgb(\u001b[7m0, 128\u001b[27m, 0)\"\u001b[39m\nReceived: \u001b[31m\"rgb(\u001b[7m255, 0\u001b[27m, 0)\"\u001b[39m\nTimeout:  1000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveCSS\" getByRole('heading') with timeout 1000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('heading')\u001b[22m\n\u001b[2m    11 × locator resolved to <h1>Community tools</h1>\u001b[22m\n\u001b[2m       - unexpected value \"rgb(255, 0, 0)\"\u001b[22m\n"
                 }
               ]
             }
           ],
-          "durationMs": 2751,
+          "durationMs": 1215,
           "line": 1,
           "column": 143,
           "id": "0a16f0637e7b21eb65fffafeb26e3de21ccf6c236ac09f7f12001f9f890cc2e5"
@@ -314,11 +319,11 @@
             {
               "status": "passed",
               "retry": 0,
-              "durationMs": 1655,
+              "durationMs": 215,
               "errors": []
             }
           ],
-          "durationMs": 1655,
+          "durationMs": 215,
           "line": 1,
           "column": 143,
           "id": "83d14df8d2c6ea8d187efa9734fbafbbdb91a076c8e21f8ce772234e2ebe58a9"
@@ -361,14 +366,14 @@
         "<fixture>/browser/pricing\\.spec\\.js$"
       ],
       "stdout": "",
-      "stderr": "(node:88355) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n(node:88487) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n",
+      "stderr": "(node:84315) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n(node:84328) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n",
       "signal": null,
       "reportErrors": []
     },
     "subset": {
       "adapter": "playwright",
       "exitCode": 1,
-      "durationMs": 10037,
+      "durationMs": 2259,
       "tests": [
         {
           "file": "browser/landing.spec.js",
@@ -384,7 +389,7 @@
             {
               "status": "failed",
               "retry": 0,
-              "durationMs": 2711,
+              "durationMs": 1217,
               "errors": [
                 {
                   "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCSS\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByRole('heading')\nExpected: \u001b[32m\"rgb(\u001b[7m0, 128\u001b[27m, 0)\"\u001b[39m\nReceived: \u001b[31m\"rgb(\u001b[7m255, 0\u001b[27m, 0)\"\u001b[39m\nTimeout:  1000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveCSS\" getByRole('heading') with timeout 1000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('heading')\u001b[22m\n\u001b[2m    11 × locator resolved to <h1>Community tools</h1>\u001b[22m\n\u001b[2m       - unexpected value \"rgb(255, 0, 0)\"\u001b[22m\n"
@@ -392,7 +397,7 @@
               ]
             }
           ],
-          "durationMs": 2711,
+          "durationMs": 1217,
           "line": 1,
           "column": 143,
           "id": "0a16f0637e7b21eb65fffafeb26e3de21ccf6c236ac09f7f12001f9f890cc2e5"
@@ -431,7 +436,7 @@
         "<fixture>/browser/landing\\.spec\\.js$"
       ],
       "stdout": "",
-      "stderr": "(node:88669) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n",
+      "stderr": "(node:84341) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n",
       "signal": null,
       "reportErrors": []
     },
@@ -440,9 +445,9 @@
       "provenance": {
         "schemaVersion": 1,
         "revision": null,
-        "runner": "ab5f3808dcb26a7b22d32b75fe6788610665059d8e79a261a59970bdb241f870",
+        "runner": "a39ecef040a760b6afea5544e40567d548e805b3f7bfa25c19a27bd8310f0678",
         "environment": {
-          "node": "v22.19.0",
+          "node": "v24.5.0",
           "platform": "darwin",
           "arch": "arm64",
           "labels": {}
@@ -465,9 +470,9 @@
           "public/pricing.js.map": "96282908e56e70b0a3bd28ba700ab80c2de8acedf2b642f172b80f7c54b41317",
           "source/landing.js": "dedb3a007fbd41b75be60a404a1c75806d0c8475ac564b6ab1423eb8290f2637",
           "source/pricing.js": "dedb3a007fbd41b75be60a404a1c75806d0c8475ac564b6ab1423eb8290f2637",
-          "tddswarm.config.json": "023d39d63b3a38e8a984fa13bbf782dfce6fd78ea2bd1aba711c20e425159903"
+          "tddswarm.config.json": "f3a57aca817fbc3259e01d55ee9806bf4ecb8cdde655b533dc05b78446bc609f"
         },
-        "fingerprint": "32c9ad885900966f0ddfc4c53ff736315de578373635f6dff5682778a70de8fa"
+        "fingerprint": "75f7b8cf59b8cfcce20e027de4aed110bbed8f9c77f92aca968a45c6ac1457a8"
       },
       "serviceTokens": {},
       "configurationFiles": [
@@ -484,6 +489,11 @@
       ],
       "total": 2,
       "omitted": 1,
+      "uncertainty": {
+        "global": 0,
+        "retainedTests": [],
+        "unreachableSources": []
+      },
       "selectionReduction": 0.5,
       "reasons": [],
       "warnings": [],
@@ -510,7 +520,7 @@
           "paths": []
         }
       ],
-      "fingerprint": "cfa00675f5f107877b7524992de533822dfd1c24742c3eb956d6d1d8e966dfc8",
+      "fingerprint": "100355864f4f0df8309ef19c28cab8197a863399469877c42d0a309e875268c9",
       "discovery": {
         "files": [
           "browser/landing.spec.js",
@@ -538,7 +548,7 @@
     "full": {
       "adapter": "playwright",
       "exitCode": 1,
-      "durationMs": 18523,
+      "durationMs": 3139,
       "tests": [
         {
           "file": "browser/landing.spec.js",
@@ -554,15 +564,15 @@
             {
               "status": "failed",
               "retry": 0,
-              "durationMs": 2491,
+              "durationMs": 1219,
               "errors": [
                 {
-                  "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  locator('p')\nExpected: \u001b[32m\"\u001b[7mWorking\u001b[27m module\"\u001b[39m\nReceived: \u001b[31m\"\u001b[7mBroken\u001b[27m module\"\u001b[39m\nTimeout:  1000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveText\" locator('p') with timeout 1000ms\u001b[22m\n\u001b[2m  - waiting for locator('p')\u001b[22m\n\u001b[2m    10 × locator resolved to <p>Broken module</p>\u001b[22m\n\u001b[2m       - unexpected value \"Broken module\"\u001b[22m\n"
+                  "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  locator('p')\nExpected: \u001b[32m\"\u001b[7mWorking\u001b[27m module\"\u001b[39m\nReceived: \u001b[31m\"\u001b[7mBroken\u001b[27m module\"\u001b[39m\nTimeout:  1000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveText\" locator('p') with timeout 1000ms\u001b[22m\n\u001b[2m  - waiting for locator('p')\u001b[22m\n\u001b[2m    11 × locator resolved to <p>Broken module</p>\u001b[22m\n\u001b[2m       - unexpected value \"Broken module\"\u001b[22m\n"
                 }
               ]
             }
           ],
-          "durationMs": 2491,
+          "durationMs": 1219,
           "line": 1,
           "column": 143,
           "id": "0a16f0637e7b21eb65fffafeb26e3de21ccf6c236ac09f7f12001f9f890cc2e5"
@@ -581,11 +591,11 @@
             {
               "status": "passed",
               "retry": 0,
-              "durationMs": 643,
+              "durationMs": 204,
               "errors": []
             }
           ],
-          "durationMs": 643,
+          "durationMs": 204,
           "line": 1,
           "column": 143,
           "id": "83d14df8d2c6ea8d187efa9734fbafbbdb91a076c8e21f8ce772234e2ebe58a9"
@@ -628,14 +638,14 @@
         "<fixture>/browser/pricing\\.spec\\.js$"
       ],
       "stdout": "",
-      "stderr": "(node:88998) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n(node:89529) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n",
+      "stderr": "(node:84435) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n(node:84447) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n",
       "signal": null,
       "reportErrors": []
     },
     "subset": {
       "adapter": "playwright",
       "exitCode": 1,
-      "durationMs": 4128,
+      "durationMs": 2249,
       "tests": [
         {
           "file": "browser/landing.spec.js",
@@ -651,7 +661,7 @@
             {
               "status": "failed",
               "retry": 0,
-              "durationMs": 1682,
+              "durationMs": 1229,
               "errors": [
                 {
                   "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  locator('p')\nExpected: \u001b[32m\"\u001b[7mWorking\u001b[27m module\"\u001b[39m\nReceived: \u001b[31m\"\u001b[7mBroken\u001b[27m module\"\u001b[39m\nTimeout:  1000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveText\" locator('p') with timeout 1000ms\u001b[22m\n\u001b[2m  - waiting for locator('p')\u001b[22m\n\u001b[2m    11 × locator resolved to <p>Broken module</p>\u001b[22m\n\u001b[2m       - unexpected value \"Broken module\"\u001b[22m\n"
@@ -659,7 +669,7 @@
               ]
             }
           ],
-          "durationMs": 1682,
+          "durationMs": 1229,
           "line": 1,
           "column": 143,
           "id": "0a16f0637e7b21eb65fffafeb26e3de21ccf6c236ac09f7f12001f9f890cc2e5"
@@ -698,7 +708,7 @@
         "<fixture>/browser/landing\\.spec\\.js$"
       ],
       "stdout": "",
-      "stderr": "(node:90222) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n",
+      "stderr": "(node:84460) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n",
       "signal": null,
       "reportErrors": []
     },
@@ -707,9 +717,9 @@
       "provenance": {
         "schemaVersion": 1,
         "revision": null,
-        "runner": "ab5f3808dcb26a7b22d32b75fe6788610665059d8e79a261a59970bdb241f870",
+        "runner": "a39ecef040a760b6afea5544e40567d548e805b3f7bfa25c19a27bd8310f0678",
         "environment": {
-          "node": "v22.19.0",
+          "node": "v24.5.0",
           "platform": "darwin",
           "arch": "arm64",
           "labels": {}
@@ -732,9 +742,9 @@
           "public/pricing.js.map": "96282908e56e70b0a3bd28ba700ab80c2de8acedf2b642f172b80f7c54b41317",
           "source/landing.js": "dedb3a007fbd41b75be60a404a1c75806d0c8475ac564b6ab1423eb8290f2637",
           "source/pricing.js": "dedb3a007fbd41b75be60a404a1c75806d0c8475ac564b6ab1423eb8290f2637",
-          "tddswarm.config.json": "023d39d63b3a38e8a984fa13bbf782dfce6fd78ea2bd1aba711c20e425159903"
+          "tddswarm.config.json": "f3a57aca817fbc3259e01d55ee9806bf4ecb8cdde655b533dc05b78446bc609f"
         },
-        "fingerprint": "2aeb4791fc1bfd3132d40f4bd0258023bed59582976a3c99add09bb6b46bbbea"
+        "fingerprint": "ed7b34b121aed40cd3677ecf023acb7be65fc67cf39ab706f646e8805242c5ed"
       },
       "serviceTokens": {},
       "configurationFiles": [
@@ -752,6 +762,11 @@
       ],
       "total": 2,
       "omitted": 1,
+      "uncertainty": {
+        "global": 0,
+        "retainedTests": [],
+        "unreachableSources": []
+      },
       "selectionReduction": 0.5,
       "reasons": [],
       "warnings": [],
@@ -782,7 +797,7 @@
           "paths": []
         }
       ],
-      "fingerprint": "e069e9a8a4b0feea81669af1d9d9234a4cd5298423f3de85852414413645e007",
+      "fingerprint": "ff82738af59da372fd9114e03e4e453f641aadcc112e44def780eb58bab56153",
       "discovery": {
         "files": [
           "browser/landing.spec.js",

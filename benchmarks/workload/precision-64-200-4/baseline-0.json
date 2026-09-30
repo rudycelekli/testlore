@@ -787,7 +787,7 @@
     "--test",
     "--test-concurrency=4",
     "--test-reporter=<testlore-source>/src/reporters/node.js",
-    "--test-reporter-destination=/var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-report-w230Xf/results.json",
+    "--test-reporter-destination=<scratch>/results.json",
     "./test/000.test.js",
     "./test/001.test.js",
     "./test/002.test.js",

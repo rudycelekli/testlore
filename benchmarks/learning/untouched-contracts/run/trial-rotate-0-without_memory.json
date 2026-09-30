@@ -410,7 +410,7 @@
           "<node>",
           "--test",
           "--test-reporter=<repository>src/reporters/node.js",
-          "--test-reporter-destination=/var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-report-Ywy6Hk/results.json",
+          "--test-reporter-destination=<scratch>/results.json",
           "./test/rotate.test.js"
         ],
         "stdout": "",
@@ -687,7 +687,7 @@
           "<node>",
           "--test",
           "--test-reporter=<repository>src/reporters/node.js",
-          "--test-reporter-destination=/var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-report-tao4f1/results.json",
+          "--test-reporter-destination=<scratch>/results.json",
           "./test/rotate.test.js"
         ],
         "stdout": "",
@@ -964,7 +964,7 @@
           "<node>",
           "--test",
           "--test-reporter=<repository>src/reporters/node.js",
-          "--test-reporter-destination=/var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-report-LljfMA/results.json",
+          "--test-reporter-destination=<scratch>/results.json",
           "./test/rotate.test.js"
         ],
         "stdout": "",
@@ -1278,7 +1278,7 @@
         "<node>",
         "--test",
         "--test-reporter=<repository>src/reporters/node.js",
-        "--test-reporter-destination=/var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-report-GQEtbS/results.json",
+        "--test-reporter-destination=<scratch>/results.json",
         "./test/rotate.test.js"
       ],
       "stdout": "",
@@ -1561,7 +1561,7 @@
       "<node>",
       "--test",
       "--test-reporter=<repository>src/reporters/node.js",
-      "--test-reporter-destination=/var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-report-DNsieY/results.json",
+      "--test-reporter-destination=<scratch>/results.json",
       "./test/rotate.test.js"
     ],
     "stdout": "",

@@ -51,20 +51,20 @@
         "full": {
           "adapter": "vitest",
           "exitCode": 1,
-          "durationMs": 334,
+          "durationMs": 317,
           "tests": [
             {
               "file": "landing.test.js",
               "name": "specified visible heading",
               "status": "failed",
-              "durationMs": 4.054541,
+              "durationMs": 4.120334,
               "id": "d7674acac6a268b42dd5086137ce37dd83d1f1c2dc73f8cc95feda43c4c0013d"
             },
             {
               "file": "pricing.test.js",
               "name": "specified free pricing",
               "status": "passed",
-              "durationMs": 0.8159169999999989,
+              "durationMs": 0.8577499999999958,
               "id": "15d1c68d073fb800887ee3e651f228c8d69ab98907c2981a730ffeb9c6941072"
             }
           ],
@@ -89,26 +89,26 @@
             "<repository>node_modules/vitest/vitest.mjs",
             "run",
             "--reporter=json",
-            "--outputFile=/var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-report-YXaXkP/results.json",
+            "--outputFile=<scratch>/results.json",
             "./landing.test.js",
             "./pricing.test.js"
           ],
-          "stdout": "JSON report written to /var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-report-YXaXkP/results.json\n",
+          "stdout": "JSON report written to <scratch>/results.json\n",
           "stderr": "",
           "signal": null,
           "reportErrors": [],
-          "measuredTotalMs": 515
+          "measuredTotalMs": 500
         },
         "testlore": {
           "adapter": "vitest",
           "exitCode": 1,
-          "durationMs": 405,
+          "durationMs": 328,
           "tests": [
             {
               "file": "landing.test.js",
               "name": "specified visible heading",
               "status": "failed",
-              "durationMs": 7.034458000000001,
+              "durationMs": 4.120999999999995,
               "id": "d7674acac6a268b42dd5086137ce37dd83d1f1c2dc73f8cc95feda43c4c0013d"
             }
           ],
@@ -130,10 +130,10 @@
             "<repository>node_modules/vitest/vitest.mjs",
             "run",
             "--reporter=json",
-            "--outputFile=/var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-report-UBHIwh/results.json",
+            "--outputFile=<scratch>/results.json",
             "./landing.test.js"
           ],
-          "stdout": "JSON report written to /var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-report-UBHIwh/results.json\n",
+          "stdout": "JSON report written to <scratch>/results.json\n",
           "stderr": "",
           "signal": null,
           "reportErrors": [],
@@ -141,8 +141,8 @@
             "schemaVersion": 1,
             "provenance": {
               "schemaVersion": 1,
-              "revision": "5cc6268a8ca17845e38827cbdc716d060a11c931",
-              "runner": "675711324678cfdf24def17f12f8dfb3ca6153740f4d0ad8ffca37e423985c0f",
+              "revision": "b7d9675e4ce000ed94a37e6b91914ede931b582f",
+              "runner": "237beca8c5aa560ea5c7d5c327a420aa43777fa2950208a30d66497cb7d5ad51",
               "environment": {
                 "node": "v24.5.0",
                 "platform": "darwin",
@@ -161,12 +161,12 @@
                 "src/pricing.js": "b16547e3924b496c1dabd6bc079ed3551074d4f588691244626485dcb3d25117",
                 "tddswarm.config.json": "27ef0235bb7b1689a22f13b6343b6ccd2cab5933fc6792fdb9e5974e546f1547"
               },
-              "fingerprint": "27b6f4e50ea74c833bad0dcccdf521f619fa9a41943f3829014e281d93108a6b"
+              "fingerprint": "73cb1679d409d890d7c21b8ff9cc351e44d8296cbde67489e63e1a714c974318"
             },
             "serviceTokens": {},
             "configurationFiles": [],
             "mode": "affected",
-            "base": "5cc6268a8ca17845e38827cbdc716d060a11c931",
+            "base": "b7d9675e4ce000ed94a37e6b91914ede931b582f",
             "changed": [
               "public/copy.json"
             ],
@@ -219,7 +219,7 @@
                 "paths": []
               }
             ],
-            "fingerprint": "0191b29e28adcaf08187167c61ba3dac8dcfebd84ac5e112f543ba4cd13c0191",
+            "fingerprint": "bf684e1891d89a95e6009cd31354cb2b4d41cc718631e8ec115b653944e360de",
             "discovery": {
               "files": [
                 "landing.test.js",
@@ -246,11 +246,11 @@
           "executedTests": [
             "landing.test.js"
           ],
-          "runner": "675711324678cfdf24def17f12f8dfb3ca6153740f4d0ad8ffca37e423985c0f",
+          "runner": "237beca8c5aa560ea5c7d5c327a420aa43777fa2950208a30d66497cb7d5ad51",
           "provenance": {
             "schemaVersion": 1,
-            "revision": "5cc6268a8ca17845e38827cbdc716d060a11c931",
-            "runner": "675711324678cfdf24def17f12f8dfb3ca6153740f4d0ad8ffca37e423985c0f",
+            "revision": "b7d9675e4ce000ed94a37e6b91914ede931b582f",
+            "runner": "237beca8c5aa560ea5c7d5c327a420aa43777fa2950208a30d66497cb7d5ad51",
             "environment": {
               "node": "v24.5.0",
               "platform": "darwin",
@@ -269,15 +269,16 @@
               "src/pricing.js": "b16547e3924b496c1dabd6bc079ed3551074d4f588691244626485dcb3d25117",
               "tddswarm.config.json": "27ef0235bb7b1689a22f13b6343b6ccd2cab5933fc6792fdb9e5974e546f1547"
             },
-            "fingerprint": "27b6f4e50ea74c833bad0dcccdf521f619fa9a41943f3829014e281d93108a6b"
+            "fingerprint": "73cb1679d409d890d7c21b8ff9cc351e44d8296cbde67489e63e1a714c974318"
           },
           "timings": {
-            "planningMs": 841,
-            "executionMs": 405,
-            "totalMs": 1420,
-            "otherMs": 174
+            "planningMs": 822,
+            "executionMs": 328,
+            "totalMs": 1272,
+            "finalReportSealingExcluded": true,
+            "otherMs": 122
           },
-          "measuredTotalMs": 1420
+          "measuredTotalMs": 1273
         },
         "native": {
           "adapter": "vitest",
@@ -290,18 +291,18 @@
             "--run",
             "--passWithNoTests",
             "--reporter=json",
-            "--outputFile=/var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/testlore-native-related-ZvTnNd/results.json"
+            "--outputFile=<scratch>/results.json"
           ],
           "complete": true,
           "exitCode": 0,
           "tests": [],
           "executedFiles": [],
           "collectionFiles": [],
-          "durationMs": 754,
-          "stdout": "JSON report written to /var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/testlore-native-related-ZvTnNd/results.json\n",
+          "durationMs": 234,
+          "stdout": "JSON report written to <scratch>/results.json\n",
           "stderr": "",
           "reportErrors": [],
-          "measuredTotalMs": 754
+          "measuredTotalMs": 235
         }
       }
     },
@@ -319,13 +320,13 @@
         "testlore": {
           "adapter": "vitest",
           "exitCode": 1,
-          "durationMs": 433,
+          "durationMs": 375,
           "tests": [
             {
               "file": "landing.test.js",
               "name": "specified visible heading",
               "status": "failed",
-              "durationMs": 6.286165999999994,
+              "durationMs": 4.160416999999995,
               "id": "d7674acac6a268b42dd5086137ce37dd83d1f1c2dc73f8cc95feda43c4c0013d"
             }
           ],
@@ -347,10 +348,10 @@
             "<repository>node_modules/vitest/vitest.mjs",
             "run",
             "--reporter=json",
-            "--outputFile=/var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-report-Kh6lcw/results.json",
+            "--outputFile=<scratch>/results.json",
             "./landing.test.js"
           ],
-          "stdout": "JSON report written to /var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-report-Kh6lcw/results.json\n",
+          "stdout": "JSON report written to <scratch>/results.json\n",
           "stderr": "",
           "signal": null,
           "reportErrors": [],
@@ -358,8 +359,8 @@
             "schemaVersion": 1,
             "provenance": {
               "schemaVersion": 1,
-              "revision": "5cc6268a8ca17845e38827cbdc716d060a11c931",
-              "runner": "675711324678cfdf24def17f12f8dfb3ca6153740f4d0ad8ffca37e423985c0f",
+              "revision": "b7d9675e4ce000ed94a37e6b91914ede931b582f",
+              "runner": "237beca8c5aa560ea5c7d5c327a420aa43777fa2950208a30d66497cb7d5ad51",
               "environment": {
                 "node": "v24.5.0",
                 "platform": "darwin",
@@ -378,12 +379,12 @@
                 "src/pricing.js": "b16547e3924b496c1dabd6bc079ed3551074d4f588691244626485dcb3d25117",
                 "tddswarm.config.json": "27ef0235bb7b1689a22f13b6343b6ccd2cab5933fc6792fdb9e5974e546f1547"
               },
-              "fingerprint": "27b6f4e50ea74c833bad0dcccdf521f619fa9a41943f3829014e281d93108a6b"
+              "fingerprint": "73cb1679d409d890d7c21b8ff9cc351e44d8296cbde67489e63e1a714c974318"
             },
             "serviceTokens": {},
             "configurationFiles": [],
             "mode": "affected",
-            "base": "5cc6268a8ca17845e38827cbdc716d060a11c931",
+            "base": "b7d9675e4ce000ed94a37e6b91914ede931b582f",
             "changed": [
               "public/copy.json"
             ],
@@ -436,7 +437,7 @@
                 "paths": []
               }
             ],
-            "fingerprint": "0191b29e28adcaf08187167c61ba3dac8dcfebd84ac5e112f543ba4cd13c0191",
+            "fingerprint": "bf684e1891d89a95e6009cd31354cb2b4d41cc718631e8ec115b653944e360de",
             "discovery": {
               "files": [
                 "landing.test.js",
@@ -463,11 +464,11 @@
           "executedTests": [
             "landing.test.js"
           ],
-          "runner": "675711324678cfdf24def17f12f8dfb3ca6153740f4d0ad8ffca37e423985c0f",
+          "runner": "237beca8c5aa560ea5c7d5c327a420aa43777fa2950208a30d66497cb7d5ad51",
           "provenance": {
             "schemaVersion": 1,
-            "revision": "5cc6268a8ca17845e38827cbdc716d060a11c931",
-            "runner": "675711324678cfdf24def17f12f8dfb3ca6153740f4d0ad8ffca37e423985c0f",
+            "revision": "b7d9675e4ce000ed94a37e6b91914ede931b582f",
+            "runner": "237beca8c5aa560ea5c7d5c327a420aa43777fa2950208a30d66497cb7d5ad51",
             "environment": {
               "node": "v24.5.0",
               "platform": "darwin",
@@ -486,15 +487,16 @@
               "src/pricing.js": "b16547e3924b496c1dabd6bc079ed3551074d4f588691244626485dcb3d25117",
               "tddswarm.config.json": "27ef0235bb7b1689a22f13b6343b6ccd2cab5933fc6792fdb9e5974e546f1547"
             },
-            "fingerprint": "27b6f4e50ea74c833bad0dcccdf521f619fa9a41943f3829014e281d93108a6b"
+            "fingerprint": "73cb1679d409d890d7c21b8ff9cc351e44d8296cbde67489e63e1a714c974318"
           },
           "timings": {
-            "planningMs": 1682,
-            "executionMs": 433,
-            "totalMs": 2277,
-            "otherMs": 162
+            "planningMs": 792,
+            "executionMs": 375,
+            "totalMs": 1301,
+            "finalReportSealingExcluded": true,
+            "otherMs": 134
           },
-          "measuredTotalMs": 2277
+          "measuredTotalMs": 1302
         },
         "native": {
           "adapter": "vitest",
@@ -507,36 +509,36 @@
             "--run",
             "--passWithNoTests",
             "--reporter=json",
-            "--outputFile=/var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/testlore-native-related-hch09A/results.json"
+            "--outputFile=<scratch>/results.json"
           ],
           "complete": true,
           "exitCode": 0,
           "tests": [],
           "executedFiles": [],
           "collectionFiles": [],
-          "durationMs": 307,
-          "stdout": "JSON report written to /var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/testlore-native-related-hch09A/results.json\n",
+          "durationMs": 259,
+          "stdout": "JSON report written to <scratch>/results.json\n",
           "stderr": "",
           "reportErrors": [],
-          "measuredTotalMs": 308
+          "measuredTotalMs": 260
         },
         "full": {
           "adapter": "vitest",
           "exitCode": 1,
-          "durationMs": 463,
+          "durationMs": 375,
           "tests": [
             {
               "file": "landing.test.js",
               "name": "specified visible heading",
               "status": "failed",
-              "durationMs": 7.4064169999999905,
+              "durationMs": 4.204374999999999,
               "id": "d7674acac6a268b42dd5086137ce37dd83d1f1c2dc73f8cc95feda43c4c0013d"
             },
             {
               "file": "pricing.test.js",
               "name": "specified free pricing",
               "status": "passed",
-              "durationMs": 1.652124999999998,
+              "durationMs": 0.8527919999999938,
               "id": "15d1c68d073fb800887ee3e651f228c8d69ab98907c2981a730ffeb9c6941072"
             }
           ],
@@ -561,15 +563,15 @@
             "<repository>node_modules/vitest/vitest.mjs",
             "run",
             "--reporter=json",
-            "--outputFile=/var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-report-p8zuMq/results.json",
+            "--outputFile=<scratch>/results.json",
             "./landing.test.js",
             "./pricing.test.js"
           ],
-          "stdout": "JSON report written to /var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-report-p8zuMq/results.json\n",
+          "stdout": "JSON report written to <scratch>/results.json\n",
           "stderr": "",
           "signal": null,
           "reportErrors": [],
-          "measuredTotalMs": 700
+          "measuredTotalMs": 579
         }
       }
     },
@@ -595,36 +597,36 @@
             "--run",
             "--passWithNoTests",
             "--reporter=json",
-            "--outputFile=/var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/testlore-native-related-8l7G1w/results.json"
+            "--outputFile=<scratch>/results.json"
           ],
           "complete": true,
           "exitCode": 0,
           "tests": [],
           "executedFiles": [],
           "collectionFiles": [],
-          "durationMs": 329,
-          "stdout": "JSON report written to /var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/testlore-native-related-8l7G1w/results.json\n",
+          "durationMs": 271,
+          "stdout": "JSON report written to <scratch>/results.json\n",
           "stderr": "",
           "reportErrors": [],
-          "measuredTotalMs": 330
+          "measuredTotalMs": 271
         },
         "full": {
           "adapter": "vitest",
           "exitCode": 1,
-          "durationMs": 424,
+          "durationMs": 375,
           "tests": [
             {
               "file": "landing.test.js",
               "name": "specified visible heading",
               "status": "failed",
-              "durationMs": 5.856542000000005,
+              "durationMs": 4.347042000000002,
               "id": "d7674acac6a268b42dd5086137ce37dd83d1f1c2dc73f8cc95feda43c4c0013d"
             },
             {
               "file": "pricing.test.js",
               "name": "specified free pricing",
               "status": "passed",
-              "durationMs": 1.1162920000000014,
+              "durationMs": 0.8426670000000058,
               "id": "15d1c68d073fb800887ee3e651f228c8d69ab98907c2981a730ffeb9c6941072"
             }
           ],
@@ -649,26 +651,26 @@
             "<repository>node_modules/vitest/vitest.mjs",
             "run",
             "--reporter=json",
-            "--outputFile=/var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-report-wgmLE7/results.json",
+            "--outputFile=<scratch>/results.json",
             "./landing.test.js",
             "./pricing.test.js"
           ],
-          "stdout": "JSON report written to /var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-report-wgmLE7/results.json\n",
+          "stdout": "JSON report written to <scratch>/results.json\n",
           "stderr": "",
           "signal": null,
           "reportErrors": [],
-          "measuredTotalMs": 690
+          "measuredTotalMs": 587
         },
         "testlore": {
           "adapter": "vitest",
           "exitCode": 1,
-          "durationMs": 436,
+          "durationMs": 318,
           "tests": [
             {
               "file": "landing.test.js",
               "name": "specified visible heading",
               "status": "failed",
-              "durationMs": 5.8769160000000085,
+              "durationMs": 4.064207999999994,
               "id": "d7674acac6a268b42dd5086137ce37dd83d1f1c2dc73f8cc95feda43c4c0013d"
             }
           ],
@@ -690,10 +692,10 @@
             "<repository>node_modules/vitest/vitest.mjs",
             "run",
             "--reporter=json",
-            "--outputFile=/var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-report-CWDKSR/results.json",
+            "--outputFile=<scratch>/results.json",
             "./landing.test.js"
           ],
-          "stdout": "JSON report written to /var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-report-CWDKSR/results.json\n",
+          "stdout": "JSON report written to <scratch>/results.json\n",
           "stderr": "",
           "signal": null,
           "reportErrors": [],
@@ -701,8 +703,8 @@
             "schemaVersion": 1,
             "provenance": {
               "schemaVersion": 1,
-              "revision": "5cc6268a8ca17845e38827cbdc716d060a11c931",
-              "runner": "675711324678cfdf24def17f12f8dfb3ca6153740f4d0ad8ffca37e423985c0f",
+              "revision": "b7d9675e4ce000ed94a37e6b91914ede931b582f",
+              "runner": "237beca8c5aa560ea5c7d5c327a420aa43777fa2950208a30d66497cb7d5ad51",
               "environment": {
                 "node": "v24.5.0",
                 "platform": "darwin",
@@ -721,12 +723,12 @@
                 "src/pricing.js": "b16547e3924b496c1dabd6bc079ed3551074d4f588691244626485dcb3d25117",
                 "tddswarm.config.json": "27ef0235bb7b1689a22f13b6343b6ccd2cab5933fc6792fdb9e5974e546f1547"
               },
-              "fingerprint": "27b6f4e50ea74c833bad0dcccdf521f619fa9a41943f3829014e281d93108a6b"
+              "fingerprint": "73cb1679d409d890d7c21b8ff9cc351e44d8296cbde67489e63e1a714c974318"
             },
             "serviceTokens": {},
             "configurationFiles": [],
             "mode": "affected",
-            "base": "5cc6268a8ca17845e38827cbdc716d060a11c931",
+            "base": "b7d9675e4ce000ed94a37e6b91914ede931b582f",
             "changed": [
               "public/copy.json"
             ],
@@ -779,7 +781,7 @@
                 "paths": []
               }
             ],
-            "fingerprint": "0191b29e28adcaf08187167c61ba3dac8dcfebd84ac5e112f543ba4cd13c0191",
+            "fingerprint": "bf684e1891d89a95e6009cd31354cb2b4d41cc718631e8ec115b653944e360de",
             "discovery": {
               "files": [
                 "landing.test.js",
@@ -806,11 +808,11 @@
           "executedTests": [
             "landing.test.js"
           ],
-          "runner": "675711324678cfdf24def17f12f8dfb3ca6153740f4d0ad8ffca37e423985c0f",
+          "runner": "237beca8c5aa560ea5c7d5c327a420aa43777fa2950208a30d66497cb7d5ad51",
           "provenance": {
             "schemaVersion": 1,
-            "revision": "5cc6268a8ca17845e38827cbdc716d060a11c931",
-            "runner": "675711324678cfdf24def17f12f8dfb3ca6153740f4d0ad8ffca37e423985c0f",
+            "revision": "b7d9675e4ce000ed94a37e6b91914ede931b582f",
+            "runner": "237beca8c5aa560ea5c7d5c327a420aa43777fa2950208a30d66497cb7d5ad51",
             "environment": {
               "node": "v24.5.0",
               "platform": "darwin",
@@ -829,24 +831,25 @@
               "src/pricing.js": "b16547e3924b496c1dabd6bc079ed3551074d4f588691244626485dcb3d25117",
               "tddswarm.config.json": "27ef0235bb7b1689a22f13b6343b6ccd2cab5933fc6792fdb9e5974e546f1547"
             },
-            "fingerprint": "27b6f4e50ea74c833bad0dcccdf521f619fa9a41943f3829014e281d93108a6b"
+            "fingerprint": "73cb1679d409d890d7c21b8ff9cc351e44d8296cbde67489e63e1a714c974318"
           },
           "timings": {
-            "planningMs": 1108,
-            "executionMs": 436,
-            "totalMs": 1680,
-            "otherMs": 136
+            "planningMs": 923,
+            "executionMs": 318,
+            "totalMs": 1355,
+            "finalReportSealingExcluded": true,
+            "otherMs": 114
           },
-          "measuredTotalMs": 1680
+          "measuredTotalMs": 1355
         }
       }
     }
   ],
   "implementationHashes": {
-    "src/runner.js": "e291e0c510457df86ed3a6db5f99ad39e950f2090c025caca87b7d40a3c10747",
+    "src/runner.js": "5929a3713de4519a502221a4ef982a2b0c116db3a3889995da807f14e6fd6225",
     "src/execution.js": "955589ba3593ccdacdbf2991c09881e43466c49974114d72327665279d4dfe04",
-    "src/selector.js": "87a5a0e66058393184519e4668702a98ac84368a734228eb5615b9ecef047fe7",
-    "src/graph.js": "0ae72ccad1b2edda029cd92a65ba58d1d3b63b6f918dba2066d1f684ea213ba8"
+    "src/selector.js": "2bc865ae1c88cd83dc6a33fc3bba916620bd4adc058a166584d2abcbb9d8500a",
+    "src/graph.js": "612b2ad417f405eb43336a43f2c4db14e40fbcb495a192ee839ef9492b3d1aed"
   },
   "limitations": [
     "Constructed two-file runtime-asset counterexample, not representative speed or fault recall.",

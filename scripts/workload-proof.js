@@ -19,7 +19,7 @@ function git(root, argv) {
   return result.stdout.trim();
 }
 function sanitize(value, root) {
-  if (typeof value === 'string') return value.replaceAll(root, '<fixture>').replaceAll(process.execPath, '<node>').replaceAll(repository.replace(/\/$/, ''), '<testlore-source>').replaceAll(os.homedir(), '<user-home>');
+  if (typeof value === 'string') return value.replaceAll(root, '<fixture>').replaceAll(process.execPath, '<node>').replaceAll(repository.replace(/\/$/, ''), '<testlore-source>').replaceAll(os.homedir(), '<user-home>').replace(/\/(?:private\/)?var\/folders\/[^\s:'"\\]+\/T\/(?:tddswarm|testlore)-[^/\s:'"\\]+/g, '<scratch>').replace(/\/(?:private\/)?tmp\/(?:tddswarm|testlore)-[^/\s:'"\\]+/g, '<scratch>');
   if (Array.isArray(value)) return value.map(item => sanitize(item, root));
   if (value && typeof value === 'object') return Object.fromEntries(Object.entries(value).map(([key, item]) => [key, sanitize(item, root)]));
   return value;

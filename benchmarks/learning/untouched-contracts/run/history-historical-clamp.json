@@ -69,7 +69,7 @@
       "<node>",
       "--test",
       "--test-reporter=<repository>src/reporters/node.js",
-      "--test-reporter-destination=/var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-report-pxpp8p/results.json",
+      "--test-reporter-destination=<scratch>/results.json",
       "./test/clamp.test.js"
     ],
     "stdout": "",

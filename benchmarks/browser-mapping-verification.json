@@ -122,15 +122,15 @@
   "rawArtifacts": [
     {
       "file": "capture.json",
-      "sha256": "3c3f8235b9715266f84cc066cb150dbd063ee4f82ac9e1d95d8071b5e7eff6f0"
+      "sha256": "6f062496f84718c0ae49a396b91dbdcf9e8646fef4c88285ba29aee94d9a20d6"
     },
     {
       "file": "proposal.json",
-      "sha256": "edebad4f889257899cafa4d07e0b2eec57cf28bf97c2c79b6112d77a31c9811c"
+      "sha256": "674572a40632ac83f594d2233a9805b26947c0e07645e751832ac95f8fb56486"
     },
     {
       "file": "faults.json",
-      "sha256": "63172c7af4005c0d6eca760cee11ce017cca7cecfc48ccd64636128ce5f5d936"
+      "sha256": "0359f90274bbc833fe14a3ac6b8c1d3c6a337514e52fd45e5735be005bde2c19"
     },
     {
       "file": "fixture.json",
@@ -141,7 +141,7 @@
   "limitations": [
     "Manually authored fixture and three fixed defects; no broad recall or wall-clock speed claim.",
     "URL-to-directory authority is explicit; source maps are local tracked files, not remote downloads.",
-    "Mappings were applied only within this disposable fixture after proposal review simulation.",
+    "Mappings were applied only in this manually scoped fixture with an explicit browser.closedWorld:true assertion after review simulation; auto proposals remain closedWorld:false.",
     "Observed requests and executed coverage do not make dependency declarations complete."
   ]
 }
