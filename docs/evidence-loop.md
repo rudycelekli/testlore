@@ -51,4 +51,6 @@ An outcome records `accepted` or `rejected` with explicit reviewer attribution. 
 
 `loop-status`, `challenge`, and `outcome-lessons` are read-only and do not invoke project code. `outcome` appends a signed review but does not run tests. Only `observe` executes the project runner. The MCP toolset is unchanged.
 
+Inspection `complete` means every registered attempt has a recorded receipt; a failed, incomplete, or not-started test observation can still have a complete recorder history. Check each attempt's status and challenge the desired claim before treating it as passing evidence.
+
 Use `--json` for complete structured results. CLI exit status is zero for a supported challenge, one for an unsupported challenge, and two for invalid or incomplete history inspection. `observe` preserves a nonzero runner exit code; an observation without a completed successful result is not a pass. Unsupported command options are rejected rather than interpreted as authority.

@@ -293,7 +293,7 @@ export async function main(args = process.argv.slice(2)) {
     default: throw new Error(`Unknown command: ${command}`);
   }
   console.log(options.json ? JSON.stringify(result, null, 2) : human(command, result));
-  if(command==='observe')return result.exitCode || (result.status === 'complete' ? 0 : 2);
+  if(command==='observe')return result.exitCode ?? 2;
   if(command==='loop-status')return result.valid && result.complete ? 0 : 2;
   if(command==='challenge')return result.supported ? 0 : 1;
   if(command==='improve')return result.status==='ready-for-review'&&(options.local||result.published)?0:2;
