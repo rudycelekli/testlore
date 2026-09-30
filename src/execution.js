@@ -211,17 +211,32 @@ export function discover(root, config = {}) {
 }
 
 const resolverCache = new Map();
+function resolutionStamp(root, config) {
+  const candidates = listFiles(root).filter(file => /(?:^|\/)(?:package(?:-lock)?\.json|[^/]*(?:jest|vite|vitest|babel|tsconfig)[^/]*\.(?:[cm]?[jt]s|json))$/.test(file));
+  for (const arg of config.runner || []) {
+    const explicit = arg.startsWith('--config=') ? arg.slice(9) : arg;
+    try { const local = localFile(root, explicit); if (fs.statSync(safePath(root, local)).isFile()) candidates.push(local); } catch {}
+  }
+  const digest = createHash('sha256');
+  for (const file of [...new Set(candidates)].sort()) digest.update(file).update(fs.readFileSync(safePath(root, file)));
+  return digest.digest('hex');
+}
 /** Delegate alias/package resolution to the configured framework, returning local paths only. */
 export function resolveNative(root, file, specifier, config = {}) {
   const adapter = adapterFor(config);
   if (!['jest', 'vitest'].includes(adapter)) return null;
-  const key = JSON.stringify([path.resolve(root), file, specifier, config]);
-  if (resolverCache.has(key)) return resolverCache.get(key);
+  const key = JSON.stringify([path.resolve(root), file, specifier, config, resolutionStamp(root, config)]);
+  if (resolverCache.has(key)) {
+    const cached = resolverCache.get(key);
+    try { if (fs.statSync(safePath(root, cached)).isFile()) return cached; } catch {}
+    resolverCache.delete(key);
+  }
   const request = { root: fs.realpathSync(root), file, specifier, adapter, command: frameworkBase(commandBase(config, adapter), adapter) };
   const script = fileURLToPath(new URL('./reporters/resolve.js', import.meta.url));
   const result = spawn(root, [process.execPath, script, JSON.stringify(request)], config);
   let resolved = null;
   try { if (result.status === 0) { const value = JSON.parse(result.stdout); if (value.file) resolved = localFile(root, value.file); } } catch {}
-  resolverCache.set(key, resolved);
+  // New modules may appear between plans; unresolved lookups must be retried.
+  if (resolved) resolverCache.set(key, resolved);
   return resolved;
 }

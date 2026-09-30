@@ -44,6 +44,9 @@ if(jest) test('real Jest native discovery, exact file execution, outcomes and mo
   const full=execute(root,found.files,config,{capture:true});
   assert.equal(full.exitCode,1);assert.equal(full.complete,true);assert.equal(full.tests.filter(t=>t.status==='failed').length,1);
   assert.equal(resolveNative(root,'suite/check-one.cjs','@domain/value',config),'src/value.js');
+  write(root,'src/other.js','module.exports=9;');
+  write(root,'jest.config.cjs',`module.exports={testMatch:['**/suite/check-*.cjs'],moduleNameMapper:{'^@domain/value$':'<rootDir>/src/other.js'},testEnvironment:'node'};`);
+  assert.equal(resolveNative(root,'suite/check-one.cjs','@domain/value',config),'src/other.js');
 });
 
 if(vitest) test('real Vitest native discovery, filtered execution, outcomes and Vite aliases',t=>{
