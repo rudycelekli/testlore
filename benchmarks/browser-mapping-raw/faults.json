@@ -1,0 +1,808 @@
+[
+  {
+    "name": "heading",
+    "full": {
+      "adapter": "playwright",
+      "exitCode": 1,
+      "durationMs": 12795,
+      "tests": [
+        {
+          "file": "browser/landing.spec.js",
+          "name": "{\"project\":\"chromium\",\"repeat\":0,\"title\":[\"landing heading style and module\"]}",
+          "title": "landing heading style and module",
+          "project": "chromium",
+          "repeatEachIndex": 0,
+          "nativeId": "3370f39aa0d6cc6ba3dc-f9f0f4be5f1cccff4ec1",
+          "status": "failed",
+          "outcome": "unexpected",
+          "expectedStatus": "passed",
+          "attempts": [
+            {
+              "status": "failed",
+              "retry": 0,
+              "durationMs": 2320,
+              "errors": [
+                {
+                  "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByRole('heading')\nExpected: \u001b[32m\"Community tools\"\u001b[39m\nReceived: \u001b[31m\"Wrong heading\"\u001b[39m\nTimeout:  1000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveText\" getByRole('heading') with timeout 1000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('heading')\u001b[22m\n\u001b[2m    10 × locator resolved to <h1>Wrong heading</h1>\u001b[22m\n\u001b[2m       - unexpected value \"Wrong heading\"\u001b[22m\n"
+                }
+              ]
+            }
+          ],
+          "durationMs": 2320,
+          "line": 1,
+          "column": 143,
+          "id": "0a16f0637e7b21eb65fffafeb26e3de21ccf6c236ac09f7f12001f9f890cc2e5"
+        },
+        {
+          "file": "browser/pricing.spec.js",
+          "name": "{\"project\":\"chromium\",\"repeat\":0,\"title\":[\"pricing heading style and module\"]}",
+          "title": "pricing heading style and module",
+          "project": "chromium",
+          "repeatEachIndex": 0,
+          "nativeId": "e5c974b4cd75371cdc64-12812b3d1c3b4046cd90",
+          "status": "passed",
+          "outcome": "expected",
+          "expectedStatus": "passed",
+          "attempts": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "durationMs": 1473,
+              "errors": []
+            }
+          ],
+          "durationMs": 1473,
+          "line": 1,
+          "column": 143,
+          "id": "83d14df8d2c6ea8d187efa9734fbafbbdb91a076c8e21f8ce772234e2ebe58a9"
+        }
+      ],
+      "collectionFiles": [
+        "browser/landing.spec.js",
+        "browser/pricing.spec.js"
+      ],
+      "requestedFiles": [
+        "browser/landing.spec.js",
+        "browser/pricing.spec.js"
+      ],
+      "executedFiles": [
+        "browser/landing.spec.js",
+        "browser/pricing.spec.js"
+      ],
+      "missingFiles": [],
+      "unknownFiles": [],
+      "dependencyFiles": [],
+      "complete": true,
+      "projects": [
+        {
+          "name": "chromium",
+          "dependencies": [],
+          "testDir": "/private<fixture>/browser"
+        }
+      ],
+      "nativeStatus": "failed",
+      "nativeExitCode": 1,
+      "command": [
+        "<node>",
+        "node_modules/@playwright/test/cli.js",
+        "test",
+        "--reporter=<tooling>/src/reporters/playwright.cjs",
+        "--forbid-only",
+        "--update-snapshots=none",
+        "--output=<scratch>/artifacts",
+        "<fixture>/browser/landing\\.spec\\.js$",
+        "<fixture>/browser/pricing\\.spec\\.js$"
+      ],
+      "stdout": "",
+      "stderr": "(node:87212) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n(node:87795) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n",
+      "signal": null,
+      "reportErrors": []
+    },
+    "subset": {
+      "adapter": "playwright",
+      "exitCode": 1,
+      "durationMs": 7911,
+      "tests": [
+        {
+          "file": "browser/landing.spec.js",
+          "name": "{\"project\":\"chromium\",\"repeat\":0,\"title\":[\"landing heading style and module\"]}",
+          "title": "landing heading style and module",
+          "project": "chromium",
+          "repeatEachIndex": 0,
+          "nativeId": "3370f39aa0d6cc6ba3dc-f9f0f4be5f1cccff4ec1",
+          "status": "failed",
+          "outcome": "unexpected",
+          "expectedStatus": "passed",
+          "attempts": [
+            {
+              "status": "failed",
+              "retry": 0,
+              "durationMs": 2220,
+              "errors": [
+                {
+                  "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByRole('heading')\nExpected: \u001b[32m\"Community tools\"\u001b[39m\nReceived: \u001b[31m\"Wrong heading\"\u001b[39m\nTimeout:  1000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveText\" getByRole('heading') with timeout 1000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('heading')\u001b[22m\n\u001b[2m    9 × locator resolved to <h1>Wrong heading</h1>\u001b[22m\n\u001b[2m      - unexpected value \"Wrong heading\"\u001b[22m\n"
+                }
+              ]
+            }
+          ],
+          "durationMs": 2220,
+          "line": 1,
+          "column": 143,
+          "id": "0a16f0637e7b21eb65fffafeb26e3de21ccf6c236ac09f7f12001f9f890cc2e5"
+        }
+      ],
+      "collectionFiles": [
+        "browser/landing.spec.js"
+      ],
+      "requestedFiles": [
+        "browser/landing.spec.js"
+      ],
+      "executedFiles": [
+        "browser/landing.spec.js"
+      ],
+      "missingFiles": [],
+      "unknownFiles": [],
+      "dependencyFiles": [],
+      "complete": true,
+      "projects": [
+        {
+          "name": "chromium",
+          "dependencies": [],
+          "testDir": "/private<fixture>/browser"
+        }
+      ],
+      "nativeStatus": "failed",
+      "nativeExitCode": 1,
+      "command": [
+        "<node>",
+        "node_modules/@playwright/test/cli.js",
+        "test",
+        "--reporter=<tooling>/src/reporters/playwright.cjs",
+        "--forbid-only",
+        "--update-snapshots=none",
+        "--output=<scratch>/artifacts",
+        "<fixture>/browser/landing\\.spec\\.js$"
+      ],
+      "stdout": "",
+      "stderr": "(node:88108) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n",
+      "signal": null,
+      "reportErrors": []
+    },
+    "selection": {
+      "schemaVersion": 1,
+      "provenance": {
+        "schemaVersion": 1,
+        "revision": null,
+        "runner": "ab5f3808dcb26a7b22d32b75fe6788610665059d8e79a261a59970bdb241f870",
+        "environment": {
+          "node": "v22.19.0",
+          "platform": "darwin",
+          "arch": "arm64",
+          "labels": {}
+        },
+        "services": {},
+        "serviceWarnings": [],
+        "files": {
+          "browser/landing.spec.js": "b1fd80bd56bb3121f7e1527d26bc15897c1f6dcc5d55b7869f469ae783542173",
+          "browser/pricing.spec.js": "2a5aae8769240d9a39308fefa8bbe8a63212da184ed37fb0af8d3ed221a176a3",
+          "globalSetup.mjs": "906beaba53b9483d46c31991c28cbc77bbfc21724fceaba6fbe6599b3ec7a91a",
+          "package.json": "625edc8ece647ac45574cae09fa12a9fbe88cdf0908e986d153f775fc80ac5e2",
+          "playwright.config.mjs": "767860c85db62999406d5c3e418a1a9faa01b481805d01388719d5d1f863f469",
+          "public/landing.css": "7784db44ef6c46a35e1c8758aaa7de10d8a1bbbea122edc6a55ba56ae4ae5208",
+          "public/landing.html": "c8076b706fb141d45d01e8d03f53f819dd18a8fe9b05931ea9a3f51d51c49665",
+          "public/landing.js": "750446799ed4a4804a1229cefe02f1eff98ba1498b48863b1df760ce1126bd0b",
+          "public/landing.js.map": "1273d1e29ed9ffd71b53f8e34aaa16c9e17cede0db00f3ec065f289e493cfac2",
+          "public/pricing.css": "7784db44ef6c46a35e1c8758aaa7de10d8a1bbbea122edc6a55ba56ae4ae5208",
+          "public/pricing.html": "e549c0ce9406507a36e125558eec5a15dfe86b87f4dd2258bafcd85d451f7106",
+          "public/pricing.js": "660c9bf05cfac27bc63099ceef2793f826a3020ae40e3831036a0cbc0fb6b67d",
+          "public/pricing.js.map": "96282908e56e70b0a3bd28ba700ab80c2de8acedf2b642f172b80f7c54b41317",
+          "source/landing.js": "dedb3a007fbd41b75be60a404a1c75806d0c8475ac564b6ab1423eb8290f2637",
+          "source/pricing.js": "dedb3a007fbd41b75be60a404a1c75806d0c8475ac564b6ab1423eb8290f2637",
+          "tddswarm.config.json": "023d39d63b3a38e8a984fa13bbf782dfce6fd78ea2bd1aba711c20e425159903"
+        },
+        "fingerprint": "f244f4722778bd75cc73b0c01981f978fd50c9e09957607f2a6fa6b687aa636e"
+      },
+      "serviceTokens": {},
+      "configurationFiles": [
+        "playwright.config.mjs"
+      ],
+      "mode": "affected",
+      "base": null,
+      "changed": [
+        "public/landing.html"
+      ],
+      "ignored": [],
+      "selected": [
+        "browser/landing.spec.js"
+      ],
+      "total": 2,
+      "omitted": 1,
+      "selectionReduction": 0.5,
+      "reasons": [],
+      "warnings": [],
+      "decisions": [
+        {
+          "test": "browser/landing.spec.js",
+          "selected": true,
+          "reasons": [
+            "dependency-path"
+          ],
+          "paths": [
+            [
+              "browser/landing.spec.js",
+              "public/landing.html"
+            ]
+          ]
+        },
+        {
+          "test": "browser/pricing.spec.js",
+          "selected": false,
+          "reasons": [
+            "no-known-dependency-on-change"
+          ],
+          "paths": []
+        }
+      ],
+      "fingerprint": "dbe2e9af9cf129d2253940aa02164a2feaeb04eae6773d08ab122fd9cca3890a",
+      "discovery": {
+        "files": [
+          "browser/landing.spec.js",
+          "browser/pricing.spec.js"
+        ],
+        "complete": true,
+        "adapter": "playwright",
+        "warnings": []
+      },
+      "runtime": {
+        "usable": false,
+        "reason": "runtime-disabled",
+        "policy": "supplement-static-only"
+      },
+      "evidence": "static-imports-and-declared-dependencies",
+      "limitations": [
+        "Runtime observations cover exercised inputs; external services require declared versions.",
+        "Selection operates at test-file granularity.",
+        "No deployment safety or measured wall-clock savings are implied."
+      ]
+    }
+  },
+  {
+    "name": "style",
+    "full": {
+      "adapter": "playwright",
+      "exitCode": 1,
+      "durationMs": 16184,
+      "tests": [
+        {
+          "file": "browser/landing.spec.js",
+          "name": "{\"project\":\"chromium\",\"repeat\":0,\"title\":[\"landing heading style and module\"]}",
+          "title": "landing heading style and module",
+          "project": "chromium",
+          "repeatEachIndex": 0,
+          "nativeId": "3370f39aa0d6cc6ba3dc-f9f0f4be5f1cccff4ec1",
+          "status": "failed",
+          "outcome": "unexpected",
+          "expectedStatus": "passed",
+          "attempts": [
+            {
+              "status": "failed",
+              "retry": 0,
+              "durationMs": 2751,
+              "errors": [
+                {
+                  "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCSS\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByRole('heading')\nExpected: \u001b[32m\"rgb(\u001b[7m0, 128\u001b[27m, 0)\"\u001b[39m\nReceived: \u001b[31m\"rgb(\u001b[7m255, 0\u001b[27m, 0)\"\u001b[39m\nTimeout:  1000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveCSS\" getByRole('heading') with timeout 1000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('heading')\u001b[22m\n\u001b[2m    10 × locator resolved to <h1>Community tools</h1>\u001b[22m\n\u001b[2m       - unexpected value \"rgb(255, 0, 0)\"\u001b[22m\n"
+                }
+              ]
+            }
+          ],
+          "durationMs": 2751,
+          "line": 1,
+          "column": 143,
+          "id": "0a16f0637e7b21eb65fffafeb26e3de21ccf6c236ac09f7f12001f9f890cc2e5"
+        },
+        {
+          "file": "browser/pricing.spec.js",
+          "name": "{\"project\":\"chromium\",\"repeat\":0,\"title\":[\"pricing heading style and module\"]}",
+          "title": "pricing heading style and module",
+          "project": "chromium",
+          "repeatEachIndex": 0,
+          "nativeId": "e5c974b4cd75371cdc64-12812b3d1c3b4046cd90",
+          "status": "passed",
+          "outcome": "expected",
+          "expectedStatus": "passed",
+          "attempts": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "durationMs": 1655,
+              "errors": []
+            }
+          ],
+          "durationMs": 1655,
+          "line": 1,
+          "column": 143,
+          "id": "83d14df8d2c6ea8d187efa9734fbafbbdb91a076c8e21f8ce772234e2ebe58a9"
+        }
+      ],
+      "collectionFiles": [
+        "browser/landing.spec.js",
+        "browser/pricing.spec.js"
+      ],
+      "requestedFiles": [
+        "browser/landing.spec.js",
+        "browser/pricing.spec.js"
+      ],
+      "executedFiles": [
+        "browser/landing.spec.js",
+        "browser/pricing.spec.js"
+      ],
+      "missingFiles": [],
+      "unknownFiles": [],
+      "dependencyFiles": [],
+      "complete": true,
+      "projects": [
+        {
+          "name": "chromium",
+          "dependencies": [],
+          "testDir": "/private<fixture>/browser"
+        }
+      ],
+      "nativeStatus": "failed",
+      "nativeExitCode": 1,
+      "command": [
+        "<node>",
+        "node_modules/@playwright/test/cli.js",
+        "test",
+        "--reporter=<tooling>/src/reporters/playwright.cjs",
+        "--forbid-only",
+        "--update-snapshots=none",
+        "--output=<scratch>/artifacts",
+        "<fixture>/browser/landing\\.spec\\.js$",
+        "<fixture>/browser/pricing\\.spec\\.js$"
+      ],
+      "stdout": "",
+      "stderr": "(node:88355) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n(node:88487) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n",
+      "signal": null,
+      "reportErrors": []
+    },
+    "subset": {
+      "adapter": "playwright",
+      "exitCode": 1,
+      "durationMs": 10037,
+      "tests": [
+        {
+          "file": "browser/landing.spec.js",
+          "name": "{\"project\":\"chromium\",\"repeat\":0,\"title\":[\"landing heading style and module\"]}",
+          "title": "landing heading style and module",
+          "project": "chromium",
+          "repeatEachIndex": 0,
+          "nativeId": "3370f39aa0d6cc6ba3dc-f9f0f4be5f1cccff4ec1",
+          "status": "failed",
+          "outcome": "unexpected",
+          "expectedStatus": "passed",
+          "attempts": [
+            {
+              "status": "failed",
+              "retry": 0,
+              "durationMs": 2711,
+              "errors": [
+                {
+                  "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCSS\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByRole('heading')\nExpected: \u001b[32m\"rgb(\u001b[7m0, 128\u001b[27m, 0)\"\u001b[39m\nReceived: \u001b[31m\"rgb(\u001b[7m255, 0\u001b[27m, 0)\"\u001b[39m\nTimeout:  1000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveCSS\" getByRole('heading') with timeout 1000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('heading')\u001b[22m\n\u001b[2m    11 × locator resolved to <h1>Community tools</h1>\u001b[22m\n\u001b[2m       - unexpected value \"rgb(255, 0, 0)\"\u001b[22m\n"
+                }
+              ]
+            }
+          ],
+          "durationMs": 2711,
+          "line": 1,
+          "column": 143,
+          "id": "0a16f0637e7b21eb65fffafeb26e3de21ccf6c236ac09f7f12001f9f890cc2e5"
+        }
+      ],
+      "collectionFiles": [
+        "browser/landing.spec.js"
+      ],
+      "requestedFiles": [
+        "browser/landing.spec.js"
+      ],
+      "executedFiles": [
+        "browser/landing.spec.js"
+      ],
+      "missingFiles": [],
+      "unknownFiles": [],
+      "dependencyFiles": [],
+      "complete": true,
+      "projects": [
+        {
+          "name": "chromium",
+          "dependencies": [],
+          "testDir": "/private<fixture>/browser"
+        }
+      ],
+      "nativeStatus": "failed",
+      "nativeExitCode": 1,
+      "command": [
+        "<node>",
+        "node_modules/@playwright/test/cli.js",
+        "test",
+        "--reporter=<tooling>/src/reporters/playwright.cjs",
+        "--forbid-only",
+        "--update-snapshots=none",
+        "--output=<scratch>/artifacts",
+        "<fixture>/browser/landing\\.spec\\.js$"
+      ],
+      "stdout": "",
+      "stderr": "(node:88669) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n",
+      "signal": null,
+      "reportErrors": []
+    },
+    "selection": {
+      "schemaVersion": 1,
+      "provenance": {
+        "schemaVersion": 1,
+        "revision": null,
+        "runner": "ab5f3808dcb26a7b22d32b75fe6788610665059d8e79a261a59970bdb241f870",
+        "environment": {
+          "node": "v22.19.0",
+          "platform": "darwin",
+          "arch": "arm64",
+          "labels": {}
+        },
+        "services": {},
+        "serviceWarnings": [],
+        "files": {
+          "browser/landing.spec.js": "b1fd80bd56bb3121f7e1527d26bc15897c1f6dcc5d55b7869f469ae783542173",
+          "browser/pricing.spec.js": "2a5aae8769240d9a39308fefa8bbe8a63212da184ed37fb0af8d3ed221a176a3",
+          "globalSetup.mjs": "906beaba53b9483d46c31991c28cbc77bbfc21724fceaba6fbe6599b3ec7a91a",
+          "package.json": "625edc8ece647ac45574cae09fa12a9fbe88cdf0908e986d153f775fc80ac5e2",
+          "playwright.config.mjs": "767860c85db62999406d5c3e418a1a9faa01b481805d01388719d5d1f863f469",
+          "public/landing.css": "b48946b9b0e1b1fbe925782739c48d231382bea9fb3bd02a07f4fe95a5a664a5",
+          "public/landing.html": "95df58ee4d11e71d33ee3bdafb6a6613b1adaf0bfac3a34957540c3cf5cb6cc2",
+          "public/landing.js": "750446799ed4a4804a1229cefe02f1eff98ba1498b48863b1df760ce1126bd0b",
+          "public/landing.js.map": "1273d1e29ed9ffd71b53f8e34aaa16c9e17cede0db00f3ec065f289e493cfac2",
+          "public/pricing.css": "7784db44ef6c46a35e1c8758aaa7de10d8a1bbbea122edc6a55ba56ae4ae5208",
+          "public/pricing.html": "e549c0ce9406507a36e125558eec5a15dfe86b87f4dd2258bafcd85d451f7106",
+          "public/pricing.js": "660c9bf05cfac27bc63099ceef2793f826a3020ae40e3831036a0cbc0fb6b67d",
+          "public/pricing.js.map": "96282908e56e70b0a3bd28ba700ab80c2de8acedf2b642f172b80f7c54b41317",
+          "source/landing.js": "dedb3a007fbd41b75be60a404a1c75806d0c8475ac564b6ab1423eb8290f2637",
+          "source/pricing.js": "dedb3a007fbd41b75be60a404a1c75806d0c8475ac564b6ab1423eb8290f2637",
+          "tddswarm.config.json": "023d39d63b3a38e8a984fa13bbf782dfce6fd78ea2bd1aba711c20e425159903"
+        },
+        "fingerprint": "32c9ad885900966f0ddfc4c53ff736315de578373635f6dff5682778a70de8fa"
+      },
+      "serviceTokens": {},
+      "configurationFiles": [
+        "playwright.config.mjs"
+      ],
+      "mode": "affected",
+      "base": null,
+      "changed": [
+        "public/landing.css"
+      ],
+      "ignored": [],
+      "selected": [
+        "browser/landing.spec.js"
+      ],
+      "total": 2,
+      "omitted": 1,
+      "selectionReduction": 0.5,
+      "reasons": [],
+      "warnings": [],
+      "decisions": [
+        {
+          "test": "browser/landing.spec.js",
+          "selected": true,
+          "reasons": [
+            "dependency-path"
+          ],
+          "paths": [
+            [
+              "browser/landing.spec.js",
+              "public/landing.css"
+            ]
+          ]
+        },
+        {
+          "test": "browser/pricing.spec.js",
+          "selected": false,
+          "reasons": [
+            "no-known-dependency-on-change"
+          ],
+          "paths": []
+        }
+      ],
+      "fingerprint": "cfa00675f5f107877b7524992de533822dfd1c24742c3eb956d6d1d8e966dfc8",
+      "discovery": {
+        "files": [
+          "browser/landing.spec.js",
+          "browser/pricing.spec.js"
+        ],
+        "complete": true,
+        "adapter": "playwright",
+        "warnings": []
+      },
+      "runtime": {
+        "usable": false,
+        "reason": "runtime-disabled",
+        "policy": "supplement-static-only"
+      },
+      "evidence": "static-imports-and-declared-dependencies",
+      "limitations": [
+        "Runtime observations cover exercised inputs; external services require declared versions.",
+        "Selection operates at test-file granularity.",
+        "No deployment safety or measured wall-clock savings are implied."
+      ]
+    }
+  },
+  {
+    "name": "module",
+    "full": {
+      "adapter": "playwright",
+      "exitCode": 1,
+      "durationMs": 18523,
+      "tests": [
+        {
+          "file": "browser/landing.spec.js",
+          "name": "{\"project\":\"chromium\",\"repeat\":0,\"title\":[\"landing heading style and module\"]}",
+          "title": "landing heading style and module",
+          "project": "chromium",
+          "repeatEachIndex": 0,
+          "nativeId": "3370f39aa0d6cc6ba3dc-f9f0f4be5f1cccff4ec1",
+          "status": "failed",
+          "outcome": "unexpected",
+          "expectedStatus": "passed",
+          "attempts": [
+            {
+              "status": "failed",
+              "retry": 0,
+              "durationMs": 2491,
+              "errors": [
+                {
+                  "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  locator('p')\nExpected: \u001b[32m\"\u001b[7mWorking\u001b[27m module\"\u001b[39m\nReceived: \u001b[31m\"\u001b[7mBroken\u001b[27m module\"\u001b[39m\nTimeout:  1000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveText\" locator('p') with timeout 1000ms\u001b[22m\n\u001b[2m  - waiting for locator('p')\u001b[22m\n\u001b[2m    10 × locator resolved to <p>Broken module</p>\u001b[22m\n\u001b[2m       - unexpected value \"Broken module\"\u001b[22m\n"
+                }
+              ]
+            }
+          ],
+          "durationMs": 2491,
+          "line": 1,
+          "column": 143,
+          "id": "0a16f0637e7b21eb65fffafeb26e3de21ccf6c236ac09f7f12001f9f890cc2e5"
+        },
+        {
+          "file": "browser/pricing.spec.js",
+          "name": "{\"project\":\"chromium\",\"repeat\":0,\"title\":[\"pricing heading style and module\"]}",
+          "title": "pricing heading style and module",
+          "project": "chromium",
+          "repeatEachIndex": 0,
+          "nativeId": "e5c974b4cd75371cdc64-12812b3d1c3b4046cd90",
+          "status": "passed",
+          "outcome": "expected",
+          "expectedStatus": "passed",
+          "attempts": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "durationMs": 643,
+              "errors": []
+            }
+          ],
+          "durationMs": 643,
+          "line": 1,
+          "column": 143,
+          "id": "83d14df8d2c6ea8d187efa9734fbafbbdb91a076c8e21f8ce772234e2ebe58a9"
+        }
+      ],
+      "collectionFiles": [
+        "browser/landing.spec.js",
+        "browser/pricing.spec.js"
+      ],
+      "requestedFiles": [
+        "browser/landing.spec.js",
+        "browser/pricing.spec.js"
+      ],
+      "executedFiles": [
+        "browser/landing.spec.js",
+        "browser/pricing.spec.js"
+      ],
+      "missingFiles": [],
+      "unknownFiles": [],
+      "dependencyFiles": [],
+      "complete": true,
+      "projects": [
+        {
+          "name": "chromium",
+          "dependencies": [],
+          "testDir": "/private<fixture>/browser"
+        }
+      ],
+      "nativeStatus": "failed",
+      "nativeExitCode": 1,
+      "command": [
+        "<node>",
+        "node_modules/@playwright/test/cli.js",
+        "test",
+        "--reporter=<tooling>/src/reporters/playwright.cjs",
+        "--forbid-only",
+        "--update-snapshots=none",
+        "--output=<scratch>/artifacts",
+        "<fixture>/browser/landing\\.spec\\.js$",
+        "<fixture>/browser/pricing\\.spec\\.js$"
+      ],
+      "stdout": "",
+      "stderr": "(node:88998) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n(node:89529) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n",
+      "signal": null,
+      "reportErrors": []
+    },
+    "subset": {
+      "adapter": "playwright",
+      "exitCode": 1,
+      "durationMs": 4128,
+      "tests": [
+        {
+          "file": "browser/landing.spec.js",
+          "name": "{\"project\":\"chromium\",\"repeat\":0,\"title\":[\"landing heading style and module\"]}",
+          "title": "landing heading style and module",
+          "project": "chromium",
+          "repeatEachIndex": 0,
+          "nativeId": "3370f39aa0d6cc6ba3dc-f9f0f4be5f1cccff4ec1",
+          "status": "failed",
+          "outcome": "unexpected",
+          "expectedStatus": "passed",
+          "attempts": [
+            {
+              "status": "failed",
+              "retry": 0,
+              "durationMs": 1682,
+              "errors": [
+                {
+                  "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  locator('p')\nExpected: \u001b[32m\"\u001b[7mWorking\u001b[27m module\"\u001b[39m\nReceived: \u001b[31m\"\u001b[7mBroken\u001b[27m module\"\u001b[39m\nTimeout:  1000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveText\" locator('p') with timeout 1000ms\u001b[22m\n\u001b[2m  - waiting for locator('p')\u001b[22m\n\u001b[2m    11 × locator resolved to <p>Broken module</p>\u001b[22m\n\u001b[2m       - unexpected value \"Broken module\"\u001b[22m\n"
+                }
+              ]
+            }
+          ],
+          "durationMs": 1682,
+          "line": 1,
+          "column": 143,
+          "id": "0a16f0637e7b21eb65fffafeb26e3de21ccf6c236ac09f7f12001f9f890cc2e5"
+        }
+      ],
+      "collectionFiles": [
+        "browser/landing.spec.js"
+      ],
+      "requestedFiles": [
+        "browser/landing.spec.js"
+      ],
+      "executedFiles": [
+        "browser/landing.spec.js"
+      ],
+      "missingFiles": [],
+      "unknownFiles": [],
+      "dependencyFiles": [],
+      "complete": true,
+      "projects": [
+        {
+          "name": "chromium",
+          "dependencies": [],
+          "testDir": "/private<fixture>/browser"
+        }
+      ],
+      "nativeStatus": "failed",
+      "nativeExitCode": 1,
+      "command": [
+        "<node>",
+        "node_modules/@playwright/test/cli.js",
+        "test",
+        "--reporter=<tooling>/src/reporters/playwright.cjs",
+        "--forbid-only",
+        "--update-snapshots=none",
+        "--output=<scratch>/artifacts",
+        "<fixture>/browser/landing\\.spec\\.js$"
+      ],
+      "stdout": "",
+      "stderr": "(node:90222) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n",
+      "signal": null,
+      "reportErrors": []
+    },
+    "selection": {
+      "schemaVersion": 1,
+      "provenance": {
+        "schemaVersion": 1,
+        "revision": null,
+        "runner": "ab5f3808dcb26a7b22d32b75fe6788610665059d8e79a261a59970bdb241f870",
+        "environment": {
+          "node": "v22.19.0",
+          "platform": "darwin",
+          "arch": "arm64",
+          "labels": {}
+        },
+        "services": {},
+        "serviceWarnings": [],
+        "files": {
+          "browser/landing.spec.js": "b1fd80bd56bb3121f7e1527d26bc15897c1f6dcc5d55b7869f469ae783542173",
+          "browser/pricing.spec.js": "2a5aae8769240d9a39308fefa8bbe8a63212da184ed37fb0af8d3ed221a176a3",
+          "globalSetup.mjs": "906beaba53b9483d46c31991c28cbc77bbfc21724fceaba6fbe6599b3ec7a91a",
+          "package.json": "625edc8ece647ac45574cae09fa12a9fbe88cdf0908e986d153f775fc80ac5e2",
+          "playwright.config.mjs": "767860c85db62999406d5c3e418a1a9faa01b481805d01388719d5d1f863f469",
+          "public/landing.css": "7784db44ef6c46a35e1c8758aaa7de10d8a1bbbea122edc6a55ba56ae4ae5208",
+          "public/landing.html": "95df58ee4d11e71d33ee3bdafb6a6613b1adaf0bfac3a34957540c3cf5cb6cc2",
+          "public/landing.js": "ef3964db36b57a444136ac8accf6305226981f5e1be92463ee4945ac4add4b18",
+          "public/landing.js.map": "1273d1e29ed9ffd71b53f8e34aaa16c9e17cede0db00f3ec065f289e493cfac2",
+          "public/pricing.css": "7784db44ef6c46a35e1c8758aaa7de10d8a1bbbea122edc6a55ba56ae4ae5208",
+          "public/pricing.html": "e549c0ce9406507a36e125558eec5a15dfe86b87f4dd2258bafcd85d451f7106",
+          "public/pricing.js": "660c9bf05cfac27bc63099ceef2793f826a3020ae40e3831036a0cbc0fb6b67d",
+          "public/pricing.js.map": "96282908e56e70b0a3bd28ba700ab80c2de8acedf2b642f172b80f7c54b41317",
+          "source/landing.js": "dedb3a007fbd41b75be60a404a1c75806d0c8475ac564b6ab1423eb8290f2637",
+          "source/pricing.js": "dedb3a007fbd41b75be60a404a1c75806d0c8475ac564b6ab1423eb8290f2637",
+          "tddswarm.config.json": "023d39d63b3a38e8a984fa13bbf782dfce6fd78ea2bd1aba711c20e425159903"
+        },
+        "fingerprint": "2aeb4791fc1bfd3132d40f4bd0258023bed59582976a3c99add09bb6b46bbbea"
+      },
+      "serviceTokens": {},
+      "configurationFiles": [
+        "playwright.config.mjs"
+      ],
+      "mode": "affected",
+      "base": null,
+      "changed": [
+        "public/landing.js",
+        "source/landing.js"
+      ],
+      "ignored": [],
+      "selected": [
+        "browser/landing.spec.js"
+      ],
+      "total": 2,
+      "omitted": 1,
+      "selectionReduction": 0.5,
+      "reasons": [],
+      "warnings": [],
+      "decisions": [
+        {
+          "test": "browser/landing.spec.js",
+          "selected": true,
+          "reasons": [
+            "dependency-path"
+          ],
+          "paths": [
+            [
+              "browser/landing.spec.js",
+              "public/landing.js"
+            ],
+            [
+              "browser/landing.spec.js",
+              "source/landing.js"
+            ]
+          ]
+        },
+        {
+          "test": "browser/pricing.spec.js",
+          "selected": false,
+          "reasons": [
+            "no-known-dependency-on-change"
+          ],
+          "paths": []
+        }
+      ],
+      "fingerprint": "e069e9a8a4b0feea81669af1d9d9234a4cd5298423f3de85852414413645e007",
+      "discovery": {
+        "files": [
+          "browser/landing.spec.js",
+          "browser/pricing.spec.js"
+        ],
+        "complete": true,
+        "adapter": "playwright",
+        "warnings": []
+      },
+      "runtime": {
+        "usable": false,
+        "reason": "runtime-disabled",
+        "policy": "supplement-static-only"
+      },
+      "evidence": "static-imports-and-declared-dependencies",
+      "limitations": [
+        "Runtime observations cover exercised inputs; external services require declared versions.",
+        "Selection operates at test-file granularity.",
+        "No deployment safety or measured wall-clock savings are implied."
+      ]
+    }
+  }
+]

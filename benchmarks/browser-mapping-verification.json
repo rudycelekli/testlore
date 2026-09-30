@@ -1,0 +1,147 @@
+{
+  "schemaVersion": 1,
+  "scope": "Controlled real Chromium two-route mapping proof",
+  "passed": true,
+  "browser": {
+    "channel": "chrome",
+    "versions": [
+      "154.0.8037.58"
+    ]
+  },
+  "library": {
+    "name": "@playwright/test",
+    "version": "1.63.0"
+  },
+  "capture": {
+    "complete": true,
+    "cases": 2,
+    "routes": [
+      {
+        "file": "browser/pricing.spec.js",
+        "routes": [
+          "/pricing.html"
+        ],
+        "javascriptEntries": 1,
+        "cssEntries": 1
+      },
+      {
+        "file": "browser/landing.spec.js",
+        "routes": [
+          "/landing.html"
+        ],
+        "javascriptEntries": 1,
+        "cssEntries": 1
+      }
+    ],
+    "warnings": []
+  },
+  "proposal": {
+    "observationsComplete": true,
+    "closedWorld": false,
+    "reviewRequired": true,
+    "mappedSources": [
+      {
+        "file": "browser/pricing.spec.js",
+        "dependencies": [
+          "browser/pricing.spec.js",
+          "public/pricing.css",
+          "public/pricing.html",
+          "public/pricing.js",
+          "public/pricing.js.map",
+          "source/pricing.js"
+        ]
+      },
+      {
+        "file": "browser/landing.spec.js",
+        "dependencies": [
+          "browser/landing.spec.js",
+          "public/landing.css",
+          "public/landing.html",
+          "public/landing.js",
+          "public/landing.js.map",
+          "source/landing.js"
+        ]
+      }
+    ],
+    "warnings": []
+  },
+  "faults": [
+    {
+      "name": "heading",
+      "changed": [
+        "public/landing.html"
+      ],
+      "mode": "affected",
+      "selected": [
+        "browser/landing.spec.js"
+      ],
+      "total": 2,
+      "warnings": [],
+      "fullCaught": true,
+      "subsetCaught": true,
+      "sameCase": true,
+      "fullCases": 2,
+      "subsetCases": 1
+    },
+    {
+      "name": "style",
+      "changed": [
+        "public/landing.css"
+      ],
+      "mode": "affected",
+      "selected": [
+        "browser/landing.spec.js"
+      ],
+      "total": 2,
+      "warnings": [],
+      "fullCaught": true,
+      "subsetCaught": true,
+      "sameCase": true,
+      "fullCases": 2,
+      "subsetCases": 1
+    },
+    {
+      "name": "module",
+      "changed": [
+        "public/landing.js",
+        "source/landing.js"
+      ],
+      "mode": "affected",
+      "selected": [
+        "browser/landing.spec.js"
+      ],
+      "total": 2,
+      "warnings": [],
+      "fullCaught": true,
+      "subsetCaught": true,
+      "sameCase": true,
+      "fullCases": 2,
+      "subsetCases": 1
+    }
+  ],
+  "rawArtifacts": [
+    {
+      "file": "capture.json",
+      "sha256": "3c3f8235b9715266f84cc066cb150dbd063ee4f82ac9e1d95d8071b5e7eff6f0"
+    },
+    {
+      "file": "proposal.json",
+      "sha256": "edebad4f889257899cafa4d07e0b2eec57cf28bf97c2c79b6112d77a31c9811c"
+    },
+    {
+      "file": "faults.json",
+      "sha256": "63172c7af4005c0d6eca760cee11ce017cca7cecfc48ccd64636128ce5f5d936"
+    },
+    {
+      "file": "fixture.json",
+      "sha256": "50208d51eec076ee799a6011d6d4fb0bc3caea72a161761bfbb45a8f52d63fa2"
+    }
+  ],
+  "fixtureHash": "092336c364657634ac916467edf7c23b0d697afb911e1d5c90d295b83ffe4807",
+  "limitations": [
+    "Manually authored fixture and three fixed defects; no broad recall or wall-clock speed claim.",
+    "URL-to-directory authority is explicit; source maps are local tracked files, not remote downloads.",
+    "Mappings were applied only within this disposable fixture after proposal review simulation.",
+    "Observed requests and executed coverage do not make dependency declarations complete."
+  ]
+}

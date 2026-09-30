@@ -1,0 +1,129 @@
+{
+  "schemaVersion": 1,
+  "type": "browser-mapping-proposal",
+  "evidenceHash": "ae04f2cd9f4d57923f188b63f9dec49049df08d155ffe0ce96753934cacc29c3",
+  "provenance": {
+    "schemaVersion": 1,
+    "revision": null,
+    "runner": "ab5f3808dcb26a7b22d32b75fe6788610665059d8e79a261a59970bdb241f870",
+    "environment": {
+      "node": "v22.19.0",
+      "platform": "darwin",
+      "arch": "arm64",
+      "labels": {}
+    },
+    "services": {},
+    "serviceWarnings": [],
+    "files": {
+      "browser/landing.spec.js": "b1fd80bd56bb3121f7e1527d26bc15897c1f6dcc5d55b7869f469ae783542173",
+      "browser/pricing.spec.js": "2a5aae8769240d9a39308fefa8bbe8a63212da184ed37fb0af8d3ed221a176a3",
+      "globalSetup.mjs": "906beaba53b9483d46c31991c28cbc77bbfc21724fceaba6fbe6599b3ec7a91a",
+      "package.json": "625edc8ece647ac45574cae09fa12a9fbe88cdf0908e986d153f775fc80ac5e2",
+      "playwright.config.mjs": "767860c85db62999406d5c3e418a1a9faa01b481805d01388719d5d1f863f469",
+      "public/landing.css": "7784db44ef6c46a35e1c8758aaa7de10d8a1bbbea122edc6a55ba56ae4ae5208",
+      "public/landing.html": "95df58ee4d11e71d33ee3bdafb6a6613b1adaf0bfac3a34957540c3cf5cb6cc2",
+      "public/landing.js": "750446799ed4a4804a1229cefe02f1eff98ba1498b48863b1df760ce1126bd0b",
+      "public/landing.js.map": "1273d1e29ed9ffd71b53f8e34aaa16c9e17cede0db00f3ec065f289e493cfac2",
+      "public/pricing.css": "7784db44ef6c46a35e1c8758aaa7de10d8a1bbbea122edc6a55ba56ae4ae5208",
+      "public/pricing.html": "e549c0ce9406507a36e125558eec5a15dfe86b87f4dd2258bafcd85d451f7106",
+      "public/pricing.js": "660c9bf05cfac27bc63099ceef2793f826a3020ae40e3831036a0cbc0fb6b67d",
+      "public/pricing.js.map": "96282908e56e70b0a3bd28ba700ab80c2de8acedf2b642f172b80f7c54b41317",
+      "source/landing.js": "dedb3a007fbd41b75be60a404a1c75806d0c8475ac564b6ab1423eb8290f2637",
+      "source/pricing.js": "dedb3a007fbd41b75be60a404a1c75806d0c8475ac564b6ab1423eb8290f2637",
+      "tddswarm.config.json": "e3f73825f5edbe34ac50da2543e6f8f16f22fe9fcd0fbe9088cc68e439109a74"
+    },
+    "fingerprint": "9c0d68d1f41edd989ee0da4114feb2433cbaa58cb8260bda9c54fe1c185e814b"
+  },
+  "configurationHash": "07027aaeddae6110de6ca3ca9a3cc89b2b57919c4242c78b8697713c6bd5f03c",
+  "observationsComplete": true,
+  "closedWorld": false,
+  "reviewRequired": true,
+  "caseMappings": [
+    {
+      "caseId": "83d14df8d2c6ea8d187efa9734fbafbbdb91a076c8e21f8ce772234e2ebe58a9",
+      "nativeId": "e5c974b4cd75371cdc64-12812b3d1c3b4046cd90",
+      "repeatEachIndex": 0,
+      "file": "browser/pricing.spec.js",
+      "routes": [
+        "http://127.0.0.1:<port>/pricing.html"
+      ],
+      "dependencies": [
+        "browser/pricing.spec.js",
+        "public/pricing.css",
+        "public/pricing.html",
+        "public/pricing.js",
+        "public/pricing.js.map",
+        "source/pricing.js"
+      ],
+      "unresolved": []
+    },
+    {
+      "caseId": "0a16f0637e7b21eb65fffafeb26e3de21ccf6c236ac09f7f12001f9f890cc2e5",
+      "nativeId": "3370f39aa0d6cc6ba3dc-f9f0f4be5f1cccff4ec1",
+      "repeatEachIndex": 0,
+      "file": "browser/landing.spec.js",
+      "routes": [
+        "http://127.0.0.1:<port>/landing.html"
+      ],
+      "dependencies": [
+        "browser/landing.spec.js",
+        "public/landing.css",
+        "public/landing.html",
+        "public/landing.js",
+        "public/landing.js.map",
+        "source/landing.js"
+      ],
+      "unresolved": []
+    }
+  ],
+  "proposed": {
+    "browser": {
+      "routes": {
+        "/pricing.html": {
+          "tests": [
+            "browser/pricing.spec.js"
+          ],
+          "inputs": [
+            "browser/pricing.spec.js",
+            "public/pricing.css",
+            "public/pricing.html",
+            "public/pricing.js",
+            "public/pricing.js.map",
+            "source/pricing.js"
+          ]
+        },
+        "/landing.html": {
+          "tests": [
+            "browser/landing.spec.js"
+          ],
+          "inputs": [
+            "browser/landing.spec.js",
+            "public/landing.css",
+            "public/landing.html",
+            "public/landing.js",
+            "public/landing.js.map",
+            "source/landing.js"
+          ]
+        }
+      }
+    }
+  },
+  "manualRoutes": [],
+  "warnings": [],
+  "policy": {
+    "urlRoots": [
+      {
+        "origin": "http://127.0.0.1:<port>",
+        "urlPrefix": "/",
+        "directory": "public"
+      }
+    ],
+    "serverInputs": {}
+  },
+  "limitations": [
+    "Browser requests and executed coverage are observations, not proof of unexercised branches or a complete closed world.",
+    "Only an explicitly configured URL root or server input declaration gives a request authority to map to project files.",
+    "Coverage is Chromium only; additional pages, external services, unknown source maps and missing instrumentation require review and conservative fallback."
+  ],
+  "integrity": "8cbb055afd38c1a91100a3121c1b6fe05609d98b452e73f0e68c19a0cc68b85f"
+}

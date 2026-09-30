@@ -1,0 +1,14 @@
+{
+  "public/landing.css": "h1 { color: rgb(0, 128, 0); }",
+  "public/landing.html": "<link rel=\"stylesheet\" href=\"/landing.css\"><h1>Community tools</h1><p>ready</p><script src=\"/landing.js\"></script>",
+  "public/landing.js": "document.querySelector('p').textContent='Working module';\n//# sourceMappingURL=landing.js.map\n",
+  "public/landing.js.map": "{\n  \"version\": 3,\n  \"file\": \"landing.js\",\n  \"sources\": [\n    \"../source/landing.js\"\n  ],\n  \"names\": [],\n  \"mappings\": \"AAAA\"\n}",
+  "public/pricing.css": "h1 { color: rgb(0, 128, 0); }",
+  "public/pricing.html": "<link rel=\"stylesheet\" href=\"/pricing.css\"><h1>Simple pricing</h1><p>ready</p><script src=\"/pricing.js\"></script>",
+  "public/pricing.js": "document.querySelector('p').textContent='Working module';\n//# sourceMappingURL=pricing.js.map\n",
+  "public/pricing.js.map": "{\n  \"version\": 3,\n  \"file\": \"pricing.js\",\n  \"sources\": [\n    \"../source/pricing.js\"\n  ],\n  \"names\": [],\n  \"mappings\": \"AAAA\"\n}",
+  "source/landing.js": "document.querySelector('p').textContent='Working module';\n",
+  "source/pricing.js": "document.querySelector('p').textContent='Working module';\n",
+  "browser/landing.spec.js": "import {test as base,expect} from '@playwright/test';import {createBrowserTest} from 'testlore/playwright';const test=createBrowserTest(base);test('landing heading style and module',async({page})=>{await page.goto(process.env.FIXTURE_ORIGIN+'/landing.html');await expect(page.getByRole('heading')).toHaveText('Community tools');await expect(page.getByRole('heading')).toHaveCSS('color','rgb(0, 128, 0)');await expect(page.locator('p')).toHaveText('Working module');});",
+  "browser/pricing.spec.js": "import {test as base,expect} from '@playwright/test';import {createBrowserTest} from 'testlore/playwright';const test=createBrowserTest(base);test('pricing heading style and module',async({page})=>{await page.goto(process.env.FIXTURE_ORIGIN+'/pricing.html');await expect(page.getByRole('heading')).toHaveText('Simple pricing');await expect(page.getByRole('heading')).toHaveCSS('color','rgb(0, 128, 0)');await expect(page.locator('p')).toHaveText('Working module');});"
+}
