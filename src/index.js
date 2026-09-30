@@ -12,3 +12,5 @@ export { aqeGenerate, aqeCapabilities } from './adapters/aqe.js';
 export { installQualityLayer, installQualityWorkflow } from './quality-layer.js';
 export { improve } from './improvement.js';
 export { publishImprovement } from './pull-request.js';
+export {rememberValidation, recallLessons, reflectLearning, exportLearning, copyLearning, mergeLearning} from './learning.js';
+export {qualityAgent,ensureQualityAgent,seedRequirements} from './agent-profile.js';

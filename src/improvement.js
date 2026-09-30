@@ -1,3 +1,5 @@
+import {qualityAgent,ensureQualityAgent} from './agent-profile.js';
+import {copyLearning,mergeLearning} from './learning.js';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
@@ -97,6 +99,7 @@ export async function improve(root, options = {}) {
   const worktree = prefix ? path.join(worktreeRoot, prefix) : worktreeRoot;
   const result = { schemaVersion: 1, id, branch, worktree, worktreeRoot, base, sourceHead: base, baseBranch, sha: null, status: 'preparing', merged: false, originalCheckout: root };
   const receipt = () => {
+    result.learning=mergeLearning(worktree,root);
     const directory = safePath(worktree, '.tddswarm/improvement'); fs.mkdirSync(directory, { recursive: true });
     result.receipt = path.join(directory, 'result.json'); fs.writeFileSync(result.receipt, JSON.stringify(result, null, 2)); return result;
   };
@@ -104,6 +107,8 @@ export async function improve(root, options = {}) {
     git(repository, ['worktree', 'add', '-b', branch, worktreeRoot, base]);
     const dependencies = path.join(root, 'node_modules');
     if (fs.existsSync(dependencies) && !fs.existsSync(path.join(worktree, 'node_modules'))) fs.symlinkSync(fs.realpathSync(dependencies), path.join(worktree, 'node_modules'), 'dir');
+    result.agentProfile=ensureQualityAgent(worktree,{name:qualityAgent(root).name}).profile;
+    result.learningSeed=copyLearning(root,worktree);
     // Bound original input must match the checked-out branch before any agent runs.
     const initial = freshness(before, snapshot(worktree, readConfig(worktree)));
     if (!initial.fresh) throw new Error(`Branch inputs differ from original: ${initial.reasons.join(', ')}`);

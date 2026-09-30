@@ -1,6 +1,6 @@
 # Architecture and implemented contract
 
-TDDSwarm is an experimental local test intelligence layer. Deterministic evidence controls routing; agents propose test improvements.
+TestLore is an experimental local test intelligence layer. Deterministic evidence controls routing; agents propose test improvements.
 
 ```mermaid
 flowchart LR

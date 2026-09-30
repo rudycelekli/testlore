@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-09-30T02:30:19.894Z",
+  "scope": "One actual native Codex held-out mutation ablation with and without one prior validated historical example",
+  "cli": "codex-cli 0.155.1",
+  "node": "v22.19.0",
+  "model": "installed CLI default; unpinned",
+  "order": [
+    "without_memory",
+    "historical_memory"
+  ],
+  "source": "export function bounded(value,lower,upper){if(lower>upper)throw new RangeError('bounds');return Math.min(upper,Math.max(lower,value));}\n",
+  "requirements": "For finite numbers, bounded(value,lower,upper) returns lower below the lower bound, upper above the upper bound, and the unchanged value within inclusive bounds. Equal bounds return that bound. Reversed bounds throw RangeError. Test negative values, zero, boundaries and interior values with independent exact expectations, not implementation-computed oracles. Use named Node test/assert cases.",
+  "implementationHashes": {
+    "src/learning.js": "51e365974d175b65d71aa7133caf19b4b4d317c95bd6f54724ebff2099e615f4",
+    "src/swarm.js": "e1fcaca3d3963dd9af2060ef79442cb94550e76485d4aa5509c4cfa581860be5",
+    "src/candidates.js": "d1dac5493ce9084d61eb52fa52098414f3f6b3753dd4cee9cf1d1d117f3583fc",
+    "src/adapters/codex.js": "a304a13b8ae0bb3f2fc7b733e865e3faaa8efd61fd9d3417b2318b9556b52c92",
+    "scripts/learning-ablation.js": "e686dd6fa1b321a7bd47acbc5787425e4f2aaadb2de84a81714e6a5cf00a9f01"
+  },
+  "variants": [
+    {
+      "variant": "without_memory",
+      "durationMs": 57941,
+      "recalledRecords": 0,
+      "calls": 3,
+      "detected": 4,
+      "total": 4,
+      "cases": 33,
+      "complete": true
+    },
+    {
+      "variant": "historical_memory",
+      "durationMs": 75514,
+      "recalledRecords": 1,
+      "calls": 3,
+      "detected": 4,
+      "total": 4,
+      "cases": 16,
+      "complete": true
+    }
+  ],
+  "limitations": [
+    "One stochastic run per variant on one small controlled task; not a general learning improvement or competitor ranking.",
+    "Historical pattern is human-authored and genuinely validated; learned snippets are advisory, not model-weight training.",
+    "Identical current source/specification is supplied; four mutation payloads are withheld from every worker.",
+    "Execution order and unpinned default model may confound timing and output differences.",
+    "Generation consumes the existing native account allowance; no provider API-key fallback."
+  ]
+}

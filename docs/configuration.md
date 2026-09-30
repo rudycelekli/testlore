@@ -17,7 +17,7 @@
 }
 ```
 
-For Jest: `["npx", "--no-install", "jest", "--runTestsByPath", "{files}"]`. For Node: `["node", "--test", "{files}"]`. A custom wrapper must accept the exact files and exit nonzero on failures. Configured executables run with your permissions. TDDSwarm does not override your runner's setup, environment, or services.
+For Jest: `["npx", "--no-install", "jest", "--runTestsByPath", "{files}"]`. For Node: `["node", "--test", "{files}"]`. A custom wrapper must accept the exact files and exit nonzero on failures. Configured executables run with your permissions. TestLore does not override your runner's setup, environment, or services.
 
 ## Discovery
 
@@ -32,8 +32,8 @@ Git-tracked and nonignored untracked files are scanned; symlinks and `.git`, `no
 `--base HEAD` compares the current working tree to HEAD, including staged, unstaged, and untracked files. It does **not** mean “the latest committed change.” For a committed pull request, use its merge base or explicit base SHA:
 
 ```sh
-npx --no-install tddswarm plan --base <base-sha> --json
-npx --no-install tddswarm run --shadow --base <base-sha>
+npx --no-install testlore plan --base <base-sha> --json
+npx --no-install testlore run --shadow --base <base-sha>
 ```
 
 Fetch enough history to resolve that SHA. Deleted files and removed imports are evaluated with old source edges where available. `.tddswarm/` metadata does not count as a source change. Invalid Git references cause full selection, with an explicit reason.

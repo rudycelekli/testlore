@@ -1,3 +1,4 @@
+import {rememberValidation} from './learning.js';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
@@ -182,6 +183,8 @@ export function validateCandidates(root, id, options = {}) {
   const result = { schemaVersion: 1, id, validatedAt: new Date().toISOString(), manifestHash: hash, provenance: current, accepted: !reasons.length, reasons: [...new Set(reasons)], original, candidate, missingCases, defects, measured: { execution: Boolean(original && candidate), heldOutDefects: defects.length }, isolation: 'disposable-file-copy-with-trusted-dependencies', applied: false };
   result.integrity=digest(result);
   fs.writeFileSync(path.join(dir, 'validation.json'), JSON.stringify(result, null, 2));
+  // Historical learning is advisory and never changes acceptance.
+  rememberValidation(root, manifest, result, config);
   return result;
 }
 

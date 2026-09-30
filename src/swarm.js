@@ -1,3 +1,5 @@
+import {qualityAgent} from './agent-profile.js';
+import {recallLessons} from './learning.js';
 import fs from 'node:fs';
 import path from 'node:path';
 import { spawn } from 'node:child_process';
@@ -12,7 +14,7 @@ export function workOrder(root) {
   const report = audit(root);
   const subjects = report.sourcesWithoutImportingTests.length ? report.sourcesWithoutImportingTests : Object.keys(graph.sources).filter(f => !TEST.test(f));
   return {
-    schemaVersion: 1, purpose: report.testFiles ? 'improve-existing-tests' : 'bootstrap-tests',
+    schemaVersion: 1, agentProfile:qualityAgent(root), purpose: report.testFiles ? 'improve-existing-tests' : 'bootstrap-tests',
     subjects, audit: report,
     roles: ['architect', 'author', 'reviewer'],
     acceptance: ['Use requirements or independent invariants for expected behavior.', 'Cover boundary/error cases and observable behavior.', 'Keep tests deterministic and independent.', 'Preserve integration coverage.', 'Return candidates for review; execution and mutation quality are not yet measured.'],
@@ -61,7 +63,8 @@ export async function generate(root, options = {}) {
   const requirements = fs.existsSync(requirementsPath) ? fs.readFileSync(safePath(root, 'tddswarm.requirements.md'), 'utf8') : '';
   if (!requirements.trim()) throw new Error('Add tddswarm.requirements.md with independent behavior expectations before --execute.');
   if (Buffer.byteLength(JSON.stringify(context)) + Buffer.byteLength(requirements) > 256 * 1024) throw new Error('Agent context exceeds 256 KB. Scope this run to a smaller project.');
-  const architectural = await callAgent(agent, { schemaVersion: 1, role: 'architect', order, requirements, context }, root);
+  const learning = recallLessons(root, (requirements+' '+order.subjects.join(' ')).slice(0,4096), {limit:5,maxChars:12000,config});
+  const architectural = await callAgent(agent, { schemaVersion: 1, role: 'architect', order, requirements, context, learning }, root);
   if (!Array.isArray(architectural.tasks) || !architectural.tasks.length || architectural.tasks.length > 12) throw new Error('Architect must return 1–12 tasks');
   for (const task of architectural.tasks) {
     if (typeof task.subject !== 'string' || !graph.sources[task.subject] || typeof task.instructions !== 'string' || task.instructions.length > 20000) throw new Error('Invalid architect task');
@@ -69,7 +72,7 @@ export async function generate(root, options = {}) {
   // Three authors at a time; maximum 12 tasks + architect + reviewer = 14 calls.
   const drafts = [];
   for (let offset = 0; offset < architectural.tasks.length; offset += 3) {
-    const batch = await Promise.all(architectural.tasks.slice(offset, offset + 3).map(task => callAgent(agent, { schemaVersion: 1, role: 'author', task, requirements, context }, root)));
+    const batch = await Promise.all(architectural.tasks.slice(offset, offset + 3).map(task => callAgent(agent, { schemaVersion: 1, role: 'author', agentProfile:order.agentProfile, task, requirements, context, learning:recallLessons(root,(task.subject+' '+task.instructions+' '+requirements).slice(0,4096),{limit:3,maxChars:8000,config}) }, root)));
     drafts.push(...batch);
   }
   const candidates = drafts.flatMap(d => {

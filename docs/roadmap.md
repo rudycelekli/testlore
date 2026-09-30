@@ -19,6 +19,12 @@ Candidate preservation checks compare collection identities and passing outcomes
 
 Browser declarations represent routes, copy, styles, templates and localization as inputs to an existing browser runner. Imported runtime reports trust their producer's completeness attestation. Observed runtime dependencies always supplement static edges; inference about unexercised branches remains a project policy.
 
+## Persistent learning and public comparison
+
+TestLore adds local retain/recall/reflect operations over validated proposals and measured outcomes. Retrieval supplies bounded historical examples to architects and authors while independent review, execution, and selection policy retain authority. Aggregate export is explicit and contains no source or project identifiers. See [learning](learning.md) and [comparison](comparison.md).
+
+The GitHub project and primary command are now TestLore (`testlore`); `tddswarm` and its existing configuration/metadata paths remain compatible.
+
 ## Continuing qualification
 
 - Broader real-project change corpora, including missed dependencies and order-dependent subset failures.

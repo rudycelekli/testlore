@@ -16,7 +16,7 @@ export function aqeCapabilities(command = ['aqe']) {
 }
 export function aqeGenerate(root, options = {}) {
   root = path.resolve(root);
-  if (options.role) throw new Error('AQE CLI does not implement TDDSwarm architect/author/reviewer JSON roles. Use aqeGenerate directly.');
+  if (options.role) throw new Error('AQE CLI does not implement TestLore architect/author/reviewer JSON roles. Use aqeGenerate directly.');
   const command = options.command || ['aqe']; const capabilities = aqeCapabilities(command);
   if (!capabilities.available) return { ...capabilities, executed: false, complete: false };
   const framework = options.framework || 'vitest';
@@ -58,7 +58,7 @@ export function aqeGenerate(root, options = {}) {
     }
     const directory = safePath(root, `.tddswarm/candidates/${id}`); fs.mkdirSync(directory, { recursive: true });
     for (const [file, content] of files) { const destination = safePath(directory, file); fs.mkdirSync(path.dirname(destination), { recursive: true }); fs.writeFileSync(destination, content, { flag: 'wx' }); }
-    const report = { adapter: 'agentic-qe-cli', executed: true, complete: true, exitCode: 0, id, directory, files: [...files.keys()], status: 'unreviewed-candidates', applied: false, measured: { execution: false, mutation: false }, upstream: { coverageEstimate: generated.coverageEstimate, llmEnhanced: generated.tests.every(t => t.llmEnhanced === true), qualityGates: generated.tests.map(t => t.qualityGateResult || null) }, limitations: ['AQE coverageEstimate and qualityGateResult are upstream estimates, not TDDSwarm measurements.', 'Candidates require independent oracle review and isolated execution.'] };
+    const report = { adapter: 'agentic-qe-cli', executed: true, complete: true, exitCode: 0, id, directory, files: [...files.keys()], status: 'unreviewed-candidates', applied: false, measured: { execution: false, mutation: false }, upstream: { coverageEstimate: generated.coverageEstimate, llmEnhanced: generated.tests.every(t => t.llmEnhanced === true), qualityGates: generated.tests.map(t => t.qualityGateResult || null) }, limitations: ['AQE coverageEstimate and qualityGateResult are upstream estimates, not TestLore measurements.', 'Candidates require independent oracle review and isolated execution.'] };
     fs.writeFileSync(path.join(directory, 'aqe-review.json'), JSON.stringify(report, null, 2)); return report;
   } finally { fs.rmSync(workspace, { recursive: true, force: true }); }
 }

@@ -1,4 +1,4 @@
-name: TDDSwarm shadow and affected tests
+name: TestLore shadow and affected tests
 description: Explainable test selection, full-suite shadow comparison, and retained evidence
 inputs:
   base:

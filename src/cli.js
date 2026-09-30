@@ -3,13 +3,14 @@ import fs from 'node:fs';
 import path from 'node:path';
 import {spawnSync} from 'node:child_process';
 import { fileURLToPath } from 'node:url';
-import { audit, modules, plan, generate, run, snapshot, ingestQuality, measureStability, captureRuntime, stagePatch, validateCandidates, applyPatch, externalPlan, externalRun, aqeGenerate, improve, installQualityLayer, installQualityWorkflow, publishImprovement } from './index.js';
+import { audit, modules, plan, generate, run, snapshot, ingestQuality, measureStability, captureRuntime, stagePatch, validateCandidates, applyPatch, externalPlan, externalRun, aqeGenerate, improve, installQualityLayer, installQualityWorkflow, publishImprovement, recallLessons, reflectLearning, exportLearning, ensureQualityAgent, seedRequirements } from './index.js';
 import { safePath, readConfig, git } from './files.js';
 
-const help = `TDDSwarm — know why each test runs.
+const help = `TestLore — know why each test runs.
 
-Usage: tddswarm <command> [options]
+Usage: testlore <command> [options]
 
+  agent       Create or inspect your project quality agent (--name optional)
   improve     New branch, reviewed tests, full validation, automatic GitHub PR
   init        Create configuration and a local health report (never overwrite)
   audit       Grade static test structure; report what has not been measured
@@ -26,6 +27,9 @@ Usage: tddswarm <command> [options]
   apply       Review or apply a validated patch (--id id --execute)
   external-plan / external-run   Delegate to pytest-testmon, Nx, or Bazel
   aqe         Generate unreviewed candidates through an installed AQE CLI
+  learn       Reflect on validated local outcomes and supported lessons
+  recall      Retrieve advisory historical test patterns (--query text)
+  learning-export   Export aggregate metadata without source or identifiers
   demo        Show a copy-only change, a shared change, and a conservative fallback
 
 Options:
@@ -47,7 +51,7 @@ need explicit declarations. No AI account required for audit, plan, or run.
 export function parseArgs(args) {
   const options = {};
   let command = 'help';
-  const values = new Set(['root','base','changed','output','report','type','provenance','repeat','id','patch','target','framework','head','action-ref','base-branch']);
+  const values = new Set(['root','base','changed','output','report','type','provenance','repeat','id','patch','target','framework','head','action-ref','base-branch','query','name']);
   const flags = new Set(['json', 'full', 'shadow', 'execute', 'help', 'version', 'local', 'no-ci']);
   if (args[0] && !args[0].startsWith('-')) command = args.shift();
   for (let i = 0; i < args.length; i++) {
@@ -110,7 +114,9 @@ export async function main(args = process.argv.slice(2)) {
       }
       const patch=options.patch?JSON.parse(fs.readFileSync(path.resolve(root,options.patch),'utf8')):undefined;
       let defaultBranch='main';try{defaultBranch=git(root,['symbolic-ref','--short','refs/remotes/origin/HEAD']).trim().replace(/^[^/]+\//,'');}catch{}
-      result=await improve(root,{...options,patch,agent,initialize:branch=>installQualityLayer(branch,{ci:false}),prepare:branch=>installQualityLayer(branch,{ci:false}),prepareRepository:(repo,{project})=>options['no-ci']?[]:installQualityWorkflow(repo,{project,actionRef:options['action-ref'],defaultBranch})});
+      const projectAgent=ensureQualityAgent(root);
+      result=await improve(root,{...options,patch,agent,initialize:branch=>[...installQualityLayer(branch,{ci:false}),...seedRequirements(branch)],prepare:branch=>installQualityLayer(branch,{ci:false}),prepareRepository:(repo,{project})=>options['no-ci']?[]:installQualityWorkflow(repo,{project,actionRef:options['action-ref'],defaultBranch})});
+      result.agentProfile=projectAgent.profile;
       if(result.status==='ready-for-review'&&!options.local){
         try{result=publishImprovement(root,result,{baseBranch:options['base-branch']});}
         catch(error){result={...result,published:false,publicationError:error.message};}
@@ -118,6 +124,10 @@ export async function main(args = process.argv.slice(2)) {
       if(result.receipt)fs.writeFileSync(result.receipt,JSON.stringify(result,null,2));
       break;
     }
+    case 'agent': result=ensureQualityAgent(root,{name:options.name});break;
+    case 'learn': result=reflectLearning(root);break;
+    case 'recall': if(!options.query)throw new Error('--query is required');result=recallLessons(root,options.query);break;
+    case 'learning-export': result=exportLearning(root);break;
     case 'snapshot': {
       result=snapshot(root,readConfig(root));
       const target=safePath(root,options.output||'.tddswarm/snapshot.json');fs.mkdirSync(path.dirname(target),{recursive:true});fs.writeFileSync(target,JSON.stringify(result,null,2));
@@ -164,5 +174,5 @@ export async function main(args = process.argv.slice(2)) {
 }
 if (process.argv[1] && fs.realpathSync(process.argv[1]) === fs.realpathSync(fileURLToPath(import.meta.url))) {
   try { process.exitCode = await main(); }
-  catch (error) { console.error(`TDDSwarm: ${error.message}`); process.exitCode = 2; }
+  catch (error) { console.error(`TestLore: ${error.message}`); process.exitCode = 2; }
 }

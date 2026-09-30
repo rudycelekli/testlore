@@ -1,9 +1,10 @@
 {
-  "name": "tddswarm",
+  "name": "testlore",
   "version": "0.1.0",
-  "description": "An explainable, local-first test intelligence layer: audit, modularize, and run impacted tests.",
+  "description": "A learning quality engineer: improve, measure, and intelligently route tests with reviewable evidence.",
   "type": "module",
   "bin": {
+    "testlore": "src/cli.js",
     "tddswarm": "src/cli.js",
     "tddswarm-codex-agent": "src/adapters/codex.js"
   },
@@ -34,10 +35,10 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/rudycelekli/tddswarm.git"
+    "url": "https://github.com/rudycelekli/testlore.git"
   },
   "bugs": {
-    "url": "https://github.com/rudycelekli/tddswarm/issues"
+    "url": "https://github.com/rudycelekli/testlore/issues"
   },
   "keywords": [
     "testing",

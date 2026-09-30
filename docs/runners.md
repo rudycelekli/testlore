@@ -1,6 +1,6 @@
 # Native runner evidence
 
-TDDSwarm retains filesystem discovery by default for compatibility. Set `"discovery": "native"` to reconcile selection with the configured runner's real collection scope. A failed discovery returns fallback files with an explicit incomplete warning: it cannot authorize omission or certify shadow recall.
+TestLore retains filesystem discovery by default for compatibility. Set `"discovery": "native"` to reconcile selection with the configured runner's real collection scope. A failed discovery returns fallback files with an explicit incomplete warning: it cannot authorize omission or certify shadow recall.
 
 ```json
 {
@@ -11,7 +11,7 @@ TDDSwarm retains filesystem discovery by default for compatibility. Set `"discov
 }
 ```
 
-The adapter is inferred from the runner argv. `"adapter": "jest"`, `"vitest"`, or `"node"` overrides inference for wrappers. TDDSwarm invokes argv directly, without a shell. `env` values override inherited process environment; the inherited `NODE_TEST_CONTEXT` is removed so nested Node runners start independently. Each invocation has a default two-minute timeout, configurable through `runnerTimeoutMs`.
+The adapter is inferred from the runner argv. `"adapter": "jest"`, `"vitest"`, or `"node"` overrides inference for wrappers. TestLore invokes argv directly, without a shell. `env` values override inherited process environment; the inherited `NODE_TEST_CONTEXT` is removed so nested Node runners start independently. Each invocation has a default two-minute timeout, configurable through `runnerTimeoutMs`.
 
 | Runner | Discovery | Execution evidence | Resolution |
 | --- | --- | --- | --- |
@@ -57,6 +57,6 @@ TDDSWARM_VITEST_BIN=/tmp/tddswarm-runner-tools/node_modules/vitest/vitest.mjs \
 node --test test/runner-native.test.js
 ```
 
-These fixtures exercise custom collection patterns, excluded files, individual passes/failures/skips, exact subset execution, and real Jest/Vite aliases. Standard dependency resolution also enables these tests when those tools are installed in TDDSwarm's development environment.
+These fixtures exercise custom collection patterns, excluded files, individual passes/failures/skips, exact subset execution, and real Jest/Vite aliases. Standard dependency resolution also enables these tests when those tools are installed in TestLore's development environment.
 
 Runner contracts were checked against [Node's public test runner documentation](https://nodejs.org/docs/latest-v22.x/api/test.html), [Jest CLI documentation](https://jestjs.io/docs/cli), [Vitest CLI documentation](https://vitest.dev/guide/cli.html), and pinned installed CLI help. Vitest's published documentation may describe newer majors: the reproducible smoke evidence here specifically uses 5.0.2.

@@ -156,7 +156,7 @@ export function ingestRuntime(root, reportPath, options = {}) {
     if(observation?.complete!==true||!Array.isArray(observation.dependencies)||observation.dependencies.some(d=>typeof d!=='string'||(!graph.files.includes(d)&&!Object.hasOwn(inputs.values,d))))throw new Error(`Invalid runtime observation for ${test}`);
     observations[test]={complete:true,dependencies:[...new Set([test,...observation.dependencies,...(declarations[test]||[])])].sort()};
   }
-  const record={schemaVersion:1,type:'runtime',captureId:randomUUID(),provenance,inputs:inputs.values,tests:graph.tests,observations,complete:true,reportHash:digest(raw),createdAt:new Date().toISOString(),limitations:['Imported producer attestations are trusted; TDDSwarm does not prove trace completeness.','Runtime observations supplement static dependencies; closedWorld policy is explicit.']};
+  const record={schemaVersion:1,type:'runtime',captureId:randomUUID(),provenance,inputs:inputs.values,tests:graph.tests,observations,complete:true,reportHash:digest(raw),createdAt:new Date().toISOString(),limitations:['Imported producer attestations are trusted; TestLore does not prove trace completeness.','Runtime observations supplement static dependencies; closedWorld policy is explicit.']};
   record.integrity=digest(record);
   const dir=safePath(root,'.tddswarm/evidence');fs.mkdirSync(dir,{recursive:true});
   fs.writeFileSync(path.join(dir,'runtime.json'),JSON.stringify(record,null,2));

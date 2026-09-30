@@ -40,8 +40,8 @@ export function installQualityWorkflow(root,options={}){
  const dependencyCommand=fs.existsSync(safePath(dependencyRoot,'package-lock.json'))?'npm ci --ignore-scripts':fs.existsSync(safePath(dependencyRoot,'pnpm-lock.yaml'))?'corepack enable && pnpm install --frozen-lockfile --ignore-scripts':fs.existsSync(safePath(dependencyRoot,'yarn.lock'))?'corepack enable && yarn install --immutable':fs.existsSync(safePath(dependencyRoot,'package.json'))?'npm install --ignore-scripts':null;
  const dependencies=dependencyCommand?`      - name: Install project dependencies\n        working-directory: ${JSON.stringify(dependencyDirectory)}\n        run: ${dependencyCommand}\n`:'';
  const external=config.integration?'      # Configure your native Python/Nx/Bazel dependencies here before the action.\n':'';
- const text=`# Generated on a tested TDDSwarm improvement branch. Pin the action ref after review.
-name: TDDSwarm quality engineer
+ const text=`# Generated on a tested TestLore improvement branch. Pin the action ref after review.
+name: TestLore quality engineer
 on:
   pull_request:
   push:
@@ -63,7 +63,7 @@ jobs:
         with:
           node-version: '22'
 ${dependencies}${external}      - name: Assess quality and execute tests for the change
-        uses: rudycelekli/tddswarm@${reference}
+        uses: rudycelekli/testlore@${reference}
         with:
           root: ${JSON.stringify(project)}
           base: \${{ github.event.pull_request.base.sha || github.event.before || github.sha }}

@@ -20,7 +20,7 @@ try{
  const archive=path.join(workspace,pack.filename);const sha256=createHash('sha256').update(fs.readFileSync(archive)).digest('hex');
  fs.writeFileSync(path.join(tools,'package.json'),JSON.stringify({name:'packed-proof',version:'1.0.0',private:true}));
  invoke(tools,['npm','install','--omit=dev','--ignore-scripts','--no-audit','--no-fund',archive]);
- const cli=path.join(tools,'node_modules/tddswarm/src/cli.js');
+ const cli=path.join(tools,'node_modules/testlore/src/cli.js');
  const command=(args,exit=0)=>JSON.parse(invoke(project,[process.execPath,cli,...args,'--json'],exit));
  write('package.json',{type:'module'});write('.gitignore','.tddswarm/\n');
  for(const name of ['a','b']){write(`src/${name}.js`,`export const ${name}=1;`);write(`test/${name}.test.js`,`import test from 'node:test';import assert from 'node:assert/strict';import {${name}} from '../src/${name}.js';test('${name}',()=>assert.equal(${name},1));`);}
@@ -36,7 +36,7 @@ try{
  improvement=command(['improve','--local','--patch','.tddswarm/proposal.json','--action-ref','packed-proof']);
  assert.equal(improvement.status,'ready-for-review');assert.equal(improvement.fullRun.complete,true);assert.equal(improvement.fullRun.tests.filter(t=>t.status==='passed').length,3);
  assert.equal(invoke(project,['git','rev-parse','HEAD']).trim(),initial);assert.equal(invoke(project,['git','branch','--show-current']).trim(),'main');assert.equal(invoke(project,['git','status','--porcelain']).trim(),'');
- assert.match(fs.readFileSync(path.join(improvement.worktreeRoot,'.github/workflows/tddswarm.yml'),'utf8'),/tddswarm@packed-proof/);
+ assert.match(fs.readFileSync(path.join(improvement.worktreeRoot,'.github/workflows/tddswarm.yml'),'utf8'),/testlore@packed-proof/);
  const receipt={schemaVersion:1,date:new Date().toISOString(),archive:pack.filename,sha256,version:pack.version,node:process.version,productionInstall:true,nativeShadow:{complete:shadow.complete,selected:shadow.plan.selected,executed:shadow.executedFiles.length,detected:true},runtimeCaptureComplete:capture.complete,improvement:{status:improvement.status,cases:improvement.fullRun.tests.length,originalBranch:'main'},limitations:['Local packed-artifact installation; no registry publication or live GitHub PR created.','Controlled two-module fixture; broad project compatibility remains unqualified.']};
  fs.mkdirSync(path.dirname(output),{recursive:true});fs.writeFileSync(output,JSON.stringify(receipt,null,2));console.log(JSON.stringify(receipt,null,2));
 }finally{
