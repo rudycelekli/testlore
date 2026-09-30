@@ -35,7 +35,7 @@ jobs:
         run: |
           [[ "$SOURCE_SHA" =~ ^[0-9a-f]{40}$ ]]
           test "$(git rev-parse HEAD)" = "$SOURCE_SHA"
-          git merge-base --is-ancestor "$SOURCE_SHA" origin/main
+          test "$(git rev-parse origin/main)" = "$SOURCE_SHA"
       - uses: actions/setup-node@v7.0.0
         with:
           node-version: '24'
@@ -111,6 +111,12 @@ jobs:
         run: |
           node scripts/release-candidate.js --verify .tddswarm/alpha-release/release-candidate.json --publish-check
           node --input-type=module -e "import fs from 'node:fs'; const r=JSON.parse(fs.readFileSync('.tddswarm/alpha-release/release-candidate.json')); if(r.archiveSha256!==process.env.EXPECTED_ARCHIVE_SHA)process.exit(1);"
+      - name: Require current main immediately before publication
+        env:
+          SOURCE_SHA: ${{ inputs.source_sha }}
+        run: |
+          test "$(git rev-parse HEAD)" = "$SOURCE_SHA"
+          test "$(git ls-remote origin refs/heads/main | cut -f1)" = "$SOURCE_SHA"
       - name: Publish that archive using trusted OIDC
         run: |
           ARCHIVE=$(node --input-type=module -e "import fs from 'node:fs'; console.log(JSON.parse(fs.readFileSync('.tddswarm/alpha-release/release-candidate.json')).archive);")
