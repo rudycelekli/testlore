@@ -1,0 +1,149 @@
+{
+  "schemaVersion": 1,
+  "kind": "synthetic-fixtures-only",
+  "runtime": "v22.19.0",
+  "platform": "darwin arm64",
+  "cpu": "Apple M4 Pro",
+  "selectorSourceHash": "f9c6a396a9ec5c21ac985c1f3ef6fc998393ab507bbe9f18a8c1eb45b6ffbb99",
+  "baselineSha": "8eb92d9ddb448ac9a692d9e46879b15517deb87a",
+  "synthetic": {
+    "testFiles": 1000,
+    "selectedFiles": 1,
+    "selectionReduction": 0.999,
+    "planningMs": 207,
+    "executed": false
+  },
+  "faultyChanges": 5,
+  "detectedFaultyChanges": 5,
+  "fixtureFaultyChangeRecall": 1,
+  "outcomes": [
+    {
+      "name": "wrong-a",
+      "mode": "affected",
+      "selected": [
+        "test/a.test.js"
+      ],
+      "total": 2,
+      "full": {
+        "exitCode": 1,
+        "durationMs": 98,
+        "stdout": "TAP version 13\n# Subtest: a contract\nnot ok 1 - a contract\n  ---\n  duration_ms: 0.746833\n  type: 'test'\n  location: '/private/var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-benchmark-qyH363/test/a.test.js:1:100'\n  failureType: 'testCodeFailure'\n  error: |-\n    Expected values to be strictly equal:\n    \n    9 !== 1\n    \n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: 1\n  actual: 9\n  operator: 'strictEqual'\n  stack: |-\n    TestContext.<anonymous> (file:///private/var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-benchmark-qyH363/test/a.test.js:1:129)\n    Test.runInAsyncScope (node:async_hooks:214:14)\n    Test.run (node:internal/test_runner/test:1047:25)\n    Test.start (node:internal/test_runner/test:944:17)\n    startSubtestAfterBootstrap (node:internal/test_runner/harness:296:17)\n  ...\n# Subtest: b contract\nok 2 - b contract\n  ---\n  duration_ms: 0.348167\n  type: 'test'\n  ...\n1..2\n# tests 2\n# suites 0\n# pass 1\n# fail 1\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 61.758042\n",
+        "stderr": ""
+      },
+      "subset": {
+        "exitCode": 1,
+        "durationMs": 92,
+        "stdout": "TAP version 13\n# Subtest: a contract\nnot ok 1 - a contract\n  ---\n  duration_ms: 0.751542\n  type: 'test'\n  location: '/private/var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-benchmark-qyH363/test/a.test.js:1:100'\n  failureType: 'testCodeFailure'\n  error: |-\n    Expected values to be strictly equal:\n    \n    9 !== 1\n    \n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: 1\n  actual: 9\n  operator: 'strictEqual'\n  stack: |-\n    TestContext.<anonymous> (file:///private/var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-benchmark-qyH363/test/a.test.js:1:129)\n    Test.runInAsyncScope (node:async_hooks:214:14)\n    Test.run (node:internal/test_runner/test:1047:25)\n    Test.start (node:internal/test_runner/test:944:17)\n    startSubtestAfterBootstrap (node:internal/test_runner/harness:296:17)\n  ...\n1..1\n# tests 1\n# suites 0\n# pass 0\n# fail 1\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 55.202584\n",
+        "stderr": ""
+      }
+    },
+    {
+      "name": "wrong-b",
+      "mode": "affected",
+      "selected": [
+        "test/b.test.js"
+      ],
+      "total": 2,
+      "full": {
+        "exitCode": 1,
+        "durationMs": 102,
+        "stdout": "TAP version 13\n# Subtest: a contract\nok 1 - a contract\n  ---\n  duration_ms: 0.356\n  type: 'test'\n  ...\n# Subtest: b contract\nnot ok 2 - b contract\n  ---\n  duration_ms: 0.745125\n  type: 'test'\n  location: '/private/var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-benchmark-qyH363/test/b.test.js:1:100'\n  failureType: 'testCodeFailure'\n  error: |-\n    Expected values to be strictly equal:\n    \n    9 !== 2\n    \n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: 2\n  actual: 9\n  operator: 'strictEqual'\n  stack: |-\n    TestContext.<anonymous> (file:///private/var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-benchmark-qyH363/test/b.test.js:1:129)\n    Test.runInAsyncScope (node:async_hooks:214:14)\n    Test.run (node:internal/test_runner/test:1047:25)\n    Test.start (node:internal/test_runner/test:944:17)\n    startSubtestAfterBootstrap (node:internal/test_runner/harness:296:17)\n  ...\n1..2\n# tests 2\n# suites 0\n# pass 1\n# fail 1\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 64.535417\n",
+        "stderr": ""
+      },
+      "subset": {
+        "exitCode": 1,
+        "durationMs": 94,
+        "stdout": "TAP version 13\n# Subtest: b contract\nnot ok 1 - b contract\n  ---\n  duration_ms: 0.740958\n  type: 'test'\n  location: '/private/var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-benchmark-qyH363/test/b.test.js:1:100'\n  failureType: 'testCodeFailure'\n  error: |-\n    Expected values to be strictly equal:\n    \n    9 !== 2\n    \n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: 2\n  actual: 9\n  operator: 'strictEqual'\n  stack: |-\n    TestContext.<anonymous> (file:///private/var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-benchmark-qyH363/test/b.test.js:1:129)\n    Test.runInAsyncScope (node:async_hooks:214:14)\n    Test.run (node:internal/test_runner/test:1047:25)\n    Test.start (node:internal/test_runner/test:944:17)\n    startSubtestAfterBootstrap (node:internal/test_runner/harness:296:17)\n  ...\n1..1\n# tests 1\n# suites 0\n# pass 0\n# fail 1\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 56.033042\n",
+        "stderr": ""
+      }
+    },
+    {
+      "name": "deleted-a",
+      "mode": "full",
+      "selected": [
+        "test/a.test.js",
+        "test/b.test.js"
+      ],
+      "total": 2,
+      "full": {
+        "exitCode": 1,
+        "durationMs": 103,
+        "stdout": "TAP version 13\n# node:internal/modules/esm/resolve:274\n#     throw new ERR_MODULE_NOT_FOUND(\n#           ^\n# Error [ERR_MODULE_NOT_FOUND]: Cannot find module '/private/var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-benchmark-qyH363/src/a.js' imported from /private/var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-benchmark-qyH363/test/a.test.js\n#     at finalizeResolution (node:internal/modules/esm/resolve:274:11)\n#     at moduleResolve (node:internal/modules/esm/resolve:859:10)\n#     at defaultResolve (node:internal/modules/esm/resolve:983:11)\n#     at \\#cachedDefaultResolve (node:internal/modules/esm/loader:717:20)\n#     at ModuleLoader.resolve (node:internal/modules/esm/loader:694:38)\n#     at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:308:38)\n#     at ModuleJob._link (node:internal/modules/esm/module_job:183:49) {\n#   code: 'ERR_MODULE_NOT_FOUND',\n#   url: 'file:///private/var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-benchmark-qyH363/src/a.js'\n# }\n# Node.js v22.19.0\n# Subtest: test/a.test.js\nnot ok 1 - test/a.test.js\n  ---\n  duration_ms: 47.006834\n  type: 'test'\n  location: '/private/var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-benchmark-qyH363/test/a.test.js:1:1'\n  failureType: 'testCodeFailure'\n  exitCode: 1\n  signal: ~\n  error: 'test failed'\n  code: 'ERR_TEST_FAILURE'\n  ...\n# Subtest: b contract\nok 2 - b contract\n  ---\n  duration_ms: 0.347167\n  type: 'test'\n  ...\n1..2\n# tests 2\n# suites 0\n# pass 1\n# fail 1\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 65.674959\n",
+        "stderr": ""
+      },
+      "subset": {
+        "exitCode": 1,
+        "durationMs": 108,
+        "stdout": "TAP version 13\n# node:internal/modules/esm/resolve:274\n#     throw new ERR_MODULE_NOT_FOUND(\n#           ^\n# Error [ERR_MODULE_NOT_FOUND]: Cannot find module '/private/var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-benchmark-qyH363/src/a.js' imported from /private/var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-benchmark-qyH363/test/a.test.js\n#     at finalizeResolution (node:internal/modules/esm/resolve:274:11)\n#     at moduleResolve (node:internal/modules/esm/resolve:859:10)\n#     at defaultResolve (node:internal/modules/esm/resolve:983:11)\n#     at \\#cachedDefaultResolve (node:internal/modules/esm/loader:717:20)\n#     at ModuleLoader.resolve (node:internal/modules/esm/loader:694:38)\n#     at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:308:38)\n#     at ModuleJob._link (node:internal/modules/esm/module_job:183:49) {\n#   code: 'ERR_MODULE_NOT_FOUND',\n#   url: 'file:///private/var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-benchmark-qyH363/src/a.js'\n# }\n# Node.js v22.19.0\n# Subtest: test/a.test.js\nnot ok 1 - test/a.test.js\n  ---\n  duration_ms: 51.883875\n  type: 'test'\n  location: '/private/var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-benchmark-qyH363/test/a.test.js:1:1'\n  failureType: 'testCodeFailure'\n  exitCode: 1\n  signal: ~\n  error: 'test failed'\n  code: 'ERR_TEST_FAILURE'\n  ...\n# Subtest: b contract\nok 2 - b contract\n  ---\n  duration_ms: 0.361334\n  type: 'test'\n  ...\n1..2\n# tests 2\n# suites 0\n# pass 1\n# fail 1\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 70.606958\n",
+        "stderr": ""
+      }
+    },
+    {
+      "name": "unknown-import",
+      "mode": "full",
+      "selected": [
+        "test/a.test.js",
+        "test/b.test.js"
+      ],
+      "total": 2,
+      "full": {
+        "exitCode": 1,
+        "durationMs": 106,
+        "stdout": "TAP version 13\n# node:internal/modules/esm/resolve:274\n#     throw new ERR_MODULE_NOT_FOUND(\n#           ^\n# Error [ERR_MODULE_NOT_FOUND]: Cannot find module '/private/var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-benchmark-qyH363/src/missing.js' imported from /private/var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-benchmark-qyH363/src/a.js\n#     at finalizeResolution (node:internal/modules/esm/resolve:274:11)\n#     at moduleResolve (node:internal/modules/esm/resolve:859:10)\n#     at defaultResolve (node:internal/modules/esm/resolve:983:11)\n#     at \\#cachedDefaultResolve (node:internal/modules/esm/loader:717:20)\n#     at ModuleLoader.resolve (node:internal/modules/esm/loader:694:38)\n#     at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:308:38)\n#     at ModuleJob._link (node:internal/modules/esm/module_job:183:49) {\n#   code: 'ERR_MODULE_NOT_FOUND',\n#   url: 'file:///private/var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-benchmark-qyH363/src/missing.js'\n# }\n# Node.js v22.19.0\n# Subtest: test/a.test.js\nnot ok 1 - test/a.test.js\n  ---\n  duration_ms: 49.652917\n  type: 'test'\n  location: '/private/var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-benchmark-qyH363/test/a.test.js:1:1'\n  failureType: 'testCodeFailure'\n  exitCode: 1\n  signal: ~\n  error: 'test failed'\n  code: 'ERR_TEST_FAILURE'\n  ...\n# Subtest: b contract\nok 2 - b contract\n  ---\n  duration_ms: 0.350959\n  type: 'test'\n  ...\n1..2\n# tests 2\n# suites 0\n# pass 1\n# fail 1\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 69.560125\n",
+        "stderr": ""
+      },
+      "subset": {
+        "exitCode": 1,
+        "durationMs": 105,
+        "stdout": "TAP version 13\n# node:internal/modules/esm/resolve:274\n#     throw new ERR_MODULE_NOT_FOUND(\n#           ^\n# Error [ERR_MODULE_NOT_FOUND]: Cannot find module '/private/var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-benchmark-qyH363/src/missing.js' imported from /private/var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-benchmark-qyH363/src/a.js\n#     at finalizeResolution (node:internal/modules/esm/resolve:274:11)\n#     at moduleResolve (node:internal/modules/esm/resolve:859:10)\n#     at defaultResolve (node:internal/modules/esm/resolve:983:11)\n#     at \\#cachedDefaultResolve (node:internal/modules/esm/loader:717:20)\n#     at ModuleLoader.resolve (node:internal/modules/esm/loader:694:38)\n#     at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:308:38)\n#     at ModuleJob._link (node:internal/modules/esm/module_job:183:49) {\n#   code: 'ERR_MODULE_NOT_FOUND',\n#   url: 'file:///private/var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-benchmark-qyH363/src/missing.js'\n# }\n# Node.js v22.19.0\n# Subtest: test/a.test.js\nnot ok 1 - test/a.test.js\n  ---\n  duration_ms: 48.087292\n  type: 'test'\n  location: '/private/var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-benchmark-qyH363/test/a.test.js:1:1'\n  failureType: 'testCodeFailure'\n  exitCode: 1\n  signal: ~\n  error: 'test failed'\n  code: 'ERR_TEST_FAILURE'\n  ...\n# Subtest: b contract\nok 2 - b contract\n  ---\n  duration_ms: 0.378\n  type: 'test'\n  ...\n1..2\n# tests 2\n# suites 0\n# pass 1\n# fail 1\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 66.432125\n",
+        "stderr": ""
+      }
+    },
+    {
+      "name": "runtime-import",
+      "mode": "full",
+      "selected": [
+        "test/a.test.js",
+        "test/b.test.js"
+      ],
+      "total": 2,
+      "full": {
+        "exitCode": 1,
+        "durationMs": 97,
+        "stdout": "TAP version 13\n# node:internal/modules/esm/resolve:274\n#     throw new ERR_MODULE_NOT_FOUND(\n#           ^\n# Error [ERR_MODULE_NOT_FOUND]: Cannot find module '/private/var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-benchmark-qyH363/src/missing.js' imported from /private/var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-benchmark-qyH363/src/a.js\n#     at finalizeResolution (node:internal/modules/esm/resolve:274:11)\n#     at moduleResolve (node:internal/modules/esm/resolve:859:10)\n#     at defaultResolve (node:internal/modules/esm/resolve:983:11)\n#     at \\#cachedDefaultResolve (node:internal/modules/esm/loader:717:20)\n#     at ModuleLoader.resolve (node:internal/modules/esm/loader:694:38)\n#     at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:308:38)\n#     at onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:650:36)\n#     at TracingChannel.tracePromise (node:diagnostics_channel:344:14)\n#     at ModuleLoader.import (node:internal/modules/esm/loader:649:21)\n#     at defaultImportModuleDynamicallyForModule (node:internal/modules/esm/utils:222:31) {\n#   code: 'ERR_MODULE_NOT_FOUND',\n#   url: 'file:///private/var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-benchmark-qyH363/src/missing.js'\n# }\n# Node.js v22.19.0\n# Subtest: test/a.test.js\nnot ok 1 - test/a.test.js\n  ---\n  duration_ms: 41.547417\n  type: 'test'\n  location: '/private/var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-benchmark-qyH363/test/a.test.js:1:1'\n  failureType: 'testCodeFailure'\n  exitCode: 1\n  signal: ~\n  error: 'test failed'\n  code: 'ERR_TEST_FAILURE'\n  ...\n# Subtest: b contract\nok 2 - b contract\n  ---\n  duration_ms: 0.359875\n  type: 'test'\n  ...\n1..2\n# tests 2\n# suites 0\n# pass 1\n# fail 1\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 58.770917\n",
+        "stderr": ""
+      },
+      "subset": {
+        "exitCode": 1,
+        "durationMs": 104,
+        "stdout": "TAP version 13\n# node:internal/modules/esm/resolve:274\n#     throw new ERR_MODULE_NOT_FOUND(\n#           ^\n# Error [ERR_MODULE_NOT_FOUND]: Cannot find module '/private/var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-benchmark-qyH363/src/missing.js' imported from /private/var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-benchmark-qyH363/src/a.js\n#     at finalizeResolution (node:internal/modules/esm/resolve:274:11)\n#     at moduleResolve (node:internal/modules/esm/resolve:859:10)\n#     at defaultResolve (node:internal/modules/esm/resolve:983:11)\n#     at \\#cachedDefaultResolve (node:internal/modules/esm/loader:717:20)\n#     at ModuleLoader.resolve (node:internal/modules/esm/loader:694:38)\n#     at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:308:38)\n#     at onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:650:36)\n#     at TracingChannel.tracePromise (node:diagnostics_channel:344:14)\n#     at ModuleLoader.import (node:internal/modules/esm/loader:649:21)\n#     at defaultImportModuleDynamicallyForModule (node:internal/modules/esm/utils:222:31) {\n#   code: 'ERR_MODULE_NOT_FOUND',\n#   url: 'file:///private/var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-benchmark-qyH363/src/missing.js'\n# }\n# Node.js v22.19.0\n# Subtest: test/a.test.js\nnot ok 1 - test/a.test.js\n  ---\n  duration_ms: 47.023125\n  type: 'test'\n  location: '/private/var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-benchmark-qyH363/test/a.test.js:1:1'\n  failureType: 'testCodeFailure'\n  exitCode: 1\n  signal: ~\n  error: 'test failed'\n  code: 'ERR_TEST_FAILURE'\n  ...\n# Subtest: b contract\nok 2 - b contract\n  ---\n  duration_ms: 0.352625\n  type: 'test'\n  ...\n1..2\n# tests 2\n# suites 0\n# pass 1\n# fail 1\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 64.536541\n",
+        "stderr": ""
+      }
+    },
+    {
+      "name": "clean-comment",
+      "mode": "affected",
+      "selected": [
+        "test/a.test.js"
+      ],
+      "total": 2,
+      "full": {
+        "exitCode": 0,
+        "durationMs": 110,
+        "stdout": "TAP version 13\n# Subtest: a contract\nok 1 - a contract\n  ---\n  duration_ms: 0.36525\n  type: 'test'\n  ...\n# Subtest: b contract\nok 2 - b contract\n  ---\n  duration_ms: 0.360917\n  type: 'test'\n  ...\n1..2\n# tests 2\n# suites 0\n# pass 2\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 68.979833\n",
+        "stderr": ""
+      },
+      "subset": {
+        "exitCode": 0,
+        "durationMs": 94,
+        "stdout": "TAP version 13\n# Subtest: a contract\nok 1 - a contract\n  ---\n  duration_ms: 0.359917\n  type: 'test'\n  ...\n1..1\n# tests 1\n# suites 0\n# pass 1\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 56.140917\n",
+        "stderr": ""
+      }
+    }
+  ],
+  "limitations": [
+    "Synthetic independence is deliberately easy.",
+    "No production repository comparison or wall-clock savings claim.",
+    "Full suite detection supplies fixture ground truth; untested faults remain possible."
+  ]
+}

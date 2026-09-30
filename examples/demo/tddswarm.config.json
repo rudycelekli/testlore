@@ -1,0 +1,6 @@
+{
+  "runner": ["node", "--test", "{files}"],
+  "dependencies": { "test/landing.test.js": ["src/copy.json"] },
+  "alwaysRun": [],
+  "ignoreChanges": []
+}

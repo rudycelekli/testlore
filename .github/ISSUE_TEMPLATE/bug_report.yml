@@ -1,0 +1,20 @@
+name: Incorrect test decision
+description: Report a reproducible selection, runner, or audit issue
+body:
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction and expected behavior
+      description: Include a minimal repository, base SHA, changed paths, runner, and Node version.
+    validations:
+      required: true
+  - type: textarea
+    id: plan
+    attributes:
+      label: Selection plan
+      description: Paste tddswarm plan --json output with private paths or data removed.
+  - type: textarea
+    id: full
+    attributes:
+      label: Full versus selected outcome
+      description: If possible, show the deterministic failure the full suite catches.

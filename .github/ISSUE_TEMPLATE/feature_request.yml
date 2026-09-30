@@ -1,0 +1,14 @@
+name: Feature or adapter proposal
+description: Propose an evidence source, runner adapter, or useful workflow
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem should this solve?
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Example and verification approach
+      description: Include runner documentation, a minimal fixture, or a public benchmark.
