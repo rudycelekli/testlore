@@ -1,0 +1,290 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-09-30T01:20:57.683Z",
+  "environment": {
+    "node": "v22.19.0",
+    "platform": "darwin",
+    "architecture": "arm64"
+  },
+  "bazelVersion": "bazel 6.5.0",
+  "fixture": {
+    ".bazelversion": "6.5.0\n",
+    "WORKSPACE": "workspace(name = \"tddswarm_native_proof\")\n",
+    ".gitignore": ".bazel-output/\nbazel-*\n",
+    "BUILD": "sh_test(name=\"alpha_test\", srcs=[\"alpha.sh\"], data=[\"alpha.txt\"])\nsh_test(name=\"beta_test\", srcs=[\"beta.sh\"], data=[\"beta.txt\"])\n",
+    "alpha.sh": "#!/usr/bin/env bash\nset -eu\ntest \"$(cat alpha.txt)\" = \"alpha\"\n",
+    "beta.sh": "#!/usr/bin/env bash\nset -eu\ntest \"$(cat beta.txt)\" = \"beta\"\n",
+    "alpha.txt": "alpha\n",
+    "beta.txt": "beta\n"
+  },
+  "configuration": {
+    "integration": {
+      "type": "bazel",
+      "executable": "<bazelisk-executable>",
+      "args": [
+        "--batch",
+        "--output_user_root=<bazel-output>"
+      ],
+      "options": [
+        "--test_output=errors",
+        "--nocache_test_results"
+      ],
+      "fileLabels": {
+        "alpha.txt": [
+          "//:alpha.txt"
+        ],
+        "beta.txt": [
+          "//:beta.txt"
+        ]
+      }
+    }
+  },
+  "baseline": {
+    "adapter": "bazel",
+    "command": [
+      "<bazelisk-executable>",
+      "--batch",
+      "--output_user_root=<bazel-output>",
+      "test",
+      "//:alpha_test",
+      "//:beta_test",
+      "--test_output=errors",
+      "--nocache_test_results"
+    ],
+    "exitCode": 0,
+    "stdout": "//:alpha_test                                                            PASSED in 0.6s\n//:beta_test                                                             PASSED in 0.7s\n\nExecuted 2 out of 2 tests: 2 tests pass.\nThere were tests whose specified size is too big. Use the --test_verbose_timeout_warnings command line option to see which ones these are.\n",
+    "stderr": "Loading: \nLoading: \nLoading: 0 packages loaded\nAnalyzing: 2 targets (1 packages loaded, 0 targets configured)\nAnalyzing: 2 targets (33 packages loaded, 34 targets configured)\nAnalyzing: 2 targets (33 packages loaded, 34 targets configured)\nAnalyzing: 2 targets (36 packages loaded, 190 targets configured)\nAnalyzing: 2 targets (36 packages loaded, 190 targets configured)\nAnalyzing: 2 targets (39 packages loaded, 229 targets configured)\nINFO: Analyzed 2 targets (40 packages loaded, 275 targets configured).\nINFO: Found 2 test targets...\n[0 / 7] [Prepa] BazelWorkspaceStatusAction stable-status.txt ... (5 actions, 2 running)\n[7 / 9] 1 / 2 tests; Testing //:alpha_test; 0s darwin-sandbox ... (2 actions running)\nINFO: Elapsed time: 14.154s, Critical Path: 1.08s\nINFO: 9 processes: 5 internal, 4 darwin-sandbox.\nINFO: Build completed successfully, 9 total actions\n",
+    "durationMs": 19947,
+    "plan": {
+      "adapter": "bazel",
+      "command": [
+        "<bazelisk-executable>",
+        "--batch",
+        "--output_user_root=<bazel-output>",
+        "query",
+        "kind(\".*_test rule\", set(//...))",
+        "--output=label"
+      ],
+      "exitCode": 0,
+      "stdout": "//:alpha_test\n//:beta_test\n",
+      "stderr": "Extracting Bazel installation...\n checking cached actions\nLoading: 0 packages loaded\nLoading: 1 packages loaded\n",
+      "durationMs": 8739,
+      "complete": true,
+      "targets": [
+        "//:alpha_test",
+        "//:beta_test"
+      ],
+      "mode": "full",
+      "reasons": [],
+      "unmapped": [],
+      "evidence": "bazel-query-rdeps"
+    },
+    "complete": true,
+    "executed": true,
+    "shadow": false,
+    "delegated": true,
+    "initialFull": false
+  },
+  "affectedPlan": {
+    "adapter": "bazel",
+    "command": [
+      "<bazelisk-executable>",
+      "--batch",
+      "--output_user_root=<bazel-output>",
+      "query",
+      "kind(\".*_test rule\", rdeps(set(//...), set(//:alpha.txt)))",
+      "--output=label"
+    ],
+    "exitCode": 0,
+    "stdout": "//:alpha_test\n",
+    "stderr": " checking cached actions\nLoading: 0 packages loaded\nLoading: 16 packages loaded\n    currently loading: @remote_coverage_tools//\nLoading: 18 packages loaded\n",
+    "durationMs": 7321,
+    "complete": true,
+    "targets": [
+      "//:alpha_test"
+    ],
+    "mode": "affected",
+    "reasons": [],
+    "unmapped": [],
+    "evidence": "bazel-query-rdeps"
+  },
+  "affected": {
+    "adapter": "bazel",
+    "command": [
+      "<bazelisk-executable>",
+      "--batch",
+      "--output_user_root=<bazel-output>",
+      "test",
+      "//:alpha_test",
+      "--test_output=errors",
+      "--nocache_test_results"
+    ],
+    "exitCode": 3,
+    "stdout": "==================== Test output for //:alpha_test:\n================================================================================\n//:alpha_test                                                            FAILED in 0.2s\n  <bazel-output>/df01da87c099c01e704a5dc00a068e2a/execroot/tddswarm_native_proof/bazel-out/darwin_arm64-fastbuild/testlogs/alpha_test/test.log\n\nExecuted 1 out of 1 test: 1 fails locally.\n",
+    "stderr": "Loading: \nLoading: \nLoading: 0 packages loaded\nAnalyzing: target //:alpha_test (1 packages loaded, 0 targets configured)\nAnalyzing: target //:alpha_test (39 packages loaded, 227 targets configured)\nAnalyzing: target //:alpha_test (39 packages loaded, 227 targets configured)\nINFO: Analyzed target //:alpha_test (40 packages loaded, 272 targets configured).\nINFO: Found 1 test target...\n[2 / 4] [Prepa] BazelWorkspaceStatusAction stable-status.txt\nFAIL: //:alpha_test (see <bazel-output>/df01da87c099c01e704a5dc00a068e2a/execroot/tddswarm_native_proof/bazel-out/darwin_arm64-fastbuild/testlogs/alpha_test/test.log)\nINFO: From Testing //:alpha_test:\nTarget //:alpha_test up-to-date:\n  bazel-bin/alpha_test\nINFO: Elapsed time: 4.352s, Critical Path: 0.31s\nINFO: 2 processes: 2 darwin-sandbox.\nINFO: Build completed, 1 test FAILED, 2 total actions\n",
+    "durationMs": 10406,
+    "plan": {
+      "adapter": "bazel",
+      "command": [
+        "<bazelisk-executable>",
+        "--batch",
+        "--output_user_root=<bazel-output>",
+        "query",
+        "kind(\".*_test rule\", rdeps(set(//...), set(//:alpha.txt)))",
+        "--output=label"
+      ],
+      "exitCode": 0,
+      "stdout": "//:alpha_test\n",
+      "stderr": " checking cached actions\nLoading: 0 packages loaded\nLoading: 18 packages loaded\n",
+      "durationMs": 6914,
+      "complete": true,
+      "targets": [
+        "//:alpha_test"
+      ],
+      "mode": "affected",
+      "reasons": [],
+      "unmapped": [],
+      "evidence": "bazel-query-rdeps"
+    },
+    "complete": true,
+    "executed": true,
+    "shadow": false,
+    "delegated": true,
+    "initialFull": false
+  },
+  "full": {
+    "adapter": "bazel",
+    "command": [
+      "<bazelisk-executable>",
+      "--batch",
+      "--output_user_root=<bazel-output>",
+      "test",
+      "//:alpha_test",
+      "//:beta_test",
+      "--test_output=errors",
+      "--nocache_test_results"
+    ],
+    "exitCode": 3,
+    "stdout": "==================== Test output for //:alpha_test:\n================================================================================\n//:beta_test                                                             PASSED in 0.2s\n//:alpha_test                                                            FAILED in 0.2s\n  <bazel-output>/df01da87c099c01e704a5dc00a068e2a/execroot/tddswarm_native_proof/bazel-out/darwin_arm64-fastbuild/testlogs/alpha_test/test.log\n\nExecuted 2 out of 2 tests: 1 test passes and 1 fails locally.\nThere were tests whose specified size is too big. Use the --test_verbose_timeout_warnings command line option to see which ones these are.\n",
+    "stderr": "Loading: \nLoading: \nLoading: 0 packages loaded\nAnalyzing: 2 targets (1 packages loaded, 0 targets configured)\nAnalyzing: 2 targets (39 packages loaded, 229 targets configured)\nAnalyzing: 2 targets (39 packages loaded, 229 targets configured)\nINFO: Analyzed 2 targets (40 packages loaded, 275 targets configured).\nINFO: Found 2 test targets...\n[4 / 7] [Prepa] BazelWorkspaceStatusAction stable-status.txt\nFAIL: //:alpha_test (see <bazel-output>/df01da87c099c01e704a5dc00a068e2a/execroot/tddswarm_native_proof/bazel-out/darwin_arm64-fastbuild/testlogs/alpha_test/test.log)\nINFO: From Testing //:alpha_test:\nINFO: Elapsed time: 3.735s, Critical Path: 0.29s\nINFO: 3 processes: 4 darwin-sandbox.\nINFO: Build completed, 1 test FAILED, 3 total actions\n",
+    "durationMs": 9803,
+    "plan": {
+      "adapter": "bazel",
+      "command": [
+        "<bazelisk-executable>",
+        "--batch",
+        "--output_user_root=<bazel-output>",
+        "query",
+        "kind(\".*_test rule\", set(//...))",
+        "--output=label"
+      ],
+      "exitCode": 0,
+      "stdout": "//:alpha_test\n//:beta_test\n",
+      "stderr": " checking cached actions\nLoading: 0 packages loaded\nLoading: 1 packages loaded\n",
+      "durationMs": 7018,
+      "complete": true,
+      "targets": [
+        "//:alpha_test",
+        "//:beta_test"
+      ],
+      "mode": "full",
+      "reasons": [],
+      "unmapped": [],
+      "evidence": "bazel-query-rdeps"
+    },
+    "complete": true,
+    "executed": true,
+    "shadow": false,
+    "delegated": true,
+    "initialFull": false
+  },
+  "shadow": {
+    "adapter": "bazel",
+    "command": [
+      "<bazelisk-executable>",
+      "--batch",
+      "--output_user_root=<bazel-output>",
+      "test",
+      "//:alpha_test",
+      "//:beta_test",
+      "--test_output=errors",
+      "--nocache_test_results"
+    ],
+    "exitCode": 3,
+    "stdout": "==================== Test output for //:alpha_test:\n================================================================================\n//:beta_test                                                             PASSED in 0.3s\n//:alpha_test                                                            FAILED in 0.3s\n  <bazel-output>/df01da87c099c01e704a5dc00a068e2a/execroot/tddswarm_native_proof/bazel-out/darwin_arm64-fastbuild/testlogs/alpha_test/test.log\n\nExecuted 2 out of 2 tests: 1 test passes and 1 fails locally.\nThere were tests whose specified size is too big. Use the --test_verbose_timeout_warnings command line option to see which ones these are.\n",
+    "stderr": "Loading: \nLoading: \nLoading: 0 packages loaded\nAnalyzing: 2 targets (1 packages loaded, 0 targets configured)\nAnalyzing: 2 targets (39 packages loaded, 229 targets configured)\nAnalyzing: 2 targets (39 packages loaded, 229 targets configured)\nINFO: Analyzed 2 targets (40 packages loaded, 275 targets configured).\nINFO: Found 2 test targets...\n checking cached actions\n[6 / 7] [Prepa] BazelWorkspaceStatusAction stable-status.txt\nFAIL: //:alpha_test (see <bazel-output>/df01da87c099c01e704a5dc00a068e2a/execroot/tddswarm_native_proof/bazel-out/darwin_arm64-fastbuild/testlogs/alpha_test/test.log)\nINFO: From Testing //:alpha_test:\nINFO: Elapsed time: 5.071s, Critical Path: 0.48s\nINFO: 3 processes: 4 darwin-sandbox.\nINFO: Build completed, 1 test FAILED, 3 total actions\n",
+    "durationMs": 11230,
+    "plan": {
+      "adapter": "bazel",
+      "command": [
+        "<bazelisk-executable>",
+        "--batch",
+        "--output_user_root=<bazel-output>",
+        "query",
+        "kind(\".*_test rule\", set(//...))",
+        "--output=label"
+      ],
+      "exitCode": 0,
+      "stdout": "//:alpha_test\n//:beta_test\n",
+      "stderr": " checking cached actions\nLoading: 0 packages loaded\nLoading: 1 packages loaded\n",
+      "durationMs": 6598,
+      "complete": true,
+      "targets": [
+        "//:alpha_test",
+        "//:beta_test"
+      ],
+      "mode": "full",
+      "reasons": [],
+      "unmapped": [],
+      "evidence": "bazel-query-rdeps"
+    },
+    "complete": true,
+    "executed": true,
+    "shadow": true,
+    "delegated": true,
+    "initialFull": false
+  },
+  "unknownInputPlan": {
+    "adapter": "bazel",
+    "command": [
+      "<bazelisk-executable>",
+      "--batch",
+      "--output_user_root=<bazel-output>",
+      "query",
+      "kind(\".*_test rule\", set(//...))",
+      "--output=label"
+    ],
+    "exitCode": 0,
+    "stdout": "//:alpha_test\n//:beta_test\n",
+    "stderr": " checking cached actions\nLoading: 0 packages loaded\nLoading: 1 packages loaded\n",
+    "durationMs": 7242,
+    "complete": true,
+    "targets": [
+      "//:alpha_test",
+      "//:beta_test"
+    ],
+    "mode": "full",
+    "reasons": [
+      "unmapped-file-label-full-fallback"
+    ],
+    "unmapped": [
+      "unknown-input.txt"
+    ],
+    "evidence": "bazel-query-rdeps"
+  },
+  "checks": {
+    "baselineBothPassed": true,
+    "onlyAffectedTarget": true,
+    "affectedDetectedFailure": true,
+    "fullDetectedFailure": true,
+    "shadowDetectedFailure": true,
+    "unknownInputFallsBack": true
+  },
+  "valid": true,
+  "limitations": [
+    "Small native sh_test fixture only; no remote execution, toolchains, generated sources or monorepo claim.",
+    "Declared fileLabels are required; native query results define target scope.",
+    "Batch mode and disabled test-result cache make this a correctness proof, not a speed benchmark.",
+    "Bazel shadow runs full native scope, not a per-test identity equivalence comparison."
+  ]
+}

@@ -81,6 +81,7 @@ export function externalRun(root, config, options = {}) {
     else if (value.type === 'nx') args = ['run-many', '-t', 'test', `--projects=${selection.targets.join(',')}`, ...(value.options || [])];
     else args = ['test', ...selection.targets, ...(value.options || [])];
     const result = invoke(path.resolve(root), value, args);
-    return { ...result, plan: selection, complete: !result.error && !result.signal && [0, 1].includes(result.exitCode), executed: true, shadow: Boolean(options.shadow), delegated: true, initialFull: selection.mode === 'initial-full' };
+    // Bazel uses 1 for build failure and 3 for a completed build with failed tests.
+    return { ...result, plan: selection, complete: !result.error && !result.signal && (value.type === 'bazel' ? [0, 3] : [0, 1]).includes(result.exitCode), executed: true, shadow: Boolean(options.shadow), delegated: true, initialFull: selection.mode === 'initial-full' };
   } catch (error) { return { ...fail(value?.type, error), executed: false }; }
 }

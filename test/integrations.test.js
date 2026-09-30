@@ -38,3 +38,12 @@ test('AQE bridge uses supported direct CLI, stages candidates, and preserves ups
   assert.equal(result.applied, false); assert.equal(result.measured.execution, false); assert.equal(result.upstream.coverageEstimate, 50); assert.match(fs.readFileSync(path.join(result.directory, 'add.test.js'), 'utf8'), /from "\.\/add.js"/);
   assert.throws(() => aqeGenerate(f.root, { role: 'reviewer' }), /does not implement/);
 });
+
+test('Bazel test failure exit 3 is complete execution; build failure exit 1 remains incomplete', t => {
+  const f = fixture(t, `if(process.argv[2]==='query')console.log('//app:unit_test');else process.exit(Number(process.argv.at(-1)));`);
+  const configuration = code => ({ integration: { ...f, type: 'bazel', options: [String(code)], fileLabels: { 'src/a.js': ['//app:a'] } } });
+  const failedTest = externalRun(f.root, configuration(3), { changed: ['src/a.js'] });
+  assert.equal(failedTest.exitCode, 3); assert.equal(failedTest.complete, true);
+  const failedBuild = externalRun(f.root, configuration(1), { changed: ['src/a.js'] });
+  assert.equal(failedBuild.exitCode, 1); assert.equal(failedBuild.complete, false);
+});
