@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import {spawnSync} from 'node:child_process';
 import { fileURLToPath } from 'node:url';
-import { audit, modules, plan, generate, run, snapshot, ingestQuality, measureStability, captureRuntime, stagePatch, validateCandidates, applyPatch, externalPlan, externalRun, aqeGenerate, improve, installQualityLayer, installQualityWorkflow, publishImprovement, recallLessons, reflectLearning, exportLearning, ensureQualityAgent, seedRequirements } from './index.js';
+import { audit, modules, plan, generate, run, snapshot, ingestQuality, measureStability, captureRuntime, stagePatch, validateCandidates, applyPatch, externalPlan, externalRun, aqeGenerate, improve, installQualityLayer, installQualityWorkflow, publishImprovement, recallLessons, reflectLearning, exportLearning, ensureQualityAgent, seedRequirements, initializeWitness, observeQuality, inspectEvidenceLoop, challengeEvidence, reviewEvidence, recallOutcomeLessons } from './index.js';
 import { safePath, readConfig, git } from './files.js';
 import { pluginCatalog, configurePlugin, checkPlugins, configurePluginsAutomatically } from './plugins.js';
 import { recommendPlugins } from './plugin-recommendations.js';
@@ -52,6 +52,12 @@ Usage: testlore <command> [options]
   learning-export   Export aggregate metadata without source or identifiers
   pilot       Inspect local repository pilots (--manifest file); --execute runs isolated copies
   pilot-export Export fixed aggregate pilot metrics (--report local-summary.json)
+  witness-init Export a recorder public key (--output path; never overwrite)
+  observe     Record a signed full-suite observation (--revision label; --output checkpoint)
+  loop-status Inspect signed history (--trusted-key PEM; optional --checkpoint JSON)
+  challenge   Test a historical claim (--id UUID --claim claim --trusted-key PEM)
+  outcome     Record an attributed review (--id --claim --verdict --reviewer --trusted-key)
+  outcome-lessons Retrieve advisory reviewed outcomes (--query --trusted-key PEM)
   demo        Show a copy-only change, a shared change, and a conservative fallback
 
 Options:
@@ -74,7 +80,7 @@ need explicit declarations. No AI account required for audit, plan, or run.
 export function parseArgs(args) {
   const options = {};
   let command = 'help';
-  const values = new Set(['root','base','changed','output','report','type','provenance','repeat','id','patch','target','framework','head','action-ref','base-branch','query','name','enable','disable','select','plugin','settings','manifest','mutate','defects']);
+  const values = new Set(['root','base','changed','output','report','type','provenance','repeat','id','patch','target','framework','head','action-ref','base-branch','query','name','enable','disable','select','plugin','settings','manifest','mutate','defects','revision','deadline-ms','trusted-key','checkpoint','claim','verdict','reviewer']);
   const flags = new Set(['json', 'full', 'shadow', 'execute', 'help', 'version', 'local', 'no-ci','check','recommend','auto','selective','allow-execution']);
   if (args[0] && !args[0].startsWith('-')) command = args.shift();
   for (let i = 0; i < args.length; i++) {
@@ -87,6 +93,31 @@ export function parseArgs(args) {
   }
   if (options.changed) options.changed = options.changed.split(',').filter(Boolean);
   return { command, options };
+}
+
+const loopOptions = {
+  'witness-init': ['output'],
+  observe: ['revision', 'base', 'deadline-ms', 'output'],
+  'loop-status': ['trusted-key', 'checkpoint'],
+  challenge: ['id', 'claim', 'trusted-key', 'checkpoint'],
+  outcome: ['id', 'claim', 'verdict', 'reviewer', 'trusted-key', 'checkpoint'],
+  'outcome-lessons': ['query', 'trusted-key', 'checkpoint']
+};
+function validateLoopOptions(command, options) {
+  if (!loopOptions[command]) {
+    for (const key of ['revision', 'deadline-ms', 'trusted-key', 'checkpoint', 'claim', 'verdict', 'reviewer']) if (key in options) throw new Error(`--${key} requires an evidence-loop command`);
+    return;
+  }
+  const allowed = new Set(['root', 'json', ...loopOptions[command]]);
+  for (const key of Object.keys(options)) if (!allowed.has(key)) throw new Error(`--${key} does not apply to ${command}`);
+  const required = {
+    'witness-init': ['output'], observe: ['revision'],
+    challenge: ['id', 'claim', 'trusted-key'],
+    outcome: ['id', 'claim', 'verdict', 'reviewer', 'trusted-key'],
+    'outcome-lessons': ['query', 'trusted-key']
+  };
+  for (const key of required[command] || []) if (!options[key]?.trim()) throw new Error(`--${key} is required`);
+  if (options['deadline-ms'] !== undefined && (!/^\d+$/.test(options['deadline-ms']) || !Number.isSafeInteger(Number(options['deadline-ms'])) || Number(options['deadline-ms']) <= 0)) throw new Error('--deadline-ms must be a positive integer');
 }
 
 function init(root) {
@@ -130,6 +161,7 @@ export async function main(args = process.argv.slice(2)) {
   const { command, options } = parseArgs([...args]);
   if (options.version) { console.log(JSON.parse(fs.readFileSync(new URL('../package.json',import.meta.url),'utf8')).version); return 0; }
   if (command === 'help' || options.help) { console.log(help); return 0; }
+  validateLoopOptions(command, options);
   const root = path.resolve(options.root || '.');
   if (command === 'mcp') {
     if (Object.keys(options).some(key => !['root','allow-execution'].includes(key))) throw new Error('mcp accepts only --root and --allow-execution');
@@ -143,6 +175,22 @@ export async function main(args = process.argv.slice(2)) {
   if (command === 'run' && options.changed) throw new Error('--changed is diagnostic only. run uses Git to discover the complete change set.');
   let result;
   switch (command) {
+    case 'witness-init': result = initializeWitness(root, {output: path.resolve(root, options.output)}); break;
+    case 'observe': {
+      const output = options.output ? path.resolve(root, options.output) : undefined;
+      if (output && fs.existsSync(output)) throw new Error(`Checkpoint output already exists: ${output}`);
+      if (output && !fs.statSync(path.dirname(output)).isDirectory()) throw new Error('Checkpoint output parent must be an existing directory');
+      result = observeQuality(root, {revision: options.revision, base: options.base, deadlineMs: options['deadline-ms'] === undefined ? undefined : Number(options['deadline-ms'])});
+      if (output) {
+        fs.writeFileSync(output, JSON.stringify(result.checkpoint, null, 2) + '\n', {flag: 'wx'});
+        result = {...result, output};
+      }
+      break;
+    }
+    case 'loop-status': result = inspectEvidenceLoop(root, {trustedKey: options['trusted-key'] && path.resolve(root, options['trusted-key']), checkpoint: options.checkpoint && path.resolve(root, options.checkpoint)}); break;
+    case 'challenge': result = challengeEvidence(root, {id: options.id, claim: options.claim, trustedKey: path.resolve(root, options['trusted-key']), checkpoint: options.checkpoint && path.resolve(root, options.checkpoint)}); break;
+    case 'outcome': result = reviewEvidence(root, {id: options.id, claim: options.claim, verdict: options.verdict, reviewer: options.reviewer, trustedKey: path.resolve(root, options['trusted-key']), checkpoint: options.checkpoint && path.resolve(root, options.checkpoint)}); break;
+    case 'outcome-lessons': result = recallOutcomeLessons(root, {query: options.query, trustedKey: path.resolve(root, options['trusted-key']), checkpoint: options.checkpoint && path.resolve(root, options.checkpoint)}); break;
     case 'brief': result = verificationBrief(root, {task: options.query || '', changed: options.changed || []}); break;
     case 'setup': {
       const written=installQualityLayer(root,{ci:!options['no-ci'],actionRef:options['action-ref']});
@@ -245,6 +293,9 @@ export async function main(args = process.argv.slice(2)) {
     default: throw new Error(`Unknown command: ${command}`);
   }
   console.log(options.json ? JSON.stringify(result, null, 2) : human(command, result));
+  if(command==='observe')return result.exitCode || (result.status === 'complete' ? 0 : 2);
+  if(command==='loop-status')return result.valid && result.complete ? 0 : 2;
+  if(command==='challenge')return result.supported ? 0 : 1;
   if(command==='improve')return result.status==='ready-for-review'&&(options.local||result.published)?0:2;
   if(command==='plugins' && options.check)return result.exitCode || 0;
   if(command==='pilot' && result.executed)return result.valid?0:1;
