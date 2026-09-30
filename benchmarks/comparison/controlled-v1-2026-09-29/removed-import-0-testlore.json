@@ -1,0 +1,256 @@
+{
+  "scenario": "removed-import",
+  "project": "modular",
+  "regression": false,
+  "repetition": 0,
+  "order": [
+    "full-native",
+    "testlore",
+    "imports-only"
+  ],
+  "method": "testlore",
+  "totalFiles": 8,
+  "plannedFiles": [
+    "test/4.test.js"
+  ],
+  "executedFiles": [
+    "test/4.test.js"
+  ],
+  "endToEndMs": 569,
+  "executionMs": 96,
+  "result": {
+    "adapter": "node",
+    "exitCode": 0,
+    "durationMs": 96,
+    "tests": [
+      {
+        "file": "test/4.test.js",
+        "name": "contract 4",
+        "status": "passed",
+        "durationMs": 0.3935,
+        "line": 4,
+        "column": 1,
+        "id": "60a74ffb2d4dbf89f2c7319119d0eaaf90ff8a5a2588c22e22e48ad206f13199"
+      }
+    ],
+    "collectionFiles": [
+      "test/4.test.js"
+    ],
+    "requestedFiles": [
+      "test/4.test.js"
+    ],
+    "executedFiles": [
+      "test/4.test.js"
+    ],
+    "missingFiles": [],
+    "unknownFiles": [],
+    "complete": true,
+    "command": [
+      "<node>",
+      "--test",
+      "--test-reporter=<testlore-source>/src/reporters/node.js",
+      "--test-reporter-destination=/var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-report-BiVjlR/results.json",
+      "./test/4.test.js"
+    ],
+    "stdout": "",
+    "stderr": "",
+    "signal": null,
+    "reportErrors": [],
+    "plan": {
+      "schemaVersion": 1,
+      "provenance": {
+        "schemaVersion": 1,
+        "revision": "02e31f18cd183cd9c1739b0b8b3f32ad40052bee",
+        "runner": "fb72d90b07a61f056a809d106827986d2ea0628e36a00010f9021072652c46d5",
+        "environment": {
+          "node": "v22.19.0",
+          "platform": "darwin",
+          "arch": "arm64",
+          "labels": {}
+        },
+        "services": {},
+        "serviceWarnings": [],
+        "files": {
+          ".gitignore": "7fb44527b443495e92c61dccfc6b3adf4400dae72a66af52820f7a7b0827527c",
+          "package.json": "f8f6c85d7a372eb7a60eb389f0f0a9901ad08ac127af38a22dff02788ac84267",
+          "src/feature0.js": "c6e12e9343822001cbf04807fe41217c54acedd90f07cb9eb7fd073bbe553f3f",
+          "src/feature1.js": "4fceb8655e9fb3e59a0b0f544b97de1e947491bdc23e8000acfec88fae698f11",
+          "src/feature2.js": "6048089fdf2806ff8dcefb667dab67f9e332d64428dc250516c8eae64678b8ba",
+          "src/feature3.js": "d20b8804db7ee07c40b5d922ccbe82ed6d015458b6a4773227b500bf687f0444",
+          "src/feature4.js": "d71b39e1d4c943e1da05b835b1bd217d06d6a7a0e68ab474a95b45d627122dfa",
+          "src/feature5.js": "ef2c14382da836a445ba56d74ae64881d7e2477b4a261db971285e2cf6262876",
+          "src/feature6.js": "a4d7b44772464e4db1f3d1f1393e70fe1bc91edcd0bb96168cc32b646919e083",
+          "src/feature7.js": "371864c2766d45ed1a5c632c0c72eea0f628a7123c503fc770680d185e0ea55f",
+          "src/shared.js": "6f9e2f043e3e9594848e8607bafbdfada7f572e24864e705ae3b58a8d00ad8ce",
+          "tddswarm.config.json": "228d09855c0a48b6ea3c45d83a3590e6a97c8578face6848c06ef1ab59ae3475",
+          "test/0.test.js": "e298686921be81d9c8352dc33644a50a2e72d192f5c561f34807cf94326348e1",
+          "test/1.test.js": "f3026bf100407b7c372be662dc3ad2199c4e3df97aa7d1f697c16f187bbb0c10",
+          "test/2.test.js": "30809ac33f8af6cb4d7ac28b14e514f357ed81956910db105f2a00bfe61f158e",
+          "test/3.test.js": "4583ef360a1173ace648e209948b337790877d7906b6b980ef2d27042320b163",
+          "test/4.test.js": "2ac35f144e09b98b781caf609780630b34eaa40ba5eb14d5b348833bb445681d",
+          "test/5.test.js": "191a3c0eedffd3e24043c597ea54f4c6d04c91880c0f973d719e0cb8a35a009f",
+          "test/6.test.js": "a94665c8fbe900b413a3db8e63a5acd60b14b3fe632fc5b88e619e42c1aaeb22",
+          "test/7.test.js": "7fd5e093b665d9666b4979d203487be7096a14f9f863893be634e8ab4e7d5a90"
+        },
+        "fingerprint": "1122d418715438fdf23fa9c6a6876e0e560a57aabb23fe217d4786929307672f"
+      },
+      "serviceTokens": {},
+      "configurationFiles": [],
+      "mode": "affected",
+      "base": "02e31f18cd183cd9c1739b0b8b3f32ad40052bee",
+      "changed": [
+        "src/feature4.js"
+      ],
+      "ignored": [],
+      "selected": [
+        "test/4.test.js"
+      ],
+      "total": 8,
+      "omitted": 7,
+      "selectionReduction": 0.875,
+      "reasons": [],
+      "warnings": [],
+      "decisions": [
+        {
+          "test": "test/0.test.js",
+          "selected": false,
+          "reasons": [
+            "no-known-dependency-on-change"
+          ],
+          "paths": []
+        },
+        {
+          "test": "test/1.test.js",
+          "selected": false,
+          "reasons": [
+            "no-known-dependency-on-change"
+          ],
+          "paths": []
+        },
+        {
+          "test": "test/2.test.js",
+          "selected": false,
+          "reasons": [
+            "no-known-dependency-on-change"
+          ],
+          "paths": []
+        },
+        {
+          "test": "test/3.test.js",
+          "selected": false,
+          "reasons": [
+            "no-known-dependency-on-change"
+          ],
+          "paths": []
+        },
+        {
+          "test": "test/4.test.js",
+          "selected": true,
+          "reasons": [
+            "dependency-path"
+          ],
+          "paths": [
+            [
+              "test/4.test.js",
+              "src/feature4.js"
+            ]
+          ]
+        },
+        {
+          "test": "test/5.test.js",
+          "selected": false,
+          "reasons": [
+            "no-known-dependency-on-change"
+          ],
+          "paths": []
+        },
+        {
+          "test": "test/6.test.js",
+          "selected": false,
+          "reasons": [
+            "no-known-dependency-on-change"
+          ],
+          "paths": []
+        },
+        {
+          "test": "test/7.test.js",
+          "selected": false,
+          "reasons": [
+            "no-known-dependency-on-change"
+          ],
+          "paths": []
+        }
+      ],
+      "fingerprint": "2ef1337a1dec6607224e5708efbc8887a0a2c4cd10cdd641fb37c1ebdf7d31c0",
+      "discovery": {
+        "files": [
+          "test/0.test.js",
+          "test/1.test.js",
+          "test/2.test.js",
+          "test/3.test.js",
+          "test/4.test.js",
+          "test/5.test.js",
+          "test/6.test.js",
+          "test/7.test.js"
+        ],
+        "complete": true,
+        "adapter": "node",
+        "warnings": []
+      },
+      "runtime": {
+        "usable": false,
+        "reason": "runtime-disabled",
+        "policy": "supplement-static-only"
+      },
+      "evidence": "static-imports-and-declared-dependencies",
+      "limitations": [
+        "Runtime observations cover exercised inputs; external services require declared versions.",
+        "Selection operates at test-file granularity.",
+        "No deployment safety or measured wall-clock savings are implied."
+      ]
+    },
+    "executed": true,
+    "shadow": false,
+    "executedTests": [
+      "test/4.test.js"
+    ],
+    "runner": "fb72d90b07a61f056a809d106827986d2ea0628e36a00010f9021072652c46d5",
+    "provenance": {
+      "schemaVersion": 1,
+      "revision": "02e31f18cd183cd9c1739b0b8b3f32ad40052bee",
+      "runner": "fb72d90b07a61f056a809d106827986d2ea0628e36a00010f9021072652c46d5",
+      "environment": {
+        "node": "v22.19.0",
+        "platform": "darwin",
+        "arch": "arm64",
+        "labels": {}
+      },
+      "services": {},
+      "serviceWarnings": [],
+      "files": {
+        ".gitignore": "7fb44527b443495e92c61dccfc6b3adf4400dae72a66af52820f7a7b0827527c",
+        "package.json": "f8f6c85d7a372eb7a60eb389f0f0a9901ad08ac127af38a22dff02788ac84267",
+        "src/feature0.js": "c6e12e9343822001cbf04807fe41217c54acedd90f07cb9eb7fd073bbe553f3f",
+        "src/feature1.js": "4fceb8655e9fb3e59a0b0f544b97de1e947491bdc23e8000acfec88fae698f11",
+        "src/feature2.js": "6048089fdf2806ff8dcefb667dab67f9e332d64428dc250516c8eae64678b8ba",
+        "src/feature3.js": "d20b8804db7ee07c40b5d922ccbe82ed6d015458b6a4773227b500bf687f0444",
+        "src/feature4.js": "d71b39e1d4c943e1da05b835b1bd217d06d6a7a0e68ab474a95b45d627122dfa",
+        "src/feature5.js": "ef2c14382da836a445ba56d74ae64881d7e2477b4a261db971285e2cf6262876",
+        "src/feature6.js": "a4d7b44772464e4db1f3d1f1393e70fe1bc91edcd0bb96168cc32b646919e083",
+        "src/feature7.js": "371864c2766d45ed1a5c632c0c72eea0f628a7123c503fc770680d185e0ea55f",
+        "src/shared.js": "6f9e2f043e3e9594848e8607bafbdfada7f572e24864e705ae3b58a8d00ad8ce",
+        "tddswarm.config.json": "228d09855c0a48b6ea3c45d83a3590e6a97c8578face6848c06ef1ab59ae3475",
+        "test/0.test.js": "e298686921be81d9c8352dc33644a50a2e72d192f5c561f34807cf94326348e1",
+        "test/1.test.js": "f3026bf100407b7c372be662dc3ad2199c4e3df97aa7d1f697c16f187bbb0c10",
+        "test/2.test.js": "30809ac33f8af6cb4d7ac28b14e514f357ed81956910db105f2a00bfe61f158e",
+        "test/3.test.js": "4583ef360a1173ace648e209948b337790877d7906b6b980ef2d27042320b163",
+        "test/4.test.js": "2ac35f144e09b98b781caf609780630b34eaa40ba5eb14d5b348833bb445681d",
+        "test/5.test.js": "191a3c0eedffd3e24043c597ea54f4c6d04c91880c0f973d719e0cb8a35a009f",
+        "test/6.test.js": "a94665c8fbe900b413a3db8e63a5acd60b14b3fe632fc5b88e619e42c1aaeb22",
+        "test/7.test.js": "7fd5e093b665d9666b4979d203487be7096a14f9f863893be634e8ab4e7d5a90"
+      },
+      "fingerprint": "1122d418715438fdf23fa9c6a6876e0e560a57aabb23fe217d4786929307672f"
+    }
+  },
+  "observedFailures": []
+}

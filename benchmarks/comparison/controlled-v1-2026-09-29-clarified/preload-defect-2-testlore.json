@@ -1,0 +1,392 @@
+{
+  "scenario": "preload-defect",
+  "project": "preload",
+  "regression": true,
+  "repetition": 2,
+  "order": [
+    "full-native",
+    "testlore",
+    "imports-only"
+  ],
+  "method": "testlore",
+  "totalFiles": 8,
+  "plannedFiles": [
+    "test/0.test.js",
+    "test/1.test.js",
+    "test/2.test.js",
+    "test/3.test.js",
+    "test/4.test.js",
+    "test/5.test.js",
+    "test/6.test.js",
+    "test/7.test.js"
+  ],
+  "executedFiles": [
+    "test/0.test.js",
+    "test/1.test.js",
+    "test/2.test.js",
+    "test/3.test.js",
+    "test/4.test.js",
+    "test/5.test.js",
+    "test/6.test.js",
+    "test/7.test.js"
+  ],
+  "endToEndMs": 576,
+  "executionMs": 138,
+  "result": {
+    "adapter": "node",
+    "exitCode": 1,
+    "durationMs": 138,
+    "tests": [
+      {
+        "file": "test/0.test.js",
+        "name": "contract 0",
+        "status": "failed",
+        "durationMs": 0.815292,
+        "line": 4,
+        "column": 1,
+        "id": "31d6b4e3834249106de4173f8b8afaa6fe516cd10a1066da59307a221a4c04f0"
+      },
+      {
+        "file": "test/1.test.js",
+        "name": "contract 1",
+        "status": "failed",
+        "durationMs": 0.83225,
+        "line": 4,
+        "column": 1,
+        "id": "d45d09ad8d68369391d1f3eb865f4612605ea29b84c9f6b870b39922f1bf0d47"
+      },
+      {
+        "file": "test/2.test.js",
+        "name": "contract 2",
+        "status": "failed",
+        "durationMs": 0.790917,
+        "line": 4,
+        "column": 1,
+        "id": "7ec72062b69b9635a8728dc7d8012ef81512433c35af6deea50bb2a3f1a8d6e4"
+      },
+      {
+        "file": "test/3.test.js",
+        "name": "contract 3",
+        "status": "failed",
+        "durationMs": 0.821458,
+        "line": 4,
+        "column": 1,
+        "id": "45498eac539cfaf653b9c5dd1b5f883597a4019577897a01dec6e88245b328db"
+      },
+      {
+        "file": "test/4.test.js",
+        "name": "contract 4",
+        "status": "failed",
+        "durationMs": 0.80675,
+        "line": 4,
+        "column": 1,
+        "id": "60a74ffb2d4dbf89f2c7319119d0eaaf90ff8a5a2588c22e22e48ad206f13199"
+      },
+      {
+        "file": "test/5.test.js",
+        "name": "contract 5",
+        "status": "failed",
+        "durationMs": 0.808291,
+        "line": 4,
+        "column": 1,
+        "id": "17067766ae5f51b48b47d93dda12d81e117dfff3000540f3309ed82e694cdf7f"
+      },
+      {
+        "file": "test/6.test.js",
+        "name": "contract 6",
+        "status": "failed",
+        "durationMs": 0.802,
+        "line": 4,
+        "column": 1,
+        "id": "02bfab99dbef9256eb45cfc2908439572b2f95e97d4d7359407c69850b958943"
+      },
+      {
+        "file": "test/7.test.js",
+        "name": "contract 7",
+        "status": "failed",
+        "durationMs": 0.835542,
+        "line": 4,
+        "column": 1,
+        "id": "0455927407ebb0ec334070a34fd73cc1736fa20095b52974969f1873031d2bbd"
+      }
+    ],
+    "collectionFiles": [
+      "test/0.test.js",
+      "test/1.test.js",
+      "test/2.test.js",
+      "test/3.test.js",
+      "test/4.test.js",
+      "test/5.test.js",
+      "test/6.test.js",
+      "test/7.test.js"
+    ],
+    "requestedFiles": [
+      "test/0.test.js",
+      "test/1.test.js",
+      "test/2.test.js",
+      "test/3.test.js",
+      "test/4.test.js",
+      "test/5.test.js",
+      "test/6.test.js",
+      "test/7.test.js"
+    ],
+    "executedFiles": [
+      "test/0.test.js",
+      "test/1.test.js",
+      "test/2.test.js",
+      "test/3.test.js",
+      "test/4.test.js",
+      "test/5.test.js",
+      "test/6.test.js",
+      "test/7.test.js"
+    ],
+    "missingFiles": [],
+    "unknownFiles": [],
+    "complete": true,
+    "command": [
+      "<node>",
+      "--test",
+      "--import",
+      "./setup.js",
+      "--test-reporter=<testlore-source>/src/reporters/node.js",
+      "--test-reporter-destination=/var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-report-3EHH0h/results.json",
+      "./test/0.test.js",
+      "./test/1.test.js",
+      "./test/2.test.js",
+      "./test/3.test.js",
+      "./test/4.test.js",
+      "./test/5.test.js",
+      "./test/6.test.js",
+      "./test/7.test.js"
+    ],
+    "stdout": "",
+    "stderr": "",
+    "signal": null,
+    "reportErrors": [],
+    "plan": {
+      "schemaVersion": 1,
+      "provenance": {
+        "schemaVersion": 1,
+        "revision": "6236b48826b83dcfd408f57208fb2ed119f048b6",
+        "runner": "392b2f7c4daa79901c6615da7eac538a357d5a1709d339c28cc85435723d96f4",
+        "environment": {
+          "node": "v22.19.0",
+          "platform": "darwin",
+          "arch": "arm64",
+          "labels": {}
+        },
+        "services": {},
+        "serviceWarnings": [],
+        "files": {
+          ".gitignore": "7fb44527b443495e92c61dccfc6b3adf4400dae72a66af52820f7a7b0827527c",
+          "package.json": "258bbf96f5f85b1495aa3511a2a2f05a6a593193dacb03cc3992f2c9b19a4026",
+          "setup.js": "cd9e329c3a2c9709bfb109364cf69849a097efe6d706805a18cae56037c595e9",
+          "src/feature0.js": "0474d398b6b7928fbcb386fd0010575a677e0dda8e5cb4e7a3a921d178bd6e47",
+          "src/feature1.js": "1f626035775fe7c684e903db7bfb0e01c11bd065e9b1ce8a9c63141b759c6218",
+          "src/feature2.js": "5cc0e4a17e47bf7820e807add7dd5fd23459a4ced0a7bacca2ac8d7d46a9fb48",
+          "src/feature3.js": "8941f75fba41dc73f66140c4b9cb79e5adc36a12a53063bc12d50d05677de127",
+          "src/feature4.js": "d71b39e1d4c943e1da05b835b1bd217d06d6a7a0e68ab474a95b45d627122dfa",
+          "src/feature5.js": "20aec7b856c55a66359e91938f731ab056624359b88d14adb2e67926c761a264",
+          "src/feature6.js": "ee281cfbc789166ba616c19e5a5c3cc9eac76303637a01d50cf78a9c96d13cee",
+          "src/feature7.js": "b45999afb46de4f15924c8442b28f66eda9e533594a5a66dba8a43c7c4cf9f4c",
+          "tddswarm.config.json": "4bd8e4e7a17ae6eaab94b8f73b33798336fdefc40a475dbecbf2bb80ac0534df",
+          "test/0.test.js": "6c0e47f67a16182040ae344d97da8e93105713cdbefa6af8e67ddfaba4d36981",
+          "test/1.test.js": "9bafe25dcdebbe28da08ed23c88dce7d0b67e5e6717cd2924ff044ba593cc485",
+          "test/2.test.js": "ba3c7ca38d4ddad82ed44dcff4efedf922aa9a10b4a0fb00e596505b131b288b",
+          "test/3.test.js": "6069491d3e8462932570567e30e7b4fafc26ce0fa99cd89f0c52a3b58351677b",
+          "test/4.test.js": "6df6c58ff92e8029ebf3fae7d1e084a5e9738ecf2697026dd543c61d506bfee4",
+          "test/5.test.js": "6df7b93fe5f5d84ada736d85ce99a5faac9e3ff0f1dfb3b02c0a8cf22ff05361",
+          "test/6.test.js": "7547f696da6772797fafb15fd601fd49c044f76fe113b4519c2009c6137c64e6",
+          "test/7.test.js": "962cc4182751c9ab472590a0ed717f80284a3fa88dd2914df48d27f54d656344"
+        },
+        "fingerprint": "0c0ddf4e89202ed7b6a362ebcfaadb7a680f4a2eb14608db90f79b4b5d919b95"
+      },
+      "serviceTokens": {},
+      "configurationFiles": [],
+      "mode": "full",
+      "base": "6236b48826b83dcfd408f57208fb2ed119f048b6",
+      "changed": [
+        "setup.js"
+      ],
+      "ignored": [],
+      "selected": [
+        "test/0.test.js",
+        "test/1.test.js",
+        "test/2.test.js",
+        "test/3.test.js",
+        "test/4.test.js",
+        "test/5.test.js",
+        "test/6.test.js",
+        "test/7.test.js"
+      ],
+      "total": 8,
+      "omitted": 0,
+      "selectionReduction": 0,
+      "reasons": [
+        "global-configuration-changed",
+        "change-without-test-evidence"
+      ],
+      "warnings": [],
+      "decisions": [
+        {
+          "test": "test/0.test.js",
+          "selected": true,
+          "reasons": [
+            "global-configuration-changed",
+            "change-without-test-evidence"
+          ],
+          "paths": []
+        },
+        {
+          "test": "test/1.test.js",
+          "selected": true,
+          "reasons": [
+            "global-configuration-changed",
+            "change-without-test-evidence"
+          ],
+          "paths": []
+        },
+        {
+          "test": "test/2.test.js",
+          "selected": true,
+          "reasons": [
+            "global-configuration-changed",
+            "change-without-test-evidence"
+          ],
+          "paths": []
+        },
+        {
+          "test": "test/3.test.js",
+          "selected": true,
+          "reasons": [
+            "global-configuration-changed",
+            "change-without-test-evidence"
+          ],
+          "paths": []
+        },
+        {
+          "test": "test/4.test.js",
+          "selected": true,
+          "reasons": [
+            "global-configuration-changed",
+            "change-without-test-evidence"
+          ],
+          "paths": []
+        },
+        {
+          "test": "test/5.test.js",
+          "selected": true,
+          "reasons": [
+            "global-configuration-changed",
+            "change-without-test-evidence"
+          ],
+          "paths": []
+        },
+        {
+          "test": "test/6.test.js",
+          "selected": true,
+          "reasons": [
+            "global-configuration-changed",
+            "change-without-test-evidence"
+          ],
+          "paths": []
+        },
+        {
+          "test": "test/7.test.js",
+          "selected": true,
+          "reasons": [
+            "global-configuration-changed",
+            "change-without-test-evidence"
+          ],
+          "paths": []
+        }
+      ],
+      "fingerprint": "d9730332a2a245dba482a0e9e9adc30ac02cc6ce562d0072500163688bd1abcd",
+      "discovery": {
+        "files": [
+          "test/0.test.js",
+          "test/1.test.js",
+          "test/2.test.js",
+          "test/3.test.js",
+          "test/4.test.js",
+          "test/5.test.js",
+          "test/6.test.js",
+          "test/7.test.js"
+        ],
+        "complete": true,
+        "adapter": "node",
+        "warnings": []
+      },
+      "runtime": {
+        "usable": false,
+        "reason": "runtime-disabled",
+        "policy": "supplement-static-only"
+      },
+      "evidence": "static-imports-and-declared-dependencies",
+      "limitations": [
+        "Runtime observations cover exercised inputs; external services require declared versions.",
+        "Selection operates at test-file granularity.",
+        "No deployment safety or measured wall-clock savings are implied."
+      ]
+    },
+    "executed": true,
+    "shadow": false,
+    "executedTests": [
+      "test/0.test.js",
+      "test/1.test.js",
+      "test/2.test.js",
+      "test/3.test.js",
+      "test/4.test.js",
+      "test/5.test.js",
+      "test/6.test.js",
+      "test/7.test.js"
+    ],
+    "runner": "392b2f7c4daa79901c6615da7eac538a357d5a1709d339c28cc85435723d96f4",
+    "provenance": {
+      "schemaVersion": 1,
+      "revision": "6236b48826b83dcfd408f57208fb2ed119f048b6",
+      "runner": "392b2f7c4daa79901c6615da7eac538a357d5a1709d339c28cc85435723d96f4",
+      "environment": {
+        "node": "v22.19.0",
+        "platform": "darwin",
+        "arch": "arm64",
+        "labels": {}
+      },
+      "services": {},
+      "serviceWarnings": [],
+      "files": {
+        ".gitignore": "7fb44527b443495e92c61dccfc6b3adf4400dae72a66af52820f7a7b0827527c",
+        "package.json": "258bbf96f5f85b1495aa3511a2a2f05a6a593193dacb03cc3992f2c9b19a4026",
+        "setup.js": "cd9e329c3a2c9709bfb109364cf69849a097efe6d706805a18cae56037c595e9",
+        "src/feature0.js": "0474d398b6b7928fbcb386fd0010575a677e0dda8e5cb4e7a3a921d178bd6e47",
+        "src/feature1.js": "1f626035775fe7c684e903db7bfb0e01c11bd065e9b1ce8a9c63141b759c6218",
+        "src/feature2.js": "5cc0e4a17e47bf7820e807add7dd5fd23459a4ced0a7bacca2ac8d7d46a9fb48",
+        "src/feature3.js": "8941f75fba41dc73f66140c4b9cb79e5adc36a12a53063bc12d50d05677de127",
+        "src/feature4.js": "d71b39e1d4c943e1da05b835b1bd217d06d6a7a0e68ab474a95b45d627122dfa",
+        "src/feature5.js": "20aec7b856c55a66359e91938f731ab056624359b88d14adb2e67926c761a264",
+        "src/feature6.js": "ee281cfbc789166ba616c19e5a5c3cc9eac76303637a01d50cf78a9c96d13cee",
+        "src/feature7.js": "b45999afb46de4f15924c8442b28f66eda9e533594a5a66dba8a43c7c4cf9f4c",
+        "tddswarm.config.json": "4bd8e4e7a17ae6eaab94b8f73b33798336fdefc40a475dbecbf2bb80ac0534df",
+        "test/0.test.js": "6c0e47f67a16182040ae344d97da8e93105713cdbefa6af8e67ddfaba4d36981",
+        "test/1.test.js": "9bafe25dcdebbe28da08ed23c88dce7d0b67e5e6717cd2924ff044ba593cc485",
+        "test/2.test.js": "ba3c7ca38d4ddad82ed44dcff4efedf922aa9a10b4a0fb00e596505b131b288b",
+        "test/3.test.js": "6069491d3e8462932570567e30e7b4fafc26ce0fa99cd89f0c52a3b58351677b",
+        "test/4.test.js": "6df6c58ff92e8029ebf3fae7d1e084a5e9738ecf2697026dd543c61d506bfee4",
+        "test/5.test.js": "6df7b93fe5f5d84ada736d85ce99a5faac9e3ff0f1dfb3b02c0a8cf22ff05361",
+        "test/6.test.js": "7547f696da6772797fafb15fd601fd49c044f76fe113b4519c2009c6137c64e6",
+        "test/7.test.js": "962cc4182751c9ab472590a0ed717f80284a3fa88dd2914df48d27f54d656344"
+      },
+      "fingerprint": "0c0ddf4e89202ed7b6a362ebcfaadb7a680f4a2eb14608db90f79b4b5d919b95"
+    }
+  },
+  "observedFailures": [
+    "31d6b4e3834249106de4173f8b8afaa6fe516cd10a1066da59307a221a4c04f0",
+    "d45d09ad8d68369391d1f3eb865f4612605ea29b84c9f6b870b39922f1bf0d47",
+    "7ec72062b69b9635a8728dc7d8012ef81512433c35af6deea50bb2a3f1a8d6e4",
+    "45498eac539cfaf653b9c5dd1b5f883597a4019577897a01dec6e88245b328db",
+    "60a74ffb2d4dbf89f2c7319119d0eaaf90ff8a5a2588c22e22e48ad206f13199",
+    "17067766ae5f51b48b47d93dda12d81e117dfff3000540f3309ed82e694cdf7f",
+    "02bfab99dbef9256eb45cfc2908439572b2f95e97d4d7359407c69850b958943",
+    "0455927407ebb0ec334070a34fd73cc1736fa20095b52974969f1873031d2bbd"
+  ]
+}

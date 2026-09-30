@@ -1,0 +1,168 @@
+{
+  "scenario": "dynamic-import-defect",
+  "project": "uncertainty",
+  "regression": true,
+  "repetition": 1,
+  "order": [
+    "full-native",
+    "testlore",
+    "imports-only"
+  ],
+  "method": "full-native",
+  "totalFiles": 8,
+  "plannedFiles": [
+    "test/0.test.js",
+    "test/1.test.js",
+    "test/2.test.js",
+    "test/3.test.js",
+    "test/4.test.js",
+    "test/5.test.js",
+    "test/6.test.js",
+    "test/7.test.js"
+  ],
+  "executedFiles": [
+    "test/0.test.js",
+    "test/1.test.js",
+    "test/2.test.js",
+    "test/3.test.js",
+    "test/4.test.js",
+    "test/5.test.js",
+    "test/6.test.js",
+    "test/7.test.js"
+  ],
+  "endToEndMs": 128,
+  "executionMs": 128,
+  "result": {
+    "adapter": "node",
+    "exitCode": 1,
+    "durationMs": 128,
+    "tests": [
+      {
+        "file": "test/0.test.js",
+        "name": "contract 0",
+        "status": "failed",
+        "durationMs": 0.783542,
+        "line": 4,
+        "column": 1,
+        "id": "31d6b4e3834249106de4173f8b8afaa6fe516cd10a1066da59307a221a4c04f0"
+      },
+      {
+        "file": "test/1.test.js",
+        "name": "contract 1",
+        "status": "passed",
+        "durationMs": 0.376334,
+        "line": 4,
+        "column": 1,
+        "id": "d45d09ad8d68369391d1f3eb865f4612605ea29b84c9f6b870b39922f1bf0d47"
+      },
+      {
+        "file": "test/2.test.js",
+        "name": "contract 2",
+        "status": "passed",
+        "durationMs": 0.41,
+        "line": 4,
+        "column": 1,
+        "id": "7ec72062b69b9635a8728dc7d8012ef81512433c35af6deea50bb2a3f1a8d6e4"
+      },
+      {
+        "file": "test/3.test.js",
+        "name": "contract 3",
+        "status": "passed",
+        "durationMs": 0.411458,
+        "line": 4,
+        "column": 1,
+        "id": "45498eac539cfaf653b9c5dd1b5f883597a4019577897a01dec6e88245b328db"
+      },
+      {
+        "file": "test/4.test.js",
+        "name": "contract 4",
+        "status": "passed",
+        "durationMs": 0.386459,
+        "line": 4,
+        "column": 1,
+        "id": "60a74ffb2d4dbf89f2c7319119d0eaaf90ff8a5a2588c22e22e48ad206f13199"
+      },
+      {
+        "file": "test/5.test.js",
+        "name": "contract 5",
+        "status": "passed",
+        "durationMs": 0.395291,
+        "line": 4,
+        "column": 1,
+        "id": "17067766ae5f51b48b47d93dda12d81e117dfff3000540f3309ed82e694cdf7f"
+      },
+      {
+        "file": "test/6.test.js",
+        "name": "contract 6",
+        "status": "passed",
+        "durationMs": 0.683125,
+        "line": 4,
+        "column": 1,
+        "id": "02bfab99dbef9256eb45cfc2908439572b2f95e97d4d7359407c69850b958943"
+      },
+      {
+        "file": "test/7.test.js",
+        "name": "contract 7",
+        "status": "passed",
+        "durationMs": 0.362834,
+        "line": 4,
+        "column": 1,
+        "id": "0455927407ebb0ec334070a34fd73cc1736fa20095b52974969f1873031d2bbd"
+      }
+    ],
+    "collectionFiles": [
+      "test/0.test.js",
+      "test/1.test.js",
+      "test/2.test.js",
+      "test/3.test.js",
+      "test/4.test.js",
+      "test/5.test.js",
+      "test/6.test.js",
+      "test/7.test.js"
+    ],
+    "requestedFiles": [
+      "test/0.test.js",
+      "test/1.test.js",
+      "test/2.test.js",
+      "test/3.test.js",
+      "test/4.test.js",
+      "test/5.test.js",
+      "test/6.test.js",
+      "test/7.test.js"
+    ],
+    "executedFiles": [
+      "test/0.test.js",
+      "test/1.test.js",
+      "test/2.test.js",
+      "test/3.test.js",
+      "test/4.test.js",
+      "test/5.test.js",
+      "test/6.test.js",
+      "test/7.test.js"
+    ],
+    "missingFiles": [],
+    "unknownFiles": [],
+    "complete": true,
+    "command": [
+      "<node>",
+      "--test",
+      "--test-reporter=<testlore-source>/src/reporters/node.js",
+      "--test-reporter-destination=/var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-report-hlsTmt/results.json",
+      "./test/0.test.js",
+      "./test/1.test.js",
+      "./test/2.test.js",
+      "./test/3.test.js",
+      "./test/4.test.js",
+      "./test/5.test.js",
+      "./test/6.test.js",
+      "./test/7.test.js"
+    ],
+    "stdout": "",
+    "stderr": "",
+    "signal": null,
+    "reportErrors": []
+  },
+  "observedFailures": [
+    "31d6b4e3834249106de4173f8b8afaa6fe516cd10a1066da59307a221a4c04f0"
+  ]
+}

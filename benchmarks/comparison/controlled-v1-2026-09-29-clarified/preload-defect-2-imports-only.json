@@ -1,0 +1,31 @@
+{
+  "scenario": "preload-defect",
+  "project": "preload",
+  "regression": true,
+  "repetition": 2,
+  "order": [
+    "full-native",
+    "testlore",
+    "imports-only"
+  ],
+  "method": "imports-only",
+  "totalFiles": 8,
+  "plannedFiles": [],
+  "executedFiles": [],
+  "endToEndMs": 1,
+  "executionMs": 0,
+  "result": {
+    "adapter": "node",
+    "exitCode": 0,
+    "tests": [],
+    "collectionFiles": [],
+    "requestedFiles": [],
+    "executedFiles": [],
+    "complete": true,
+    "durationMs": 0,
+    "command": [],
+    "stdout": "",
+    "stderr": ""
+  },
+  "observedFailures": []
+}
