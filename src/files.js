@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
+import { resolvePluginConfig } from './plugin-config.js';
 
 export const SOURCE = /\.(?:[cm]?[jt]sx?)$/;
 export const TEST = /(?:^|\/)(?:[^/]+\.)?(?:test|spec)\.[cm]?[jt]sx?$|(?:^|\/)(?:__tests__)\/.*\.[cm]?[jt]sx?$/;
@@ -43,7 +44,10 @@ export function listFiles(root) {
 }
 export function readConfig(root) {
   const file = safePath(root, 'tddswarm.config.json');
-  const config = fs.existsSync(file) ? JSON.parse(fs.readFileSync(file, 'utf8')) : {};
+  return validateConfig(fs.existsSync(file) ? JSON.parse(fs.readFileSync(file, 'utf8')) : {});
+}
+export function validateConfig(raw) {
+  const config = resolvePluginConfig(raw);
   for (const key of ['runner', 'agent']) {
     if (config[key] && (!Array.isArray(config[key]) || !config[key].length || config[key].some(v => typeof v !== 'string' || !v))) throw new Error(`${key} must be a nonempty array of executable and arguments`);
   }
