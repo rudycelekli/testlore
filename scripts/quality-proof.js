@@ -52,12 +52,15 @@ function sanitize(value, roots) {
 export async function qualityProof(options = {}) {
   const apiRoot = path.resolve(options.apiRoot || process.env.TDDSWARM_API_ROOT || repository);
   const toolsRoot = path.resolve(options.toolsRoot || process.env.TDDSWARM_TOOLS_ROOT || apiRoot);
-  const implementationDigests = Object.fromEntries(['src/evidence.js', 'src/provenance.js'].map(file => [file, sha(fs.readFileSync(path.join(apiRoot, file)))]));
+  const implementationDigests = Object.fromEntries(['src/evidence.js', 'src/provenance.js', 'src/inputs.js'].map(file => [file, sha(fs.readFileSync(path.join(apiRoot, file)))]));
   implementationDigests['scripts/quality-proof.js'] = sha(fs.readFileSync(fileURLToPath(import.meta.url)));
   const { ingestQuality, qualityEvidence } = await import(pathToFileURL(path.join(apiRoot, 'src/evidence.js')).href);
   const { snapshot } = await import(pathToFileURL(path.join(apiRoot, 'src/provenance.js')).href);
+  const { readConfig } = await import(pathToFileURL(path.join(apiRoot, 'src/files.js')).href);
   const c8 = packageTool(toolsRoot, 'c8'), stryker = packageTool(toolsRoot, '@stryker-mutator/core');
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'tddswarm-quality-proof-'));
+  const serviceVariable = 'TDDSWARM_QUALITY_PROOF_SERVICE', previousService = process.env[serviceVariable];
+  process.env[serviceVariable] = 'proof-contract-v1';
   try {
     const config = {
       mutate: ['src/classify.js'], testRunner: 'command', commandRunner: { command: 'node --test test/classify.test.js' },
@@ -67,8 +70,9 @@ export async function qualityProof(options = {}) {
     };
     write(root, 'package.json', { type: 'module', private: true });
     write(root, 'src/classify.js', source); write(root, 'test/classify.test.js', tests); write(root, 'stryker.config.json', config);
+    write(root, 'tddswarm.config.json', { services: { proofContract: { tests: ['test/classify.test.js'], env: serviceVariable } } });
     // One snapshot predates both actual tool invocations. Reports/temp files stay in excluded metadata.
-    const provenance = snapshot(root);
+    const provenance = snapshot(root, readConfig(root));
     write(root, '.tddswarm/proof/provenance.json', provenance);
     const coverageRun = command(root, [process.execPath, c8.path, '--include=src/*.js', '--reporter=json', '--reports-dir=.tddswarm/proof/coverage', process.execPath, '--test', 'test/classify.test.js']);
     const coveragePath = '.tddswarm/proof/coverage/coverage-final.json';
@@ -85,6 +89,27 @@ export async function qualityProof(options = {}) {
     for (const [status, count] of Object.entries(mutation.metrics.counts)) assert.equal(count, rawStatuses.filter(value => value === status).length);
     const fresh = qualityEvidence(root);
     assert.equal(fresh.coverage.measured, true); assert.equal(fresh.mutation.measured, true);
+    const coverageRecordPath = path.join(root, '.tddswarm/evidence/quality/coverage.json');
+    const coverageRecordBytes = fs.readFileSync(coverageRecordPath);
+    const tamperedRecord = JSON.parse(coverageRecordBytes); tamperedRecord.scope = ['tampered scope'];
+    fs.writeFileSync(coverageRecordPath, JSON.stringify(tamperedRecord));
+    const recordTamper = qualityEvidence(root).coverage;
+    assert.equal(recordTamper.measured, false); assert.match(recordTamper.error, /integrity mismatch/i);
+    fs.writeFileSync(coverageRecordPath, coverageRecordBytes);
+    const mutationStoredRaw = path.join(root, '.tddswarm/evidence/quality/mutation.raw.json');
+    fs.appendFileSync(mutationStoredRaw, '\n');
+    const rawTamper = qualityEvidence(root).mutation;
+    assert.equal(rawTamper.measured, false); assert.match(rawTamper.error, /raw evidence changed/i);
+    fs.writeFileSync(mutationStoredRaw, mutationRaw);
+    process.env[serviceVariable] = 'proof-contract-v2';
+    const serviceStale = qualityEvidence(root), serviceRejected = {};
+    assert.equal(serviceStale.coverage.measured, false); assert.equal(serviceStale.mutation.measured, false);
+    for (const [type, reportPath] of [['coverage', coveragePath], ['mutation', mutationPath]]) {
+      try { ingestQuality(root, type, reportPath, { provenance }); throw new Error('Changed service version incorrectly accepted'); }
+      catch (error) { assert.match(error.message, /Quality evidence source changed:.*service-versions-changed/); serviceRejected[type] = error.message; }
+    }
+    process.env[serviceVariable] = 'proof-contract-v1';
+    assert.equal(qualityEvidence(root).coverage.measured, true); assert.equal(qualityEvidence(root).mutation.measured, true);
     fs.appendFileSync(path.join(root, 'src/classify.js'), '\n// deliberate postmeasurement source drift\n');
     const rejected = {};
     for (const [type, reportPath] of [['coverage', coveragePath], ['mutation', mutationPath]]) {
@@ -100,10 +125,15 @@ export async function qualityProof(options = {}) {
       preRunProvenance: provenance, coverage: { run: coverageRun, record: coverage, originalReportHash: sha(coverageRaw), raw: JSON.parse(coverageRaw) },
       mutation: { run: mutationRun, record: mutation, originalReportHash: sha(mutationRaw), raw: JSON.parse(mutationRaw) },
       fresh: { coverageMeasured: fresh.coverage.measured, mutationMeasured: fresh.mutation.measured },
+      integrityChecks: { recordTamperRejected: recordTamper.measured === false, recordError: recordTamper.error, rawTamperRejected: rawTamper.measured === false, rawError: rawTamper.error },
+      serviceChecks: { coverageMeasuredAfterVersionChange: serviceStale.coverage.measured, mutationMeasuredAfterVersionChange: serviceStale.mutation.measured, ingestionRejected: serviceRejected },
       stale: { coverageMeasured: stale.coverage.measured, mutationMeasured: stale.mutation.measured, ingestionRejected: rejected, coverageReasons: stale.coverage.reasons, mutationReasons: stale.mutation.reasons }
     };
     return sanitize(receipt, [[root, '<fixture>'], [toolsRoot, '<tools>'], [apiRoot, '<api>'], [repository, '<repository>'], [process.execPath, '<node>']]);
-  } finally { fs.rmSync(root, { recursive: true, force: true }); }
+  } finally {
+    if (previousService === undefined) delete process.env[serviceVariable]; else process.env[serviceVariable] = previousService;
+    fs.rmSync(root, { recursive: true, force: true });
+  }
 }
 
 if (process.argv[1] && fileURLToPath(import.meta.url) === path.resolve(process.argv[1])) {

@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "scope": "Real c8 and Stryker execution on a deterministic scratch fixture; not production-project or model quality",
-  "generatedAt": "2026-09-30T01:12:06.453Z",
+  "generatedAt": "2026-09-30T01:20:30.062Z",
   "verified": true,
   "node": "v22.19.0",
   "tools": {
@@ -9,9 +9,10 @@
     "stryker": "10.0.0"
   },
   "implementationDigests": {
-    "src/evidence.js": "dcfd1898df7694348d299e206083213ec1e93b39cffb942813598e841b08cded",
+    "src/evidence.js": "cca398cd92c0696572659c089e7cece9054bbf07c98348cfa2070bde674afe81",
     "src/provenance.js": "6e573abb022528f098584cb9de48fd35e9750b9ddc612a686bfb522cbbc6b654",
-    "scripts/quality-proof.js": "e7b910344e97d33840d36c3b55d723bb42868d3abf5802f4133cf1beb716781b"
+    "src/inputs.js": "b60751753fef2e11d65b88ce69e866a273289312ce65c1a1fb8bed7a49fd6da7",
+    "scripts/quality-proof.js": "662148b7631e449001a9c44b9950f845e00e6e8b812e94ec14fd58fca1c56a19"
   },
   "fixture": {
     "source": "export function classify(value) {\n  if (value < 0) return 'negative';\n  if (value === 0) return 'zero';\n  return 'positive';\n}\nexport function unused(value) {\n  return value * 2;\n}\n",
@@ -59,15 +60,18 @@
       "arch": "arm64",
       "labels": {}
     },
-    "services": {},
+    "services": {
+      "service:proofContract": "568e3c0c6cf0b6bd791ed8e73c4b8198aab52dd899e0f95719985a82ec4f4500"
+    },
     "serviceWarnings": [],
     "files": {
       "package.json": "3163d7bfc4fa7ddaa1b6e5a5eb16fa721e405c38311805ac8feb685c104bc37e",
       "src/classify.js": "a9c2b867ffac3205ec7a5fb0d0eb5ce7a9377a0888912718d2fa5ba94dade3f8",
       "stryker.config.json": "79e5427e753cdd75bf147e0516d475072dae60169b1137aa5482a1141775d430",
+      "tddswarm.config.json": "8fc81b9011dd1e0eac80bd993008a2d3777e39e4c53d9181953fd3398ab2e094",
       "test/classify.test.js": "8eb836858a54df0119e37fab8cda63bbfa7660f605b233d88664bb73b6f22486"
     },
-    "fingerprint": "221492d1ecd958678e3eacd068946b9ee49d70220035a9f2fa7262964ba093d0"
+    "fingerprint": "954dee0793a184db7f69525fa462471dd00d8e81249551eb5b878410416dab11"
   },
   "coverage": {
     "run": {
@@ -82,8 +86,8 @@
         "test/classify.test.js"
       ],
       "exitCode": 0,
-      "durationMs": 604,
-      "stdout": "TAP version 13\n# Subtest: negative requirement\nok 1 - negative requirement\n  ---\n  duration_ms: 1.979417\n  type: 'test'\n  ...\n# Subtest: zero requirement\nok 2 - zero requirement\n  ---\n  duration_ms: 0.132667\n  type: 'test'\n  ...\n# Subtest: positive requirement\nok 3 - positive requirement\n  ---\n  duration_ms: 0.085708\n  type: 'test'\n  ...\n1..3\n# tests 3\n# suites 0\n# pass 3\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 164.312916\n",
+      "durationMs": 395,
+      "stdout": "TAP version 13\n# Subtest: negative requirement\nok 1 - negative requirement\n  ---\n  duration_ms: 1.4135\n  type: 'test'\n  ...\n# Subtest: zero requirement\nok 2 - zero requirement\n  ---\n  duration_ms: 0.118708\n  type: 'test'\n  ...\n# Subtest: positive requirement\nok 3 - positive requirement\n  ---\n  duration_ms: 0.074333\n  type: 'test'\n  ...\n1..3\n# tests 3\n# suites 0\n# pass 3\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 68.946333\n",
       "stderr": ""
     },
     "record": {
@@ -99,18 +103,21 @@
           "arch": "arm64",
           "labels": {}
         },
-        "services": {},
+        "services": {
+          "service:proofContract": "568e3c0c6cf0b6bd791ed8e73c4b8198aab52dd899e0f95719985a82ec4f4500"
+        },
         "serviceWarnings": [],
         "files": {
           "package.json": "3163d7bfc4fa7ddaa1b6e5a5eb16fa721e405c38311805ac8feb685c104bc37e",
           "src/classify.js": "a9c2b867ffac3205ec7a5fb0d0eb5ce7a9377a0888912718d2fa5ba94dade3f8",
           "stryker.config.json": "79e5427e753cdd75bf147e0516d475072dae60169b1137aa5482a1141775d430",
+          "tddswarm.config.json": "8fc81b9011dd1e0eac80bd993008a2d3777e39e4c53d9181953fd3398ab2e094",
           "test/classify.test.js": "8eb836858a54df0119e37fab8cda63bbfa7660f605b233d88664bb73b6f22486"
         },
-        "fingerprint": "221492d1ecd958678e3eacd068946b9ee49d70220035a9f2fa7262964ba093d0"
+        "fingerprint": "954dee0793a184db7f69525fa462471dd00d8e81249551eb5b878410416dab11"
       },
-      "reportHash": "194815dcc380565be193e9def4df74051fe13870a349386eb608bbf88a69947a",
-      "createdAt": "2026-09-30T01:11:59.113Z",
+      "reportHash": "6b6ecc2e0fecb015929067e19e8c262217448e1b04e9810d9e42e6b756addf59",
+      "createdAt": "2026-09-30T01:20:25.417Z",
       "scope": [
         "src/classify.js"
       ],
@@ -136,9 +143,9 @@
           "percentage": 100
         }
       },
-      "integrity": "a1c63dbd7ff4d5fff56db95e4deddcfc2cbef82ec613b265e9ba94929805ff2f"
+      "integrity": "125bddbee80f5118046e3d3a71304ce66d6864ae280c9644122e00afada0ad72"
     },
-    "originalReportHash": "194815dcc380565be193e9def4df74051fe13870a349386eb608bbf88a69947a",
+    "originalReportHash": "6b6ecc2e0fecb015929067e19e8c262217448e1b04e9810d9e42e6b756addf59",
     "raw": {
       "/private<fixture>/src/classify.js": {
         "path": "/private<fixture>/src/classify.js",
@@ -450,7 +457,7 @@
         "stryker.config.json"
       ],
       "exitCode": 0,
-      "durationMs": 6425,
+      "durationMs": 3514,
       "stdout": "",
       "stderr": ""
     },
@@ -467,18 +474,21 @@
           "arch": "arm64",
           "labels": {}
         },
-        "services": {},
+        "services": {
+          "service:proofContract": "568e3c0c6cf0b6bd791ed8e73c4b8198aab52dd899e0f95719985a82ec4f4500"
+        },
         "serviceWarnings": [],
         "files": {
           "package.json": "3163d7bfc4fa7ddaa1b6e5a5eb16fa721e405c38311805ac8feb685c104bc37e",
           "src/classify.js": "a9c2b867ffac3205ec7a5fb0d0eb5ce7a9377a0888912718d2fa5ba94dade3f8",
           "stryker.config.json": "79e5427e753cdd75bf147e0516d475072dae60169b1137aa5482a1141775d430",
+          "tddswarm.config.json": "8fc81b9011dd1e0eac80bd993008a2d3777e39e4c53d9181953fd3398ab2e094",
           "test/classify.test.js": "8eb836858a54df0119e37fab8cda63bbfa7660f605b233d88664bb73b6f22486"
         },
-        "fingerprint": "221492d1ecd958678e3eacd068946b9ee49d70220035a9f2fa7262964ba093d0"
+        "fingerprint": "954dee0793a184db7f69525fa462471dd00d8e81249551eb5b878410416dab11"
       },
-      "reportHash": "72e661b7d25ab112c7c099de6c48b744f2023d93acc24451f755f2996ee00784",
-      "createdAt": "2026-09-30T01:12:05.683Z",
+      "reportHash": "1b03f679933b1865de59dabeebb801eccd33e03e3b5223339fec5aeb0ef0fb3e",
+      "createdAt": "2026-09-30T01:20:29.036Z",
       "scope": [
         "src/classify.js"
       ],
@@ -499,9 +509,9 @@
         "complete": true,
         "excluded": 0
       },
-      "integrity": "aed031edf5b8d5605faf372cdace7ab1a82925c642fcdec2ee862b5e3d82323b"
+      "integrity": "6560df7c4eeb002957103b0194f3410713164809219533b131791d3116d46343"
     },
-    "originalReportHash": "72e661b7d25ab112c7c099de6c48b744f2023d93acc24451f755f2996ee00784",
+    "originalReportHash": "1b03f679933b1865de59dabeebb801eccd33e03e3b5223339fec5aeb0ef0fb3e",
     "raw": {
       "files": {
         "src/classify.js": {
@@ -511,7 +521,7 @@
               "id": "0",
               "mutatorName": "BlockStatement",
               "replacement": "{}",
-              "statusReason": "TAP version 13\n\n# Subtest: negative requirement\n\nnot ok 1 - negative requirement\n  ---\n  duration_ms: 6.440208\n  type: 'test'\n  location: '/private<fixture>/.tddswarm/stryker-tmp/sandbox-I7Vgj7/test/classify.test.js:5:1'\n  failureType: 'testCodeFailure'\n  error: |-\n    Expected values to be strictly equal:\n    + actual - expected\n    \n    + undefined\n    - 'negative'\n    \n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: 'negative'\n  operator: 'strictEqual'\n  stack: |-\n    TestContext.<anonymous> (file:///private<fixture>/.tddswarm/stryker-tmp/sandbox-I7Vgj7/test/classify.test.js:5:43)\n    Test.runInAsyncScope (node:async_hooks:214:14)\n    Test.run (node:internal/test_runner/test:1047:25)\n    Test.start (node:internal/test_runner/test:944:17)\n    startSubtestAfterBootstrap (node:internal/test_runner/harness:296:17)\n  ...\n\n# Subtest: zero requirement\nnot ok 2 - zero requirement\n  ---\n  duration_ms: 0.52075\n  type: 'test'\n  location: '/private<fixture>/.tddswarm/stryker-tmp/sandbox-I7Vgj7/test/classify.test.js:6:1'\n  failureType: 'testCodeFailure'\n  error: |-\n    Expected values to be strictly equal:\n    + actual - expected\n    \n    + undefined\n    - 'zero'\n    \n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: 'zero'\n  operator: 'strictEqual'\n  stack: |-\n    TestContext.<anonymous> (file:///private<fixture>/.tddswarm/stryker-tmp/sandbox-I7Vgj7/test/classify.test.js:6:39)\n    Test.runInAsyncScope (node:async_hooks:214:14)\n    Test.run (node:internal/test_runner/test:1047:25)\n    Test.processPendingSubtests (node:internal/test_runner/test:744:18)\n    Test.postRun (node:internal/test_runner/test:1173:19)\n    Test.run (node:internal/test_runner/test:1101:12)\n    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)\n  ...\n# Subtest: positive requirement\nnot ok 3 - positive requirement\n  ---\n  duration_ms: 0.268792\n  type: 'test'\n  location: '/private<fixture>/.tddswarm/stryker-tmp/sandbox-I7Vgj7/test/classify.test.js:7:1'\n  failureType: 'testCodeFailure'\n  error: |-\n    Expected values to be strictly equal:\n    + actual - expected\n    \n    + undefined\n    - 'positive'\n    \n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: 'positive'\n  operator: 'strictEqual'\n  stack: |-\n    TestContext.<anonymous> (file:///private<fixture>/.tddswarm/stryker-tmp/sandbox-I7Vgj7/test/classify.test.js:7:43)\n    Test.runInAsyncScope (node:async_hooks:214:14)\n    Test.run (node:internal/test_runner/test:1047:25)\n    Test.processPendingSubtests (node:internal/test_runner/test:744:18)\n    Test.postRun (node:internal/test_runner/test:1173:19)\n    Test.run (node:internal/test_runner/test:1101:12)\n    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)\n  ...\n\n1..3\n# tests 3\n\n# suites 0\n# pass 0\n\n# fail 3\n# cancelled 0\n\n# skipped 0\n\n# todo 0\n# duration_ms 125.663709\n",
+              "statusReason": "TAP version 13\n\n# Subtest: negative requirement\n\nnot ok 1 - negative requirement\n\n  ---\n  duration_ms: 1.257334\n  type: 'test'\n  location: '/private<fixture>/.tddswarm/stryker-tmp/sandbox-JrZalp/test/classify.test.js:5:1'\n  failureType: 'testCodeFailure'\n  error: |-\n    Expected values to be strictly equal:\n    + actual - expected\n    \n    + undefined\n    - 'negative'\n    \n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: 'negative'\n  operator: 'strictEqual'\n  stack: |-\n    TestContext.<anonymous> (file:///private<fixture>/.tddswarm/stryker-tmp/sandbox-JrZalp/test/classify.test.js:5:43)\n    Test.runInAsyncScope (node:async_hooks:214:14)\n    Test.run (node:internal/test_runner/test:1047:25)\n    Test.start (node:internal/test_runner/test:944:17)\n    startSubtestAfterBootstrap (node:internal/test_runner/harness:296:17)\n  ...\n\n# Subtest: zero requirement\n\nnot ok 2 - zero requirement\n\n  ---\n  duration_ms: 0.278042\n  type: 'test'\n  location: '/private<fixture>/.tddswarm/stryker-tmp/sandbox-JrZalp/test/classify.test.js:6:1'\n  failureType: 'testCodeFailure'\n  error: |-\n    Expected values to be strictly equal:\n    + actual - expected\n    \n    + undefined\n    - 'zero'\n    \n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: 'zero'\n  operator: 'strictEqual'\n  stack: |-\n    TestContext.<anonymous> (file:///private<fixture>/.tddswarm/stryker-tmp/sandbox-JrZalp/test/classify.test.js:6:39)\n    Test.runInAsyncScope (node:async_hooks:214:14)\n    Test.run (node:internal/test_runner/test:1047:25)\n    Test.processPendingSubtests (node:internal/test_runner/test:744:18)\n    Test.postRun (node:internal/test_runner/test:1173:19)\n    Test.run (node:internal/test_runner/test:1101:12)\n    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)\n  ...\n\n# Subtest: positive requirement\n\nnot ok 3 - positive requirement\n\n  ---\n  duration_ms: 0.126625\n  type: 'test'\n  location: '/private<fixture>/.tddswarm/stryker-tmp/sandbox-JrZalp/test/classify.test.js:7:1'\n  failureType: 'testCodeFailure'\n  error: |-\n    Expected values to be strictly equal:\n    + actual - expected\n    \n    + undefined\n    - 'positive'\n    \n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: 'positive'\n  operator: 'strictEqual'\n  stack: |-\n    TestContext.<anonymous> (file:///private<fixture>/.tddswarm/stryker-tmp/sandbox-JrZalp/test/classify.test.js:7:43)\n    Test.runInAsyncScope (node:async_hooks:214:14)\n    Test.run (node:internal/test_runner/test:1047:25)\n    Test.processPendingSubtests (node:internal/test_runner/test:744:18)\n    Test.postRun (node:internal/test_runner/test:1173:19)\n    Test.run (node:internal/test_runner/test:1101:12)\n    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)\n  ...\n\n1..3\n\n# tests 3\n# suites 0\n\n# pass 0\n\n# fail 3\n# cancelled 0\n# skipped 0\n\n# todo 0\n\n# duration_ms 69.389208\n",
               "status": "Killed",
               "testsCompleted": 1,
               "killedBy": [
@@ -532,7 +542,7 @@
               "id": "1",
               "mutatorName": "ConditionalExpression",
               "replacement": "true",
-              "statusReason": "TAP version 13\n\n# Subtest: negative requirement\n\nok 1 - negative requirement\n  ---\n  duration_ms: 1\n  type: 'test'\n  ...\n\n# Subtest: zero requirement\n\nnot ok 2 - zero requirement\n\n  ---\n  duration_ms: 0.860833\n  type: 'test'\n  location: '/private<fixture>/.tddswarm/stryker-tmp/sandbox-I7Vgj7/test/classify.test.js:6:1'\n  failureType: 'testCodeFailure'\n  error: |-\n    Expected values to be strictly equal:\n    \n    'negative' !== 'zero'\n    \n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: 'zero'\n  actual: 'negative'\n  operator: 'strictEqual'\n  stack: |-\n    TestContext.<anonymous> (file:///private<fixture>/.tddswarm/stryker-tmp/sandbox-I7Vgj7/test/classify.test.js:6:39)\n    Test.runInAsyncScope (node:async_hooks:214:14)\n    Test.run (node:internal/test_runner/test:1047:25)\n    Test.processPendingSubtests (node:internal/test_runner/test:744:18)\n    Test.postRun (node:internal/test_runner/test:1173:19)\n    Test.run (node:internal/test_runner/test:1101:12)\n    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)\n  ...\n# Subtest: positive requirement\n\nnot ok 3 - positive requirement\n\n  ---\n  duration_ms: 0.339542\n  type: 'test'\n  location: '/private<fixture>/.tddswarm/stryker-tmp/sandbox-I7Vgj7/test/classify.test.js:7:1'\n  failureType: 'testCodeFailure'\n  error: |-\n    Expected values to be strictly equal:\n    + actual - expected\n    \n    + 'negative'\n    - 'positive'\n    \n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: 'positive'\n  actual: 'negative'\n  operator: 'strictEqual'\n  stack: |-\n    TestContext.<anonymous> (file:///private<fixture>/.tddswarm/stryker-tmp/sandbox-I7Vgj7/test/classify.test.js:7:43)\n    Test.runInAsyncScope (node:async_hooks:214:14)\n    Test.run (node:internal/test_runner/test:1047:25)\n    Test.processPendingSubtests (node:internal/test_runner/test:744:18)\n    Test.postRun (node:internal/test_runner/test:1173:19)\n    Test.run (node:internal/test_runner/test:1101:12)\n    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)\n  ...\n\n1..3\n# tests 3\n# suites 0\n\n# pass 1\n# fail 2\n\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 95.555\n",
+              "statusReason": "TAP version 13\n\n# Subtest: negative requirement\n\nok 1 - negative requirement\n\n  ---\n  duration_ms: 0.618042\n  type: 'test'\n  ...\n\n# Subtest: zero requirement\n\nnot ok 2 - zero requirement\n\n  ---\n  duration_ms: 0.61475\n  type: 'test'\n  location: '/private<fixture>/.tddswarm/stryker-tmp/sandbox-JrZalp/test/classify.test.js:6:1'\n  failureType: 'testCodeFailure'\n  error: |-\n    Expected values to be strictly equal:\n    \n    'negative' !== 'zero'\n    \n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: 'zero'\n  actual: 'negative'\n  operator: 'strictEqual'\n  stack: |-\n    TestContext.<anonymous> (file:///private<fixture>/.tddswarm/stryker-tmp/sandbox-JrZalp/test/classify.test.js:6:39)\n    Test.runInAsyncScope (node:async_hooks:214:14)\n    Test.run (node:internal/test_runner/test:1047:25)\n    Test.processPendingSubtests (node:internal/test_runner/test:744:18)\n    Test.postRun (node:internal/test_runner/test:1173:19)\n    Test.run (node:internal/test_runner/test:1101:12)\n    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)\n  ...\n\n# Subtest: positive requirement\n\nnot ok 3 - positive requirement\n\n  ---\n  duration_ms: 0.262375\n  type: 'test'\n  location: '/private<fixture>/.tddswarm/stryker-tmp/sandbox-JrZalp/test/classify.test.js:7:1'\n  failureType: 'testCodeFailure'\n  error: |-\n    Expected values to be strictly equal:\n    + actual - expected\n    \n    + 'negative'\n    - 'positive'\n    \n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: 'positive'\n  actual: 'negative'\n  operator: 'strictEqual'\n  stack: |-\n    TestContext.<anonymous> (file:///private<fixture>/.tddswarm/stryker-tmp/sandbox-JrZalp/test/classify.test.js:7:43)\n    Test.runInAsyncScope (node:async_hooks:214:14)\n    Test.run (node:internal/test_runner/test:1047:25)\n    Test.processPendingSubtests (node:internal/test_runner/test:744:18)\n    Test.postRun (node:internal/test_runner/test:1173:19)\n    Test.run (node:internal/test_runner/test:1101:12)\n    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)\n  ...\n\n1..3\n\n# tests 3\n# suites 0\n# pass 1\n\n# fail 2\n\n# cancelled 0\n\n# skipped 0\n# todo 0\n\n# duration_ms 64.451333\n",
               "status": "Killed",
               "testsCompleted": 1,
               "killedBy": [
@@ -553,7 +563,7 @@
               "id": "2",
               "mutatorName": "ConditionalExpression",
               "replacement": "false",
-              "statusReason": "TAP version 13\n\n# Subtest: negative requirement\n\nnot ok 1 - negative requirement\n  ---\n  duration_ms: 1.551208\n  type: 'test'\n  location: '/private<fixture>/.tddswarm/stryker-tmp/sandbox-I7Vgj7/test/classify.test.js:5:1'\n  failureType: 'testCodeFailure'\n  error: |-\n    Expected values to be strictly equal:\n    + actual - expected\n    \n    + 'positive'\n    - 'negative'\n    \n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: 'negative'\n  actual: 'positive'\n  operator: 'strictEqual'\n  stack: |-\n    TestContext.<anonymous> (file:///private<fixture>/.tddswarm/stryker-tmp/sandbox-I7Vgj7/test/classify.test.js:5:43)\n    Test.runInAsyncScope (node:async_hooks:214:14)\n    Test.run (node:internal/test_runner/test:1047:25)\n    Test.start (node:internal/test_runner/test:944:17)\n    startSubtestAfterBootstrap (node:internal/test_runner/harness:296:17)\n  ...\n\n# Subtest: zero requirement\n\nok 2 - zero requirement\n  ---\n  duration_ms: 0.542542\n  type: 'test'\n  ...\n# Subtest: positive requirement\n\nok 3 - positive requirement\n\n  ---\n  duration_ms: 0.107708\n  type: 'test'\n  ...\n\n1..3\n\n# tests 3\n# suites 0\n\n# pass 2\n\n# fail 1\n# cancelled 0\n\n# skipped 0\n# todo 0\n# duration_ms 120.012\n",
+              "statusReason": "TAP version 13\n\n# Subtest: negative requirement\n\nnot ok 1 - negative requirement\n\n  ---\n  duration_ms: 1.272542\n  type: 'test'\n  location: '/private<fixture>/.tddswarm/stryker-tmp/sandbox-JrZalp/test/classify.test.js:5:1'\n  failureType: 'testCodeFailure'\n  error: |-\n    Expected values to be strictly equal:\n    + actual - expected\n    \n    + 'positive'\n    - 'negative'\n    \n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: 'negative'\n  actual: 'positive'\n  operator: 'strictEqual'\n  stack: |-\n    TestContext.<anonymous> (file:///private<fixture>/.tddswarm/stryker-tmp/sandbox-JrZalp/test/classify.test.js:5:43)\n    Test.runInAsyncScope (node:async_hooks:214:14)\n    Test.run (node:internal/test_runner/test:1047:25)\n    Test.start (node:internal/test_runner/test:944:17)\n    startSubtestAfterBootstrap (node:internal/test_runner/harness:296:17)\n  ...\n\n# Subtest: zero requirement\nok 2 - zero requirement\n\n  ---\n  duration_ms: 0.124416\n  type: 'test'\n  ...\n\n# Subtest: positive requirement\n\nok 3 - positive requirement\n  ---\n  duration_ms: 0.079708\n  type: 'test'\n  ...\n\n1..3\n\n# tests 3\n# suites 0\n\n# pass 2\n# fail 1\n\n# cancelled 0\n# skipped 0\n\n# todo 0\n# duration_ms 64.972917\n",
               "status": "Killed",
               "testsCompleted": 1,
               "killedBy": [
@@ -574,7 +584,7 @@
               "id": "3",
               "mutatorName": "EqualityOperator",
               "replacement": "value <= 0",
-              "statusReason": "TAP version 13\n\n# Subtest: negative requirement\n\nok 1 - negative requirement\n  ---\n  duration_ms: 0.806667\n  type: 'test'\n  ...\n\n# Subtest: zero requirement\n\nnot ok 2 - zero requirement\n  ---\n  duration_ms: 0.788792\n  type: 'test'\n  location: '/private<fixture>/.tddswarm/stryker-tmp/sandbox-I7Vgj7/test/classify.test.js:6:1'\n  failureType: 'testCodeFailure'\n  error: |-\n    Expected values to be strictly equal:\n    \n    'negative' !== 'zero'\n    \n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: 'zero'\n  actual: 'negative'\n  operator: 'strictEqual'\n  stack: |-\n    TestContext.<anonymous> (file:///private<fixture>/.tddswarm/stryker-tmp/sandbox-I7Vgj7/test/classify.test.js:6:39)\n    Test.runInAsyncScope (node:async_hooks:214:14)\n    Test.run (node:internal/test_runner/test:1047:25)\n    Test.processPendingSubtests (node:internal/test_runner/test:744:18)\n    Test.postRun (node:internal/test_runner/test:1173:19)\n    Test.run (node:internal/test_runner/test:1101:12)\n    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)\n  ...\n# Subtest: positive requirement\n\nok 3 - positive requirement\n\n  ---\n  duration_ms: 0.52525\n  type: 'test'\n  ...\n\n1..3\n# tests 3\n# suites 0\n\n# pass 2\n# fail 1\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 98.430959\n",
+              "statusReason": "TAP version 13\n\n# Subtest: negative requirement\n\nok 1 - negative requirement\n\n  ---\n  duration_ms: 0.723042\n  type: 'test'\n  ...\n\n# Subtest: zero requirement\n\nnot ok 2 - zero requirement\n\n  ---\n  duration_ms: 0.699583\n  type: 'test'\n  location: '/private<fixture>/.tddswarm/stryker-tmp/sandbox-JrZalp/test/classify.test.js:6:1'\n  failureType: 'testCodeFailure'\n  error: |-\n    Expected values to be strictly equal:\n    \n    'negative' !== 'zero'\n    \n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: 'zero'\n  actual: 'negative'\n  operator: 'strictEqual'\n  stack: |-\n    TestContext.<anonymous> (file:///private<fixture>/.tddswarm/stryker-tmp/sandbox-JrZalp/test/classify.test.js:6:39)\n    Test.runInAsyncScope (node:async_hooks:214:14)\n    Test.run (node:internal/test_runner/test:1047:25)\n    Test.processPendingSubtests (node:internal/test_runner/test:744:18)\n    Test.postRun (node:internal/test_runner/test:1173:19)\n    Test.run (node:internal/test_runner/test:1101:12)\n    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)\n  ...\n\n# Subtest: positive requirement\n\nok 3 - positive requirement\n\n  ---\n  duration_ms: 0.156\n  type: 'test'\n  ...\n\n1..3\n\n# tests 3\n# suites 0\n\n# pass 2\n\n# fail 1\n# cancelled 0\n\n# skipped 0\n\n# todo 0\n\n# duration_ms 66.493042\n",
               "status": "Killed",
               "testsCompleted": 1,
               "killedBy": [
@@ -595,7 +605,7 @@
               "id": "4",
               "mutatorName": "EqualityOperator",
               "replacement": "value >= 0",
-              "statusReason": "TAP version 13\n\n# Subtest: negative requirement\n\nnot ok 1 - negative requirement\n  ---\n  duration_ms: 1.491208\n  type: 'test'\n  location: '/private<fixture>/.tddswarm/stryker-tmp/sandbox-I7Vgj7/test/classify.test.js:5:1'\n  failureType: 'testCodeFailure'\n  error: |-\n    Expected values to be strictly equal:\n    + actual - expected\n    \n    + 'positive'\n    - 'negative'\n    \n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: 'negative'\n  actual: 'positive'\n  operator: 'strictEqual'\n  stack: |-\n    TestContext.<anonymous> (file:///private<fixture>/.tddswarm/stryker-tmp/sandbox-I7Vgj7/test/classify.test.js:5:43)\n    Test.runInAsyncScope (node:async_hooks:214:14)\n    Test.run (node:internal/test_runner/test:1047:25)\n    Test.start (node:internal/test_runner/test:944:17)\n    startSubtestAfterBootstrap (node:internal/test_runner/harness:296:17)\n  ...\n\n# Subtest: zero requirement\n\nnot ok 2 - zero requirement\n\n  ---\n  duration_ms: 0.274708\n  type: 'test'\n  location: '/private<fixture>/.tddswarm/stryker-tmp/sandbox-I7Vgj7/test/classify.test.js:6:1'\n  failureType: 'testCodeFailure'\n  error: |-\n    Expected values to be strictly equal:\n    \n    'negative' !== 'zero'\n    \n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: 'zero'\n  actual: 'negative'\n  operator: 'strictEqual'\n  stack: |-\n    TestContext.<anonymous> (file:///private<fixture>/.tddswarm/stryker-tmp/sandbox-I7Vgj7/test/classify.test.js:6:39)\n    Test.runInAsyncScope (node:async_hooks:214:14)\n    Test.run (node:internal/test_runner/test:1047:25)\n    Test.processPendingSubtests (node:internal/test_runner/test:744:18)\n    Test.postRun (node:internal/test_runner/test:1173:19)\n    Test.run (node:internal/test_runner/test:1101:12)\n    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)\n  ...\n\n# Subtest: positive requirement\n\nnot ok 3 - positive requirement\n  ---\n  duration_ms: 0.15075\n  type: 'test'\n  location: '/private<fixture>/.tddswarm/stryker-tmp/sandbox-I7Vgj7/test/classify.test.js:7:1'\n  failureType: 'testCodeFailure'\n  error: |-\n    Expected values to be strictly equal:\n    + actual - expected\n    \n    + 'negative'\n    - 'positive'\n    \n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: 'positive'\n  actual: 'negative'\n  operator: 'strictEqual'\n  stack: |-\n    TestContext.<anonymous> (file:///private<fixture>/.tddswarm/stryker-tmp/sandbox-I7Vgj7/test/classify.test.js:7:43)\n    Test.runInAsyncScope (node:async_hooks:214:14)\n    Test.run (node:internal/test_runner/test:1047:25)\n    Test.processPendingSubtests (node:internal/test_runner/test:744:18)\n    Test.postRun (node:internal/test_runner/test:1173:19)\n    Test.run (node:internal/test_runner/test:1101:12)\n    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)\n  ...\n\n1..3\n# tests 3\n\n# suites 0\n\n# pass 0\n# fail 3\n\n# cancelled 0\n\n# skipped 0\n\n# todo 0\n\n# duration_ms 100.665667\n",
+              "statusReason": "TAP version 13\n\n# Subtest: negative requirement\n\nnot ok 1 - negative requirement\n\n  ---\n  duration_ms: 1.349666\n  type: 'test'\n  location: '/private<fixture>/.tddswarm/stryker-tmp/sandbox-JrZalp/test/classify.test.js:5:1'\n  failureType: 'testCodeFailure'\n  error: |-\n    Expected values to be strictly equal:\n    + actual - expected\n    \n    + 'positive'\n    - 'negative'\n    \n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: 'negative'\n  actual: 'positive'\n  operator: 'strictEqual'\n  stack: |-\n    TestContext.<anonymous> (file:///private<fixture>/.tddswarm/stryker-tmp/sandbox-JrZalp/test/classify.test.js:5:43)\n    Test.runInAsyncScope (node:async_hooks:214:14)\n    Test.run (node:internal/test_runner/test:1047:25)\n    Test.start (node:internal/test_runner/test:944:17)\n    startSubtestAfterBootstrap (node:internal/test_runner/harness:296:17)\n  ...\n\n# Subtest: zero requirement\n\nnot ok 2 - zero requirement\n\n  ---\n  duration_ms: 0.2375\n  type: 'test'\n  location: '/private<fixture>/.tddswarm/stryker-tmp/sandbox-JrZalp/test/classify.test.js:6:1'\n  failureType: 'testCodeFailure'\n  error: |-\n    Expected values to be strictly equal:\n    \n    'negative' !== 'zero'\n    \n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: 'zero'\n  actual: 'negative'\n  operator: 'strictEqual'\n  stack: |-\n    TestContext.<anonymous> (file:///private<fixture>/.tddswarm/stryker-tmp/sandbox-JrZalp/test/classify.test.js:6:39)\n    Test.runInAsyncScope (node:async_hooks:214:14)\n    Test.run (node:internal/test_runner/test:1047:25)\n    Test.processPendingSubtests (node:internal/test_runner/test:744:18)\n    Test.postRun (node:internal/test_runner/test:1173:19)\n    Test.run (node:internal/test_runner/test:1101:12)\n    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)\n  ...\n\n# Subtest: positive requirement\n\nnot ok 3 - positive requirement\n\n  ---\n  duration_ms: 0.134375\n  type: 'test'\n  location: '/private<fixture>/.tddswarm/stryker-tmp/sandbox-JrZalp/test/classify.test.js:7:1'\n  failureType: 'testCodeFailure'\n  error: |-\n    Expected values to be strictly equal:\n    + actual - expected\n    \n    + 'negative'\n    - 'positive'\n    \n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: 'positive'\n  actual: 'negative'\n  operator: 'strictEqual'\n  stack: |-\n    TestContext.<anonymous> (file:///private<fixture>/.tddswarm/stryker-tmp/sandbox-JrZalp/test/classify.test.js:7:43)\n    Test.runInAsyncScope (node:async_hooks:214:14)\n    Test.run (node:internal/test_runner/test:1047:25)\n    Test.processPendingSubtests (node:internal/test_runner/test:744:18)\n    Test.postRun (node:internal/test_runner/test:1173:19)\n    Test.run (node:internal/test_runner/test:1101:12)\n    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)\n  ...\n\n1..3\n\n# tests 3\n# suites 0\n\n# pass 0\n\n# fail 3\n\n# cancelled 0\n\n# skipped 0\n\n# todo 0\n\n# duration_ms 75.006375\n",
               "status": "Killed",
               "testsCompleted": 1,
               "killedBy": [
@@ -616,7 +626,7 @@
               "id": "5",
               "mutatorName": "StringLiteral",
               "replacement": "\"\"",
-              "statusReason": "TAP version 13\n\n# Subtest: negative requirement\n\nnot ok 1 - negative requirement\n  ---\n  duration_ms: 1.641625\n  type: 'test'\n  location: '/private<fixture>/.tddswarm/stryker-tmp/sandbox-I7Vgj7/test/classify.test.js:5:1'\n  failureType: 'testCodeFailure'\n  error: |-\n    Expected values to be strictly equal:\n    \n    '' !== 'negative'\n    \n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: 'negative'\n  actual: ''\n  operator: 'strictEqual'\n  stack: |-\n    TestContext.<anonymous> (file:///private<fixture>/.tddswarm/stryker-tmp/sandbox-I7Vgj7/test/classify.test.js:5:43)\n    Test.runInAsyncScope (node:async_hooks:214:14)\n    Test.run (node:internal/test_runner/test:1047:25)\n    Test.start (node:internal/test_runner/test:944:17)\n    startSubtestAfterBootstrap (node:internal/test_runner/harness:296:17)\n  ...\n\n# Subtest: zero requirement\nok 2 - zero requirement\n  ---\n  duration_ms: 0.150666\n  type: 'test'\n  ...\n# Subtest: positive requirement\nok 3 - positive requirement\n  ---\n  duration_ms: 0.085\n  type: 'test'\n  ...\n\n1..3\n# tests 3\n# suites 0\n\n# pass 2\n\n# fail 1\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 83.592708\n",
+              "statusReason": "TAP version 13\n\n# Subtest: negative requirement\n\nnot ok 1 - negative requirement\n\n  ---\n  duration_ms: 1.044334\n  type: 'test'\n  location: '/private<fixture>/.tddswarm/stryker-tmp/sandbox-JrZalp/test/classify.test.js:5:1'\n  failureType: 'testCodeFailure'\n  error: |-\n    Expected values to be strictly equal:\n    \n    '' !== 'negative'\n    \n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: 'negative'\n  actual: ''\n  operator: 'strictEqual'\n  stack: |-\n    TestContext.<anonymous> (file:///private<fixture>/.tddswarm/stryker-tmp/sandbox-JrZalp/test/classify.test.js:5:43)\n    Test.runInAsyncScope (node:async_hooks:214:14)\n    Test.run (node:internal/test_runner/test:1047:25)\n    Test.start (node:internal/test_runner/test:944:17)\n    startSubtestAfterBootstrap (node:internal/test_runner/harness:296:17)\n  ...\n\n# Subtest: zero requirement\n\nok 2 - zero requirement\n\n  ---\n  duration_ms: 0.102208\n  type: 'test'\n  ...\n\n# Subtest: positive requirement\n\nok 3 - positive requirement\n\n  ---\n  duration_ms: 0.064\n  type: 'test'\n  ...\n\n1..3\n\n# tests 3\n# suites 0\n\n# pass 2\n\n# fail 1\n\n# cancelled 0\n\n# skipped 0\n\n# todo 0\n\n# duration_ms 60.295333\n",
               "status": "Killed",
               "testsCompleted": 1,
               "killedBy": [
@@ -637,7 +647,7 @@
               "id": "6",
               "mutatorName": "ConditionalExpression",
               "replacement": "true",
-              "statusReason": "TAP version 13\n\n# Subtest: negative requirement\n\nok 1 - negative requirement\n\n  ---\n  duration_ms: 0.81875\n  type: 'test'\n  ...\n# Subtest: zero requirement\nok 2 - zero requirement\n  ---\n  duration_ms: 0.112084\n  type: 'test'\n  ...\n\n# Subtest: positive requirement\n\nnot ok 3 - positive requirement\n  ---\n  duration_ms: 0.765167\n  type: 'test'\n  location: '/private<fixture>/.tddswarm/stryker-tmp/sandbox-I7Vgj7/test/classify.test.js:7:1'\n  failureType: 'testCodeFailure'\n  error: |-\n    Expected values to be strictly equal:\n    \n    'zero' !== 'positive'\n    \n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: 'positive'\n  actual: 'zero'\n  operator: 'strictEqual'\n  stack: |-\n    TestContext.<anonymous> (file:///private<fixture>/.tddswarm/stryker-tmp/sandbox-I7Vgj7/test/classify.test.js:7:43)\n    Test.runInAsyncScope (node:async_hooks:214:14)\n    Test.run (node:internal/test_runner/test:1047:25)\n    Test.processPendingSubtests (node:internal/test_runner/test:744:18)\n    Test.postRun (node:internal/test_runner/test:1173:19)\n    Test.run (node:internal/test_runner/test:1101:12)\n    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)\n  ...\n\n1..3\n# tests 3\n# suites 0\n\n# pass 2\n# fail 1\n\n# cancelled 0\n\n# skipped 0\n# todo 0\n\n# duration_ms 102.674333\n",
+              "statusReason": "TAP version 13\n\n# Subtest: negative requirement\n\nok 1 - negative requirement\n\n  ---\n  duration_ms: 0.563125\n  type: 'test'\n  ...\n\n# Subtest: zero requirement\n\nok 2 - zero requirement\n\n  ---\n  duration_ms: 0.075625\n  type: 'test'\n  ...\n\n# Subtest: positive requirement\n\nnot ok 3 - positive requirement\n\n  ---\n  duration_ms: 0.525167\n  type: 'test'\n  location: '/private<fixture>/.tddswarm/stryker-tmp/sandbox-JrZalp/test/classify.test.js:7:1'\n  failureType: 'testCodeFailure'\n  error: |-\n    Expected values to be strictly equal:\n    \n    'zero' !== 'positive'\n    \n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: 'positive'\n  actual: 'zero'\n  operator: 'strictEqual'\n  stack: |-\n    TestContext.<anonymous> (file:///private<fixture>/.tddswarm/stryker-tmp/sandbox-JrZalp/test/classify.test.js:7:43)\n    Test.runInAsyncScope (node:async_hooks:214:14)\n    Test.run (node:internal/test_runner/test:1047:25)\n    Test.processPendingSubtests (node:internal/test_runner/test:744:18)\n    Test.postRun (node:internal/test_runner/test:1173:19)\n    Test.run (node:internal/test_runner/test:1101:12)\n    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)\n  ...\n\n1..3\n\n# tests 3\n# suites 0\n\n# pass 2\n\n# fail 1\n\n# cancelled 0\n\n# skipped 0\n# todo 0\n\n# duration_ms 57.079917\n",
               "status": "Killed",
               "testsCompleted": 1,
               "killedBy": [
@@ -658,7 +668,7 @@
               "id": "7",
               "mutatorName": "ConditionalExpression",
               "replacement": "false",
-              "statusReason": "TAP version 13\n\n# Subtest: negative requirement\n\nok 1 - negative requirement\n  ---\n  duration_ms: 0.815416\n  type: 'test'\n  ...\n\n# Subtest: zero requirement\n\nnot ok 2 - zero requirement\n  ---\n  duration_ms: 0.798833\n  type: 'test'\n  location: '/private<fixture>/.tddswarm/stryker-tmp/sandbox-I7Vgj7/test/classify.test.js:6:1'\n  failureType: 'testCodeFailure'\n  error: |-\n    Expected values to be strictly equal:\n    \n    'positive' !== 'zero'\n    \n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: 'zero'\n  actual: 'positive'\n  operator: 'strictEqual'\n  stack: |-\n    TestContext.<anonymous> (file:///private<fixture>/.tddswarm/stryker-tmp/sandbox-I7Vgj7/test/classify.test.js:6:39)\n    Test.runInAsyncScope (node:async_hooks:214:14)\n    Test.run (node:internal/test_runner/test:1047:25)\n    Test.processPendingSubtests (node:internal/test_runner/test:744:18)\n    Test.postRun (node:internal/test_runner/test:1173:19)\n    Test.run (node:internal/test_runner/test:1101:12)\n    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)\n  ...\n# Subtest: positive requirement\nok 3 - positive requirement\n  ---\n  duration_ms: 0.1015\n  type: 'test'\n  ...\n\n1..3\n# tests 3\n\n# suites 0\n# pass 2\n# fail 1\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 95.152417\n",
+              "statusReason": "TAP version 13\n\n# Subtest: negative requirement\n\nok 1 - negative requirement\n\n  ---\n  duration_ms: 0.856375\n  type: 'test'\n  ...\n\n# Subtest: zero requirement\n\nnot ok 2 - zero requirement\n\n  ---\n  duration_ms: 0.769\n  type: 'test'\n  location: '/private<fixture>/.tddswarm/stryker-tmp/sandbox-JrZalp/test/classify.test.js:6:1'\n  failureType: 'testCodeFailure'\n  error: |-\n    Expected values to be strictly equal:\n    \n    'positive' !== 'zero'\n    \n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: 'zero'\n  actual: 'positive'\n  operator: 'strictEqual'\n  stack: |-\n    TestContext.<anonymous> (file:///private<fixture>/.tddswarm/stryker-tmp/sandbox-JrZalp/test/classify.test.js:6:39)\n    Test.runInAsyncScope (node:async_hooks:214:14)\n    Test.run (node:internal/test_runner/test:1047:25)\n    Test.processPendingSubtests (node:internal/test_runner/test:744:18)\n    Test.postRun (node:internal/test_runner/test:1173:19)\n    Test.run (node:internal/test_runner/test:1101:12)\n    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)\n  ...\n\n# Subtest: positive requirement\n\nok 3 - positive requirement\n\n  ---\n  duration_ms: 0.093166\n  type: 'test'\n  ...\n\n1..3\n\n# tests 3\n# suites 0\n# pass 2\n# fail 1\n\n# cancelled 0\n# skipped 0\n\n# todo 0\n# duration_ms 68.193666\n",
               "status": "Killed",
               "testsCompleted": 1,
               "killedBy": [
@@ -679,7 +689,7 @@
               "id": "8",
               "mutatorName": "EqualityOperator",
               "replacement": "value !== 0",
-              "statusReason": "TAP version 13\n\n# Subtest: negative requirement\n\nok 1 - negative requirement\n\n  ---\n  duration_ms: 0.731583\n  type: 'test'\n  ...\n\n# Subtest: zero requirement\n\nnot ok 2 - zero requirement\n  ---\n  duration_ms: 0.730541\n  type: 'test'\n  location: '/private<fixture>/.tddswarm/stryker-tmp/sandbox-I7Vgj7/test/classify.test.js:6:1'\n  failureType: 'testCodeFailure'\n  error: |-\n    Expected values to be strictly equal:\n    \n    'positive' !== 'zero'\n    \n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: 'zero'\n  actual: 'positive'\n  operator: 'strictEqual'\n  stack: |-\n    TestContext.<anonymous> (file:///private<fixture>/.tddswarm/stryker-tmp/sandbox-I7Vgj7/test/classify.test.js:6:39)\n    Test.runInAsyncScope (node:async_hooks:214:14)\n    Test.run (node:internal/test_runner/test:1047:25)\n    Test.processPendingSubtests (node:internal/test_runner/test:744:18)\n    Test.postRun (node:internal/test_runner/test:1173:19)\n    Test.run (node:internal/test_runner/test:1101:12)\n    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)\n  ...\n# Subtest: positive requirement\n\nnot ok 3 - positive requirement\n\n  ---\n  duration_ms: 0.231125\n  type: 'test'\n  location: '/private<fixture>/.tddswarm/stryker-tmp/sandbox-I7Vgj7/test/classify.test.js:7:1'\n  failureType: 'testCodeFailure'\n  error: |-\n    Expected values to be strictly equal:\n    \n    'zero' !== 'positive'\n    \n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: 'positive'\n  actual: 'zero'\n  operator: 'strictEqual'\n  stack: |-\n    TestContext.<anonymous> (file:///private<fixture>/.tddswarm/stryker-tmp/sandbox-I7Vgj7/test/classify.test.js:7:43)\n    Test.runInAsyncScope (node:async_hooks:214:14)\n    Test.run (node:internal/test_runner/test:1047:25)\n    Test.processPendingSubtests (node:internal/test_runner/test:744:18)\n    Test.postRun (node:internal/test_runner/test:1173:19)\n    Test.run (node:internal/test_runner/test:1101:12)\n    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)\n  ...\n\n1..3\n\n# tests 3\n# suites 0\n\n# pass 1\n\n# fail 2\n# cancelled 0\n# skipped 0\n# todo 0\n\n# duration_ms 138.496041\n",
+              "statusReason": "TAP version 13\n\n# Subtest: negative requirement\n\nok 1 - negative requirement\n\n  ---\n  duration_ms: 0.646625\n  type: 'test'\n  ...\n\n# Subtest: zero requirement\n\nnot ok 2 - zero requirement\n\n  ---\n  duration_ms: 0.633208\n  type: 'test'\n  location: '/private<fixture>/.tddswarm/stryker-tmp/sandbox-JrZalp/test/classify.test.js:6:1'\n  failureType: 'testCodeFailure'\n  error: |-\n    Expected values to be strictly equal:\n    \n    'positive' !== 'zero'\n    \n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: 'zero'\n  actual: 'positive'\n  operator: 'strictEqual'\n  stack: |-\n    TestContext.<anonymous> (file:///private<fixture>/.tddswarm/stryker-tmp/sandbox-JrZalp/test/classify.test.js:6:39)\n    Test.runInAsyncScope (node:async_hooks:214:14)\n    Test.run (node:internal/test_runner/test:1047:25)\n    Test.processPendingSubtests (node:internal/test_runner/test:744:18)\n    Test.postRun (node:internal/test_runner/test:1173:19)\n    Test.run (node:internal/test_runner/test:1101:12)\n    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)\n  ...\n\n# Subtest: positive requirement\n\nnot ok 3 - positive requirement\n\n  ---\n  duration_ms: 0.207083\n  type: 'test'\n  location: '/private<fixture>/.tddswarm/stryker-tmp/sandbox-JrZalp/test/classify.test.js:7:1'\n  failureType: 'testCodeFailure'\n  error: |-\n    Expected values to be strictly equal:\n    \n    'zero' !== 'positive'\n    \n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: 'positive'\n  actual: 'zero'\n  operator: 'strictEqual'\n  stack: |-\n    TestContext.<anonymous> (file:///private<fixture>/.tddswarm/stryker-tmp/sandbox-JrZalp/test/classify.test.js:7:43)\n    Test.runInAsyncScope (node:async_hooks:214:14)\n    Test.run (node:internal/test_runner/test:1047:25)\n    Test.processPendingSubtests (node:internal/test_runner/test:744:18)\n    Test.postRun (node:internal/test_runner/test:1173:19)\n    Test.run (node:internal/test_runner/test:1101:12)\n    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)\n  ...\n\n1..3\n\n# tests 3\n# suites 0\n\n# pass 1\n\n# fail 2\n\n# cancelled 0\n\n# skipped 0\n\n# todo 0\n# duration_ms 78.947458\n",
               "status": "Killed",
               "testsCompleted": 1,
               "killedBy": [
@@ -700,7 +710,7 @@
               "id": "9",
               "mutatorName": "StringLiteral",
               "replacement": "\"\"",
-              "statusReason": "TAP version 13\n\n# Subtest: negative requirement\n\nok 1 - negative requirement\n  ---\n  duration_ms: 1.061583\n  type: 'test'\n  ...\n\n# Subtest: zero requirement\n\nnot ok 2 - zero requirement\n  ---\n  duration_ms: 1.121792\n  type: 'test'\n  location: '/private<fixture>/.tddswarm/stryker-tmp/sandbox-I7Vgj7/test/classify.test.js:6:1'\n  failureType: 'testCodeFailure'\n  error: |-\n    Expected values to be strictly equal:\n    \n    '' !== 'zero'\n    \n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: 'zero'\n  actual: ''\n  operator: 'strictEqual'\n  stack: |-\n    TestContext.<anonymous> (file:///private<fixture>/.tddswarm/stryker-tmp/sandbox-I7Vgj7/test/classify.test.js:6:39)\n    Test.runInAsyncScope (node:async_hooks:214:14)\n    Test.run (node:internal/test_runner/test:1047:25)\n    Test.processPendingSubtests (node:internal/test_runner/test:744:18)\n    Test.postRun (node:internal/test_runner/test:1173:19)\n    Test.run (node:internal/test_runner/test:1101:12)\n    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)\n  ...\n# Subtest: positive requirement\nok 3 - positive requirement\n  ---\n  duration_ms: 0.124333\n  type: 'test'\n  ...\n\n1..3\n# tests 3\n\n# suites 0\n# pass 2\n\n# fail 1\n\n# cancelled 0\n# skipped 0\n\n# todo 0\n\n# duration_ms 113.808583\n",
+              "statusReason": "TAP version 13\n\n# Subtest: negative requirement\n\nok 1 - negative requirement\n\n  ---\n  duration_ms: 0.701417\n  type: 'test'\n  ...\n\n# Subtest: zero requirement\n\nnot ok 2 - zero requirement\n\n  ---\n  duration_ms: 0.684708\n  type: 'test'\n  location: '/private<fixture>/.tddswarm/stryker-tmp/sandbox-JrZalp/test/classify.test.js:6:1'\n  failureType: 'testCodeFailure'\n  error: |-\n    Expected values to be strictly equal:\n    \n    '' !== 'zero'\n    \n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: 'zero'\n  actual: ''\n  operator: 'strictEqual'\n  stack: |-\n    TestContext.<anonymous> (file:///private<fixture>/.tddswarm/stryker-tmp/sandbox-JrZalp/test/classify.test.js:6:39)\n    Test.runInAsyncScope (node:async_hooks:214:14)\n    Test.run (node:internal/test_runner/test:1047:25)\n    Test.processPendingSubtests (node:internal/test_runner/test:744:18)\n    Test.postRun (node:internal/test_runner/test:1173:19)\n    Test.run (node:internal/test_runner/test:1101:12)\n    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)\n  ...\n\n# Subtest: positive requirement\n\nok 3 - positive requirement\n\n  ---\n  duration_ms: 0.083959\n  type: 'test'\n  ...\n\n1..3\n\n# tests 3\n\n# suites 0\n\n# pass 2\n\n# fail 1\n# cancelled 0\n\n# skipped 0\n\n# todo 0\n\n# duration_ms 74.749209\n",
               "status": "Killed",
               "testsCompleted": 1,
               "killedBy": [
@@ -721,7 +731,7 @@
               "id": "10",
               "mutatorName": "StringLiteral",
               "replacement": "\"\"",
-              "statusReason": "TAP version 13\n\n# Subtest: negative requirement\n\nok 1 - negative requirement\n\n  ---\n  duration_ms: 0.832291\n  type: 'test'\n  ...\n\n# Subtest: zero requirement\n\nok 2 - zero requirement\n  ---\n  duration_ms: 0.118375\n  type: 'test'\n  ...\n\n# Subtest: positive requirement\n\nnot ok 3 - positive requirement\n  ---\n  duration_ms: 0.7985\n  type: 'test'\n  location: '/private<fixture>/.tddswarm/stryker-tmp/sandbox-I7Vgj7/test/classify.test.js:7:1'\n  failureType: 'testCodeFailure'\n  error: |-\n    Expected values to be strictly equal:\n    \n    '' !== 'positive'\n    \n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: 'positive'\n  actual: ''\n  operator: 'strictEqual'\n  stack: |-\n    TestContext.<anonymous> (file:///private<fixture>/.tddswarm/stryker-tmp/sandbox-I7Vgj7/test/classify.test.js:7:43)\n    Test.runInAsyncScope (node:async_hooks:214:14)\n    Test.run (node:internal/test_runner/test:1047:25)\n    Test.processPendingSubtests (node:internal/test_runner/test:744:18)\n    Test.postRun (node:internal/test_runner/test:1173:19)\n    Test.run (node:internal/test_runner/test:1101:12)\n    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)\n  ...\n\n1..3\n# tests 3\n\n# suites 0\n# pass 2\n# fail 1\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 103.818459\n",
+              "statusReason": "TAP version 13\n\n# Subtest: negative requirement\n\nok 1 - negative requirement\n\n  ---\n  duration_ms: 0.700458\n  type: 'test'\n  ...\n\n# Subtest: zero requirement\n\nok 2 - zero requirement\n\n  ---\n  duration_ms: 0.09675\n  type: 'test'\n  ...\n\n# Subtest: positive requirement\n\nnot ok 3 - positive requirement\n\n  ---\n  duration_ms: 0.658125\n  type: 'test'\n  location: '/private<fixture>/.tddswarm/stryker-tmp/sandbox-JrZalp/test/classify.test.js:7:1'\n  failureType: 'testCodeFailure'\n  error: |-\n    Expected values to be strictly equal:\n    \n    '' !== 'positive'\n    \n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: 'positive'\n  actual: ''\n  operator: 'strictEqual'\n  stack: |-\n    TestContext.<anonymous> (file:///private<fixture>/.tddswarm/stryker-tmp/sandbox-JrZalp/test/classify.test.js:7:43)\n    Test.runInAsyncScope (node:async_hooks:214:14)\n    Test.run (node:internal/test_runner/test:1047:25)\n    Test.processPendingSubtests (node:internal/test_runner/test:744:18)\n    Test.postRun (node:internal/test_runner/test:1173:19)\n    Test.run (node:internal/test_runner/test:1101:12)\n    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)\n  ...\n\n1..3\n\n# tests 3\n# suites 0\n\n# pass 2\n\n# fail 1\n# cancelled 0\n# skipped 0\n\n# todo 0\n\n# duration_ms 72.846542\n",
               "status": "Killed",
               "testsCompleted": 1,
               "killedBy": [
@@ -886,6 +896,20 @@
   "fresh": {
     "coverageMeasured": true,
     "mutationMeasured": true
+  },
+  "integrityChecks": {
+    "recordTamperRejected": true,
+    "recordError": "Evidence integrity mismatch",
+    "rawTamperRejected": true,
+    "rawError": "Raw evidence changed"
+  },
+  "serviceChecks": {
+    "coverageMeasuredAfterVersionChange": false,
+    "mutationMeasuredAfterVersionChange": false,
+    "ingestionRejected": {
+      "coverage": "Quality evidence source changed: service-versions-changed",
+      "mutation": "Quality evidence source changed: service-versions-changed"
+    }
   },
   "stale": {
     "coverageMeasured": false,
