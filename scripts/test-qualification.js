@@ -57,7 +57,8 @@ export async function qualifyTests(root, files, {timeoutMs = 900000, maxBytes = 
 
 const requiredBrowserCases = [
   'real Chromium validates declared route selection, full/subset fault identity and candidate copies',
-  'real Chromium maps isolated HTML/style/bundle/source inputs and preserves three independent named faults'
+  'real Chromium maps isolated HTML/style/bundle/source inputs and preserves three independent named faults',
+  'native Chrome proposal qualification preserves failures and rejects a misrouted mutant'
 ];
 export function verifySourceScope(result, expectedFiles, {browserEnabled = false} = {}) {
   const reasons = [...result.reasons];

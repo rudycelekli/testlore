@@ -15,7 +15,7 @@ test('a passing native subset cannot certify full source or absent browser quali
   assert.equal(result.qualified, true);
   const scope = verifySourceScope(result, ['pass.test.js', 'omitted.test.js']);
   assert.equal(scope.qualified, false); assert.ok(scope.reasons.includes('not-full-test-file-scope'));
-  assert.ok(scope.reasons.includes('browser-tests-disabled')); assert.equal(scope.reasons.filter(reason => reason.startsWith('required-browser-case-missing:')).length, 2);
+  assert.ok(scope.reasons.includes('browser-tests-disabled')); assert.equal(scope.reasons.filter(reason => reason.startsWith('required-browser-case-missing:')).length, 3);
 });
 
 test('qualification rejects native success with skipped, todo or zero tests', async t => {
