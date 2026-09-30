@@ -24,6 +24,21 @@ The next performance acceptance test is a larger, quiet, representative change c
 
 A passing proposal remains **unapplied**, **review required**, and **closedWorld:false**. Browser observations cannot establish unexercised branches or all server inputs; browser fallback remains explicit. Synchronous source copying and hashing are bounded by size but not forcibly interrupted. [Mapping procedure](browser-mappings.md) documents the process and budgets.
 
+## Generated tests and learning
+
+Six new authored contracts, eighteen reference-demonstrated conformance faults, three repetitions and two arms produced 36 attempted trials and 100 controller role invocations. Native reference baselines, generated baselines and each fault repeated at least twice. All valid generated-test trials caught all three faults for their specification; fifteen distinct faults were caught. All six version-comparison generation trials timed out.
+
+| Frozen live arm | Qualified fault detections / opportunities | Valid trials | Timeouts | Mean recorded trial time |
+| --- | ---: | ---: | ---: | ---: |
+| Without memory | 42 / 54 | 14 / 18 | 4 | 69.9 seconds |
+| With advisory memory | 39 / 54 | 13 / 18 | 5 | 73.5 seconds |
+
+The paired inference is **inconclusive**, with incomplete pairs and absent relevant memory disclosed. Learning has no demonstrated improvement and remains advisory. More generated cases did not establish better detection. No timeout was raised, failed attempt rerun, or favorable trial selected.
+
+[Public aggregate](../benchmarks/learning/six-contracts-live-aggregate.json) records the original source revision and hashes. Its recorded times omit project/memory setup and retrieval; byte counts are normalized JSON payloads, not raw transport bytes or tokens. Billing is unknown. Subsequent accounting now measures setup/retrieval and shared controller costs, retains failed ground-truth receipts and states these byte definitions; it does not rewrite this frozen experiment. Two frozen fault names overstate their precise semantics, documented in the [evaluation method](learning-evaluation.md).
+
+Held-out exclusion is established for supplied stdin, historical memory and trial roots. This run does not establish OS read confinement or independently observed zero tool use. There is no observed leakage claim. Constructed specifications, an unpinned default model and local contention limit generalization. The next quality acceptance milestone needs separately frozen, independently maintained specifications, native event auditing, stronger worker confinement and reliable bounded completion before testing any learning-effect claim.
+
 ## Native coding-agent hosts
 
 The opt-in harness launches installed native hosts against two isolated TestLore MCP servers and records actual stdio requests and responses. It requires exact case/scope summaries, call arguments and order, deadlines, output bounds and immutable package/executable identity. An SDK smoke test cannot substitute for native execution.

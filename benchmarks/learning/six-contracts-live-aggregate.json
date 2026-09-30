@@ -1,0 +1,443 @@
+{
+  "schemaVersion": 1,
+  "kind": "local-live-learning-aggregate",
+  "dataset": "six-frozen-contracts-20260930-v1",
+  "datasetHash": "d2993324c0eda464be6a07fa59e7e602015310aad752877914e3ba1adb52e0d1",
+  "measuredSourceRevision": "0488a7601dc1b9801d7cba99f35dede14d2c1a40",
+  "implementationHashes": {
+    "scripts/learning-evaluation.js": "882c8017770fa25a64b103f22487f5b9c4f8d5bdd99f3033b358f31fbb07b4d4",
+    "src/learning.js": "b20f3b143015543f5ad5f339b33eeffe350da3f3ca310b07c740365e47d9d273",
+    "src/swarm.js": "23f09e9a5ce9feb87f9b8527a771d6fa5808c44994516276d901f4ee702c7f68",
+    "src/candidates.js": "cf376d249374c147f93458750490769bc0b9542029da761f7424fb78220f83e8",
+    "src/execution.js": "955589ba3593ccdacdbf2991c09881e43466c49974114d72327665279d4dfe04"
+  },
+  "rawSummarySha256": "b8ec6707bf952bb65c0f212ebefbdb311a5718ae36ed37d34612930bd62ea5bd",
+  "identity": "codex-cli/0.159.0; existing ChatGPT login; default model unpinned",
+  "independentSpecifications": 6,
+  "repetitions": 3,
+  "trials": 36,
+  "workerRoleInvocations": 100,
+  "budget": {
+    "maxCalls": 108,
+    "timeoutMs": 60000,
+    "maxOutputBytes": 32768,
+    "stabilityRuns": 2
+  },
+  "arms": [
+    {
+      "arm": "without_memory",
+      "trials": 18,
+      "failedTrials": 4,
+      "detected": 42,
+      "totalDefects": 54,
+      "meanCases": 17.5,
+      "meanGenerationMs": 66314.44444444444,
+      "meanOutputBytes": 3765.9444444444443,
+      "meanInputBytes": 6429.777777777777,
+      "meanTotalMs": 69850.27777777778,
+      "calls": 50,
+      "stableTrials": 14,
+      "billingUSD": null
+    },
+    {
+      "arm": "with_memory",
+      "trials": 18,
+      "failedTrials": 5,
+      "detected": 39,
+      "totalDefects": 54,
+      "meanCases": 10.944444444444445,
+      "meanGenerationMs": 69798.5,
+      "meanOutputBytes": 4007,
+      "meanInputBytes": 9764.166666666666,
+      "meanTotalMs": 73464.61111111111,
+      "calls": 50,
+      "stableTrials": 13,
+      "billingUSD": null
+    }
+  ],
+  "comparison": {
+    "pairs": [
+      {
+        "fixture": "csvField",
+        "repetition": 0,
+        "recallDelta": 0,
+        "caseDelta": -42,
+        "generationMsDelta": 752,
+        "outputBytesDelta": -205,
+        "inputBytesDelta": 4255,
+        "totalMsDelta": -7799,
+        "complete": true
+      },
+      {
+        "fixture": "csvField",
+        "repetition": 1,
+        "recallDelta": 0,
+        "caseDelta": -34,
+        "generationMsDelta": 13707,
+        "outputBytesDelta": 758,
+        "inputBytesDelta": 5119,
+        "totalMsDelta": 13229,
+        "complete": true
+      },
+      {
+        "fixture": "csvField",
+        "repetition": 2,
+        "recallDelta": 0,
+        "caseDelta": 1,
+        "generationMsDelta": 14525,
+        "outputBytesDelta": 442,
+        "inputBytesDelta": 4717,
+        "totalMsDelta": 14490,
+        "complete": true
+      },
+      {
+        "fixture": "duration",
+        "repetition": 0,
+        "recallDelta": 0,
+        "caseDelta": 33,
+        "generationMsDelta": 1543,
+        "outputBytesDelta": -32,
+        "inputBytesDelta": 345,
+        "totalMsDelta": -2300,
+        "complete": true
+      },
+      {
+        "fixture": "duration",
+        "repetition": 1,
+        "recallDelta": 0,
+        "caseDelta": 5,
+        "generationMsDelta": 2344,
+        "outputBytesDelta": 281,
+        "inputBytesDelta": 623,
+        "totalMsDelta": 2336,
+        "complete": true
+      },
+      {
+        "fixture": "duration",
+        "repetition": 2,
+        "recallDelta": 0,
+        "caseDelta": -1,
+        "generationMsDelta": -6878,
+        "outputBytesDelta": -93,
+        "inputBytesDelta": 380,
+        "totalMsDelta": -6848,
+        "complete": true
+      },
+      {
+        "fixture": "firstIndex",
+        "repetition": 0,
+        "recallDelta": 0,
+        "caseDelta": -2,
+        "generationMsDelta": 5901,
+        "outputBytesDelta": 30,
+        "inputBytesDelta": 485,
+        "totalMsDelta": 17060,
+        "complete": true
+      },
+      {
+        "fixture": "firstIndex",
+        "repetition": 1,
+        "recallDelta": -1,
+        "caseDelta": -30,
+        "generationMsDelta": 139,
+        "outputBytesDelta": -5024,
+        "inputBytesDelta": -4976,
+        "totalMsDelta": -2152,
+        "complete": false
+      },
+      {
+        "fixture": "firstIndex",
+        "repetition": 2,
+        "recallDelta": 0,
+        "caseDelta": 1,
+        "generationMsDelta": 7434,
+        "outputBytesDelta": 666,
+        "inputBytesDelta": 1079,
+        "totalMsDelta": 7361,
+        "complete": true
+      },
+      {
+        "fixture": "frequencies",
+        "repetition": 0,
+        "recallDelta": 0,
+        "caseDelta": 1,
+        "generationMsDelta": -6777,
+        "outputBytesDelta": -515,
+        "inputBytesDelta": 3888,
+        "totalMsDelta": -8037,
+        "complete": true
+      },
+      {
+        "fixture": "frequencies",
+        "repetition": 1,
+        "recallDelta": 0,
+        "caseDelta": -7,
+        "generationMsDelta": -1547,
+        "outputBytesDelta": 305,
+        "inputBytesDelta": 4657,
+        "totalMsDelta": -1618,
+        "complete": true
+      },
+      {
+        "fixture": "frequencies",
+        "repetition": 2,
+        "recallDelta": 0,
+        "caseDelta": -4,
+        "generationMsDelta": 8980,
+        "outputBytesDelta": 674,
+        "inputBytesDelta": 5055,
+        "totalMsDelta": 8829,
+        "complete": true
+      },
+      {
+        "fixture": "commonPrefix",
+        "repetition": 0,
+        "recallDelta": 1,
+        "caseDelta": 5,
+        "generationMsDelta": -5464,
+        "outputBytesDelta": 3593,
+        "inputBytesDelta": 8529,
+        "totalMsDelta": 4436,
+        "complete": false
+      },
+      {
+        "fixture": "commonPrefix",
+        "repetition": 1,
+        "recallDelta": 0,
+        "caseDelta": 4,
+        "generationMsDelta": 8869,
+        "outputBytesDelta": 566,
+        "inputBytesDelta": 5174,
+        "totalMsDelta": 9338,
+        "complete": true
+      },
+      {
+        "fixture": "commonPrefix",
+        "repetition": 2,
+        "recallDelta": -1,
+        "caseDelta": -48,
+        "generationMsDelta": 11754,
+        "outputBytesDelta": 2160,
+        "inputBytesDelta": 6618,
+        "totalMsDelta": 9301,
+        "complete": false
+      },
+      {
+        "fixture": "compareVersion",
+        "repetition": 0,
+        "recallDelta": 0,
+        "caseDelta": 0,
+        "generationMsDelta": 5701,
+        "outputBytesDelta": 336,
+        "inputBytesDelta": 4782,
+        "totalMsDelta": 5701,
+        "complete": false
+      },
+      {
+        "fixture": "compareVersion",
+        "repetition": 1,
+        "recallDelta": 0,
+        "caseDelta": 0,
+        "generationMsDelta": 705,
+        "outputBytesDelta": 147,
+        "inputBytesDelta": 4593,
+        "totalMsDelta": 706,
+        "complete": false
+      },
+      {
+        "fixture": "compareVersion",
+        "repetition": 2,
+        "recallDelta": 0,
+        "caseDelta": 0,
+        "generationMsDelta": 1025,
+        "outputBytesDelta": 250,
+        "inputBytesDelta": 4696,
+        "totalMsDelta": 1025,
+        "complete": false
+      }
+    ],
+    "applicableMemoryInAllTrials": false,
+    "independentSpecificationUnits": [
+      {
+        "fixture": "csvField",
+        "recallDelta": 0
+      },
+      {
+        "fixture": "duration",
+        "recallDelta": 0
+      },
+      {
+        "fixture": "firstIndex",
+        "recallDelta": -0.3333333333333333
+      },
+      {
+        "fixture": "frequencies",
+        "recallDelta": 0
+      },
+      {
+        "fixture": "commonPrefix",
+        "recallDelta": 0
+      },
+      {
+        "fixture": "compareVersion",
+        "recallDelta": 0
+      }
+    ],
+    "complete": false,
+    "inference": "inconclusive",
+    "exactTwoSidedSignTest": {
+      "unit": "independent specification mean across repetitions; ties excluded",
+      "positive": 0,
+      "negative": 1,
+      "ties": 5,
+      "p": 1
+    },
+    "pairedMeans": {
+      "recallDelta": -0.05555555555555555,
+      "caseDelta": -6.555555555555555,
+      "generationMsDelta": 3484.0555555555557,
+      "outputBytesDelta": 241.05555555555554,
+      "inputBytesDelta": 3334.3888888888887,
+      "totalMsDelta": 3614.3333333333335
+    }
+  },
+  "failedTrials": [
+    {
+      "fixture": "commonPrefix",
+      "repetition": 0,
+      "arm": "without_memory",
+      "error": "Agent timed out",
+      "rolesAttempted": [
+        "architect",
+        "author"
+      ]
+    },
+    {
+      "fixture": "commonPrefix",
+      "repetition": 2,
+      "arm": "with_memory",
+      "error": "Generated candidate failed independent review or execution validation",
+      "rolesAttempted": [
+        "architect",
+        "author",
+        "reviewer"
+      ]
+    },
+    {
+      "fixture": "compareVersion",
+      "repetition": 0,
+      "arm": "with_memory",
+      "error": "Agent timed out",
+      "rolesAttempted": [
+        "architect",
+        "author"
+      ]
+    },
+    {
+      "fixture": "compareVersion",
+      "repetition": 0,
+      "arm": "without_memory",
+      "error": "Agent timed out",
+      "rolesAttempted": [
+        "architect",
+        "author"
+      ]
+    },
+    {
+      "fixture": "compareVersion",
+      "repetition": 1,
+      "arm": "with_memory",
+      "error": "Agent timed out",
+      "rolesAttempted": [
+        "architect",
+        "author"
+      ]
+    },
+    {
+      "fixture": "compareVersion",
+      "repetition": 1,
+      "arm": "without_memory",
+      "error": "Agent timed out",
+      "rolesAttempted": [
+        "architect",
+        "author"
+      ]
+    },
+    {
+      "fixture": "compareVersion",
+      "repetition": 2,
+      "arm": "with_memory",
+      "error": "Agent timed out",
+      "rolesAttempted": [
+        "architect",
+        "author"
+      ]
+    },
+    {
+      "fixture": "compareVersion",
+      "repetition": 2,
+      "arm": "without_memory",
+      "error": "Agent timed out",
+      "rolesAttempted": [
+        "architect",
+        "author"
+      ]
+    },
+    {
+      "fixture": "firstIndex",
+      "repetition": 1,
+      "arm": "with_memory",
+      "error": "Agent timed out",
+      "rolesAttempted": [
+        "architect",
+        "author"
+      ]
+    }
+  ],
+  "absentApplicableMemory": [
+    {
+      "fixture": "duration",
+      "repetition": 0,
+      "arm": "with_memory"
+    },
+    {
+      "fixture": "duration",
+      "repetition": 1,
+      "arm": "with_memory"
+    },
+    {
+      "fixture": "duration",
+      "repetition": 2,
+      "arm": "with_memory"
+    },
+    {
+      "fixture": "firstIndex",
+      "repetition": 0,
+      "arm": "with_memory"
+    },
+    {
+      "fixture": "firstIndex",
+      "repetition": 1,
+      "arm": "with_memory"
+    },
+    {
+      "fixture": "firstIndex",
+      "repetition": 2,
+      "arm": "with_memory"
+    }
+  ],
+  "uniqueGeneratedDetectedFaults": 15,
+  "referenceFaults": 18,
+  "conclusion": "No demonstrated learning improvement; advisory only.",
+  "limitations": [
+    "Authored six-contract dataset, not a production corpus or independent competitor leaderboard. Specifications were excluded from history before this run; semantic independence remains a maintainer audit obligation.",
+    "All 36 planned trials were attempted; nine timeouts remain invalid zero-recall trials. No timeout increase, rerun or favorable-only filtering.",
+    "Reference and generated baselines and each fault repeated at least twice. Fifteen distinct faults were caught by generated tests; all six compareVersion generation trials timed out.",
+    "Run executed original evaluator at measuredSourceRevision. Later accounting/preservation fixes were independently tested but were not used by this frozen experiment.",
+    "Original totalMs excludes project/memory setup and retrieval. Input/output bytes are normalized JSON payloads before appended transportBudget and after parsed responses, not raw wire sizes or tokens.",
+    "No provider billing or pinned/independently observed model identity. Fifty controller role invocations per arm do not certify provider API request counts.",
+    "Untouched here means exclusion from historical memory, supplied stdin and trial roots. No OS read confinement or independently observed zero tool use is established; no observed leakage is asserted.",
+    "Two frozen labels overstate semantics: duplicate-last is an upper-bound miss; lexical-components rejects valid version strings. Counts are conformance faults, not claimed lexical/last-duplicate coverage.",
+    "Other local qualification processes overlapped. Unstable/incomplete trials contribute zero; mean times include failed attempts but exclude the stated setup costs."
+  ]
+}
