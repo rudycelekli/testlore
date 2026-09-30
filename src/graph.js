@@ -27,14 +27,19 @@ export function analyze(file, text) {
       const name = node.expression.getText(ast);
       if (node.expression.kind === ts.SyntaxKind.ImportKeyword || name === 'require' || name === 'require.resolve') add(node.arguments[0]);
       if (['eval', 'Function', 'import.meta.glob', 'import.meta.globEager', 'require.context'].includes(name)) warnings.push('dynamic-dependency');
+      if (name === 'fetch' || name === 'globalThis.fetch' || name.endsWith('.fetch')) warnings.push('runtime-dependency');
       if (name.endsWith('.register') || name === 'module.register') warnings.push('runtime-registration');
     }
-    if (ts.isNewExpression(node) && node.expression.getText(ast) === 'Function') warnings.push('dynamic-dependency');
+    if (ts.isNewExpression(node)) {
+      const name=node.expression.getText(ast);
+      if(name==='Function')warnings.push('dynamic-dependency');
+      if(['Worker','SharedWorker','WebSocket','EventSource'].includes(name)|| /(?:^|\.)(?:Worker|SharedWorker|WebSocket|EventSource)$/.test(name))warnings.push('runtime-dependency');
+    }
     ts.forEachChild(node, visit);
   }
   visit(ast);
   for (const spec of imports) {
-    if (/^(?:node:)?(?:fs|fs\/promises|vm|child_process|module)$/.test(spec)) warnings.push('runtime-dependency');
+    if (/^(?:node:)?(?:fs|fs\/promises|vm|child_process|module|worker_threads|http|https|http2|net|tls|dns|dns\/promises|dgram|wasi)$/.test(spec)) warnings.push('runtime-dependency');
   }
   return { ast, imports: [...imports], warnings: [...new Set(warnings)] };
 }
@@ -74,6 +79,10 @@ export function buildGraph(root) {
     if(!discovered.complete)graph.warnings.push({file:'discovery',reason:'incomplete-native-discovery'});
   }
   graph.configFiles = new Set();
+  // NODE_OPTIONS is parsed by Node before our runner starts. Its quoting, inline
+  // data URLs and package preloads are not an argv contract we can certify.
+  const nodeOptions = config.env?.NODE_OPTIONS ?? process.env.NODE_OPTIONS ?? '';
+  if(nodeOptions.trim())graph.warnings.push({file:'configuration',reason:'unmodeled-node-options-runtime-context'});
   for (const file of configurationSeeds(root,config)) graph.configFiles.add(file);
   if(graph.configFiles.has('__external_runner_config__'))graph.warnings.push({file:'configuration',reason:'external-resolution-config'});
   graph.compilerOptions = compilerOptions(root,config,graph.warnings,graph.configFiles);

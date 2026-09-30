@@ -91,7 +91,7 @@ try {
   } else {
     // Match Vitest's config-loading environment, including CLI-supplied mode.
     process.env.VITEST = 'true'; process.env.NODE_ENV ??= 'test';
-    const unsupported = command.some(arg => /^(?:--(?:workspace|project|browser|root|configLoader|environment)|-r)(?:=|$)/.test(arg));
+    const unsupported = command.some(arg => /^(?:--(?:workspace|project|browser|root|configLoader|environment|no-isolate|isolate)|-r)(?:=|$)/.test(arg));
     if (unsupported) throw new Error('Unsupported native resolution context; use a full suite');
     const vite = await import(pathToFileURL(loadPath('vite')).href);
     let configFile = argument('--config', '-c');

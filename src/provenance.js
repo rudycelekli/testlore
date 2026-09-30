@@ -8,7 +8,7 @@ export const digest = value => createHash('sha256').update(typeof value === 'str
 export function runnerIdentity(root, config = {}) {
   const dependencyState={};
   for(const file of ['package.json','package-lock.json','pnpm-lock.yaml','yarn.lock','bun.lock','pytest.ini','pyproject.toml','nx.json','MODULE.bazel','.bazelversion']){try{dependencyState[file]=digest(fs.readFileSync(safePath(root,file)));}catch{}}
-  return digest({ integration:config.integration||null, discovery:config.discovery||null, runtimePolicy:config.runtime||null, dependencyState, actionEnvironment:process.env.TDDSWARM_ENVIRONMENT||'', runner: config.runner || ['node','--test','{files}'], adapter: config.adapter || 'node', environment: config.environment || {}, env: config.env || {}, node: process.version, platform: process.platform, arch: process.arch, nodeEnv: process.env.NODE_ENV || '', tz: process.env.TZ || '' });
+  return digest({ integration:config.integration||null, discovery:config.discovery||null, runtimePolicy:config.runtime||null, dependencyState, actionEnvironment:process.env.TDDSWARM_ENVIRONMENT||'', nodeOptions: digest(config.env?.NODE_OPTIONS ?? process.env.NODE_OPTIONS ?? ''), runner: config.runner || ['node','--test','{files}'], adapter: config.adapter || 'node', environment: config.environment || {}, env: config.env || {}, node: process.version, platform: process.platform, arch: process.arch, nodeEnv: process.env.NODE_ENV || '', tz: process.env.TZ || '' });
 }
 export function snapshot(root, config = {}) {
   const files = {};
