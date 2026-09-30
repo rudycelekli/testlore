@@ -130,6 +130,20 @@ Copy, styles, templates, localization, schemas, fixtures, and services can all a
 
 Run `npm run demo` for a selective copy edit, a shared dependency, and an uncertain change. Selection works at **test-file granularity**; native execution reports individual cases. New installations default to shadow mode; `--selective` explicitly opts into the proposed subset. Shadow mode runs the full suite while checking the proposed selection against observed failures. [Routing configuration →](docs/configuration.md)
 
+## From one change to an evidence loop
+
+[![Observe, witness, challenge, outcome: reviewed learning with separate recorder health](docs/assets/evidence-loop.svg)](docs/evidence-loop.md)
+
+Register an expected result, run native full shadow verification, sign its receipt, challenge the claim, and record an explicit review. Only reviewed outcomes become advisory lessons. The loop distinguishes failed tests, tests that never started, missing witnesses and altered receipts. An independently retained public key authenticates the recorder; an external checkpoint helps detect removed history.
+
+```sh
+npx --no-install testlore witness-init --output ../testlore-witness.pub.pem
+npx --no-install testlore observe --revision "candidate-1" --output ../testlore-checkpoint.json --json
+npx --no-install testlore loop-status --trusted-key ../testlore-witness.pub.pem --checkpoint ../testlore-checkpoint.json --json
+```
+
+Signatures establish recorder identity. Revision labels and reviewer names remain operator assertions; this local loop does not verify a live serving revision. Tests do not establish deployment safety, and reviewed memory does not establish learning improvement. [Evidence contract and outcome commands →](docs/evidence-loop.md) · [Interactive visual explanation →](docs/index.html)
+
 ## Learning that stays with your project
 
 ```text

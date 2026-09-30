@@ -97,7 +97,7 @@ export function parseArgs(args) {
 
 const loopOptions = {
   'witness-init': ['output'],
-  observe: ['revision', 'base', 'deadline-ms', 'output'],
+  observe: ['query', 'revision', 'base', 'deadline-ms', 'output'],
   'loop-status': ['trusted-key', 'checkpoint'],
   challenge: ['id', 'claim', 'trusted-key', 'checkpoint'],
   outcome: ['id', 'claim', 'verdict', 'reviewer', 'trusted-key', 'checkpoint'],
@@ -180,7 +180,7 @@ export async function main(args = process.argv.slice(2)) {
       const output = options.output ? path.resolve(root, options.output) : undefined;
       if (output && fs.existsSync(output)) throw new Error(`Checkpoint output already exists: ${output}`);
       if (output && !fs.statSync(path.dirname(output)).isDirectory()) throw new Error('Checkpoint output parent must be an existing directory');
-      result = observeQuality(root, {revision: options.revision, base: options.base, deadlineMs: options['deadline-ms'] === undefined ? undefined : Number(options['deadline-ms'])});
+      result = observeQuality(root, {revision: options.revision, focus: options.query, base: options.base, deadlineMs: options['deadline-ms'] === undefined ? undefined : Number(options['deadline-ms'])});
       if (output) {
         fs.writeFileSync(output, JSON.stringify(result.checkpoint, null, 2) + '\n', {flag: 'wx'});
         result = {...result, output};

@@ -3,6 +3,7 @@ import path from 'node:path';
 import { randomUUID } from 'node:crypto';
 import { digest, freshness, snapshot } from './provenance.js';
 import { readConfig, safePath, TEST } from './files.js';
+import { recallOutcomeLessons } from './evidence-loop.js';
 import { ruvectorRecall } from './adapters/ruvector.js';
 
 const STORE = '.tddswarm/learning/index.json';
@@ -185,6 +186,22 @@ export function recallLessons(root, query, options = {}) {
       const length = JSON.stringify(value).length;
       if (length > remaining) break;
       results.push(value); remaining -= length;
+    }
+    const trusted = config.learning?.outcomes;
+    if (trusted?.trustedKey) {
+      const outcomes = recallOutcomeLessons(root, { query: query.slice(0, 2000), trustedKey: path.resolve(root, trusted.trustedKey), ...(trusted.checkpoint ? { checkpoint: path.resolve(root, trusted.checkpoint) } : {}) });
+      output.reviewedOutcomes = [];
+      if (outcomes.reason) output.warnings.push('Reviewed outcome history unavailable; no outcome authority granted.');
+      const contractWords = contractTokens === null ? null : new Set(contractTokens);
+      for (const lesson of outcomes.lessons.slice(-limit)) {
+        if (contractWords && !tokens(lesson.focus).some(word => contractWords.has(word))) continue;
+        const value = { ...lesson, sourceCompatible: lesson.sourceFingerprint === current.fingerprint };
+        // Outcome metadata shares the complete caller budget with candidate examples.
+        output.reviewedOutcomes.push(value);
+        if (JSON.stringify(output).length > maxChars) { output.reviewedOutcomes.pop(); break; }
+      }
+      if (JSON.stringify(output).length > maxChars) delete output.reviewedOutcomes;
+      while (JSON.stringify(output).length > maxChars && output.warnings.length) output.warnings.pop();
     }
     return output;
   } catch (error) { return { records: [], advisoryOnly: true, reason: error.message }; }

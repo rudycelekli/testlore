@@ -1,6 +1,6 @@
 # ADR-002: Roadmap implementation contract
 
-Status: Accepted; core implementation merged, ecosystem qualification continues. Date: September 29, 2026.
+Status: Accepted; core implementation merged, ecosystem qualification continues. Date: September 29, 2026. Updated: September 30, 2026.
 
 Runner discovery, execution results, provenance, impact evidence, quality evidence, and reviewed patches are separate contracts. An empty discovery result cannot certify a suite. Normalized test identities use file plus case name; completeness is explicit. Shadow execution compares failing full-suite identities against the proposed file set and reports omitted failures. Failure history is partitioned by executable/config/environment identity.
 
@@ -15,3 +15,5 @@ No roadmap item is marked complete merely because an interface exists: focused r
 Learning comparisons pair the same executable/provider and declared budgets with and without frozen validated history. Independently authored evaluation contracts, reference tests and defect payloads remain outside historical memory and worker context. Repeated attempts are clustered by specification; ties, rejections and incomplete evidence are retained, and a small or undercontrolled experiment cannot certify a quality gain.
 
 Release preparation binds one archive to an immutable reviewed source revision and qualifies that exact archive through a production-only install. A protected publishing job verifies the retained archive/proof hashes and uses trusted OIDC; source tests, environment protection, npm ownership and actual registry provenance remain separate gates. Local qualification does not certify publisher access or a published release.
+
+The implemented historical evidence loop separates expected observations, signed native witnesses, read-only claim challenges and explicitly attributed outcomes. Ed25519 trust is supplied independently; an externally retained checkpoint detects deletion within its anchored prefix. Signed records authenticate recorder identity, not truthfulness, a live serving revision or human identity. Reviewed outcome recall remains advisory and can enter architect/author context only through explicitly configured trust material. It never changes selection authority. The interactive evidence page is an illustration, not live monitoring.

@@ -10,7 +10,7 @@ The normal native runner remains responsible for discovery and execution. `obser
 # Use an existing directory outside the repository for retained trust material.
 testlore witness-init --output /absolute/external/trust/recorder.pem --json
 
-testlore observe --revision reviewed-commit-sha --base HEAD \
+testlore observe --revision reviewed-commit-sha --query "checkout contract" --base HEAD \
   --deadline-ms 60000 --output /absolute/external/trust/checkpoint-001.json --json
 
 testlore loop-status --trusted-key /absolute/external/trust/recorder.pem \
@@ -45,7 +45,22 @@ Use the UUID returned by `observe` for `--id`. Every validation command accepts 
 
 An outcome records `accepted` or `rejected` with explicit reviewer attribution. The reviewer string is operator asserted; TestLore does not authenticate a human reviewer or establish that the operator is independent of the recorder. An attributed outcome is not independent proof of correctness.
 
-`outcome-lessons` retrieves only reviewed outcomes, as advisory history. It grants no deployment authority and does not silently revise mappings, rewrite tests, or change native runner policy. The existing `learn` and `recall` commands remain separate advisory facilities.
+`outcome-lessons` retrieves only reviewed outcomes, as advisory history. It grants no deployment authority and does not silently revise mappings, rewrite tests, or change native runner policy. The optional `--query` on `observe` supplies a bounded topic label (up to 200 characters), useful when matching future contracts. It is operator-declared context, not an independent specification.
+
+To pass relevant reviewed outcomes into the existing architect/author learning context, explicitly configure independently retained trust material:
+
+```json
+{
+  "learning": {
+    "outcomes": {
+      "trustedKey": "/absolute/external/trust/recorder.pem",
+      "checkpoint": "/absolute/external/trust/checkpoint-001.json"
+    }
+  }
+}
+```
+
+`recall` and generation then include bounded `reviewedOutcomes` matching the query and current contract topic. Each retains its evidence ID, historical/advisory labels and source compatibility. Corrupt history supplies no outcome lessons. Candidate examples and reviewed outcomes share the caller's response budget. Outcome feedback never changes routing policy or independent reviewer authority. `learning.enabled: false` disables both memories.
 
 ## Inspection and automation boundaries
 

@@ -54,3 +54,7 @@ The next implementation now includes an opt-in bounded [source-analysis cache](p
 ## Precision and trust milestone
 
 Merged into main through PR #3: test-closure uncertainty retention and native monorepo resolution; review-only runtime/browser mappings; actual native-selector comparisons with full TestLore spans; independent defect/preservation/stability/cost measurements; conservative genuine Stryker reuse; contract-filtered advisory lessons and supervised deadlines; one-command shadow setup and decision summaries. The browser and Stryker proofs retain actual raw outcomes. Real application timing must be read alongside native comparison and negative results, never inferred from fewer selected files. npm authentication and first-publication/trusted-publisher configuration remain external completion gates, not implemented features or evidence of publication.
+
+## Historical evidence loop
+
+The [signed observation contract](evidence-loop.md) registers expected results before native full shadow execution, validates receipt integrity and recorder continuity, challenges scoped claims, and retains attributed outcomes as advisory lessons. Independent public-key trust and external checkpoints remain explicit. Optional reviewed-outcome context composes with generation memory; it establishes no measured improvement. The [interactive evidence story](index.html) and README diagram distinguish implemented mechanics from production monitoring, serving-revision verification and learning effectiveness, which remain unestablished.
