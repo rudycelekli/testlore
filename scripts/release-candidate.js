@@ -19,7 +19,8 @@ if(options['--verify']){
  if(hash(archive)!==receipt.archiveSha256||hash(proof)!==receipt.proofSha256)throw new Error('Sealed archive or packed proof changed');
  const evidence=JSON.parse(fs.readFileSync(proof,'utf8'));if(evidence.sha256!==receipt.archiveSha256||evidence.version!==receipt.version||evidence.exactInputArchive!==true||evidence.proofScriptSha256!==hash(path.join(root,'scripts/packed-proof.js'))||!evidence.productionInstall||!evidence.nativeShadow?.complete||!evidence.nativeShadow?.detected||!evidence.runtimeCaptureComplete||evidence.improvement?.status!=='ready-for-review')throw new Error('Packed artifact evidence incomplete');
  if(options.publish&&(!/^\d+\.\d+\.\d+(?:-alpha\.\d+)?$/.test(receipt.version)||process.env.NODE_AUTH_TOKEN||process.env.NPM_TOKEN))throw new Error('Publish requires a valid scoped alpha candidate version and token-free trusted OIDC');
- console.log(JSON.stringify({...receipt,verified:true,publishEligible:/^\d+\.\d+\.\d+(?:-alpha\.\d+)?$/.test(receipt.version)},null,2));
+ if(options.publish&&(process.env.GITHUB_ACTIONS!=='true'||!process.env.ACTIONS_ID_TOKEN_REQUEST_URL||!process.env.ACTIONS_ID_TOKEN_REQUEST_TOKEN))throw new Error('Publish check requires a GitHub Actions OIDC-enabled job; publisher mapping is still an external gate');
+ console.log(JSON.stringify({...receipt,verified:true,alphaVersionEligible:/^\d+\.\d+\.\d+(?:-alpha\.\d+)?$/.test(receipt.version)},null,2));
 }else{
  if(!options['--output']||options.publish)throw new Error('--output new-directory required; publishing is never performed by this script');
  const sourceRevision=revision();if(options['--revision']&&options['--revision']!==sourceRevision)throw new Error('Checkout differs from requested immutable revision');
