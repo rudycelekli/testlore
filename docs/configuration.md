@@ -58,3 +58,9 @@ TypeScript paths/baseUrl/extends and supported native Jest/Vite aliases resolve 
 Shadow mode records the proposed subset while running all **discovered** files. It compares failed case identities against proposed file membership and reports decision recall when observed failures exist. It does not run a separate subset, so order-dependent failures require additional comparisons. Test-count reduction is reported separately from elapsed runner time. Neither result proves untested defects are absent.
 
 Runtime capture/import, browser route declarations, contracts, service versions/probes and measured quality formats are documented in [evidence](evidence.md). Missing or stale required runtime evidence widens selection. `runtime.closedWorld` explicitly allows exercised runtime observations to resolve detected dynamic uncertainty; it is a policy assumption about unexercised behavior.
+
+## Optional plugins
+
+`testlore plugins --recommend` explains project-fit choices; `plugins --auto` atomically enables applicable installed providers while preserving explicit policy. Inspection never invokes tools.
+
+`plugins` maps tool IDs to explicit settings with `enabled:true`. Built-ins include `agentic-qe`, `pytest-testmon`, `nx`, `bazel`, `c8`, `stryker`, and `ruvector`. `testlore plugins --enable <id>` and `--disable <id>` preserve unrelated settings; `--check` runs explicit availability probes. All built-ins can be enabled; `executionPlugin` chooses the native backend for this project, with `plugins --select <id>` for an explicit switch. Ambiguous manual backend selection or competing worker definitions are rejected. See [plugin composition and settings](plugins.md) and [RuVector learning](ruvector.md).

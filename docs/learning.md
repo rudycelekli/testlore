@@ -1,6 +1,6 @@
 # TestLore local episodic learning
 
-TestLore retains validated test patterns and observed rejection signals in a bounded, repository-local episodic memory. Later generation can retrieve relevant historical examples, including examples from earlier source revisions. This is deterministic lexical retrieval and tentative reflection over local evidence. It does not train model weights, call a remote memory service, reproduce Hindsight's implementation, or guarantee that generated tests improve.
+TestLore retains validated test patterns and observed rejection signals in a bounded, repository-local episodic memory. Later generation can retrieve relevant historical examples, including examples from earlier source revisions. Default retrieval is deterministic lexical matching. The optional [RuVector plugin](ruvector.md) adds a local native vector index; feature vectors are its default, and semantic embeddings require an explicitly configured model provider. Neither backend trains model weights, reproduces Hindsight's implementation, or guarantees that generated tests improve.
 
 The store remains `.tddswarm/learning/index.json` for compatibility with existing project metadata. There is no global memory, telemetry, automatic upload, remote dependency, or configurable arbitrary storage path. Add `.tddswarm/` to the repository ignore policy. `learning.enabled: false` in `tddswarm.config.json` disables capture, retrieval, reflection, export, and transfer.
 
@@ -21,7 +21,7 @@ Integrity checks detect accidental changes and schema corruption. They are unkey
 
 ## Retrieval and reflection
 
-`recallLessons(root, query, {limit, maxChars, config})` returns structured historical examples. Ranking uses lexical overlap against framework, fixed tags, warning categories, and accepted test snippets. Observed successes and demonstrated caught defects increase evidence weight; current source compatibility provides a small preference. Ties are deterministic by capture date and record ID. Other frameworks are filtered out. There are no embeddings, neural ranking, or unreported model calls.
+`recallLessons(root, query, {limit, maxChars, config})` returns structured historical examples. Default ranking uses lexical overlap against framework, fixed tags, warning categories, and accepted test snippets. Observed successes and demonstrated caught defects increase evidence weight; current source compatibility provides a small preference. Ties are deterministic by capture date and record ID. Other frameworks are filtered out. With RuVector enabled, bounded vector search can rank validated record IDs. The actual backend and fallbacks are reported; optional embedding commands are explicit trusted providers. Vector search does not change evidence or acceptance authority.
 
 Each returned episode includes its outcome, generic context, observed counters, age, `historical: true`, `sourceCompatible`, and `advisoryOnly: true`. Source changes do not erase history or turn historical evidence into a present execution claim. Compatibility changes are explicitly labeled. An old test pattern may help draft a new test; it cannot prove the new code is correct.
 

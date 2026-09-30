@@ -5,12 +5,15 @@ import {spawnSync} from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { audit, modules, plan, generate, run, snapshot, ingestQuality, measureStability, captureRuntime, stagePatch, validateCandidates, applyPatch, externalPlan, externalRun, aqeGenerate, improve, installQualityLayer, installQualityWorkflow, publishImprovement, recallLessons, reflectLearning, exportLearning, ensureQualityAgent, seedRequirements } from './index.js';
 import { safePath, readConfig, git } from './files.js';
+import { pluginCatalog, configurePlugin, checkPlugins, configurePluginsAutomatically } from './plugins.js';
+import { recommendPlugins } from './plugin-recommendations.js';
 
 const help = `TestLore — know why each test runs.
 
 Usage: testlore <command> [options]
 
   agent       Create or inspect your project quality agent (--name optional)
+  plugins     Choose project-fit tools with --recommend/--auto; enable, disable, select, check
   improve     New branch, reviewed tests, full validation, automatic GitHub PR
   init        Create configuration and a local health report (never overwrite)
   audit       Grade static test structure; report what has not been measured
@@ -51,8 +54,8 @@ need explicit declarations. No AI account required for audit, plan, or run.
 export function parseArgs(args) {
   const options = {};
   let command = 'help';
-  const values = new Set(['root','base','changed','output','report','type','provenance','repeat','id','patch','target','framework','head','action-ref','base-branch','query','name']);
-  const flags = new Set(['json', 'full', 'shadow', 'execute', 'help', 'version', 'local', 'no-ci']);
+  const values = new Set(['root','base','changed','output','report','type','provenance','repeat','id','patch','target','framework','head','action-ref','base-branch','query','name','enable','disable','select','plugin','settings']);
+  const flags = new Set(['json', 'full', 'shadow', 'execute', 'help', 'version', 'local', 'no-ci','check','recommend','auto']);
   if (args[0] && !args[0].startsWith('-')) command = args.shift();
   for (let i = 0; i < args.length; i++) {
     const key = args[i].replace(/^--/, '');
@@ -88,6 +91,11 @@ function init(root) {
   return { config: file, created, report, next: report.testFiles ? ['tddswarm plan --base HEAD', 'tddswarm run --shadow'] : ['tddswarm generate', 'Add tddswarm.requirements.md and configure an agent for generation.'] };
 }
 function human(command, result) {
+  if ((command === 'plan' || command === 'run') && (result.delegated || result.targets !== undefined || result.plan?.targets !== undefined)) {
+    const selection = result.plan || result;
+    return `${result.adapter || selection.adapter} · ${selection.mode || 'native'} · ${Array.isArray(selection.targets) ? selection.targets.length + ' native targets' : 'selection delegated to native execution'}\n${result.error || (command === 'run' ? `Runner exited ${result.exitCode}; evidence ${result.complete ? 'complete' : 'incomplete'}.` : selection.reasons?.join(', ') || 'Native graph discovery.')}\nNative scope is preserved; no individual-case comparison is implied.`;
+  }
+  if (command === 'plugins' && result.recommendations) return result.recommendations.map(choice => `${choice.id} · ${choice.status} · ${choice.reasons.join('; ')}`).join('\n') + (result.applied ? `\nEnabled: ${result.applied.join(', ') || 'none; explicit choices retained or prerequisites missing'}` : '\nInspect only. Use plugins --auto to enable compatible installed tools.');
   if (command === 'init') return `${result.created ? 'Created' : 'Kept'} ${result.config}\n${human('audit', result.report)}\nNext: ${result.next.join(' → ')}`;
   if (command === 'audit') return `${result.testFiles} test files · static triage grade ${result.grade}${result.score === null ? '' : ` (${result.score}/100)`}\n${Object.entries(result.measured).map(([key,value])=>`${key}: ${value?'measured (see JSON scope)':'not measured'}`).join(' · ')}\n${result.files.flatMap(f => f.findings.map(x => `  ${f.file}:${x.line} — ${x.message}`)).join('\n')}\n${result.sourcesWithoutImportingTests.length} source files have no importing tests (not a coverage result).`;
   if (command === 'plan') return `${result.mode.toUpperCase()} · ${result.selected.length}/${result.total} test files selected\n${result.reasons.length ? `Reasons: ${result.reasons.join(', ')}\n` : ''}${result.decisions.map(d => `${d.selected ? 'RUN ' : 'SKIP'} ${d.test} — ${d.reasons.join(', ')}${d.paths.length ? `\n     ${d.paths.map(p => p.join(' → ')).join('\n     ')}` : ''}`).join('\n')}\nStatic evidence; runtime dependencies require declarations.`;
@@ -103,9 +111,26 @@ export async function main(args = process.argv.slice(2)) {
   if (options.version) { console.log('0.1.0'); return 0; }
   if (command === 'help' || options.help) { console.log(help); return 0; }
   const root = path.resolve(options.root || '.');
+  if ((options.auto || options.recommend) && command !== 'plugins') throw new Error('--auto and --recommend require the plugins command');
   if (command === 'run' && options.changed) throw new Error('--changed is diagnostic only. run uses Git to discover the complete change set.');
   let result;
   switch (command) {
+    case 'plugins': {
+      const mutations = [options.enable, options.disable, options.select].filter(Boolean);
+      if (mutations.length + [options.check,options.recommend,options.auto].filter(Boolean).length > 1) throw new Error('Choose one plugin enable, disable, select, check, recommend, or auto operation');
+      if (options.settings && !options.enable && !options.select) throw new Error('--settings requires --enable or --select');
+      if (options.recommend || options.auto) {
+        const recommendation = recommendPlugins(root);
+        if (options.auto) {
+          if (recommendPlugins(root).fingerprint !== recommendation.fingerprint) throw new Error('Project evidence changed during inspection; retry');
+          result = configurePluginsAutomatically(root, recommendation);
+        } else result = recommendation;
+      } else if (mutations.length) {
+        const settings = options.settings ? JSON.parse(fs.readFileSync(safePath(root, options.settings), 'utf8')) : undefined;
+        result = configurePlugin(root, mutations[0], {enabled: Boolean(options.enable || options.select), settings, select:Boolean(options.select)});
+      } else result = options.check ? checkPlugins(root, {id:options.plugin}) : pluginCatalog(root);
+      break;
+    }
     case 'improve': {
       let agent;
       if(!options.id&&!options.patch&&!readConfig(root).agent){
@@ -166,7 +191,8 @@ export async function main(args = process.argv.slice(2)) {
   }
   console.log(options.json ? JSON.stringify(result, null, 2) : human(command, result));
   if(command==='improve')return result.status==='ready-for-review'&&(options.local||result.published)?0:2;
-  if(['run','external-run','external-plan','aqe'].includes(command))return result.exitCode||0;
+  if(command==='plugins' && options.check)return result.exitCode || 0;
+  if(['plan','run','external-run','external-plan','aqe'].includes(command))return result.exitCode||0;
   if(command==='validate')return result.accepted?0:1;
   if(command==='capture')return result.complete?0:2;
   if(command==='stability')return !result.complete?2:result.metrics.unstable?1:0;

@@ -6,6 +6,7 @@ import { runnerIdentity, snapshot } from './provenance.js';
 import { changedServices } from './inputs.js';
 import { runtimeEvidence } from './evidence.js';
 import { buildGraph, addSources, evidencePath, dependencies } from './graph.js';
+import { externalPlan } from './integrations.js';
 
 const GLOBAL = /(?:^|\/)(?:package(?:-lock)?\.json|npm-shrinkwrap\.json|pnpm-lock\.yaml|yarn\.lock|bun\.lockb?|tsconfig[^/]*\.json|jsconfig\.json|tddswarm\.config\.json|[^/]*(?:vitest|vite|jest|babel|webpack|rollup|playwright|cypress)[^/]*\.(?:[cm]?[jt]s|json)|(?:setup|globalSetup|globalTeardown)[^/]*\.[cm]?[jt]s|\.env(?:\..*)?|\.gitignore)$/;
 
@@ -21,6 +22,7 @@ export function gitChanges(root, base) {
 export function plan(root, options = {}) {
   root = path.resolve(root);
   const config = readConfig(root);
+  if (config.integration) return externalPlan(root, config, options);
   const provenance = snapshot(root,config);
   const graph = buildGraph(root);
   let changed, baseSha = null, prefix = '', gitError = null;

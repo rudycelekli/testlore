@@ -122,9 +122,46 @@ npx --no-install testlore recall --query "boundary validation" --json
 npx --no-install testlore learning-export --json
 ```
 
-The learning loop uses deterministic lexical retrieval and evidence-backed recommendations. Historical snippets are advisory; current requirements and execution determine acceptance. It does not train model weights. Memory stays local, including across improvement branches. Explicit aggregate export contains fixed counts without source, paths, or project identifiers. Disable learning with `"learning": {"enabled": false}`.
+The default learning loop uses deterministic lexical retrieval and evidence-backed recommendations. An optional RuVector plugin adds native vector retrieval over the same validated lessons. Its default feature vectors are lexical; semantic embeddings require an explicitly configured model provider. Historical snippets are advisory; current requirements and execution determine acceptance. It does not train model weights. Memory stays local, including across improvement branches. Explicit aggregate export contains fixed counts without source, paths, or project identifiers. Disable learning with `"learning": {"enabled": false}`.
 
 Inspired by Hindsight's retain/recall/reflect cycle, implemented around testing evidence. [Learning →](docs/learning.md) · [Hindsight research →](docs/hindsight-research.md)
+
+## Grow with optional tools
+
+TestLore is a complementary coordination layer. Bring your specialist tools into one quality workflow: their engines supply expertise, and TestLore connects modularity, routing, independent validation, and retained lessons. Enable capabilities as your project grows.
+
+| Optional plugin | Contribution |
+| --- | --- |
+| **Agentic QE** | Draft tests for architect tasks; an independent worker reviews them before isolated validation. |
+| **pytest-testmon · Nx · Bazel** | Native selection and execution through the ordinary `plan` and `run` commands. |
+| **c8 · Stryker** | Genuine coverage and mutation reports through the existing measured-evidence pipeline. |
+| **RuVector** | Optional local vector retrieval of validated historical lessons; JSON memory remains authoritative. |
+| **Your team's worker** | Register an installed executable implementing the versioned generation protocol. |
+
+Choose a setup in one command without first installing TestLore locally:
+
+```sh
+npm exec --yes --package=github:rudycelekli/testlore#feat/full-roadmap -- testlore plugins --auto
+```
+
+Or inspect the choices and manage tools after a local install:
+
+```sh
+npx --no-install testlore plugins --recommend --json  # Explain project-fit choices
+npx --no-install testlore plugins --auto             # Enable compatible installed tools
+npx --no-install testlore plugins --json
+npx --no-install testlore plugins --enable agentic-qe
+npx --no-install testlore plugins --check --plugin agentic-qe --json
+# Optional native vector backend:
+npm install --save-dev @ruvector/core@0.1.32
+npx --no-install testlore plugins --enable ruvector
+```
+
+Automatic setup uses explainable project-fit rules, preserves explicit choices, and enables only supported installed tools. Missing tools receive recommendations; ambiguous execution engines require a choice. It performs no downloads or agent calls. Tools are installed separately. Health checks describe availability and supported contracts, not measured quality. All built-in plugins can be enabled together; `executionPlugin` selects the native backend for the project, while other providers run only for their relevant operations. Enabling more tools preserves the current backend. Reviewed branch improvements currently require Node/Jest/Vitest individual-case validation. [Plugin configuration and community contract →](docs/plugins.md) · [RuVector learning →](docs/ruvector.md)
+
+The next integration seams are browser evidence (Playwright), properties (fast-check), consumer contracts (Pact), service fixtures (Testcontainers), and API exploration (Schemathesis). Each has a distinct role. fast-check already composes inside a supported runner; dedicated adapters for the other shortlisted tools require separate qualification. [Research, admission criteria, and real property proof →](docs/ecosystem.md)
+
+Built to work alongside [Agentic QE](https://github.com/proffesor-for-testing/agentic-qe), [RuVector](https://github.com/ruvnet/ruvector), [pytest-testmon](https://www.testmon.org/), [Nx](https://nx.dev/), [Bazel](https://bazel.build/), [c8](https://github.com/bcoe/c8), and [Stryker](https://stryker-mutator.io/). Each remains an independently maintained project; integration does not imply affiliation or endorsement.
 
 ## Show the evidence
 
@@ -142,6 +179,9 @@ On **12 controlled changes across four Node fixtures**, TestLore caught all 63 o
 | **Live agent generation** | Three actual Codex role calls generated 50 passing cases and caught four withheld mutations on one specification. | [Raw receipt](benchmarks/quality/live-codex.receipt.json) |
 | **Live memory comparison** | With memory: 16 passing cases; without: 33. Both caught 4/4 withheld mutations. Memory generation took longer in this single run. | [Raw comparison](benchmarks/learning/2026-09-29-native-ablation/summary.json) |
 | **Native ecosystem adapters** | Actual pytest-testmon, Nx, Bazel and AQE executions, with completeness and upstream-estimate boundaries. | [Integration receipts](docs/integrations.md) |
+| **Optional vector recall** | Real RuVector core 0.1.32: native build/reopen, bounded CLI recall, corrupt-cache fallback, and unchanged canonical memory. | [Native receipt](benchmarks/ruvector-verification.json) · [Method](docs/ruvector.md) |
+| **Complementary property library** | Real fast-check 4.10.2: complete base validation; 4/4 scoped defects caught and replayed from seed/path. | [Receipt](benchmarks/property-verification.json) · [Method](docs/ecosystem.md) |
+| **Independent AQE gate** | Actual template author reported score 100; independent review rejected the output. No live LLM claim. | [Composition receipt](benchmarks/aqe-composition-verification.json) |
 | **Packed installation** | Production-only install, native shadow fault detection, runtime capture, and a fully tested improvement branch. | `node scripts/packed-proof.js` |
 
 These are scoped experiments. The memory comparison confirms that historical recall reaches real agent generation; it does not establish a general quality gain. Tiny suites can run slower after discovery and planning. There is no universal safety, production speedup, or “best overall” claim. Misses, overhead, and counterexamples belong in the results. [Benchmark methodology →](docs/comparison.md)
@@ -168,6 +208,7 @@ Source/service changes, incomplete reports, and altered receipts invalidate evid
 | Commands | Purpose |
 | --- | --- |
 | `agent` | Create or inspect your project’s named quality agent. |
+| `plugins` | Recommend a project-fit setup, enable it with `--auto`, or manage and check tools explicitly. |
 | `improve` | New branch, reviewed candidates, full validation, automatic PR. |
 | `init`, `audit`, `modules` | Setup, quality triage and modular group proposals. |
 | `plan`, `run`, `run --shadow`, `run --full` | Explain and execute test selections; compare with full outcomes. |

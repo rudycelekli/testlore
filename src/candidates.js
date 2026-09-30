@@ -128,6 +128,7 @@ function installPatch(temp, dir, manifest) {
 }
 function suite(root, config, options) {
   try {
+    if (config.integration) return {exitCode:2,complete:false,tests:[],error:'Candidate validation requires a native backend that reports individual cases; use the native ecosystem plan/run adapter for this project.'};
     const discovery = discover(root, { ...config, discovery: Array.isArray(config.discovery) ? config.discovery : 'native' });
     if (!discovery.complete) return { discovery, exitCode: 2, complete: false, tests: [], error: 'Native full-suite discovery is incomplete' };
     if (!discovery.files.length) return { discovery, exitCode: 0, complete: true, tests: [], collectionFiles: [], executedFiles: [] };

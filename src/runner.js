@@ -5,6 +5,7 @@ import { readConfig, safePath } from './files.js';
 import { execute } from './execution.js';
 import { rememberServices, serviceInputs } from './inputs.js';
 import { runnerIdentity, snapshot, freshness } from './provenance.js';
+import { externalRun } from './integrations.js';
 
 export function compareShadow(selection, execution) {
   const proposed = new Set(selection.selected);
@@ -20,6 +21,10 @@ export function compareShadow(selection, execution) {
 
 export function run(root, options = {}) {
   const config = readConfig(root);
+  if (config.integration) {
+    if (options.changed) throw new Error('--changed is diagnostic only. run uses the native engine to discover changes.');
+    return externalRun(root, config, options);
+  }
   const selection = plan(root, options);
   if (selection.discovery?.complete===false)return {plan:selection,exitCode:2,error:'Native discovery is incomplete. Run the native full-suite command and repair discovery before selection.'};
   const before=snapshot(root,config);

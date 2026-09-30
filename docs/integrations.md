@@ -2,6 +2,8 @@
 
 TestLore delegates established ecosystems to their native engines. Install these tools in your own project/environment; TestLore never silently downloads them. All command arguments are arrays, executed without a shell. Missing tools, invalid native output and unresolved revisions produce explicit `exitCode: 2`, incomplete reports. Ordinary runner failures preserve their exit codes.
 
+The optional [plugin catalog](plugins.md) can enable these native backends in project configuration. Ordinary `plan` and `run` then use the selected engine. AQE can also supply generation drafts inside TestLore's architect/reviewer workflow, and [RuVector](ruvector.md) can retrieve validated learning examples. One native selection/execution backend is permitted per project; other capabilities can coexist. Enabling a tool does not install it or certify its output.
+
 ## pytest-testmon
 
 ```json

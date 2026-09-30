@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { randomUUID } from 'node:crypto';
+import { randomUUID, createHash } from 'node:crypto';
 import { createRequire } from 'node:module';
 import { spawnSync } from 'node:child_process';
 import { safePath, validateConfig } from './files.js';
@@ -45,6 +45,10 @@ export function configurePlugin(root, id, { enabled, settings = {}, select = fal
     }
   }
   validateConfig(candidate); // Full resolution and legacy validation before any write.
+  writeConfiguration(root, current, candidate);
+  return { id, enabled, configFile: current.file, plugin: pluginCatalog(root).plugins.find(plugin => plugin.id === id) };
+}
+function writeConfiguration(root, current, candidate) {
   const temporary = safePath(root, `.tddswarm.config.plugin-${randomUUID()}.tmp`);
   try {
     fs.writeFileSync(temporary, JSON.stringify(candidate, null, 2) + '\n', { flag: 'wx', mode: fs.existsSync(current.file) ? fs.statSync(current.file).mode & 0o777 : 0o600 });
@@ -52,10 +56,36 @@ export function configurePlugin(root, id, { enabled, settings = {}, select = fal
     // Recheck the safe project path immediately before atomic replacement.
     safePath(root, 'tddswarm.config.json'); fs.renameSync(temporary, current.file);
   } finally { fs.rmSync(temporary, { force: true }); }
-  return { id, enabled, configFile: current.file, plugin: pluginCatalog(root).plugins.find(plugin => plugin.id === id) };
 }
+
+/** Apply one inspected project-fit plan atomically; explicit choices are retained. */
+export function configurePluginsAutomatically(root, recommendation) {
+  if (recommendation?.blocked) throw new Error('Automatic setup is blocked by unsafe or invalid project evidence; use plugins --recommend for details');
+  const current = rawConfig(root);
+  const hash = current.original === null ? null : createHash('sha256').update(current.original).digest('hex');
+  if (recommendation.configHash !== hash) throw new Error('Project configuration changed after inspection; inspect again');
+  if (!Array.isArray(recommendation.applicable) || recommendation.applicable.length > BUILTIN_PLUGINS.length) throw new Error('Invalid automatic plugin plan');
+  const candidate = { ...current.config, plugins: { ...(current.config.plugins || {}) } };
+  const applied = [], seen = new Set();
+  for (const choice of recommendation.applicable) {
+    if (!choice || seen.has(choice.id) || !BUILTIN_PLUGINS.some(plugin => plugin.id === choice.id)) throw new Error('Invalid automatic plugin choice');
+    seen.add(choice.id);
+    if (Object.hasOwn(candidate.plugins, choice.id)) throw new Error('Automatic setup cannot replace an explicit plugin choice');
+    candidate.plugins[choice.id] = { ...(choice.settings || {}), enabled: true };
+    if (choice.select) {
+      if (candidate.executionPlugin !== undefined || candidate.integration !== undefined || current.config.runner !== undefined || current.config.adapter !== undefined || !BUILTIN_PLUGINS.some(plugin => plugin.id === choice.id && plugin.kind === 'native-backend')) throw new Error('Automatic setup cannot replace an execution backend');
+      candidate.executionPlugin = choice.id;
+    }
+    applied.push(choice.id);
+  }
+  validateConfig(candidate);
+  if (applied.length) writeConfiguration(root, current, candidate);
+  return { ...recommendation, applied, configFile: current.file, changed: applied.length > 0 };
+}
+
 function commandFor(root, id, entry) {
   if (entry.command) return entry.command;
+  if (id === 'agentic-qe' && fs.existsSync(path.join(root, 'node_modules', '.bin', 'aqe'))) return [path.join(root, 'node_modules', '.bin', 'aqe')];
   if (['nx', 'c8', 'stryker'].includes(id)) return [entry.executable || path.join(root, 'node_modules', '.bin', id), ...(entry.args || [])];
   return [entry.executable || ({ 'agentic-qe': 'aqe', 'pytest-testmon': 'pytest', bazel: 'bazel' })[id], ...(entry.args || [])];
 }

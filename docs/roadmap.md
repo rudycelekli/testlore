@@ -25,6 +25,12 @@ TestLore adds local retain/recall/reflect operations over validated proposals an
 
 The GitHub project and primary command are now TestLore (`testlore`); `tddswarm` and its existing configuration/metadata paths remain compatible.
 
+## Complementary plugin composition
+
+The optional plugin registry supplies explicit generation, native execution, measured-report import, and learning-retrieval roles. All built-ins can be enabled together; one selected execution backend preserves each project's native scope. Ordinary `plan`/`run` dispatch to that backend. AQE can draft architect tasks while an independent worker reviews the actual code and candidate execution determines acceptance. RuVector indexes validated local lessons with explicit provenance, fallback, and no acceptance authority.
+
+Project inspection recommends compatible installed tools without invoking them. Automatic configuration preserves explicit policies and applies the compatible plan atomically. Its project-fit rules are explainable, not evidence of universal provider superiority. See [plugins](plugins.md), [RuVector](ruvector.md), and [ecosystem research](ecosystem.md).
+
 ## Continuing qualification
 
 - Broader real-project change corpora, including missed dependencies and order-dependent subset failures.

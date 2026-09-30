@@ -78,6 +78,7 @@ function missingPassingCases(expected, actual) {
 /** Improve in a new branch. Never check out, apply into, or merge the caller's checkout. */
 export async function improve(root, options = {}) {
   root = fs.realpathSync(path.resolve(root));
+  if (readConfig(root).integration) throw new Error('Reviewed improvements currently require Node/Jest/Vitest individual-case validation. Use plan/run for your native ecosystem backend; a native-backend candidate validator is required before improving that project.');
   if (options.agent !== undefined && (!Array.isArray(options.agent) || !options.agent.length || options.agent.some(argument => typeof argument !== 'string' || !argument))) throw new Error('agent must be a nonempty executable and argv array');
   if (options.id && options.patch) throw new Error('Use a candidate id or a patch, not both');
   if (options.id && !candidateId(options.id)) throw new Error('Invalid candidate id');
@@ -128,7 +129,7 @@ export async function improve(root, options = {}) {
       }
       const requirements=safePath(worktree,'tddswarm.requirements.md');
       if(!fs.existsSync(requirements)||!fs.readFileSync(requirements,'utf8').trim()){result.status='awaiting-requirements';result.workOrder=await generate(worktree);return receipt();}
-      staged = await generate(worktree, { execute: true, agent: options.agent });
+      staged = await generate(worktree, { execute: true, agent: options.agent, plugin: options.plugin });
     }
     result.candidate = { id: staged.id, directory: staged.directory };
     const validation = validateCandidates(worktree, staged.id, options);

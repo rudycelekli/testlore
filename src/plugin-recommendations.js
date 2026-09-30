@@ -144,6 +144,7 @@ export function recommendPlugins(projectRoot) {
   const recommendations = BUILTIN_PLUGINS.map(plugin => {
     const retained = own(configured, plugin.id), ready = installed[plugin.id] && fit[plugin.id];
     const reasons = [];
+    if (fit[plugin.id]) reasons.push(({nx:'Nx workspace or dependency detected.',bazel:'Bazel workspace detected.','pytest-testmon':'Python project configuration detected.',c8:'Declared c8 dependency complements execution with coverage evidence.',stryker:'Declared Stryker dependency complements coverage with mutation evidence.',ruvector:'Intact persisted learning can support indexed recall.','agentic-qe':'Test generation can complement this project after explicit worker setup.'})[plugin.id]);
     if (retained) reasons.push('Existing explicit plugin entry is preserved, including disabled settings.');
     if (!fit[plugin.id]) reasons.push('No matching project evidence for automatic activation.');
     if (!installed[plugin.id]) reasons.push('Matching project-local installation is missing or cannot be safely inspected.');

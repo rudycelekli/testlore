@@ -14,3 +14,5 @@ export { improve } from './improvement.js';
 export { publishImprovement } from './pull-request.js';
 export {rememberValidation, recallLessons, reflectLearning, exportLearning, copyLearning, mergeLearning} from './learning.js';
 export {qualityAgent,ensureQualityAgent,seedRequirements} from './agent-profile.js';
+export {pluginCatalog,configurePlugin,checkPlugins,configurePluginsAutomatically} from './plugins.js';
+export {recommendPlugins} from './plugin-recommendations.js';
