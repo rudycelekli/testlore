@@ -10,6 +10,7 @@ test('evaluation manifests reject overlap and traversal; schedules are repeatabl
   const data = defaultDataset(); assert.equal(validateDataset(data),data);
   const overlap = structuredClone(data); overlap.fixtures[0].specificationId = overlap.history[0].specificationId; assert.throws(() => validateDataset(overlap),/distinct/);
   const traversal = structuredClone(data); traversal.fixtures[0].files[0].path = '../private.js'; assert.throws(() => validateDataset(traversal),/path/);
+  const nativeNames=structuredClone(data);nativeNames.fixtures[0].referenceTests[0].path='tests/normalize.test.mjs';assert.equal(validateDataset(nativeNames),nativeNames);
   const repeated = evaluationSchedule(data.fixtures,4,7); assert.deepEqual(repeated,evaluationSchedule(data.fixtures,4,7)); assert.equal(repeated.filter(p => p.arms[0] === 'with_memory').length,6);
 });
 test('ties and fixture-only workers never establish a learning gain; repetitions are clustered', () => {
@@ -30,6 +31,9 @@ test('paired controller executes withheld defects, retains raw outputs, and neve
   const failureOutput=path.join(root,'failed-receipt'); const failed=await evaluateLearning({output:failureOutput,agent:[process.execPath,'-e','process.exit(9)'],identity:'failed-protocol-fixture',dataset,repeat:1,maxCalls:12,evidenceKind:'protocol-fixture'});
   assert.equal(failed.calls,4); assert.equal(failed.comparison.complete,false); assert.equal(failed.arms.every(arm=>arm.detected===0&&arm.failedTrials===2),true);
   const attempted=JSON.parse(fs.readFileSync(path.join(failureOutput,'trial-normalize-0-with_memory.json'))); assert.equal(attempted.calls[0].role,'architect'); assert.match(attempted.calls[0].error,/exited 9/); assert.ok(attempted.calls[0].input.requirements);
+  const injected=await evaluateLearning({output:path.join(root,'injected'),agent:[process.execPath,'-e',"const fs=require('node:fs');fs.mkdirSync('tests');fs.writeFileSync('tests/hidden.test.mjs','');process.stdout.write(JSON.stringify({tasks:[{subject:'src/normalize.js',instructions:'test'}]}));"],identity:'side-effect-fixture',dataset,repeat:1,maxCalls:12,evidenceKind:'protocol-fixture'});
+  assert.equal(injected.comparison.complete,false);assert.equal(injected.calls,4);
+  assert.match(JSON.parse(fs.readFileSync(path.join(root,'injected','trial-normalize-0-with_memory.json'))).error,/outside the JSON protocol/);
 });
 test('call budget fails before any output directory or worker invocation', async t => {
   const root = temporary(t), output = path.join(root,'budget-receipt');

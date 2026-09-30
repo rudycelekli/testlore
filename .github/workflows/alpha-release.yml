@@ -40,8 +40,9 @@ jobs:
         with:
           node-version: '24'
       - run: npm ci --ignore-scripts
+      - run: npx --no-install playwright install --with-deps chromium
       - run: npm run check
-      - run: npm test
+      - run: TESTLORE_PLAYWRIGHT_BROWSER=1 npm test
       - run: npm run demo
       - name: Seal and qualify the exact production archive
         id: seal
@@ -93,3 +94,12 @@ jobs:
         run: |
           ARCHIVE=$(node --input-type=module -e "import fs from 'node:fs'; console.log(JSON.parse(fs.readFileSync('.tddswarm/alpha-release/release-candidate.json')).archive);")
           npm publish ".tddswarm/alpha-release/$ARCHIVE" --ignore-scripts --access public --tag alpha --provenance
+      - name: Verify registry bytes against the qualified archive
+        run: node scripts/registry-proof.js --receipt .tddswarm/alpha-release/release-candidate.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: alpha-registry-proof-${{ inputs.source_sha }}
+          path: .tddswarm/alpha-release/
+          include-hidden-files: true
+          if-no-files-found: error

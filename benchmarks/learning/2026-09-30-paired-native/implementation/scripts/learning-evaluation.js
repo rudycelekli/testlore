@@ -9,7 +9,7 @@ import { callAgent } from '../src/swarm.js';
 import { stagePatch, validateCandidates, applyPatch } from '../src/candidates.js';
 import { execute, discover } from '../src/execution.js';
 import { recallLessons } from '../src/learning.js';
-import { digest,snapshot,freshness } from '../src/provenance.js';
+import { digest } from '../src/provenance.js';
 import {TEST} from '../src/files.js';
 
 const repository = fileURLToPath(new URL('../', import.meta.url));
@@ -138,12 +138,12 @@ export async function evaluateLearning({ output, agent, identity, dataset = defa
       async function request(role, payload) {
         if (++calls > maxCalls) throw new Error('Worker call budget exceeded');
         const sent = { schemaVersion: 1, role, requirements: f.requirements, context, budget, ...payload };
-        const start = performance.now(),workerBefore=snapshot(root,config); let result;
+        const start = performance.now(); let result;
         try { result = await callAgent(agent, sent, root, timeoutMs); }
         catch (error) { row.calls.push({ role, durationMs: Math.round(performance.now() - start), input: sent, error: error.message }); throw error; }
         const bytes = Buffer.byteLength(JSON.stringify(result));
         row.outputBytes += bytes; row.calls.push({ role, durationMs: Math.round(performance.now() - start), input: sent, output: result, outputBytes: bytes });
-        if (!freshness(workerBefore,snapshot(root,config)).fresh) throw new Error('Worker changed the source or installed tests outside the JSON protocol');
+        if (f.files.some(file => fs.readFileSync(path.join(root,file.path),'utf8') !== file.content) || fs.existsSync(path.join(root,'test'))) throw new Error('Worker changed the source or installed tests outside the JSON protocol');
         if (bytes > maxOutputBytes) throw new Error('Worker response exceeds declared output budget'); return result;
       }
       try {

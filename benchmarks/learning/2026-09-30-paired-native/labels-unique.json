@@ -1,0 +1,206 @@
+{
+  "fixture": "unique",
+  "base": {
+    "adapter": "node",
+    "exitCode": 0,
+    "durationMs": 99,
+    "tests": [
+      {
+        "file": "test/unique.test.js",
+        "name": "stable distinct immutable empty type",
+        "status": "passed",
+        "durationMs": 0.765792,
+        "line": 1,
+        "column": 110,
+        "id": "74b7235b819713c3e1479ea9d5e75c228211f934a1e8d2bb73ae74458231d07e"
+      }
+    ],
+    "collectionFiles": [
+      "test/unique.test.js"
+    ],
+    "requestedFiles": [
+      "test/unique.test.js"
+    ],
+    "executedFiles": [
+      "test/unique.test.js"
+    ],
+    "missingFiles": [],
+    "unknownFiles": [],
+    "dependencyFiles": [],
+    "complete": true,
+    "command": [
+      "<node>",
+      "--test",
+      "--test-reporter=<repository>src/reporters/node.js",
+      "--test-reporter-destination=<tmp>/tddswarm-report-Ay7tOU/results.json",
+      "./test/unique.test.js"
+    ],
+    "stdout": "",
+    "stderr": "",
+    "signal": null,
+    "reportErrors": [],
+    "discovery": {
+      "files": [
+        "test/unique.test.js"
+      ],
+      "complete": true,
+      "adapter": "node",
+      "warnings": []
+    }
+  },
+  "defects": [
+    {
+      "id": "duplicate-retention",
+      "result": {
+        "adapter": "node",
+        "exitCode": 1,
+        "durationMs": 109,
+        "tests": [
+          {
+            "file": "test/unique.test.js",
+            "name": "stable distinct immutable empty type",
+            "status": "failed",
+            "durationMs": 1.183833,
+            "line": 1,
+            "column": 110,
+            "id": "74b7235b819713c3e1479ea9d5e75c228211f934a1e8d2bb73ae74458231d07e"
+          }
+        ],
+        "collectionFiles": [
+          "test/unique.test.js"
+        ],
+        "requestedFiles": [
+          "test/unique.test.js"
+        ],
+        "executedFiles": [
+          "test/unique.test.js"
+        ],
+        "missingFiles": [],
+        "unknownFiles": [],
+        "dependencyFiles": [],
+        "complete": true,
+        "command": [
+          "<node>",
+          "--test",
+          "--test-reporter=<repository>src/reporters/node.js",
+          "--test-reporter-destination=<tmp>/tddswarm-report-FR80t1/results.json",
+          "./test/unique.test.js"
+        ],
+        "stdout": "",
+        "stderr": "",
+        "signal": null,
+        "reportErrors": [],
+        "discovery": {
+          "files": [
+            "test/unique.test.js"
+          ],
+          "complete": true,
+          "adapter": "node",
+          "warnings": []
+        }
+      }
+    },
+    {
+      "id": "type-collapse",
+      "result": {
+        "adapter": "node",
+        "exitCode": 1,
+        "durationMs": 109,
+        "tests": [
+          {
+            "file": "test/unique.test.js",
+            "name": "stable distinct immutable empty type",
+            "status": "failed",
+            "durationMs": 1.109125,
+            "line": 1,
+            "column": 110,
+            "id": "74b7235b819713c3e1479ea9d5e75c228211f934a1e8d2bb73ae74458231d07e"
+          }
+        ],
+        "collectionFiles": [
+          "test/unique.test.js"
+        ],
+        "requestedFiles": [
+          "test/unique.test.js"
+        ],
+        "executedFiles": [
+          "test/unique.test.js"
+        ],
+        "missingFiles": [],
+        "unknownFiles": [],
+        "dependencyFiles": [],
+        "complete": true,
+        "command": [
+          "<node>",
+          "--test",
+          "--test-reporter=<repository>src/reporters/node.js",
+          "--test-reporter-destination=<tmp>/tddswarm-report-Q0b4dp/results.json",
+          "./test/unique.test.js"
+        ],
+        "stdout": "",
+        "stderr": "",
+        "signal": null,
+        "reportErrors": [],
+        "discovery": {
+          "files": [
+            "test/unique.test.js"
+          ],
+          "complete": true,
+          "adapter": "node",
+          "warnings": []
+        }
+      }
+    },
+    {
+      "id": "order-reversal",
+      "result": {
+        "adapter": "node",
+        "exitCode": 1,
+        "durationMs": 110,
+        "tests": [
+          {
+            "file": "test/unique.test.js",
+            "name": "stable distinct immutable empty type",
+            "status": "failed",
+            "durationMs": 1.222167,
+            "line": 1,
+            "column": 110,
+            "id": "74b7235b819713c3e1479ea9d5e75c228211f934a1e8d2bb73ae74458231d07e"
+          }
+        ],
+        "collectionFiles": [
+          "test/unique.test.js"
+        ],
+        "requestedFiles": [
+          "test/unique.test.js"
+        ],
+        "executedFiles": [
+          "test/unique.test.js"
+        ],
+        "missingFiles": [],
+        "unknownFiles": [],
+        "dependencyFiles": [],
+        "complete": true,
+        "command": [
+          "<node>",
+          "--test",
+          "--test-reporter=<repository>src/reporters/node.js",
+          "--test-reporter-destination=<tmp>/tddswarm-report-0XsEHa/results.json",
+          "./test/unique.test.js"
+        ],
+        "stdout": "",
+        "stderr": "",
+        "signal": null,
+        "reportErrors": [],
+        "discovery": {
+          "files": [
+            "test/unique.test.js"
+          ],
+          "complete": true,
+          "adapter": "node",
+          "warnings": []
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,113 @@
+{
+  "schemaVersion": 1,
+  "dataset": "independent-contracts-v1",
+  "datasetHash": "ef2f1203fb288ef9a836c6f14ea31a4eb96af5a693a21aa15a92f314426283d2",
+  "sourceRevision": "2829092478c60dccbbde91c52c8d5fc13019f564",
+  "evidenceKind": "live-worker",
+  "identity": "codex-cli/0.155.1/default-model-unpinned",
+  "repeat": 2,
+  "seed": 20260930,
+  "calls": 23,
+  "budget": {
+    "maxCalls": 24,
+    "timeoutMs": 115000,
+    "maxOutputBytes": 65536
+  },
+  "arms": [
+    {
+      "arm": "without_memory",
+      "trials": 4,
+      "failedTrials": 0,
+      "detected": 12,
+      "totalDefects": 12,
+      "meanCases": 23.5,
+      "meanGenerationMs": 48552,
+      "meanOutputBytes": 3557.75
+    },
+    {
+      "arm": "with_memory",
+      "trials": 4,
+      "failedTrials": 1,
+      "detected": 9,
+      "totalDefects": 12,
+      "meanCases": 14.75,
+      "meanGenerationMs": 266126.25,
+      "meanOutputBytes": 2729.25
+    }
+  ],
+  "comparison": {
+    "pairs": [
+      {
+        "fixture": "normalize",
+        "repetition": 0,
+        "recallDelta": 0,
+        "caseDelta": -5,
+        "generationMsDelta": -1854,
+        "outputBytesDelta": 67,
+        "complete": true
+      },
+      {
+        "fixture": "normalize",
+        "repetition": 1,
+        "recallDelta": 0,
+        "caseDelta": 0,
+        "generationMsDelta": -11916,
+        "outputBytesDelta": -457,
+        "complete": true
+      },
+      {
+        "fixture": "unique",
+        "repetition": 0,
+        "recallDelta": -1,
+        "caseDelta": -16,
+        "generationMsDelta": 880541,
+        "outputBytesDelta": -3091,
+        "complete": false
+      },
+      {
+        "fixture": "unique",
+        "repetition": 1,
+        "recallDelta": 0,
+        "caseDelta": -14,
+        "generationMsDelta": 3526,
+        "outputBytesDelta": 167,
+        "complete": true
+      }
+    ],
+    "independentSpecificationUnits": [
+      {
+        "fixture": "normalize",
+        "recallDelta": 0
+      },
+      {
+        "fixture": "unique",
+        "recallDelta": -0.5
+      }
+    ],
+    "complete": false,
+    "inference": "inconclusive",
+    "exactTwoSidedSignTest": {
+      "unit": "independent specification mean across repetitions; ties excluded",
+      "positive": 0,
+      "negative": 1,
+      "ties": 1,
+      "p": 1
+    },
+    "pairedMeans": {
+      "recallDelta": -0.25,
+      "caseDelta": -8.75,
+      "generationMsDelta": 217574.25,
+      "outputBytesDelta": -828.5
+    }
+  },
+  "limitations": [
+    "Constructed authored contract dataset; different IDs/hashes prevent exact overlap, but maintainers must audit semantic independence. No production-corpus or competitor claim.",
+    "Repeated outputs are clustered by specification, not treated as independent samples.",
+    "Worker identity is operator-declared; model version/seed and provider token billing are not verified by this protocol.",
+    "Fixed three calls per successful arm; identical argv, time and response-byte limits. Input size increases with memory.",
+    "Output byte budget is checked after each response; it is not a provider token or dollar cap. Core transport still enforces its 2 MB ceiling.",
+    "Hold-out reference tests and defect payloads are absent from agent stdin and trial roots; trusted custom workers are not a security sandbox.",
+    "Generation time covers architect/author/reviewer; total time also covers candidate validation and defect execution.",
+    "Failures and incomplete trials remain visible and contribute zero recall; raw receipts stay local until explicitly reviewed for publication."
+  ]
+}
