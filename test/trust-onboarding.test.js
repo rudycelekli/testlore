@@ -40,3 +40,8 @@ test('Playwright helper imports cannot silently close undeclared browser inputs'
  const reviewed=plan(root,{changed:['src/landing.js']});assert.deepEqual(reviewed.selected,['browser/landing.spec.js']);
  delete config.browser.routes['/pricing'];write(root,'tddswarm.config.json',config);assert.equal(plan(root,{changed:['src/landing.js']}).selected.length,2);
 });
+
+test('delegated native reports describe targets without inventing individual case evidence',()=>{
+ const text=renderRunReport({delegated:true,adapter:'nx',complete:true,exitCode:0,plan:{mode:'affected',targets:['web','api'],evidence:'nx-project-graph'}});
+ assert.match(text,/Native targets: 2/);assert.match(text,/Individual case inventory and independent subset recall are not established/);assert.equal(text.includes('0 passed'),false);
+});

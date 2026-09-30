@@ -2,6 +2,12 @@
 const escape = value => String(value ?? '').replace(/[\\`*_{}[\]<>|]/g, '\\$&').replace(/[\r\n]+/g, ' ').slice(0, 1000);
 export function renderRunReport(report = {}) {
  const selection = report.plan || {}, decisions = selection.decisions || [];
+ if(report.delegated || selection.targets !== undefined){
+   const targets=selection.targets,rows=['## TestLore native engine evidence','',`Adapter: **${escape(report.adapter||selection.adapter)}**. Mode: **${report.shadow?'shadow/full native scope':escape(selection.mode||'native')}**. Exit: **${report.exitCode??'unknown'}**.`, '', `Native targets: ${Array.isArray(targets)?targets.length:'selected during execution'}. Native result: ${report.complete===true?'reported':'incomplete'}. Individual case inventory and independent subset recall are not established.`, '', `Why: ${escape((selection.reasons||[]).join('; ')||selection.evidence||'Selection delegated to the configured native engine')}.`];
+   if(Array.isArray(targets))for(const target of targets.slice(0,200))rows.push(`- ${escape(target)}`);
+   if(report.error)rows.push('',`Execution issue: ${escape(report.error)}`);
+   rows.push('','Omitted targets and their dependency decisions are owned by the native engine; inspect the JSON command and native report. This report makes no individual-case safety claim.');return rows.join('\n')+'\n';
+ }
  const ran = new Set(report.executedTests || report.executedFiles || []);
  const proposed = new Set(selection.selected || []);
  const omitted = decisions.filter(d => !ran.has(d.test));
