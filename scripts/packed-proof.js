@@ -89,6 +89,17 @@ try{
   assert.equal(observed.deploymentSafety,'not-established');assert.equal(observed.receipts.json,'.tddswarm/last-run.json');
  }finally{await executionClient.close();}
  invoke(project,['git','restore','src/a.js']);
+ const {snapshot}=await import(path.join(tools,'node_modules/testlore/src/provenance.js'));
+ const {readConfig}=await import(path.join(tools,'node_modules/testlore/src/files.js'));
+ const mappingConfig=fs.readFileSync(path.join(project,'tddswarm.config.json'),'utf8');
+ write('.tddswarm/mapping-review.json',{schemaVersion:1,applied:false,stable:true,truncated:false,
+  provenance:snapshot(project,readConfig(project)),proposals:[{authority:'proposal-only',status:'review-required',
+   patch:{dependencies:{'test/a.test.js':['src/a.js']}}}]});
+ const mapping=command(['mapping-qualify','--report','.tddswarm/mapping-review.json','--changed','src/a.js','--execute']);
+ assert.equal(mapping.qualified,true);assert.equal(mapping.complete,true);
+ assert.equal(mapping.applied,false);assert.equal(mapping.closedWorld,false);
+ assert.equal(mapping.full.tests.length,2);assert.equal(mapping.subset.tests.length,1);
+ assert.equal(fs.readFileSync(path.join(project,'tddswarm.config.json'),'utf8'),mappingConfig);
  const capture=command(['capture']);assert.equal(capture.complete,true);
  write('.tddswarm/proposal.json',{files:[{path:'test/extra.test.js',content:"import test from 'node:test';import assert from 'node:assert/strict';import {a} from '../src/a.js';test('independent a contract',()=>assert.equal(a,1));"}],review:{accepted:true,findings:[],oracle:{independent:true,basis:['a and b are one.']}},requirements:'a and b are one.'});
  improvement=command(['improve','--local','--patch','.tddswarm/proposal.json']);
@@ -100,7 +111,7 @@ try{
  const recall=command(['recall','--query','independent a contract']);assert.ok(recall.records.length);assert.equal(recall.advisoryOnly,true);assert.equal(recall.retrieval,'deterministic-lexical');
  assert.ok(recall.warnings.some(value=>value==='RuVector fallback: ruvector-sdk-missing'));
  assert.equal(createHash('sha256').update(fs.readFileSync(archive)).digest('hex'),sha256,'Archive changed during qualification');
- const receipt={schemaVersion:1,exactInputArchive:Boolean(inputArchive),proofScriptSha256:createHash('sha256').update(fs.readFileSync(fileURLToPath(import.meta.url))).digest('hex'),date:new Date().toISOString(),archive:pack.filename,sha256,version:pack.version,node:process.version,productionInstall:true,mcpStdioVerified:true,mcpShadowVerified:true,briefInspectionVerified:true,evidenceLoopVerified:true,packedManifestSha256:createHash('sha256').update(fs.readFileSync(path.join(tools,'node_modules/testlore/package.json'))).digest('hex'),actionReference:installedPackage.gitHead||null,workflowActionReference,actionIdentityVerified:Boolean(expectedSource),shadowSetupVerified:true,plugins:{catalogCount:catalog.plugins.length,missingSdkExit:missingVectorSdk.exitCode,lexicalFallbackVerified:true},nativeShadow:{complete:shadow.complete,selected:shadow.plan.selected,executed:shadow.executedFiles.length,detected:true},runtimeCaptureComplete:capture.complete,improvement:{status:improvement.status,cases:improvement.fullRun.tests.length,originalBranch:'main'},limitations:['Local packed-artifact installation; no registry publication or live GitHub PR created.','Controlled two-module fixture; broad project compatibility remains unqualified.']};
+ const receipt={schemaVersion:1,exactInputArchive:Boolean(inputArchive),proofScriptSha256:createHash('sha256').update(fs.readFileSync(fileURLToPath(import.meta.url))).digest('hex'),date:new Date().toISOString(),archive:pack.filename,sha256,version:pack.version,node:process.version,productionInstall:true,mcpStdioVerified:true,mcpShadowVerified:true,briefInspectionVerified:true,evidenceLoopVerified:true,mappingQualificationVerified:true,packedManifestSha256:createHash('sha256').update(fs.readFileSync(path.join(tools,'node_modules/testlore/package.json'))).digest('hex'),actionReference:installedPackage.gitHead||null,workflowActionReference,actionIdentityVerified:Boolean(expectedSource),shadowSetupVerified:true,plugins:{catalogCount:catalog.plugins.length,missingSdkExit:missingVectorSdk.exitCode,lexicalFallbackVerified:true},nativeShadow:{complete:shadow.complete,selected:shadow.plan.selected,executed:shadow.executedFiles.length,detected:true},runtimeCaptureComplete:capture.complete,improvement:{status:improvement.status,cases:improvement.fullRun.tests.length,originalBranch:'main'},limitations:['Local packed-artifact installation; no registry publication or live GitHub PR created.','Controlled two-module fixture; broad project compatibility remains unqualified.']};
  fs.mkdirSync(path.dirname(output),{recursive:true});fs.writeFileSync(output,JSON.stringify(receipt,null,2));console.log(JSON.stringify(receipt,null,2));
 }finally{
  if(improvement?.worktreeRoot)invoke(project,['git','worktree','remove','--force',improvement.worktreeRoot]);
