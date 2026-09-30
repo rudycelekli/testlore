@@ -7,7 +7,7 @@ node scripts/public-benchmark.js --project nanoid --output /tmp/nanoid-evidence
 node scripts/public-benchmark.js --project defu --output /tmp/defu-evidence
 ```
 
-The output must be new; previous evidence is never overwritten. The harness clones each repository into a disposable directory, checks out the exact [manifest](../benchmarks/public-projects.json) commit, verifies a green upstream runtime baseline, applies exact one-occurrence patches, and runs full, proposed subset and native selections. It retains raw stdout/stderr, argv, exit statuses, per-test failure identities, planning overhead and execution times. For Vitest, dependencies are installed at explicit versions and the resolved installation lockfile (with integrity hashes) is retained. The harness restores source and removes only its temporary checkout.
+The output must be new; previous evidence is never overwritten. The harness clones each repository into a disposable directory, checks out the exact [manifest](../benchmarks/public-projects.json) commit, verifies a green upstream runtime baseline, applies exact one-occurrence patches, and runs full, proposed subset and native selections. It retains raw stdout/stderr, argv, exit statuses, per-test failure identities, planning overhead and execution times. For Vitest, dependencies are installed with `npm ci` from the committed harness lockfile (including integrity hashes); each run also retains the installation lockfile. The harness restores source and removes only its temporary checkout.
 
 | Pinned project | Held-out deterministic regression | Full-suite failing identity | TDDSwarm misses | Native misses |
 | --- | --- | --- | --- | --- |

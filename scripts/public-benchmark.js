@@ -40,7 +40,13 @@ try {
     let runner;
     if (project.framework === 'vitest') {
       const tools = path.join(workspace, 'tools-' + project.name); fs.mkdirSync(tools);
-      setup.push(requireSuccess(workspace, ['npm', 'install', '--prefix', tools, '--ignore-scripts', '--save-exact', ...project.dependencies]));
+      if (project.dependencyLockfile) {
+        const lockfile = path.join(repository, 'benchmarks', project.dependencyLockfile);
+        const lock = JSON.parse(fs.readFileSync(lockfile));
+        fs.copyFileSync(lockfile, path.join(tools, 'package-lock.json'));
+        fs.writeFileSync(path.join(tools, 'package.json'), JSON.stringify({ name: lock.name, version: lock.version, dependencies: lock.packages[''].dependencies }));
+        setup.push(requireSuccess(workspace, ['npm', 'ci', '--prefix', tools, '--ignore-scripts']));
+      } else setup.push(requireSuccess(workspace, ['npm', 'install', '--prefix', tools, '--ignore-scripts', '--save-exact', ...project.dependencies]));
       fs.symlinkSync(path.join(tools, 'node_modules'), path.join(root, 'node_modules'), 'dir');
       fs.copyFileSync(path.join(tools, 'package-lock.json'), path.join(logs, 'runner-package-lock.json'));
       runner = [process.execPath, path.join(tools, 'node_modules/vitest/vitest.mjs'), 'run'];
