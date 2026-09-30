@@ -1,0 +1,68 @@
+{
+  "schemaVersion": 1,
+  "mode": "full",
+  "base": null,
+  "changed": [
+    "src/defu.ts"
+  ],
+  "ignored": [],
+  "selected": [
+    "test/defu.test.ts",
+    "test/utils.test.ts"
+  ],
+  "total": 2,
+  "omitted": 0,
+  "selectionReduction": 0,
+  "reasons": [
+    "dependency-graph-incomplete"
+  ],
+  "warnings": [
+    {
+      "file": "package.json",
+      "reason": "unsupported-package-resolution"
+    },
+    {
+      "file": "lib/defu.cjs",
+      "reason": "unresolved-import:../dist/defu.cjs"
+    },
+    {
+      "file": "lib/defu.d.cts",
+      "reason": "unresolved-import:../dist/defu.mts"
+    },
+    {
+      "file": "test/defu.test.ts",
+      "reason": "unresolved-import:./fixtures/"
+    }
+  ],
+  "decisions": [
+    {
+      "test": "test/defu.test.ts",
+      "selected": true,
+      "reasons": [
+        "dependency-graph-incomplete",
+        "dependency-path"
+      ],
+      "paths": [
+        [
+          "test/defu.test.ts",
+          "src/defu.ts"
+        ]
+      ]
+    },
+    {
+      "test": "test/utils.test.ts",
+      "selected": true,
+      "reasons": [
+        "dependency-graph-incomplete"
+      ],
+      "paths": []
+    }
+  ],
+  "fingerprint": "16f209b7e082769e5d6edbd9432f0dbf23359d26036b962d378c12e1073380cc",
+  "evidence": "static-imports-and-declared-dependencies",
+  "limitations": [
+    "Runtime and external service dependencies are not observed.",
+    "Selection operates at test-file granularity.",
+    "No deployment safety or measured wall-clock savings are implied."
+  ]
+}

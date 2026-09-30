@@ -1,0 +1,24 @@
+{
+  "tests": [
+    {
+      "id": "82802957-290d-4438-8757-a58fe005ed63",
+      "name": "add tests",
+      "sourceFile": "/tmp/tddswarm-aqe-probe/add.js",
+      "testFile": "/tmp/tddswarm-aqe-probe/add.test.js",
+      "testCode": "import { describe, it, expect, beforeEach, vi } from 'vitest';\nimport { add } from '/tmp/tddswarm-aqe-probe/add';\n\ndescribe('add', () => {\n  it('should handle valid input correctly', () => {\n    const result = add({} /* TODO: provide a: unknown */, {} /* TODO: provide b: unknown */);\n    expect(result).toBeDefined();\n  });\n\n});\n\n",
+      "type": "unit",
+      "assertions": 2,
+      "language": "javascript",
+      "framework": "vitest",
+      "llmEnhanced": false,
+      "qualityGateResult": {
+        "passed": true,
+        "issues": [],
+        "score": 100
+      }
+    }
+  ],
+  "coverageEstimate": 6.8,
+  "patternsUsed": [],
+  "patternIds": []
+}
