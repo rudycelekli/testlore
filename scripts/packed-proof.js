@@ -17,6 +17,8 @@ const outputIndex=process.argv.indexOf('--output');const output=path.resolve(out
 const archiveIndex=process.argv.indexOf('--archive');
 const expectedIndex=process.argv.indexOf('--expected-sha256');
 const inputArchive=archiveIndex<0?null:path.resolve(process.argv[archiveIndex+1]||'');
+const sourceIndex=process.argv.indexOf('--expected-source-sha'),expectedSource=sourceIndex<0?null:process.argv[sourceIndex+1];
+if(expectedSource&&!/^[a-f0-9]{40}$/.test(expectedSource))throw new Error('Expected source SHA must be 40 lowercase hex characters');
 const expectedSha=expectedIndex<0?null:process.argv[expectedIndex+1];
 if(expectedSha&&!/^[a-f0-9]{64}$/.test(expectedSha))throw new Error('Expected SHA-256 must be 64 lowercase hex characters');
 let improvement;
@@ -34,7 +36,9 @@ try{
  write('package.json',{type:'module'});write('.gitignore','.tddswarm/\n');
  for(const name of ['a','b']){write(`src/${name}.js`,`export const ${name}=1;`);write(`test/${name}.test.js`,`import test from 'node:test';import assert from 'node:assert/strict';import {${name}} from '../src/${name}.js';test('${name}',()=>assert.equal(${name},1));`);}
  for(const args of [['init','-b','main'],['config','user.name','Packed Proof'],['config','user.email','proof@example.invalid'],['add','.'],['commit','-m','baseline']])invoke(project,['git',...args]);
- command(['init']);
+ command(['setup','--no-ci']);
+ assert.equal(JSON.parse(fs.readFileSync(path.join(project,'tddswarm.config.json'))).executionMode,'shadow');
+ if(expectedSource){const {installedActionReference}=await import(path.join(tools,'node_modules/testlore/src/quality-layer.js'));assert.equal(installedPackage.gitHead,expectedSource);assert.equal(installedActionReference(),expectedSource);}
  const recommendation=command(['plugins','--recommend']);assert.ok(Array.isArray(recommendation.recommendations));
  const automatic=command(['plugins','--auto']);assert.equal(automatic.changed,false);
  const catalog=command(['plugins']);assert.ok(catalog.plugins.some(plugin=>plugin.id==='ruvector'&&!plugin.enabled));
@@ -56,7 +60,7 @@ try{
  const recall=command(['recall','--query','independent a contract']);assert.ok(recall.records.length);assert.equal(recall.advisoryOnly,true);assert.equal(recall.retrieval,'deterministic-lexical');
  assert.ok(recall.warnings.some(value=>value==='RuVector fallback: ruvector-sdk-missing'));
  assert.equal(createHash('sha256').update(fs.readFileSync(archive)).digest('hex'),sha256,'Archive changed during qualification');
- const receipt={schemaVersion:1,exactInputArchive:Boolean(inputArchive),proofScriptSha256:createHash('sha256').update(fs.readFileSync(fileURLToPath(import.meta.url))).digest('hex'),date:new Date().toISOString(),archive:pack.filename,sha256,version:pack.version,node:process.version,productionInstall:true,plugins:{catalogCount:catalog.plugins.length,missingSdkExit:missingVectorSdk.exitCode,lexicalFallbackVerified:true},nativeShadow:{complete:shadow.complete,selected:shadow.plan.selected,executed:shadow.executedFiles.length,detected:true},runtimeCaptureComplete:capture.complete,improvement:{status:improvement.status,cases:improvement.fullRun.tests.length,originalBranch:'main'},limitations:['Local packed-artifact installation; no registry publication or live GitHub PR created.','Controlled two-module fixture; broad project compatibility remains unqualified.']};
+ const receipt={schemaVersion:1,exactInputArchive:Boolean(inputArchive),proofScriptSha256:createHash('sha256').update(fs.readFileSync(fileURLToPath(import.meta.url))).digest('hex'),date:new Date().toISOString(),archive:pack.filename,sha256,version:pack.version,node:process.version,productionInstall:true,actionReference:installedPackage.gitHead||null,shadowSetupVerified:true,plugins:{catalogCount:catalog.plugins.length,missingSdkExit:missingVectorSdk.exitCode,lexicalFallbackVerified:true},nativeShadow:{complete:shadow.complete,selected:shadow.plan.selected,executed:shadow.executedFiles.length,detected:true},runtimeCaptureComplete:capture.complete,improvement:{status:improvement.status,cases:improvement.fullRun.tests.length,originalBranch:'main'},limitations:['Local packed-artifact installation; no registry publication or live GitHub PR created.','Controlled two-module fixture; broad project compatibility remains unqualified.']};
  fs.mkdirSync(path.dirname(output),{recursive:true});fs.writeFileSync(output,JSON.stringify(receipt,null,2));console.log(JSON.stringify(receipt,null,2));
 }finally{
  if(improvement?.worktreeRoot)invoke(project,['git','worktree','remove','--force',improvement.worktreeRoot]);

@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 // Seal once, qualify that exact archive, and verify it again before a protected publish.
 import fs from 'node:fs';
+import {sealSourceArchive} from './archive-source.js';
 import path from 'node:path';
 import { createHash } from 'node:crypto';
 import { spawnSync } from 'node:child_process';
@@ -17,7 +18,7 @@ if(options['--verify']){
  if(JSON.parse(fs.readFileSync(path.join(root,'package.json'),'utf8')).version!==receipt.version)throw new Error('Release version differs from checked-out source');
  const directory=path.dirname(file),archive=path.join(directory,receipt.archive),proof=path.join(directory,'packed-proof.json');
  if(hash(archive)!==receipt.archiveSha256||hash(proof)!==receipt.proofSha256)throw new Error('Sealed archive or packed proof changed');
- const evidence=JSON.parse(fs.readFileSync(proof,'utf8'));if(evidence.sha256!==receipt.archiveSha256||evidence.version!==receipt.version||evidence.exactInputArchive!==true||evidence.proofScriptSha256!==hash(path.join(root,'scripts/packed-proof.js'))||!evidence.productionInstall||!evidence.nativeShadow?.complete||!evidence.nativeShadow?.detected||!evidence.runtimeCaptureComplete||evidence.improvement?.status!=='ready-for-review')throw new Error('Packed artifact evidence incomplete');
+ const evidence=JSON.parse(fs.readFileSync(proof,'utf8'));if(evidence.sha256!==receipt.archiveSha256||evidence.version!==receipt.version||evidence.exactInputArchive!==true||evidence.proofScriptSha256!==hash(path.join(root,'scripts/packed-proof.js'))||!evidence.productionInstall||receipt.archiveRecipe!=='tracked-source-with-exact-gitHead'||evidence.actionReference!==receipt.sourceRevision||receipt.sourceManifestSha256!==hash(path.join(root,'package.json'))||!evidence.nativeShadow?.complete||!evidence.nativeShadow?.detected||!evidence.runtimeCaptureComplete||evidence.improvement?.status!=='ready-for-review')throw new Error('Packed artifact evidence incomplete');
  if(options.publish&&(!/^\d+\.\d+\.\d+(?:-alpha\.\d+)?$/.test(receipt.version)||process.env.NODE_AUTH_TOKEN||process.env.NPM_TOKEN))throw new Error('Publish requires a valid scoped alpha candidate version and token-free trusted OIDC');
  if(options.publish&&(process.env.GITHUB_ACTIONS!=='true'||!process.env.ACTIONS_ID_TOKEN_REQUEST_URL||!process.env.ACTIONS_ID_TOKEN_REQUEST_TOKEN))throw new Error('Publish check requires a GitHub Actions OIDC-enabled job; publisher mapping is still an external gate');
  console.log(JSON.stringify({...receipt,verified:true,alphaVersionEligible:/^\d+\.\d+\.\d+(?:-alpha\.\d+)?$/.test(receipt.version)},null,2));
@@ -26,12 +27,12 @@ if(options['--verify']){
  const sourceRevision=revision();if(options['--revision']&&options['--revision']!==sourceRevision)throw new Error('Checkout differs from requested immutable revision');
  if(invoke(['git','status','--porcelain']).trim())throw new Error('Seal requires a clean committed checkout');
  const output=path.resolve(options['--output']);if(fs.existsSync(output))throw new Error('Preserve prior evidence: output must be new');fs.mkdirSync(output,{recursive:true});
- const pack=JSON.parse(invoke(['npm','pack','--ignore-scripts','--json','--pack-destination',output]))[0];
+ const pack=sealSourceArchive(root,sourceRevision,output);
  const tracked=new Set(invoke(['git','ls-files','-z']).split('\0'));
  if(!Array.isArray(pack.files)||pack.files.some(file=>!tracked.has(file.path)))throw new Error('Archive contains files outside the committed source tree');
  const archive=path.join(output,pack.filename), archiveSha256=hash(archive);
- invoke([process.execPath,path.join(root,'scripts/packed-proof.js'),'--archive',archive,'--expected-sha256',archiveSha256,'--output',path.join(output,'packed-proof.json')]);
+ invoke([process.execPath,path.join(root,'scripts/packed-proof.js'),'--archive',archive,'--expected-sha256',archiveSha256,'--expected-source-sha',sourceRevision,'--output',path.join(output,'packed-proof.json')]);
  if(hash(archive)!==archiveSha256||revision()!==sourceRevision||invoke(['git','status','--porcelain']).trim())throw new Error('Release source or archive drifted');
- const receipt={schemaVersion:1,sourceRevision,archive:pack.filename,archiveSha256,npmIntegrity:pack.integrity,version:pack.version,node:process.version,qualified:true,proofSha256:hash(path.join(output,'packed-proof.json')),date:new Date().toISOString(),publisherVerified:false,limitations:['Exact local packed-artifact qualification; no registry credentials, OIDC publisher mapping, GitHub protected environment, or hosted CI run certified.','Source tests and hosted gates must also pass at this exact revision before publication.']};
+ const receipt={schemaVersion:1,sourceRevision,archiveRecipe:pack.recipe,sourceManifestSha256:pack.sourceManifestSha256,packedManifestSha256:pack.packedManifestSha256,archive:pack.filename,archiveSha256,npmIntegrity:pack.integrity,version:pack.version,node:process.version,qualified:true,proofSha256:hash(path.join(output,'packed-proof.json')),date:new Date().toISOString(),publisherVerified:false,limitations:['Exact local packed-artifact qualification; no registry credentials, OIDC publisher mapping, GitHub protected environment, or hosted CI run certified.','Source tests and hosted gates must also pass at this exact revision before publication.']};
  fs.writeFileSync(path.join(output,'release-candidate.json'),JSON.stringify(receipt,null,2)+'\n',{flag:'wx'});console.log(JSON.stringify(receipt,null,2));
 }
