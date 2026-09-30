@@ -21,7 +21,7 @@ test('actual isolated pilot measures both orders, catches a planted failure, and
   const report=pilot(output,manifest(root),{execute:true,output:'.tddswarm/pilots/first'});
   assert.equal(report.valid,true,JSON.stringify(report));assert.equal(report.projects[0].sourceCheckoutUnchanged,true);
   const changes=report.projects[0].changes;
-  assert.deepEqual(changes[0].trials.map(t=>t.order),[['full','subset'],['subset','full']]);
+  assert.deepEqual(changes[0].trials.map(t=>t.order),[['full','subset','native'],['subset','native','full']]);
   assert.ok(changes[1].trials.every(t=>t.fullFailures===1&&t.missedFailures===0&&t.selectedFiles===1));
   assert.equal(git(root,'rev-parse','HEAD'),revision);assert.equal(git(root,'status','--porcelain'),'');assert.equal(fs.readFileSync(path.join(root,'src/a.js'),'utf8'),source);
   assert.throws(()=>pilot(output,manifest(root),{execute:true,output:'.tddswarm/pilots/first'}),/exist/i);

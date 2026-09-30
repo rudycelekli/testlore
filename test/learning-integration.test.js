@@ -7,7 +7,7 @@ import {stagePatch,validateCandidates} from '../src/candidates.js';
 import {recallLessons,exportLearning} from '../src/learning.js';
 import {generate} from '../src/swarm.js';
 import {improve} from '../src/improvement.js';
-const proposal={files:[{path:'test/learned.test.js',content:"import test from 'node:test';import assert from 'node:assert/strict';import {a} from '../src/a.js';test('learned boundary invariant',()=>assert.equal(a,1));"}],review:{accepted:true,findings:[],oracle:{independent:true,basis:['Independent a contract is one.']}},requirements:'Independent a contract is one. Include boundary assertions.'};
+const proposal={files:[{path:'test/learned.test.js',content:"import test from 'node:test';import assert from 'node:assert/strict';import {a} from '../src/a.js';test('learned boundary invariant',()=>assert.equal(a,1));"}],review:{accepted:true,findings:[],oracle:{independent:true,basis:['Independent a contract is one.']}},requirements:'The learned invariant contract requires a to equal one. Include boundary assertions.'};
 test('validation automatically retains patterns and generation retrieves them without teaching the reviewer',async t=>{
  const root=fixture(t,twoModules);
  write(root,'.tddswarm/worker.cjs',`const fs=require('node:fs');let input='';process.stdin.on('data',d=>input+=d);process.stdin.on('end',()=>{const p=JSON.parse(input);fs.appendFileSync('.tddswarm/worker-payloads.jsonl',JSON.stringify(p)+'\\n');const result=p.role==='architect'?{tasks:[{subject:'src/a.js',instructions:'Check the independent boundary invariant'}]}:p.role==='author'?${JSON.stringify({files:proposal.files})}:${JSON.stringify(proposal.review)};process.stdout.write(JSON.stringify(result));});`);

@@ -1,0 +1,117 @@
+{
+  "schemaVersion": 1,
+  "id": "untouched-batching-and-rotation-v1",
+  "history": [
+    {
+      "id": "historical-clamp",
+      "specificationId": "numeric-clamping",
+      "requirements": "Clamp finite numbers to inclusive lower/upper bounds; reversed bounds throw RangeError. Include boundary, interior, negative and error cases.",
+      "files": [
+        {
+          "path": "src/clamp.js",
+          "content": "export function clamp(x,a,b){if(a>b)throw new RangeError();return Math.max(a,Math.min(b,x));}"
+        }
+      ],
+      "tests": [
+        {
+          "path": "test/clamp.test.js",
+          "content": "import test from 'node:test';import assert from 'node:assert/strict';import {clamp} from '../src/clamp.js';test('boundary interior negative error',()=>{assert.equal(clamp(-4,-2,3),-2);assert.equal(clamp(4,-2,3),3);assert.equal(clamp(0,-2,3),0);assert.throws(()=>clamp(0,2,1),RangeError);});"
+        }
+      ]
+    }
+  ],
+  "fixtures": [
+    {
+      "id": "batches",
+      "specificationId": "nonnegative-batch-counting",
+      "requirements": "batches(total,size) returns the minimum number of batches needed for a nonnegative integer total with a positive integer batch size. Use exact integer results including zero, exact divisibility and a partial batch. Invalid totals or sizes (negative, fractional or zero size) throw RangeError.",
+      "files": [
+        {
+          "path": "src/batches.js",
+          "content": "export function batches(total,size){if(!Number.isInteger(total)||total<0||!Number.isInteger(size)||size<1)throw new RangeError();return Math.ceil(total/size);}"
+        }
+      ],
+      "referenceTests": [
+        {
+          "path": "test/batches.test.js",
+          "content": "import test from 'node:test';import assert from 'node:assert/strict';import {batches} from '../src/batches.js';test('independent batch contract',()=>{assert.equal(batches(0,4),0);assert.equal(batches(8,4),2);assert.equal(batches(9,4),3);assert.throws(()=>batches(-1,4),RangeError);assert.throws(()=>batches(1,0),RangeError);assert.throws(()=>batches(1.5,4),RangeError)});"
+        }
+      ],
+      "defects": [
+        {
+          "id": "partial-batch-lost",
+          "files": [
+            {
+              "path": "src/batches.js",
+              "content": "export function batches(total,size){if(!Number.isInteger(total)||total<0||!Number.isInteger(size)||size<1)throw new RangeError();return Math.floor(total/size);}"
+            }
+          ]
+        },
+        {
+          "id": "negative-total-accepted",
+          "files": [
+            {
+              "path": "src/batches.js",
+              "content": "export function batches(total,size){if(!Number.isInteger(total)||!Number.isInteger(size)||size<1)throw new RangeError();return Math.ceil(total/size);}"
+            }
+          ]
+        },
+        {
+          "id": "zero-size-accepted",
+          "files": [
+            {
+              "path": "src/batches.js",
+              "content": "export function batches(total,size){if(!Number.isInteger(total)||total<0||!Number.isInteger(size)||size<0)throw new RangeError();return Math.ceil(total/size);}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "rotate",
+      "specificationId": "stable-right-array-rotation",
+      "requirements": "rotate(xs,k) accepts an array and a nonnegative integer k, returning a new array rotated right by k modulo the length, with order preserved and no input mutation. Zero steps and empty arrays return new copies. Non-array inputs throw TypeError; negative or fractional steps throw RangeError. Use exact independent expected arrays.",
+      "files": [
+        {
+          "path": "src/rotate.js",
+          "content": "export function rotate(xs,k){if(!Array.isArray(xs))throw new TypeError();if(!Number.isInteger(k)||k<0)throw new RangeError();if(!xs.length)return [];const n=k%xs.length;return n?[...xs.slice(-n),...xs.slice(0,-n)]:[...xs];}"
+        }
+      ],
+      "referenceTests": [
+        {
+          "path": "test/rotate.test.js",
+          "content": "import test from 'node:test';import assert from 'node:assert/strict';import {rotate} from '../src/rotate.js';test('independent rotation contract',()=>{const xs=[1,2,3];assert.deepEqual(rotate(xs,1),[3,1,2]);assert.deepEqual(rotate(xs,4),[3,1,2]);assert.deepEqual(xs,[1,2,3]);assert.notEqual(rotate(xs,0),xs);assert.deepEqual(rotate([],2),[]);assert.throws(()=>rotate(null,1),TypeError);assert.throws(()=>rotate(xs,-1),RangeError);assert.throws(()=>rotate(xs,1.5),RangeError)});"
+        }
+      ],
+      "defects": [
+        {
+          "id": "direction-reversed",
+          "files": [
+            {
+              "path": "src/rotate.js",
+              "content": "export function rotate(xs,k){if(!Array.isArray(xs))throw new TypeError();if(!Number.isInteger(k)||k<0)throw new RangeError();if(!xs.length)return [];const n=k%xs.length;return n?[...xs.slice(n),...xs.slice(0,n)]:[...xs];}"
+            }
+          ]
+        },
+        {
+          "id": "input-alias-returned",
+          "files": [
+            {
+              "path": "src/rotate.js",
+              "content": "export function rotate(xs,k){if(!Array.isArray(xs))throw new TypeError();if(!Number.isInteger(k)||k<0)throw new RangeError();if(!xs.length)return [];const n=k%xs.length;return n?[...xs.slice(-n),...xs.slice(0,-n)] :xs;}"
+            }
+          ]
+        },
+        {
+          "id": "negative-step-accepted",
+          "files": [
+            {
+              "path": "src/rotate.js",
+              "content": "export function rotate(xs,k){if(!Array.isArray(xs))throw new TypeError();if(!Number.isInteger(k))throw new RangeError();if(!xs.length)return [];const n=k%xs.length;return n?[...xs.slice(-n),...xs.slice(0,-n)]:[...xs];}"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

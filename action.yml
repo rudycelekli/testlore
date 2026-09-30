@@ -63,6 +63,7 @@ runs:
         const load = file => import(pathToFileURL(path.join(process.env.TDDSWARM_ACTION_PATH, 'src', file)).href);
         const { run } = await load('runner.js');
         const { audit } = await load('audit.js');
+        const { renderRunReport } = await load('run-report.js');
         const { externalRun } = await load('integrations.js');
         const { adapterFor } = await load('execution.js');
         const { readConfig } = await load('files.js');
@@ -75,13 +76,14 @@ runs:
         const adapter = process.env.TDDSWARM_ADAPTER;
         const actual = config.integration?.type || adapterFor(config);
         if (adapter !== 'auto' && adapter !== actual) throw new Error('adapter input must match project configuration');
-        const options = { base: process.env.TDDSWARM_BASE, shadow: mode === 'shadow', full: mode === 'full', capture: true, environment: process.env.TDDSWARM_ENVIRONMENT };
+        const options = { base: process.env.TDDSWARM_BASE, shadow: mode === 'shadow', selective: mode === 'affected', full: mode === 'full', capture: true, environment: process.env.TDDSWARM_ENVIRONMENT };
         const result = config.integration ? externalRun(root, config, options) : run(root, options);
         const directory = path.join(root, '.tddswarm'); fs.mkdirSync(directory, { recursive: true });
         if (process.env.TDDSWARM_AUDIT === 'true') fs.writeFileSync(path.join(directory,'audit.json'), JSON.stringify(audit(root),null,2));
         const report = path.join(directory, 'action-report.json');
         fs.writeFileSync(report, JSON.stringify({ ...result, action: { sha: process.env.GITHUB_SHA, environment: process.env.TDDSWARM_ENVIRONMENT, mode, adapter: actual } }, null, 2));
         fs.appendFileSync(process.env.GITHUB_OUTPUT, `exit-code=${result.exitCode}\nreport=${report}\n`);
+        if (process.env.GITHUB_STEP_SUMMARY) fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, renderRunReport(result));
         console.log(JSON.stringify(result, null, 2));
         process.exitCode = result.exitCode;
         JS

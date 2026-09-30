@@ -2,8 +2,9 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { git, safePath } from './files.js';
-import { discover, execute } from './execution.js';
-import { plan } from './selector.js';
+import { discover, execute, executeNativeRelated } from './execution.js';
+import { plan, gitChanges } from './selector.js';
+import { run, compareSubsetCases } from './runner.js';
 import { snapshot, freshness } from './provenance.js';
 
 const { project, revision, repetitions, timeoutMs, directory } = JSON.parse(fs.readFileSync(process.argv[2], 'utf8'));
@@ -40,20 +41,35 @@ try {
     try {
       for (let r = 0; r < repetitions; r++) {
         const trialName = `change-${c}-trial-${r}`;
-        const start = performance.now(), selection = plan(root, { base });
-        const planningMs = Math.round(performance.now() - start),collectionStart=performance.now();
-        const currentDiscovery=discover(root,config),verificationDiscoveryMs=Math.round(performance.now()-collectionStart);
-        save(trialName + '-plan', selection);save(trialName+'-discovery',currentDiscovery);
+        const collectionStart=performance.now(),currentDiscovery=discover(root,config),verificationDiscoveryMs=Math.round(performance.now()-collectionStart);
+        save(trialName+'-discovery',currentDiscovery);
         if(!currentDiscovery.complete||!currentDiscovery.files.length)throw new Error('Current native full scope is incomplete or empty');
-        const before = snapshot(root, config);
-        const order = (c + r) % 2 ? ['subset', 'full'] : ['full', 'subset'];
-        const runs = {};
-        for (const mode of order) { runs[mode] = execute(root, mode === 'full' ? currentDiscovery.files : selection.selected, config, { capture: true, timeoutMs }); save(trialName + '-' + mode, runs[mode]); }
-        const after = snapshot(root, config), fullIds = failureIds(runs.full), subsetIds = failureIds(runs.subset);
-        const missed = fullIds.filter(id => !subsetIds.includes(id)), unexpected = subsetIds.filter(id => !fullIds.includes(id));
-        const stable = freshness(before, after).fresh && freshness(selection.provenance, before).fresh && selection.selected.every(f=>currentDiscovery.files.includes(f)) && selection.total===currentDiscovery.files.length;
-        const valid = selection.discovery?.complete !== false && stable && complete(runs.full) && complete(runs.subset) && (change.expectedFailure ? fullIds.length > 0 : runs.full.exitCode === 0) && !missed.length && !unexpected.length;
-        changes.trials.push({ order, valid, stable, mode: selection.mode, selectedFiles: selection.selected.length, totalFiles: currentDiscovery.files.length, fullCases: runs.full.tests.length, subsetCases: runs.subset.tests.length, fullFailures: fullIds.length, missedFailures: missed.length, unexpectedSubsetFailures: unexpected.length, fullMs: runs.full.durationMs, subsetMs: runs.subset.durationMs, planningMs, verificationDiscoveryMs, netSavingMs: runs.full.durationMs - runs.subset.durationMs - planningMs });
+        const before=snapshot(root,config),changeset=gitChanges(root,base);
+        const nativeAvailable=['vitest','jest'].includes(config.adapter);
+        const methods=['full','subset','native'],offset=(c+r)%3,order=[...methods.slice(offset),...methods.slice(0,offset)];
+        const runs={};let selection,planningMs,testLoreMs;
+        // Each arm receives identical pre-trial history; previous defects cannot bias routing.
+        const metadata=path.join(root,'.tddswarm');fs.mkdirSync(metadata,{recursive:true});
+        const history=new Map(fs.readdirSync(metadata).filter(file=>/^history.*\.json$/.test(file)).map(file=>[file,fs.readFileSync(path.join(metadata,file))]));
+        for(const mode of order){
+          for(const file of fs.readdirSync(metadata).filter(file=>/^history.*\.json$/.test(file)))fs.rmSync(path.join(metadata,file));
+          for(const [file,content]of history)fs.writeFileSync(path.join(metadata,file),content);
+          if(mode==='subset'){
+            const started=performance.now();runs.subset=run(root,{base,capture:true,selective:true,timeoutMs});testLoreMs=Math.round(performance.now()-started);
+            selection=runs.subset.plan;planningMs=runs.subset.timings?.planningMs??testLoreMs;
+            if(!selection)throw new Error('TestLore did not return a decision');save(trialName+'-plan',selection);
+          }else if(mode==='native')runs.native=nativeAvailable?executeNativeRelated(root,changeset.changed,config,{capture:true,timeoutMs}):{...execute(root,currentDiscovery.files,config,{capture:true,timeoutMs}),selector:'native-full-no-related-selector'};
+          else runs.full=execute(root,currentDiscovery.files,config,{capture:true,timeoutMs});
+          save(trialName+'-'+mode,runs[mode]);
+        }
+        const after=snapshot(root,config),fullIds=failureIds(runs.full),subsetIds=failureIds(runs.subset),nativeIds=failureIds(runs.native);
+        const missed=fullIds.filter(id=>!subsetIds.includes(id)),unexpected=subsetIds.filter(id=>!fullIds.includes(id));
+        const nativeMissed=fullIds.filter(id=>!nativeIds.includes(id)),nativeUnexpected=nativeIds.filter(id=>!fullIds.includes(id));
+        const stable=freshness(before,after).fresh&&freshness(selection.provenance,before).fresh&&selection.selected.every(f=>currentDiscovery.files.includes(f))&&selection.total===currentDiscovery.files.length&&JSON.stringify(selection.decisions.map(d=>d.test).sort())===JSON.stringify([...currentDiscovery.files].sort());
+        const casePreservation=compareSubsetCases(runs.full,runs.subset,runs.subset.executedFiles||selection.selected);
+        const valid=casePreservation.complete&&selection.discovery?.complete!==false&&stable&&complete(runs.full)&&complete(runs.subset)&&(change.expectedFailure?fullIds.length>0:runs.full.exitCode===0)&&!missed.length&&!unexpected.length;
+        const nativeValid=stable&&complete(runs.native)&&!nativeMissed.length&&!nativeUnexpected.length;
+        changes.trials.push({order,valid,stable,casePreservation,mode:selection.mode,selectedFiles:selection.selected.length,totalFiles:currentDiscovery.files.length,fullCases:runs.full.tests.length,subsetCases:runs.subset.tests.length,fullFailures:fullIds.length,missedFailures:missed.length,unexpectedSubsetFailures:unexpected.length,fullMs:runs.full.durationMs,subsetMs:runs.subset.durationMs,planningMs,testLoreMs,verificationDiscoveryMs,netSavingMs:runs.full.durationMs-testLoreMs,nativeSelector:runs.native.selector,nativeValid,nativeFiles:runs.native.executedFiles.length,nativeCases:runs.native.tests.length,nativeMs:runs.native.durationMs,nativeMissedFailures:nativeMissed.length,nativeUnexpectedFailures:nativeUnexpected.length,netVsNativeMs:runs.native.durationMs-testLoreMs});
       }
     } finally { fs.writeFileSync(file, source); }
   }

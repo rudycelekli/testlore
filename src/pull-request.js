@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import {spawnSync} from 'node:child_process';
+import {renderRunReport} from './run-report.js';
 import {git,safePath} from './files.js';
 
 export function publishImprovement(root, result, options = {}) {
@@ -48,7 +49,7 @@ export function publishImprovement(root, result, options = {}) {
   const full=result.fullRun||result.execution||result.finalRun||result.run||{};
   const cases=full.tests||[];const defects=result.validation.defects||[];
   const summary=`${cases.filter(t=>t.status==='passed').length} passed cases, ${cases.filter(t=>t.status==='skipped').length} skipped. Full file scope: ${(full.discovery?.files||full.executedFiles||[]).join(', ')||'see receipt'}. Held-out defects: ${defects.filter(d=>d.demonstrated&&d.caught).length}/${defects.length} (zero means unmeasured).`; 
-  fs.writeFileSync(body,`TestLore proposes reviewed test improvements and an ongoing quality layer.\n\nThe original and candidate suites were validated in disposable copies; the improvement branch then ran the full discovered suite before this commit.\n\nValidation: ${summary} Commit ${result.sha}. See the retained local improvement receipt for exact scope, held-out checks and limitations.\n\nThe workflow runs a scoped audit and affected tests on pull requests, and full tests on default-branch pushes. Static grades and exercised traces do not certify all possible behavior.\n`);
+  fs.writeFileSync(body,`TestLore proposes reviewed test improvements and an ongoing quality layer.\n\nThe original and candidate suites were validated in disposable copies; the improvement branch then ran the full discovered suite before this commit.\n\nValidation: ${summary} Commit ${result.sha}. See the retained local improvement receipt for exact scope, held-out checks and limitations.\n\nNew workflows run a scoped audit and shadow validation on pull requests, and full tests on default-branch pushes. Existing project policy is preserved. Static grades and exercised traces do not certify all possible behavior.\n\n${renderRunReport({...full,executedFiles:full.executedFiles||full.collectionFiles,plan:full.plan||{mode:'full',total:full.executedFiles?.length||0,selected:full.executedFiles||full.collectionFiles||[],decisions:(full.executedFiles||full.collectionFiles||[]).map(test=>({test,reasons:['full improvement validation']})),warnings:[]}})}\n`);
   const output=invoke(['pr','create','--repo',match[1],'--head',result.branch,'--base',base,'--title',options.title||'Improve test quality with TestLore','--body-file',body]);
   const pullRequest=output.split(/\s+/).find(s=>/^https:\/\/github\.com\/[^/]+\/[^/]+\/pull\/\d+$/.test(s));
   if(!pullRequest)throw new Error('GitHub CLI did not return a pull request URL; inspect the published branch before retrying');

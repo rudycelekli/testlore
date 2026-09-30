@@ -7,12 +7,22 @@ import { audit, modules, plan, generate, run, snapshot, ingestQuality, measureSt
 import { safePath, readConfig, git } from './files.js';
 import { pluginCatalog, configurePlugin, checkPlugins, configurePluginsAutomatically } from './plugins.js';
 import { recommendPlugins } from './plugin-recommendations.js';
+import {measureMutation,measureTestEffectiveness} from './quality-measurement.js';
+import { renderRunReport } from './run-report.js';
+import { routingProposals } from './routing-proposals.js';
+import { captureBrowserEvidence, proposeBrowserMappings, proposeBrowserInstrumentation } from './browser-evidence.js';
 import { pilot, exportPilot } from './pilot.js';
 
 const help = `TestLore — know why each test runs.
 
 Usage: testlore <command> [options]
 
+  setup       Configure a quality agent, native runner and shadow CI in one command
+  report      Explain the last execution and every proposed omission
+  mappings    Propose local runtime mappings for review (no automatic changes)
+  browser-capture   Collect native browser inputs using the opt-in fixture
+  browser-mappings  Propose reviewed URL/source-map mappings (--report, --settings)
+  browser-instrument Propose an opt-in fixture patch (review only)
   agent       Create or inspect your project quality agent (--name optional)
   plugins     Choose project-fit tools with --recommend/--auto; enable, disable, select, check
   improve     New branch, reviewed tests, full validation, automatic GitHub PR
@@ -24,6 +34,8 @@ Usage: testlore <command> [options]
   generate    Produce an agent work order; --execute stages reviewed candidates
   snapshot    Save source/runner/environment provenance before measurement
   evidence    Import measured coverage or mutation JSON with provenance
+  mutation    Execute installed Stryker with safe incremental reuse (--mutate paths)
+  effectiveness Measure independent defects, preservation, stability and cost (--defects file)
   stability   Measure repeated full-suite outcomes (--repeat 5)
   capture     Observe per-file runtime imports and file-read dependencies
   modularize  Stage a reviewed patch JSON (--patch file)
@@ -43,6 +55,7 @@ Options:
   --base <git-ref>    Compare base to working tree, including untracked files
   --changed <paths>   Comma-separated paths for a diagnostic plan (not run)
   --full             Force the full discovered test suite
+  --selective        Explicitly execute only the selection (override configured shadow)
   --shadow           Run the full suite while recording the proposed selection
   --execute          Invoke an agent (generate) or apply a validated patch (apply)
   --local            Keep a tested improvement branch without opening a PR
@@ -57,8 +70,8 @@ need explicit declarations. No AI account required for audit, plan, or run.
 export function parseArgs(args) {
   const options = {};
   let command = 'help';
-  const values = new Set(['root','base','changed','output','report','type','provenance','repeat','id','patch','target','framework','head','action-ref','base-branch','query','name','enable','disable','select','plugin','settings','manifest']);
-  const flags = new Set(['json', 'full', 'shadow', 'execute', 'help', 'version', 'local', 'no-ci','check','recommend','auto']);
+  const values = new Set(['root','base','changed','output','report','type','provenance','repeat','id','patch','target','framework','head','action-ref','base-branch','query','name','enable','disable','select','plugin','settings','manifest','mutate','defects']);
+  const flags = new Set(['json', 'full', 'shadow', 'execute', 'help', 'version', 'local', 'no-ci','check','recommend','auto','selective']);
   if (args[0] && !args[0].startsWith('-')) command = args.shift();
   for (let i = 0; i < args.length; i++) {
     const key = args[i].replace(/^--/, '');
@@ -81,7 +94,7 @@ function init(root) {
     const deps = { ...pkg.dependencies, ...pkg.devDependencies };
     const runner = deps.vitest ? ['npx', '--no-install', 'vitest', 'run', '{files}'] : deps.jest ? ['npx', '--no-install', 'jest', '--runTestsByPath', '{files}'] : ['node', '--test', '{files}'];
     const adapter=deps.vitest?'vitest':deps.jest?'jest':'node';
-    fs.writeFileSync(file, JSON.stringify({ runner, adapter, discovery:'native', analysisCache:{enabled:true}, alwaysRun: [], dependencies: {}, ignoreChanges: [], fullRunEvery: 20 }, null, 2) + '\n', { flag: 'wx' });
+    fs.writeFileSync(file, JSON.stringify({ runner, adapter, discovery:'native', executionMode:'shadow', analysisCache:{enabled:true}, alwaysRun: [], dependencies: {}, ignoreChanges: [], fullRunEvery: 20 }, null, 2) + '\n', { flag: 'wx' });
     created = true;
   }
   const ignore = safePath(root, '.gitignore');
@@ -115,9 +128,20 @@ export async function main(args = process.argv.slice(2)) {
   if (command === 'help' || options.help) { console.log(help); return 0; }
   const root = path.resolve(options.root || '.');
   if ((options.auto || options.recommend) && command !== 'plugins') throw new Error('--auto and --recommend require the plugins command');
+  if(options.shadow && options.selective)throw new Error('Choose --shadow or --selective');
   if (command === 'run' && options.changed) throw new Error('--changed is diagnostic only. run uses Git to discover the complete change set.');
   let result;
   switch (command) {
+    case 'setup': {
+      const written=installQualityLayer(root,{ci:!options['no-ci'],actionRef:options['action-ref']});
+      const agent=ensureQualityAgent(root,{name:options.name});
+      result={written,agent,executionMode:readConfig(root).executionMode||'existing-policy',plugins:recommendPlugins(root),next:['testlore run --base HEAD --json','testlore report','testlore mappings --json']};break;
+    }
+    case 'report': result=JSON.parse(fs.readFileSync(safePath(root,options.report||'.tddswarm/last-run.json'),'utf8'));if(!options.json){console.log(renderRunReport(result));return result.exitCode||0;}break;
+    case 'mappings': result=routingProposals(root);break;
+    case 'browser-instrument': result=await proposeBrowserInstrumentation(root);break;
+    case 'browser-capture': result=await captureBrowserEvidence(root,options);break;
+    case 'browser-mappings': {if(!options.report||!options.settings)throw new Error('--report and --settings are required');result=proposeBrowserMappings(root,JSON.parse(fs.readFileSync(safePath(root,options.report),'utf8')),JSON.parse(fs.readFileSync(safePath(root,options.settings),'utf8')));break;}
     case 'pilot': if(!options.manifest)throw new Error('--manifest is required');result=pilot(root,JSON.parse(fs.readFileSync(path.resolve(root,options.manifest),'utf8')),options);break;
     case 'pilot-export': if(!options.report)throw new Error('--report is required');result=exportPilot(JSON.parse(fs.readFileSync(path.resolve(root,options.report),'utf8')));break;
     case 'plugins': {
@@ -164,6 +188,19 @@ export async function main(args = process.argv.slice(2)) {
       result={...result,output:target};break;
     }
     case 'evidence': if(!options.report)throw new Error('--report is required');result=ingestQuality(root,options.type,options.report,{provenance:options.provenance});break;
+    case 'mutation': {
+      if(!options.mutate)throw new Error('--mutate comma-separated source paths is required');
+      const settings=options.settings?JSON.parse(fs.readFileSync(safePath(root,options.settings),'utf8')):{};
+      result=await measureMutation(root,{...settings,mutate:options.mutate.split(',').filter(Boolean)});
+      if(result.complete)result.qualityEvidence=ingestQuality(root,'mutation',result.rawPath,{provenance:result.provenance,scope:result.scope});
+      break;
+    }
+    case 'effectiveness': {
+      if(!options.defects)throw new Error('--defects independently authored JSON is required');
+      const defects=JSON.parse(fs.readFileSync(safePath(root,options.defects),'utf8'));
+      const candidateFiles=options.patch?JSON.parse(fs.readFileSync(safePath(root,options.patch),'utf8')).files:undefined;
+      result=measureTestEffectiveness(root,{defects,candidateFiles,repetitions:options.repeat===undefined?3:Number(options.repeat)});break;
+    }
     case 'stability': result=await measureStability(root,options);break;
     case 'capture': result=await captureRuntime(root,options);break;
     case 'modularize': if(!options.patch)throw new Error('--patch is required');result=stagePatch(root,JSON.parse(fs.readFileSync(path.resolve(root,options.patch),'utf8')));break;
@@ -200,6 +237,9 @@ export async function main(args = process.argv.slice(2)) {
   if(command==='pilot' && result.executed)return result.valid?0:1;
   if(['plan','run','external-run','external-plan','aqe'].includes(command))return result.exitCode||0;
   if(command==='validate')return result.accepted?0:1;
+  if(command==='mutation')return result.complete?0:2;
+  if(command==='effectiveness')return !result.complete?2:result.dimensions.defectDetection.demonstrated>result.dimensions.defectDetection.caught?1:0;
+  if(command==='browser-capture')return result.complete?0:2;
   if(command==='capture')return result.complete?0:2;
   if(command==='stability')return !result.complete?2:result.metrics.unstable?1:0;
   return 0;

@@ -48,6 +48,7 @@ export function readConfig(root) {
 }
 export function validateConfig(raw) {
   const config = resolvePluginConfig(raw);
+  if(config.executionMode !== undefined && !['shadow','selective'].includes(config.executionMode))throw new Error('executionMode must be shadow or selective');
   if(config.analysisCache!==undefined){
     const cache=config.analysisCache;
     if(!cache || typeof cache!=='object' || Array.isArray(cache) || Object.keys(cache).some(k=>!['enabled','maxEntries','maxBytes'].includes(k)))throw new Error('analysisCache must contain only enabled, maxEntries, maxBytes');
@@ -66,6 +67,7 @@ export function validateConfig(raw) {
   for (const key of ['testMatch', 'testExclude']) if (config[key] && (!Array.isArray(config[key]) || config[key].some(p => typeof p !== 'string'))) throw new Error(`${key} must be an array of glob patterns`);
   if (config.discovery && !['static','native'].includes(config.discovery) && (!Array.isArray(config.discovery) || !config.discovery.length || config.discovery.some(v=>typeof v!=='string'))) throw new Error('discovery must be static, native, or an argv array');
   for (const key of ['environment','env']) if (config[key] && (typeof config[key] !== 'object' || Array.isArray(config[key]) || Object.values(config[key]).some(v => typeof v !== 'string'))) throw new Error(`${key} must map names to strings`);
+  if(config.browser?.closedWorld!==undefined&&typeof config.browser.closedWorld!=='boolean')throw new Error('browser.closedWorld must be boolean');
   for (const key of ['runtime','browser','contracts','services','integration']) if (config[key] && (typeof config[key] !== 'object' || Array.isArray(config[key]))) throw new Error(`${key} must be an object`);
   return config;
 }

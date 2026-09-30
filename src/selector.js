@@ -6,6 +6,7 @@ import { runnerIdentity, snapshot } from './provenance.js';
 import { changedServices } from './inputs.js';
 import { runtimeEvidence } from './evidence.js';
 import { buildGraph, addSources, evidencePath, dependencies, classifyWarnings } from './graph.js';
+import {adapterFor} from './execution.js';
 import { externalPlan } from './integrations.js';
 
 const GLOBAL = /(?:^|\/)(?:package(?:-lock)?\.json|npm-shrinkwrap\.json|pnpm-lock\.yaml|yarn\.lock|bun\.lockb?|tsconfig[^/]*\.json|jsconfig\.json|tddswarm\.config\.json|[^/]*(?:vitest|vite|jest|babel|webpack|rollup|playwright|cypress)[^/]*\.(?:[cm]?[jt]s|json)|(?:setup|globalSetup|globalTeardown)[^/]*\.[cm]?[jt]s|\.env(?:\..*)?|\.gitignore)$/;
@@ -25,6 +26,11 @@ export function plan(root, options = {}) {
   if (config.integration) return externalPlan(root, config, options);
   const provenance = snapshot(root,config);
   const graph = buildGraph(root);
+  if(adapterFor(config)==='playwright'){
+    const declared=new Set(Object.values(config.browser?.routes||{}).filter(route=>route.inputs?.length).flatMap(route=>route.tests||[]));
+    // Page/server behavior is not closed by a test's local helper imports.
+    for(const test of graph.tests)if(config.browser?.closedWorld!==true||!declared.has(test))graph.warnings.push({file:test,reason:'unmodeled-browser-runtime-inputs'});
+  }
   let changed, baseSha = null, prefix = '', gitError = null;
   if (options.changed) changed = [...new Set(options.changed.map(normalize))].filter(f => !f.startsWith('.tddswarm/')).sort();
   else {

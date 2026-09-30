@@ -9,7 +9,11 @@
     "tddswarm-codex-agent": "src/adapters/codex.js"
   },
   "exports": {
-    ".": "./src/index.js"
+    ".": "./src/index.js",
+    "./playwright": {
+      "types": "./src/browser-fixture.d.ts",
+      "default": "./src/browser-fixture.js"
+    }
   },
   "files": [
     "src",

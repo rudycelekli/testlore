@@ -5,6 +5,7 @@ import { readConfig, safePath } from './files.js';
 import { execute, adapterFor } from './execution.js';
 import { rememberServices, serviceInputs } from './inputs.js';
 import { runnerIdentity, snapshot, freshness } from './provenance.js';
+import { renderRunReport } from './run-report.js';
 import { externalRun } from './integrations.js';
 
 export function compareShadow(selection, execution) {
@@ -19,13 +20,28 @@ export function compareShadow(selection, execution) {
     limitation: 'Full-suite case outcomes are compared against proposed file membership; separate subset runs can expose order-dependent failures.' };
 }
 
+/** Independently executed subsets must preserve every case/status in their file scope. */
+export function compareSubsetCases(full, subset, files) {
+ const scope=new Set(files),expected=(full.tests||[]).filter(test=>scope.has(test.file)),observed=subset.tests||[];
+ const ids=new Map(observed.map(test=>[test.id,test]));
+ const missing=expected.filter(test=>!ids.has(test.id)).map(test=>test.id);
+ const changed=expected.filter(test=>ids.has(test.id)&&ids.get(test.id).status!==test.status).map(test=>test.id);
+ const expectedIds=new Set(expected.map(test=>test.id)),extra=observed.filter(test=>!expectedIds.has(test.id)).map(test=>test.id);
+ return {complete:full.complete===true&&subset.complete===true&&!missing.length&&!changed.length&&!extra.length,missing,changed,extra};
+}
+
 export function run(root, options = {}) {
+  const started = performance.now();
   const config = readConfig(root);
+  if(options.shadow && options.selective)throw new Error('Choose shadow or selective execution');
+  options = {...options, shadow: Boolean(options.shadow || (config.executionMode === 'shadow' && !options.selective && !options.full))};
   if (config.integration) {
     if (options.changed) throw new Error('--changed is diagnostic only. run uses the native engine to discover changes.');
     return externalRun(root, config, options);
   }
+  const planningStart=performance.now();
   const selection = plan(root, options);
+  const planningMs=Math.round(performance.now()-planningStart);
   if (selection.discovery?.complete===false)return {plan:selection,exitCode:2,error:'Native discovery is incomplete. Run the native full-suite command and repair discovery before selection.'};
   const before=snapshot(root,config);
   const serviceBefore=serviceInputs(root,config);
@@ -68,6 +84,11 @@ export function run(root, options = {}) {
   fs.writeFileSync(historyFile, JSON.stringify(next, null, 2));
   // Compatibility receipt only; selection treats namespaced history as authority.
   fs.writeFileSync(path.join(directory, 'history.json'), JSON.stringify(next, null, 2));
+  // Timings cover completed selection/execution/provenance/history work. Final
+  // report sealing cannot include its own write; pilots measure an outer span.
+  report.timings={planningMs,executionMs:execution.durationMs||0,totalMs:Math.round(performance.now()-started),finalReportSealingExcluded:true};
+  report.timings.otherMs=Math.max(0,report.timings.totalMs-planningMs-report.timings.executionMs);
+  fs.writeFileSync(path.join(directory, 'last-run.md'), renderRunReport(report));
   fs.writeFileSync(path.join(directory, 'last-run.json'), JSON.stringify(report, null, 2));
   return report;
 }

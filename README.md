@@ -38,7 +38,13 @@ TestLore connects an agent team, your existing test runner, measurable quality e
 
 ## Start in one command
 
-From a clean, committed project checkout:
+Configure your local quality engineer and **shadow CI** without an AI account:
+
+```sh
+npm exec --yes --package=github:rudycelekli/testlore -- testlore setup
+```
+
+Review and commit the setup files. To generate independently reviewed test improvements on a new isolated branch and open a validated PR, run from a clean, committed checkout:
 
 ```sh
 npm exec --yes --package=github:rudycelekli/testlore -- testlore improve
@@ -61,7 +67,7 @@ Original suite + candidate suite + full branch validation
     ↓
 GitHub pull request for your review
     ↓ after you merge
-Audit + affected tests on PRs · full tests on default-branch pushes
+Audit + shadow validation on PRs · full tests on default-branch pushes
 ```
 
 Failed validation retains the proposal and its evidence for inspection. Missing requirements or a worker produces a concrete work order. Merging remains your decision. [Full workflow →](docs/improvement.md)
@@ -100,9 +106,9 @@ SKIP  test/checkout.test.js
       reason: no-known-dependency-on-change
 ```
 
-Copy, styles, templates, localization, schemas, fixtures, and services can all affect behavior. Declare their relationships or capture runtime reads. TestLore combines these with static dependencies and explains its choices. Unknown inputs, unresolved paths, and stale evidence widen the run.
+Copy, styles, templates, localization, schemas, fixtures, and services can all affect behavior. Declare their relationships or capture runtime reads. TestLore combines these with static dependencies and explains its choices. Unresolved source dependencies retain every consuming test on every active change. Configuration, registration, discovery, unknown changed inputs and stale authority retain full fallback. Tooling outside test closures is reported separately. [Precision contract →](docs/precise-routing.md)
 
-Run `npm run demo` for a selective copy edit, a shared dependency, and an uncertain change. Selection works at **test-file granularity**; native execution reports individual cases. Shadow mode runs the full suite while checking the proposed selection against observed failures. [Routing configuration →](docs/configuration.md)
+Run `npm run demo` for a selective copy edit, a shared dependency, and an uncertain change. Selection works at **test-file granularity**; native execution reports individual cases. New installations default to shadow mode; `--selective` explicitly opts into the proposed subset. Shadow mode runs the full suite while checking the proposed selection against observed failures. [Routing configuration →](docs/configuration.md)
 
 ## Learning that stays with your project
 
@@ -159,7 +165,7 @@ npx --no-install testlore plugins --enable ruvector
 
 Automatic setup uses explainable project-fit rules, preserves explicit choices, and enables only supported installed tools. Missing tools receive recommendations; ambiguous execution engines require a choice. It performs no downloads or agent calls. Tools are installed separately. Health checks describe availability and supported contracts, not measured quality. All built-in plugins can be enabled together; `executionPlugin` selects the native backend for the project, while other providers run only for their relevant operations. Enabling more tools preserves the current backend. Reviewed branch improvements support Node/Jest/Vitest/Playwright individual-case validation. [Plugin configuration and community contract →](docs/plugins.md) · [RuVector learning →](docs/ruvector.md)
 
-Playwright now has native discovery, project-aware case reports, and real Chromium qualification for declared browser inputs. fast-check composes inside a supported runner. Consumer contracts (Pact), service fixtures (Testcontainers), and API exploration (Schemathesis) remain researched integration seams awaiting their own qualification. Each has a distinct role. [Browser setup →](docs/playwright.md) · [Research and property proof →](docs/ecosystem.md)
+Playwright has native discovery, project-aware case reports, and opt-in automatic route/request/JS/CSS observations. Explicit URL and server authorities turn bounded local source maps into reviewable proposals; observations never establish complete dependency coverage. [Browser evidence and fixture →](docs/browser-mappings.md) fast-check composes inside a supported runner. Consumer contracts (Pact), service fixtures (Testcontainers), and API exploration (Schemathesis) remain researched integration seams awaiting their own qualification. Each has a distinct role. [Browser setup →](docs/playwright.md) · [Research and property proof →](docs/ecosystem.md)
 
 Built to work alongside [Agentic QE](https://github.com/proffesor-for-testing/agentic-qe), [RuVector](https://github.com/ruvnet/ruvector), [pytest-testmon](https://www.testmon.org/), [Nx](https://nx.dev/), [Bazel](https://bazel.build/), [c8](https://github.com/bcoe/c8), and [Stryker](https://stryker-mutator.io/). Each remains an independently maintained project; integration does not imply affiliation or endorsement.
 
@@ -185,15 +191,18 @@ On **12 controlled changes across four Node fixtures**, TestLore caught all 63 o
 | **Repeated live learning** | Two specifications × two repetitions: no memory 12/12 defects; memory 9/12 with one timeout. Inconclusive; no improvement claim. | [Raw paired run](benchmarks/learning/2026-09-30-paired-native/README.md) |
 | **Complementary property library** | Real fast-check 4.10.2: complete base validation; 4/4 scoped defects caught and replayed from seed/path. | [Receipt](benchmarks/property-verification.json) · [Method](docs/ecosystem.md) |
 | **Independent AQE gate** | Actual template author reported score 100; independent review rejected the output. No live LLM claim. | [Composition receipt](benchmarks/aqe-composition-verification.json) |
+| **Runtime assets versus native selection** | Real Vitest 5 related selection omitted a declared copy-file defect; TestLore caught the same full-suite case in three rotated trials. This is a controlled counterexample, not a speed ranking. | [Raw native comparison](benchmarks/native-selector-verification.json) |
+| **Incremental mutation** | Genuine Stryker 10: 3/3 mutants killed, exact-input warm reuse, helper/lock/config/environment invalidation. | [Raw proof](benchmarks/incremental-quality-verification.json) · [Quality dimensions](docs/quality-effectiveness.md) |
+| **Observed browser mapping** | Two Chromium routes; heading, style and module faults each selected 1/2 files and matched full-suite failures. | [Raw capture/proposals](benchmarks/browser-mapping-verification.json) |
 | **Packed installation** | Production-only install, native shadow fault detection, runtime capture, and a fully tested improvement branch. | `node scripts/packed-proof.js` |
 
 A [paired repeated learning evaluation](docs/learning-evaluation.md) now controls worker budgets and execution order across independent specifications; no quality gain is established merely by shipping the evaluator.
 
-Local repository pilots independently run proposed subsets and full suites in detached copies, alternate execution order, and include discovery and routing overhead. Raw receipts remain local; aggregate export is explicit. [Run your own pilots →](docs/pilots.md)
+Local repository pilots independently run proposed subsets and full suites in detached copies, rotate full/TestLore/native-selector order and include discovery, planning, execution, freshness checks and receipt retention in TestLore total time. Native related selection is measured through real Vitest/Jest CLIs; frameworks without it use a clearly labeled native full baseline. Raw receipts remain local; aggregate export is explicit. [Run your own pilots →](docs/pilots.md)
 
 An opt-in bounded cache reuses source parsing while native discovery and resolution stay fresh. Initialization enables it for new configurations; existing configurations retain their settings. Controlled warm/cold evidence and its limits are in the [performance guide](docs/performance.md).
 
-These are scoped experiments. The memory comparison confirms that historical recall reaches real agent generation; it does not establish a general quality gain. Tiny suites can run slower after discovery and planning. There is no universal safety, production speedup, or “best overall” claim. Misses, overhead, and counterexamples belong in the results. [Benchmark methodology →](docs/comparison.md)
+These are scoped experiments. The memory comparison confirms that historical recall reaches real agent generation; it does not establish a general quality gain. Native related selectors can be faster on imported-source changes. TestLore adds declared/runtime input reasoning, retained uncertainty, independent validation and explainable evidence; it earns speed claims only where whole-run measurements show savings. Tiny suites can run slower after discovery and planning. There is no universal safety, production speedup, or “best overall” claim. Misses, overhead, and counterexamples belong in the results. [Benchmark methodology →](docs/comparison.md)
 
 [![Measured constructed workload: full-suite and TestLore total time and callback-file count](docs/assets/workload.svg)](docs/workload.md)
 

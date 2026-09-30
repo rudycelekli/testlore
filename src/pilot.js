@@ -2,6 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
+import {digest} from './provenance.js';
 import { git, safePath, validateConfig } from './files.js';
 
 const worker = fileURLToPath(new URL('./pilot-worker.js', import.meta.url));
@@ -75,7 +76,7 @@ export function pilot(root, manifest, options = {}) {
     projects.push(receipt);
   }
   const report = { schemaVersion: 1, executed: true, output, environment: { node: process.version, platform: process.platform, arch: process.arch }, repetitions: validated.repetitions, projects,
-    valid: projects.every(p => p.valid), limitations: ['Local scopes and planted changes only; no production or whole-project certification.', 'Installed dependencies are shared read-only by convention, not an OS sandbox. Native test code may access network or local files.', 'Provider credentials are removed from inherited environment; no dependency installation or agent invocation occurs.', 'Both execution orders and planning overhead are measured. Timing results are environment-specific.'] };
+    valid: projects.every(p => p.valid), implementationHashes:Object.fromEntries(['pilot.js','pilot-worker.js','runner.js','execution.js','selector.js','graph.js','provenance.js'].map(file=>[file,digest(fs.readFileSync(new URL(file,import.meta.url)))])),limitations: ['Local scopes and planted changes only; no production or whole-project certification.', 'Installed dependencies are shared read-only by convention, not an OS sandbox. Native test code may access network or local files.', 'Provider credentials are removed from inherited environment; no dependency installation or agent invocation occurs.', 'Three execution arms rotate order; TestLore discovery, planning, execution, provenance and receipt retention are included. Native related selection runs through the native CLI where available. Timing results are environment-specific.'] };
   fs.writeFileSync(path.join(output, 'summary.json'), JSON.stringify(report, null, 2));
   return report;
 }
@@ -89,6 +90,6 @@ export function exportPilot(report) {
   const sum = (key,rows=trials) => rows.reduce((n, t) => n + (Number.isFinite(t[key]) && t[key] >= 0 && t[key] < 1e9 ? t[key] : 0), 0);
   return { schemaVersion: 1, kind: 'local-pilot-aggregate', projects: report.projects.length, validProjects: report.projects.filter(p => p.valid === true).length,
     frameworks: frameworks.filter(f => report.projects.some(p => p.framework === f)), trials: trials.length, validTrials: valid.length,
-    observedFailures: sum('fullFailures'), missedFailures: sum('missedFailures'), unexpectedSubsetFailures: sum('unexpectedSubsetFailures'), validTrialTimings:{fullMs:sum('fullMs',valid),subsetMs:sum('subsetMs',valid),planningMs:sum('planningMs',valid)},
+    observedFailures: sum('fullFailures'), missedFailures: sum('missedFailures'), unexpectedSubsetFailures: sum('unexpectedSubsetFailures'), nativeValidTrials:trials.filter(t=>t.nativeValid===true).length,nativeMissedFailures:sum('nativeMissedFailures'),nativeUnexpectedFailures:sum('nativeUnexpectedFailures'), validTrialTimings:{fullMs:sum('fullMs',valid),subsetMs:sum('subsetMs',valid),planningMs:sum('planningMs',valid),testLoreMs:sum('testLoreMs',valid),nativeMs:sum('nativeMs',valid)},
     limitation: 'Unauthenticated local aggregates; planted changes and declared scopes only. Not an independent leaderboard.' };
 }

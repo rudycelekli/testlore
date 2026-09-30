@@ -30,3 +30,13 @@ A useful pilot report records the reviewed TestLore revision, runner/dependency 
 Open a [pilot issue](https://github.com/rudycelekli/testlore/issues/new) with the framework, approximate suite size and a public or sanitized reproduction when you are ready to participate. Maintainers should agree on scope, success criteria and allowed data before collecting evidence. No announcements or outbound messages are sent by the software or this document.
 
 Adoption progress is evidence-driven: retain misses and overhead, establish a stable shadow baseline, review independent generated-test behavior, and only then change CI policy deliberately. A pilot can conclude that the existing native full suite is faster or simpler. That is a useful result.
+
+## One-command local setup
+
+```sh
+npm exec --yes --package=github:rudycelekli/testlore -- testlore setup
+```
+
+This creates a named project quality-agent profile, native runner configuration with local analysis caching and shadow execution, and a shadow/full GitHub workflow. It preserves existing configuration/workflows and makes no agent calls or optional SDK downloads. Inspect and commit those files before running `improve`. A local TestLore dev dependency is required for the optional `testlore/playwright` fixture; temporary npm execution cannot supply a persistent project import.
+
+The registry shorthand `npm exec --yes --package=testlore -- testlore setup` becomes valid only after a verified npm publication. Until then use the GitHub package and pin a reviewed commit for repeatability. The exact-artifact publisher workflow exists; npm ownership/bootstrap and trusted-publisher access remain maintainer operations.

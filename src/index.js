@@ -17,3 +17,7 @@ export {qualityAgent,ensureQualityAgent,seedRequirements} from './agent-profile.
 export {pluginCatalog,configurePlugin,checkPlugins,configurePluginsAutomatically} from './plugins.js';
 export {recommendPlugins} from './plugin-recommendations.js';
 export {pilot,validatePilotManifest,exportPilot} from './pilot.js';
+export {renderRunReport} from './run-report.js';
+export {routingProposals} from './routing-proposals.js';
+export {captureBrowserEvidence,proposeBrowserMappings,proposeBrowserInstrumentation} from './browser-evidence.js';
+export {measureMutation,measureTestEffectiveness} from './quality-measurement.js';

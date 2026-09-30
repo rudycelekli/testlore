@@ -67,7 +67,7 @@ ${dependencies}${external}      - name: Assess quality and execute tests for the
         with:
           root: ${JSON.stringify(project)}
           base: \${{ github.event.pull_request.base.sha || github.event.before || github.sha }}
-          mode: \${{ github.event_name == 'pull_request' && 'affected' || 'full' }}
+          mode: \${{ github.event_name == 'pull_request' && 'shadow' || 'full' }}
           environment: node22-linux
           audit: 'true'
 `;
@@ -83,7 +83,7 @@ export function installQualityLayer(root,options={}){
   let pkg={};try{pkg=JSON.parse(fs.readFileSync(safePath(root,'package.json'),'utf8'));}catch{}
   const deps={...pkg.dependencies,...pkg.devDependencies};const adapter=deps.vitest?'vitest':deps.jest?'jest':'node';
   const runner=adapter==='vitest'?['npx','--no-install','vitest','run','{files}']:adapter==='jest'?['npx','--no-install','jest','--runTestsByPath','{files}']:['node','--test','{files}'];
-  fs.writeFileSync(configPath,JSON.stringify({adapter,discovery:'native',runner,analysisCache:{enabled:true},alwaysRun:[],dependencies:{},ignoreChanges:[],fullRunEvery:20},null,2)+'\n');written.push('tddswarm.config.json');
+  fs.writeFileSync(configPath,JSON.stringify({adapter,discovery:'native',executionMode:'shadow',runner,analysisCache:{enabled:true},alwaysRun:[],dependencies:{},ignoreChanges:[],fullRunEvery:20},null,2)+'\n');written.push('tddswarm.config.json');
  }
  const ignorePath=safePath(root,'.gitignore');let ignore=fs.existsSync(ignorePath)?fs.readFileSync(ignorePath,'utf8'):'';let amended=false;
  for(const directory of ['.tddswarm','node_modules'])if(!ignore.split(/\r?\n/).some(s=>[directory,directory+'/', '/'+directory+'/'].includes(s.trim()))){ignore+=(ignore&&!ignore.endsWith('\n')?'\n':'')+directory+'/\n';amended=true;}

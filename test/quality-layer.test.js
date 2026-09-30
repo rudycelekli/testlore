@@ -4,10 +4,10 @@ import fs from 'node:fs';
 import path from 'node:path';
 import {installQualityLayer} from '../src/quality-layer.js';
 import {fixture,write,twoModules} from './helpers.js';
-test('quality onboarding creates native config and ongoing affected/full workflow on a project branch',t=>{
+test('quality onboarding creates native config and ongoing shadow/full workflow on a project branch',t=>{
  const root=fixture(t,twoModules);const paths=installQualityLayer(root,{actionRef:'abc123'});
  assert.ok(paths.includes('.github/workflows/tddswarm.yml'));assert.equal(JSON.parse(fs.readFileSync(path.join(root,'tddswarm.config.json'))).discovery,'native');
- const workflow=fs.readFileSync(path.join(root,'.github/workflows/tddswarm.yml'),'utf8');assert.match(workflow,/rudycelekli\/testlore@abc123/);assert.match(workflow,/pull_request/);assert.match(workflow,/'affected' \|\| 'full'/);assert.match(workflow,/audit: 'true'/);
+ const workflow=fs.readFileSync(path.join(root,'.github/workflows/tddswarm.yml'),'utf8');assert.match(workflow,/rudycelekli\/testlore@abc123/);assert.match(workflow,/pull_request/);assert.match(workflow,/'shadow' \|\| 'full'/);assert.match(workflow,/audit: 'true'/);
  assert.deepEqual(installQualityLayer(root,{actionRef:'other'}),[]);
 });
 test('existing project policy and workflow are preserved during onboarding',t=>{

@@ -250,6 +250,21 @@ export function execute(root, files, config = {}, options = {}) {
     error: result.error?.message || (unreportedSuccess ? 'Runner report is incomplete; successful execution cannot be verified.' : reportError), reportErrors: normalized.errors };
 }
 
+/** Run the framework's own dependency selector for comparative measurements. */
+export function executeNativeRelated(root, changed, config = {}, options = {}) {
+ root=path.resolve(root);const adapter=adapterFor(config);
+ if(!['vitest','jest'].includes(adapter))throw new Error('Native related selection requires Vitest or Jest');
+ changed=[...new Set(changed.map(file=>localFile(root,file)))].sort();
+ if(!changed.length)throw new Error('Native comparison needs the complete Git change set');
+ const directory=fs.mkdtempSync(path.join(os.tmpdir(),'testlore-native-related-')),reportFile=path.join(directory,'results.json');
+ const base=frameworkBase(commandBase(config,adapter,root),adapter).filter(arg=>arg!=='--runTestsByPath');
+ const command=adapter==='vitest'?[...base,'related',...changed.map(file=>'./'+file),'--run','--passWithNoTests','--reporter=json',`--outputFile=${reportFile}`]:[...base,'--findRelatedTests',...changed.map(file=>'./'+file),'--watch=false','--passWithNoTests','--json',`--outputFile=${reportFile}`];
+ const start=performance.now();let result,normalized={tests:[],collectionFiles:[],valid:false,errors:[]},error;
+ try{result=spawn(root,command,config,options);normalized=frameworkResults(root,JSON.parse(fs.readFileSync(reportFile,'utf8')));}catch(e){error=e.message;}finally{fs.rmSync(directory,{recursive:true,force:true});}
+ const complete=normalized.valid&&!result?.error&&!result?.signal&&!normalized.errors.length;
+ return {adapter,selector:adapter==='vitest'?'vitest-related':'jest-findRelatedTests',command,complete,exitCode:result?.status===0&&!complete?2:result?.status??2,tests:identities(normalized.tests),executedFiles:normalized.collectionFiles,collectionFiles:normalized.collectionFiles,durationMs:Math.round(performance.now()-start),stdout:result?.stdout||'',stderr:result?.stderr||'',error:result?.error?.message||error,reportErrors:normalized.errors};
+}
+
 /** Native discovery can evaluate module top-level code. It never writes run history. */
 export function discover(root, config = {}) {
   root = path.resolve(root);

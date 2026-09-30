@@ -1,0 +1,857 @@
+{
+  "schemaVersion": 1,
+  "kind": "native-selector-runtime-input",
+  "passed": true,
+  "node": "v24.5.0",
+  "vitest": "5.0.2",
+  "requirement": "The landing heading is exactly Welcome builders, and pricing remains free.",
+  "fixture": {
+    "package.json": {
+      "type": "module"
+    },
+    ".gitignore": ".tddswarm/\nnode_modules\n",
+    "src/landing.js": "export const visible=true;",
+    "src/pricing.js": "export const free=true;",
+    "public/copy.json": {
+      "heading": "Welcome builders"
+    },
+    "landing.test.js": "import {test,expect} from 'vitest';import fs from 'node:fs';import {visible} from './src/landing.js';test('specified visible heading',()=>{expect(visible).toBe(true);expect(JSON.parse(fs.readFileSync(new URL('./public/copy.json',import.meta.url))).heading).toBe('Welcome builders')});",
+    "pricing.test.js": "import {test,expect} from 'vitest';import {free} from './src/pricing.js';test('specified free pricing',()=>expect(free).toBe(true));",
+    "tddswarm.config.json": {
+      "adapter": "vitest",
+      "discovery": "native",
+      "runner": [
+        "<node>",
+        "<repository>node_modules/vitest/vitest.mjs",
+        "run",
+        "{files}"
+      ],
+      "analysisCache": {
+        "enabled": true
+      },
+      "dependencies": {
+        "landing.test.js": [
+          "public/copy.json"
+        ]
+      }
+    }
+  },
+  "trials": [
+    {
+      "repeat": 0,
+      "order": [
+        "full",
+        "testlore",
+        "native"
+      ],
+      "fullCaught": true,
+      "testLoreCaught": true,
+      "nativeCaught": false,
+      "outcomes": {
+        "full": {
+          "adapter": "vitest",
+          "exitCode": 1,
+          "durationMs": 334,
+          "tests": [
+            {
+              "file": "landing.test.js",
+              "name": "specified visible heading",
+              "status": "failed",
+              "durationMs": 4.054541,
+              "id": "d7674acac6a268b42dd5086137ce37dd83d1f1c2dc73f8cc95feda43c4c0013d"
+            },
+            {
+              "file": "pricing.test.js",
+              "name": "specified free pricing",
+              "status": "passed",
+              "durationMs": 0.8159169999999989,
+              "id": "15d1c68d073fb800887ee3e651f228c8d69ab98907c2981a730ffeb9c6941072"
+            }
+          ],
+          "collectionFiles": [
+            "landing.test.js",
+            "pricing.test.js"
+          ],
+          "requestedFiles": [
+            "landing.test.js",
+            "pricing.test.js"
+          ],
+          "executedFiles": [
+            "landing.test.js",
+            "pricing.test.js"
+          ],
+          "missingFiles": [],
+          "unknownFiles": [],
+          "dependencyFiles": [],
+          "complete": true,
+          "command": [
+            "<node>",
+            "<repository>node_modules/vitest/vitest.mjs",
+            "run",
+            "--reporter=json",
+            "--outputFile=/var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-report-YXaXkP/results.json",
+            "./landing.test.js",
+            "./pricing.test.js"
+          ],
+          "stdout": "JSON report written to /var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-report-YXaXkP/results.json\n",
+          "stderr": "",
+          "signal": null,
+          "reportErrors": [],
+          "measuredTotalMs": 515
+        },
+        "testlore": {
+          "adapter": "vitest",
+          "exitCode": 1,
+          "durationMs": 405,
+          "tests": [
+            {
+              "file": "landing.test.js",
+              "name": "specified visible heading",
+              "status": "failed",
+              "durationMs": 7.034458000000001,
+              "id": "d7674acac6a268b42dd5086137ce37dd83d1f1c2dc73f8cc95feda43c4c0013d"
+            }
+          ],
+          "collectionFiles": [
+            "landing.test.js"
+          ],
+          "requestedFiles": [
+            "landing.test.js"
+          ],
+          "executedFiles": [
+            "landing.test.js"
+          ],
+          "missingFiles": [],
+          "unknownFiles": [],
+          "dependencyFiles": [],
+          "complete": true,
+          "command": [
+            "<node>",
+            "<repository>node_modules/vitest/vitest.mjs",
+            "run",
+            "--reporter=json",
+            "--outputFile=/var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-report-UBHIwh/results.json",
+            "./landing.test.js"
+          ],
+          "stdout": "JSON report written to /var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-report-UBHIwh/results.json\n",
+          "stderr": "",
+          "signal": null,
+          "reportErrors": [],
+          "plan": {
+            "schemaVersion": 1,
+            "provenance": {
+              "schemaVersion": 1,
+              "revision": "5cc6268a8ca17845e38827cbdc716d060a11c931",
+              "runner": "675711324678cfdf24def17f12f8dfb3ca6153740f4d0ad8ffca37e423985c0f",
+              "environment": {
+                "node": "v24.5.0",
+                "platform": "darwin",
+                "arch": "arm64",
+                "labels": {}
+              },
+              "services": {},
+              "serviceWarnings": [],
+              "files": {
+                ".gitignore": "a388d0858fcf69d4179676a32bf2ab35fb009da6bcf00fa41579ffe566aff419",
+                "landing.test.js": "5b373136f0279e72fed6b6d81797405865929366508b940e3eb1d7ca4a786989",
+                "package.json": "6dc1b06d6b093e9cccb20bee06a93836eee0420ae26803ca2ce4065d82f070d1",
+                "pricing.test.js": "08e32b3ecc1b16ba416524de42df5a4be558c9074168f0a2f25c74b875d72fd5",
+                "public/copy.json": "c52005a7b0c555a8be3c66a32b687f3f920b13960a0491e0d81e1ff4f54e5ac5",
+                "src/landing.js": "8ca369acc4ce1b293e4ec1e9d28f0276c7a3f4d7155e80017c5235be8e8cef9f",
+                "src/pricing.js": "b16547e3924b496c1dabd6bc079ed3551074d4f588691244626485dcb3d25117",
+                "tddswarm.config.json": "27ef0235bb7b1689a22f13b6343b6ccd2cab5933fc6792fdb9e5974e546f1547"
+              },
+              "fingerprint": "27b6f4e50ea74c833bad0dcccdf521f619fa9a41943f3829014e281d93108a6b"
+            },
+            "serviceTokens": {},
+            "configurationFiles": [],
+            "mode": "affected",
+            "base": "5cc6268a8ca17845e38827cbdc716d060a11c931",
+            "changed": [
+              "public/copy.json"
+            ],
+            "ignored": [],
+            "selected": [
+              "landing.test.js"
+            ],
+            "total": 2,
+            "omitted": 1,
+            "uncertainty": {
+              "global": 0,
+              "retainedTests": [
+                "landing.test.js"
+              ],
+              "unreachableSources": []
+            },
+            "selectionReduction": 0.5,
+            "reasons": [],
+            "warnings": [
+              {
+                "file": "landing.test.js",
+                "reason": "runtime-dependency",
+                "scope": "test-closure",
+                "tests": [
+                  "landing.test.js"
+                ]
+              }
+            ],
+            "decisions": [
+              {
+                "test": "landing.test.js",
+                "selected": true,
+                "reasons": [
+                  "dependency-path",
+                  "uncertain-dependency-closure"
+                ],
+                "paths": [
+                  [
+                    "landing.test.js",
+                    "public/copy.json"
+                  ]
+                ]
+              },
+              {
+                "test": "pricing.test.js",
+                "selected": false,
+                "reasons": [
+                  "no-known-dependency-on-change"
+                ],
+                "paths": []
+              }
+            ],
+            "fingerprint": "0191b29e28adcaf08187167c61ba3dac8dcfebd84ac5e112f543ba4cd13c0191",
+            "discovery": {
+              "files": [
+                "landing.test.js",
+                "pricing.test.js"
+              ],
+              "complete": true,
+              "adapter": "vitest",
+              "warnings": []
+            },
+            "runtime": {
+              "usable": false,
+              "reason": "runtime-disabled",
+              "policy": "supplement-static-only"
+            },
+            "evidence": "static-imports-and-declared-dependencies",
+            "limitations": [
+              "Runtime observations cover exercised inputs; external services require declared versions.",
+              "Selection operates at test-file granularity.",
+              "No deployment safety or measured wall-clock savings are implied."
+            ]
+          },
+          "executed": true,
+          "shadow": false,
+          "executedTests": [
+            "landing.test.js"
+          ],
+          "runner": "675711324678cfdf24def17f12f8dfb3ca6153740f4d0ad8ffca37e423985c0f",
+          "provenance": {
+            "schemaVersion": 1,
+            "revision": "5cc6268a8ca17845e38827cbdc716d060a11c931",
+            "runner": "675711324678cfdf24def17f12f8dfb3ca6153740f4d0ad8ffca37e423985c0f",
+            "environment": {
+              "node": "v24.5.0",
+              "platform": "darwin",
+              "arch": "arm64",
+              "labels": {}
+            },
+            "services": {},
+            "serviceWarnings": [],
+            "files": {
+              ".gitignore": "a388d0858fcf69d4179676a32bf2ab35fb009da6bcf00fa41579ffe566aff419",
+              "landing.test.js": "5b373136f0279e72fed6b6d81797405865929366508b940e3eb1d7ca4a786989",
+              "package.json": "6dc1b06d6b093e9cccb20bee06a93836eee0420ae26803ca2ce4065d82f070d1",
+              "pricing.test.js": "08e32b3ecc1b16ba416524de42df5a4be558c9074168f0a2f25c74b875d72fd5",
+              "public/copy.json": "c52005a7b0c555a8be3c66a32b687f3f920b13960a0491e0d81e1ff4f54e5ac5",
+              "src/landing.js": "8ca369acc4ce1b293e4ec1e9d28f0276c7a3f4d7155e80017c5235be8e8cef9f",
+              "src/pricing.js": "b16547e3924b496c1dabd6bc079ed3551074d4f588691244626485dcb3d25117",
+              "tddswarm.config.json": "27ef0235bb7b1689a22f13b6343b6ccd2cab5933fc6792fdb9e5974e546f1547"
+            },
+            "fingerprint": "27b6f4e50ea74c833bad0dcccdf521f619fa9a41943f3829014e281d93108a6b"
+          },
+          "timings": {
+            "planningMs": 841,
+            "executionMs": 405,
+            "totalMs": 1420,
+            "otherMs": 174
+          },
+          "measuredTotalMs": 1420
+        },
+        "native": {
+          "adapter": "vitest",
+          "selector": "vitest-related",
+          "command": [
+            "<node>",
+            "<repository>node_modules/vitest/vitest.mjs",
+            "related",
+            "./public/copy.json",
+            "--run",
+            "--passWithNoTests",
+            "--reporter=json",
+            "--outputFile=/var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/testlore-native-related-ZvTnNd/results.json"
+          ],
+          "complete": true,
+          "exitCode": 0,
+          "tests": [],
+          "executedFiles": [],
+          "collectionFiles": [],
+          "durationMs": 754,
+          "stdout": "JSON report written to /var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/testlore-native-related-ZvTnNd/results.json\n",
+          "stderr": "",
+          "reportErrors": [],
+          "measuredTotalMs": 754
+        }
+      }
+    },
+    {
+      "repeat": 1,
+      "order": [
+        "testlore",
+        "native",
+        "full"
+      ],
+      "fullCaught": true,
+      "testLoreCaught": true,
+      "nativeCaught": false,
+      "outcomes": {
+        "testlore": {
+          "adapter": "vitest",
+          "exitCode": 1,
+          "durationMs": 433,
+          "tests": [
+            {
+              "file": "landing.test.js",
+              "name": "specified visible heading",
+              "status": "failed",
+              "durationMs": 6.286165999999994,
+              "id": "d7674acac6a268b42dd5086137ce37dd83d1f1c2dc73f8cc95feda43c4c0013d"
+            }
+          ],
+          "collectionFiles": [
+            "landing.test.js"
+          ],
+          "requestedFiles": [
+            "landing.test.js"
+          ],
+          "executedFiles": [
+            "landing.test.js"
+          ],
+          "missingFiles": [],
+          "unknownFiles": [],
+          "dependencyFiles": [],
+          "complete": true,
+          "command": [
+            "<node>",
+            "<repository>node_modules/vitest/vitest.mjs",
+            "run",
+            "--reporter=json",
+            "--outputFile=/var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-report-Kh6lcw/results.json",
+            "./landing.test.js"
+          ],
+          "stdout": "JSON report written to /var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-report-Kh6lcw/results.json\n",
+          "stderr": "",
+          "signal": null,
+          "reportErrors": [],
+          "plan": {
+            "schemaVersion": 1,
+            "provenance": {
+              "schemaVersion": 1,
+              "revision": "5cc6268a8ca17845e38827cbdc716d060a11c931",
+              "runner": "675711324678cfdf24def17f12f8dfb3ca6153740f4d0ad8ffca37e423985c0f",
+              "environment": {
+                "node": "v24.5.0",
+                "platform": "darwin",
+                "arch": "arm64",
+                "labels": {}
+              },
+              "services": {},
+              "serviceWarnings": [],
+              "files": {
+                ".gitignore": "a388d0858fcf69d4179676a32bf2ab35fb009da6bcf00fa41579ffe566aff419",
+                "landing.test.js": "5b373136f0279e72fed6b6d81797405865929366508b940e3eb1d7ca4a786989",
+                "package.json": "6dc1b06d6b093e9cccb20bee06a93836eee0420ae26803ca2ce4065d82f070d1",
+                "pricing.test.js": "08e32b3ecc1b16ba416524de42df5a4be558c9074168f0a2f25c74b875d72fd5",
+                "public/copy.json": "c52005a7b0c555a8be3c66a32b687f3f920b13960a0491e0d81e1ff4f54e5ac5",
+                "src/landing.js": "8ca369acc4ce1b293e4ec1e9d28f0276c7a3f4d7155e80017c5235be8e8cef9f",
+                "src/pricing.js": "b16547e3924b496c1dabd6bc079ed3551074d4f588691244626485dcb3d25117",
+                "tddswarm.config.json": "27ef0235bb7b1689a22f13b6343b6ccd2cab5933fc6792fdb9e5974e546f1547"
+              },
+              "fingerprint": "27b6f4e50ea74c833bad0dcccdf521f619fa9a41943f3829014e281d93108a6b"
+            },
+            "serviceTokens": {},
+            "configurationFiles": [],
+            "mode": "affected",
+            "base": "5cc6268a8ca17845e38827cbdc716d060a11c931",
+            "changed": [
+              "public/copy.json"
+            ],
+            "ignored": [],
+            "selected": [
+              "landing.test.js"
+            ],
+            "total": 2,
+            "omitted": 1,
+            "uncertainty": {
+              "global": 0,
+              "retainedTests": [
+                "landing.test.js"
+              ],
+              "unreachableSources": []
+            },
+            "selectionReduction": 0.5,
+            "reasons": [],
+            "warnings": [
+              {
+                "file": "landing.test.js",
+                "reason": "runtime-dependency",
+                "scope": "test-closure",
+                "tests": [
+                  "landing.test.js"
+                ]
+              }
+            ],
+            "decisions": [
+              {
+                "test": "landing.test.js",
+                "selected": true,
+                "reasons": [
+                  "dependency-path",
+                  "uncertain-dependency-closure"
+                ],
+                "paths": [
+                  [
+                    "landing.test.js",
+                    "public/copy.json"
+                  ]
+                ]
+              },
+              {
+                "test": "pricing.test.js",
+                "selected": false,
+                "reasons": [
+                  "no-known-dependency-on-change"
+                ],
+                "paths": []
+              }
+            ],
+            "fingerprint": "0191b29e28adcaf08187167c61ba3dac8dcfebd84ac5e112f543ba4cd13c0191",
+            "discovery": {
+              "files": [
+                "landing.test.js",
+                "pricing.test.js"
+              ],
+              "complete": true,
+              "adapter": "vitest",
+              "warnings": []
+            },
+            "runtime": {
+              "usable": false,
+              "reason": "runtime-disabled",
+              "policy": "supplement-static-only"
+            },
+            "evidence": "static-imports-and-declared-dependencies",
+            "limitations": [
+              "Runtime observations cover exercised inputs; external services require declared versions.",
+              "Selection operates at test-file granularity.",
+              "No deployment safety or measured wall-clock savings are implied."
+            ]
+          },
+          "executed": true,
+          "shadow": false,
+          "executedTests": [
+            "landing.test.js"
+          ],
+          "runner": "675711324678cfdf24def17f12f8dfb3ca6153740f4d0ad8ffca37e423985c0f",
+          "provenance": {
+            "schemaVersion": 1,
+            "revision": "5cc6268a8ca17845e38827cbdc716d060a11c931",
+            "runner": "675711324678cfdf24def17f12f8dfb3ca6153740f4d0ad8ffca37e423985c0f",
+            "environment": {
+              "node": "v24.5.0",
+              "platform": "darwin",
+              "arch": "arm64",
+              "labels": {}
+            },
+            "services": {},
+            "serviceWarnings": [],
+            "files": {
+              ".gitignore": "a388d0858fcf69d4179676a32bf2ab35fb009da6bcf00fa41579ffe566aff419",
+              "landing.test.js": "5b373136f0279e72fed6b6d81797405865929366508b940e3eb1d7ca4a786989",
+              "package.json": "6dc1b06d6b093e9cccb20bee06a93836eee0420ae26803ca2ce4065d82f070d1",
+              "pricing.test.js": "08e32b3ecc1b16ba416524de42df5a4be558c9074168f0a2f25c74b875d72fd5",
+              "public/copy.json": "c52005a7b0c555a8be3c66a32b687f3f920b13960a0491e0d81e1ff4f54e5ac5",
+              "src/landing.js": "8ca369acc4ce1b293e4ec1e9d28f0276c7a3f4d7155e80017c5235be8e8cef9f",
+              "src/pricing.js": "b16547e3924b496c1dabd6bc079ed3551074d4f588691244626485dcb3d25117",
+              "tddswarm.config.json": "27ef0235bb7b1689a22f13b6343b6ccd2cab5933fc6792fdb9e5974e546f1547"
+            },
+            "fingerprint": "27b6f4e50ea74c833bad0dcccdf521f619fa9a41943f3829014e281d93108a6b"
+          },
+          "timings": {
+            "planningMs": 1682,
+            "executionMs": 433,
+            "totalMs": 2277,
+            "otherMs": 162
+          },
+          "measuredTotalMs": 2277
+        },
+        "native": {
+          "adapter": "vitest",
+          "selector": "vitest-related",
+          "command": [
+            "<node>",
+            "<repository>node_modules/vitest/vitest.mjs",
+            "related",
+            "./public/copy.json",
+            "--run",
+            "--passWithNoTests",
+            "--reporter=json",
+            "--outputFile=/var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/testlore-native-related-hch09A/results.json"
+          ],
+          "complete": true,
+          "exitCode": 0,
+          "tests": [],
+          "executedFiles": [],
+          "collectionFiles": [],
+          "durationMs": 307,
+          "stdout": "JSON report written to /var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/testlore-native-related-hch09A/results.json\n",
+          "stderr": "",
+          "reportErrors": [],
+          "measuredTotalMs": 308
+        },
+        "full": {
+          "adapter": "vitest",
+          "exitCode": 1,
+          "durationMs": 463,
+          "tests": [
+            {
+              "file": "landing.test.js",
+              "name": "specified visible heading",
+              "status": "failed",
+              "durationMs": 7.4064169999999905,
+              "id": "d7674acac6a268b42dd5086137ce37dd83d1f1c2dc73f8cc95feda43c4c0013d"
+            },
+            {
+              "file": "pricing.test.js",
+              "name": "specified free pricing",
+              "status": "passed",
+              "durationMs": 1.652124999999998,
+              "id": "15d1c68d073fb800887ee3e651f228c8d69ab98907c2981a730ffeb9c6941072"
+            }
+          ],
+          "collectionFiles": [
+            "landing.test.js",
+            "pricing.test.js"
+          ],
+          "requestedFiles": [
+            "landing.test.js",
+            "pricing.test.js"
+          ],
+          "executedFiles": [
+            "landing.test.js",
+            "pricing.test.js"
+          ],
+          "missingFiles": [],
+          "unknownFiles": [],
+          "dependencyFiles": [],
+          "complete": true,
+          "command": [
+            "<node>",
+            "<repository>node_modules/vitest/vitest.mjs",
+            "run",
+            "--reporter=json",
+            "--outputFile=/var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-report-p8zuMq/results.json",
+            "./landing.test.js",
+            "./pricing.test.js"
+          ],
+          "stdout": "JSON report written to /var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-report-p8zuMq/results.json\n",
+          "stderr": "",
+          "signal": null,
+          "reportErrors": [],
+          "measuredTotalMs": 700
+        }
+      }
+    },
+    {
+      "repeat": 2,
+      "order": [
+        "native",
+        "full",
+        "testlore"
+      ],
+      "fullCaught": true,
+      "testLoreCaught": true,
+      "nativeCaught": false,
+      "outcomes": {
+        "native": {
+          "adapter": "vitest",
+          "selector": "vitest-related",
+          "command": [
+            "<node>",
+            "<repository>node_modules/vitest/vitest.mjs",
+            "related",
+            "./public/copy.json",
+            "--run",
+            "--passWithNoTests",
+            "--reporter=json",
+            "--outputFile=/var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/testlore-native-related-8l7G1w/results.json"
+          ],
+          "complete": true,
+          "exitCode": 0,
+          "tests": [],
+          "executedFiles": [],
+          "collectionFiles": [],
+          "durationMs": 329,
+          "stdout": "JSON report written to /var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/testlore-native-related-8l7G1w/results.json\n",
+          "stderr": "",
+          "reportErrors": [],
+          "measuredTotalMs": 330
+        },
+        "full": {
+          "adapter": "vitest",
+          "exitCode": 1,
+          "durationMs": 424,
+          "tests": [
+            {
+              "file": "landing.test.js",
+              "name": "specified visible heading",
+              "status": "failed",
+              "durationMs": 5.856542000000005,
+              "id": "d7674acac6a268b42dd5086137ce37dd83d1f1c2dc73f8cc95feda43c4c0013d"
+            },
+            {
+              "file": "pricing.test.js",
+              "name": "specified free pricing",
+              "status": "passed",
+              "durationMs": 1.1162920000000014,
+              "id": "15d1c68d073fb800887ee3e651f228c8d69ab98907c2981a730ffeb9c6941072"
+            }
+          ],
+          "collectionFiles": [
+            "landing.test.js",
+            "pricing.test.js"
+          ],
+          "requestedFiles": [
+            "landing.test.js",
+            "pricing.test.js"
+          ],
+          "executedFiles": [
+            "landing.test.js",
+            "pricing.test.js"
+          ],
+          "missingFiles": [],
+          "unknownFiles": [],
+          "dependencyFiles": [],
+          "complete": true,
+          "command": [
+            "<node>",
+            "<repository>node_modules/vitest/vitest.mjs",
+            "run",
+            "--reporter=json",
+            "--outputFile=/var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-report-wgmLE7/results.json",
+            "./landing.test.js",
+            "./pricing.test.js"
+          ],
+          "stdout": "JSON report written to /var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-report-wgmLE7/results.json\n",
+          "stderr": "",
+          "signal": null,
+          "reportErrors": [],
+          "measuredTotalMs": 690
+        },
+        "testlore": {
+          "adapter": "vitest",
+          "exitCode": 1,
+          "durationMs": 436,
+          "tests": [
+            {
+              "file": "landing.test.js",
+              "name": "specified visible heading",
+              "status": "failed",
+              "durationMs": 5.8769160000000085,
+              "id": "d7674acac6a268b42dd5086137ce37dd83d1f1c2dc73f8cc95feda43c4c0013d"
+            }
+          ],
+          "collectionFiles": [
+            "landing.test.js"
+          ],
+          "requestedFiles": [
+            "landing.test.js"
+          ],
+          "executedFiles": [
+            "landing.test.js"
+          ],
+          "missingFiles": [],
+          "unknownFiles": [],
+          "dependencyFiles": [],
+          "complete": true,
+          "command": [
+            "<node>",
+            "<repository>node_modules/vitest/vitest.mjs",
+            "run",
+            "--reporter=json",
+            "--outputFile=/var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-report-CWDKSR/results.json",
+            "./landing.test.js"
+          ],
+          "stdout": "JSON report written to /var/folders/gm/wdg13xcd5dj90cpffbctbv080000gn/T/tddswarm-report-CWDKSR/results.json\n",
+          "stderr": "",
+          "signal": null,
+          "reportErrors": [],
+          "plan": {
+            "schemaVersion": 1,
+            "provenance": {
+              "schemaVersion": 1,
+              "revision": "5cc6268a8ca17845e38827cbdc716d060a11c931",
+              "runner": "675711324678cfdf24def17f12f8dfb3ca6153740f4d0ad8ffca37e423985c0f",
+              "environment": {
+                "node": "v24.5.0",
+                "platform": "darwin",
+                "arch": "arm64",
+                "labels": {}
+              },
+              "services": {},
+              "serviceWarnings": [],
+              "files": {
+                ".gitignore": "a388d0858fcf69d4179676a32bf2ab35fb009da6bcf00fa41579ffe566aff419",
+                "landing.test.js": "5b373136f0279e72fed6b6d81797405865929366508b940e3eb1d7ca4a786989",
+                "package.json": "6dc1b06d6b093e9cccb20bee06a93836eee0420ae26803ca2ce4065d82f070d1",
+                "pricing.test.js": "08e32b3ecc1b16ba416524de42df5a4be558c9074168f0a2f25c74b875d72fd5",
+                "public/copy.json": "c52005a7b0c555a8be3c66a32b687f3f920b13960a0491e0d81e1ff4f54e5ac5",
+                "src/landing.js": "8ca369acc4ce1b293e4ec1e9d28f0276c7a3f4d7155e80017c5235be8e8cef9f",
+                "src/pricing.js": "b16547e3924b496c1dabd6bc079ed3551074d4f588691244626485dcb3d25117",
+                "tddswarm.config.json": "27ef0235bb7b1689a22f13b6343b6ccd2cab5933fc6792fdb9e5974e546f1547"
+              },
+              "fingerprint": "27b6f4e50ea74c833bad0dcccdf521f619fa9a41943f3829014e281d93108a6b"
+            },
+            "serviceTokens": {},
+            "configurationFiles": [],
+            "mode": "affected",
+            "base": "5cc6268a8ca17845e38827cbdc716d060a11c931",
+            "changed": [
+              "public/copy.json"
+            ],
+            "ignored": [],
+            "selected": [
+              "landing.test.js"
+            ],
+            "total": 2,
+            "omitted": 1,
+            "uncertainty": {
+              "global": 0,
+              "retainedTests": [
+                "landing.test.js"
+              ],
+              "unreachableSources": []
+            },
+            "selectionReduction": 0.5,
+            "reasons": [],
+            "warnings": [
+              {
+                "file": "landing.test.js",
+                "reason": "runtime-dependency",
+                "scope": "test-closure",
+                "tests": [
+                  "landing.test.js"
+                ]
+              }
+            ],
+            "decisions": [
+              {
+                "test": "landing.test.js",
+                "selected": true,
+                "reasons": [
+                  "dependency-path",
+                  "uncertain-dependency-closure"
+                ],
+                "paths": [
+                  [
+                    "landing.test.js",
+                    "public/copy.json"
+                  ]
+                ]
+              },
+              {
+                "test": "pricing.test.js",
+                "selected": false,
+                "reasons": [
+                  "no-known-dependency-on-change"
+                ],
+                "paths": []
+              }
+            ],
+            "fingerprint": "0191b29e28adcaf08187167c61ba3dac8dcfebd84ac5e112f543ba4cd13c0191",
+            "discovery": {
+              "files": [
+                "landing.test.js",
+                "pricing.test.js"
+              ],
+              "complete": true,
+              "adapter": "vitest",
+              "warnings": []
+            },
+            "runtime": {
+              "usable": false,
+              "reason": "runtime-disabled",
+              "policy": "supplement-static-only"
+            },
+            "evidence": "static-imports-and-declared-dependencies",
+            "limitations": [
+              "Runtime observations cover exercised inputs; external services require declared versions.",
+              "Selection operates at test-file granularity.",
+              "No deployment safety or measured wall-clock savings are implied."
+            ]
+          },
+          "executed": true,
+          "shadow": false,
+          "executedTests": [
+            "landing.test.js"
+          ],
+          "runner": "675711324678cfdf24def17f12f8dfb3ca6153740f4d0ad8ffca37e423985c0f",
+          "provenance": {
+            "schemaVersion": 1,
+            "revision": "5cc6268a8ca17845e38827cbdc716d060a11c931",
+            "runner": "675711324678cfdf24def17f12f8dfb3ca6153740f4d0ad8ffca37e423985c0f",
+            "environment": {
+              "node": "v24.5.0",
+              "platform": "darwin",
+              "arch": "arm64",
+              "labels": {}
+            },
+            "services": {},
+            "serviceWarnings": [],
+            "files": {
+              ".gitignore": "a388d0858fcf69d4179676a32bf2ab35fb009da6bcf00fa41579ffe566aff419",
+              "landing.test.js": "5b373136f0279e72fed6b6d81797405865929366508b940e3eb1d7ca4a786989",
+              "package.json": "6dc1b06d6b093e9cccb20bee06a93836eee0420ae26803ca2ce4065d82f070d1",
+              "pricing.test.js": "08e32b3ecc1b16ba416524de42df5a4be558c9074168f0a2f25c74b875d72fd5",
+              "public/copy.json": "c52005a7b0c555a8be3c66a32b687f3f920b13960a0491e0d81e1ff4f54e5ac5",
+              "src/landing.js": "8ca369acc4ce1b293e4ec1e9d28f0276c7a3f4d7155e80017c5235be8e8cef9f",
+              "src/pricing.js": "b16547e3924b496c1dabd6bc079ed3551074d4f588691244626485dcb3d25117",
+              "tddswarm.config.json": "27ef0235bb7b1689a22f13b6343b6ccd2cab5933fc6792fdb9e5974e546f1547"
+            },
+            "fingerprint": "27b6f4e50ea74c833bad0dcccdf521f619fa9a41943f3829014e281d93108a6b"
+          },
+          "timings": {
+            "planningMs": 1108,
+            "executionMs": 436,
+            "totalMs": 1680,
+            "otherMs": 136
+          },
+          "measuredTotalMs": 1680
+        }
+      }
+    }
+  ],
+  "implementationHashes": {
+    "src/runner.js": "e291e0c510457df86ed3a6db5f99ad39e950f2090c025caca87b7d40a3c10747",
+    "src/execution.js": "955589ba3593ccdacdbf2991c09881e43466c49974114d72327665279d4dfe04",
+    "src/selector.js": "87a5a0e66058393184519e4668702a98ac84368a734228eb5615b9ecef047fe7",
+    "src/graph.js": "0ae72ccad1b2edda029cd92a65ba58d1d3b63b6f918dba2066d1f684ea213ba8"
+  },
+  "limitations": [
+    "Constructed two-file runtime-asset counterexample, not representative speed or fault recall.",
+    "TestLore uses an explicit asset declaration and retains uncertain consumers. Vitest related has no equivalent runtime declaration in this comparison.",
+    "Full timing here includes reference discovery; application pilot fullMs uses native execution only for a conservative speed baseline.",
+    "Native zero-case execution is complete within its selected scope but misses the independent asset defect. No speed win is credited to a missed defect."
+  ]
+}

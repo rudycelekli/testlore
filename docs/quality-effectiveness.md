@@ -33,3 +33,14 @@ Architect/author retrieval uses meaningful current-contract tokens plus framewor
 The paired evaluator reports empty applicable memory explicitly; such runs establish no learning treatment or improvement. Repeated trials remain clustered by independent specification. Both arms receive identical transport deadlines and response-byte caps. Source freshness and a bounded full filesystem inventory reject worker side effects, including ignored metadata and empty directories.
 
 Transport deadlines propagate to Codex. On POSIX, the outer worker runs in an isolated process group so timeout/output-budget termination reaches descendants. A Codex adapter started through that transport can terminate that verified group. Host suspension may delay timers; late success is rejected by both wall-clock and monotonic deadline checks. Direct standalone adapters do not provide the same outer-group supervision. No paid API fallback is used.
+
+CLI usage after installing the matching SDK locally:
+
+```sh
+npx --no-install testlore mutation --mutate src/clamp.js --json
+npx --no-install testlore effectiveness --defects .tddswarm/independent-defects.json --repeat 3 --json
+# Optional test-only candidate patch; production source is never applied:
+npx --no-install testlore effectiveness --defects .tddswarm/independent-defects.json --patch candidate.json --json
+```
+
+Mutation execution imports its genuine raw report into `audit` only when the producer completes with fresh inputs. Non-Node runners can pass a reviewed `--settings` JSON containing `commandRunner` argv, `toolsRoot`, and `timeoutMs`; shell text is not accepted. An effectiveness receipt's `complete` flag establishes complete measurements, not high quality: inspect missed defects and additional candidate detections separately. The CLI fails when a demonstrated defect is missed or measurement is incomplete.

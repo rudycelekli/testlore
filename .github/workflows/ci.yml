@@ -36,6 +36,8 @@ jobs:
           node-version: '22'
           cache: npm
       - run: npm ci --ignore-scripts
+      - run: node scripts/incremental-quality-proof.js --output .tddswarm/ci-incremental.json
+      - run: node scripts/native-selection-proof.js .tddswarm/ci-native-selector.json
       - run: node scripts/quality-proof.js --output .tddswarm/ci-quality.json
       - run: node scripts/generated-defects.js > .tddswarm/ci-defects.json
       - uses: actions/upload-artifact@v4
@@ -56,12 +58,15 @@ jobs:
           cache: npm
       - run: npm ci --ignore-scripts
       - run: npx --no-install playwright install --with-deps chromium
-      - run: TESTLORE_PLAYWRIGHT_BROWSER=1 node --test test/playwright-native.test.js
+      - run: TESTLORE_PLAYWRIGHT_BROWSER=1 node --test test/playwright-native.test.js test/browser-evidence.test.js
+      - run: node scripts/browser-mapping-proof.js --output .tddswarm/ci-browser-mapping.json
       - run: node scripts/playwright-proof.js --output .tddswarm/ci-playwright.json
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: browser-quality-proof
-          path: .tddswarm/ci-playwright.json
+          path: |
+            .tddswarm/ci-playwright.json
+            .tddswarm/ci-browser-mapping.json
           include-hidden-files: true
           if-no-files-found: error
