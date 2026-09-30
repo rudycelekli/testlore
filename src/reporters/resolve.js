@@ -61,7 +61,7 @@ try {
     if (configFile) configFile = path.resolve(root, configFile);
     configFile ||= ['vitest.config.ts', 'vitest.config.js', 'vitest.config.mts', 'vitest.config.mjs', 'vitest.config.cts', 'vitest.config.cjs'].map(f => path.join(root, f)).find(f => fs.existsSync(f));
     const mode = argument('--mode') || 'test';
-    const loaded = await vite.loadConfigFromFile({ command: 'serve', mode }, configFile, root, 'silent');
+    const loaded = await vite.loadConfigFromFile({ command: 'serve', mode, isSsrBuild: false, isPreview: false }, configFile, root, 'silent');
     const base = loaded?.config || {};
     if (base.test?.projects?.length || base.test?.browser?.enabled || base.test?.workspace || base.root && path.resolve(root,base.root)!==root || base.test?.environment && base.test.environment!=='node') throw new Error('Multiple projects/browser resolution requires a native project graph');
     output.configFiles.push(...(loaded?.dependencies || []), ...(loaded?.path ? [loaded.path] : []));

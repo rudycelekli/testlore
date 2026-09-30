@@ -37,12 +37,14 @@ if(jest) {
 if(vitest) for(const [label,argv,env,expression] of [
  ['split mode',['--mode','production'],{},`mode==='production'`],['equal mode',['--mode=production'],{},`mode==='production'`],
  ['effective NODE_ENV and VITEST',[],{},`process.env.NODE_ENV==='test' && process.env.VITEST==='true'`],
- ['explicit NODE_ENV',[],{NODE_ENV:'production'},`process.env.NODE_ENV==='production' && process.env.VITEST==='true'`]
+ ['explicit NODE_ENV',[],{NODE_ENV:'production'},`process.env.NODE_ENV==='production' && process.env.VITEST==='true'`],
+ ['native serve config flags',[],{},`isSsrBuild===false && isPreview===false`]
 ])test(`real Vitest ${label} config resolves the actual consumer`,t=>{
  const config={discovery:'native',env,runner:[process.execPath,vitest,'run',...argv,'{files}']};
- const root=fixture(t,{'package.json':{type:'module'},'vitest.config.mjs':`export default ({mode})=>({resolve:{alias:{'@subject':new URL(${expression}? './src/b.js':'./src/a.js',import.meta.url).pathname}},test:{include:['test/*.test.js'],maxWorkers:1}});`,'src/a.js':'export default 1;','src/b.js':'export default 1;','test/a.test.js':`import {test,expect} from 'vitest';import value from '@subject';test('subject',()=>expect(value).toBe(1));`,'test/b.test.js':`import {test,expect} from 'vitest';import value from '../src/b.js';test('b',()=>expect(value).toBe(1));`,'tddswarm.config.json':config});
+ const root=fixture(t,{'package.json':{type:'module'},'vitest.config.mjs':`export default ({mode,isSsrBuild,isPreview})=>({resolve:{alias:{'@subject':new URL(${expression}? './src/b.js':'./src/a.js',import.meta.url).pathname}},test:{include:['test/*.test.js'],maxWorkers:1}});`,'src/a.js':'export default 1;','src/b.js':'export default 1;','test/a.test.js':`import {test,expect} from 'vitest';import value from '@subject';test('subject',()=>expect(value).toBe(1));`,'test/b.test.js':`import {test,expect} from 'vitest';import value from '../src/b.js';test('b',()=>expect(value).toBe(1));`,'tddswarm.config.json':config});
  fs.symlinkSync(path.dirname(path.dirname(vitest)),path.join(root,'node_modules'),'dir');
  write(root,'src/b.js','export default 2;');const selection=plan(root,{changed:['src/b.js']});assert.deepEqual(selection.selected,['test/a.test.js','test/b.test.js'],JSON.stringify(selection));
+ if(label==='native serve config flags'){assert.equal(selection.mode,'affected');assert.ok(selection.decisions[0].paths.some(chain=>chain.at(-1)==='src/b.js'));}
  const full=execute(root,selection.selected,config,{capture:true});assert.equal(full.complete,true,JSON.stringify(full));assert.equal(full.tests.filter(t=>t.status==='failed').length,2);
 });
 test('custom tsconfig and its arbitrarily named extends file invalidate globally',t=>{
