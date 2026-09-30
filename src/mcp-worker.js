@@ -24,7 +24,7 @@ export function summarizePlan(selection) {
   };
 }
 
-function summarizeRun(report, mode, receipts) {
+export function summarizeRun(report, mode, receipts) {
   const tests = report.tests || [];
   const caseOutcomesAvailable = Array.isArray(report.tests);
   const observedScope = caseOutcomesAvailable ? tests.some(t => ['passed', 'failed'].includes(t.status))
@@ -41,12 +41,17 @@ function summarizeRun(report, mode, receipts) {
     outcomes: { available: caseOutcomesAvailable, passed: caseOutcomesAvailable ? tests.filter(t => t.status === 'passed').length : null,
       failed: caseOutcomesAvailable ? tests.filter(t => t.status === 'failed').length : null,
       skipped: caseOutcomesAvailable ? tests.filter(t => t.status === 'skipped').length : null },
-    failedCases: tests.filter(t => t.status === 'failed').map(t => ({ id: t.id, file: t.file })),
+    failedCases: tests.filter(t => t.status === 'failed').map(t => ({ id: t.id, file: t.file, name: t.name })),
     timings: report.timings, plan: report.plan && summarizePlan(report.plan),
     comparison: report.comparison && { complete: report.comparison.complete,
       noObservedMisses: report.comparison.noObservedMisses,
       decisionRecall: report.comparison.decisionRecall, limitation: report.comparison.limitation },
     receipts,
+    nextAction: report.executed !== true || report.complete !== true
+      ? 'Repair the reported execution/discovery problem and rerun full native verification; no complete current result is available.'
+      : report.exitCode !== 0
+        ? 'Inspect the failed case identities and durable receipts, repair the independently established defect, then rerun the full suite.'
+        : 'Review remaining routing uncertainty and independent defect obligations before relying on this scoped observation.',
     deploymentSafety: 'not-established', learningImprovement: 'not-established'
   };
 }
@@ -65,10 +70,20 @@ export function boundedSummary(value, maxBytes = 65536) {
   const result = { ...bound(value), presentation: { truncated, maximumBytes: maxBytes,
     limitation: 'Bounded agent summary; inspect durable receipts for complete run evidence.' } };
   if (Buffer.byteLength(JSON.stringify(result)) <= maxBytes) return result;
-  return { kind: value.kind || 'agent-summary', authority: value.authority || 'advisory',
-    complete: false, deploymentSafety: 'not-established',
+  const short = item => typeof item === 'string' ? item.slice(0, 500) : undefined;
+  const count = item => Number.isInteger(item) ? item : null;
+  return { kind: short(value.kind) || 'agent-summary', authority: short(value.authority) || 'advisory',
+    complete: false, observedComplete: value.complete === true, executed: value.executed === true,
+    verdict: short(value.verdict), exitCode: count(value.exitCode),
+    outcomes: value.outcomes && {available: value.outcomes.available === true,
+      passed: count(value.outcomes.passed), failed: count(value.outcomes.failed), skipped: count(value.outcomes.skipped)},
+    failedCases: Array.isArray(value.failedCases) ? value.failedCases.slice(0, 10).map(row => ({id: short(row.id), file: short(row.file), name: short(row.name)})) : [],
+    failedCaseCount: Array.isArray(value.failedCases) ? value.failedCases.length : null,
+    scopeLimitation: short(value.scopeLimitation), executedFileCount: Array.isArray(value.executedFiles) ? value.executedFiles.length : null,
+    error: typeof value.error === 'string' ? value.error.slice(0, 1000) : undefined,
+    nextAction: short(value.nextAction), deploymentSafety: 'not-established',
     presentation: { truncated: true, maximumBytes: maxBytes, limitation: 'Summary exceeds output bound; inspect project receipts.' },
-    receipts: value.receipts || null };
+    receipts: value.receipts ? {json: short(value.receipts.json), markdown: short(value.receipts.markdown)} : null };
 }
 
 if (process.send && process.argv[2] === '--internal-mcp-worker') {

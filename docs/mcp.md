@@ -50,6 +50,8 @@ One execution request is active per server. A second receives a busy error. Work
 
 Native per-file run receipts remain `.tddswarm/last-run.json` and `.tddswarm/last-run.md`. The MCP response returns their relative paths and explicitly reports summary truncation. Delegated Nx, Bazel and pytest-testmon execution keeps its native scope authority, exposes target information and limitations, and returns `receipts: null` and null case counts when per-case reporting is unavailable. A verdict is `incomplete`, `failed` or `passed-in-observed-scope`. Those receipt files can be historical after an aborted run: inspect the status limitations and rerun to obtain current evidence.
 
+Run summaries include failed case IDs, file paths, names and a concrete next action. If the complete presentation exceeds its byte budget, the compact response keeps up to ten failed identities, outcome and scope counts, verdict, receipt paths and next action. It sets `complete: false` for the incomplete presentation and separately retains `observedComplete`; truncation never establishes additional execution or deployment authority.
+
 ## Recommended agent sequence
 
 Add this project instruction to your agent's workflow after configuring the server:
@@ -63,3 +65,31 @@ Add this project instruction to your agent's workflow after configuring the serv
 5. State the actual scoped results and remaining uncertainty. A passing run is evidence about the tested revision and environment, not proof of universal correctness.
 
 Implementation uses [`@modelcontextprotocol/server`](https://github.com/modelcontextprotocol/typescript-sdk) 2.2.0 and strict Zod schemas. Tests exercise an actual SDK client/server handshake, not a fabricated JSON-RPC substitute.
+
+## Opt-in native host qualification
+
+SDK interoperability tests and native coding-host qualification are separate evidence. From a reviewed checkout, explicitly run the installed subscription-backed host executables against a source or already-installed package entrypoint:
+
+```sh
+node scripts/host-qualification.js --run \
+  --entrypoint /absolute/path/to/testlore/src/cli.js \
+  --codex /absolute/path/to/codex \
+  --claude /absolute/path/to/claude \
+  --output /absolute/path/to/host-receipt.json --timeout-ms 90000
+```
+
+This is never part of ordinary `npm test`. It runs at most one invocation per supplied host, after checking the installed CLI's help. Each host gets a temporary Git fixture with one planted implementation fault and one preserved passing case. Two temporary MCP configurations expose the default tool surface and execution-opted-in tools. The host must call brief/status before plan/shadow verification, then report the exact observed failure identity, both executed test files, remaining uncertainty and a concrete next action. The prompt contains only this synthetic fixture's task.
+
+The harness does not install hosts or packages, download dependencies, edit personal configuration, or read/copy/write credentials. Existing subscription login remains available. The subprocess environment removes provider API keys, provider routing variables, injected Node options and API-key helpers. Codex uses its documented ignore-user-config, ignore-rules and ephemeral options, with read-only shell sandbox and approval policy `never`; Claude uses empty setting sources, strict temporary MCP configuration, disabled built-in tools/hooks/skills, explicitly allowed fixture MCP tools, and no session persistence. A host can still reject execution under its own approval rules. The harness preserves that rejection; it does not weaken permissions, retry, switch providers or replace the host with an SDK client. Claude's streamed native API retry event stops the invocation immediately and retains the reported HTTP error; the harness does not allow a native automatic retry loop.
+
+Receipts contain SHA-256 identities for Node, host launchers (and the resolved Codex native binary when available), package metadata, every TestLore source file, exact CLI arguments, bounded process output and real MCP calls/results. A transparent stdio relay forwards bytes to the exact supplied CLI; it does not implement MCP responses. Host runtime, cumulative output and observer frames/call counts are bounded. Timeout, missing host, missing tool invocation, incomplete native verification, changed package bytes or an overclaiming final account leave the host unqualified. Temporary evidence is retained for inspection; remove its reported workspace when no longer needed. Windows process supervision only guarantees termination of the immediate host, unlike POSIX process-group termination.
+
+For immutable packed evidence, point `--entrypoint` at the fresh production install prepared by the packed proof and additionally supply:
+
+```sh
+--archive /absolute/path/to/testlore.tgz \
+--expected-archive-sha256 EXACT_SHA256 \
+--expected-source-sha EXACT_GIT_COMMIT
+```
+
+The harness checks the archive checksum, compares every installed source file and `package.json` with archive members without extraction, and requires the installed package's `gitHead` to match the supplied source commit. `--expected-sha256` can additionally pin the entrypoint file. No host result qualifies a different package digest, other host versions, another repository or a release. If a host times out or blocks tools, report the observed failure and rerun only as a separately reviewed invocation; keep the failed receipt.
