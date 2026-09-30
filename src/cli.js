@@ -10,7 +10,7 @@ import { recommendPlugins } from './plugin-recommendations.js';
 import {measureMutation,measureTestEffectiveness} from './quality-measurement.js';
 import { renderRunReport } from './run-report.js';
 import { routingProposals } from './routing-proposals.js';
-import { captureBrowserEvidence, proposeBrowserMappings, proposeBrowserInstrumentation } from './browser-evidence.js';
+import { captureBrowserEvidence, proposeBrowserMappings, proposeBrowserInstrumentation, inspectBrowserBuildArtifacts } from './browser-evidence.js';
 import { pilot, exportPilot } from './pilot.js';
 
 const help = `TestLore — know why each test runs.
@@ -22,6 +22,7 @@ Usage: testlore <command> [options]
   mappings    Propose local runtime mappings for review (no automatic changes)
   browser-capture   Collect native browser inputs using the opt-in fixture
   browser-mappings  Propose reviewed URL/source-map mappings (--report, --settings)
+  browser-build Inspect explicit generated bundles/maps (--settings with artifacts)
   browser-instrument Propose an opt-in fixture patch (review only)
   agent       Create or inspect your project quality agent (--name optional)
   plugins     Choose project-fit tools with --recommend/--auto; enable, disable, select, check
@@ -139,6 +140,7 @@ export async function main(args = process.argv.slice(2)) {
     }
     case 'report': result=JSON.parse(fs.readFileSync(safePath(root,options.report||'.tddswarm/last-run.json'),'utf8'));if(!options.json){console.log(renderRunReport(result));return result.exitCode||0;}break;
     case 'mappings': result=routingProposals(root);break;
+    case 'browser-build': {if(!options.settings)throw new Error('--settings JSON with explicit artifacts is required');result=inspectBrowserBuildArtifacts(root,JSON.parse(fs.readFileSync(safePath(root,options.settings),'utf8')));break;}
     case 'browser-instrument': result=await proposeBrowserInstrumentation(root);break;
     case 'browser-capture': result=await captureBrowserEvidence(root,options);break;
     case 'browser-mappings': {if(!options.report||!options.settings)throw new Error('--report and --settings are required');result=proposeBrowserMappings(root,JSON.parse(fs.readFileSync(safePath(root,options.report),'utf8')),JSON.parse(fs.readFileSync(safePath(root,options.settings),'utf8')));break;}
