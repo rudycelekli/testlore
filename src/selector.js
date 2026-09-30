@@ -2,10 +2,10 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { createHash } from 'node:crypto';
 import { SOURCE, git, normalize, readConfig } from './files.js';
-import { runnerIdentity } from './provenance.js';
+import { runnerIdentity, snapshot } from './provenance.js';
 import { changedServices } from './inputs.js';
 import { runtimeEvidence } from './evidence.js';
-import { buildGraph, addSource, evidencePath, dependencies } from './graph.js';
+import { buildGraph, addSources, evidencePath, dependencies } from './graph.js';
 
 const GLOBAL = /(?:^|\/)(?:package(?:-lock)?\.json|npm-shrinkwrap\.json|pnpm-lock\.yaml|yarn\.lock|bun\.lockb?|tsconfig[^/]*\.json|jsconfig\.json|tddswarm\.config\.json|[^/]*(?:vitest|vite|jest|babel|webpack|rollup|playwright|cypress)[^/]*\.(?:[cm]?[jt]s|json)|(?:setup|globalSetup|globalTeardown)[^/]*\.[cm]?[jt]s|\.env(?:\..*)?|\.gitignore)$/;
 
@@ -20,8 +20,9 @@ export function gitChanges(root, base) {
 
 export function plan(root, options = {}) {
   root = path.resolve(root);
-  const graph = buildGraph(root);
   const config = readConfig(root);
+  const provenance = snapshot(root,config);
+  const graph = buildGraph(root);
   let changed, baseSha = null, prefix = '', gitError = null;
   if (options.changed) changed = [...new Set(options.changed.map(normalize))].filter(f => !f.startsWith('.tddswarm/')).sort();
   else {
@@ -37,21 +38,23 @@ export function plan(root, options = {}) {
   if(services.warnings.length)reasons.push('external-service-evidence-unavailable');
   if(config.runtime?.enabled && !runtime.usable)reasons.push(runtime.reason);
   if(graph.discovery?.complete===false)reasons.push('discovery-incomplete');
-  const canIgnore = f => (config.ignoreChanges || []).includes(f) && !graph.tests.some(t => evidencePath(graph, t, f));
+  const canIgnore = f => !GLOBAL.test(f) && !graph.configFiles.has(f) && (config.ignoreChanges || []).includes(f) && !graph.tests.some(t => evidencePath(graph, t, f));
   const ignored = changed.filter(canIgnore);
   const active = changed.filter(f => !canIgnore(f));
   // Old edges matter when a change removes an import or deletes a module.
   if (baseSha) {
     const oldFiles = new Set(graph.files);
     for (const file of changed) oldFiles.add(file);
+    const oldSources=[];
     for (const file of active.filter(f => SOURCE.test(f))) {
-      try { addSource(graph, file, git(root, ['show', `${baseSha}:${prefix}${file}`]), oldFiles); }
+      try { oldSources.push([file,git(root, ['show', `${baseSha}:${prefix}${file}`])]); }
       catch { /* New file: current edges already describe it. */ }
     }
+    if(oldSources.length)addSources(graph,oldSources,oldFiles);
   }
   if (options.full) reasons.push('explicit-full-run');
   if (gitError) reasons.push(gitError);
-  if (active.some(f => GLOBAL.test(f))) reasons.push('global-configuration-changed');
+  if (active.some(f => GLOBAL.test(f) || graph.configFiles.has(f))) reasons.push('global-configuration-changed');
   const unresolvedWarnings = graph.warnings.filter(w => !(runtime.usable && config.runtime?.closedWorld === true && ['runtime-dependency','dynamic-dependency'].includes(w.reason)));
   if (active.length && unresolvedWarnings.length) reasons.push('dependency-graph-incomplete');
   const unresolvedChanges = active.filter(f => !graph.files.includes(f) && !Object.values(graph.edges).some(deps => deps.includes(f)));
@@ -88,7 +91,7 @@ export function plan(root, options = {}) {
   const selected = decisions.filter(d => d.selected).map(d => d.test);
   const fingerprint = createHash('sha256').update(JSON.stringify({ config, sources: graph.sources, edges: graph.edges, changed, baseSha })).digest('hex');
   return {
-    schemaVersion: 1, mode: mode === 'none' && selected.length ? 'policy' : mode, base: baseSha, changed, ignored, selected,
+    schemaVersion: 1, provenance, serviceTokens: services.values, configurationFiles: [...graph.configFiles].sort(), mode: mode === 'none' && selected.length ? 'policy' : mode, base: baseSha, changed, ignored, selected,
     total: graph.tests.length, omitted: graph.tests.length - selected.length,
     selectionReduction: graph.tests.length ? 1 - selected.length / graph.tests.length : 0,
     reasons: [...new Set(reasons)], warnings: graph.warnings, decisions, fingerprint, discovery: graph.discovery,

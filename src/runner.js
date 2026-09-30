@@ -22,12 +22,16 @@ export function run(root, options = {}) {
   const config = readConfig(root);
   const selection = plan(root, options);
   if (selection.discovery?.complete===false)return {plan:selection,exitCode:2,error:'Native discovery is incomplete. Run the native full-suite command and repair discovery before selection.'};
+  const before=snapshot(root,config);
+  const serviceBefore=serviceInputs(root,config);
+  const decisionCheck=freshness(selection.provenance,before);
+  const plannedServices=JSON.stringify(selection.serviceTokens||{});
+  if(!decisionCheck.fresh || serviceBefore.warnings.length || plannedServices!==JSON.stringify(before.services||{}) || plannedServices!==JSON.stringify(serviceBefore.values))
+    return {plan:selection,exitCode:2,executed:false,complete:false,error:'Inputs changed during selection; rerun after source and service versions stabilize.',decisionDrift:[...decisionCheck.reasons,...(plannedServices!==JSON.stringify(before.services||{}) || plannedServices!==JSON.stringify(serviceBefore.values) ? ['planned-service-versions-changed'] : [])]};
   if (!selection.total) return { plan: selection, exitCode: 2, error: 'No test files detected. Run generate or configure a supported project.' };
   if (!selection.selected.length && !options.shadow) return { plan: selection, exitCode: 0, executed: false };
   if (!config.runner && selection.selected.some(f => !/\.[cm]?js$/.test(f))) return { plan: selection, exitCode: 2, error: 'Configure a TypeScript/JSX-capable runner. See docs/configuration.md.' };
   const executedTests = options.shadow ? selection.decisions.map(d => d.test) : selection.selected;
-  const before=snapshot(root,config);
-  const serviceBefore=serviceInputs(root,config);
   const execution = execute(root, executedTests, config, options);
   const sourceCheck=freshness(before,snapshot(root,config));
   const serviceAfter=serviceInputs(root,config);

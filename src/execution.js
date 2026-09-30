@@ -210,33 +210,31 @@ export function discover(root, config = {}) {
   } finally { fs.rmSync(temporary, { recursive: true, force: true }); }
 }
 
-const resolverCache = new Map();
-function resolutionStamp(root, config) {
-  const candidates = listFiles(root).filter(file => /(?:^|\/)(?:package(?:-lock)?\.json|[^/]*(?:jest|vite|vitest|babel|tsconfig)[^/]*\.(?:[cm]?[jt]s|json))$/.test(file));
-  for (const arg of config.runner || []) {
-    const explicit = arg.startsWith('--config=') ? arg.slice(9) : arg;
-    try { const local = localFile(root, explicit); if (fs.statSync(safePath(root, local)).isFile()) candidates.push(local); } catch {}
-  }
-  const digest = createHash('sha256');
-  for (const file of [...new Set(candidates)].sort()) digest.update(file).update(fs.readFileSync(safePath(root, file)));
-  return digest.digest('hex');
-}
-/** Delegate alias/package resolution to the configured framework, returning local paths only. */
-export function resolveNative(root, file, specifier, config = {}) {
+/** Resolve a graph's imports with one framework config/server setup. */
+export function resolveNativeBatch(root, imports, config = {}) {
   const adapter = adapterFor(config);
-  if (!['jest', 'vitest'].includes(adapter)) return null;
-  const key = JSON.stringify([path.resolve(root), file, specifier, config, resolutionStamp(root, config)]);
-  if (resolverCache.has(key)) {
-    const cached = resolverCache.get(key);
-    try { if (fs.statSync(safePath(root, cached)).isFile()) return cached; } catch {}
-    resolverCache.delete(key);
-  }
-  const request = { root: fs.realpathSync(root), file, specifier, adapter, command: frameworkBase(commandBase(config, adapter), adapter) };
-  const script = fileURLToPath(new URL('./reporters/resolve.js', import.meta.url));
-  const result = spawn(root, [process.execPath, script, JSON.stringify(request)], config);
-  let resolved = null;
-  try { if (result.status === 0) { const value = JSON.parse(result.stdout); if (value.file) resolved = localFile(root, value.file); } } catch {}
-  // New modules may appear between plans; unresolved lookups must be retried.
-  if (resolved) resolverCache.set(key, resolved);
-  return resolved;
+  if (!['jest', 'vitest'].includes(adapter)) return { resolutions: [], configFiles: [], complete: true, adapter, supported: false };
+  const temporary = fs.mkdtempSync(path.join(os.tmpdir(), 'tddswarm-resolution-'));
+  const requestFile = path.join(temporary, 'request.json');
+  try {
+    fs.writeFileSync(requestFile, JSON.stringify({ root: fs.realpathSync(root), adapter, imports, command: frameworkBase(commandBase(config, adapter), adapter) }));
+    const script = fileURLToPath(new URL('./reporters/resolve.js', import.meta.url));
+    const result = spawn(root, [process.execPath, script, requestFile], config);
+    if (result.status !== 0 || result.error) throw new Error(result.error?.message || 'Native resolver failed');
+    const value = JSON.parse(result.stdout);
+    if (!Array.isArray(value.resolutions) || value.resolutions.length !== imports.length || typeof value.complete !== 'boolean') throw new Error('Invalid native resolver report');
+    const resolutions = value.resolutions.map(resolution => ({ ...resolution, paths: (resolution.paths || []).map(file => localFile(root, file)) }));
+    const configFiles = (value.configFiles || []).flatMap(file => {
+      if(typeof file==='string' && file.split(path.sep).includes('node_modules'))return [];
+      try { return [localFile(root, file)]; } catch { value.complete=false; value.error='Native config dependency is outside the observed project'; return []; }
+    });
+    return { ...value, resolutions, configFiles, adapter, supported: true };
+  } catch (error) {
+    return { resolutions: imports.map(() => ({paths: [], unresolved: true})), configFiles: [], adapter, supported: true, complete: false, error: error.message };
+  } finally { fs.rmSync(temporary, { recursive: true, force: true }); }
+}
+
+/** Compatibility lookup. Graph construction uses the batched API. */
+export function resolveNative(root, file, specifier, config = {}) {
+  return resolveNativeBatch(root, [{file,specifier}], config).resolutions[0]?.paths?.[0] || null;
 }
