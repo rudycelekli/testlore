@@ -49,6 +49,27 @@ test('no observations, host spawn failures and malformed final output never beco
   assert.equal(result.observedFailure, null);
 });
 
+test('host final account rejects invented failures, invented scope, renamed cases and duplicate or malformed entries', () => {
+  for (const mutate of [
+    summary => summary.failedCases.push({id: 'phantom', file: 'test/phantom.test.js', name: 'invented failure'}),
+    summary => summary.executedFiles.push('test/phantom.test.js'),
+    summary => {summary.failedCases[0].name = 'renamed observed failure';},
+    summary => summary.failedCases.push({...summary.failedCases[0]}),
+    summary => summary.executedFiles.push(summary.executedFiles[0]),
+    summary => summary.failedCases.push(null),
+    summary => {summary.failedCases[0].id = 123;},
+    summary => summary.executedFiles.push({file: 'test/phantom.test.js'})
+  ]) {
+    const input = successfulObservation(), summary = JSON.parse(input.finalMessage); mutate(summary);
+    input.finalMessage = JSON.stringify(summary);
+    const result = assessHost(input);
+    assert.equal(result.qualified, false); assert.ok(result.reasons.some(reason => /host-summary-(failure-identities|scope)-mismatch/.test(reason)));
+  }
+  const reordered = successfulObservation(), summary = JSON.parse(reordered.finalMessage);
+  summary.executedFiles.reverse(); reordered.finalMessage = JSON.stringify(summary);
+  assert.equal(assessHost(reordered).qualified, true);
+});
+
 test('native streamed authentication errors retain the observed cause without a provider fallback', () => {
   const events = hostEvents('claude', JSON.stringify({type: 'system', subtype: 'api_retry', error_status: 401, error: 'authentication_failed', attempt: 1}) + '\n');
   assert.equal(events.nativeApiRetriesObserved, 1);
