@@ -13,6 +13,8 @@ import { digest,snapshot,freshness } from '../src/provenance.js';
 import {TEST} from '../src/files.js';
 
 const repository = fileURLToPath(new URL('../', import.meta.url));
+const byteAccounting = { encoding: 'UTF-8', inputBytes: 'JSON.stringify(role payload) before transportBudget is appended', outputBytes: 'JSON.stringify(parsed JSON response)', transportBudgetBytes: 'excluded', rawStdoutBytes: 'not measured; whitespace and other raw transport bytes are excluded', providerTokens: 'not measured' };
+const timingAccounting = { totalMs: 'project/source setup, frozen memory copy, retrieval, generation, candidate validation, repeated baseline and defect execution', setupMs: 'project/source setup and frozen memory copy', retrievalMs: 'recallLessons only', excluded: ['run-level historical validation and ground truth', 'final trial receipt write'] };
 const review = requirements => ({ accepted: true, findings: [], oracle: { independent: true, basis: [requirements] } });
 const testFile = (name, source) => ({ path: `test/${name}.test.js`, content: "import test from 'node:test';import assert from 'node:assert/strict';" + source });
 const sourceFile = (name, source) => ({ path: `src/${name}.js`, content: source });
@@ -76,7 +78,7 @@ function write(root, file, value) { const target = path.join(root, file); fs.mkd
 function install(root, files) { for (const f of files) write(root, f.path, f.content); }
 function configuration(enabled) { return { adapter: 'node', discovery: 'native', runner: [process.execPath, '--test', '{files}'], runnerTimeoutMs: 10000, learning: { enabled } }; }
 function project(root, files, enabled) { fs.mkdirSync(root); write(root, 'package.json', { type: 'module' }); write(root, 'tddswarm.config.json', configuration(enabled)); install(root, files); }
-function collect(root, config) { const discovery = discover(root, config); if (!discovery.complete || !discovery.files.length) throw new Error('Incomplete or empty native discovery'); return { ...execute(root, discovery.files, config, { capture: true, timeoutMs: 10000 }), discovery }; }
+function collect(root, config) { const discovery = discover(root, config); if (!discovery.complete || !discovery.files.length) return {complete:false,exitCode:2,tests:[],error:'Incomplete or empty native discovery',discovery}; return { ...execute(root, discovery.files, config, { capture: true, timeoutMs: 10000 }), discovery }; }
 function workerInventory(root) {
   const entries = [], queue = ['']; let bytes = 0;
   while (queue.length) {
@@ -121,6 +123,7 @@ export function summarizeEvaluation(trials, fixtures, repeat) {
 }
 
 export async function evaluateLearning({ output, agent, identity, dataset = defaultDataset(), repeat = 3, seed = 20260930, timeoutMs = 115000, maxOutputBytes = 65536, maxCalls = 54, evidenceKind = 'live-worker', stabilityRuns = 2 }) {
+  const controllerStart=performance.now();
   validateDataset(dataset);
   if (!Array.isArray(agent) || agent.length < 1 || agent.length > 32 || agent.some(arg => !boundedText(arg, 4096)) || !boundedText(identity, 256)) throw new Error('Explicit worker argv and provider/model identity are required');
   if (!Number.isInteger(repeat) || repeat < 1 || repeat > 5 || !Number.isInteger(seed) || seed < 0 || seed > 0xffffffff || !Number.isInteger(timeoutMs) || timeoutMs < 100 || timeoutMs > 120000 || !Number.isInteger(maxOutputBytes) || maxOutputBytes < 1024 || maxOutputBytes > 131072 || !Number.isInteger(maxCalls) || maxCalls < 1 || maxCalls > 360 || !['live-worker','protocol-fixture'].includes(evidenceKind)) throw new Error('Invalid evaluation budget');
@@ -133,26 +136,57 @@ export async function evaluateLearning({ output, agent, identity, dataset = defa
   const schedule = evaluationSchedule(dataset.fixtures, repeat, seed), trials = [], groundTruth = [];
   const sourceRevision = spawnSync('git', ['rev-parse', 'HEAD'], { cwd: repository, encoding: 'utf8', timeout: 10000 }).stdout?.trim() || null;
   const implementationHashes = Object.fromEntries(['scripts/learning-evaluation.js','src/learning.js','src/swarm.js','src/candidates.js','src/execution.js'].map(file => [file, digest(fs.readFileSync(path.join(repository,file)))]));
-  persist('manifest.json', { schemaVersion: 1, datasetHash: digest(dataset), dataset, agent, identity, evidenceKind, repeat, seed, budget: { callsRequired, maxCalls, timeoutMs, maxOutputBytes, stabilityRuns }, schedule, sourceRevision, implementationHashes, node: process.version });
+  persist('manifest.json', { schemaVersion: 1, datasetHash: digest(dataset), dataset, agent, identity, evidenceKind, repeat, seed, budget: { callsRequired, maxCalls, timeoutMs, maxOutputBytes, stabilityRuns }, accountingVersion:2, byteAccounting, timingAccounting, schedule, sourceRevision, implementationHashes, node: process.version });
+  let summary,controllerError,setupMs,sharedPreparationStart,sharedPreparationMs=null,groundTruthStart,groundTruthMs=null;
   try {
+    sharedPreparationStart=performance.now();setupMs=Math.round(sharedPreparationStart-controllerStart);
     const historical = path.join(workspace, 'history'); project(historical, [], true);
     for (const h of dataset.history) { install(historical, h.files); const staged = stagePatch(historical, { files: h.tests, requirements: h.requirements, review: review(h.requirements) }); const validation = validateCandidates(historical, staged.id); persist(`history-${h.id}.json`, validation); if (!validation.accepted) throw new Error('Historical example did not pass genuine candidate validation'); }
     const memory = fs.readFileSync(path.join(historical, '.tddswarm/learning/index.json'));
+    sharedPreparationMs=Math.round(performance.now()-sharedPreparationStart);groundTruthStart=performance.now();
     // Ground truth is evaluated in roots never passed to the worker. No held-out code enters memory.
     for (const f of dataset.fixtures) {
       const root = path.join(workspace, `labels-${f.id}`); project(root, f.files, false); install(root, f.referenceTests);
-      const baselines = Array.from({length:stabilityRuns}, () => collect(root, configuration(false))), base = baselines[0]; if (!baselines.every(successful) || !stableOutcomes(baselines)) throw new Error(`Independent reference baseline failed or unstable: ${f.id}`);
-      const defects = [];
-      for (const d of f.defects) { install(root, d.files); const executions = Array.from({length:stabilityRuns}, () => collect(root, configuration(false))), result = executions[0]; install(root, f.files); if (!executions.every(detected) || !stableOutcomes(executions)) throw new Error(`Undemonstrated, incomplete or unstable held-out defect: ${f.id}/${d.id}`); defects.push({ id: d.id, result, executions }); }
-      groundTruth.push({ fixture: f.id, base, baselines, defects }); persist(`labels-${f.id}.json`, groundTruth.at(-1));
+      function retainedExecutions(prefix) {
+        return Array.from({length:stabilityRuns}, (_,index) => {
+          let result;
+          try { result=collect(root,configuration(false)); }
+          catch(error) { result={complete:false,exitCode:2,tests:[],error:error.message}; }
+          persist(`${prefix}-${index}.json`,result);
+          return result;
+        });
+      }
+      const baselines=retainedExecutions(`labels-${f.id}-baseline`),record={fixture:f.id,base:baselines[0],baselines,defects:[],complete:false};
+      groundTruth.push(record);
+      if (!baselines.every(successful) || !stableOutcomes(baselines)) {
+        record.error=`Independent reference baseline failed or unstable: ${f.id}`;
+        persist(`labels-${f.id}.json`,record); throw new Error(record.error);
+      }
+      for (const d of f.defects) {
+        install(root,d.files);
+        let executions;
+        try { executions=retainedExecutions(`labels-${f.id}-defect-${d.id}`); }
+        finally { install(root,f.files); }
+        const stable=stableOutcomes(executions),demonstrated=executions.every(detected)&&stable;
+        record.defects.push({id:d.id,result:executions[0],executions,stable,detected:demonstrated});
+        if (!demonstrated) {
+          record.error=`Undemonstrated, incomplete or unstable held-out defect: ${f.id}/${d.id}`;
+          persist(`labels-${f.id}.json`,record); throw new Error(record.error);
+        }
+      }
+      record.complete=true; persist(`labels-${f.id}.json`,record);
     }
+    groundTruthMs=Math.round(performance.now()-groundTruthStart);
     let calls = 0;
     for (const pair of schedule) for (const arm of pair.arms) {
+      const totalStart=performance.now();
       const f = dataset.fixtures.find(item => item.id === pair.fixture), root = path.join(workspace, `${f.id}-${pair.repetition}-${arm}`), config = configuration(arm === 'with_memory'); project(root, f.files, config.learning.enabled);
       write(root, '.tddswarm/learning/index.json', memory.toString('utf8'));
+      const setupMs=Math.round(performance.now()-totalStart),retrievalStart=performance.now();
       const learning = recallLessons(root, f.requirements.slice(0,4096), { config, limit: 5, maxChars: 12000, contract: f.requirements });
-      const row = { fixture: f.id, specificationId: f.specificationId, repetition: pair.repetition, arm, order: trials.length, recalledRecords: learning.records.length, recall: 0, cases: 0, generationMs: 0, totalMs: 0, inputBytes: 0, outputBytes: 0, calls: [], defects: [], stabilityRuns, billing:{currency:'USD',amount:null,reason:'Worker transport does not report verified provider billing.'} };
-      const totalStart = performance.now(), generationStart = performance.now();
+      const retrievalMs=Math.round(performance.now()-retrievalStart);
+      const row = { accountingVersion:2, byteAccounting, setupMs, retrievalMs, fixture: f.id, specificationId: f.specificationId, repetition: pair.repetition, arm, order: trials.length, recalledRecords: learning.records.length, recall: 0, cases: 0, generationMs: 0, totalMs: 0, inputBytes: 0, outputBytes: 0, calls: [], defects: [], stabilityRuns, billing:{currency:'USD',amount:null,reason:'Worker transport does not report verified provider billing.'} };
+      const generationStart = performance.now();
       const context = f.files.map(file => ({ file: file.path, content: file.content }));
       const budget = { maxTasks: 1, maxOutputBytes, timeoutMs, callsPerTrial: 3, orderSeed: seed, instructions: 'Use only supplied context and requirements. No tools or filesystem reads. Return one task, then independent runnable Node tests named test/NAME.test.js (Node test and assert builtins; package type is module). Historical patterns are advisory. Do not infer expected values from current implementation.' };
       async function request(role, payload) {
@@ -182,10 +216,18 @@ export async function evaluateLearning({ output, agent, identity, dataset = defa
       } catch (error) { row.error = error.message; row.generationMs ||= Math.round(performance.now() - generationStart); }
       row.totalMs = Math.round(performance.now() - totalStart); trials.push(row); persist(`trial-${f.id}-${pair.repetition}-${arm}.json`, row);
     }
-    const summary = { schemaVersion: 1, dataset: dataset.id, datasetHash: digest(dataset), sourceRevision, evidenceKind, identity, repeat, seed, calls, budget: { maxCalls, timeoutMs, maxOutputBytes, stabilityRuns }, arms: ['without_memory','with_memory'].map(arm => { const rows = trials.filter(row => row.arm === arm); return { arm, trials: rows.length, failedTrials: rows.filter(row => row.error).length, detected: rows.reduce((n,row) => n + (row.error ? 0 : row.defects.filter(d => d.detected).length), 0), totalDefects: dataset.fixtures.reduce((n,f) => n + f.defects.length, 0) * repeat, meanCases: mean(rows.map(row => row.cases)), meanGenerationMs: mean(rows.map(row => row.generationMs)), meanOutputBytes: mean(rows.map(row => row.outputBytes)), meanInputBytes: mean(rows.map(row => row.inputBytes)), meanTotalMs: mean(rows.map(row => row.totalMs)), calls: rows.reduce((n,row)=>n+row.calls.length,0), stableTrials:rows.filter(row=>!row.error&&row.baselines&&stableOutcomes(row.baselines)&&row.defects.every(d=>d.stable)).length, billingUSD:null }; }), comparison: summarizeEvaluation(trials, dataset.fixtures, repeat), limitations: ['Constructed authored contract dataset; different IDs/hashes prevent exact overlap, but maintainers must audit semantic independence. No production-corpus or competitor claim.', 'Repeated outputs are clustered by specification, not treated as independent samples.', 'Worker identity is operator-declared; model version/seed and provider token billing are not verified by this protocol.', 'Fixed three calls per successful arm; identical argv, time and response-byte limits. Input size increases with memory.', 'Transport rejects responses exceeding the identical declared byte budget in both arms; this is not a provider token or dollar cap. Requested deadlines propagate to adapters; host suspension can delay timers and late successes are rejected.', 'Hold-out reference tests and defect payloads are absent from agent stdin and trial roots; trusted custom workers are not a security sandbox.', 'Each reference baseline, generated baseline and held-out defect executes independently at least twice; changed case identities/statuses, skips and incomplete runs invalidate the trial.', 'Input/output bytes and actual calls are transport resource measurements, not provider token counts. billingUSD is unknown, never zero or an invented estimate.', 'Generation time covers architect/author/reviewer; total time also covers candidate validation, repeated stability and defect execution.', 'Failures and incomplete trials remain visible and contribute zero recall; raw receipts stay local until explicitly reviewed for publication.', ...(evidenceKind === 'protocol-fixture' ? ['Protocol fixture workers are orchestration tests, not live AI or learning-quality evidence.'] : [])] };
+    summary = { schemaVersion: 1, accountingVersion:2, byteAccounting, timingAccounting, dataset: dataset.id, datasetHash: digest(dataset), sourceRevision, evidenceKind, identity, repeat, seed, calls, budget: { maxCalls, timeoutMs, maxOutputBytes, stabilityRuns }, arms: ['without_memory','with_memory'].map(arm => { const rows = trials.filter(row => row.arm === arm); return { arm, trials: rows.length, failedTrials: rows.filter(row => row.error).length, detected: rows.reduce((n,row) => n + (row.error ? 0 : row.defects.filter(d => d.detected).length), 0), totalDefects: dataset.fixtures.reduce((n,f) => n + f.defects.length, 0) * repeat, meanCases: mean(rows.map(row => row.cases)), meanGenerationMs: mean(rows.map(row => row.generationMs)), meanOutputBytes: mean(rows.map(row => row.outputBytes)), meanInputBytes: mean(rows.map(row => row.inputBytes)), meanTotalMs: mean(rows.map(row => row.totalMs)), meanSetupMs:mean(rows.map(row=>row.setupMs)),meanRetrievalMs:mean(rows.map(row=>row.retrievalMs)), calls: rows.reduce((n,row)=>n+row.calls.length,0), stableTrials:rows.filter(row=>!row.error&&row.baselines&&stableOutcomes(row.baselines)&&row.defects.every(d=>d.stable)).length, billingUSD:null }; }), comparison: summarizeEvaluation(trials, dataset.fixtures, repeat), limitations: ['Constructed authored contract dataset; different IDs/hashes prevent exact overlap, but maintainers must audit semantic independence. No production-corpus or competitor claim.', 'Repeated outputs are clustered by specification, not treated as independent samples.', 'Worker identity is operator-declared; model version/seed and provider token billing are not verified by this protocol.', 'Fixed three calls per successful arm; identical argv, time and response-byte limits. Input size increases with memory.', 'Transport rejects responses exceeding the identical declared byte budget in both arms; this is not a provider token or dollar cap. Requested deadlines propagate to adapters; host suspension can delay timers and late successes are rejected.', 'Hold-out reference tests and defect payloads are absent from agent stdin and trial roots; trusted custom workers are not a security sandbox.', 'Each reference baseline, generated baseline and held-out defect executes independently at least twice; changed case identities/statuses, skips and incomplete runs invalidate the trial.', 'Input/output counters measure normalized JSON payload bytes, excluding appended transportBudget and raw stdout bytes; they are not complete transport sizes or provider token counts. billingUSD is unknown, never zero or an invented estimate.', 'Generation time covers architect/author/reviewer; total time starts before project/source setup and frozen memory copy, includes retrieval, candidate validation, repeated stability and defect execution, and excludes run-level historical/ground-truth execution and final receipt writing.', 'Failures and incomplete trials remain visible and contribute zero recall; raw receipts stay local until explicitly reviewed for publication.', ...(evidenceKind === 'protocol-fixture' ? ['Protocol fixture workers are orchestration tests, not live AI or learning-quality evidence.'] : [])] };
     if (evidenceKind === 'protocol-fixture') summary.comparison.inference = 'inconclusive-protocol-fixture';
-    persist('summary.json', summary); return summary;
-  } finally { fs.rmSync(workspace, { recursive: true, force: true }); }
+    return summary;
+  } catch(error) { controllerError=error.message;throw error; }
+  finally {
+    if(sharedPreparationStart!==undefined&&sharedPreparationMs===null)sharedPreparationMs=Math.round(performance.now()-sharedPreparationStart);
+    if(groundTruthStart!==undefined&&groundTruthMs===null)groundTruthMs=Math.round(performance.now()-groundTruthStart);
+    fs.rmSync(workspace, { recursive: true, force: true });
+    const controller={elapsedMs:Math.round(performance.now()-controllerStart),setupMs,sharedPreparationMs,groundTruthMs,completed:Boolean(summary),error:controllerError||null,scope:'evaluateLearning entry through disposable workspace cleanup; process startup and final summary/controller receipt writes excluded'};
+    if(summary){summary.controller=controller;persist('summary.json',summary);}
+    persist('controller.json',{schemaVersion:1,accountingVersion:2,controller});
+  }
 }
 export async function main(argv = process.argv.slice(2)) {
   const options = {}; for (let i = 0; i < argv.length; i += 2) { if (!/^--(output|agent|identity|fixtures|repeat|seed|timeout-ms|max-output-bytes|max-calls|evidence-kind|stability-runs)$/.test(argv[i]) || argv[i+1] === undefined) throw new Error('Expected explicit --option value'); const key = argv[i].slice(2); if (Object.hasOwn(options,key)) throw new Error('Duplicate evaluation option'); options[key] = argv[i+1]; }

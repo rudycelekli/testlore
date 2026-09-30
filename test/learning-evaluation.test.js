@@ -29,6 +29,8 @@ test('paired controller executes withheld defects, retains raw outputs, and neve
   const warm = JSON.parse(fs.readFileSync(path.join(output,'trial-normalize-0-with_memory.json'))); const cold = JSON.parse(fs.readFileSync(path.join(output,'trial-normalize-0-without_memory.json')));
   assert.equal(warm.recalledRecords,0); assert.equal(warm.noApplicableMemory,true); assert.equal(summary.comparison.applicableMemoryInAllTrials,false); assert.equal(cold.recalledRecords,0); assert.equal(warm.calls.length,3); assert.equal(warm.calls[2].input.learning,undefined); assert.equal(warm.defects[0].detected,true); assert.equal(warm.defects[0].result.tests.some(t => t.status==='failed' && t.name!=='<file-load>'),true);
   assert.equal(warm.baselines.length,2);assert.equal(warm.defects[0].executions.length,2);assert.equal(warm.defects[0].stable,true);assert.equal(warm.billing.amount,null);assert.ok(warm.inputBytes>0);assert.equal(summary.arms.every(a=>a.stableTrials===2&&a.billingUSD===null),true);
+  assert.equal(warm.accountingVersion,2);assert.equal(warm.byteAccounting.transportBudgetBytes,'excluded');assert.ok(warm.setupMs>=0&&warm.retrievalMs>=0);assert.ok(warm.totalMs>=warm.setupMs+warm.retrievalMs-1);
+  assert.equal(warm.inputBytes,warm.calls.reduce((bytes,call)=>bytes+Buffer.byteLength(JSON.stringify(call.input)),0));assert.equal(warm.outputBytes,warm.calls.reduce((bytes,call)=>bytes+Buffer.byteLength(JSON.stringify(call.output)),0));
   await assert.rejects(evaluateLearning({output,agent:[process.execPath,worker],identity:'fixture',dataset,repeat:1,maxCalls:12}),/new directory/);
   const failureOutput=path.join(root,'failed-receipt'); const failed=await evaluateLearning({output:failureOutput,agent:[process.execPath,'-e','process.exit(9)'],identity:'failed-protocol-fixture',dataset,repeat:1,maxCalls:12,evidenceKind:'protocol-fixture'});
   assert.equal(failed.calls,4); assert.equal(failed.comparison.complete,false); assert.equal(failed.arms.every(arm=>arm.detected===0&&arm.failedTrials===2),true);
@@ -37,6 +39,38 @@ test('paired controller executes withheld defects, retains raw outputs, and neve
   assert.equal(injected.comparison.complete,false);assert.equal(injected.calls,4);
   assert.match(JSON.parse(fs.readFileSync(path.join(root,'injected','trial-normalize-0-with_memory.json'))).error,/outside the JSON protocol/);
   const ignored=await evaluateLearning({output:path.join(root,'ignored-write'),agent:[process.execPath,'-e',"const fs=require('node:fs');fs.writeFileSync('.tddswarm/hidden','side effect');process.stdout.write(JSON.stringify({tasks:[{subject:'src/normalize.js',instructions:'test'}]}));"],identity:'ignored-side-effect-fixture',dataset,repeat:1,maxCalls:12,evidenceKind:'protocol-fixture'});assert.equal(ignored.comparison.complete,false);assert.match(JSON.parse(fs.readFileSync(path.join(root,'ignored-write','trial-normalize-0-with_memory.json'))).error,/outside the JSON protocol/);
+});
+test('failed reference baseline and undemonstrated held-out fault retain native executions before cleanup without worker calls',async t=>{
+  const root=temporary(t),marker=path.join(root,'worker-called');
+  const agent=[process.execPath,'-e',`require('node:fs').writeFileSync(${JSON.stringify(marker)},'called');process.exit(9);`];
+  for(const failure of ['baseline','defect']){
+    const dataset=defaultDataset();dataset.fixtures=dataset.fixtures.slice(0,2);dataset.fixtures.forEach(f=>{f.defects=f.defects.slice(0,1);});
+    const first=dataset.fixtures[0];
+    if(failure==='baseline')first.referenceTests[0].content+="test('deliberate reference failure',()=>assert.fail('retain native failure'));";
+    else first.defects[0].files[0].content=first.files[0].content+' // behavior-preserving non-fault';
+    const output=path.join(root,failure);
+    await assert.rejects(evaluateLearning({output,agent,identity:'never-invoked-protocol-fixture',dataset,repeat:1,maxCalls:12,evidenceKind:'protocol-fixture'}),failure==='baseline'?/reference baseline failed/:/Undemonstrated/);
+    assert.equal(fs.existsSync(marker),false);
+    const label=JSON.parse(fs.readFileSync(path.join(output,'labels-normalize.json')));assert.equal(label.complete,false);assert.ok(label.error);assert.equal(label.baselines.length,2);
+    const {controller}=JSON.parse(fs.readFileSync(path.join(output,'controller.json')));assert.equal(controller.completed,false);assert.ok(controller.error);assert.ok(controller.groundTruthMs>=0&&controller.sharedPreparationMs>=0);assert.ok(controller.elapsedMs>=controller.setupMs+controller.sharedPreparationMs+controller.groundTruthMs-2);
+    for(let i=0;i<2;i++){
+      const baseline=JSON.parse(fs.readFileSync(path.join(output,`labels-normalize-baseline-${i}.json`)));assert.equal(baseline.complete,true);
+      if(failure==='baseline')assert.ok(baseline.tests.some(test=>test.status==='failed'&&test.name!=='<file-load>'));
+      else{const fault=JSON.parse(fs.readFileSync(path.join(output,`labels-normalize-defect-trim-omitted-${i}.json`)));assert.equal(fault.complete,true);assert.equal(fault.exitCode,0);assert.ok(fault.tests.every(test=>test.status==='passed'));}
+    }
+  }
+});
+test('focused protocol accounting labels normalized JSON bytes and includes setup and recall in trial spans',async t=>{
+  const root=temporary(t),dataset=defaultDataset();dataset.fixtures=dataset.fixtures.slice(0,2);dataset.fixtures.forEach(f=>{f.defects=f.defects.slice(0,1);});
+  const worker=path.join(root,'accounting.cjs');fs.writeFileSync(worker,"let input='';process.stdin.on('data',s=>input+=s);process.stdin.on('end',()=>{const p=JSON.parse(input);process.stdout.write('  '+JSON.stringify({tasks:[],transportBudgetReceived:Boolean(p.transportBudget)})+'\\n  ');});");
+  const output=path.join(root,'accounting');const summary=await evaluateLearning({output,agent:[process.execPath,worker],identity:'accounting-protocol-fixture',dataset,repeat:1,maxCalls:12,evidenceKind:'protocol-fixture'});
+  assert.equal(summary.calls,4);assert.equal(summary.accountingVersion,2);assert.equal(summary.comparison.complete,false);assert.equal(summary.byteAccounting.transportBudgetBytes,'excluded');assert.match(summary.byteAccounting.rawStdoutBytes,/not measured/);
+  assert.equal(summary.controller.completed,true);assert.ok(summary.controller.groundTruthMs>=0&&summary.controller.sharedPreparationMs>=0);assert.equal(JSON.parse(fs.readFileSync(path.join(output,'controller.json'))).controller.elapsedMs,summary.controller.elapsedMs);assert.deepEqual(JSON.parse(fs.readFileSync(path.join(output,'summary.json'))).controller,summary.controller);
+  for(const arm of ['with_memory','without_memory']){
+    const row=JSON.parse(fs.readFileSync(path.join(output,`trial-normalize-0-${arm}.json`))),call=row.calls[0];
+    assert.ok(Number.isInteger(row.setupMs)&&row.setupMs>=0);assert.ok(Number.isInteger(row.retrievalMs)&&row.retrievalMs>=0);assert.ok(row.totalMs>=row.setupMs+row.retrievalMs+row.generationMs-2);
+    assert.equal(call.input.transportBudget,undefined);assert.equal(call.output.transportBudgetReceived,true);assert.equal(row.inputBytes,Buffer.byteLength(JSON.stringify(call.input)));assert.equal(row.outputBytes,Buffer.byteLength(JSON.stringify(call.output)));assert.equal(call.outputBytes,row.outputBytes);
+  }
 });
 test('call budget fails before any output directory or worker invocation', async t => {
   const root = temporary(t), output = path.join(root,'budget-receipt');
