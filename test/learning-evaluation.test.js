@@ -3,7 +3,8 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { evaluateLearning, defaultDataset, validateDataset, evaluationSchedule, summarizeEvaluation } from '../scripts/learning-evaluation.js';
+import { evaluateLearning, defaultDataset, validateDataset, evaluationSchedule, summarizeEvaluation, stableOutcomes } from '../scripts/learning-evaluation.js';
+import {qualificationContracts} from '../scripts/qualification-contracts.js';
 
 function temporary(t) { const root = fs.mkdtempSync(path.join(os.tmpdir(),'testlore-evaluation-test-')); t.after(() => fs.rmSync(root,{recursive:true,force:true})); return root; }
 test('evaluation manifests reject overlap and traversal; schedules are repeatable and balanced', () => {
@@ -27,6 +28,7 @@ test('paired controller executes withheld defects, retains raw outputs, and neve
   assert.equal(summary.calls,12); assert.equal(summary.comparison.complete,true); assert.equal(summary.comparison.inference,'inconclusive-protocol-fixture'); assert.equal(summary.arms.every(arm => arm.detected===2),true);
   const warm = JSON.parse(fs.readFileSync(path.join(output,'trial-normalize-0-with_memory.json'))); const cold = JSON.parse(fs.readFileSync(path.join(output,'trial-normalize-0-without_memory.json')));
   assert.equal(warm.recalledRecords,0); assert.equal(warm.noApplicableMemory,true); assert.equal(summary.comparison.applicableMemoryInAllTrials,false); assert.equal(cold.recalledRecords,0); assert.equal(warm.calls.length,3); assert.equal(warm.calls[2].input.learning,undefined); assert.equal(warm.defects[0].detected,true); assert.equal(warm.defects[0].result.tests.some(t => t.status==='failed' && t.name!=='<file-load>'),true);
+  assert.equal(warm.baselines.length,2);assert.equal(warm.defects[0].executions.length,2);assert.equal(warm.defects[0].stable,true);assert.equal(warm.billing.amount,null);assert.ok(warm.inputBytes>0);assert.equal(summary.arms.every(a=>a.stableTrials===2&&a.billingUSD===null),true);
   await assert.rejects(evaluateLearning({output,agent:[process.execPath,worker],identity:'fixture',dataset,repeat:1,maxCalls:12}),/new directory/);
   const failureOutput=path.join(root,'failed-receipt'); const failed=await evaluateLearning({output:failureOutput,agent:[process.execPath,'-e','process.exit(9)'],identity:'failed-protocol-fixture',dataset,repeat:1,maxCalls:12,evidenceKind:'protocol-fixture'});
   assert.equal(failed.calls,4); assert.equal(failed.comparison.complete,false); assert.equal(failed.arms.every(arm=>arm.detected===0&&arm.failedTrials===2),true);
@@ -39,4 +41,16 @@ test('paired controller executes withheld defects, retains raw outputs, and neve
 test('call budget fails before any output directory or worker invocation', async t => {
   const root = temporary(t), output = path.join(root,'budget-receipt');
   await assert.rejects(evaluateLearning({output,agent:['unavailable'],identity:'fixture',maxCalls:1}),/requires 54 calls/); assert.equal(fs.existsSync(output),false);
+});
+test('stability needs repeated complete named outcomes and rejects skips, status changes and identity changes',()=>{
+  const r={complete:true,exitCode:0,tests:[{id:'a',file:'test/a.test.js',name:'contract',status:'passed'}]};
+  assert.equal(stableOutcomes([r,structuredClone(r)]),true);
+  for(const changed of [{...r,complete:false},{...r,exitCode:1},{...r,tests:[]},{...r,tests:[{...r.tests[0],status:'skipped'}]},{...r,tests:[{...r.tests[0],status:'failed'}]},{...r,tests:[{...r.tests[0],id:'other'}]}])assert.equal(stableOutcomes([r,changed]),false);
+  assert.equal(stableOutcomes([r]),false);
+});
+test('fresh qualification contracts are distinct and paired accounting retains total cost and input overhead',()=>{
+  const dataset=qualificationContracts();assert.equal(validateDataset(dataset),dataset);assert.equal(dataset.fixtures.length,6);assert.equal(dataset.fixtures.flatMap(f=>f.defects).length,18);
+  const fixtures=[{id:'one'}],without={fixture:'one',repetition:0,arm:'without_memory',recall:1,cases:1,generationMs:10,totalMs:30,inputBytes:100,outputBytes:50};
+  const result=summarizeEvaluation([without,{...without,arm:'with_memory',totalMs:45,inputBytes:200}],fixtures,1);
+  assert.equal(result.pairedMeans.totalMsDelta,15);assert.equal(result.pairedMeans.inputBytesDelta,100);assert.equal(result.inference,'inconclusive');
 });
