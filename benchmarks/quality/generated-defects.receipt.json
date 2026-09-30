@@ -1,0 +1,1728 @@
+{
+  "schemaVersion": 1,
+  "scope": "deterministic synthetic held-out defect validation controls; no model efficacy claim",
+  "generatedAt": "2026-09-30T01:10:21.207Z",
+  "node": "v22.19.0",
+  "passed": true,
+  "fixture": {
+    "implementation": "export function successor(value){if(!Number.isInteger(value))throw new TypeError('integer required');return value+1;}",
+    "independentOriginalCases": [
+      {
+        "name": "zero successor",
+        "assertion": "assert.equal(successor(0),1)"
+      },
+      {
+        "name": "negative successor",
+        "assertion": "assert.equal(successor(-1),0)"
+      },
+      {
+        "name": "upper boundary successor",
+        "assertion": "assert.equal(successor(100),101)"
+      },
+      {
+        "name": "reject noninteger input",
+        "assertion": "assert.throws(()=>successor(1.5),TypeError)"
+      }
+    ],
+    "corpus": [
+      {
+        "name": "zero off by one",
+        "path": "src/successor.js",
+        "content": "export function successor(value){if(!Number.isInteger(value))throw new TypeError('integer required');return value===0?0:value+1;}"
+      },
+      {
+        "name": "negative off by one",
+        "path": "src/successor.js",
+        "content": "export function successor(value){if(!Number.isInteger(value))throw new TypeError('integer required');return value<0?value:value+1;}"
+      },
+      {
+        "name": "upper boundary off by one",
+        "path": "src/successor.js",
+        "content": "export function successor(value){if(!Number.isInteger(value))throw new TypeError('integer required');return value===100?100:value+1;}"
+      },
+      {
+        "name": "accept noninteger",
+        "path": "src/successor.js",
+        "content": "export function successor(value){return value+1;}"
+      }
+    ]
+  },
+  "variants": [
+    {
+      "name": "requirement-tests-positive-control",
+      "candidateHash": "cf5392f49ef48194709f85466500f7509a8fcc4fb55777c4bf6e7fbe08518cb7",
+      "accepted": true,
+      "demonstrated": 4,
+      "caught": 4,
+      "missed": 0,
+      "recall": 1,
+      "reasons": [],
+      "validation": {
+        "schemaVersion": 1,
+        "id": "da1a539c-d10d-4b73-98c3-9d3c983318c9",
+        "validatedAt": "2026-09-30T01:10:18.829Z",
+        "manifestHash": "86718bd4da49017c7b90c46e5488dd67117881877fdfb55910cbefb4ca1a6b52",
+        "provenance": {
+          "schemaVersion": 1,
+          "revision": null,
+          "runner": "bed3c37fdbe38586de9a5bbdf496a2881ecfbc7ed4490bea6d5313b28aaa3446",
+          "environment": {
+            "node": "v22.19.0",
+            "platform": "darwin",
+            "arch": "arm64",
+            "labels": {}
+          },
+          "files": {
+            "package.json": "6dc1b06d6b093e9cccb20bee06a93836eee0420ae26803ca2ce4065d82f070d1",
+            "src/successor.js": "838b4fc142a75714071dffb76b88f4eac320a4043ea01556afd75247107dceef",
+            "test/original.test.js": "6fb2326f063a059997e12abce6d4922a9e804578dd118a18f61394a0e94b6f1e"
+          },
+          "fingerprint": "513bbb684422ba01f1b32d3c7dd9cc3c4739601d87b871e803337acc75099c07"
+        },
+        "accepted": true,
+        "reasons": [],
+        "original": {
+          "adapter": "node",
+          "exitCode": 0,
+          "durationMs": 105,
+          "tests": [
+            {
+              "file": "test/original.test.js",
+              "name": "zero successor",
+              "status": "passed",
+              "durationMs": 0.412667,
+              "line": 1,
+              "column": 116,
+              "id": "8ceaa1db6d8b3d2a54f2f3016cc254ad718fd5729757d61a53ae64349a7bd0e4"
+            },
+            {
+              "file": "test/original.test.js",
+              "name": "negative successor",
+              "status": "passed",
+              "durationMs": 0.066458,
+              "line": 2,
+              "column": 1,
+              "id": "80dc9589a00ea639b484f7d55fced694164e7e0f5abbbca68a4713ac66593e33"
+            },
+            {
+              "file": "test/original.test.js",
+              "name": "upper boundary successor",
+              "status": "passed",
+              "durationMs": 0.052083,
+              "line": 3,
+              "column": 1,
+              "id": "0f07038bc7d6a7f1273269101ecffc3bb5e5809a933b654a6b3e9063f8d69071"
+            },
+            {
+              "file": "test/original.test.js",
+              "name": "reject noninteger input",
+              "status": "passed",
+              "durationMs": 0.719959,
+              "line": 4,
+              "column": 1,
+              "id": "3d588be3d11cab82928d7a1b172ea37e2a137f8694e25065ec079bc1d21c2b15"
+            }
+          ],
+          "collectionFiles": [
+            "test/original.test.js"
+          ],
+          "requestedFiles": [
+            "test/original.test.js"
+          ],
+          "executedFiles": [
+            "test/original.test.js"
+          ],
+          "missingFiles": [],
+          "unknownFiles": [],
+          "complete": true,
+          "command": [
+            "node",
+            "--test",
+            "--test-reporter=<repository>/src/reporters/node.js",
+            "--test-reporter-destination=<temp>/tddswarm-report-<report>/results.json",
+            "./test/original.test.js"
+          ],
+          "stdout": "",
+          "stderr": "",
+          "signal": null,
+          "reportErrors": [],
+          "discovery": {
+            "files": [
+              "test/original.test.js"
+            ],
+            "complete": true,
+            "adapter": "node",
+            "warnings": []
+          }
+        },
+        "candidate": {
+          "adapter": "node",
+          "exitCode": 0,
+          "durationMs": 105,
+          "tests": [
+            {
+              "file": "test/invalid.test.js",
+              "name": "reject noninteger input",
+              "status": "passed",
+              "durationMs": 0.502375,
+              "line": 1,
+              "column": 116,
+              "id": "a384acf7220460892ac545b6b6e5670351bf9bbc8ea90f025ee74b47971f317b"
+            },
+            {
+              "file": "test/numeric.test.js",
+              "name": "zero successor",
+              "status": "passed",
+              "durationMs": 0.456709,
+              "line": 1,
+              "column": 116,
+              "id": "2c231adb2e416962b1f4c4e864d7435056565fe6ba69147068fe58cab8b11a46"
+            },
+            {
+              "file": "test/numeric.test.js",
+              "name": "negative successor",
+              "status": "passed",
+              "durationMs": 0.065584,
+              "line": 2,
+              "column": 1,
+              "id": "6b45da332a124ca92d18f7eef6fb866c5f90e311fe6aabff2b8442bddd486dc0"
+            },
+            {
+              "file": "test/numeric.test.js",
+              "name": "upper boundary successor",
+              "status": "passed",
+              "durationMs": 0.054542,
+              "line": 3,
+              "column": 1,
+              "id": "c254ff48903d6c30f639bf899ac29693305d19d25d28950a8232ad5ecd6ce500"
+            }
+          ],
+          "collectionFiles": [
+            "test/invalid.test.js",
+            "test/numeric.test.js"
+          ],
+          "requestedFiles": [
+            "test/invalid.test.js",
+            "test/numeric.test.js"
+          ],
+          "executedFiles": [
+            "test/invalid.test.js",
+            "test/numeric.test.js"
+          ],
+          "missingFiles": [],
+          "unknownFiles": [],
+          "complete": true,
+          "command": [
+            "node",
+            "--test",
+            "--test-reporter=<repository>/src/reporters/node.js",
+            "--test-reporter-destination=<temp>/tddswarm-report-<report>/results.json",
+            "./test/invalid.test.js",
+            "./test/numeric.test.js"
+          ],
+          "stdout": "",
+          "stderr": "",
+          "signal": null,
+          "reportErrors": [],
+          "discovery": {
+            "files": [
+              "test/invalid.test.js",
+              "test/numeric.test.js"
+            ],
+            "complete": true,
+            "adapter": "node",
+            "warnings": []
+          }
+        },
+        "missingCases": [],
+        "defects": [
+          {
+            "name": "zero off by one",
+            "path": "src/successor.js",
+            "baseline": {
+              "adapter": "node",
+              "exitCode": 1,
+              "durationMs": 103,
+              "tests": [
+                {
+                  "file": "test/original.test.js",
+                  "name": "zero successor",
+                  "status": "failed",
+                  "durationMs": 0.824042,
+                  "line": 1,
+                  "column": 116,
+                  "id": "8ceaa1db6d8b3d2a54f2f3016cc254ad718fd5729757d61a53ae64349a7bd0e4"
+                },
+                {
+                  "file": "test/original.test.js",
+                  "name": "negative successor",
+                  "status": "passed",
+                  "durationMs": 0.085667,
+                  "line": 2,
+                  "column": 1,
+                  "id": "80dc9589a00ea639b484f7d55fced694164e7e0f5abbbca68a4713ac66593e33"
+                },
+                {
+                  "file": "test/original.test.js",
+                  "name": "upper boundary successor",
+                  "status": "passed",
+                  "durationMs": 0.053167,
+                  "line": 3,
+                  "column": 1,
+                  "id": "0f07038bc7d6a7f1273269101ecffc3bb5e5809a933b654a6b3e9063f8d69071"
+                },
+                {
+                  "file": "test/original.test.js",
+                  "name": "reject noninteger input",
+                  "status": "passed",
+                  "durationMs": 0.701209,
+                  "line": 4,
+                  "column": 1,
+                  "id": "3d588be3d11cab82928d7a1b172ea37e2a137f8694e25065ec079bc1d21c2b15"
+                }
+              ],
+              "collectionFiles": [
+                "test/original.test.js"
+              ],
+              "requestedFiles": [
+                "test/original.test.js"
+              ],
+              "executedFiles": [
+                "test/original.test.js"
+              ],
+              "missingFiles": [],
+              "unknownFiles": [],
+              "complete": true,
+              "command": [
+                "node",
+                "--test",
+                "--test-reporter=<repository>/src/reporters/node.js",
+                "--test-reporter-destination=<temp>/tddswarm-report-<report>/results.json",
+                "./test/original.test.js"
+              ],
+              "stdout": "",
+              "stderr": "",
+              "signal": null,
+              "reportErrors": [],
+              "discovery": {
+                "files": [
+                  "test/original.test.js"
+                ],
+                "complete": true,
+                "adapter": "node",
+                "warnings": []
+              }
+            },
+            "candidate": {
+              "adapter": "node",
+              "exitCode": 1,
+              "durationMs": 99,
+              "tests": [
+                {
+                  "file": "test/invalid.test.js",
+                  "name": "reject noninteger input",
+                  "status": "passed",
+                  "durationMs": 0.518958,
+                  "line": 1,
+                  "column": 116,
+                  "id": "a384acf7220460892ac545b6b6e5670351bf9bbc8ea90f025ee74b47971f317b"
+                },
+                {
+                  "file": "test/numeric.test.js",
+                  "name": "zero successor",
+                  "status": "failed",
+                  "durationMs": 0.816042,
+                  "line": 1,
+                  "column": 116,
+                  "id": "2c231adb2e416962b1f4c4e864d7435056565fe6ba69147068fe58cab8b11a46"
+                },
+                {
+                  "file": "test/numeric.test.js",
+                  "name": "negative successor",
+                  "status": "passed",
+                  "durationMs": 0.085667,
+                  "line": 2,
+                  "column": 1,
+                  "id": "6b45da332a124ca92d18f7eef6fb866c5f90e311fe6aabff2b8442bddd486dc0"
+                },
+                {
+                  "file": "test/numeric.test.js",
+                  "name": "upper boundary successor",
+                  "status": "passed",
+                  "durationMs": 0.0545,
+                  "line": 3,
+                  "column": 1,
+                  "id": "c254ff48903d6c30f639bf899ac29693305d19d25d28950a8232ad5ecd6ce500"
+                }
+              ],
+              "collectionFiles": [
+                "test/invalid.test.js",
+                "test/numeric.test.js"
+              ],
+              "requestedFiles": [
+                "test/invalid.test.js",
+                "test/numeric.test.js"
+              ],
+              "executedFiles": [
+                "test/invalid.test.js",
+                "test/numeric.test.js"
+              ],
+              "missingFiles": [],
+              "unknownFiles": [],
+              "complete": true,
+              "command": [
+                "node",
+                "--test",
+                "--test-reporter=<repository>/src/reporters/node.js",
+                "--test-reporter-destination=<temp>/tddswarm-report-<report>/results.json",
+                "./test/invalid.test.js",
+                "./test/numeric.test.js"
+              ],
+              "stdout": "",
+              "stderr": "",
+              "signal": null,
+              "reportErrors": [],
+              "discovery": {
+                "files": [
+                  "test/invalid.test.js",
+                  "test/numeric.test.js"
+                ],
+                "complete": true,
+                "adapter": "node",
+                "warnings": []
+              }
+            },
+            "demonstrated": true,
+            "caught": true
+          },
+          {
+            "name": "negative off by one",
+            "path": "src/successor.js",
+            "baseline": {
+              "adapter": "node",
+              "exitCode": 1,
+              "durationMs": 98,
+              "tests": [
+                {
+                  "file": "test/original.test.js",
+                  "name": "zero successor",
+                  "status": "passed",
+                  "durationMs": 0.41175,
+                  "line": 1,
+                  "column": 116,
+                  "id": "8ceaa1db6d8b3d2a54f2f3016cc254ad718fd5729757d61a53ae64349a7bd0e4"
+                },
+                {
+                  "file": "test/original.test.js",
+                  "name": "negative successor",
+                  "status": "failed",
+                  "durationMs": 0.467666,
+                  "line": 2,
+                  "column": 1,
+                  "id": "80dc9589a00ea639b484f7d55fced694164e7e0f5abbbca68a4713ac66593e33"
+                },
+                {
+                  "file": "test/original.test.js",
+                  "name": "upper boundary successor",
+                  "status": "passed",
+                  "durationMs": 0.058625,
+                  "line": 3,
+                  "column": 1,
+                  "id": "0f07038bc7d6a7f1273269101ecffc3bb5e5809a933b654a6b3e9063f8d69071"
+                },
+                {
+                  "file": "test/original.test.js",
+                  "name": "reject noninteger input",
+                  "status": "passed",
+                  "durationMs": 0.678625,
+                  "line": 4,
+                  "column": 1,
+                  "id": "3d588be3d11cab82928d7a1b172ea37e2a137f8694e25065ec079bc1d21c2b15"
+                }
+              ],
+              "collectionFiles": [
+                "test/original.test.js"
+              ],
+              "requestedFiles": [
+                "test/original.test.js"
+              ],
+              "executedFiles": [
+                "test/original.test.js"
+              ],
+              "missingFiles": [],
+              "unknownFiles": [],
+              "complete": true,
+              "command": [
+                "node",
+                "--test",
+                "--test-reporter=<repository>/src/reporters/node.js",
+                "--test-reporter-destination=<temp>/tddswarm-report-<report>/results.json",
+                "./test/original.test.js"
+              ],
+              "stdout": "",
+              "stderr": "",
+              "signal": null,
+              "reportErrors": [],
+              "discovery": {
+                "files": [
+                  "test/original.test.js"
+                ],
+                "complete": true,
+                "adapter": "node",
+                "warnings": []
+              }
+            },
+            "candidate": {
+              "adapter": "node",
+              "exitCode": 1,
+              "durationMs": 99,
+              "tests": [
+                {
+                  "file": "test/invalid.test.js",
+                  "name": "reject noninteger input",
+                  "status": "passed",
+                  "durationMs": 0.508375,
+                  "line": 1,
+                  "column": 116,
+                  "id": "a384acf7220460892ac545b6b6e5670351bf9bbc8ea90f025ee74b47971f317b"
+                },
+                {
+                  "file": "test/numeric.test.js",
+                  "name": "zero successor",
+                  "status": "passed",
+                  "durationMs": 0.455708,
+                  "line": 1,
+                  "column": 116,
+                  "id": "2c231adb2e416962b1f4c4e864d7435056565fe6ba69147068fe58cab8b11a46"
+                },
+                {
+                  "file": "test/numeric.test.js",
+                  "name": "negative successor",
+                  "status": "failed",
+                  "durationMs": 0.446334,
+                  "line": 2,
+                  "column": 1,
+                  "id": "6b45da332a124ca92d18f7eef6fb866c5f90e311fe6aabff2b8442bddd486dc0"
+                },
+                {
+                  "file": "test/numeric.test.js",
+                  "name": "upper boundary successor",
+                  "status": "passed",
+                  "durationMs": 0.0595,
+                  "line": 3,
+                  "column": 1,
+                  "id": "c254ff48903d6c30f639bf899ac29693305d19d25d28950a8232ad5ecd6ce500"
+                }
+              ],
+              "collectionFiles": [
+                "test/invalid.test.js",
+                "test/numeric.test.js"
+              ],
+              "requestedFiles": [
+                "test/invalid.test.js",
+                "test/numeric.test.js"
+              ],
+              "executedFiles": [
+                "test/invalid.test.js",
+                "test/numeric.test.js"
+              ],
+              "missingFiles": [],
+              "unknownFiles": [],
+              "complete": true,
+              "command": [
+                "node",
+                "--test",
+                "--test-reporter=<repository>/src/reporters/node.js",
+                "--test-reporter-destination=<temp>/tddswarm-report-<report>/results.json",
+                "./test/invalid.test.js",
+                "./test/numeric.test.js"
+              ],
+              "stdout": "",
+              "stderr": "",
+              "signal": null,
+              "reportErrors": [],
+              "discovery": {
+                "files": [
+                  "test/invalid.test.js",
+                  "test/numeric.test.js"
+                ],
+                "complete": true,
+                "adapter": "node",
+                "warnings": []
+              }
+            },
+            "demonstrated": true,
+            "caught": true
+          },
+          {
+            "name": "upper boundary off by one",
+            "path": "src/successor.js",
+            "baseline": {
+              "adapter": "node",
+              "exitCode": 1,
+              "durationMs": 97,
+              "tests": [
+                {
+                  "file": "test/original.test.js",
+                  "name": "zero successor",
+                  "status": "passed",
+                  "durationMs": 0.439792,
+                  "line": 1,
+                  "column": 116,
+                  "id": "8ceaa1db6d8b3d2a54f2f3016cc254ad718fd5729757d61a53ae64349a7bd0e4"
+                },
+                {
+                  "file": "test/original.test.js",
+                  "name": "negative successor",
+                  "status": "passed",
+                  "durationMs": 0.069917,
+                  "line": 2,
+                  "column": 1,
+                  "id": "80dc9589a00ea639b484f7d55fced694164e7e0f5abbbca68a4713ac66593e33"
+                },
+                {
+                  "file": "test/original.test.js",
+                  "name": "upper boundary successor",
+                  "status": "failed",
+                  "durationMs": 0.45225,
+                  "line": 3,
+                  "column": 1,
+                  "id": "0f07038bc7d6a7f1273269101ecffc3bb5e5809a933b654a6b3e9063f8d69071"
+                },
+                {
+                  "file": "test/original.test.js",
+                  "name": "reject noninteger input",
+                  "status": "passed",
+                  "durationMs": 0.694,
+                  "line": 4,
+                  "column": 1,
+                  "id": "3d588be3d11cab82928d7a1b172ea37e2a137f8694e25065ec079bc1d21c2b15"
+                }
+              ],
+              "collectionFiles": [
+                "test/original.test.js"
+              ],
+              "requestedFiles": [
+                "test/original.test.js"
+              ],
+              "executedFiles": [
+                "test/original.test.js"
+              ],
+              "missingFiles": [],
+              "unknownFiles": [],
+              "complete": true,
+              "command": [
+                "node",
+                "--test",
+                "--test-reporter=<repository>/src/reporters/node.js",
+                "--test-reporter-destination=<temp>/tddswarm-report-<report>/results.json",
+                "./test/original.test.js"
+              ],
+              "stdout": "",
+              "stderr": "",
+              "signal": null,
+              "reportErrors": [],
+              "discovery": {
+                "files": [
+                  "test/original.test.js"
+                ],
+                "complete": true,
+                "adapter": "node",
+                "warnings": []
+              }
+            },
+            "candidate": {
+              "adapter": "node",
+              "exitCode": 1,
+              "durationMs": 99,
+              "tests": [
+                {
+                  "file": "test/invalid.test.js",
+                  "name": "reject noninteger input",
+                  "status": "passed",
+                  "durationMs": 0.511125,
+                  "line": 1,
+                  "column": 116,
+                  "id": "a384acf7220460892ac545b6b6e5670351bf9bbc8ea90f025ee74b47971f317b"
+                },
+                {
+                  "file": "test/numeric.test.js",
+                  "name": "zero successor",
+                  "status": "passed",
+                  "durationMs": 0.464208,
+                  "line": 1,
+                  "column": 116,
+                  "id": "2c231adb2e416962b1f4c4e864d7435056565fe6ba69147068fe58cab8b11a46"
+                },
+                {
+                  "file": "test/numeric.test.js",
+                  "name": "negative successor",
+                  "status": "passed",
+                  "durationMs": 0.06725,
+                  "line": 2,
+                  "column": 1,
+                  "id": "6b45da332a124ca92d18f7eef6fb866c5f90e311fe6aabff2b8442bddd486dc0"
+                },
+                {
+                  "file": "test/numeric.test.js",
+                  "name": "upper boundary successor",
+                  "status": "failed",
+                  "durationMs": 0.443083,
+                  "line": 3,
+                  "column": 1,
+                  "id": "c254ff48903d6c30f639bf899ac29693305d19d25d28950a8232ad5ecd6ce500"
+                }
+              ],
+              "collectionFiles": [
+                "test/invalid.test.js",
+                "test/numeric.test.js"
+              ],
+              "requestedFiles": [
+                "test/invalid.test.js",
+                "test/numeric.test.js"
+              ],
+              "executedFiles": [
+                "test/invalid.test.js",
+                "test/numeric.test.js"
+              ],
+              "missingFiles": [],
+              "unknownFiles": [],
+              "complete": true,
+              "command": [
+                "node",
+                "--test",
+                "--test-reporter=<repository>/src/reporters/node.js",
+                "--test-reporter-destination=<temp>/tddswarm-report-<report>/results.json",
+                "./test/invalid.test.js",
+                "./test/numeric.test.js"
+              ],
+              "stdout": "",
+              "stderr": "",
+              "signal": null,
+              "reportErrors": [],
+              "discovery": {
+                "files": [
+                  "test/invalid.test.js",
+                  "test/numeric.test.js"
+                ],
+                "complete": true,
+                "adapter": "node",
+                "warnings": []
+              }
+            },
+            "demonstrated": true,
+            "caught": true
+          },
+          {
+            "name": "accept noninteger",
+            "path": "src/successor.js",
+            "baseline": {
+              "adapter": "node",
+              "exitCode": 1,
+              "durationMs": 99,
+              "tests": [
+                {
+                  "file": "test/original.test.js",
+                  "name": "zero successor",
+                  "status": "passed",
+                  "durationMs": 0.399292,
+                  "line": 1,
+                  "column": 116,
+                  "id": "8ceaa1db6d8b3d2a54f2f3016cc254ad718fd5729757d61a53ae64349a7bd0e4"
+                },
+                {
+                  "file": "test/original.test.js",
+                  "name": "negative successor",
+                  "status": "passed",
+                  "durationMs": 0.063375,
+                  "line": 2,
+                  "column": 1,
+                  "id": "80dc9589a00ea639b484f7d55fced694164e7e0f5abbbca68a4713ac66593e33"
+                },
+                {
+                  "file": "test/original.test.js",
+                  "name": "upper boundary successor",
+                  "status": "passed",
+                  "durationMs": 0.050709,
+                  "line": 3,
+                  "column": 1,
+                  "id": "0f07038bc7d6a7f1273269101ecffc3bb5e5809a933b654a6b3e9063f8d69071"
+                },
+                {
+                  "file": "test/original.test.js",
+                  "name": "reject noninteger input",
+                  "status": "failed",
+                  "durationMs": 0.801833,
+                  "line": 4,
+                  "column": 1,
+                  "id": "3d588be3d11cab82928d7a1b172ea37e2a137f8694e25065ec079bc1d21c2b15"
+                }
+              ],
+              "collectionFiles": [
+                "test/original.test.js"
+              ],
+              "requestedFiles": [
+                "test/original.test.js"
+              ],
+              "executedFiles": [
+                "test/original.test.js"
+              ],
+              "missingFiles": [],
+              "unknownFiles": [],
+              "complete": true,
+              "command": [
+                "node",
+                "--test",
+                "--test-reporter=<repository>/src/reporters/node.js",
+                "--test-reporter-destination=<temp>/tddswarm-report-<report>/results.json",
+                "./test/original.test.js"
+              ],
+              "stdout": "",
+              "stderr": "",
+              "signal": null,
+              "reportErrors": [],
+              "discovery": {
+                "files": [
+                  "test/original.test.js"
+                ],
+                "complete": true,
+                "adapter": "node",
+                "warnings": []
+              }
+            },
+            "candidate": {
+              "adapter": "node",
+              "exitCode": 1,
+              "durationMs": 100,
+              "tests": [
+                {
+                  "file": "test/invalid.test.js",
+                  "name": "reject noninteger input",
+                  "status": "failed",
+                  "durationMs": 0.855333,
+                  "line": 1,
+                  "column": 116,
+                  "id": "a384acf7220460892ac545b6b6e5670351bf9bbc8ea90f025ee74b47971f317b"
+                },
+                {
+                  "file": "test/numeric.test.js",
+                  "name": "zero successor",
+                  "status": "passed",
+                  "durationMs": 0.456916,
+                  "line": 1,
+                  "column": 116,
+                  "id": "2c231adb2e416962b1f4c4e864d7435056565fe6ba69147068fe58cab8b11a46"
+                },
+                {
+                  "file": "test/numeric.test.js",
+                  "name": "negative successor",
+                  "status": "passed",
+                  "durationMs": 0.065167,
+                  "line": 2,
+                  "column": 1,
+                  "id": "6b45da332a124ca92d18f7eef6fb866c5f90e311fe6aabff2b8442bddd486dc0"
+                },
+                {
+                  "file": "test/numeric.test.js",
+                  "name": "upper boundary successor",
+                  "status": "passed",
+                  "durationMs": 0.052084,
+                  "line": 3,
+                  "column": 1,
+                  "id": "c254ff48903d6c30f639bf899ac29693305d19d25d28950a8232ad5ecd6ce500"
+                }
+              ],
+              "collectionFiles": [
+                "test/invalid.test.js",
+                "test/numeric.test.js"
+              ],
+              "requestedFiles": [
+                "test/invalid.test.js",
+                "test/numeric.test.js"
+              ],
+              "executedFiles": [
+                "test/invalid.test.js",
+                "test/numeric.test.js"
+              ],
+              "missingFiles": [],
+              "unknownFiles": [],
+              "complete": true,
+              "command": [
+                "node",
+                "--test",
+                "--test-reporter=<repository>/src/reporters/node.js",
+                "--test-reporter-destination=<temp>/tddswarm-report-<report>/results.json",
+                "./test/invalid.test.js",
+                "./test/numeric.test.js"
+              ],
+              "stdout": "",
+              "stderr": "",
+              "signal": null,
+              "reportErrors": [],
+              "discovery": {
+                "files": [
+                  "test/invalid.test.js",
+                  "test/numeric.test.js"
+                ],
+                "complete": true,
+                "adapter": "node",
+                "warnings": []
+              }
+            },
+            "demonstrated": true,
+            "caught": true
+          }
+        ],
+        "measured": {
+          "execution": true,
+          "heldOutDefects": 4
+        },
+        "isolation": "disposable-file-copy-with-trusted-dependencies",
+        "applied": false
+      }
+    },
+    {
+      "name": "same-name-vacuous-tests-negative-control",
+      "candidateHash": "6c017a573981abd7cc9a49919710cbae885693d47ae9c96c852fca33cfd4b00b",
+      "accepted": false,
+      "demonstrated": 4,
+      "caught": 0,
+      "missed": 4,
+      "recall": 0,
+      "reasons": [
+        "held-out-defect-missed:zero off by one",
+        "held-out-defect-missed:negative off by one",
+        "held-out-defect-missed:upper boundary off by one",
+        "held-out-defect-missed:accept noninteger"
+      ],
+      "validation": {
+        "schemaVersion": 1,
+        "id": "a58ade59-14f7-4ee1-884a-ce8019125dbd",
+        "validatedAt": "2026-09-30T01:10:21.207Z",
+        "manifestHash": "61bd2cb924f282ffd8f902099250b2245fbbdf9c1f5290d60d1278956a64d733",
+        "provenance": {
+          "schemaVersion": 1,
+          "revision": null,
+          "runner": "bed3c37fdbe38586de9a5bbdf496a2881ecfbc7ed4490bea6d5313b28aaa3446",
+          "environment": {
+            "node": "v22.19.0",
+            "platform": "darwin",
+            "arch": "arm64",
+            "labels": {}
+          },
+          "files": {
+            "package.json": "6dc1b06d6b093e9cccb20bee06a93836eee0420ae26803ca2ce4065d82f070d1",
+            "src/successor.js": "838b4fc142a75714071dffb76b88f4eac320a4043ea01556afd75247107dceef",
+            "test/original.test.js": "6fb2326f063a059997e12abce6d4922a9e804578dd118a18f61394a0e94b6f1e"
+          },
+          "fingerprint": "513bbb684422ba01f1b32d3c7dd9cc3c4739601d87b871e803337acc75099c07"
+        },
+        "accepted": false,
+        "reasons": [
+          "held-out-defect-missed:zero off by one",
+          "held-out-defect-missed:negative off by one",
+          "held-out-defect-missed:upper boundary off by one",
+          "held-out-defect-missed:accept noninteger"
+        ],
+        "original": {
+          "adapter": "node",
+          "exitCode": 0,
+          "durationMs": 98,
+          "tests": [
+            {
+              "file": "test/original.test.js",
+              "name": "zero successor",
+              "status": "passed",
+              "durationMs": 0.408417,
+              "line": 1,
+              "column": 116,
+              "id": "8ceaa1db6d8b3d2a54f2f3016cc254ad718fd5729757d61a53ae64349a7bd0e4"
+            },
+            {
+              "file": "test/original.test.js",
+              "name": "negative successor",
+              "status": "passed",
+              "durationMs": 0.067041,
+              "line": 2,
+              "column": 1,
+              "id": "80dc9589a00ea639b484f7d55fced694164e7e0f5abbbca68a4713ac66593e33"
+            },
+            {
+              "file": "test/original.test.js",
+              "name": "upper boundary successor",
+              "status": "passed",
+              "durationMs": 0.053042,
+              "line": 3,
+              "column": 1,
+              "id": "0f07038bc7d6a7f1273269101ecffc3bb5e5809a933b654a6b3e9063f8d69071"
+            },
+            {
+              "file": "test/original.test.js",
+              "name": "reject noninteger input",
+              "status": "passed",
+              "durationMs": 0.612042,
+              "line": 4,
+              "column": 1,
+              "id": "3d588be3d11cab82928d7a1b172ea37e2a137f8694e25065ec079bc1d21c2b15"
+            }
+          ],
+          "collectionFiles": [
+            "test/original.test.js"
+          ],
+          "requestedFiles": [
+            "test/original.test.js"
+          ],
+          "executedFiles": [
+            "test/original.test.js"
+          ],
+          "missingFiles": [],
+          "unknownFiles": [],
+          "complete": true,
+          "command": [
+            "node",
+            "--test",
+            "--test-reporter=<repository>/src/reporters/node.js",
+            "--test-reporter-destination=<temp>/tddswarm-report-<report>/results.json",
+            "./test/original.test.js"
+          ],
+          "stdout": "",
+          "stderr": "",
+          "signal": null,
+          "reportErrors": [],
+          "discovery": {
+            "files": [
+              "test/original.test.js"
+            ],
+            "complete": true,
+            "adapter": "node",
+            "warnings": []
+          }
+        },
+        "candidate": {
+          "adapter": "node",
+          "exitCode": 0,
+          "durationMs": 100,
+          "tests": [
+            {
+              "file": "test/invalid.test.js",
+              "name": "reject noninteger input",
+              "status": "passed",
+              "durationMs": 0.40525,
+              "line": 1,
+              "column": 116,
+              "id": "a384acf7220460892ac545b6b6e5670351bf9bbc8ea90f025ee74b47971f317b"
+            },
+            {
+              "file": "test/numeric.test.js",
+              "name": "zero successor",
+              "status": "passed",
+              "durationMs": 0.446125,
+              "line": 1,
+              "column": 116,
+              "id": "2c231adb2e416962b1f4c4e864d7435056565fe6ba69147068fe58cab8b11a46"
+            },
+            {
+              "file": "test/numeric.test.js",
+              "name": "negative successor",
+              "status": "passed",
+              "durationMs": 0.190291,
+              "line": 2,
+              "column": 1,
+              "id": "6b45da332a124ca92d18f7eef6fb866c5f90e311fe6aabff2b8442bddd486dc0"
+            },
+            {
+              "file": "test/numeric.test.js",
+              "name": "upper boundary successor",
+              "status": "passed",
+              "durationMs": 0.086542,
+              "line": 3,
+              "column": 1,
+              "id": "c254ff48903d6c30f639bf899ac29693305d19d25d28950a8232ad5ecd6ce500"
+            }
+          ],
+          "collectionFiles": [
+            "test/invalid.test.js",
+            "test/numeric.test.js"
+          ],
+          "requestedFiles": [
+            "test/invalid.test.js",
+            "test/numeric.test.js"
+          ],
+          "executedFiles": [
+            "test/invalid.test.js",
+            "test/numeric.test.js"
+          ],
+          "missingFiles": [],
+          "unknownFiles": [],
+          "complete": true,
+          "command": [
+            "node",
+            "--test",
+            "--test-reporter=<repository>/src/reporters/node.js",
+            "--test-reporter-destination=<temp>/tddswarm-report-<report>/results.json",
+            "./test/invalid.test.js",
+            "./test/numeric.test.js"
+          ],
+          "stdout": "",
+          "stderr": "",
+          "signal": null,
+          "reportErrors": [],
+          "discovery": {
+            "files": [
+              "test/invalid.test.js",
+              "test/numeric.test.js"
+            ],
+            "complete": true,
+            "adapter": "node",
+            "warnings": []
+          }
+        },
+        "missingCases": [],
+        "defects": [
+          {
+            "name": "zero off by one",
+            "path": "src/successor.js",
+            "baseline": {
+              "adapter": "node",
+              "exitCode": 1,
+              "durationMs": 96,
+              "tests": [
+                {
+                  "file": "test/original.test.js",
+                  "name": "zero successor",
+                  "status": "failed",
+                  "durationMs": 0.84075,
+                  "line": 1,
+                  "column": 116,
+                  "id": "8ceaa1db6d8b3d2a54f2f3016cc254ad718fd5729757d61a53ae64349a7bd0e4"
+                },
+                {
+                  "file": "test/original.test.js",
+                  "name": "negative successor",
+                  "status": "passed",
+                  "durationMs": 0.0865,
+                  "line": 2,
+                  "column": 1,
+                  "id": "80dc9589a00ea639b484f7d55fced694164e7e0f5abbbca68a4713ac66593e33"
+                },
+                {
+                  "file": "test/original.test.js",
+                  "name": "upper boundary successor",
+                  "status": "passed",
+                  "durationMs": 0.053625,
+                  "line": 3,
+                  "column": 1,
+                  "id": "0f07038bc7d6a7f1273269101ecffc3bb5e5809a933b654a6b3e9063f8d69071"
+                },
+                {
+                  "file": "test/original.test.js",
+                  "name": "reject noninteger input",
+                  "status": "passed",
+                  "durationMs": 0.595125,
+                  "line": 4,
+                  "column": 1,
+                  "id": "3d588be3d11cab82928d7a1b172ea37e2a137f8694e25065ec079bc1d21c2b15"
+                }
+              ],
+              "collectionFiles": [
+                "test/original.test.js"
+              ],
+              "requestedFiles": [
+                "test/original.test.js"
+              ],
+              "executedFiles": [
+                "test/original.test.js"
+              ],
+              "missingFiles": [],
+              "unknownFiles": [],
+              "complete": true,
+              "command": [
+                "node",
+                "--test",
+                "--test-reporter=<repository>/src/reporters/node.js",
+                "--test-reporter-destination=<temp>/tddswarm-report-<report>/results.json",
+                "./test/original.test.js"
+              ],
+              "stdout": "",
+              "stderr": "",
+              "signal": null,
+              "reportErrors": [],
+              "discovery": {
+                "files": [
+                  "test/original.test.js"
+                ],
+                "complete": true,
+                "adapter": "node",
+                "warnings": []
+              }
+            },
+            "candidate": {
+              "adapter": "node",
+              "exitCode": 0,
+              "durationMs": 102,
+              "tests": [
+                {
+                  "file": "test/invalid.test.js",
+                  "name": "reject noninteger input",
+                  "status": "passed",
+                  "durationMs": 0.395291,
+                  "line": 1,
+                  "column": 116,
+                  "id": "a384acf7220460892ac545b6b6e5670351bf9bbc8ea90f025ee74b47971f317b"
+                },
+                {
+                  "file": "test/numeric.test.js",
+                  "name": "zero successor",
+                  "status": "passed",
+                  "durationMs": 0.449291,
+                  "line": 1,
+                  "column": 116,
+                  "id": "2c231adb2e416962b1f4c4e864d7435056565fe6ba69147068fe58cab8b11a46"
+                },
+                {
+                  "file": "test/numeric.test.js",
+                  "name": "negative successor",
+                  "status": "passed",
+                  "durationMs": 0.062875,
+                  "line": 2,
+                  "column": 1,
+                  "id": "6b45da332a124ca92d18f7eef6fb866c5f90e311fe6aabff2b8442bddd486dc0"
+                },
+                {
+                  "file": "test/numeric.test.js",
+                  "name": "upper boundary successor",
+                  "status": "passed",
+                  "durationMs": 0.052458,
+                  "line": 3,
+                  "column": 1,
+                  "id": "c254ff48903d6c30f639bf899ac29693305d19d25d28950a8232ad5ecd6ce500"
+                }
+              ],
+              "collectionFiles": [
+                "test/invalid.test.js",
+                "test/numeric.test.js"
+              ],
+              "requestedFiles": [
+                "test/invalid.test.js",
+                "test/numeric.test.js"
+              ],
+              "executedFiles": [
+                "test/invalid.test.js",
+                "test/numeric.test.js"
+              ],
+              "missingFiles": [],
+              "unknownFiles": [],
+              "complete": true,
+              "command": [
+                "node",
+                "--test",
+                "--test-reporter=<repository>/src/reporters/node.js",
+                "--test-reporter-destination=<temp>/tddswarm-report-<report>/results.json",
+                "./test/invalid.test.js",
+                "./test/numeric.test.js"
+              ],
+              "stdout": "",
+              "stderr": "",
+              "signal": null,
+              "reportErrors": [],
+              "discovery": {
+                "files": [
+                  "test/invalid.test.js",
+                  "test/numeric.test.js"
+                ],
+                "complete": true,
+                "adapter": "node",
+                "warnings": []
+              }
+            },
+            "demonstrated": true,
+            "caught": false
+          },
+          {
+            "name": "negative off by one",
+            "path": "src/successor.js",
+            "baseline": {
+              "adapter": "node",
+              "exitCode": 1,
+              "durationMs": 94,
+              "tests": [
+                {
+                  "file": "test/original.test.js",
+                  "name": "zero successor",
+                  "status": "passed",
+                  "durationMs": 0.409333,
+                  "line": 1,
+                  "column": 116,
+                  "id": "8ceaa1db6d8b3d2a54f2f3016cc254ad718fd5729757d61a53ae64349a7bd0e4"
+                },
+                {
+                  "file": "test/original.test.js",
+                  "name": "negative successor",
+                  "status": "failed",
+                  "durationMs": 0.474292,
+                  "line": 2,
+                  "column": 1,
+                  "id": "80dc9589a00ea639b484f7d55fced694164e7e0f5abbbca68a4713ac66593e33"
+                },
+                {
+                  "file": "test/original.test.js",
+                  "name": "upper boundary successor",
+                  "status": "passed",
+                  "durationMs": 0.057916,
+                  "line": 3,
+                  "column": 1,
+                  "id": "0f07038bc7d6a7f1273269101ecffc3bb5e5809a933b654a6b3e9063f8d69071"
+                },
+                {
+                  "file": "test/original.test.js",
+                  "name": "reject noninteger input",
+                  "status": "passed",
+                  "durationMs": 0.700375,
+                  "line": 4,
+                  "column": 1,
+                  "id": "3d588be3d11cab82928d7a1b172ea37e2a137f8694e25065ec079bc1d21c2b15"
+                }
+              ],
+              "collectionFiles": [
+                "test/original.test.js"
+              ],
+              "requestedFiles": [
+                "test/original.test.js"
+              ],
+              "executedFiles": [
+                "test/original.test.js"
+              ],
+              "missingFiles": [],
+              "unknownFiles": [],
+              "complete": true,
+              "command": [
+                "node",
+                "--test",
+                "--test-reporter=<repository>/src/reporters/node.js",
+                "--test-reporter-destination=<temp>/tddswarm-report-<report>/results.json",
+                "./test/original.test.js"
+              ],
+              "stdout": "",
+              "stderr": "",
+              "signal": null,
+              "reportErrors": [],
+              "discovery": {
+                "files": [
+                  "test/original.test.js"
+                ],
+                "complete": true,
+                "adapter": "node",
+                "warnings": []
+              }
+            },
+            "candidate": {
+              "adapter": "node",
+              "exitCode": 0,
+              "durationMs": 104,
+              "tests": [
+                {
+                  "file": "test/invalid.test.js",
+                  "name": "reject noninteger input",
+                  "status": "passed",
+                  "durationMs": 0.372542,
+                  "line": 1,
+                  "column": 116,
+                  "id": "a384acf7220460892ac545b6b6e5670351bf9bbc8ea90f025ee74b47971f317b"
+                },
+                {
+                  "file": "test/numeric.test.js",
+                  "name": "zero successor",
+                  "status": "passed",
+                  "durationMs": 0.445625,
+                  "line": 1,
+                  "column": 116,
+                  "id": "2c231adb2e416962b1f4c4e864d7435056565fe6ba69147068fe58cab8b11a46"
+                },
+                {
+                  "file": "test/numeric.test.js",
+                  "name": "negative successor",
+                  "status": "passed",
+                  "durationMs": 0.064,
+                  "line": 2,
+                  "column": 1,
+                  "id": "6b45da332a124ca92d18f7eef6fb866c5f90e311fe6aabff2b8442bddd486dc0"
+                },
+                {
+                  "file": "test/numeric.test.js",
+                  "name": "upper boundary successor",
+                  "status": "passed",
+                  "durationMs": 0.050958,
+                  "line": 3,
+                  "column": 1,
+                  "id": "c254ff48903d6c30f639bf899ac29693305d19d25d28950a8232ad5ecd6ce500"
+                }
+              ],
+              "collectionFiles": [
+                "test/invalid.test.js",
+                "test/numeric.test.js"
+              ],
+              "requestedFiles": [
+                "test/invalid.test.js",
+                "test/numeric.test.js"
+              ],
+              "executedFiles": [
+                "test/invalid.test.js",
+                "test/numeric.test.js"
+              ],
+              "missingFiles": [],
+              "unknownFiles": [],
+              "complete": true,
+              "command": [
+                "node",
+                "--test",
+                "--test-reporter=<repository>/src/reporters/node.js",
+                "--test-reporter-destination=<temp>/tddswarm-report-<report>/results.json",
+                "./test/invalid.test.js",
+                "./test/numeric.test.js"
+              ],
+              "stdout": "",
+              "stderr": "",
+              "signal": null,
+              "reportErrors": [],
+              "discovery": {
+                "files": [
+                  "test/invalid.test.js",
+                  "test/numeric.test.js"
+                ],
+                "complete": true,
+                "adapter": "node",
+                "warnings": []
+              }
+            },
+            "demonstrated": true,
+            "caught": false
+          },
+          {
+            "name": "upper boundary off by one",
+            "path": "src/successor.js",
+            "baseline": {
+              "adapter": "node",
+              "exitCode": 1,
+              "durationMs": 93,
+              "tests": [
+                {
+                  "file": "test/original.test.js",
+                  "name": "zero successor",
+                  "status": "passed",
+                  "durationMs": 0.40875,
+                  "line": 1,
+                  "column": 116,
+                  "id": "8ceaa1db6d8b3d2a54f2f3016cc254ad718fd5729757d61a53ae64349a7bd0e4"
+                },
+                {
+                  "file": "test/original.test.js",
+                  "name": "negative successor",
+                  "status": "passed",
+                  "durationMs": 0.065209,
+                  "line": 2,
+                  "column": 1,
+                  "id": "80dc9589a00ea639b484f7d55fced694164e7e0f5abbbca68a4713ac66593e33"
+                },
+                {
+                  "file": "test/original.test.js",
+                  "name": "upper boundary successor",
+                  "status": "failed",
+                  "durationMs": 0.43525,
+                  "line": 3,
+                  "column": 1,
+                  "id": "0f07038bc7d6a7f1273269101ecffc3bb5e5809a933b654a6b3e9063f8d69071"
+                },
+                {
+                  "file": "test/original.test.js",
+                  "name": "reject noninteger input",
+                  "status": "passed",
+                  "durationMs": 0.623292,
+                  "line": 4,
+                  "column": 1,
+                  "id": "3d588be3d11cab82928d7a1b172ea37e2a137f8694e25065ec079bc1d21c2b15"
+                }
+              ],
+              "collectionFiles": [
+                "test/original.test.js"
+              ],
+              "requestedFiles": [
+                "test/original.test.js"
+              ],
+              "executedFiles": [
+                "test/original.test.js"
+              ],
+              "missingFiles": [],
+              "unknownFiles": [],
+              "complete": true,
+              "command": [
+                "node",
+                "--test",
+                "--test-reporter=<repository>/src/reporters/node.js",
+                "--test-reporter-destination=<temp>/tddswarm-report-<report>/results.json",
+                "./test/original.test.js"
+              ],
+              "stdout": "",
+              "stderr": "",
+              "signal": null,
+              "reportErrors": [],
+              "discovery": {
+                "files": [
+                  "test/original.test.js"
+                ],
+                "complete": true,
+                "adapter": "node",
+                "warnings": []
+              }
+            },
+            "candidate": {
+              "adapter": "node",
+              "exitCode": 0,
+              "durationMs": 102,
+              "tests": [
+                {
+                  "file": "test/invalid.test.js",
+                  "name": "reject noninteger input",
+                  "status": "passed",
+                  "durationMs": 0.423209,
+                  "line": 1,
+                  "column": 116,
+                  "id": "a384acf7220460892ac545b6b6e5670351bf9bbc8ea90f025ee74b47971f317b"
+                },
+                {
+                  "file": "test/numeric.test.js",
+                  "name": "zero successor",
+                  "status": "passed",
+                  "durationMs": 0.450708,
+                  "line": 1,
+                  "column": 116,
+                  "id": "2c231adb2e416962b1f4c4e864d7435056565fe6ba69147068fe58cab8b11a46"
+                },
+                {
+                  "file": "test/numeric.test.js",
+                  "name": "negative successor",
+                  "status": "passed",
+                  "durationMs": 0.062875,
+                  "line": 2,
+                  "column": 1,
+                  "id": "6b45da332a124ca92d18f7eef6fb866c5f90e311fe6aabff2b8442bddd486dc0"
+                },
+                {
+                  "file": "test/numeric.test.js",
+                  "name": "upper boundary successor",
+                  "status": "passed",
+                  "durationMs": 0.051542,
+                  "line": 3,
+                  "column": 1,
+                  "id": "c254ff48903d6c30f639bf899ac29693305d19d25d28950a8232ad5ecd6ce500"
+                }
+              ],
+              "collectionFiles": [
+                "test/invalid.test.js",
+                "test/numeric.test.js"
+              ],
+              "requestedFiles": [
+                "test/invalid.test.js",
+                "test/numeric.test.js"
+              ],
+              "executedFiles": [
+                "test/invalid.test.js",
+                "test/numeric.test.js"
+              ],
+              "missingFiles": [],
+              "unknownFiles": [],
+              "complete": true,
+              "command": [
+                "node",
+                "--test",
+                "--test-reporter=<repository>/src/reporters/node.js",
+                "--test-reporter-destination=<temp>/tddswarm-report-<report>/results.json",
+                "./test/invalid.test.js",
+                "./test/numeric.test.js"
+              ],
+              "stdout": "",
+              "stderr": "",
+              "signal": null,
+              "reportErrors": [],
+              "discovery": {
+                "files": [
+                  "test/invalid.test.js",
+                  "test/numeric.test.js"
+                ],
+                "complete": true,
+                "adapter": "node",
+                "warnings": []
+              }
+            },
+            "demonstrated": true,
+            "caught": false
+          },
+          {
+            "name": "accept noninteger",
+            "path": "src/successor.js",
+            "baseline": {
+              "adapter": "node",
+              "exitCode": 1,
+              "durationMs": 104,
+              "tests": [
+                {
+                  "file": "test/original.test.js",
+                  "name": "zero successor",
+                  "status": "passed",
+                  "durationMs": 0.419542,
+                  "line": 1,
+                  "column": 116,
+                  "id": "8ceaa1db6d8b3d2a54f2f3016cc254ad718fd5729757d61a53ae64349a7bd0e4"
+                },
+                {
+                  "file": "test/original.test.js",
+                  "name": "negative successor",
+                  "status": "passed",
+                  "durationMs": 0.065666,
+                  "line": 2,
+                  "column": 1,
+                  "id": "80dc9589a00ea639b484f7d55fced694164e7e0f5abbbca68a4713ac66593e33"
+                },
+                {
+                  "file": "test/original.test.js",
+                  "name": "upper boundary successor",
+                  "status": "passed",
+                  "durationMs": 0.053583,
+                  "line": 3,
+                  "column": 1,
+                  "id": "0f07038bc7d6a7f1273269101ecffc3bb5e5809a933b654a6b3e9063f8d69071"
+                },
+                {
+                  "file": "test/original.test.js",
+                  "name": "reject noninteger input",
+                  "status": "failed",
+                  "durationMs": 0.820834,
+                  "line": 4,
+                  "column": 1,
+                  "id": "3d588be3d11cab82928d7a1b172ea37e2a137f8694e25065ec079bc1d21c2b15"
+                }
+              ],
+              "collectionFiles": [
+                "test/original.test.js"
+              ],
+              "requestedFiles": [
+                "test/original.test.js"
+              ],
+              "executedFiles": [
+                "test/original.test.js"
+              ],
+              "missingFiles": [],
+              "unknownFiles": [],
+              "complete": true,
+              "command": [
+                "node",
+                "--test",
+                "--test-reporter=<repository>/src/reporters/node.js",
+                "--test-reporter-destination=<temp>/tddswarm-report-<report>/results.json",
+                "./test/original.test.js"
+              ],
+              "stdout": "",
+              "stderr": "",
+              "signal": null,
+              "reportErrors": [],
+              "discovery": {
+                "files": [
+                  "test/original.test.js"
+                ],
+                "complete": true,
+                "adapter": "node",
+                "warnings": []
+              }
+            },
+            "candidate": {
+              "adapter": "node",
+              "exitCode": 0,
+              "durationMs": 103,
+              "tests": [
+                {
+                  "file": "test/invalid.test.js",
+                  "name": "reject noninteger input",
+                  "status": "passed",
+                  "durationMs": 0.372125,
+                  "line": 1,
+                  "column": 116,
+                  "id": "a384acf7220460892ac545b6b6e5670351bf9bbc8ea90f025ee74b47971f317b"
+                },
+                {
+                  "file": "test/numeric.test.js",
+                  "name": "zero successor",
+                  "status": "passed",
+                  "durationMs": 0.451291,
+                  "line": 1,
+                  "column": 116,
+                  "id": "2c231adb2e416962b1f4c4e864d7435056565fe6ba69147068fe58cab8b11a46"
+                },
+                {
+                  "file": "test/numeric.test.js",
+                  "name": "negative successor",
+                  "status": "passed",
+                  "durationMs": 0.064459,
+                  "line": 2,
+                  "column": 1,
+                  "id": "6b45da332a124ca92d18f7eef6fb866c5f90e311fe6aabff2b8442bddd486dc0"
+                },
+                {
+                  "file": "test/numeric.test.js",
+                  "name": "upper boundary successor",
+                  "status": "passed",
+                  "durationMs": 0.052083,
+                  "line": 3,
+                  "column": 1,
+                  "id": "c254ff48903d6c30f639bf899ac29693305d19d25d28950a8232ad5ecd6ce500"
+                }
+              ],
+              "collectionFiles": [
+                "test/invalid.test.js",
+                "test/numeric.test.js"
+              ],
+              "requestedFiles": [
+                "test/invalid.test.js",
+                "test/numeric.test.js"
+              ],
+              "executedFiles": [
+                "test/invalid.test.js",
+                "test/numeric.test.js"
+              ],
+              "missingFiles": [],
+              "unknownFiles": [],
+              "complete": true,
+              "command": [
+                "node",
+                "--test",
+                "--test-reporter=<repository>/src/reporters/node.js",
+                "--test-reporter-destination=<temp>/tddswarm-report-<report>/results.json",
+                "./test/invalid.test.js",
+                "./test/numeric.test.js"
+              ],
+              "stdout": "",
+              "stderr": "",
+              "signal": null,
+              "reportErrors": [],
+              "discovery": {
+                "files": [
+                  "test/invalid.test.js",
+                  "test/numeric.test.js"
+                ],
+                "complete": true,
+                "adapter": "node",
+                "warnings": []
+              }
+            },
+            "demonstrated": true,
+            "caught": false
+          }
+        ],
+        "measured": {
+          "execution": true,
+          "heldOutDefects": 4
+        },
+        "isolation": "disposable-file-copy-with-trusted-dependencies",
+        "applied": false
+      }
+    }
+  ]
+}
