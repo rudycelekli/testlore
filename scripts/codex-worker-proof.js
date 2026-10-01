@@ -39,7 +39,11 @@ function generatedFiles(value){
 async function nativeRequest(payload,requestDirectory,timeoutMs){
   const request=codexRequest(payload,requestDirectory),env={...process.env};
   for(const key of ['OPENAI_API_KEY','CODEX_API_KEY','AZURE_OPENAI_API_KEY','ANTHROPIC_API_KEY','OPENROUTER_API_KEY'])delete env[key];
-  return runCodex(request.args,request.prompt,requestDirectory,env,{deadlineAt:Date.now()+timeoutMs,maxOutputBytes:32768});
+  const deadlineAt=Date.now()+timeoutMs;
+  const version=spawnSync('codex',['--version'],{cwd:requestDirectory,env,encoding:'utf8',timeout:Math.min(5000,timeoutMs),maxBuffer:4096,shell:false});
+  if(version.status!==0||!/^codex-cli [A-Za-z0-9.+_-]+\s*$/.test(version.stdout||''))throw new Error('Codex version preflight failed');
+  const result=await runCodex(request.args,request.prompt,requestDirectory,env,{deadlineAt,maxOutputBytes:32768});
+  result.audit.cliReportedVersion=version.stdout.trim();return result;
 }
 
 /** Protocol fixture injection is test-only evidence, never native qualification. */
