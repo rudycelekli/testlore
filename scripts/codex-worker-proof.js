@@ -42,8 +42,10 @@ async function nativeRequest(payload,requestDirectory,timeoutMs){
   const deadlineAt=Date.now()+timeoutMs;
   const version=spawnSync('codex',['--version'],{cwd:requestDirectory,env,encoding:'utf8',timeout:Math.min(5000,timeoutMs),maxBuffer:4096,shell:false});
   if(version.status!==0||!/^codex-cli [A-Za-z0-9.+_-]+\s*$/.test(version.stdout||''))throw new Error('Codex version preflight failed');
+  const auth=spawnSync('codex',['login','status'],{cwd:requestDirectory,env,encoding:'utf8',timeout:Math.max(1,Math.min(5000,deadlineAt-Date.now())),maxBuffer:4096,shell:false});
+  if(auth.status!==0||!/^Logged in using ChatGPT\s*$/.test((auth.stdout||'')+(auth.stderr||'')))throw new Error('Native proof requires an existing reported ChatGPT login');
   const result=await runCodex(request.args,request.prompt,requestDirectory,env,{deadlineAt,maxOutputBytes:32768});
-  result.audit.cliReportedVersion=version.stdout.trim();return result;
+  result.audit.cliReportedVersion=version.stdout.trim();result.audit.authMode='reported-chatgpt-login';return result;
 }
 
 /** Protocol fixture injection is test-only evidence, never native qualification. */
