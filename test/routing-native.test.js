@@ -9,9 +9,12 @@ import { execute, resolveNativeBatch } from '../src/execution.js';
 import { digest } from '../src/provenance.js';
 import { fixture,write,commit,twoModules } from './helpers.js';
 const requireHere=createRequire(import.meta.url);
-function tool(name,explicit){try{return explicit||requireHere.resolve(name);}catch{return undefined;}}
-const jest=tool('jest/bin/jest',process.env.TDDSWARM_JEST_BIN);
-const vitest=tool('vitest/vitest.mjs',process.env.TDDSWARM_VITEST_BIN);
+function tool(packageName, executable, explicit) {
+ try { return explicit || path.join(path.dirname(requireHere.resolve(`${packageName}/package.json`)),executable); }
+ catch { return undefined; }
+}
+const jest=tool('jest','bin/jest.js',process.env.TDDSWARM_JEST_BIN);
+const vitest=tool('vitest','vitest.mjs',process.env.TDDSWARM_VITEST_BIN);
 function jestFixture(t,mapper,specifier='@subject',extra={}) {
  const config={discovery:'native',runner:[process.execPath,jest,'--config=settings.cjs','--runInBand','{files}']};
  const root=fixture(t,{'package.json':{type:'commonjs'},'settings.cjs':`module.exports={testEnvironment:'node',testMatch:['**/test/*.test.cjs'],moduleNameMapper:${JSON.stringify(mapper)}};`,'tsconfig.json':{compilerOptions:{baseUrl:'.',paths:{'@subject':['src/a.js']}}},'src/a.js':'module.exports=1;','src/b.js':'module.exports=1;','test/a.test.cjs':`const value=require(${JSON.stringify(specifier)});test('subject',()=>expect(value).toBe(1));`,'test/b.test.cjs':`const value=require('../src/b.js');test('b',()=>expect(value).toBe(1));`,'tddswarm.config.json':config,...extra});

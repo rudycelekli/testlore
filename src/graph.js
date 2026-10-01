@@ -87,7 +87,7 @@ export function buildGraph(root) {
   // data URLs and package preloads are not an argv contract we can certify.
   const nodeOptions = config.env?.NODE_OPTIONS ?? process.env.NODE_OPTIONS ?? '';
   if(nodeOptions.trim())graph.warnings.push({file:'configuration',reason:'unmodeled-node-options-runtime-context'});
-  for (const file of configurationSeeds(root,config)) graph.configFiles.add(file);
+  for (const file of configurationSeeds(root,config,files)) graph.configFiles.add(file);
   if(graph.configFiles.has('__external_runner_config__'))graph.warnings.push({file:'configuration',reason:'external-resolution-config'});
   graph.compilerOptions = compilerOptions(root,config,graph.warnings,graph.configFiles);
   graph.packageNames = new Set();
@@ -126,7 +126,12 @@ export function addSources(graph, entries, files = new Set(graph.files), options
   if(graph.root && (graph.config?.discovery === 'native' || Array.isArray(graph.config?.discovery))) {
     const relevant = options.roots ? entries.filter(([file])=>options.roots.includes(file)) : entries;
     const imports = relevant.flatMap(([file,text]) => sourceSummary(graph,file,text).imports.filter(specifier=>!isBuiltin(specifier)).map(specifier=>({file,specifier})));
-    const batch = resolveNativeBatch(graph.root,imports,graph.config,{ transitive: Boolean(options.roots), roots: options.roots });
+    // A root pass must load native configuration even without imports. Baseline
+    // additions with no imports have no edges to resolve; starting another
+    // framework server cannot contribute baseline dependency evidence.
+    const batch = imports.length || options.roots
+      ? resolveNativeBatch(graph.root,imports,graph.config,{ transitive: Boolean(options.roots), roots: options.roots })
+      : { supported: false };
     if(batch.supported) {
       graph.nativeResolutions ||= new Map();
       imports.forEach((item,i)=>graph.nativeResolutions.set(JSON.stringify([item.file,item.specifier]),batch.resolutions[i]));
@@ -176,10 +181,10 @@ export function evidencePath(graph, start, target) {
   return null;
 }
 
-function configurationSeeds(root,config) {
+function configurationSeeds(root,config,files = listFiles(root)) {
   const seeds = new Set();
   if(config.tsconfig)seeds.add(normalize(config.tsconfig));
-  for(const file of listFiles(root)) if(/^(?:tsconfig\.json|jsconfig\.json|(?:vitest|vite|jest|playwright)\.config\.[cm]?[jt]s)$/.test(file))seeds.add(file);
+  for(const file of files) if(/^(?:tsconfig\.json|jsconfig\.json|(?:vitest|vite|jest|playwright)\.config\.[cm]?[jt]s)$/.test(file))seeds.add(file);
   const argv=config.runner||[];
   for(let i=0;i<argv.length;i++) {
     let file;

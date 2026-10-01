@@ -29,9 +29,12 @@ test('failed native discovery preserves fallback tests and declares incomplete s
 });
 
 const requireHere=createRequire(import.meta.url);
-function tool(name, explicit) { try{return explicit || requireHere.resolve(name);} catch{return undefined;} }
-const jest=tool('jest/bin/jest',process.env.TDDSWARM_JEST_BIN);
-const vitest=tool('vitest/vitest.mjs',process.env.TDDSWARM_VITEST_BIN);
+function tool(packageName, executable, explicit) {
+ try { return explicit || path.join(path.dirname(requireHere.resolve(`${packageName}/package.json`)),executable); }
+ catch { return undefined; }
+}
+const jest=tool('jest','bin/jest.js',process.env.TDDSWARM_JEST_BIN);
+const vitest=tool('vitest','vitest.mjs',process.env.TDDSWARM_VITEST_BIN);
 
 if(jest) test('real Jest native discovery, exact file execution, outcomes and moduleNameMapper resolution',t=>{
   const root=fixture(t,{'package.json':{type:'commonjs'},'jest.config.cjs':`module.exports={testMatch:['**/suite/check-*.cjs'],moduleNameMapper:{'^@domain/(.*)$':'<rootDir>/src/$1.js'},testEnvironment:'node'};`,'src/value.js':'module.exports=7;','suite/check-one.cjs':`const value=require('@domain/value');describe('group',()=>{test('pass',()=>expect(value).toBe(7));test.skip('skip',()=>{});});`,'suite/check-two.cjs':`test('fail',()=>expect(1).toBe(2));`,'outside.test.js':`throw new Error('out of config scope');`});
