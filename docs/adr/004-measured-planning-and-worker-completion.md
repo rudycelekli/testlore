@@ -1,6 +1,6 @@
 # ADR-004: Measured planning and audited worker completion
 
-Status: In progress. Date: September 30, 2026.
+Status: Implemented contracts; qualification remains scoped. Date: September 30, 2026.
 
 The last qualification campaign exposed planning overhead and incomplete generation. This milestone measures planning phases and improves repeated work within a fresh plan without reusing evidence across independent runs. Source, configuration, environment, runner and runtime changes must continue to invalidate selection. Unknown dependencies retain full fallback. Planning timings do not participate in evidence fingerprints.
 

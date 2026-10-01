@@ -1,0 +1,263 @@
+{
+  "schemaVersion": 1,
+  "kind": "native-worker-protocol-and-constructed-contract-retention",
+  "attempts": [
+    {
+      "schemaVersion": 1,
+      "sourceRevision": "2452cc90b241d0ee929d6b1e71c74cd7819ec2b6",
+      "implementationHashes": {
+        "scripts/codex-worker-proof.js": "6988cd5f22098f4f5f09c155fc6c32000cb32a5ddeb3c1766a47e1812b43e3a7",
+        "src/adapters/codex.js": "23e485e31a9e00e8c1e655095bbd1888e441f49ef3a8b577ab4af96f5b009bf7",
+        "src/adapters/codex-protocol.js": "9990337657931282a4b84199e32f47937bc66e051237995ffebfc0367a872a0c",
+        "src/execution.js": "955589ba3593ccdacdbf2991c09881e43466c49974114d72327665279d4dfe04",
+        "scripts/learning-evaluation.js": "b8b291a4528414ec7967d18a891697d39c0387478437c14d839ffda473044b54"
+      },
+      "contractHash": "05ba718a98205a939c82c784aaf4d2beecb1eaa892d8373aab019a39e23d84f3",
+      "complete": false,
+      "roleInvocations": 2,
+      "qualifiedDefectDetections": 0,
+      "referenceDemonstrated": 3,
+      "defectOpportunities": 3,
+      "elapsedMs": 51565,
+      "error": {
+        "code": "qualification-failed",
+        "message": "Invalid generated test file"
+      },
+      "budget": {
+        "maxRoleInvocations": 3,
+        "timeoutMs": 60000,
+        "maxResponseBytes": 32768,
+        "stabilityRuns": 2,
+        "retries": 0
+      },
+      "calls": [
+        {
+          "role": "architect",
+          "durationMs": 14748,
+          "inputBytes": 816,
+          "outputBytes": 959,
+          "error": null,
+          "audit": {
+            "protocol": "codex-exec-jsonl-v1",
+            "complete": true,
+            "toolAttempts": 0,
+            "eventCount": 4,
+            "eventBytes": 1310,
+            "responseBytes": 959,
+            "cliReportedVersion": "codex-cli 0.155.1",
+            "executableSha256": "61b0194f3bb6534439c8d26a3ed57d0805f84b884588b761795323eeb92fcf70",
+            "adapterSha256": "23e485e31a9e00e8c1e655095bbd1888e441f49ef3a8b577ab4af96f5b009bf7",
+            "protocolSha256": "9990337657931282a4b84199e32f47937bc66e051237995ffebfc0367a872a0c",
+            "schemaSha256": "a13842217003727dd414764764e892cdaebfe2d75145463ea19f8fa4f1637287",
+            "responseSha256": "2455205069c80ac21caab53cd9261a9bcd06c6813192984030aa253d20c049cf",
+            "usage": {
+              "input_tokens": 16671,
+              "cached_input_tokens": 0,
+              "cache_write_input_tokens": 0,
+              "output_tokens": 277,
+              "reasoning_output_tokens": 0
+            },
+            "modelIdentity": "unknown CLI default",
+            "authMode": "reported-chatgpt-login",
+            "identityScope": "native launcher bytes; nested runtime/provider identities unverified"
+          }
+        },
+        {
+          "role": "author",
+          "durationMs": 34928,
+          "inputBytes": 1727,
+          "outputBytes": 2711,
+          "error": null,
+          "audit": {
+            "protocol": "codex-exec-jsonl-v1",
+            "complete": true,
+            "toolAttempts": 0,
+            "eventCount": 4,
+            "eventBytes": 3148,
+            "responseBytes": 2711,
+            "cliReportedVersion": "codex-cli 0.155.1",
+            "executableSha256": "61b0194f3bb6534439c8d26a3ed57d0805f84b884588b761795323eeb92fcf70",
+            "adapterSha256": "23e485e31a9e00e8c1e655095bbd1888e441f49ef3a8b577ab4af96f5b009bf7",
+            "protocolSha256": "9990337657931282a4b84199e32f47937bc66e051237995ffebfc0367a872a0c",
+            "schemaSha256": "f5d552f653abc81b45eaad9dee76576e561d27e3f0eb4f3ee1faf43070143c62",
+            "responseSha256": "78083770a25d04a6dbba37a5ccd163c42cd33c5b1b6c5baf3496f907182477f3",
+            "usage": {
+              "input_tokens": 16924,
+              "cached_input_tokens": 0,
+              "cache_write_input_tokens": 0,
+              "output_tokens": 914,
+              "reasoning_output_tokens": 0
+            },
+            "modelIdentity": "unknown CLI default",
+            "authMode": "reported-chatgpt-login",
+            "identityScope": "native launcher bytes; nested runtime/provider identities unverified"
+          }
+        }
+      ],
+      "model": {
+        "requested": null,
+        "verified": null
+      },
+      "billingUSD": null
+    },
+    {
+      "schemaVersion": 1,
+      "sourceRevision": "b5bdae5c7591c81e85b25b11de405b00421efbab",
+      "implementationHashes": {
+        "scripts/codex-worker-proof.js": "be23e24b0e9a07cdaf8b94014c7acd884c4048bddd9a3097e621b60dc164e62a",
+        "src/adapters/codex.js": "23e485e31a9e00e8c1e655095bbd1888e441f49ef3a8b577ab4af96f5b009bf7",
+        "src/adapters/codex-protocol.js": "9990337657931282a4b84199e32f47937bc66e051237995ffebfc0367a872a0c",
+        "src/execution.js": "955589ba3593ccdacdbf2991c09881e43466c49974114d72327665279d4dfe04",
+        "scripts/learning-evaluation.js": "b8b291a4528414ec7967d18a891697d39c0387478437c14d839ffda473044b54"
+      },
+      "contractHash": "05ba718a98205a939c82c784aaf4d2beecb1eaa892d8373aab019a39e23d84f3",
+      "complete": true,
+      "roleInvocations": 3,
+      "qualifiedDefectDetections": 3,
+      "referenceDemonstrated": 3,
+      "defectOpportunities": 3,
+      "elapsedMs": 64291,
+      "error": null,
+      "budget": {
+        "maxRoleInvocations": 3,
+        "timeoutMs": 60000,
+        "maxResponseBytes": 32768,
+        "stabilityRuns": 2,
+        "retries": 0
+      },
+      "calls": [
+        {
+          "role": "architect",
+          "durationMs": 14328,
+          "inputBytes": 1263,
+          "outputBytes": 1109,
+          "error": null,
+          "audit": {
+            "protocol": "codex-exec-jsonl-v1",
+            "complete": true,
+            "toolAttempts": 0,
+            "eventCount": 4,
+            "eventBytes": 1460,
+            "responseBytes": 1109,
+            "cliReportedVersion": "codex-cli 0.155.1",
+            "executableSha256": "61b0194f3bb6534439c8d26a3ed57d0805f84b884588b761795323eeb92fcf70",
+            "adapterSha256": "23e485e31a9e00e8c1e655095bbd1888e441f49ef3a8b577ab4af96f5b009bf7",
+            "protocolSha256": "9990337657931282a4b84199e32f47937bc66e051237995ffebfc0367a872a0c",
+            "schemaSha256": "a13842217003727dd414764764e892cdaebfe2d75145463ea19f8fa4f1637287",
+            "responseSha256": "3fc6cf3c9da00b54ee6463011dfed1c9a2082f1789b798bb5b859836605fa941",
+            "usage": {
+              "input_tokens": 18775,
+              "cached_input_tokens": 0,
+              "cache_write_input_tokens": 0,
+              "output_tokens": 287,
+              "reasoning_output_tokens": 0
+            },
+            "modelIdentity": "unknown CLI default",
+            "authMode": "reported-chatgpt-login",
+            "identityScope": "native launcher bytes; nested runtime/provider identities unverified"
+          }
+        },
+        {
+          "role": "author",
+          "durationMs": 37440,
+          "inputBytes": 2324,
+          "outputBytes": 3102,
+          "error": null,
+          "audit": {
+            "protocol": "codex-exec-jsonl-v1",
+            "complete": true,
+            "toolAttempts": 0,
+            "eventCount": 4,
+            "eventBytes": 3553,
+            "responseBytes": 3102,
+            "cliReportedVersion": "codex-cli 0.155.1",
+            "executableSha256": "61b0194f3bb6534439c8d26a3ed57d0805f84b884588b761795323eeb92fcf70",
+            "adapterSha256": "23e485e31a9e00e8c1e655095bbd1888e441f49ef3a8b577ab4af96f5b009bf7",
+            "protocolSha256": "9990337657931282a4b84199e32f47937bc66e051237995ffebfc0367a872a0c",
+            "schemaSha256": "f5d552f653abc81b45eaad9dee76576e561d27e3f0eb4f3ee1faf43070143c62",
+            "responseSha256": "b52704cf65dcef48284978c54fd207b1b4faeec7871f2955b726f2174cabcb25",
+            "usage": {
+              "input_tokens": 17042,
+              "cached_input_tokens": 0,
+              "cache_write_input_tokens": 0,
+              "output_tokens": 1011,
+              "reasoning_output_tokens": 0
+            },
+            "modelIdentity": "unknown CLI default",
+            "authMode": "reported-chatgpt-login",
+            "identityScope": "native launcher bytes; nested runtime/provider identities unverified"
+          }
+        },
+        {
+          "role": "reviewer",
+          "durationMs": 8368,
+          "inputBytes": 4439,
+          "outputBytes": 643,
+          "error": null,
+          "audit": {
+            "protocol": "codex-exec-jsonl-v1",
+            "complete": true,
+            "toolAttempts": 0,
+            "eventCount": 4,
+            "eventBytes": 1002,
+            "responseBytes": 643,
+            "cliReportedVersion": "codex-cli 0.155.1",
+            "executableSha256": "61b0194f3bb6534439c8d26a3ed57d0805f84b884588b761795323eeb92fcf70",
+            "adapterSha256": "23e485e31a9e00e8c1e655095bbd1888e441f49ef3a8b577ab4af96f5b009bf7",
+            "protocolSha256": "9990337657931282a4b84199e32f47937bc66e051237995ffebfc0367a872a0c",
+            "schemaSha256": "a5981dd9aba841784a2abccaac5c6f66013d0f1db879f0a8882ad430b5964795",
+            "responseSha256": "49a87c8046ebfd0691a50194f27476d5b4363191d1a4d703bdcec3aa400ded66",
+            "usage": {
+              "input_tokens": 17810,
+              "cached_input_tokens": 0,
+              "cache_write_input_tokens": 0,
+              "output_tokens": 127,
+              "reasoning_output_tokens": 0
+            },
+            "modelIdentity": "unknown CLI default",
+            "authMode": "reported-chatgpt-login",
+            "identityScope": "native launcher bytes; nested runtime/provider identities unverified"
+          }
+        }
+      ],
+      "model": {
+        "requested": null,
+        "verified": null
+      },
+      "billingUSD": null
+    }
+  ],
+  "failedAttempts": 1,
+  "totalRoleInvocations": 5,
+  "totalMeasuredAttemptMs": 115856,
+  "qualifiedDetectionsAcrossAttemptOpportunities": {
+    "detected": 3,
+    "opportunities": 6
+  },
+  "successfulRetest": {
+    "stabilityRuns": 2,
+    "generatedCasesPerBaseline": [
+      43,
+      43
+    ],
+    "demonstratedFaults": 3
+  },
+  "learningGainEstablished": false,
+  "generalQualityEstablished": false,
+  "billingUSD": null,
+  "limitations": [
+    "The first attempt omitted the harness file-layout rule from the author instructions; a root-level test file was rejected before review. Its zero qualified detections, calls and time remain counted.",
+    "The second attempt follows that prompt/protocol correction on the same constructed contract. It is a compatibility and retention retest, not a new untouched specification or an independent quality/learning experiment.",
+    "Three authored conformance faults and one contract do not establish production bug recall or competitor superiority.",
+    "CLI-reported version 0.155.1 and launcher hashes are recorded; nested runtime/model identity and billing are not independently attested. Reported token counters are not an invoice.",
+    "Zero reported tool attempts does not establish OS read confinement. Each attempt has no controller retries; provider internal requests/retries are unknown.",
+    "Private prompts, test source, native case names and filesystem paths are omitted from this aggregate. Raw receipts remain local."
+  ],
+  "byteAccounting": {
+    "inputBytes": "JSON.stringify(role payload), excluding the native prompt template, schema and CLI transport",
+    "outputBytes": "JSON.stringify(parsed role response)",
+    "eventBytes": "Actual native stdout JSONL bytes",
+    "responseBytes": "Actual native response-file bytes",
+    "providerBilling": "Unknown"
+  }
+}
