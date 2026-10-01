@@ -32,10 +32,10 @@ Payload:\n${JSON.stringify(payload)}`;
 }
 const LIMIT = 2 * 1024 * 1024;
 const digest = bytes => createHash('sha256').update(bytes).digest('hex');
-function resolveCodex(env) {
+function resolveCodex(env, directory) {
+  if(typeof env.PATH!=='string')throw failure('CLI_UNAVAILABLE','Codex executable search requires an explicit PATH');
   for (const entry of (env.PATH || '').split(path.delimiter)) {
-    if (!entry) continue;
-    const requestedPath = path.resolve(entry, process.platform === 'win32' ? 'codex.exe' : 'codex');
+    const requestedPath = path.resolve(directory, entry || '.', process.platform === 'win32' ? 'codex.exe' : 'codex');
     try { fs.accessSync(requestedPath, fs.constants.X_OK); if (fs.statSync(requestedPath).isFile()) return { requestedPath, resolvedPath: fs.realpathSync(requestedPath) }; } catch {}
   }
   throw failure('CLI_UNAVAILABLE', 'Codex executable is unavailable on the supplied PATH');
@@ -95,7 +95,7 @@ export function runCodex(args, prompt, directory, env, budget = {}) {
     const schemaIdentity = fileIdentity(schemaPath, 32768, true);
     const schemaBytes = schemaIdentity.bytes; delete schemaIdentity.bytes; schema = JSON.parse(schemaBytes);
     if (!Object.values(schemas).some(candidate => JSON.stringify(candidate) === JSON.stringify(schema))) throw failure('REQUEST_INVALID', 'Codex request schema is unsupported');
-    launcher = resolveCodex(env); executable = launcher.resolvedPath;
+    launcher = resolveCodex(env, directory); executable = launcher.resolvedPath;
     identities = { executable: fileIdentity(executable, 512 * 1024 * 1024), schema: schemaIdentity, adapter: fileIdentity(fileURLToPath(import.meta.url), LIMIT), protocol: fileIdentity(fileURLToPath(new URL('./codex-protocol.js', import.meta.url)), LIMIT) };
     identity = { requestedExecutable: 'codex', requestedExecutablePath: launcher.requestedPath, resolvedExecutable: executable, executableSha256: identities.executable.sha256, schemaSha256: identities.schema.sha256, adapterSha256: identities.adapter.sha256, protocolSha256: identities.protocol.sha256 };
     try { fs.lstatSync(output); throw failure('RESPONSE_EXISTS', 'Codex response path already exists'); } catch (error) { if (error.code !== 'ENOENT') throw error; }
@@ -122,7 +122,7 @@ export function runCodex(args, prompt, directory, env, budget = {}) {
       if (code !== 0 || signal) return finish(failure('CLI_EXIT', 'Codex process did not exit successfully'));
       try {
         const completion = events.finish();
-        const observedLauncher = resolveCodex(env);
+        const observedLauncher = resolveCodex(env, directory);
         if (observedLauncher.requestedPath !== launcher.requestedPath || observedLauncher.resolvedPath !== executable) throw failure('IDENTITY_DRIFT', 'Codex executable resolution changed during execution');
         const observedIdentities = { executable: fileIdentity(executable, 512 * 1024 * 1024), schema: fileIdentity(schemaPath, 32768), adapter: fileIdentity(fileURLToPath(import.meta.url), LIMIT), protocol: fileIdentity(fileURLToPath(new URL('./codex-protocol.js', import.meta.url)), LIMIT) };
         if (JSON.stringify(identities) !== JSON.stringify(observedIdentities)) throw failure('IDENTITY_DRIFT', 'Codex transport identity changed during execution');

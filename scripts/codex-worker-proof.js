@@ -23,7 +23,7 @@ const repository=fileURLToPath(new URL('../',import.meta.url));
 function sourceIdentity(){
   const revision=spawnSync('git',['rev-parse','HEAD'],{cwd:repository,encoding:'utf8',timeout:10000});
   const status=spawnSync('git',['status','--porcelain'],{cwd:repository,encoding:'utf8',timeout:10000});
-  if(revision.status!==0||status.status!==0||status.stdout.trim()||!/^\w{40}$/.test(revision.stdout.trim()))throw new Error('Native proof requires clean committed source');
+  if(revision.status!==0||status.status!==0||status.stdout.trim()||!(/^[a-f0-9]{40}$/.test(revision.stdout.trim())))throw new Error('Native proof requires clean committed source');
   const hashes=Object.fromEntries(['scripts/codex-worker-proof.js','src/adapters/codex.js','src/adapters/codex-protocol.js','src/execution.js','scripts/learning-evaluation.js'].map(file=>[file,digest(fs.readFileSync(path.join(repository,file)))]));
   return {revision:revision.stdout.trim(),hashes};
 }

@@ -94,6 +94,11 @@ test('fake native executable must pass terminal, file and identity audit', async
   for (const key of ['executableSha256', 'schemaSha256', 'adapterSha256', 'protocolSha256', 'responseSha256']) assert.match(audit[key], /^[a-f0-9]{64}$/);
   assert.equal(JSON.stringify(audit).includes('private source sentinel'), false);
 });
+test('relative PATH entries resolve from the native child working directory',async t=>{
+  const {directory,request,env,executable}=fake(t,emitValid);env.PATH='bin';
+  const {value,audit}=await runCodex(request.args,request.prompt,directory,env);
+  assert.deepEqual(value,reply);assert.equal(audit.requestedExecutablePath,executable);
+});
 
 test('fake exit zero with no terminal, missing response, symlink, malformed file or disagreement is rejected', async t => {
   const cases = [
