@@ -8,6 +8,7 @@ import { runtimeEvidence } from './evidence.js';
 import { buildGraph, addSources, evidencePath, dependencies, classifyWarnings } from './graph.js';
 import {adapterFor} from './execution.js';
 import { externalPlan } from './integrations.js';
+import { phaseTimings } from './timing.js';
 
 const GLOBAL = /(?:^|\/)(?:package(?:-lock)?\.json|npm-shrinkwrap\.json|pnpm-lock\.yaml|yarn\.lock|bun\.lockb?|tsconfig[^/]*\.json|jsconfig\.json|tddswarm\.config\.json|[^/]*(?:vitest|vite|jest|babel|webpack|rollup|playwright|cypress)[^/]*\.(?:[cm]?[jt]s|json)|(?:setup|globalSetup|globalTeardown)[^/]*\.[cm]?[jt]s|\.env(?:\..*)?|\.gitignore)$/;
 
@@ -21,11 +22,19 @@ export function gitChanges(root, base) {
 }
 
 export function plan(root, options = {}) {
+  const timing = phaseTimings();
   root = path.resolve(root);
   const config = readConfig(root);
-  if (config.integration) return externalPlan(root, config, options);
+  timing.mark('configuration');
+  if (config.integration) {
+    const result = externalPlan(root, config, options);
+    timing.mark('externalPlan');
+    return { ...result, timings: timing.finish() };
+  }
   const provenance = snapshot(root,config);
+  timing.mark('provenance');
   const graph = buildGraph(root);
+  timing.mark('graph');
   if(adapterFor(config)==='playwright'){
     const declared=new Set(Object.values(config.browser?.routes||{}).filter(route=>route.inputs?.length).flatMap(route=>route.tests||[]));
     // Page/server behavior is not closed by a test's local helper imports.
@@ -37,11 +46,13 @@ export function plan(root, options = {}) {
     try { ({ changed, baseSha, prefix } = gitChanges(root, options.base || 'HEAD')); }
     catch { changed = []; gitError = 'git-baseline-unavailable'; }
   }
+  timing.mark('changeDetection');
   const services = changedServices(root,config);
   changed = [...new Set([...changed,...services.changed])].sort();
   graph.warnings.push(...services.warnings);
   const runtime = runtimeEvidence(root,graph,changed,config);
   if(runtime.usable) for(const [test,observation] of Object.entries(runtime.record.observations)) graph.edges[test] = [...new Set([...(graph.edges[test]||[]),...observation.dependencies])];
+  timing.mark('runtimeAndServices');
   const reasons = [];
   if(services.warnings.length)reasons.push('external-service-evidence-unavailable');
   if(config.runtime?.enabled && !runtime.usable)reasons.push(runtime.reason);
@@ -60,6 +71,7 @@ export function plan(root, options = {}) {
     }
     if(oldSources.length)addSources(graph,oldSources,oldFiles);
   }
+  timing.mark('baselineAndIgnore');
   if (options.full) reasons.push('explicit-full-run');
   if (gitError) reasons.push(gitError);
   if (active.some(f => GLOBAL.test(f) || graph.configFiles.has(f))) reasons.push('global-configuration-changed');
@@ -73,6 +85,7 @@ export function plan(root, options = {}) {
   for (const test of config.alwaysRun || []) if (!graph.tests.includes(test)) reasons.push('unknown-always-run-test');
   const unmapped = active.filter(f => !graph.tests.some(t => evidencePath(graph, t, f)));
   if (unmapped.length) reasons.push('change-without-test-evidence');
+  timing.mark('uncertaintyAndMapping');
   let state = { count: 0, failed: [] };
   const identity=runnerIdentity(root,config);
   const historyPath=path.join(root,'.tddswarm',`history-${identity}.json`);
@@ -88,6 +101,7 @@ export function plan(root, options = {}) {
   if (!Number.isInteger(state.count) || state.count < 0 || !Array.isArray(state.failed) || state.failed.some(f=>typeof f!=='string')) { reasons.push('invalid-run-history'); state = { count: 0, failed: [] }; }
   if(state.failed.some(f=>!graph.tests.includes(f)))reasons.push('failed-history-scope-changed');
   if (config.fullRunEvery && (state.count + 1) % config.fullRunEvery === 0) reasons.push('periodic-full-run');
+  timing.mark('history');
   const mode = reasons.length ? 'full' : active.length ? 'affected' : 'none';
   const decisions = graph.tests.map(test => {
     const paths = active.map(file => evidencePath(graph, test, file)).filter(Boolean);
@@ -102,8 +116,9 @@ export function plan(root, options = {}) {
   });
   const selected = decisions.filter(d => d.selected).map(d => d.test);
   const fingerprint = createHash('sha256').update(JSON.stringify({ config, sources: graph.sources, edges: graph.edges, changed, baseSha })).digest('hex');
+  timing.mark('decisionsAndFingerprint');
   return {
-    schemaVersion: 1, provenance, serviceTokens: services.values, configurationFiles: [...graph.configFiles].sort(), mode: mode === 'none' && selected.length ? 'policy' : mode, base: baseSha, changed, ignored, selected,
+    schemaVersion: 1, timings: { ...timing.finish(), graph: graph.timings }, provenance, serviceTokens: services.values, configurationFiles: [...graph.configFiles].sort(), mode: mode === 'none' && selected.length ? 'policy' : mode, base: baseSha, changed, ignored, selected,
     total: graph.tests.length, omitted: graph.tests.length - selected.length,
     uncertainty: { global: globalWarnings.length, retainedTests: [...uncertainTests].sort(), unreachableSources: [...new Set(unresolvedWarnings.filter(w=>w.scope==='unreachable-source').map(w=>w.file))].sort() },
     selectionReduction: graph.tests.length ? 1 - selected.length / graph.tests.length : 0,

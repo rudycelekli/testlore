@@ -7,6 +7,7 @@ import { fileURLToPath } from 'node:url';
 import { createAnalysisCache, ANALYSIS_CACHE_IMPLEMENTATION } from './graph-cache.js';
 import { discover as nativeDiscovery, resolveNativeBatch } from './execution.js';
 import { declaredInputs } from './inputs.js';
+import { phaseTimings } from './timing.js';
 import { SOURCE, TEST, listFiles, normalize, safePath, readConfig } from './files.js';
 
 export function analyze(file, text) {
@@ -67,10 +68,12 @@ export function resolveImport(file, spec, files) {
 }
 
 export function buildGraph(root) {
+  const timing = phaseTimings();
   const config = readConfig(root);
   const files = listFiles(root);
   const selected = files.filter(f => (config.testMatch ? config.testMatch.some(pattern => path.matchesGlob(f,pattern)) : TEST.test(f)) && !(config.testExclude || []).some(pattern => path.matchesGlob(f,pattern)));
   const graph = { files, tests: selected, edges: {}, warnings: [], sources: {}, root, config, discovery: {complete:true,method:'configured-static-conventions'} };
+  timing.mark('inventory');
   if(config.discovery === 'native' || Array.isArray(config.discovery)) {
     const discovered = nativeDiscovery(root,config);
     graph.tests = discovered.files;
@@ -78,6 +81,7 @@ export function buildGraph(root) {
     for(const file of discovered.files)if(!files.includes(file))graph.warnings.push({file,reason:'discovered-file-outside-graph'});
     if(!discovered.complete)graph.warnings.push({file:'discovery',reason:'incomplete-native-discovery'});
   }
+  timing.mark('discovery');
   graph.configFiles = new Set();
   // NODE_OPTIONS is parsed by Node before our runner starts. Its quoting, inline
   // data URLs and package preloads are not an argv contract we can certify.
@@ -94,8 +98,11 @@ export function buildGraph(root) {
       if(pkg.name)graph.packageNames.add(pkg.name);
     } catch { graph.warnings.push({file,reason:'invalid-package-json'}); }
   }
+  timing.mark('configuration');
   for (const file of files.filter(f => SOURCE.test(f))) graph.sources[file] = fs.readFileSync(safePath(root,file),'utf8');
+  timing.mark('sourceReads');
   addSources(graph,Object.entries(graph.sources),set,{ roots: [...graph.tests,...graph.configFiles] });
+  timing.mark('sourceAnalysisAndResolution');
   const declared = declaredInputs(config);
   for (const [test,deps] of Object.entries(config.dependencies || {})) declared[test] = [...(declared[test]||[]),...deps];
   for (const [test, deps] of Object.entries(declared)) {
@@ -107,7 +114,10 @@ export function buildGraph(root) {
   }
   for(const file of [...graph.configFiles]) for(const dep of dependencies(graph,file)) graph.configFiles.add(dep);
   for(const file of graph.configFiles)if(!set.has(file))graph.warnings.push({file,reason:'resolution-config-outside-graph'});
+  timing.mark('declaredInputsAndConfigurationClosure');
   classifyWarnings(graph);
+  timing.mark('warningClassification');
+  graph.timings = timing.finish();
   return graph;
 }
 
