@@ -45,10 +45,10 @@ The opt-in harness launches installed native hosts against two isolated TestLore
 
 | Actual host attempt | Observed result | Next step |
 | --- | --- | --- |
-| Codex CLI 0.159.0 | Two readonly calls; execution refused: “MCP tool call requires approval, but approval policy is never” | Review the host's execution-permission configuration separately before a fresh isolated qualification. |
-| Claude CLI 2.1.88 | Two connected servers, zero TestLore calls; bounded attempts retained HTTP 401 `authentication_failed` | Repair the existing native subscription login, then run a fresh isolated qualification. |
+| Codex native CLI | Two readonly calls; execution refused: “MCP tool call requires approval, but approval policy is never” | Review the host's execution-permission configuration separately before a fresh isolated qualification. |
+| Claude native CLI | Two connected servers, zero TestLore calls; bounded attempts retained HTTP 401 `authentication_failed` | Repair the existing native subscription login, then run a fresh isolated qualification. |
 
-Neither host is fully qualified. Credentials, personal configuration and host approval policies were not changed to force success. Subsequent hardening was tested locally against malformed observations; it does not relabel the blocked host runs as passed. [Public aggregate](../benchmarks/host-native-aggregate.json) excludes private traces. [Host procedure](mcp.md) supplies concrete commands and bounded failure interpretation.
+Neither host is fully qualified. Retained receipts bind launcher bytes and help text; they do not fully bind nested native runtimes. The app-bundled Codex 0.159.0 help inspection cannot identify the separate npm launcher used for this host attempt. Credentials, personal configuration and host approval policies were not changed to force success. Subsequent hardening was tested locally against malformed observations; it does not relabel the blocked host runs as passed. [Public aggregate](../benchmarks/host-native-aggregate.json) excludes private traces. [Host procedure](mcp.md) supplies concrete commands and bounded failure interpretation.
 
 ## Distribution
 
