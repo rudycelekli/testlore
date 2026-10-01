@@ -9,6 +9,28 @@ concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
 jobs:
+  source-qualification:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - uses: actions/setup-node@v7.0.0
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - run: npx --no-install playwright install --with-deps chromium
+      - name: Qualify the complete source scope with native browser cases
+        run: TESTLORE_PLAYWRIGHT_BROWSER=1 node scripts/test-qualification.js --output .tddswarm/ci-full-source.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: full-source-${{ github.event.pull_request.head.sha || github.sha }}
+          path: .tddswarm/ci-full-source.*
+          include-hidden-files: true
+          if-no-files-found: error
   packed-install:
     runs-on: ubuntu-latest
     timeout-minutes: 10
