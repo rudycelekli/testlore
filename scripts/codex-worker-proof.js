@@ -4,6 +4,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
+import {spawnSync} from 'node:child_process';
 import {codexRequest, runCodex} from '../src/adapters/codex.js';
 import {digest} from '../src/provenance.js';
 import {discover, execute} from '../src/execution.js';
@@ -18,6 +19,14 @@ const defects = [
   {id:'fractional-value-accepted',source:'export function encode16(n){if(typeof n!=="number"||!Number.isFinite(n)||n<0||n>65535)throw new RangeError();return [n>>>8,n&255];}'}
 ];
 const config = {adapter:'node',discovery:'native',runner:[process.execPath,'--test','{files}'],runnerTimeoutMs:10000};
+const repository=fileURLToPath(new URL('../',import.meta.url));
+function sourceIdentity(){
+  const revision=spawnSync('git',['rev-parse','HEAD'],{cwd:repository,encoding:'utf8',timeout:10000});
+  const status=spawnSync('git',['status','--porcelain'],{cwd:repository,encoding:'utf8',timeout:10000});
+  if(revision.status!==0||status.status!==0||status.stdout.trim()||!/^\w{40}$/.test(revision.stdout.trim()))throw new Error('Native proof requires clean committed source');
+  const hashes=Object.fromEntries(['scripts/codex-worker-proof.js','src/adapters/codex.js','src/adapters/codex-protocol.js','src/execution.js','scripts/learning-evaluation.js'].map(file=>[file,digest(fs.readFileSync(path.join(repository,file)))]));
+  return {revision:revision.stdout.trim(),hashes};
+}
 function put(root,file,value){const target=path.join(root,file);fs.mkdirSync(path.dirname(target),{recursive:true});fs.writeFileSync(target,value);}
 function project(root,files){fs.mkdirSync(root);put(root,'package.json',JSON.stringify({type:'module'}));put(root,'src/encode16.js',correct);for(const file of files)put(root,file.path,file.content);}
 function collect(root){const discovery=discover(root,config);if(!discovery.complete||!discovery.files.length)throw new Error('Incomplete or empty native discovery');return {...execute(root,discovery.files,config,{capture:true,timeoutMs:10000}),discovery};}
@@ -39,13 +48,14 @@ export async function qualifyCodexWorker({output,executeNative=false,timeoutMs=6
   if(typeof output!=='string'||!output.trim())throw new Error('A new private output directory is required');
   if(request!==undefined&&typeof request!=='function')throw new Error('Invalid fixture request');
   if(!request&&!executeNative)throw new Error('Native model execution requires explicit --execute');
+  const identity=request?null:sourceIdentity();
   output=path.resolve(output);if(fs.existsSync(output))throw new Error('Preserve prior evidence: output must be new');fs.mkdirSync(output,{recursive:true,mode:0o700});
   const evidenceKind=request?'protocol-fixture':'native-codex-worker',worker=request||nativeRequest;
   const workspace=fs.mkdtempSync(path.join(os.tmpdir(),'testlore-codex-proof-')),started=performance.now(),calls=[];
   const receipt=(file,value)=>fs.writeFileSync(path.join(output,file),JSON.stringify(value,null,2)+'\n',{flag:'wx',mode:0o600});
   let summary,detected=0,referenceDemonstrated=0,error;
   try{
-    receipt('manifest.json',{schemaVersion:1,evidenceKind,contractHash:digest(contract),contract,source:correct,reference,defects,budget:{maxRoleInvocations:3,timeoutMs,maxResponseBytes:32768,stabilityRuns:2,retries:0},model:{requested:null,verified:null},billingUSD:null});
+    receipt('manifest.json',{schemaVersion:1,evidenceKind,sourceIdentity:identity,contractHash:digest(contract),contract,source:correct,reference,defects,budget:{maxRoleInvocations:3,timeoutMs,maxResponseBytes:32768,stabilityRuns:2,retries:0},model:{requested:null,verified:null},billingUSD:null});
     const oracle=path.join(workspace,'oracle');project(oracle,[{path:'test/reference.test.js',content:reference}]);
     const baselines=[collect(oracle),collect(oracle)];receipt('reference-baselines.json',baselines);
     if(!baselines.every(pass)||!stableOutcomes(baselines))throw new Error('Independent reference baseline is invalid');
@@ -53,6 +63,7 @@ export async function qualifyCodexWorker({output,executeNative=false,timeoutMs=6
     const context=[{file:'src/encode16.js',content:correct}];
     async function role(name,extra){
       const directory=path.join(workspace,name);fs.mkdirSync(directory);
+      if(identity&&JSON.stringify(sourceIdentity())!==JSON.stringify(identity))throw new Error('Native proof source identity drift');
       const payload={schemaVersion:1,role:name,requirements:contract,context,budget:{maxTasks:1,instructions:'Use only supplied context. No tools or filesystem reads.'},...extra},start=performance.now();
       const call={role:name,inputBytes:Buffer.byteLength(JSON.stringify(payload))};calls.push(call);
       try{const result=await worker(payload,directory,timeoutMs);call.durationMs=Math.round(performance.now()-start);call.audit=result.audit??null;call.outputBytes=Buffer.byteLength(JSON.stringify(result.value));receipt(name+'.json',{payload,...result});return result.value;}
@@ -67,10 +78,11 @@ export async function qualifyCodexWorker({output,executeNative=false,timeoutMs=6
     const baselinesGenerated=[collect(candidate),collect(candidate)];receipt('generated-baselines.json',baselinesGenerated);
     if(!baselinesGenerated.every(pass)||!stableOutcomes(baselinesGenerated))throw new Error('Generated baseline incomplete or unstable');
     for(const defect of defects){put(candidate,'src/encode16.js',defect.source);const results=[collect(candidate),collect(candidate)];receipt('generated-'+defect.id+'.json',results);if(results.every(caught)&&stableOutcomes(results))detected++;else throw new Error('Generated tests did not stably detect '+defect.id);}
+    if(identity&&JSON.stringify(sourceIdentity())!==JSON.stringify(identity))throw new Error('Native proof source identity drift');
   }catch(failure){error={code:failure.code??'qualification-failed',message:failure.message};}
   finally{
     fs.rmSync(workspace,{recursive:true,force:true});
-    summary={schemaVersion:1,evidenceKind,complete:!error,roleInvocations:calls.length,calls,referenceDemonstrated,detected:error?0:detected,partiallyObservedDetections:detected,defectOpportunities:defects.length,elapsedMs:Math.round(performance.now()-started),error:error??null,model:{requested:null,verified:null},billingUSD:null,limitations:['One constructed contract and three independently authored conformance faults; no production, competitor or learning-effect claim.','Reference/defect material is excluded from worker payloads and request directories; native event auditing does not establish OS read confinement.','At most three role invocations, no controller retries, fixed per-role deadline. Provider internal retries and token billing are unknown.','Native execution uses the existing Codex login. Full agent-host MCP qualification is a separate gate.','Elapsed time includes reference executions, model roles, repeated generated executions and cleanup; final summary writing and process startup are excluded.']};
+    summary={schemaVersion:1,evidenceKind,sourceIdentity:identity,complete:!error,roleInvocations:calls.length,calls,referenceDemonstrated,detected:error?0:detected,partiallyObservedDetections:detected,defectOpportunities:defects.length,elapsedMs:Math.round(performance.now()-started),error:error??null,model:{requested:null,verified:null},billingUSD:null,limitations:['One constructed contract and three independently authored conformance faults; no production, competitor or learning-effect claim.','Reference/defect material is excluded from worker payloads and request directories; native event auditing does not establish OS read confinement.','At most three role invocations, no controller retries, fixed per-role deadline. Provider internal retries and token billing are unknown.','Native execution uses the existing Codex login. Full agent-host MCP qualification is a separate gate.','Elapsed time includes reference executions, model roles, repeated generated executions and cleanup; final summary writing and process startup are excluded.']};
     receipt('summary.json',summary);
   }
   return summary;
