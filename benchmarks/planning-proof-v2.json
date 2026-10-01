@@ -1,0 +1,2124 @@
+{
+  "schemaVersion": 1,
+  "kind": "authored-fixtures-only",
+  "complete": true,
+  "generatedAt": "2026-10-01T01:12:46.127Z",
+  "runtime": "v24.5.0",
+  "platform": "darwin",
+  "arch": "arm64",
+  "harnessDigest": "064e389ad7cc30edc0ccc10fc1be460979e6134e4fb8551d391fbc7da0f11e3c",
+  "baselineSourcePreparation": "Instrumented pre-optimization planning commit f37f134f3c98f72948c8c3f9fb665890ce2dd78c; full src snapshot only, dependencies shared, source hashes recorded.",
+  "summary": [
+    {
+      "scenario": "traversal",
+      "arm": "baseline",
+      "method": "plan",
+      "attempts": 3,
+      "completedWorkers": 3,
+      "medianMs": 235.56479199999995,
+      "minimumMs": 228.734708,
+      "maximumMs": 246.15525000000002,
+      "medianOuterMs": 661.2428749999999
+    },
+    {
+      "scenario": "traversal",
+      "arm": "candidate",
+      "method": "plan",
+      "attempts": 3,
+      "completedWorkers": 3,
+      "medianMs": 200.729125,
+      "minimumMs": 195.28854099999995,
+      "maximumMs": 201.085375,
+      "medianOuterMs": 618.3846670000003
+    },
+    {
+      "scenario": "native",
+      "arm": "baseline",
+      "method": "testlore",
+      "attempts": 3,
+      "completedWorkers": 3,
+      "medianMs": 1747.1022500000001,
+      "minimumMs": 1742.056333,
+      "maximumMs": 2043.298125,
+      "medianOuterMs": 2125.7845420000012
+    },
+    {
+      "scenario": "native",
+      "arm": "candidate",
+      "method": "testlore",
+      "attempts": 3,
+      "completedWorkers": 3,
+      "medianMs": 1276.8520830000002,
+      "minimumMs": 1274.9675000000002,
+      "maximumMs": 1296.235084,
+      "medianOuterMs": 1656.9389580000025
+    },
+    {
+      "scenario": "native",
+      "arm": "candidate",
+      "method": "native",
+      "attempts": 3,
+      "completedWorkers": 3,
+      "medianMs": 300.2885,
+      "minimumMs": 296.15529100000003,
+      "maximumMs": 314.289167,
+      "medianOuterMs": 679.1590419999993
+    },
+    {
+      "scenario": "native",
+      "arm": "candidate",
+      "method": "full",
+      "attempts": 3,
+      "completedWorkers": 3,
+      "medianMs": 1380.043667,
+      "minimumMs": 1341.890334,
+      "maximumMs": 1397.080875,
+      "medianOuterMs": 1750.7364579999994
+    }
+  ],
+  "trials": [
+    {
+      "scenario": "traversal",
+      "repetition": 0,
+      "arm": "baseline",
+      "method": "plan",
+      "workerComplete": true,
+      "outerMs": 703.8201670000001,
+      "worker": {
+        "status": 0,
+        "signal": null
+      },
+      "elapsedMs": 246.15525000000002,
+      "config": {
+        "analysisCache": {
+          "enabled": false
+        }
+      },
+      "sourceBefore": "7bed4d1ba8586c52afe81ce3826d2dd18a5719b50fddc8398b4f34c90d1f47a2",
+      "sourceAfter": "7bed4d1ba8586c52afe81ce3826d2dd18a5719b50fddc8398b4f34c90d1f47a2",
+      "timings": {
+        "totalMs": 245.87295799999998,
+        "phases": {
+          "configuration": 0.2797919999999863,
+          "provenance": 84.17674999999997,
+          "graph": 144.35975000000008,
+          "changeDetection": 0.38145799999995234,
+          "runtimeAndServices": 0.22262499999999363,
+          "baselineAndIgnore": 0.436458000000016,
+          "uncertaintyAndMapping": 2.34695899999997,
+          "history": 0.3812080000000151,
+          "decisionsAndFingerprint": 13.266624999999976
+        },
+        "graph": {
+          "totalMs": 144.13925000000006,
+          "phases": {
+            "inventory": 37.32020800000004,
+            "discovery": 0.004791999999952168,
+            "configuration": 39.90420800000004,
+            "sourceReads": 12.05137499999995,
+            "sourceAnalysisAndResolution": 51.32120900000007,
+            "declaredInputsAndConfigurationClosure": 0.09074999999995725,
+            "warningClassification": 3.4018330000000105
+          }
+        }
+      },
+      "normalized": {
+        "mode": "affected",
+        "selected": [
+          "test/leaf-0.test.js",
+          "test/leaf-1.test.js",
+          "test/leaf-10.test.js",
+          "test/leaf-100.test.js",
+          "test/leaf-101.test.js",
+          "test/leaf-102.test.js",
+          "test/leaf-103.test.js",
+          "test/leaf-104.test.js",
+          "test/leaf-105.test.js",
+          "test/leaf-106.test.js",
+          "test/leaf-107.test.js",
+          "test/leaf-108.test.js",
+          "test/leaf-109.test.js",
+          "test/leaf-11.test.js",
+          "test/leaf-110.test.js",
+          "test/leaf-111.test.js",
+          "test/leaf-112.test.js",
+          "test/leaf-113.test.js",
+          "test/leaf-114.test.js",
+          "test/leaf-115.test.js",
+          "test/leaf-116.test.js",
+          "test/leaf-117.test.js",
+          "test/leaf-118.test.js",
+          "test/leaf-119.test.js",
+          "test/leaf-12.test.js",
+          "test/leaf-13.test.js",
+          "test/leaf-14.test.js",
+          "test/leaf-15.test.js",
+          "test/leaf-16.test.js",
+          "test/leaf-17.test.js",
+          "test/leaf-18.test.js",
+          "test/leaf-19.test.js",
+          "test/leaf-2.test.js",
+          "test/leaf-20.test.js",
+          "test/leaf-21.test.js",
+          "test/leaf-22.test.js",
+          "test/leaf-23.test.js",
+          "test/leaf-24.test.js",
+          "test/leaf-25.test.js",
+          "test/leaf-26.test.js",
+          "test/leaf-27.test.js",
+          "test/leaf-28.test.js",
+          "test/leaf-29.test.js",
+          "test/leaf-3.test.js",
+          "test/leaf-30.test.js",
+          "test/leaf-31.test.js",
+          "test/leaf-32.test.js",
+          "test/leaf-33.test.js",
+          "test/leaf-34.test.js",
+          "test/leaf-35.test.js",
+          "test/leaf-36.test.js",
+          "test/leaf-37.test.js",
+          "test/leaf-38.test.js",
+          "test/leaf-39.test.js",
+          "test/leaf-4.test.js",
+          "test/leaf-40.test.js",
+          "test/leaf-41.test.js",
+          "test/leaf-42.test.js",
+          "test/leaf-43.test.js",
+          "test/leaf-44.test.js",
+          "test/leaf-45.test.js",
+          "test/leaf-46.test.js",
+          "test/leaf-47.test.js",
+          "test/leaf-48.test.js",
+          "test/leaf-49.test.js",
+          "test/leaf-5.test.js",
+          "test/leaf-50.test.js",
+          "test/leaf-51.test.js",
+          "test/leaf-52.test.js",
+          "test/leaf-53.test.js",
+          "test/leaf-54.test.js",
+          "test/leaf-55.test.js",
+          "test/leaf-56.test.js",
+          "test/leaf-57.test.js",
+          "test/leaf-58.test.js",
+          "test/leaf-59.test.js",
+          "test/leaf-6.test.js",
+          "test/leaf-60.test.js",
+          "test/leaf-61.test.js",
+          "test/leaf-62.test.js",
+          "test/leaf-63.test.js",
+          "test/leaf-64.test.js",
+          "test/leaf-65.test.js",
+          "test/leaf-66.test.js",
+          "test/leaf-67.test.js",
+          "test/leaf-68.test.js",
+          "test/leaf-69.test.js",
+          "test/leaf-7.test.js",
+          "test/leaf-70.test.js",
+          "test/leaf-71.test.js",
+          "test/leaf-72.test.js",
+          "test/leaf-73.test.js",
+          "test/leaf-74.test.js",
+          "test/leaf-75.test.js",
+          "test/leaf-76.test.js",
+          "test/leaf-77.test.js",
+          "test/leaf-78.test.js",
+          "test/leaf-79.test.js",
+          "test/leaf-8.test.js",
+          "test/leaf-80.test.js",
+          "test/leaf-81.test.js",
+          "test/leaf-82.test.js",
+          "test/leaf-83.test.js",
+          "test/leaf-84.test.js",
+          "test/leaf-85.test.js",
+          "test/leaf-86.test.js",
+          "test/leaf-87.test.js",
+          "test/leaf-88.test.js",
+          "test/leaf-89.test.js",
+          "test/leaf-9.test.js",
+          "test/leaf-90.test.js",
+          "test/leaf-91.test.js",
+          "test/leaf-92.test.js",
+          "test/leaf-93.test.js",
+          "test/leaf-94.test.js",
+          "test/leaf-95.test.js",
+          "test/leaf-96.test.js",
+          "test/leaf-97.test.js",
+          "test/leaf-98.test.js",
+          "test/leaf-99.test.js"
+        ],
+        "reasons": [],
+        "decisionDigest": "e15ca1d45b47d81165a85a967fecacf4e8d56922cc33e641815b70a91f299c1e",
+        "fingerprint": "04b42a74a6301f355a0a121fdafa8024dd6e71f257f9e73bd5441345cc605ad4"
+      }
+    },
+    {
+      "scenario": "traversal",
+      "repetition": 0,
+      "arm": "candidate",
+      "method": "plan",
+      "workerComplete": true,
+      "outerMs": 618.3846670000003,
+      "worker": {
+        "status": 0,
+        "signal": null
+      },
+      "elapsedMs": 195.28854099999995,
+      "config": {
+        "analysisCache": {
+          "enabled": false
+        }
+      },
+      "sourceBefore": "7bed4d1ba8586c52afe81ce3826d2dd18a5719b50fddc8398b4f34c90d1f47a2",
+      "sourceAfter": "7bed4d1ba8586c52afe81ce3826d2dd18a5719b50fddc8398b4f34c90d1f47a2",
+      "timings": {
+        "totalMs": 194.9975,
+        "phases": {
+          "configuration": 0.2787079999999946,
+          "provenance": 81.36474999999996,
+          "graph": 96.68541700000003,
+          "changeDetection": 0.28233299999999417,
+          "runtimeAndServices": 0.13895899999999983,
+          "baselineAndIgnore": 0.4262499999999818,
+          "uncertaintyAndMapping": 2.4591250000000286,
+          "history": 0.32749999999998636,
+          "decisionsAndFingerprint": 13.015832999999986
+        },
+        "graph": {
+          "totalMs": 96.48516699999999,
+          "phases": {
+            "inventory": 34.303292,
+            "discovery": 0.005916000000013355,
+            "configuration": 0.48024999999995543,
+            "sourceReads": 11.630250000000046,
+            "sourceAnalysisAndResolution": 47.46070900000001,
+            "declaredInputsAndConfigurationClosure": 0.08079099999997652,
+            "warningClassification": 2.509416999999985
+          }
+        }
+      },
+      "normalized": {
+        "mode": "affected",
+        "selected": [
+          "test/leaf-0.test.js",
+          "test/leaf-1.test.js",
+          "test/leaf-10.test.js",
+          "test/leaf-100.test.js",
+          "test/leaf-101.test.js",
+          "test/leaf-102.test.js",
+          "test/leaf-103.test.js",
+          "test/leaf-104.test.js",
+          "test/leaf-105.test.js",
+          "test/leaf-106.test.js",
+          "test/leaf-107.test.js",
+          "test/leaf-108.test.js",
+          "test/leaf-109.test.js",
+          "test/leaf-11.test.js",
+          "test/leaf-110.test.js",
+          "test/leaf-111.test.js",
+          "test/leaf-112.test.js",
+          "test/leaf-113.test.js",
+          "test/leaf-114.test.js",
+          "test/leaf-115.test.js",
+          "test/leaf-116.test.js",
+          "test/leaf-117.test.js",
+          "test/leaf-118.test.js",
+          "test/leaf-119.test.js",
+          "test/leaf-12.test.js",
+          "test/leaf-13.test.js",
+          "test/leaf-14.test.js",
+          "test/leaf-15.test.js",
+          "test/leaf-16.test.js",
+          "test/leaf-17.test.js",
+          "test/leaf-18.test.js",
+          "test/leaf-19.test.js",
+          "test/leaf-2.test.js",
+          "test/leaf-20.test.js",
+          "test/leaf-21.test.js",
+          "test/leaf-22.test.js",
+          "test/leaf-23.test.js",
+          "test/leaf-24.test.js",
+          "test/leaf-25.test.js",
+          "test/leaf-26.test.js",
+          "test/leaf-27.test.js",
+          "test/leaf-28.test.js",
+          "test/leaf-29.test.js",
+          "test/leaf-3.test.js",
+          "test/leaf-30.test.js",
+          "test/leaf-31.test.js",
+          "test/leaf-32.test.js",
+          "test/leaf-33.test.js",
+          "test/leaf-34.test.js",
+          "test/leaf-35.test.js",
+          "test/leaf-36.test.js",
+          "test/leaf-37.test.js",
+          "test/leaf-38.test.js",
+          "test/leaf-39.test.js",
+          "test/leaf-4.test.js",
+          "test/leaf-40.test.js",
+          "test/leaf-41.test.js",
+          "test/leaf-42.test.js",
+          "test/leaf-43.test.js",
+          "test/leaf-44.test.js",
+          "test/leaf-45.test.js",
+          "test/leaf-46.test.js",
+          "test/leaf-47.test.js",
+          "test/leaf-48.test.js",
+          "test/leaf-49.test.js",
+          "test/leaf-5.test.js",
+          "test/leaf-50.test.js",
+          "test/leaf-51.test.js",
+          "test/leaf-52.test.js",
+          "test/leaf-53.test.js",
+          "test/leaf-54.test.js",
+          "test/leaf-55.test.js",
+          "test/leaf-56.test.js",
+          "test/leaf-57.test.js",
+          "test/leaf-58.test.js",
+          "test/leaf-59.test.js",
+          "test/leaf-6.test.js",
+          "test/leaf-60.test.js",
+          "test/leaf-61.test.js",
+          "test/leaf-62.test.js",
+          "test/leaf-63.test.js",
+          "test/leaf-64.test.js",
+          "test/leaf-65.test.js",
+          "test/leaf-66.test.js",
+          "test/leaf-67.test.js",
+          "test/leaf-68.test.js",
+          "test/leaf-69.test.js",
+          "test/leaf-7.test.js",
+          "test/leaf-70.test.js",
+          "test/leaf-71.test.js",
+          "test/leaf-72.test.js",
+          "test/leaf-73.test.js",
+          "test/leaf-74.test.js",
+          "test/leaf-75.test.js",
+          "test/leaf-76.test.js",
+          "test/leaf-77.test.js",
+          "test/leaf-78.test.js",
+          "test/leaf-79.test.js",
+          "test/leaf-8.test.js",
+          "test/leaf-80.test.js",
+          "test/leaf-81.test.js",
+          "test/leaf-82.test.js",
+          "test/leaf-83.test.js",
+          "test/leaf-84.test.js",
+          "test/leaf-85.test.js",
+          "test/leaf-86.test.js",
+          "test/leaf-87.test.js",
+          "test/leaf-88.test.js",
+          "test/leaf-89.test.js",
+          "test/leaf-9.test.js",
+          "test/leaf-90.test.js",
+          "test/leaf-91.test.js",
+          "test/leaf-92.test.js",
+          "test/leaf-93.test.js",
+          "test/leaf-94.test.js",
+          "test/leaf-95.test.js",
+          "test/leaf-96.test.js",
+          "test/leaf-97.test.js",
+          "test/leaf-98.test.js",
+          "test/leaf-99.test.js"
+        ],
+        "reasons": [],
+        "decisionDigest": "e15ca1d45b47d81165a85a967fecacf4e8d56922cc33e641815b70a91f299c1e",
+        "fingerprint": "04b42a74a6301f355a0a121fdafa8024dd6e71f257f9e73bd5441345cc605ad4"
+      }
+    },
+    {
+      "scenario": "traversal",
+      "repetition": 1,
+      "arm": "candidate",
+      "method": "plan",
+      "workerComplete": true,
+      "outerMs": 626.4126249999999,
+      "worker": {
+        "status": 0,
+        "signal": null
+      },
+      "elapsedMs": 201.085375,
+      "config": {
+        "analysisCache": {
+          "enabled": false
+        }
+      },
+      "sourceBefore": "7bed4d1ba8586c52afe81ce3826d2dd18a5719b50fddc8398b4f34c90d1f47a2",
+      "sourceAfter": "7bed4d1ba8586c52afe81ce3826d2dd18a5719b50fddc8398b4f34c90d1f47a2",
+      "timings": {
+        "totalMs": 200.79087499999997,
+        "phases": {
+          "configuration": 0.3064579999999637,
+          "provenance": 84.044625,
+          "graph": 99.92266700000005,
+          "changeDetection": 0.3002079999999978,
+          "runtimeAndServices": 0.1386669999999981,
+          "baselineAndIgnore": 0.42979099999996606,
+          "uncertaintyAndMapping": 2.4742919999999913,
+          "history": 0.32066700000001447,
+          "decisionsAndFingerprint": 12.838666000000046
+        },
+        "graph": {
+          "totalMs": 99.691958,
+          "phases": {
+            "inventory": 37.46841599999999,
+            "discovery": 0.005791999999985364,
+            "configuration": 0.43437499999998863,
+            "sourceReads": 11.597042000000044,
+            "sourceAnalysisAndResolution": 47.54262499999999,
+            "declaredInputsAndConfigurationClosure": 0.07562500000000227,
+            "warningClassification": 2.55420799999996
+          }
+        }
+      },
+      "normalized": {
+        "mode": "affected",
+        "selected": [
+          "test/leaf-0.test.js",
+          "test/leaf-1.test.js",
+          "test/leaf-10.test.js",
+          "test/leaf-100.test.js",
+          "test/leaf-101.test.js",
+          "test/leaf-102.test.js",
+          "test/leaf-103.test.js",
+          "test/leaf-104.test.js",
+          "test/leaf-105.test.js",
+          "test/leaf-106.test.js",
+          "test/leaf-107.test.js",
+          "test/leaf-108.test.js",
+          "test/leaf-109.test.js",
+          "test/leaf-11.test.js",
+          "test/leaf-110.test.js",
+          "test/leaf-111.test.js",
+          "test/leaf-112.test.js",
+          "test/leaf-113.test.js",
+          "test/leaf-114.test.js",
+          "test/leaf-115.test.js",
+          "test/leaf-116.test.js",
+          "test/leaf-117.test.js",
+          "test/leaf-118.test.js",
+          "test/leaf-119.test.js",
+          "test/leaf-12.test.js",
+          "test/leaf-13.test.js",
+          "test/leaf-14.test.js",
+          "test/leaf-15.test.js",
+          "test/leaf-16.test.js",
+          "test/leaf-17.test.js",
+          "test/leaf-18.test.js",
+          "test/leaf-19.test.js",
+          "test/leaf-2.test.js",
+          "test/leaf-20.test.js",
+          "test/leaf-21.test.js",
+          "test/leaf-22.test.js",
+          "test/leaf-23.test.js",
+          "test/leaf-24.test.js",
+          "test/leaf-25.test.js",
+          "test/leaf-26.test.js",
+          "test/leaf-27.test.js",
+          "test/leaf-28.test.js",
+          "test/leaf-29.test.js",
+          "test/leaf-3.test.js",
+          "test/leaf-30.test.js",
+          "test/leaf-31.test.js",
+          "test/leaf-32.test.js",
+          "test/leaf-33.test.js",
+          "test/leaf-34.test.js",
+          "test/leaf-35.test.js",
+          "test/leaf-36.test.js",
+          "test/leaf-37.test.js",
+          "test/leaf-38.test.js",
+          "test/leaf-39.test.js",
+          "test/leaf-4.test.js",
+          "test/leaf-40.test.js",
+          "test/leaf-41.test.js",
+          "test/leaf-42.test.js",
+          "test/leaf-43.test.js",
+          "test/leaf-44.test.js",
+          "test/leaf-45.test.js",
+          "test/leaf-46.test.js",
+          "test/leaf-47.test.js",
+          "test/leaf-48.test.js",
+          "test/leaf-49.test.js",
+          "test/leaf-5.test.js",
+          "test/leaf-50.test.js",
+          "test/leaf-51.test.js",
+          "test/leaf-52.test.js",
+          "test/leaf-53.test.js",
+          "test/leaf-54.test.js",
+          "test/leaf-55.test.js",
+          "test/leaf-56.test.js",
+          "test/leaf-57.test.js",
+          "test/leaf-58.test.js",
+          "test/leaf-59.test.js",
+          "test/leaf-6.test.js",
+          "test/leaf-60.test.js",
+          "test/leaf-61.test.js",
+          "test/leaf-62.test.js",
+          "test/leaf-63.test.js",
+          "test/leaf-64.test.js",
+          "test/leaf-65.test.js",
+          "test/leaf-66.test.js",
+          "test/leaf-67.test.js",
+          "test/leaf-68.test.js",
+          "test/leaf-69.test.js",
+          "test/leaf-7.test.js",
+          "test/leaf-70.test.js",
+          "test/leaf-71.test.js",
+          "test/leaf-72.test.js",
+          "test/leaf-73.test.js",
+          "test/leaf-74.test.js",
+          "test/leaf-75.test.js",
+          "test/leaf-76.test.js",
+          "test/leaf-77.test.js",
+          "test/leaf-78.test.js",
+          "test/leaf-79.test.js",
+          "test/leaf-8.test.js",
+          "test/leaf-80.test.js",
+          "test/leaf-81.test.js",
+          "test/leaf-82.test.js",
+          "test/leaf-83.test.js",
+          "test/leaf-84.test.js",
+          "test/leaf-85.test.js",
+          "test/leaf-86.test.js",
+          "test/leaf-87.test.js",
+          "test/leaf-88.test.js",
+          "test/leaf-89.test.js",
+          "test/leaf-9.test.js",
+          "test/leaf-90.test.js",
+          "test/leaf-91.test.js",
+          "test/leaf-92.test.js",
+          "test/leaf-93.test.js",
+          "test/leaf-94.test.js",
+          "test/leaf-95.test.js",
+          "test/leaf-96.test.js",
+          "test/leaf-97.test.js",
+          "test/leaf-98.test.js",
+          "test/leaf-99.test.js"
+        ],
+        "reasons": [],
+        "decisionDigest": "e15ca1d45b47d81165a85a967fecacf4e8d56922cc33e641815b70a91f299c1e",
+        "fingerprint": "04b42a74a6301f355a0a121fdafa8024dd6e71f257f9e73bd5441345cc605ad4"
+      }
+    },
+    {
+      "scenario": "traversal",
+      "repetition": 1,
+      "arm": "baseline",
+      "method": "plan",
+      "workerComplete": true,
+      "outerMs": 661.2428749999999,
+      "worker": {
+        "status": 0,
+        "signal": null
+      },
+      "elapsedMs": 235.56479199999995,
+      "config": {
+        "analysisCache": {
+          "enabled": false
+        }
+      },
+      "sourceBefore": "7bed4d1ba8586c52afe81ce3826d2dd18a5719b50fddc8398b4f34c90d1f47a2",
+      "sourceAfter": "7bed4d1ba8586c52afe81ce3826d2dd18a5719b50fddc8398b4f34c90d1f47a2",
+      "timings": {
+        "totalMs": 235.28145899999998,
+        "phases": {
+          "configuration": 0.2771250000000123,
+          "provenance": 84.68283399999996,
+          "graph": 133.86004100000002,
+          "changeDetection": 0.3037090000000262,
+          "runtimeAndServices": 0.15562499999998636,
+          "baselineAndIgnore": 0.42233299999998053,
+          "uncertaintyAndMapping": 2.2200000000000273,
+          "history": 0.3025000000000091,
+          "decisionsAndFingerprint": 13.033583000000021
+        },
+        "graph": {
+          "totalMs": 133.641458,
+          "phases": {
+            "inventory": 36.47087499999998,
+            "discovery": 0.006042000000036296,
+            "configuration": 34.35537499999998,
+            "sourceReads": 11.719625000000008,
+            "sourceAnalysisAndResolution": 48.097916,
+            "declaredInputsAndConfigurationClosure": 0.07570899999996072,
+            "warningClassification": 2.8915830000000824
+          }
+        }
+      },
+      "normalized": {
+        "mode": "affected",
+        "selected": [
+          "test/leaf-0.test.js",
+          "test/leaf-1.test.js",
+          "test/leaf-10.test.js",
+          "test/leaf-100.test.js",
+          "test/leaf-101.test.js",
+          "test/leaf-102.test.js",
+          "test/leaf-103.test.js",
+          "test/leaf-104.test.js",
+          "test/leaf-105.test.js",
+          "test/leaf-106.test.js",
+          "test/leaf-107.test.js",
+          "test/leaf-108.test.js",
+          "test/leaf-109.test.js",
+          "test/leaf-11.test.js",
+          "test/leaf-110.test.js",
+          "test/leaf-111.test.js",
+          "test/leaf-112.test.js",
+          "test/leaf-113.test.js",
+          "test/leaf-114.test.js",
+          "test/leaf-115.test.js",
+          "test/leaf-116.test.js",
+          "test/leaf-117.test.js",
+          "test/leaf-118.test.js",
+          "test/leaf-119.test.js",
+          "test/leaf-12.test.js",
+          "test/leaf-13.test.js",
+          "test/leaf-14.test.js",
+          "test/leaf-15.test.js",
+          "test/leaf-16.test.js",
+          "test/leaf-17.test.js",
+          "test/leaf-18.test.js",
+          "test/leaf-19.test.js",
+          "test/leaf-2.test.js",
+          "test/leaf-20.test.js",
+          "test/leaf-21.test.js",
+          "test/leaf-22.test.js",
+          "test/leaf-23.test.js",
+          "test/leaf-24.test.js",
+          "test/leaf-25.test.js",
+          "test/leaf-26.test.js",
+          "test/leaf-27.test.js",
+          "test/leaf-28.test.js",
+          "test/leaf-29.test.js",
+          "test/leaf-3.test.js",
+          "test/leaf-30.test.js",
+          "test/leaf-31.test.js",
+          "test/leaf-32.test.js",
+          "test/leaf-33.test.js",
+          "test/leaf-34.test.js",
+          "test/leaf-35.test.js",
+          "test/leaf-36.test.js",
+          "test/leaf-37.test.js",
+          "test/leaf-38.test.js",
+          "test/leaf-39.test.js",
+          "test/leaf-4.test.js",
+          "test/leaf-40.test.js",
+          "test/leaf-41.test.js",
+          "test/leaf-42.test.js",
+          "test/leaf-43.test.js",
+          "test/leaf-44.test.js",
+          "test/leaf-45.test.js",
+          "test/leaf-46.test.js",
+          "test/leaf-47.test.js",
+          "test/leaf-48.test.js",
+          "test/leaf-49.test.js",
+          "test/leaf-5.test.js",
+          "test/leaf-50.test.js",
+          "test/leaf-51.test.js",
+          "test/leaf-52.test.js",
+          "test/leaf-53.test.js",
+          "test/leaf-54.test.js",
+          "test/leaf-55.test.js",
+          "test/leaf-56.test.js",
+          "test/leaf-57.test.js",
+          "test/leaf-58.test.js",
+          "test/leaf-59.test.js",
+          "test/leaf-6.test.js",
+          "test/leaf-60.test.js",
+          "test/leaf-61.test.js",
+          "test/leaf-62.test.js",
+          "test/leaf-63.test.js",
+          "test/leaf-64.test.js",
+          "test/leaf-65.test.js",
+          "test/leaf-66.test.js",
+          "test/leaf-67.test.js",
+          "test/leaf-68.test.js",
+          "test/leaf-69.test.js",
+          "test/leaf-7.test.js",
+          "test/leaf-70.test.js",
+          "test/leaf-71.test.js",
+          "test/leaf-72.test.js",
+          "test/leaf-73.test.js",
+          "test/leaf-74.test.js",
+          "test/leaf-75.test.js",
+          "test/leaf-76.test.js",
+          "test/leaf-77.test.js",
+          "test/leaf-78.test.js",
+          "test/leaf-79.test.js",
+          "test/leaf-8.test.js",
+          "test/leaf-80.test.js",
+          "test/leaf-81.test.js",
+          "test/leaf-82.test.js",
+          "test/leaf-83.test.js",
+          "test/leaf-84.test.js",
+          "test/leaf-85.test.js",
+          "test/leaf-86.test.js",
+          "test/leaf-87.test.js",
+          "test/leaf-88.test.js",
+          "test/leaf-89.test.js",
+          "test/leaf-9.test.js",
+          "test/leaf-90.test.js",
+          "test/leaf-91.test.js",
+          "test/leaf-92.test.js",
+          "test/leaf-93.test.js",
+          "test/leaf-94.test.js",
+          "test/leaf-95.test.js",
+          "test/leaf-96.test.js",
+          "test/leaf-97.test.js",
+          "test/leaf-98.test.js",
+          "test/leaf-99.test.js"
+        ],
+        "reasons": [],
+        "decisionDigest": "e15ca1d45b47d81165a85a967fecacf4e8d56922cc33e641815b70a91f299c1e",
+        "fingerprint": "04b42a74a6301f355a0a121fdafa8024dd6e71f257f9e73bd5441345cc605ad4"
+      }
+    },
+    {
+      "scenario": "traversal",
+      "repetition": 2,
+      "arm": "baseline",
+      "method": "plan",
+      "workerComplete": true,
+      "outerMs": 636.7657499999996,
+      "worker": {
+        "status": 0,
+        "signal": null
+      },
+      "elapsedMs": 228.734708,
+      "config": {
+        "analysisCache": {
+          "enabled": false
+        }
+      },
+      "sourceBefore": "7bed4d1ba8586c52afe81ce3826d2dd18a5719b50fddc8398b4f34c90d1f47a2",
+      "sourceAfter": "7bed4d1ba8586c52afe81ce3826d2dd18a5719b50fddc8398b4f34c90d1f47a2",
+      "timings": {
+        "totalMs": 228.44883400000003,
+        "phases": {
+          "configuration": 0.2984589999999798,
+          "provenance": 79.037958,
+          "graph": 133.19212500000003,
+          "changeDetection": 0.30279200000001083,
+          "runtimeAndServices": 0.1432079999999587,
+          "baselineAndIgnore": 0.422375000000045,
+          "uncertaintyAndMapping": 2.232167000000004,
+          "history": 0.29837499999996453,
+          "decisionsAndFingerprint": 12.500708000000031
+        },
+        "graph": {
+          "totalMs": 132.96833400000003,
+          "phases": {
+            "inventory": 34.98712499999999,
+            "discovery": 0.006334000000038031,
+            "configuration": 35.62658299999998,
+            "sourceReads": 11.891583000000026,
+            "sourceAnalysisAndResolution": 47.55558399999995,
+            "declaredInputsAndConfigurationClosure": 0.08425000000005411,
+            "warningClassification": 2.7984579999999823
+          }
+        }
+      },
+      "normalized": {
+        "mode": "affected",
+        "selected": [
+          "test/leaf-0.test.js",
+          "test/leaf-1.test.js",
+          "test/leaf-10.test.js",
+          "test/leaf-100.test.js",
+          "test/leaf-101.test.js",
+          "test/leaf-102.test.js",
+          "test/leaf-103.test.js",
+          "test/leaf-104.test.js",
+          "test/leaf-105.test.js",
+          "test/leaf-106.test.js",
+          "test/leaf-107.test.js",
+          "test/leaf-108.test.js",
+          "test/leaf-109.test.js",
+          "test/leaf-11.test.js",
+          "test/leaf-110.test.js",
+          "test/leaf-111.test.js",
+          "test/leaf-112.test.js",
+          "test/leaf-113.test.js",
+          "test/leaf-114.test.js",
+          "test/leaf-115.test.js",
+          "test/leaf-116.test.js",
+          "test/leaf-117.test.js",
+          "test/leaf-118.test.js",
+          "test/leaf-119.test.js",
+          "test/leaf-12.test.js",
+          "test/leaf-13.test.js",
+          "test/leaf-14.test.js",
+          "test/leaf-15.test.js",
+          "test/leaf-16.test.js",
+          "test/leaf-17.test.js",
+          "test/leaf-18.test.js",
+          "test/leaf-19.test.js",
+          "test/leaf-2.test.js",
+          "test/leaf-20.test.js",
+          "test/leaf-21.test.js",
+          "test/leaf-22.test.js",
+          "test/leaf-23.test.js",
+          "test/leaf-24.test.js",
+          "test/leaf-25.test.js",
+          "test/leaf-26.test.js",
+          "test/leaf-27.test.js",
+          "test/leaf-28.test.js",
+          "test/leaf-29.test.js",
+          "test/leaf-3.test.js",
+          "test/leaf-30.test.js",
+          "test/leaf-31.test.js",
+          "test/leaf-32.test.js",
+          "test/leaf-33.test.js",
+          "test/leaf-34.test.js",
+          "test/leaf-35.test.js",
+          "test/leaf-36.test.js",
+          "test/leaf-37.test.js",
+          "test/leaf-38.test.js",
+          "test/leaf-39.test.js",
+          "test/leaf-4.test.js",
+          "test/leaf-40.test.js",
+          "test/leaf-41.test.js",
+          "test/leaf-42.test.js",
+          "test/leaf-43.test.js",
+          "test/leaf-44.test.js",
+          "test/leaf-45.test.js",
+          "test/leaf-46.test.js",
+          "test/leaf-47.test.js",
+          "test/leaf-48.test.js",
+          "test/leaf-49.test.js",
+          "test/leaf-5.test.js",
+          "test/leaf-50.test.js",
+          "test/leaf-51.test.js",
+          "test/leaf-52.test.js",
+          "test/leaf-53.test.js",
+          "test/leaf-54.test.js",
+          "test/leaf-55.test.js",
+          "test/leaf-56.test.js",
+          "test/leaf-57.test.js",
+          "test/leaf-58.test.js",
+          "test/leaf-59.test.js",
+          "test/leaf-6.test.js",
+          "test/leaf-60.test.js",
+          "test/leaf-61.test.js",
+          "test/leaf-62.test.js",
+          "test/leaf-63.test.js",
+          "test/leaf-64.test.js",
+          "test/leaf-65.test.js",
+          "test/leaf-66.test.js",
+          "test/leaf-67.test.js",
+          "test/leaf-68.test.js",
+          "test/leaf-69.test.js",
+          "test/leaf-7.test.js",
+          "test/leaf-70.test.js",
+          "test/leaf-71.test.js",
+          "test/leaf-72.test.js",
+          "test/leaf-73.test.js",
+          "test/leaf-74.test.js",
+          "test/leaf-75.test.js",
+          "test/leaf-76.test.js",
+          "test/leaf-77.test.js",
+          "test/leaf-78.test.js",
+          "test/leaf-79.test.js",
+          "test/leaf-8.test.js",
+          "test/leaf-80.test.js",
+          "test/leaf-81.test.js",
+          "test/leaf-82.test.js",
+          "test/leaf-83.test.js",
+          "test/leaf-84.test.js",
+          "test/leaf-85.test.js",
+          "test/leaf-86.test.js",
+          "test/leaf-87.test.js",
+          "test/leaf-88.test.js",
+          "test/leaf-89.test.js",
+          "test/leaf-9.test.js",
+          "test/leaf-90.test.js",
+          "test/leaf-91.test.js",
+          "test/leaf-92.test.js",
+          "test/leaf-93.test.js",
+          "test/leaf-94.test.js",
+          "test/leaf-95.test.js",
+          "test/leaf-96.test.js",
+          "test/leaf-97.test.js",
+          "test/leaf-98.test.js",
+          "test/leaf-99.test.js"
+        ],
+        "reasons": [],
+        "decisionDigest": "e15ca1d45b47d81165a85a967fecacf4e8d56922cc33e641815b70a91f299c1e",
+        "fingerprint": "04b42a74a6301f355a0a121fdafa8024dd6e71f257f9e73bd5441345cc605ad4"
+      }
+    },
+    {
+      "scenario": "traversal",
+      "repetition": 2,
+      "arm": "candidate",
+      "method": "plan",
+      "workerComplete": true,
+      "outerMs": 611.030334,
+      "worker": {
+        "status": 0,
+        "signal": null
+      },
+      "elapsedMs": 200.729125,
+      "config": {
+        "analysisCache": {
+          "enabled": false
+        }
+      },
+      "sourceBefore": "7bed4d1ba8586c52afe81ce3826d2dd18a5719b50fddc8398b4f34c90d1f47a2",
+      "sourceAfter": "7bed4d1ba8586c52afe81ce3826d2dd18a5719b50fddc8398b4f34c90d1f47a2",
+      "timings": {
+        "totalMs": 200.456417,
+        "phases": {
+          "configuration": 0.2717920000000049,
+          "provenance": 82.30116700000002,
+          "graph": 101.55487499999998,
+          "changeDetection": 0.30383299999999736,
+          "runtimeAndServices": 0.13474999999999682,
+          "baselineAndIgnore": 0.42458299999998417,
+          "uncertaintyAndMapping": 2.54441700000001,
+          "history": 0.296875,
+          "decisionsAndFingerprint": 12.607082999999989
+        },
+        "graph": {
+          "totalMs": 101.340708,
+          "phases": {
+            "inventory": 38.12704199999996,
+            "discovery": 0.005916000000013355,
+            "configuration": 0.444958999999983,
+            "sourceReads": 11.773166000000003,
+            "sourceAnalysisAndResolution": 48.363249999999994,
+            "declaredInputsAndConfigurationClosure": 0.08533400000004576,
+            "warningClassification": 2.5240409999999542
+          }
+        }
+      },
+      "normalized": {
+        "mode": "affected",
+        "selected": [
+          "test/leaf-0.test.js",
+          "test/leaf-1.test.js",
+          "test/leaf-10.test.js",
+          "test/leaf-100.test.js",
+          "test/leaf-101.test.js",
+          "test/leaf-102.test.js",
+          "test/leaf-103.test.js",
+          "test/leaf-104.test.js",
+          "test/leaf-105.test.js",
+          "test/leaf-106.test.js",
+          "test/leaf-107.test.js",
+          "test/leaf-108.test.js",
+          "test/leaf-109.test.js",
+          "test/leaf-11.test.js",
+          "test/leaf-110.test.js",
+          "test/leaf-111.test.js",
+          "test/leaf-112.test.js",
+          "test/leaf-113.test.js",
+          "test/leaf-114.test.js",
+          "test/leaf-115.test.js",
+          "test/leaf-116.test.js",
+          "test/leaf-117.test.js",
+          "test/leaf-118.test.js",
+          "test/leaf-119.test.js",
+          "test/leaf-12.test.js",
+          "test/leaf-13.test.js",
+          "test/leaf-14.test.js",
+          "test/leaf-15.test.js",
+          "test/leaf-16.test.js",
+          "test/leaf-17.test.js",
+          "test/leaf-18.test.js",
+          "test/leaf-19.test.js",
+          "test/leaf-2.test.js",
+          "test/leaf-20.test.js",
+          "test/leaf-21.test.js",
+          "test/leaf-22.test.js",
+          "test/leaf-23.test.js",
+          "test/leaf-24.test.js",
+          "test/leaf-25.test.js",
+          "test/leaf-26.test.js",
+          "test/leaf-27.test.js",
+          "test/leaf-28.test.js",
+          "test/leaf-29.test.js",
+          "test/leaf-3.test.js",
+          "test/leaf-30.test.js",
+          "test/leaf-31.test.js",
+          "test/leaf-32.test.js",
+          "test/leaf-33.test.js",
+          "test/leaf-34.test.js",
+          "test/leaf-35.test.js",
+          "test/leaf-36.test.js",
+          "test/leaf-37.test.js",
+          "test/leaf-38.test.js",
+          "test/leaf-39.test.js",
+          "test/leaf-4.test.js",
+          "test/leaf-40.test.js",
+          "test/leaf-41.test.js",
+          "test/leaf-42.test.js",
+          "test/leaf-43.test.js",
+          "test/leaf-44.test.js",
+          "test/leaf-45.test.js",
+          "test/leaf-46.test.js",
+          "test/leaf-47.test.js",
+          "test/leaf-48.test.js",
+          "test/leaf-49.test.js",
+          "test/leaf-5.test.js",
+          "test/leaf-50.test.js",
+          "test/leaf-51.test.js",
+          "test/leaf-52.test.js",
+          "test/leaf-53.test.js",
+          "test/leaf-54.test.js",
+          "test/leaf-55.test.js",
+          "test/leaf-56.test.js",
+          "test/leaf-57.test.js",
+          "test/leaf-58.test.js",
+          "test/leaf-59.test.js",
+          "test/leaf-6.test.js",
+          "test/leaf-60.test.js",
+          "test/leaf-61.test.js",
+          "test/leaf-62.test.js",
+          "test/leaf-63.test.js",
+          "test/leaf-64.test.js",
+          "test/leaf-65.test.js",
+          "test/leaf-66.test.js",
+          "test/leaf-67.test.js",
+          "test/leaf-68.test.js",
+          "test/leaf-69.test.js",
+          "test/leaf-7.test.js",
+          "test/leaf-70.test.js",
+          "test/leaf-71.test.js",
+          "test/leaf-72.test.js",
+          "test/leaf-73.test.js",
+          "test/leaf-74.test.js",
+          "test/leaf-75.test.js",
+          "test/leaf-76.test.js",
+          "test/leaf-77.test.js",
+          "test/leaf-78.test.js",
+          "test/leaf-79.test.js",
+          "test/leaf-8.test.js",
+          "test/leaf-80.test.js",
+          "test/leaf-81.test.js",
+          "test/leaf-82.test.js",
+          "test/leaf-83.test.js",
+          "test/leaf-84.test.js",
+          "test/leaf-85.test.js",
+          "test/leaf-86.test.js",
+          "test/leaf-87.test.js",
+          "test/leaf-88.test.js",
+          "test/leaf-89.test.js",
+          "test/leaf-9.test.js",
+          "test/leaf-90.test.js",
+          "test/leaf-91.test.js",
+          "test/leaf-92.test.js",
+          "test/leaf-93.test.js",
+          "test/leaf-94.test.js",
+          "test/leaf-95.test.js",
+          "test/leaf-96.test.js",
+          "test/leaf-97.test.js",
+          "test/leaf-98.test.js",
+          "test/leaf-99.test.js"
+        ],
+        "reasons": [],
+        "decisionDigest": "e15ca1d45b47d81165a85a967fecacf4e8d56922cc33e641815b70a91f299c1e",
+        "fingerprint": "04b42a74a6301f355a0a121fdafa8024dd6e71f257f9e73bd5441345cc605ad4"
+      }
+    },
+    {
+      "scenario": "native",
+      "repetition": 0,
+      "arm": "baseline",
+      "method": "testlore",
+      "workerComplete": true,
+      "outerMs": 2414.3592499999995,
+      "worker": {
+        "status": 0,
+        "signal": null
+      },
+      "elapsedMs": 2043.298125,
+      "config": {
+        "adapter": "vitest",
+        "discovery": "native",
+        "analysisCache": {
+          "enabled": false
+        },
+        "runner": [
+          "/Users/rudycelekli/.nvm/versions/node/v24.5.0/bin/node",
+          "/private/tmp/testlore-performance-20260930/node_modules/vitest/vitest.mjs",
+          "run",
+          "--maxWorkers=1",
+          "--no-file-parallelism",
+          "{files}"
+        ]
+      },
+      "sourceBefore": "27c76cf85d86c6365daf24ba1566213bc5692b0cf1a1df5f7c709e901093ebe3",
+      "sourceAfter": "27c76cf85d86c6365daf24ba1566213bc5692b0cf1a1df5f7c709e901093ebe3",
+      "timings": {
+        "totalMs": 1580.074542,
+        "phases": {
+          "configuration": 0.08950000000004366,
+          "provenance": 64.59625,
+          "graph": 914.549417,
+          "changeDetection": 190.47350000000006,
+          "runtimeAndServices": 0.20499999999992724,
+          "baselineAndIgnore": 409.52370799999994,
+          "uncertaintyAndMapping": 0.16091700000015408,
+          "history": 0.31245799999987867,
+          "decisionsAndFingerprint": 0.1486250000000382
+        },
+        "graph": {
+          "totalMs": 914.3054589999999,
+          "phases": {
+            "inventory": 30.657208999999966,
+            "discovery": 259.813375,
+            "configuration": 32.28641600000003,
+            "sourceReads": 1.3112089999999625,
+            "sourceAnalysisAndResolution": 589.9236249999999,
+            "declaredInputsAndConfigurationClosure": 0.11712500000021464,
+            "warningClassification": 0.1694999999999709
+          }
+        }
+      },
+      "normalized": {
+        "complete": true,
+        "exitCode": 1,
+        "files": [
+          "test/leaf-0.test.js"
+        ],
+        "tests": [
+          {
+            "file": "test/leaf-0.test.js",
+            "name": "leaf 0",
+            "status": "failed",
+            "durationMs": 10.864334,
+            "id": "5df8918a328c8084da8fc4109908dcc335ed2100aa4ebfc6406796792fec609e"
+          }
+        ]
+      },
+      "nativeCaseCount": 1
+    },
+    {
+      "scenario": "native",
+      "repetition": 0,
+      "arm": "candidate",
+      "method": "testlore",
+      "workerComplete": true,
+      "outerMs": 1639.823625000001,
+      "worker": {
+        "status": 0,
+        "signal": null
+      },
+      "elapsedMs": 1276.8520830000002,
+      "config": {
+        "adapter": "vitest",
+        "discovery": "native",
+        "analysisCache": {
+          "enabled": false
+        },
+        "runner": [
+          "/Users/rudycelekli/.nvm/versions/node/v24.5.0/bin/node",
+          "/private/tmp/testlore-performance-20260930/node_modules/vitest/vitest.mjs",
+          "run",
+          "--maxWorkers=1",
+          "--no-file-parallelism",
+          "{files}"
+        ]
+      },
+      "sourceBefore": "27c76cf85d86c6365daf24ba1566213bc5692b0cf1a1df5f7c709e901093ebe3",
+      "sourceAfter": "27c76cf85d86c6365daf24ba1566213bc5692b0cf1a1df5f7c709e901093ebe3",
+      "timings": {
+        "totalMs": 828.207375,
+        "phases": {
+          "configuration": 0.08833299999997735,
+          "provenance": 58.25433400000003,
+          "graph": 619.4628329999999,
+          "changeDetection": 119.01354200000014,
+          "runtimeAndServices": 0.20941599999991922,
+          "baselineAndIgnore": 30.536125000000084,
+          "uncertaintyAndMapping": 0.1794999999999618,
+          "history": 0.2889589999999771,
+          "decisionsAndFingerprint": 0.16116599999986647
+        },
+        "graph": {
+          "totalMs": 619.2367079999999,
+          "phases": {
+            "inventory": 31.125,
+            "discovery": 185.924875,
+            "configuration": 0.5114160000000538,
+            "sourceReads": 1.6141249999999445,
+            "sourceAnalysisAndResolution": 399.844834,
+            "declaredInputsAndConfigurationClosure": 0.08258299999999963,
+            "warningClassification": 0.12012500000003001
+          }
+        }
+      },
+      "normalized": {
+        "complete": true,
+        "exitCode": 1,
+        "files": [
+          "test/leaf-0.test.js"
+        ],
+        "tests": [
+          {
+            "file": "test/leaf-0.test.js",
+            "name": "leaf 0",
+            "status": "failed",
+            "durationMs": 10.632000000000005,
+            "id": "5df8918a328c8084da8fc4109908dcc335ed2100aa4ebfc6406796792fec609e"
+          }
+        ]
+      },
+      "nativeCaseCount": 1
+    },
+    {
+      "scenario": "native",
+      "repetition": 0,
+      "arm": "candidate",
+      "method": "native",
+      "workerComplete": true,
+      "outerMs": 667.7523330000004,
+      "worker": {
+        "status": 0,
+        "signal": null
+      },
+      "elapsedMs": 296.15529100000003,
+      "config": {
+        "adapter": "vitest",
+        "discovery": "native",
+        "analysisCache": {
+          "enabled": false
+        },
+        "runner": [
+          "/Users/rudycelekli/.nvm/versions/node/v24.5.0/bin/node",
+          "/private/tmp/testlore-performance-20260930/node_modules/vitest/vitest.mjs",
+          "run",
+          "--maxWorkers=1",
+          "--no-file-parallelism",
+          "{files}"
+        ]
+      },
+      "sourceBefore": "27c76cf85d86c6365daf24ba1566213bc5692b0cf1a1df5f7c709e901093ebe3",
+      "sourceAfter": "27c76cf85d86c6365daf24ba1566213bc5692b0cf1a1df5f7c709e901093ebe3",
+      "normalized": {
+        "complete": true,
+        "exitCode": 1,
+        "files": [
+          "test/leaf-0.test.js"
+        ],
+        "tests": [
+          {
+            "file": "test/leaf-0.test.js",
+            "name": "leaf 0",
+            "status": "failed",
+            "durationMs": 10.460500000000003,
+            "id": "5df8918a328c8084da8fc4109908dcc335ed2100aa4ebfc6406796792fec609e"
+          }
+        ]
+      },
+      "nativeCaseCount": 1
+    },
+    {
+      "scenario": "native",
+      "repetition": 0,
+      "arm": "candidate",
+      "method": "full",
+      "workerComplete": true,
+      "outerMs": 1750.7364579999994,
+      "worker": {
+        "status": 0,
+        "signal": null
+      },
+      "elapsedMs": 1380.043667,
+      "config": {
+        "adapter": "vitest",
+        "discovery": "native",
+        "analysisCache": {
+          "enabled": false
+        },
+        "runner": [
+          "/Users/rudycelekli/.nvm/versions/node/v24.5.0/bin/node",
+          "/private/tmp/testlore-performance-20260930/node_modules/vitest/vitest.mjs",
+          "run",
+          "--maxWorkers=1",
+          "--no-file-parallelism",
+          "{files}"
+        ]
+      },
+      "sourceBefore": "27c76cf85d86c6365daf24ba1566213bc5692b0cf1a1df5f7c709e901093ebe3",
+      "sourceAfter": "27c76cf85d86c6365daf24ba1566213bc5692b0cf1a1df5f7c709e901093ebe3",
+      "normalized": {
+        "complete": true,
+        "exitCode": 1,
+        "files": [
+          "test/leaf-0.test.js",
+          "test/leaf-1.test.js",
+          "test/leaf-10.test.js",
+          "test/leaf-11.test.js",
+          "test/leaf-2.test.js",
+          "test/leaf-3.test.js",
+          "test/leaf-4.test.js",
+          "test/leaf-5.test.js",
+          "test/leaf-6.test.js",
+          "test/leaf-7.test.js",
+          "test/leaf-8.test.js",
+          "test/leaf-9.test.js"
+        ],
+        "tests": [
+          {
+            "file": "test/leaf-0.test.js",
+            "name": "leaf 0",
+            "status": "failed",
+            "durationMs": 10.606042000000002,
+            "id": "5df8918a328c8084da8fc4109908dcc335ed2100aa4ebfc6406796792fec609e"
+          },
+          {
+            "file": "test/leaf-1.test.js",
+            "name": "leaf 1",
+            "status": "passed",
+            "durationMs": 7.687290999999995,
+            "id": "ee1aaba3fccf51fb7b8e072a93fc883152dd2f26708fba087a72e6722c4f91d1"
+          },
+          {
+            "file": "test/leaf-10.test.js",
+            "name": "leaf 10",
+            "status": "passed",
+            "durationMs": 7.725208000000002,
+            "id": "1a51b90bb619759019fb1c298f8a2441c747ecfe0b44d7ec89ac1c80305ac391"
+          },
+          {
+            "file": "test/leaf-11.test.js",
+            "name": "leaf 11",
+            "status": "passed",
+            "durationMs": 7.730542,
+            "id": "277374d67543219c5682ae5da078870308fc4815e912e731c408d8d90b1cc9e6"
+          },
+          {
+            "file": "test/leaf-2.test.js",
+            "name": "leaf 2",
+            "status": "passed",
+            "durationMs": 7.817917000000001,
+            "id": "23d242b64868b883d3793be7b739eaff8b664da227255a7648b6cadfba71c304"
+          },
+          {
+            "file": "test/leaf-3.test.js",
+            "name": "leaf 3",
+            "status": "passed",
+            "durationMs": 6.722499999999997,
+            "id": "500dec0c5a367156903e966fbdfc8dc4e3b99ac2d175f739688e6eb124d2d912"
+          },
+          {
+            "file": "test/leaf-4.test.js",
+            "name": "leaf 4",
+            "status": "passed",
+            "durationMs": 7.742666999999997,
+            "id": "92c7326f9ac4fadecc5835ec47fb7ed475044a531ef620a7e185728a8ac0b7c4"
+          },
+          {
+            "file": "test/leaf-5.test.js",
+            "name": "leaf 5",
+            "status": "passed",
+            "durationMs": 8.029291999999998,
+            "id": "a538dad436a438d83e10626b75001aa137b34cc43eeacde7589a3843c6f8fb8d"
+          },
+          {
+            "file": "test/leaf-6.test.js",
+            "name": "leaf 6",
+            "status": "passed",
+            "durationMs": 7.720374999999997,
+            "id": "4f95b2456bfe9c81f0072da86abe946d83fb637365ee68da90d0f7b3a9577ad7"
+          },
+          {
+            "file": "test/leaf-7.test.js",
+            "name": "leaf 7",
+            "status": "passed",
+            "durationMs": 7.8103339999999974,
+            "id": "a2990b2344becd888247a35e7876a712b22933abc17e6b0c868c095a443aba2b"
+          },
+          {
+            "file": "test/leaf-8.test.js",
+            "name": "leaf 8",
+            "status": "passed",
+            "durationMs": 7.689666999999993,
+            "id": "a0ebbc38359af0d0b3d5969fdf9bc9faf566b0a9211d50dcf25c8bcffd45c38c"
+          },
+          {
+            "file": "test/leaf-9.test.js",
+            "name": "leaf 9",
+            "status": "passed",
+            "durationMs": 7.634875000000001,
+            "id": "4bc60a5fa98675ba6cc0ef3e45bda4d33a2f4283be7a79a024bd03d734199c53"
+          }
+        ]
+      },
+      "nativeCaseCount": 12
+    },
+    {
+      "scenario": "native",
+      "repetition": 1,
+      "arm": "candidate",
+      "method": "full",
+      "workerComplete": true,
+      "outerMs": 1777.2140830000008,
+      "worker": {
+        "status": 0,
+        "signal": null
+      },
+      "elapsedMs": 1397.080875,
+      "config": {
+        "adapter": "vitest",
+        "discovery": "native",
+        "analysisCache": {
+          "enabled": false
+        },
+        "runner": [
+          "/Users/rudycelekli/.nvm/versions/node/v24.5.0/bin/node",
+          "/private/tmp/testlore-performance-20260930/node_modules/vitest/vitest.mjs",
+          "run",
+          "--maxWorkers=1",
+          "--no-file-parallelism",
+          "{files}"
+        ]
+      },
+      "sourceBefore": "27c76cf85d86c6365daf24ba1566213bc5692b0cf1a1df5f7c709e901093ebe3",
+      "sourceAfter": "27c76cf85d86c6365daf24ba1566213bc5692b0cf1a1df5f7c709e901093ebe3",
+      "normalized": {
+        "complete": true,
+        "exitCode": 1,
+        "files": [
+          "test/leaf-0.test.js",
+          "test/leaf-1.test.js",
+          "test/leaf-10.test.js",
+          "test/leaf-11.test.js",
+          "test/leaf-2.test.js",
+          "test/leaf-3.test.js",
+          "test/leaf-4.test.js",
+          "test/leaf-5.test.js",
+          "test/leaf-6.test.js",
+          "test/leaf-7.test.js",
+          "test/leaf-8.test.js",
+          "test/leaf-9.test.js"
+        ],
+        "tests": [
+          {
+            "file": "test/leaf-0.test.js",
+            "name": "leaf 0",
+            "status": "failed",
+            "durationMs": 11.336708000000002,
+            "id": "5df8918a328c8084da8fc4109908dcc335ed2100aa4ebfc6406796792fec609e"
+          },
+          {
+            "file": "test/leaf-1.test.js",
+            "name": "leaf 1",
+            "status": "passed",
+            "durationMs": 6.727833000000004,
+            "id": "ee1aaba3fccf51fb7b8e072a93fc883152dd2f26708fba087a72e6722c4f91d1"
+          },
+          {
+            "file": "test/leaf-10.test.js",
+            "name": "leaf 10",
+            "status": "passed",
+            "durationMs": 7.870458999999997,
+            "id": "1a51b90bb619759019fb1c298f8a2441c747ecfe0b44d7ec89ac1c80305ac391"
+          },
+          {
+            "file": "test/leaf-11.test.js",
+            "name": "leaf 11",
+            "status": "passed",
+            "durationMs": 7.912458000000001,
+            "id": "277374d67543219c5682ae5da078870308fc4815e912e731c408d8d90b1cc9e6"
+          },
+          {
+            "file": "test/leaf-2.test.js",
+            "name": "leaf 2",
+            "status": "passed",
+            "durationMs": 7.815458,
+            "id": "23d242b64868b883d3793be7b739eaff8b664da227255a7648b6cadfba71c304"
+          },
+          {
+            "file": "test/leaf-3.test.js",
+            "name": "leaf 3",
+            "status": "passed",
+            "durationMs": 7.763750000000009,
+            "id": "500dec0c5a367156903e966fbdfc8dc4e3b99ac2d175f739688e6eb124d2d912"
+          },
+          {
+            "file": "test/leaf-4.test.js",
+            "name": "leaf 4",
+            "status": "passed",
+            "durationMs": 7.818165999999991,
+            "id": "92c7326f9ac4fadecc5835ec47fb7ed475044a531ef620a7e185728a8ac0b7c4"
+          },
+          {
+            "file": "test/leaf-5.test.js",
+            "name": "leaf 5",
+            "status": "passed",
+            "durationMs": 7.796999999999997,
+            "id": "a538dad436a438d83e10626b75001aa137b34cc43eeacde7589a3843c6f8fb8d"
+          },
+          {
+            "file": "test/leaf-6.test.js",
+            "name": "leaf 6",
+            "status": "passed",
+            "durationMs": 7.311667,
+            "id": "4f95b2456bfe9c81f0072da86abe946d83fb637365ee68da90d0f7b3a9577ad7"
+          },
+          {
+            "file": "test/leaf-7.test.js",
+            "name": "leaf 7",
+            "status": "passed",
+            "durationMs": 7.776957999999993,
+            "id": "a2990b2344becd888247a35e7876a712b22933abc17e6b0c868c095a443aba2b"
+          },
+          {
+            "file": "test/leaf-8.test.js",
+            "name": "leaf 8",
+            "status": "passed",
+            "durationMs": 7.706667000000003,
+            "id": "a0ebbc38359af0d0b3d5969fdf9bc9faf566b0a9211d50dcf25c8bcffd45c38c"
+          },
+          {
+            "file": "test/leaf-9.test.js",
+            "name": "leaf 9",
+            "status": "passed",
+            "durationMs": 6.696875000000006,
+            "id": "4bc60a5fa98675ba6cc0ef3e45bda4d33a2f4283be7a79a024bd03d734199c53"
+          }
+        ]
+      },
+      "nativeCaseCount": 12
+    },
+    {
+      "scenario": "native",
+      "repetition": 1,
+      "arm": "candidate",
+      "method": "native",
+      "workerComplete": true,
+      "outerMs": 711.8143330000021,
+      "worker": {
+        "status": 0,
+        "signal": null
+      },
+      "elapsedMs": 314.289167,
+      "config": {
+        "adapter": "vitest",
+        "discovery": "native",
+        "analysisCache": {
+          "enabled": false
+        },
+        "runner": [
+          "/Users/rudycelekli/.nvm/versions/node/v24.5.0/bin/node",
+          "/private/tmp/testlore-performance-20260930/node_modules/vitest/vitest.mjs",
+          "run",
+          "--maxWorkers=1",
+          "--no-file-parallelism",
+          "{files}"
+        ]
+      },
+      "sourceBefore": "27c76cf85d86c6365daf24ba1566213bc5692b0cf1a1df5f7c709e901093ebe3",
+      "sourceAfter": "27c76cf85d86c6365daf24ba1566213bc5692b0cf1a1df5f7c709e901093ebe3",
+      "normalized": {
+        "complete": true,
+        "exitCode": 1,
+        "files": [
+          "test/leaf-0.test.js"
+        ],
+        "tests": [
+          {
+            "file": "test/leaf-0.test.js",
+            "name": "leaf 0",
+            "status": "failed",
+            "durationMs": 10.575333,
+            "id": "5df8918a328c8084da8fc4109908dcc335ed2100aa4ebfc6406796792fec609e"
+          }
+        ]
+      },
+      "nativeCaseCount": 1
+    },
+    {
+      "scenario": "native",
+      "repetition": 1,
+      "arm": "candidate",
+      "method": "testlore",
+      "workerComplete": true,
+      "outerMs": 1662.5452909999985,
+      "worker": {
+        "status": 0,
+        "signal": null
+      },
+      "elapsedMs": 1296.235084,
+      "config": {
+        "adapter": "vitest",
+        "discovery": "native",
+        "analysisCache": {
+          "enabled": false
+        },
+        "runner": [
+          "/Users/rudycelekli/.nvm/versions/node/v24.5.0/bin/node",
+          "/private/tmp/testlore-performance-20260930/node_modules/vitest/vitest.mjs",
+          "run",
+          "--maxWorkers=1",
+          "--no-file-parallelism",
+          "{files}"
+        ]
+      },
+      "sourceBefore": "27c76cf85d86c6365daf24ba1566213bc5692b0cf1a1df5f7c709e901093ebe3",
+      "sourceAfter": "27c76cf85d86c6365daf24ba1566213bc5692b0cf1a1df5f7c709e901093ebe3",
+      "timings": {
+        "totalMs": 833.311375,
+        "phases": {
+          "configuration": 0.09762499999999363,
+          "provenance": 63.296583999999996,
+          "graph": 630.435666,
+          "changeDetection": 112.3075,
+          "runtimeAndServices": 0.24250000000006366,
+          "baselineAndIgnore": 26.235584000000017,
+          "uncertaintyAndMapping": 0.1966660000000502,
+          "history": 0.3268749999999727,
+          "decisionsAndFingerprint": 0.15699999999992542
+        },
+        "graph": {
+          "totalMs": 630.196958,
+          "phases": {
+            "inventory": 30.843999999999994,
+            "discovery": 181.86983299999997,
+            "configuration": 0.4647090000000844,
+            "sourceReads": 1.2817079999999805,
+            "sourceAnalysisAndResolution": 415.53216699999996,
+            "declaredInputsAndConfigurationClosure": 0.07487500000002001,
+            "warningClassification": 0.11095799999998235
+          }
+        }
+      },
+      "normalized": {
+        "complete": true,
+        "exitCode": 1,
+        "files": [
+          "test/leaf-0.test.js"
+        ],
+        "tests": [
+          {
+            "file": "test/leaf-0.test.js",
+            "name": "leaf 0",
+            "status": "failed",
+            "durationMs": 11.179417,
+            "id": "5df8918a328c8084da8fc4109908dcc335ed2100aa4ebfc6406796792fec609e"
+          }
+        ]
+      },
+      "nativeCaseCount": 1
+    },
+    {
+      "scenario": "native",
+      "repetition": 1,
+      "arm": "baseline",
+      "method": "testlore",
+      "workerComplete": true,
+      "outerMs": 2125.7845420000012,
+      "worker": {
+        "status": 0,
+        "signal": null
+      },
+      "elapsedMs": 1742.056333,
+      "config": {
+        "adapter": "vitest",
+        "discovery": "native",
+        "analysisCache": {
+          "enabled": false
+        },
+        "runner": [
+          "/Users/rudycelekli/.nvm/versions/node/v24.5.0/bin/node",
+          "/private/tmp/testlore-performance-20260930/node_modules/vitest/vitest.mjs",
+          "run",
+          "--maxWorkers=1",
+          "--no-file-parallelism",
+          "{files}"
+        ]
+      },
+      "sourceBefore": "27c76cf85d86c6365daf24ba1566213bc5692b0cf1a1df5f7c709e901093ebe3",
+      "sourceAfter": "27c76cf85d86c6365daf24ba1566213bc5692b0cf1a1df5f7c709e901093ebe3",
+      "timings": {
+        "totalMs": 1281.088041,
+        "phases": {
+          "configuration": 0.08591599999999744,
+          "provenance": 66.374417,
+          "graph": 665.299,
+          "changeDetection": 132.60529199999996,
+          "runtimeAndServices": 0.18433299999992414,
+          "baselineAndIgnore": 415.84900000000016,
+          "uncertaintyAndMapping": 0.19637499999998909,
+          "history": 0.3255420000000413,
+          "decisionsAndFingerprint": 0.15399999999999636
+        },
+        "graph": {
+          "totalMs": 665.038084,
+          "phases": {
+            "inventory": 33.48462500000005,
+            "discovery": 188.47374999999994,
+            "configuration": 35.82283400000006,
+            "sourceReads": 1.4454580000000306,
+            "sourceAnalysisAndResolution": 405.5975829999999,
+            "declaredInputsAndConfigurationClosure": 0.08229200000005221,
+            "warningClassification": 0.1143329999999878
+          }
+        }
+      },
+      "normalized": {
+        "complete": true,
+        "exitCode": 1,
+        "files": [
+          "test/leaf-0.test.js"
+        ],
+        "tests": [
+          {
+            "file": "test/leaf-0.test.js",
+            "name": "leaf 0",
+            "status": "failed",
+            "durationMs": 10.651541000000009,
+            "id": "5df8918a328c8084da8fc4109908dcc335ed2100aa4ebfc6406796792fec609e"
+          }
+        ]
+      },
+      "nativeCaseCount": 1
+    },
+    {
+      "scenario": "native",
+      "repetition": 2,
+      "arm": "baseline",
+      "method": "testlore",
+      "workerComplete": true,
+      "outerMs": 2123.0097499999974,
+      "worker": {
+        "status": 0,
+        "signal": null
+      },
+      "elapsedMs": 1747.1022500000001,
+      "config": {
+        "adapter": "vitest",
+        "discovery": "native",
+        "analysisCache": {
+          "enabled": false
+        },
+        "runner": [
+          "/Users/rudycelekli/.nvm/versions/node/v24.5.0/bin/node",
+          "/private/tmp/testlore-performance-20260930/node_modules/vitest/vitest.mjs",
+          "run",
+          "--maxWorkers=1",
+          "--no-file-parallelism",
+          "{files}"
+        ]
+      },
+      "sourceBefore": "27c76cf85d86c6365daf24ba1566213bc5692b0cf1a1df5f7c709e901093ebe3",
+      "sourceAfter": "27c76cf85d86c6365daf24ba1566213bc5692b0cf1a1df5f7c709e901093ebe3",
+      "timings": {
+        "totalMs": 1271.491334,
+        "phases": {
+          "configuration": 0.1057920000000081,
+          "provenance": 67.20745800000003,
+          "graph": 667.258709,
+          "changeDetection": 126.26245800000004,
+          "runtimeAndServices": 0.19220799999993687,
+          "baselineAndIgnore": 409.818209,
+          "uncertaintyAndMapping": 0.16937499999994543,
+          "history": 0.31275000000005093,
+          "decisionsAndFingerprint": 0.15266599999995378
+        },
+        "graph": {
+          "totalMs": 667.024875,
+          "phases": {
+            "inventory": 32.212541999999985,
+            "discovery": 184.18258300000002,
+            "configuration": 28.94100000000003,
+            "sourceReads": 1.5855419999999185,
+            "sourceAnalysisAndResolution": 419.90862500000003,
+            "declaredInputsAndConfigurationClosure": 0.07683299999996507,
+            "warningClassification": 0.1062090000000353
+          }
+        }
+      },
+      "normalized": {
+        "complete": true,
+        "exitCode": 1,
+        "files": [
+          "test/leaf-0.test.js"
+        ],
+        "tests": [
+          {
+            "file": "test/leaf-0.test.js",
+            "name": "leaf 0",
+            "status": "failed",
+            "durationMs": 10.740541000000007,
+            "id": "5df8918a328c8084da8fc4109908dcc335ed2100aa4ebfc6406796792fec609e"
+          }
+        ]
+      },
+      "nativeCaseCount": 1
+    },
+    {
+      "scenario": "native",
+      "repetition": 2,
+      "arm": "candidate",
+      "method": "testlore",
+      "workerComplete": true,
+      "outerMs": 1656.9389580000025,
+      "worker": {
+        "status": 0,
+        "signal": null
+      },
+      "elapsedMs": 1274.9675000000002,
+      "config": {
+        "adapter": "vitest",
+        "discovery": "native",
+        "analysisCache": {
+          "enabled": false
+        },
+        "runner": [
+          "/Users/rudycelekli/.nvm/versions/node/v24.5.0/bin/node",
+          "/private/tmp/testlore-performance-20260930/node_modules/vitest/vitest.mjs",
+          "run",
+          "--maxWorkers=1",
+          "--no-file-parallelism",
+          "{files}"
+        ]
+      },
+      "sourceBefore": "27c76cf85d86c6365daf24ba1566213bc5692b0cf1a1df5f7c709e901093ebe3",
+      "sourceAfter": "27c76cf85d86c6365daf24ba1566213bc5692b0cf1a1df5f7c709e901093ebe3",
+      "timings": {
+        "totalMs": 829.615792,
+        "phases": {
+          "configuration": 0.08575000000001864,
+          "provenance": 57.748541999999986,
+          "graph": 612.928583,
+          "changeDetection": 126.80233400000009,
+          "runtimeAndServices": 0.19108299999993505,
+          "baselineAndIgnore": 31.251792000000023,
+          "uncertaintyAndMapping": 0.1722500000000764,
+          "history": 0.27212499999996,
+          "decisionsAndFingerprint": 0.15029099999992468
+        },
+        "graph": {
+          "totalMs": 612.705958,
+          "phases": {
+            "inventory": 28.197541,
+            "discovery": 179.38587500000006,
+            "configuration": 0.46070899999995163,
+            "sourceReads": 1.310416000000032,
+            "sourceAnalysisAndResolution": 403.132709,
+            "declaredInputsAndConfigurationClosure": 0.0810830000000351,
+            "warningClassification": 0.12220800000000054
+          }
+        }
+      },
+      "normalized": {
+        "complete": true,
+        "exitCode": 1,
+        "files": [
+          "test/leaf-0.test.js"
+        ],
+        "tests": [
+          {
+            "file": "test/leaf-0.test.js",
+            "name": "leaf 0",
+            "status": "failed",
+            "durationMs": 10.169375000000002,
+            "id": "5df8918a328c8084da8fc4109908dcc335ed2100aa4ebfc6406796792fec609e"
+          }
+        ]
+      },
+      "nativeCaseCount": 1
+    },
+    {
+      "scenario": "native",
+      "repetition": 2,
+      "arm": "candidate",
+      "method": "native",
+      "workerComplete": true,
+      "outerMs": 679.1590419999993,
+      "worker": {
+        "status": 0,
+        "signal": null
+      },
+      "elapsedMs": 300.2885,
+      "config": {
+        "adapter": "vitest",
+        "discovery": "native",
+        "analysisCache": {
+          "enabled": false
+        },
+        "runner": [
+          "/Users/rudycelekli/.nvm/versions/node/v24.5.0/bin/node",
+          "/private/tmp/testlore-performance-20260930/node_modules/vitest/vitest.mjs",
+          "run",
+          "--maxWorkers=1",
+          "--no-file-parallelism",
+          "{files}"
+        ]
+      },
+      "sourceBefore": "27c76cf85d86c6365daf24ba1566213bc5692b0cf1a1df5f7c709e901093ebe3",
+      "sourceAfter": "27c76cf85d86c6365daf24ba1566213bc5692b0cf1a1df5f7c709e901093ebe3",
+      "normalized": {
+        "complete": true,
+        "exitCode": 1,
+        "files": [
+          "test/leaf-0.test.js"
+        ],
+        "tests": [
+          {
+            "file": "test/leaf-0.test.js",
+            "name": "leaf 0",
+            "status": "failed",
+            "durationMs": 10.508041999999996,
+            "id": "5df8918a328c8084da8fc4109908dcc335ed2100aa4ebfc6406796792fec609e"
+          }
+        ]
+      },
+      "nativeCaseCount": 1
+    },
+    {
+      "scenario": "native",
+      "repetition": 2,
+      "arm": "candidate",
+      "method": "full",
+      "workerComplete": true,
+      "outerMs": 1712.6330830000006,
+      "worker": {
+        "status": 0,
+        "signal": null
+      },
+      "elapsedMs": 1341.890334,
+      "config": {
+        "adapter": "vitest",
+        "discovery": "native",
+        "analysisCache": {
+          "enabled": false
+        },
+        "runner": [
+          "/Users/rudycelekli/.nvm/versions/node/v24.5.0/bin/node",
+          "/private/tmp/testlore-performance-20260930/node_modules/vitest/vitest.mjs",
+          "run",
+          "--maxWorkers=1",
+          "--no-file-parallelism",
+          "{files}"
+        ]
+      },
+      "sourceBefore": "27c76cf85d86c6365daf24ba1566213bc5692b0cf1a1df5f7c709e901093ebe3",
+      "sourceAfter": "27c76cf85d86c6365daf24ba1566213bc5692b0cf1a1df5f7c709e901093ebe3",
+      "normalized": {
+        "complete": true,
+        "exitCode": 1,
+        "files": [
+          "test/leaf-0.test.js",
+          "test/leaf-1.test.js",
+          "test/leaf-10.test.js",
+          "test/leaf-11.test.js",
+          "test/leaf-2.test.js",
+          "test/leaf-3.test.js",
+          "test/leaf-4.test.js",
+          "test/leaf-5.test.js",
+          "test/leaf-6.test.js",
+          "test/leaf-7.test.js",
+          "test/leaf-8.test.js",
+          "test/leaf-9.test.js"
+        ],
+        "tests": [
+          {
+            "file": "test/leaf-0.test.js",
+            "name": "leaf 0",
+            "status": "failed",
+            "durationMs": 10.639708999999996,
+            "id": "5df8918a328c8084da8fc4109908dcc335ed2100aa4ebfc6406796792fec609e"
+          },
+          {
+            "file": "test/leaf-1.test.js",
+            "name": "leaf 1",
+            "status": "passed",
+            "durationMs": 7.652583000000007,
+            "id": "ee1aaba3fccf51fb7b8e072a93fc883152dd2f26708fba087a72e6722c4f91d1"
+          },
+          {
+            "file": "test/leaf-10.test.js",
+            "name": "leaf 10",
+            "status": "passed",
+            "durationMs": 8.140459,
+            "id": "1a51b90bb619759019fb1c298f8a2441c747ecfe0b44d7ec89ac1c80305ac391"
+          },
+          {
+            "file": "test/leaf-11.test.js",
+            "name": "leaf 11",
+            "status": "passed",
+            "durationMs": 7.764290999999993,
+            "id": "277374d67543219c5682ae5da078870308fc4815e912e731c408d8d90b1cc9e6"
+          },
+          {
+            "file": "test/leaf-2.test.js",
+            "name": "leaf 2",
+            "status": "passed",
+            "durationMs": 7.773250000000004,
+            "id": "23d242b64868b883d3793be7b739eaff8b664da227255a7648b6cadfba71c304"
+          },
+          {
+            "file": "test/leaf-3.test.js",
+            "name": "leaf 3",
+            "status": "passed",
+            "durationMs": 7.70975,
+            "id": "500dec0c5a367156903e966fbdfc8dc4e3b99ac2d175f739688e6eb124d2d912"
+          },
+          {
+            "file": "test/leaf-4.test.js",
+            "name": "leaf 4",
+            "status": "passed",
+            "durationMs": 7.731166000000002,
+            "id": "92c7326f9ac4fadecc5835ec47fb7ed475044a531ef620a7e185728a8ac0b7c4"
+          },
+          {
+            "file": "test/leaf-5.test.js",
+            "name": "leaf 5",
+            "status": "passed",
+            "durationMs": 7.7433750000000074,
+            "id": "a538dad436a438d83e10626b75001aa137b34cc43eeacde7589a3843c6f8fb8d"
+          },
+          {
+            "file": "test/leaf-6.test.js",
+            "name": "leaf 6",
+            "status": "passed",
+            "durationMs": 7.76424999999999,
+            "id": "4f95b2456bfe9c81f0072da86abe946d83fb637365ee68da90d0f7b3a9577ad7"
+          },
+          {
+            "file": "test/leaf-7.test.js",
+            "name": "leaf 7",
+            "status": "passed",
+            "durationMs": 7.700457999999998,
+            "id": "a2990b2344becd888247a35e7876a712b22933abc17e6b0c868c095a443aba2b"
+          },
+          {
+            "file": "test/leaf-8.test.js",
+            "name": "leaf 8",
+            "status": "passed",
+            "durationMs": 7.745499999999993,
+            "id": "a0ebbc38359af0d0b3d5969fdf9bc9faf566b0a9211d50dcf25c8bcffd45c38c"
+          },
+          {
+            "file": "test/leaf-9.test.js",
+            "name": "leaf 9",
+            "status": "passed",
+            "durationMs": 7.7654170000000065,
+            "id": "4bc60a5fa98675ba6cc0ef3e45bda4d33a2f4283be7a79a024bd03d734199c53"
+          }
+        ]
+      },
+      "nativeCaseCount": 12
+    }
+  ],
+  "limitations": [
+    "Fresh fixture and process for every arm; analysis disk cache disabled and cold history. OS and dependency caches are not flushed.",
+    "Traversal fixture deliberately concentrates 40 changes in one shared closure; results do not estimate typical production speedup.",
+    "Native fixture has twelve Vitest files with one independently asserted regression. TestLore and native related execute the same one-file case scope; full executes all twelve.",
+    "Internal spans exclude module import and fixture setup; outer spans include fresh process/module startup and equal harness source verification but exclude fixture creation.",
+    "Local timing, three repetitions and a narrow authored workload cannot establish universal speed advantage. No private repository was executed.",
+    "Dependencies are shared and identified by lockfile/version; installed dependency bytes and Node executable bytes are not frozen."
+  ],
+  "baselineImplementation": "5bf33af7fccd1f6695a6ee814cd63ac1cae30bdc13761d1debdb71a6269b8ad4",
+  "candidateImplementation": "62fd79ec2d384f8c73c9a8781c5b3e274b56cd1cab48e97f2a584abf59c1ea09",
+  "dependencies": {
+    "vitest": "5.0.2",
+    "packageLock": "f4099c07e38ac8a9bf7311a7f048e3844ff06c91933fb7325e1ef9a71f2764ba"
+  },
+  "nativeCaseObservations": 45
+}

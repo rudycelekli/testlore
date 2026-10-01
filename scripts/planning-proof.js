@@ -9,7 +9,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 const repository = path.resolve(fileURLToPath(new URL('..', import.meta.url)));
 const hash = text => createHash('sha256').update(typeof text==='string'?text:JSON.stringify(text)).digest('hex');
 const implementationHash = root => hash(fs.readdirSync(path.join(root,'src'),{recursive:true,withFileTypes:true}).filter(entry=>entry.isFile()).map(entry=>path.join(entry.parentPath,entry.name)).sort().map(file=>[path.relative(root,file),fs.readFileSync(file,'utf8')]));
-if (process.argv[2] === '--worker') {
+async function worker() {
   const [implementation, fixture, method, scenario] = process.argv.slice(3);
   const { plan } = await import(pathToFileURL(path.join(implementation, 'src/selector.js')));
   const { run } = await import(pathToFileURL(path.join(implementation, 'src/runner.js')));
@@ -19,19 +19,50 @@ if (process.argv[2] === '--worker') {
   const changed = scenario === 'traversal' ? Array.from({length:40},(_,i)=>`src/shared-${i}.js`) : ['src/leaf-0.js'];
   const before = snapshot(fixture,config);
   const started = performance.now();
-  const result = method === 'plan' ? plan(fixture,{changed}) : method === 'testlore' ? run(fixture,{capture:true}) : method === 'native' ? executeNativeRelated(fixture,changed,config,{capture:true}) : execute(fixture,Array.from({length:12},(_,i)=>`test/leaf-${i}.test.js`),config,{capture:true});
+  const result = method === 'plan' ? plan(fixture,{changed}) : method === 'testlore' ? run(fixture,{capture:true,selective:true}) : method === 'native' ? executeNativeRelated(fixture,changed,config,{capture:true}) : execute(fixture,Array.from({length:12},(_,i)=>`test/leaf-${i}.test.js`),config,{capture:true});
   const elapsedMs = performance.now()-started;
   const after = snapshot(fixture,config);
   assert.equal(freshness(before,after).fresh,true);
   const normalized = method === 'plan' ? { mode:result.mode,selected:result.selected,reasons:result.reasons,decisionDigest:hash(JSON.stringify({decisions:result.decisions,warnings:result.warnings})),fingerprint:result.fingerprint } : {complete:result.complete,exitCode:result.exitCode,files:result.executedFiles,tests:result.tests};
   console.log(JSON.stringify({method,elapsedMs,config,sourceBefore:before.fingerprint,sourceAfter:after.fingerprint,timings:method==='plan'?result.timings:result.plan?.timings,normalized}));
-} else {
-  const baseline = path.resolve(process.argv[2] || repository), output = path.resolve(process.argv[3] || 'benchmarks/planning-proof.json');
-  const repetitions = Number(process.env.TESTLORE_PLANNING_REPETITIONS || 3);
-  assert.ok(Number.isInteger(repetitions) && repetitions>=1 && repetitions<=10);
-  const temporary = fs.mkdtempSync(path.join(os.tmpdir(),'testlore-planning-proof-'));
-  const frozenImplementation={baseline:implementationHash(baseline),candidate:implementationHash(repository)};
+}
+
+export function reserveReceipt(output) {
+  fs.mkdirSync(path.dirname(output),{recursive:true});
+  // wx also rejects directories and dangling symlinks, before fixture creation.
+  const fd=fs.openSync(output,'wx');
+  fs.writeSync(fd,JSON.stringify({schemaVersion:1,complete:false,trials:[]}));
+  return fd;
+}
+
+export function validateNativeFull(full) {
+  assert.equal(full.complete,true);assert.equal(full.exitCode,1);
+  const expected=Array.from({length:12},(_,i)=>[`test/leaf-${i}.test.js`,`leaf ${i}`,i===0?'failed':'passed']);
+  assert.deepEqual([...full.files].sort(),expected.map(t=>t[0]).sort());
+  assert.equal(full.tests.length,12);
+  assert.equal(new Set(full.tests.map(t=>t.id)).size,12);
+  assert.deepEqual(full.tests.map(t=>[t.file,t.name,t.status]).sort((a,b)=>a[0].localeCompare(b[0])),expected.sort((a,b)=>a[0].localeCompare(b[0])));
+}
+
+function summarize(trials) {
+  const median=values=>[...values].sort((a,b)=>a-b)[Math.floor(values.length/2)];
+  const summary=[];
+  for(const scenario of ['traversal','native'])for(const arm of ['baseline','candidate'])for(const method of ['plan','testlore','native','full']) {
+    const attempts=trials.filter(t=>t.scenario===scenario&&t.arm===arm&&t.method===method);
+    const rows=attempts.filter(t=>t.workerComplete===true&&Number.isFinite(t.elapsedMs));
+    if(!attempts.length)continue;
+    summary.push({scenario,arm,method,attempts:attempts.length,completedWorkers:rows.length,...(rows.length?{medianMs:median(rows.map(t=>t.elapsedMs)),minimumMs:Math.min(...rows.map(t=>t.elapsedMs)),maximumMs:Math.max(...rows.map(t=>t.elapsedMs)),medianOuterMs:median(rows.map(t=>t.outerMs))}:{})});
+  }
+  return summary;
+}
+
+export function runPlanningProof({baseline,output,repetitions=3,spawnWorker=spawnSync}) {
+  baseline=path.resolve(baseline);output=path.resolve(output);
+  assert.ok(Number.isInteger(repetitions)&&repetitions>=1&&repetitions<=10);
+  const fd=reserveReceipt(output);
+  let temporary;
   const trials=[];
+  const report={schemaVersion:1,kind:'authored-fixtures-only',complete:false,generatedAt:new Date().toISOString(),runtime:process.version,platform:process.platform,arch:process.arch,harnessDigest:hash(fs.readFileSync(fileURLToPath(import.meta.url),'utf8')),baselineSourcePreparation:'Instrumented pre-optimization planning commit f37f134f3c98f72948c8c3f9fb665890ce2dd78c; full src snapshot only, dependencies shared, source hashes recorded.',summary:[],trials,limitations:['Fresh fixture and process for every arm; analysis disk cache disabled and cold history. OS and dependency caches are not flushed.','Traversal fixture deliberately concentrates 40 changes in one shared closure; results do not estimate typical production speedup.','Native fixture has twelve Vitest files with one independently asserted regression. TestLore and native related execute the same one-file case scope; full executes all twelve.','Internal spans exclude module import and fixture setup; outer spans include fresh process/module startup and equal harness source verification but exclude fixture creation.','Local timing, three repetitions and a narrow authored workload cannot establish universal speed advantage. No private repository was executed.','Dependencies are shared and identified by lockfile/version; installed dependency bytes and Node executable bytes are not frozen.']};
   const write=(root,file,value)=>{const target=path.join(root,file);fs.mkdirSync(path.dirname(target),{recursive:true});fs.writeFileSync(target,typeof value==='string'?value:JSON.stringify(value));};
   function fixture(scenario,label) {
     const root=path.join(temporary,label);fs.mkdirSync(root);
@@ -51,37 +82,73 @@ if (process.argv[2] === '--worker') {
     return root;
   }
   try {
+    temporary=fs.mkdtempSync(path.join(os.tmpdir(),'testlore-planning-proof-'));
+    report.baselineImplementation=implementationHash(baseline);
+    report.candidateImplementation=implementationHash(repository);
+    report.dependencies={vitest:JSON.parse(fs.readFileSync(path.join(repository,'node_modules/vitest/package.json'),'utf8')).version,packageLock:hash(fs.readFileSync(path.join(repository,'package-lock.json'),'utf8'))};
     for(const scenario of ['traversal','native'])for(let repetition=0;repetition<repetitions;repetition++) {
       const methods=scenario==='traversal'?[['baseline','plan'],['candidate','plan']]:[['baseline','testlore'],['candidate','testlore'],['candidate','native'],['candidate','full']];
       if(repetition%2)methods.reverse();
       for(const [arm,method] of methods) {
-        const root=fixture(scenario,`${scenario}-${repetition}-${arm}-${method}`), implementation=arm==='baseline'?baseline:repository;
+        const attempt={scenario,repetition,arm,method,workerComplete:false};
+        trials.push(attempt); // Retain even fixture/worker/JSON/assertion failure.
+        const root=fixture(scenario,`${scenario}-${repetition}-${arm}-${method}`),implementation=arm==='baseline'?baseline:repository;
         const start=performance.now();
-        const result=spawnSync(process.execPath,[fileURLToPath(import.meta.url),'--worker',implementation,root,method,scenario],{encoding:'utf8',timeout:30000,maxBuffer:4*1024*1024});
-        assert.equal(result.status,0,result.stderr);
-        const receipt=JSON.parse(result.stdout);trials.push({scenario,repetition,arm,outerMs:performance.now()-start,...receipt});
+        const result=spawnWorker(process.execPath,[fileURLToPath(import.meta.url),'--worker',implementation,root,method,scenario],{encoding:'utf8',timeout:30000,maxBuffer:4*1024*1024});
+        attempt.outerMs=performance.now()-start;
+        attempt.worker={status:result.status,signal:result.signal||null,error:result.error?.message};
+        if(result.status!==0||result.error||result.signal) {
+          attempt.worker.stdout=String(result.stdout||'').slice(0,16384);
+          attempt.worker.stderr=String(result.stderr||'').slice(0,16384);
+          attempt.worker.outputTruncated=String(result.stdout||'').length>16384||String(result.stderr||'').length>16384;
+          throw new Error(`Worker failed for ${scenario}/${arm}/${method}: ${result.error?.message||result.signal||result.status}`);
+        }
+        let receipt;
+        try {receipt=JSON.parse(result.stdout);}catch(error) {
+          attempt.worker.stdout=String(result.stdout||'').slice(0,16384);
+          throw new Error(`Invalid worker receipt for ${scenario}/${arm}/${method}: ${error.message}`);
+        }
+        Object.assign(attempt,receipt,{workerComplete:true});
+        attempt.nativeCaseCount=scenario==='native'?receipt.normalized?.tests?.length:undefined;
         fs.rmSync(root,{recursive:true,force:true});
       }
-    }
-    const median=values=>[...values].sort((a,b)=>a-b)[Math.floor(values.length/2)];
-    const summary=[];
-    for(const scenario of ['traversal','native'])for(const arm of ['baseline','candidate'])for(const method of ['plan','testlore','native','full']) {
-      const rows=trials.filter(t=>t.scenario===scenario&&t.arm===arm&&t.method===method);if(!rows.length)continue;
-      summary.push({scenario,arm,method,trials:rows.length,medianMs:median(rows.map(t=>t.elapsedMs)),minimumMs:Math.min(...rows.map(t=>t.elapsedMs)),maximumMs:Math.max(...rows.map(t=>t.elapsedMs)),medianOuterMs:median(rows.map(t=>t.outerMs))});
     }
     for(let repetition=0;repetition<repetitions;repetition++) {
       const rows=trials.filter(t=>t.repetition===repetition);
       assert.deepEqual(rows.find(t=>t.scenario==='traversal'&&t.arm==='candidate').normalized,rows.find(t=>t.scenario==='traversal'&&t.arm==='baseline').normalized);
       const native=rows.filter(t=>t.scenario==='native'),full=native.find(t=>t.method==='full').normalized;
-      assert.equal(full.complete,true);assert.equal(full.exitCode,1);
+      validateNativeFull(full);
       for(const row of native.filter(t=>t.method!=='full')) {
         assert.equal(row.normalized.complete,true);assert.equal(row.normalized.exitCode,1);assert.deepEqual(row.normalized.files,['test/leaf-0.test.js']);
+        assert.equal(row.nativeCaseCount,1);
+        assert.deepEqual(row.normalized.tests.map(t=>[t.file,t.name,t.status]),[['test/leaf-0.test.js','leaf 0','failed']]);
         assert.deepEqual(row.normalized.tests.map(t=>[t.id,t.status]),full.tests.filter(t=>t.file==='test/leaf-0.test.js').map(t=>[t.id,t.status]));
       }
     }
-    assert.equal(implementationHash(baseline),frozenImplementation.baseline);
-    assert.equal(implementationHash(repository),frozenImplementation.candidate);
-    const report={schemaVersion:1,kind:'authored-fixtures-only',generatedAt:new Date().toISOString(),runtime:process.version,platform:process.platform,arch:process.arch,baselineImplementation:frozenImplementation.baseline,candidateImplementation:frozenImplementation.candidate,harnessDigest:hash(fs.readFileSync(fileURLToPath(import.meta.url),'utf8')),baselineSourcePreparation:'Instrumented pre-optimization planning commit f37f134f3c98f72948c8c3f9fb665890ce2dd78c; full src snapshot only, dependencies shared, source hashes recorded.',dependencies:{vitest:JSON.parse(fs.readFileSync(path.join(repository,'node_modules/vitest/package.json'),'utf8')).version,packageLock:hash(fs.readFileSync(path.join(repository,'package-lock.json'),'utf8'))},summary,trials,limitations:['Fresh fixture and process for every arm; analysis disk cache disabled and cold history. OS and dependency caches are not flushed.','Traversal fixture deliberately concentrates 40 changes in one shared closure; results do not estimate typical production speedup.','Native fixture has twelve Vitest files with one independently asserted regression. TestLore and native related execute the same one-file case scope; full executes all twelve.','Internal spans exclude module import and fixture setup; outer spans include fresh process/module startup and equal harness source verification but exclude fixture creation.','Local timing, three repetitions and a narrow authored workload cannot establish universal speed advantage. No private repository was executed.']};
-    fs.mkdirSync(path.dirname(output),{recursive:true});fs.writeFileSync(output,JSON.stringify(report,null,2)+'\n');console.log(JSON.stringify({output,summary}));
-  } finally {fs.rmSync(temporary,{recursive:true,force:true});}
+    assert.equal(implementationHash(baseline),report.baselineImplementation);
+    assert.equal(implementationHash(repository),report.candidateImplementation);
+    report.complete=true;
+  } catch(error) {
+    report.failure={message:error.message};
+  } finally {
+    report.summary=summarize(trials);
+    report.nativeCaseObservations=trials.reduce((n,t)=>n+(t.nativeCaseCount||0),0);
+    try {
+      fs.ftruncateSync(fd,0);fs.writeSync(fd,JSON.stringify(report,null,2)+'\n',0,'utf8');
+    } finally {
+      fs.closeSync(fd);
+      if(temporary)fs.rmSync(temporary,{recursive:true,force:true});
+    }
+  }
+  return report;
+}
+
+if(process.argv[1]&&path.resolve(process.argv[1])===fileURLToPath(import.meta.url)) {
+  if(process.argv[2]==='--worker')await worker();
+  else {
+    const output=path.resolve(process.argv[3]||'.tddswarm/planning-reproduction.json');
+    const report=runPlanningProof({baseline:process.argv[2]||repository,output,repetitions:Number(process.env.TESTLORE_PLANNING_REPETITIONS||3)});
+    console.log(JSON.stringify({output,complete:report.complete,summary:report.summary,failure:report.failure}));
+    if(!report.complete)process.exitCode=1;
+  }
 }
