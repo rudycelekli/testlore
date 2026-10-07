@@ -128,3 +128,5 @@ test('aggregate preserves missing worker trials and unknown source/native verifi
   assert.equal(exportPilot(old).nativeValidTrials,0);assert.equal(exportPilot(old).nativeUnverifiedTrials,1);
   assert.equal(exportPilot({schemaVersion:1,executed:true,projects:[{}]}).uncompletedTrials,null);
 });
+
+test('pilot cache policy rejects arbitrary environment settings and supports only explicit fresh JITI transforms',t=>{const root=fixture(t,twoModules),value=manifest(root);for(const bad of[{jitiFilesystem:true},{jitiFilesystem:false,OPENAI_API_KEY:'synthetic'},{env:{JITI_FS_CACHE:'false'}},null,[]])assert.throws(()=>validatePilotManifest({...value,cachePolicy:bad}),/cachePolicy/);assert.deepEqual(validatePilotManifest({...value,cachePolicy:{jitiFilesystem:false}}).cachePolicy,{jitiFilesystem:false});assert.throws(()=>validatePilotManifest({...value,projects:value.projects.map(p=>({...p,config:{...p.config,env:{JITI_FS_CACHE:'false'}}}))}),/credential environment/);});
