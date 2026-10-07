@@ -217,7 +217,9 @@ test('large agent summaries keep failed identities, scope counts and next action
   assert.ok(Buffer.byteLength(JSON.stringify(summary)) <= 65536);
   for (const report of [{executed: false, complete: false, exitCode: 2}, {executed: true, complete: false, exitCode: 0}]) {
     const incomplete = summarizeRun(report, 'shadow', null);
-    assert.equal(incomplete.verdict, 'incomplete'); assert.match(incomplete.nextAction, /Repair.*rerun/);
+    assert.equal(incomplete.verdict, 'incomplete');
+    assert.match(incomplete.nextAction, /testlore doctor --json/);
+    assert.match(incomplete.nextAction, /repair.*rerun full native verification/i);
   }
 });
 
