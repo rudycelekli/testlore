@@ -136,36 +136,45 @@ function nodeEvents(root, text) {
   const collectionFiles = new Set();
   const names = new Map();
   const hierarchy = new Map();
+  let completeHierarchy=true;
+  // Node can enqueue every sibling suite before enqueueing their children.
+  // Terminal suite events follow their children in reporter tree order. Walking
+  // backwards reconstructs the actual ancestry, including concurrent siblings.
+  // Key by event identity: dynamic cases can share source line/column/nesting.
+  for(let index=events.length-1;index>=0;index--){
+    const event=events[index],{type,data}=event;
+    if(!['test:pass','test:fail'].includes(type)||!data.file)continue;
+    let file;try{file=localFile(root,data.file);}catch{continue;}
+    const nesting=data.nesting??0;
+    if(!Number.isInteger(nesting)||nesting<0||nesting>128||typeof data.name!=='string'){completeHierarchy=false;continue;}
+    const ancestors=hierarchy.get(file)||[];ancestors[nesting]=data.name;ancestors.length=nesting+1;hierarchy.set(file,ancestors);
+    if(Array.from({length:nesting},(_,i)=>ancestors[i]).some(name=>typeof name!=='string')){completeHierarchy=false;continue;}
+    names.set(event,ancestors.join(' > '));
+  }
   let stdout = '', stderr = '';
   const tests = [];
   let summary = false;
   let summaryCounts;
-  for (const { type, data } of events) {
+  for (const event of events) {
+    const {type,data}=event;
     if (type === 'test:stdout') stdout += data.message || '';
     if (type === 'test:stderr') stderr += data.message || '';
     let file;
     try { if (data.file) file = localFile(root, data.file); } catch { continue; }
     if (type === 'test:summary' && !data.file) { summary = true; summaryCounts = data.counts; }
     if (file) collectionFiles.add(file);
-    if (type === 'test:enqueue' && file) {
-      const ancestors = hierarchy.get(file) || [];
-      ancestors[data.nesting || 0] = data.name;
-      ancestors.length = (data.nesting || 0) + 1;
-      hierarchy.set(file, ancestors);
-      names.set(`${file}:${data.line}:${data.column}:${data.nesting}`, ancestors.join(' > '));
-    }
     if (!['test:pass', 'test:fail'].includes(type) || !file || data.details?.type === 'suite') continue;
     // Synthetic file wrappers are useful collection evidence but aren't cases.
     if (data.name === path.join(root, file) || data.name === file) {
       if (type === 'test:fail') tests.push({ file, name: '<file-load>', status: 'failed', durationMs: data.details?.duration_ms || 0, line: 0, column: 0 });
       continue;
     }
-    tests.push({ file, name: names.get(`${file}:${data.line}:${data.column}:${data.nesting}`) || data.name, status: data.skip || data.todo ? 'skipped' : type === 'test:pass' ? 'passed' : 'failed', durationMs: data.details?.duration_ms || 0, line: data.line, column: data.column });
+    tests.push({ file, name: names.get(event) || data.name, status: data.skip || data.todo ? 'skipped' : type === 'test:pass' ? 'passed' : 'failed', durationMs: data.details?.duration_ms || 0, line: data.line, column: data.column });
   }
   // Native counts include synthetic empty/load files. Named case counts may be
   // lower, but they must never exceed what the terminal summary acknowledges.
   const validCounts = Number.isInteger(summaryCounts?.tests) && tests.length <= summaryCounts.tests;
-  return { tests, collectionFiles: [...collectionFiles].sort(), valid: summary && validCounts, errors: [], stdout, stderr };
+  return { tests, collectionFiles: [...collectionFiles].sort(), valid: summary && validCounts&&completeHierarchy, errors: completeHierarchy?[]:['native-case-ancestry-incomplete'], stdout, stderr };
 }
 function frameworkResults(root, value) {
   if (!value || !Array.isArray(value.testResults)) throw new Error('Missing testResults in runner report');
