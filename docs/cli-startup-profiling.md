@@ -57,3 +57,9 @@ cases, and challenge mappings with genuine faults before crediting any speed
 improvement. Publish unsuccessful attempts and native-selector comparisons too.
 On POSIX the controller kills the disposable CLI process group after each arm,
 including timed-out workers; Windows has no equivalent descendant guarantee.
+
+The [planning phase follow-up](planning-phase-performance.md) publishes all three
+repetitions of the latest complete four-arm campaigns, including negative native
+comparisons and concurrent-load outliers. Its separate Git operation diagnostics
+identify repeated inventory work and a local developer-tool entrypoint cost;
+configuration and execution authority remain freshly checked.

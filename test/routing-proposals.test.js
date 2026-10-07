@@ -42,6 +42,31 @@ test('ambiguous or unsupported workspace declarations never fabricate local pack
   write(root,'package.json',{type:'module',workspaces:['!packages/a']});const unsupported=routingProposals(root);assert.equal(unsupported.proposals.length,0);assert.ok(unsupported.warnings.some(entry=>entry.reason==='unsupported-workspace-declarations'));
 });
 
+test('pnpm literal workspace declarations retain exclusions and fresh declaration evidence',t=>{
+  const root=fixture(t,{...twoModules,'pnpm-workspace.yaml':'packages:\n  - packages/** # actual pnpm glob form\n  - "!packages/excluded/**"\ncatalog:\n  vite: ^7.0.0\n','src/a.js':`import 'widget';export const a=1;`,'src/b.js':`import 'excluded';export const b=2;`,'packages/widget/package.json':{name:'widget'},'packages/widget/index.js':'export const value=1;','packages/excluded/nested/package.json':{name:'excluded'},'packages/excluded/nested/index.js':'export const value=2;'});
+  const report=routingProposals(root),entry=report.proposals.find(entry=>entry.kind==='workspace-package-input-group');
+  assert.equal(report.proposals.length,1);assert.equal(entry.evidence.packageName,'widget');assert.equal(entry.evidence.workspaceDeclaration,'pnpm-workspace.yaml');assert.equal(entry.evidence.workspaceDeclarationHash,digest(fs.readFileSync(path.join(root,'pnpm-workspace.yaml'))));assert.equal(validateRoutingProposals(root,report).valid,true);
+  const forged=structuredClone(report);forged.proposals[0].evidence.workspaceDeclarationHash='0'.repeat(64);assert.throws(()=>validateRoutingProposals(root,reseal(forged)),/Workspace declaration evidence/);
+  write(root,'pnpm-workspace.yaml','packages:\n  - packages/*\n');assert.throws(()=>validateRoutingProposals(root,report),/stale/);
+});
+
+test('unsupported YAML cannot be interpreted as a pnpm package binding',t=>{
+  for(const declaration of ['packages: [packages/*]\n','packages:\n  - *aliases\n','packages:\n  - !packages/excluded\n','packages:\n  - packages/*\n  - >\n    packages/more\n','packages:\n  - packages/*\npackages:\n  - packages/more\n']){
+    const root=fixture(t,{...twoModules,'pnpm-workspace.yaml':declaration,'src/a.js':`import 'widget';export const a=1;`,'packages/widget/package.json':{name:'widget'},'packages/widget/index.js':'export const value=1;'});
+    const report=routingProposals(root);assert.equal(report.proposals.length,0,declaration);assert.ok(report.warnings.some(entry=>entry.reason==='unsupported-workspace-declarations'),declaration);
+  }
+});
+
+test('conflicting workspace declaration formats stay unresolved',t=>{
+  const root=fixture(t,{...twoModules,'package.json':{type:'module',workspaces:['packages/*']},'pnpm-workspace.yaml':'packages:\n  - packages/*\n','src/a.js':`import 'widget';export const a=1;`,'packages/widget/package.json':{name:'widget'},'packages/widget/index.js':'export const value=1;'});
+  const report=routingProposals(root);assert.equal(report.proposals.length,0);assert.ok(report.warnings.some(entry=>entry.reason==='ambiguous-workspace-declarations'));
+});
+
+test('pnpm workspace configuration cannot be ignored to authorize omissions',t=>{
+  const root=fixture(t,{...twoModules,'pnpm-workspace.yaml':'packages:\n  - packages/*\n','tddswarm.config.json':{ignoreChanges:['pnpm-workspace.yaml']}});
+  const result=plan(root,{changed:['pnpm-workspace.yaml']});assert.equal(result.mode,'full');assert.equal(result.ignored.length,0);assert.ok(result.reasons.includes('global-configuration-changed'));
+});
+
 test('sealed generated proposals reject tampering, producer replacement and current source drift before native qualification',t=>{
   const root=fixture(t,{...twoModules,'data.json':'{}','src/a.js':`import fs from 'node:fs';fs.readFileSync('data.json');export const a=1;`}),report=routingProposals(root);
   const tampered=structuredClone(report);tampered.proposals[0].patch.dependencies['test/b.test.js']=['data.json'];assert.throws(()=>validateRoutingProposals(root,tampered),/integrity/);assert.throws(()=>qualifyRoutingMappings(root,tampered,{changed:['data.json']}),/integrity/);
@@ -84,6 +109,14 @@ test('generated workspace group preserves a package asset defect in independentl
   const proposal=routingProposals(root);assert.ok(proposal.proposals.some(entry=>entry.kind==='workspace-package-input-group'));
   const result=qualifyRoutingMappings(root,proposal,{changed:['packages/widget/data.json'],defects:[{path:'packages/widget/data.json',content:'{"value":9}'}],timeoutMs:5000});
   assert.equal(result.qualified,true,JSON.stringify(result.reasons));assert.deepEqual(result.selection.selected,['test/a.test.js']);assert.equal(result.full.tests.find(entry=>entry.name==='a').status,'failed');assert.equal(result.subset.tests[0].status,'failed');assert.equal(result.closedWorld,false);assert.equal(fs.readFileSync(path.join(root,'packages/widget/data.json'),'utf8'),'{"value":1}');assert.equal(fs.realpathSync(path.join(root,'node_modules/@fixture/widget')),fs.realpathSync(path.join(root,'packages/widget')));
+});
+
+test('pnpm workspace asset mapping preserves a native failure and leaves unknown inputs conservative',t=>{
+  const root=fixture(t,{...twoModules,'pnpm-workspace.yaml':'packages:\n  - packages/*\n  - "!packages/excluded"\n','src/a.js':`export {value as a} from '@fixture/widget';`,'packages/widget/package.json':{name:'@fixture/widget',type:'module',exports:'./index.js'},'packages/widget/index.js':`import fs from 'node:fs';export const value=JSON.parse(fs.readFileSync(new URL('./data.json',import.meta.url),'utf8')).value;`,'packages/widget/data.json':'{"value":1}','unknown/server-input.txt':'unmodeled'});
+  fs.mkdirSync(path.join(root,'node_modules/@fixture'),{recursive:true});fs.symlinkSync(path.join(root,'packages/widget'),path.join(root,'node_modules/@fixture/widget'),'dir');
+  const proposal=routingProposals(root),result=qualifyRoutingMappings(root,proposal,{changed:['packages/widget/data.json'],defects:[{path:'packages/widget/data.json',content:'{"value":9}'}],timeoutMs:5000});
+  assert.equal(result.qualified,true,JSON.stringify(result.reasons));assert.deepEqual(result.selection.selected,['test/a.test.js']);assert.equal(result.full.tests.find(entry=>entry.name==='a').status,'failed');assert.equal(result.subset.tests[0].status,'failed');assert.equal(result.missedFailures.length,0);assert.equal(result.applied,false);assert.equal(result.closedWorld,false);
+  assert.equal(plan(root,{changed:['unknown/server-input.txt']}).mode,'full');assert.equal(fs.readFileSync(path.join(root,'packages/widget/data.json'),'utf8'),'{"value":1}');
 });
 
 test('declared service revision drift invalidates a retained generated proposal',t=>{

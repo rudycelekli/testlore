@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "kind": "evaluation-dataset-commitment",
+  "datasetId": "public-maintainer-fresh-contracts-20261007-v1",
+  "datasetHash": "78d7e6127d15873b351f6c5128e951a39bd14a167fc2c9b8d9d1a5d354fedc0f",
+  "units": [
+    {
+      "specificationId": "maintainer-time-conversion",
+      "requirementsHash": "813c8e59de7af8bf585ca514f54843c3571bc730ac6d3662dff79fd81727063f",
+      "sourceHash": "d573c8dd73667cd9209e26f6455cbe26ec5649bd08594620f7433f5106158595",
+      "referenceHash": "8e5ce70aff5a6bdb60328807db23b162f4a425f4bc482fb2ecd336ea26bf4bfb",
+      "defectsHash": "80911f8c29220c89ab5d35cecb7af98a5c4f4bb8d20abaf88d700ca72a98d3fd"
+    },
+    {
+      "specificationId": "maintainer-promise-predicate",
+      "requirementsHash": "6ee03bf4c17087f30e96e5880d3dcf5b57c2a75a37b5fbf10d1a2e9040722515",
+      "sourceHash": "40d6c2297d1ecf9b5b5543227484604cffdd57f731360c24876a27e6125d9b89",
+      "referenceHash": "835ad445ee0ab60185360b3995ad305b1e7cb923fa484beadf44c66d4fdd9eba",
+      "defectsHash": "21ded0d089e9aa3541cc7b51cacb0bdb3df6255da0203d9f4dfc77068284b2ce"
+    },
+    {
+      "specificationId": "maintainer-plain-object-predicate",
+      "requirementsHash": "2450c0ca68dcb14caf9e7ea9ed548ba049250a5e466b8482617dc4668c6d4fc0",
+      "sourceHash": "15e72bf07137ca72049ef89fcb2cd6321573d0624c193fb39887bca3772b6bb8",
+      "referenceHash": "4b43f0dd01827eff279354c30aa344988151bcc87ece1402bb894f7d60ba7663",
+      "defectsHash": "9b27fd5fe74f0408367210df71410afd2839acb8eca247f07bb0ef4cd3576d03"
+    },
+    {
+      "specificationId": "maintainer-stream-predicates",
+      "requirementsHash": "c9032da806dbdeef45daa57fc96ddfe4583d6287a66698d63d147a4905c5b799",
+      "sourceHash": "950b064edc2e27f5d2d161498a03f7336d69cd22470209f7cd4c54c9b3883dc2",
+      "referenceHash": "5fec26bd88cd9c5d48d33339cae7a856e39deaeee4c65171332f34e1515a17c8",
+      "defectsHash": "a4fe81134af2238baef094f89ce89a67ce15dcbd619d53661592cba27ec7d034"
+    }
+  ],
+  "provenance": {
+    "owner": "Public upstream maintainers; TestLore transport adaptation",
+    "source": "Pinned vercel/ms, then/is-promise, sindresorhus/is-plain-obj, sindresorhus/is-stream README, tests, and genuine historical parent revisions; upstream blob bindings accompany dataset",
+    "independenceNotes": "Maintainer specifications/assertions/history independently maintained. TestLore selects snapshots and adapts framework entry points; no assertion bodies change. Stream imports also relocate the fixture read and replace tempy with disposable paths/cleanup. One authored distinct history example is advisory memory. Local byte commitments do not prove model-training isolation, semantic independence or trusted publication time. Four fresh units cannot establish general learning efficacy.",
+    "independentlyMaintained": true
+  },
+  "createdAt": "2026-10-07T05:56:32.186Z",
+  "scope": "Local content commitment; owner and independence are declarations. No trusted timestamp, external publication, access isolation or semantic independence attestation."
+}

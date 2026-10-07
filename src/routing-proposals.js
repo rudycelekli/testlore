@@ -36,18 +36,45 @@ function imports(ast){
   }
   visit(ast);return [...new Set(result)];
 }
+// This deliberately accepts only a bounded literal packages block, not general
+// YAML. Aliases, tags, inline lists and multiline scalars need manual review.
+function pnpmPatterns(root,files,warnings){
+  if(!files.has('pnpm-workspace.yaml'))return null;
+  const file=safePath(root,'pnpm-workspace.yaml');
+  if(fs.statSync(file).size>64*1024){warnings.push({file:'pnpm-workspace.yaml',reason:'unsupported-workspace-declarations'});return null;}
+  const lines=fs.readFileSync(file,'utf8').split(/\r?\n/),patterns=[];let block=false,found=false,invalid=false;
+  for(const raw of lines){
+    if(!raw.trim()||/^\s*#/.test(raw))continue;
+    if(/^packages\s*:/.test(raw)){
+      if(found||!/^packages\s*:\s*(?:#.*)?$/.test(raw)){invalid=true;break;}
+      found=true;block=true;continue;
+    }
+    if(!block)continue;
+    if(/^\S/.test(raw)){block=false;continue;}
+    const match=/^ +-[ \t]+(?:(['"])([^'"\r\n]+)\1|([^\s#'"\[\]{},&|>:]+))[ \t]*(?:#.*)?$/.exec(raw);
+    if(!match||raw.includes('\t')||/^[*!]/.test(match[3]||'')){invalid=true;break;}
+    patterns.push(match[2]||match[3]);
+  }
+  if(!found||invalid||!patterns.length||patterns.length>100){warnings.push({file:'pnpm-workspace.yaml',reason:'unsupported-workspace-declarations'});return null;}
+  return patterns;
+}
 function workspacePackages(root,graph,warnings){
   let manifest={};try{manifest=JSON.parse(fs.readFileSync(safePath(root,'package.json'),'utf8'));}catch{}
-  const patterns=Array.isArray(manifest.workspaces)?manifest.workspaces:manifest.workspaces?.packages;
+  const npmPatterns=Array.isArray(manifest.workspaces)?manifest.workspaces:manifest.workspaces?.packages;
+  const pnpm=pnpmPatterns(root,new Set(graph.files),warnings);
+  if(npmPatterns!==undefined&&graph.files.includes('pnpm-workspace.yaml')){warnings.push({file:'pnpm-workspace.yaml',reason:'ambiguous-workspace-declarations'});return new Map();}
+  const patterns=npmPatterns??pnpm;
   if(patterns===undefined)return new Map();
-  if(!Array.isArray(patterns)||patterns.length>100||patterns.some(pattern=>typeof pattern!=='string'||!pattern||pattern.startsWith('!')||pattern.includes('..')||/[\\\0]/.test(pattern))){warnings.push({file:'package.json',reason:'unsupported-workspace-declarations'});return new Map();}
+  if(patterns===null)return new Map();
+  const declaration=pnpm?'pnpm-workspace.yaml':'package.json';
+  if(!Array.isArray(patterns)||patterns.length>100||patterns.some(pattern=>typeof pattern!=='string'||!pattern||(!pnpm&&pattern.startsWith('!'))||pattern==='!'||pattern.includes('..')||path.posix.isAbsolute(pattern.replace(/^!/,''))||/[\\\0]/.test(pattern))){warnings.push({file:declaration,reason:'unsupported-workspace-declarations'});return new Map();}
   const packages=new Map();
   for(const file of graph.files.filter(file=>file.endsWith('/package.json'))){
-    const directory=path.posix.dirname(file);if(!patterns.some(pattern=>path.matchesGlob(directory,pattern.replace(/\/$/,''))))continue;
+    const directory=path.posix.dirname(file);if(!patterns.some(pattern=>!pattern.startsWith('!')&&path.matchesGlob(directory,pattern.replace(/\/$/,'')))||patterns.some(pattern=>pattern.startsWith('!')&&path.matchesGlob(directory,pattern.slice(1).replace(/\/$/,''))))continue;
     try{
       const pkg=JSON.parse(fs.readFileSync(safePath(root,file),'utf8'));if(typeof pkg.name!=='string'||!pkg.name)continue;
       const inputs=graph.files.filter(input=>input.startsWith(directory+'/')&&!TEST.test(input)&&!graph.tests.includes(input));
-      const entry={name:pkg.name,directory,inputs};packages.set(pkg.name,[...(packages.get(pkg.name)||[]),entry]);
+      const entry={name:pkg.name,directory,inputs,declaration};packages.set(pkg.name,[...(packages.get(pkg.name)||[]),entry]);
     }catch{warnings.push({file,reason:'invalid-workspace-package-json'});}
   }
   return packages;
@@ -95,7 +122,7 @@ export function routingProposals(root){
       if(specifier.startsWith('.')||specifier.startsWith('#')||specifier.includes(':'))continue;
       const matches=packages.get(packageName(specifier));if(!matches)continue;
       if(matches.length!==1){warnings.push({file,reason:'ambiguous-workspace-package-name'});continue;}
-      const pkg=matches[0];add(file,pkg.inputs,consumers,'workspace-package-input-group',{specifier,packageName:pkg.name,workspaceDirectory:pkg.directory,workspaceDeclaration:'package.json'}, {limitations:[...LIMITATIONS,'The group includes tracked package source/assets and metadata, not transitive services or files outside the package. Review native exports, conditions and package binding.']});
+      const pkg=matches[0];add(file,pkg.inputs,consumers,'workspace-package-input-group',{specifier,packageName:pkg.name,workspaceDirectory:pkg.directory,workspaceDeclaration:pkg.declaration,workspaceDeclarationHash:before.files[pkg.declaration]}, {limitations:[...LIMITATIONS,'The group includes tracked package source/assets and metadata, not transitive services or files outside the package. Review native exports, conditions and package binding.']});
     }
   }
   // CSS observations remain proposals: comments, preprocessors and served URL bases need review.
@@ -136,6 +163,7 @@ export function validateRoutingProposals(root,proposal){
     if(!Array.isArray(entry.inputs)||!entry.inputs.length||entry.inputs.length>MAX_INPUTS||!Array.isArray(entry.tests)||!entry.tests.length||entry.tests.length>MAX_TESTS)throw new Error('Invalid routing mapping entry paths');
     safePath(root,entry.source);
     if(entry.id!==digest({file:entry.source,inputs:entry.inputs,consumers:entry.tests,kind:entry.kind})||entry.evidence?.sourceHash!==proposal.provenance.files[entry.source]||digest(entry.evidence?.inputHashes)!==digest(Object.fromEntries(entry.inputs.map(input=>[input,proposal.provenance.files[input]]))))throw new Error('Routing mapping evidence does not match retained provenance');
+    if(entry.kind==='workspace-package-input-group'&&(!['package.json','pnpm-workspace.yaml'].includes(entry.evidence.workspaceDeclaration)||entry.evidence.workspaceDeclarationHash!==proposal.provenance.files[entry.evidence.workspaceDeclaration]))throw new Error('Workspace declaration evidence does not match retained provenance');
     if(Object.keys(entry.patch.dependencies||{}).length>MAX_TESTS)throw new Error('Routing proposal test count exceeded');
     for(const [test,inputs]of Object.entries(entry.patch.dependencies||{})){
       safePath(root,test);if(!Object.hasOwn(proposal.provenance.files,test)||!Array.isArray(inputs)||!inputs.length||inputs.length>MAX_INPUTS)throw new Error('Invalid routing mapping paths');

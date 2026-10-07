@@ -1,10 +1,10 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { plan } from './selector.js';
+import { plan, planWithinStartupPhase } from './selector.js';
 import { readConfig, safePath } from './files.js';
 import { execute, adapterFor } from './execution.js';
 import { rememberServices, serviceInputs } from './inputs.js';
-import { runnerIdentity, snapshot, freshness } from './provenance.js';
+import { runnerIdentity, snapshot, freshness, digest } from './provenance.js';
 import { renderRunReport } from './run-report.js';
 import { openNativeSession, unifiedNativeEligibility } from './native-session.js';
 import { externalRun } from './integrations.js';
@@ -47,11 +47,12 @@ export async function runUnifiedNative(root,options={}) {
  if(unsupported){const result=run(root,options);return {...result,unifiedNative:{prototype:true,used:false,fallbackReason:unsupported}};}
  const initial=snapshot(root,config);let session,prepared,executionAttempted=false;
  try {
-  session=await openNativeSession(root,config,options);
+  session=await openNativeSession(root,config,options,{root,configurationDigest:digest(config),files:Object.keys(initial.files)});
   if(session.unsupported)throw new Error('Native command eligibility changed before startup; rerun after inputs stabilize');
-  const startupCheck=freshness(initial,snapshot(root,config));
+  const startupCurrent=snapshot(root,config);
+  const startupCheck=freshness(initial,startupCurrent);
   if(!startupCheck.fresh)throw new Error('Inputs changed during native context startup: '+startupCheck.reasons.join(', '));
-  prepared=prepareRun(root,options,session.token,started);
+  prepared=prepareRun(root,options,session.token,started,{root,configurationDigest:digest(config),provenance:startupCurrent});
   if(prepared.terminal)return {...prepared.terminal,unifiedNative:{prototype:true,used:true,contexts:1}};
   executionAttempted=true;
   const execution=await session.execute(prepared.executedTests);
@@ -63,7 +64,7 @@ export async function runUnifiedNative(root,options={}) {
  } finally {await session?.close?.();}
 }
 
-function prepareRun(root, options = {}, nativeSession, started = performance.now()) {
+function prepareRun(root, options = {}, nativeSession, started = performance.now(), startupPhase) {
   const config = readConfig(root);
   if(options.shadow && options.selective)throw new Error('Choose shadow or selective execution');
   options = {...options, shadow: Boolean(options.shadow || (config.executionMode === 'shadow' && !options.selective && !options.full))};
@@ -72,7 +73,7 @@ function prepareRun(root, options = {}, nativeSession, started = performance.now
     return {terminal:externalRun(root, config, options)};
   }
   const planningStart=performance.now();
-  const selection = plan(root, options,nativeSession);
+  const selection = startupPhase ? planWithinStartupPhase(root, options,nativeSession,startupPhase) : plan(root, options,nativeSession);
   const planningMs=Math.round(performance.now()-(nativeSession?started:planningStart));
   if (selection.discovery?.complete===false)return {terminal:{plan:selection,exitCode:2,error:'Native discovery is incomplete. Run the native full-suite command and repair discovery before selection.'}};
   const before=snapshot(root,config);

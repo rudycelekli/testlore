@@ -10,6 +10,8 @@ import {fixtureSnapshot, assessRepairDiff, parseIndependentRun, assessRepairLoop
 import {execute} from '../src/execution.js';
 import {Client} from '@modelcontextprotocol/client';
 import {StdioClientTransport} from '@modelcontextprotocol/client/stdio';
+import {repairProfile,createMaintainerRepairFixture} from '../scripts/maintainer-repair-profile.js';
+import {independentRun} from '../scripts/agent-repair-qualification.js';
 const hash = text => createHash('sha256').update(text).digest('hex');
 const testFiles = ['test/fault.test.js', 'test/preserved.test.js'];
 const fault = 'export const value=9;\n', fixed = 'export const value = 1;\n';
@@ -119,4 +121,84 @@ test('explicit repair opt-in never expands default detection host tools', async 
   const event = JSON.stringify({item: {type: 'mcp_tool_call', server: 'testlore_fixture', tool: 'repair_fixture'}});
   assert.equal(hostEvents('codex', event).errors.length, 1); assert.equal(hostEvents('codex', event, true).errors.length, 0);
   assert.equal(hostEvents('codex', JSON.stringify({item: {type: 'mcp_tool_call', server: 'testlore_fixture', tool: 'change_tests'}}), true).errors.length, 1);
+});
+
+test('named maintainer profile binds genuine historical bytes, unchanged assertion bodies and one repair target',()=>{
+  const profile=repairProfile('maintainer-is-promise'),schema=repairSummarySchema(profile.name),prompt=repairQualificationPrompt(profile.name);
+  assert.equal(profile.provenance.fixed,'ed0eaa4dec17597f0dae892a0472a9b7f459320d');assert.equal(profile.provenance.parent,'2dfb684306b6f3b8b374478c86e63f8bab4a7f06');assert.equal(profile.provenance.bindings.length,5);
+  assert.equal(profile.count,8);assert.equal(profile.failedCount,2);assert.equal(profile.maxSourceBytes,1024);assert.deepEqual(schema.properties.repairedFile.enum,['src/promise.cjs']);assert.deepEqual(schema.properties.executedFiles.items.enum,['test/promise.test.cjs']);
+  assert.ok(profile.oracle.endsWith(profile.original.slice(profile.original.indexOf('\n\n'))));assert.match(profile.license,/Forbes Lindesay/);assert.ok(prompt.includes(JSON.stringify(schema)));assert.ok(prompt.includes(JSON.stringify(profile.fault)));assert.match(prompt,/all seven calls/i);
+  assert.throws(()=>repairProfile('arbitrary-edit'),/Unknown/);
+});
+
+test('maintainer repair refuses wrong source, extra code, target redirection, root drift and repeated edits',t=>{
+  const root=fixture(t),profile=createMaintainerRepairFixture(root),stat=fs.statSync(root);
+  const bound={root:fs.realpathSync(root),rootIdentity:{dev:stat.dev,ino:stat.ino},expectedFaultSha256:hash(profile.fault),repairProfile:profile.name,target:'test/promise.test.cjs'};
+  const before=fixtureSnapshot(root);
+  for(const source of [profile.fault,'module.exports=()=>false;',profile.fixed+'process.exit(0);','x'.repeat(1025)])assert.throws(()=>repairFixture(bound,source),/authorized/);
+  assert.throws(()=>repairFixture({...bound,expectedFaultSha256:'0'.repeat(64)},profile.fixed),/binding changed/);
+  assert.throws(()=>repairFixture({...bound,rootIdentity:{...bound.rootIdentity,ino:0}},profile.fixed),/root identity/);
+  assert.deepEqual(fixtureSnapshot(root),before);
+  const result=repairFixture(bound,profile.fixed);assert.equal(result.changedFile,profile.target);assert.deepEqual(assessRepairDiff(before,fixtureSnapshot(root),profile.name),[]);assert.throws(()=>repairFixture(bound,profile.fixed),/planted fault/);
+});
+
+test('genuine maintainer defect preserves all eight independent cases and rejects loop/oracle drift',async t=>{
+  const root=fixture(t),profile=createMaintainerRepairFixture(root),nodeIdentity={realpath:process.execPath};
+  fs.writeFileSync(path.join(root,profile.target),profile.fixed);const baseline=await independentRun(root,nodeIdentity,profile.name);
+  fs.writeFileSync(path.join(root,profile.target),profile.fault);const planted=await independentRun(root,nodeIdentity,profile.name),before=fixtureSnapshot(root);
+  assert.equal(baseline.complete,true,JSON.stringify(baseline.errors));assert.equal(planted.complete,true,JSON.stringify(planted.errors));assert.equal(baseline.cases.length,8);assert.equal(planted.cases.filter(row=>row.status==='failed').length,2);
+  const nativeInitial=execute(root,profile.files,{adapter:'node'},{capture:true});assert.deepEqual(nativeInitial.tests.map(row=>row.id).sort(),planted.cases.map(row=>row.id).sort());
+  const stat=fs.statSync(root),result=repairFixture({root:fs.realpathSync(root),rootIdentity:{dev:stat.dev,ino:stat.ino},expectedFaultSha256:hash(profile.fault),repairProfile:profile.name},profile.fixed),after=fixtureSnapshot(root),post=await independentRun(root,nodeIdentity,profile.name);
+  const initial={complete:true,executed:true,mode:'shadow',verdict:'failed',outcomes:{passed:6,failed:2,skipped:0},failedCases:planted.cases.filter(row=>row.status==='failed'),executedFiles:profile.files};
+  const final={complete:true,executed:true,mode:'full',verdict:'passed-in-observed-scope',outcomes:{passed:8,failed:0,skipped:0},executedFiles:profile.files};
+  const input={...observerCalls(initial,final),profileName:profile.name,before,after,baseline,planted,independent:post,
+    repair:{schemaVersion:1,kind:'bounded-fixture-repair',rejectedAdditionalCalls:0,calls:[{requestedAt:9,respondedAt:10,sourceSha256:hash(profile.fixed),result}]},
+    finalMessage:JSON.stringify({verdict:'passed-in-observed-scope',repairedFile:profile.target,executedFiles:profile.files,uncertainty:'One adapted maintainer contract cannot establish full application or deployment safety.',nextAction:'Qualify additional independent historical repairs under unchanged maintainer assertions.',deploymentSafety:'not-established'})};
+  assert.equal(assessRepairLoop(input).qualified,true,JSON.stringify(assessRepairLoop(input).reasons));
+  for(const mutate of [
+    value=>{value.before.find(row=>row.file===profile.files[0]).sha256='0'.repeat(64);},
+    value=>{value.before.find(row=>row.file==='tddswarm.requirements.md').sha256='0'.repeat(64);},
+    value=>{value.before.find(row=>row.file==='tddswarm.config.json').sha256='0'.repeat(64);},
+    value=>{value.after.find(row=>row.file===profile.files[0]).sha256='0'.repeat(64);},
+    value=>{value.after.find(row=>row.file==='README.maintainer.md').sha256='0'.repeat(64);},
+    value=>{value.after.find(row=>row.file==='LICENSE.maintainer').sha256='0'.repeat(64);},
+    value=>{value.after.find(row=>row.file==='tddswarm.config.json').sha256='0'.repeat(64);},
+    value=>{value.after.find(row=>row.file===profile.target).sha256='0'.repeat(64);value.repair.calls[0].result.afterSha256='0'.repeat(64);value.repair.calls[0].sourceSha256='0'.repeat(64);},
+    value=>{value.independent.cases[0].id='drifted';},
+    value=>{value.independent.cases.pop();},
+    value=>{for(const run of [value.baseline,value.planted,value.independent])run.cases.pop();},
+    value=>{value.observed[1].calls[1].result.failedCases[0].id='fabricated';},
+    value=>{value.observed[1].calls[1].result.failedCases={};},
+    value=>{value.observed[1].calls[1].result.failedCases=[null];},
+    value=>{value.observed[1].calls[1].result.outcomes.failed=1;},
+    value=>{value.observed[1].calls[3].result.outcomes.passed=2;},
+    value=>{value.observed[1].calls[3].arguments.mode='shadow';},
+    value=>{value.observed[0].calls[0].respondedAt=99;},
+    value=>{value.observed[0].tools.push('edit_tests');},
+    value=>{value.observed[0].calls[0].arguments={unexpected:true};},
+    value=>{value.observed[1].calls[0].isError=true;},
+    value=>{value.repair.calls[0].requestedAt=1;},
+    value=>{value.repair.calls[0].result.changedFile=profile.files[0];},
+    value=>{value.processResult.status='timeout';},
+    value=>{value.repair.rejectedAdditionalCalls=1;},
+    value=>{const summary=JSON.parse(value.finalMessage);summary.repairedFile='src/value.js';value.finalMessage=JSON.stringify(summary);}
+  ]){const mutated=structuredClone(input);mutate(mutated);assert.equal(assessRepairLoop(mutated).qualified,false);}
+  const wrongNames=structuredClone(post.process);wrongNames.stdout=wrongNames.stdout.replaceAll('with null','with another input');assert.equal(parseIndependentRun(wrongNames,root,profile.name).complete,false);
+});
+
+test('real maintainer MCP accepts one canonical source edit while assertions and provenance remain sealed',async t=>{
+  const directory=fixture(t),root=path.join(directory,'fixture'),profile=createMaintainerRepairFixture(root),stat=fs.statSync(root),before=fixtureSnapshot(root);
+  const configuration={root:fs.realpathSync(root),rootIdentity:{dev:stat.dev,ino:stat.ino},expectedFaultSha256:hash(profile.fault),repairProfile:profile.name,receipt:path.join(directory,'repair.json')},filename=path.join(directory,'config.json');fs.writeFileSync(filename,JSON.stringify(configuration));
+  const client=new Client({name:'maintainer-capability-test',version:'1.0.0'}),transport=new StdioClientTransport({command:process.execPath,args:[path.resolve('scripts/fixture-repair-mcp.js'),filename],cwd:root,stderr:'pipe'});t.after(async()=>client.close());await client.connect(transport);
+  const tools=(await client.listTools()).tools;assert.deepEqual(tools.map(row=>row.name),['repair_fixture']);assert.deepEqual(Object.keys(tools[0].inputSchema.properties),['source']);assert.equal(tools[0].inputSchema.properties.source.maxLength,1024);
+  assert.equal((await client.callTool({name:'repair_fixture',arguments:{source:profile.fixed}})).structuredContent.complete,true);assert.deepEqual(assessRepairDiff(before,fixtureSnapshot(root),profile.name),[]);
+  const native=await independentRun(root,{realpath:process.execPath},profile.name);assert.equal(native.complete,true);assert.equal(native.cases.filter(row=>row.status==='passed').length,8);
+  assert.equal((await client.callTool({name:'repair_fixture',arguments:{source:profile.fixed}})).isError,true);
+});
+
+test('named profile is explicit, preserves synthetic default and prohibits a second prospective host call',async()=>{
+  const argv=['--run','--authorize-fixture-tools','--authorize-fixture-repair','--entrypoint','/package/src/cli.js','--output','/tmp/repair.json'];
+  assert.equal(parseRepairArguments(argv).repairProfile,'synthetic');assert.equal(parseRepairArguments([...argv,'--repair-profile','maintainer-is-promise']).repairProfile,'maintainer-is-promise');
+  assert.throws(()=>parseRepairArguments([...argv,'--repair-profile','all-files']),/Unknown/);assert.throws(()=>parseRepairArguments([...argv,'--repair-profile','synthetic','--repair-profile','synthetic']),/Duplicate/);
+  await assert.rejects(qualifyRepairHosts({authorizeFixtureRepair:true,authorizeFixtureTools:true,repairProfile:'maintainer-is-promise',timeoutMs:1000,claude:'/host/claude'}),/at most one/);
 });

@@ -20,6 +20,7 @@ test('prepared upstream inversion reuses native corpus, preserves actual failure
  const selection=freeze(c),profile={reviewed:true,candidateId:c.id,root:source,scope:'Constructed two-case controller verification; no external independence claim',config:{adapter:'node',discovery:'native'},expectedFailureNames:['a']};
  const prepared=preparePublicCandidate(selection,c.id,profile);assert.equal(prepared.qualified,false);assert.equal(prepared.corpus.labels[0].origin.fixedSourceHash,digest('export const a = 1;'));
  assert.throws(()=>preparePublicCandidate(selection,c.id,{...profile,reviewed:false}),/reviewed/);
+ for(const cachePolicy of[null,false,{jitiFilesystem:true},{jitiFilesystem:false,env:{SECRET:'synthetic'}}])assert.throws(()=>preparePublicCandidate(selection,c.id,{...profile,cachePolicy}),/cachePolicy/);
  assert.throws(()=>preparePublicCandidate(selection,c.id,{...profile,executionMode:'unified-native'}),/Vitest adapter/);
  assert.throws(()=>preparePublicCandidate(selection,c.id,{...profile,executionMode:'made-up'}),/reviewed/);
  const changed=structuredClone(prepared);changed.corpus.pilot.projects[0].changes[0].after='export const a = 2;';assert.throws(()=>executePreparedPublic(source,selection,changed,'.tddswarm/pilots/tampered'),/commitment/);

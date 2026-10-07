@@ -9,8 +9,14 @@ import { inspectHistoricalChange } from './pilot-history.js';
 const worker = fileURLToPath(new URL('./pilot-worker.js', import.meta.url));
 const frameworks = ['node', 'jest', 'vitest', 'playwright'];
 export const PILOT_EXECUTION_MODES = Object.freeze(['legacy','unified-native']);
+export function validatePilotCachePolicy(value){
+ if(value===undefined)return undefined;
+ if(!value||typeof value!=='object'||Array.isArray(value)||Object.keys(value).length!==1||value.jitiFilesystem!==false)throw Error('Pilot cachePolicy only permits explicit jitiFilesystem:false');
+ return {jitiFilesystem:false};
+}
 export function validatePilotManifest(value) {
   if (value?.schemaVersion !== 1 || !Array.isArray(value.projects) || !value.projects.length || value.projects.length > 20) throw new Error('Pilot manifest needs schemaVersion:1 and 1–20 projects');
+  const cachePolicy=validatePilotCachePolicy(value.cachePolicy);
   const repetitions = value.repetitions ?? 3, timeoutMs = value.timeoutMs ?? 120000;
   if (!Number.isInteger(repetitions) || repetitions < 1 || repetitions > 5) throw new Error('Pilot repetitions must be 1–5');
   if (!Number.isInteger(timeoutMs) || timeoutMs < 1000 || timeoutMs > 300000) throw new Error('Pilot timeoutMs must be 1000–300000');
@@ -38,7 +44,7 @@ export function validatePilotManifest(value) {
     }
     return { name: project.name, root: fs.realpathSync(project.root), scope: project.scope, config, changes: project.changes };
   });
-  return { schemaVersion: 1, projects, repetitions, timeoutMs };
+  return { schemaVersion: 1, projects, repetitions, timeoutMs,...(cachePolicy?{cachePolicy}:{}) };
 }
 
 function inspect(project) {
@@ -54,10 +60,11 @@ function inspect(project) {
   }
   return { name: project.name, revision, framework: project.config.adapter, scope: project.scope, changes: project.changes.length, historicalChanges, dependencyMode: fs.existsSync(path.join(project.root, 'node_modules')) ? 'shared-installed-local' : 'none' };
 }
-function environment() {
+export function pilotEnvironment(cachePolicy) {
+  cachePolicy=validatePilotCachePolicy(cachePolicy);
   const env = {};
   for (const key of ['PATH', 'HOME', 'TMPDIR', 'TEMP', 'TMP', 'SystemRoot', 'USERPROFILE', 'LANG', 'LC_ALL', 'PLAYWRIGHT_BROWSERS_PATH']) if (process.env[key]) env[key] = process.env[key];
-  return { ...env, CI: '1', NODE_ENV: 'test' };
+  return { ...env, CI: '1', NODE_ENV: 'test',...(cachePolicy?{JITI_FS_CACHE:'false'}:{}) };
 }
 
 /** Local pilot execution is explicit. No downloads, provider calls, or remote publication. */
@@ -77,7 +84,7 @@ export function pilot(root, manifest, options = {}) {
     fs.mkdirSync(directory);
     const request = path.join(directory, 'request.json');
     fs.writeFileSync(request, JSON.stringify({ project, revision: inspected[index].revision, repetitions: validated.repetitions, timeoutMs: validated.timeoutMs, directory, unifiedNative:options.unifiedNative===true }));
-    const result = spawnSync(process.execPath, [worker, request], { encoding: 'utf8', env: environment(), shell: false, timeout: Math.min(1800000, validated.timeoutMs * (3 + project.changes.length * validated.repetitions * 5)), killSignal: 'SIGKILL', maxBuffer: 4 * 1024 * 1024 });
+    const result = spawnSync(process.execPath, [worker, request], { encoding: 'utf8', env: pilotEnvironment(validated.cachePolicy), shell: false, timeout: Math.min(1800000, validated.timeoutMs * (3 + project.changes.length * validated.repetitions * 5)), killSignal: 'SIGKILL', maxBuffer: 4 * 1024 * 1024 });
     fs.writeFileSync(path.join(directory, 'worker-log.json'), JSON.stringify({ status: result.status, signal: result.signal, error: result.error?.message, stdout: result.stdout, stderr: result.stderr }, null, 2));
     let receipt;
     try { receipt = JSON.parse(fs.readFileSync(path.join(directory, 'receipt.json'), 'utf8')); } catch { receipt = { name: project.name, framework: project.config.adapter, valid: false, error: 'Worker did not finish; retained workspace and logs', changes: [] }; }
@@ -87,7 +94,7 @@ export function pilot(root, manifest, options = {}) {
     if (result.status !== 0 || !unchanged) receipt.valid = false;
     projects.push(receipt);
   }
-  const report = { schemaVersion: 1, executed: true, executionMode:options.unifiedNative===true?'unified-native':'legacy', output, environment: { node: process.version, platform: process.platform, arch: process.arch }, repetitions: validated.repetitions, projects,
+  const report = { schemaVersion: 1, executed: true, executionMode:options.unifiedNative===true?'unified-native':'legacy', output, environment: { node: process.version, platform: process.platform, arch: process.arch,...(validated.cachePolicy?{cachePolicy:validated.cachePolicy}:{}) }, repetitions: validated.repetitions, projects,
     valid: projects.every(p => p.valid), implementationHashes:Object.fromEntries(['pilot.js','pilot-worker.js','pilot-history.js','runner.js','execution.js','selector.js','graph.js','provenance.js'].map(file=>[file,digest(fs.readFileSync(new URL(file,import.meta.url)))])),limitations: ['Local declared scopes, planted changes and bounded historical Git pairs only; no production or whole-project certification.', 'Installed dependencies are shared read-only by convention, not an OS sandbox. Native test code may access network or local files.', 'Provider credentials are removed from inherited environment; no dependency installation or agent invocation occurs.', 'Three execution arms rotate order; TestLore discovery, planning, execution, provenance and receipt retention are included. Native related selection runs through the native CLI where available. Timing results are environment-specific.'] };
   fs.writeFileSync(path.join(output, 'summary.json'), JSON.stringify(report, null, 2));
   return report;

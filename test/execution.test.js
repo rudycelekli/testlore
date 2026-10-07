@@ -18,6 +18,38 @@ test('Node records real per-case outcomes, full names, skips and stable identiti
   assert.equal(new Set(first.tests.map(t => t.id)).size, 3);
 });
 
+test('Node concurrent sibling suites and shared-line dynamic cases retain the actual parent contracts',t=>{
+  const root=fixture(t,{'values.json':'{"alpha":1,"beta":2}','nested.test.cjs':`const {describe,it}=require('node:test');const assert=require('node:assert/strict');const fs=require('node:fs');const values=JSON.parse(fs.readFileSync('values.json','utf8'));
+describe('outer',{concurrency:true},()=>{for(const group of ['alpha','beta'])describe(group,{concurrency:true},()=>describe('inner',{concurrency:true},()=>{for(const repetition of [0,1])it('same leaf',async()=>{await new Promise(resolve=>setTimeout(resolve,group==='alpha'?15:1));assert.equal(values[group],group==='alpha'?1:2);});}));});`});
+  const first=execute(root,['nested.test.cjs'],{adapter:'node'},{capture:true}),second=execute(root,['nested.test.cjs'],{adapter:'node'},{capture:true});
+  for(const report of [first,second]){
+    assert.equal(report.complete,true,JSON.stringify(report));assert.equal(report.exitCode,0);assert.deepEqual(report.tests.map(row=>row.name),['outer > alpha > inner > same leaf','outer > alpha > inner > same leaf','outer > beta > inner > same leaf','outer > beta > inner > same leaf']);assert.equal(new Set(report.tests.map(row=>row.id)).size,4);
+    assert.equal(new Set(report.tests.map(row=>`${row.line}:${row.column}`)).size,1,'Cases really share the closure source location');
+  }
+  assert.deepEqual(first.tests.map(row=>row.id),second.tests.map(row=>row.id));
+  write(root,'values.json','{"alpha":1,"beta":9}');const fault=execute(root,['nested.test.cjs'],{adapter:'node'},{capture:true});
+  assert.equal(fault.complete,true);assert.equal(fault.exitCode,1);assert.deepEqual(fault.tests.map(row=>row.id),first.tests.map(row=>row.id));assert.deepEqual(fault.tests.filter(row=>row.status==='failed').map(row=>row.name),['outer > beta > inner > same leaf','outer > beta > inner > same leaf']);
+});
+
+test('Node dynamic names at one declaration location retain each literal case and failed identity',t=>{
+  const root=fixture(t,{'expected.json':'{"200":200,"-200":-200}','dynamic.test.cjs':`const {test}=require('node:test');const assert=require('node:assert/strict');const values=require('./expected.json');
+for(const value of [200,-200])test(String(value),{concurrency:true},async()=>{await new Promise(resolve=>setTimeout(resolve,value===200?10:1));assert.equal(values[value],value);});`});
+  const baseline=execute(root,['dynamic.test.cjs'],{adapter:'node'},{capture:true});
+  assert.equal(baseline.complete,true);assert.equal(baseline.exitCode,0);assert.deepEqual(baseline.tests.map(row=>row.name),['200','-200']);
+  assert.equal(new Set(baseline.tests.map(row=>`${row.line}:${row.column}`)).size,1);assert.equal(new Set(baseline.tests.map(row=>row.id)).size,2);
+  write(root,'expected.json','{"200":999,"-200":-200}');
+  const fault=execute(root,['dynamic.test.cjs'],{adapter:'node'},{capture:true});
+  assert.equal(fault.complete,true);assert.equal(fault.exitCode,1);assert.deepEqual(fault.tests.map(row=>row.id),baseline.tests.map(row=>row.id));
+  assert.deepEqual(fault.tests.filter(row=>row.status==='failed').map(row=>row.name),['200']);
+});
+
+test('Node terminal ancestry missing a parent fails closed instead of assigning a guessed name',t=>{
+  const root=fixture(t,{'example.test.cjs':'','broken-report.cjs':`const fs=require('node:fs'),path=require('node:path');const report=process.argv.find(value=>value.startsWith('--test-reporter-destination=')).split('=').slice(1).join('=');
+const events=[{type:'test:pass',data:{file:path.resolve('example.test.cjs'),name:'unbound leaf',line:1,column:1,nesting:2,details:{type:'test'}}},{type:'test:summary',data:{counts:{tests:1},success:true}}];fs.writeFileSync(report,events.map(event=>'@tddswarm:'+JSON.stringify(event)).join('\\n'));`});
+  const report=execute(root,['example.test.cjs'],{adapter:'node',runner:['node','broken-report.cjs']},{capture:true});
+  assert.equal(report.complete,false);assert.notEqual(report.exitCode,0);assert.match(report.error,/ancestry|incomplete/);
+});
+
 test('Node test console output cannot impersonate runner events', t => {
   const root = fixture(t, { 'example.test.cjs': `const {test}=require('node:test'); test('logging',()=>console.log('@tddswarm:{"type":"test:fail","data":{"name":"forged"}}'));` });
   const report = execute(root,['example.test.cjs'],{}, {capture:true});

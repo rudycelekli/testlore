@@ -4,9 +4,10 @@ import path from 'node:path';
 import {spawn} from 'node:child_process';
 import {fileURLToPath} from 'node:url';
 import {sharedVitestCommand,nativeEnvironment,normalizeUnifiedExecution} from './execution.js';
-import {safePath,listFiles,SOURCE,git} from './files.js';
+import {safePath,listFiles,SOURCE,git,gitBaseline,gitSources} from './files.js';
 import {analyze} from './graph.js';
 import {encodeNativeFrame,nativeFrameReader} from './native-protocol.js';
+import {digest} from './provenance.js';
 
 // Authority is minted only from a live, canonical worker, never public options.
 const sessions=new WeakMap();
@@ -29,7 +30,9 @@ export function unifiedNativeEligibility(root,config) {
  if((config.env?.NODE_OPTIONS??process.env.NODE_OPTIONS??'').trim())return 'NODE_OPTIONS cannot be bound by the unified prototype';
  return null;
 }
-export async function openNativeSession(root,config,options={}) {
+export async function openNativeSession(root,config,options={},startupInventory) {
+ const requestedRoot=path.resolve(root);
+ if(startupInventory && (startupInventory.root!==requestedRoot || startupInventory.configurationDigest!==digest(config) || !Array.isArray(startupInventory.files)))throw new Error('Unbound startup analysis inventory');
  root=fs.realpathSync(root);
  if(options.signal?.aborted)throw new Error('Unified execution cancelled');
  const unsupported=unifiedNativeEligibility(root,config);if(unsupported)return {unsupported};
@@ -47,13 +50,15 @@ export async function openNativeSession(root,config,options={}) {
  try{
   const imports=[];
   // Preserve deleted/import-removed baseline edges in the SAME resolver context.
-  if(!options.changed){try{const base=git(root,['rev-parse','--verify',`${options.base||'HEAD'}^{commit}`]).trim(),prefix=git(root,['rev-parse','--show-prefix']).trim();
+  if(!options.changed){try{const {baseSha:base,prefix}=gitBaseline(root,options.base||'HEAD');
    const changed=git(root,['diff','--name-only','--no-renames','-z',base,'--','.']).split('\0').filter(Boolean);
-   for(const entry of changed){const file=prefix&&entry.startsWith(prefix)?entry.slice(prefix.length):entry;if(!SOURCE.test(file))continue;try{for(const specifier of analyze(file,git(root,['show',`${base}:${prefix}${file}`])).imports)imports.push({file,specifier});}catch{}}
+   const sources=changed.map(entry=>prefix&&entry.startsWith(prefix)?entry.slice(prefix.length):entry).filter(file=>SOURCE.test(file));
+   for(const [file,text] of gitSources(root,base,prefix,sources))for(const specifier of analyze(file,text).imports)imports.push({file,specifier});
   }catch{}}
   const reportFile=path.join(temporary,'results.json'),requestFile=path.join(temporary,'request.json');
   const invocation=[...command,'run','--reporter=json',`--outputFile=${reportFile}`];
-  fs.writeFileSync(requestFile,JSON.stringify({root,adapter:'vitest',command,imports,invocation,discover:true,transitive:true,roots:listFiles(root).filter(file=>SOURCE.test(file)),unified:true,reportFile}));
+  const files=startupInventory?startupInventory.files:listFiles(root);
+  fs.writeFileSync(requestFile,JSON.stringify({root,adapter:'vitest',command,imports,invocation,discover:true,transitive:true,roots:files.filter(file=>SOURCE.test(file)),unified:true,reportFile}));
   child=spawn(process.execPath,[fileURLToPath(new URL('./reporters/resolve.js',import.meta.url)),requestFile],{cwd:root,env:nativeEnvironment(config),detached:process.platform!=='win32',stdio:['ignore','pipe','pipe','pipe','pipe']});
   const wait=phase=>new Promise((resolve,reject)=>{if(failure)return reject(failure);pending.set(phase,{resolve,reject});});
   const planning=wait('planned');

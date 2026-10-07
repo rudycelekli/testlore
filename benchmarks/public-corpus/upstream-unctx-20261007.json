@@ -1,0 +1,239 @@
+{
+  "schemaVersion": 1,
+  "kind": "public-upstream-lock-qualified-expansion",
+  "recordedDate": "2026-10-07",
+  "selectionCommitmentSha256": "065b79f7f345a971e76b0a2d1bdc4f4ab34c9c3b254837b693dee552b71af65a",
+  "candidateId": "unjs-unctx-1bb220dccf40",
+  "repository": "https://github.com/unjs/unctx",
+  "fixRevision": "1bb220dccf40c1f00e1941412c454f791aad6785",
+  "parentRevision": "7005e81cb40e18a8d6b78cc4c790da26e67bdaa5",
+  "sourceRevision": "08bf8ea4e7a5dccdfd719810980f5446102a5db7",
+  "sourceTreeClean": true,
+  "implementationUnchanged": true,
+  "upstreamByteBindings": [
+    {
+      "kind": "dependency",
+      "path": "package.json",
+      "bytes": 1273,
+      "sha256": "79bdb1bd17918061018bd3ee4846b762ca150cbd30961d92cd3a2f5b66b0e103",
+      "gitBlob": "2a9a43faac05cf2c5a82c829d55de92f92edb3d6"
+    },
+    {
+      "kind": "dependency",
+      "path": "pnpm-lock.yaml",
+      "bytes": 111746,
+      "sha256": "a2d3bce271fcf5169acee8aad90289f84af4b6aed35bd5ed921a2dae3f5f4c50",
+      "gitBlob": "0ff41056e521b30e74962788a681cf02e4efd19d"
+    },
+    {
+      "kind": "fixed-source",
+      "path": "src/index.ts",
+      "bytes": 6781,
+      "sha256": "896b76f0fec0a9bb87bf76e5fabf84c123d2f9a98a45abdcaa55392e4d5dd837",
+      "gitBlob": "4196ba1fcdcbc255580d68d6a25bbb8cf763be31"
+    },
+    {
+      "kind": "prior-source",
+      "path": "src/index.ts",
+      "bytes": 5970,
+      "sha256": "94b6f2ac8fdd3e958851aa229cc0d7f0b8d99d36c4b5f81b2d660f861f487f38",
+      "gitBlob": "acac137c4d7ddeaa72592231a60536ff6ac82458"
+    },
+    {
+      "kind": "oracle",
+      "path": "test/async-context.test.ts",
+      "bytes": 4275,
+      "sha256": "c7b198ba7c0bb962e022eed51553644dd0637f90f6188c84a6d8afda08c59674",
+      "gitBlob": "c2d18275de32c92a80665f7848ed371c8e00b993"
+    }
+  ],
+  "scope": "Native upstream runtime units with original config/plugin/test bodies and full frozen-lock dev dependency installation; lint/types/build/coverage omitted",
+  "environment": {
+    "node": "v22.19.0",
+    "platform": "darwin",
+    "arch": "arm64",
+    "packageManager": "pnpm@10.26.0",
+    "framework": {
+      "package": "vitest",
+      "upstreamDeclared": "^4.0.16",
+      "installed": "4.0.16"
+    },
+    "installation": {
+      "sha256": "1c03a2e5255c59c639bfd07b29bfac9515e020fcb05bb4f41243f62cab6f1bae",
+      "files": 6733,
+      "bytes": 116825499
+    },
+    "lifecyclePolicy": "Pinned package-manager defaults with lifecycle scripts enabled and personal npm config excluded; upstream project configuration retained; no --ignore-scripts, production-only, optional-dependency or package filtering flags",
+    "lifecycleWarnings": true,
+    "managerPackageSha256": "4268c1c6191a491b345c31e40d755ab0a73c9602c7740e13449f6cdb67f8609b",
+    "managerCliSha256": "b276da51dc8ca5b0d3ee3371695b50fc8b3244b281b091c63a3f082a88dadeb9",
+    "installerSha256": "0b5375296c55088521bf604a6f623feb0b06f20f4da29d67f139edf99866252d",
+    "installMs": 3606,
+    "installControllerMs": 7856,
+    "sharedStoreReused": true,
+    "upstreamLockInstallationVerified": true
+  },
+  "cacheProtocol": {
+    "jitiFilesystem": false,
+    "vitestResults": false,
+    "testLoreDiskAnalysis": false,
+    "allArmsIdentical": true,
+    "first": "Fresh child processes, first analytical plan in a new workspace; dependency/OS/package caches already warm",
+    "repeat": "Fresh child processes with disk caches still disabled; shared OS caches uncontrolled",
+    "nativeDefaultComparison": false
+  },
+  "independentPreflight": {
+    "completed": true,
+    "fixedCases": 32,
+    "fixedPassed": 32,
+    "fixedSkipped": 0,
+    "fullFaultRuns": 2,
+    "namedStableFaultsPerRun": 1
+  },
+  "qualification": {
+    "qualified": true,
+    "requestedTrials": 2,
+    "completedTrials": 2,
+    "preservedFaultTrials": 2,
+    "independentlyDemonstratedFaultTrials": 2,
+    "fullFallbackTrials": 2,
+    "selectiveTrials": 0,
+    "unchangedOriginalCheckout": true,
+    "caseObservations": {
+      "full": 64,
+      "testLore": 64,
+      "native": 38
+    },
+    "fileObservations": {
+      "full": 8,
+      "testLore": 8,
+      "native": 6
+    },
+    "totalMissedFailures": 0,
+    "nativeMissedFailures": 0,
+    "controllerMs": 14827,
+    "trialSpans": [
+      {
+        "repetition": 1,
+        "analysisCachePhase": "first-plan-in-new-workspace",
+        "armOrder": [
+          "full",
+          "subset",
+          "native"
+        ],
+        "fullMs": 1149,
+        "testLoreMs": 4041,
+        "nativeMs": 985,
+        "planningMs": 2124,
+        "subsetExecutionMs": 1785,
+        "analysisCache": {
+          "enabled": false,
+          "engine": "b526be74a607cc4df67794f8dd5d0bd35f6c6c9e32df08c84a792dd6fd1dd86a",
+          "memoryHits": 6,
+          "diskHits": 0,
+          "parses": 11,
+          "writes": 0,
+          "corruptions": 0,
+          "evictions": 0,
+          "skipped": 0,
+          "unavailable": false
+        },
+        "mode": "full",
+        "selectedFiles": 4,
+        "totalFiles": 4,
+        "missedFailures": 0,
+        "nativeMissedFailures": 0,
+        "valid": true,
+        "stable": true
+      },
+      {
+        "repetition": 2,
+        "analysisCachePhase": "repeat-analysis-cache-disabled",
+        "armOrder": [
+          "subset",
+          "native",
+          "full"
+        ],
+        "fullMs": 1011,
+        "testLoreMs": 2541,
+        "nativeMs": 890,
+        "planningMs": 1340,
+        "subsetExecutionMs": 1045,
+        "analysisCache": {
+          "enabled": false,
+          "engine": "b526be74a607cc4df67794f8dd5d0bd35f6c6c9e32df08c84a792dd6fd1dd86a",
+          "memoryHits": 6,
+          "diskHits": 0,
+          "parses": 11,
+          "writes": 0,
+          "corruptions": 0,
+          "evictions": 0,
+          "skipped": 0,
+          "unavailable": false
+        },
+        "mode": "full",
+        "selectedFiles": 4,
+        "totalFiles": 4,
+        "missedFailures": 0,
+        "nativeMissedFailures": 0,
+        "valid": true,
+        "stable": true
+      }
+    ]
+  },
+  "combinedAccounting": {
+    "olderComparativeQualifiedChanges": 10,
+    "olderComparativeQualifiedRepositories": 3,
+    "actualUpstreamLockQualifiedChanges": 1,
+    "actualUpstreamLockQualifiedRepositories": 1,
+    "qualifiedUniqueChanges": 11,
+    "qualifiedRepositories": 4,
+    "uniqueThreeArmAttemptedChanges": 11,
+    "selectedChanges": 100,
+    "unattemptedChanges": 89,
+    "stableQualifiedFaultTrialExposures": 22,
+    "intermediateTarget": {
+      "changes": 30,
+      "repositories": 5
+    },
+    "target": {
+      "changes": 100,
+      "repositories": 10
+    },
+    "targetMet": false,
+    "earlierReceiptsReclassified": false
+  },
+  "retainedNegatives": [
+    {
+      "kind": "package-manager-bootstrap",
+      "reason": "First prospective unctx bootstrap rejected duplicate user/global npm config paths before dependency installation; fresh separate bound empty files corrected the controller",
+      "nativeTrials": 0
+    },
+    {
+      "kind": "post-preflight-admission",
+      "reason": "Earlier unctx preflight passed32cases and demonstrated stable fault, but preparation rejected changes in installed bytes after native executable filesystem cache writes; no cache file excluded from hash",
+      "qualified": false
+    },
+    {
+      "kind": "native-controller-start",
+      "reason": "An earlier missing prepared input stopped before corpus trials; retained CLI error, no native trials or qualification",
+      "nativeTrials": 0
+    }
+  ],
+  "receiptSha256": {
+    "install": "df2b8364288ba3195b4b8dc2443ea8dccee23451aebe68fb1479009041a8d064",
+    "preflight": "41497c4fe75ec081ee695c4665abb96df3f3329728e02b0315eab5088b91d759",
+    "prepared": "2d9bf973afe0bc2c4b7b58aaab44f522c0a312aa2292c3a21bc7f7bd5992f94e",
+    "attempt": "be8d22d8289760a436e17481b1b6dfb627c089a542c5d608320a27b7920f3c40"
+  },
+  "limitations": [
+    "One bounded independently executed upstream fault with unchanged original maintainer cases; commit association is not external verification of authorship independence.",
+    "The30/5 and100/10 benchmarks remain incomplete; combined counts include older comparative dependency projections that are not original upstream-lock environments.",
+    "Conservative full fallback retained all4files32cases; native selected3files19cases. Both preserved the fault; no routing advantage or speed improvement here.",
+    "Native JITI/result caches and TestLore disk analysis cache disabled equally. Not a native-default caching comparison or OS-cold measurement.",
+    "Timing overlapped remote provider qualification and one local scoped controller test; no ranking or performance-win claim.",
+    "Pinned pnpm native lifecycle policy warned that some build scripts were ignored by defaults; no override or manual dependency approval occurred.",
+    "Complete installed bytes/link commitment unchanged during qualification; environment, models and arbitrary child processes are not fully attested.",
+    "No generated test, learning, browser or production-service qualification."
+  ]
+}

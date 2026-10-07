@@ -1,0 +1,2230 @@
+{
+  "schemaVersion": 1,
+  "kind": "planning-phase-performance-qualification",
+  "baseline": {
+    "schemaVersion": 1,
+    "kind": "public-four-arm-whole-cli-proof",
+    "complete": true,
+    "qualified": true,
+    "sourceRevision": "6648f7b5690fedb4e09236c72fc97c1d698ee35b",
+    "implementationHashes": {
+      "scripts/unified-native-proof.js": "824b8b83893bd0b496a43f4eda1fcff295413fb1c76f2204bc57823fb2ae339f",
+      "scripts/worker-identity.js": "10fe0b51f032c71bf475f7d8e788dd3c6d6452ba53c072f08783b0bce1b446a6",
+      "scripts/evaluation-commitment.js": "8e1e6e7c586bf3b2f38f3202f7b2d1c4b2e37d0054fca4315e3434c6b368251a",
+      "scripts/regression-corpus.js": "497797b7ac14c2cd8efcf5663dfa2faf8e3df6a1d7cde86f942e29f2bb40c9ed",
+      "scripts/public-corpus.js": "67349f62983d61feb925d146ba7ed043f8ec4803e64e7bfdc1f75a365cee1416",
+      "package-lock.json": "f4099c07e38ac8a9bf7311a7f048e3844ff06c91933fb7325e1ef9a71f2764ba",
+      "src/adoption-readiness.js": "739f6f9cc4c0a91c9ffb96ca352ac6548c67be0317fc09afe1162e4a12839870",
+      "src/agent-contract.js": "f7df563d2f77d3dbacea7607495916a22df8fcbee655ca69ed57ef2960886376",
+      "src/agent-profile.js": "85a636f66ed1f939a3b32e175e470a3adc00549c7c7b243e46079cfe93836814",
+      "src/audit.js": "023f15549f498f7ef5a5e9cc38056d1cd2b0b80a868dd36498e7b43a09f770ad",
+      "src/browser-evidence.js": "43d3e66283e7172c83f71d19c8377843ce0315ad8f49550371525e35ce7bb803",
+      "src/browser-fixture.d.ts": "5dbb0d7c1a2a6f05dba93f00ed5e88eea823bb0f08d8b9eead60bcbe808cc80e",
+      "src/browser-fixture.js": "5dce6ad7342cf298af5cf798330b7c3110fc2372aa435543a4e4495b001ce855",
+      "src/candidates.js": "cf376d249374c147f93458750490769bc0b9542029da761f7424fb78220f83e8",
+      "src/cli.js": "73e0c8f60d7c08e533dacd6d2d06cd55ce39398a3d3aa4e487295aa43d6028b1",
+      "src/evidence-loop.js": "283ea660a8bb45e3eb0cce8a3f165b63d695be389aaf03c46c933955e2843c64",
+      "src/evidence.js": "a8a4970738d9e1f55a4dcd27c901b2e3280b1109383e16e932ec29bf72b7b545",
+      "src/execution.js": "c2a2009bbff209ad61b079d5e3498bd5df1e95d17a69b51281d23da238b5aed7",
+      "src/fallback-diagnostics.js": "5b08914a7cfffa466407e08b264262d63ed20be285a5668a5a14ed28c4bb7def",
+      "src/files.js": "3b3222eac493d93f6f9997fa6e49e96302e521991cd46250673af18fddf30283",
+      "src/graph-cache.js": "5a17633fa29a98ae8f09b2e6b988ac0c7b9c9958df33aba53ab3ac39d8a08f5c",
+      "src/graph.js": "18b691757c62a4e708a06eb84b6522953f21dbd8bf5c68578b82c1f09d6d6fbb",
+      "src/improvement.js": "086ecc931459b05425d28ce47c65faf05a70b7e85ce7935fe1be2f9acc1d1695",
+      "src/index.js": "e74796adfb506a5fdec2b7a5b1512af579696abb0e5775124d1c540cc6e49025",
+      "src/inputs.js": "b60751753fef2e11d65b88ce69e866a273289312ce65c1a1fb8bed7a49fd6da7",
+      "src/integrations.js": "ba103a3f9f975f605f1d2013db1606ed6bb0bb12f24044da90cbcfc506ea8fe8",
+      "src/learning.js": "b20f3b143015543f5ad5f339b33eeffe350da3f3ca310b07c740365e47d9d273",
+      "src/mapping-qualification.js": "e74fc34b398c2272c16e30d5a6d467cf9294a42ca4de1da5e5ad166e4a5a6f96",
+      "src/mcp-worker.js": "0114989a9a3bfd185cd149d73ed2bfa7142e3bf009dd6ecee911089af0dad697",
+      "src/mcp.js": "c5a337d38cfd82d743d3905e8f32b9e0e89b52ba50c5b321b0c7c07f605602e1",
+      "src/native-protocol.js": "71330430c930ddb5c8640f2b9f1482a3a1f16cf81af9aab6aae56c0b147dbf11",
+      "src/native-session.js": "0c16aabdf379c14285f3687a1393581b3101890c2076929de4d8f65f57ef9c9e",
+      "src/pilot-history.js": "ac6ec6e866fc696a45115823d82d8d05c8ee8d3e7db7a52d422db7572e89e004",
+      "src/pilot-worker.js": "a0fee2254f3a55079bc92321c0fd559ba083912331065fb6a9fad717d61afaa7",
+      "src/pilot.js": "9e7a63336c78eb54c54c2ebb6cb84a09f65a3fecd0d07b58a877ba62452f7643",
+      "src/plugin-config.js": "43cbdc3450288a49c8ee02b27b4178ea4b3baae43745b9f0de87c5b8d771fcc4",
+      "src/plugin-recommendations.js": "d626dce84e63156d74b32697dc32a61e456afe9ef1e39142d1af9a4c138dc0d4",
+      "src/plugins.js": "1ba8a5d5e4db4bce3c48ec1042cc23e5779803dfaba69b28a7a632ae34479413",
+      "src/provenance.js": "31729e07bb832015805752e26221b43bd25d440c12c4230e4399d812c60793a3",
+      "src/pull-request.js": "40111c2d70fc30f87adac6691860404741c584756b1035975d97f25e80f2f009",
+      "src/quality-layer.js": "2c7f0613df6eac15835201b99a305ca80ac0fd7ace59b8af28dbd1564a6ad62d",
+      "src/quality-measurement.js": "2ce9eaf57ead7366e9ec91dc563d08a67db6ac74081f1e5a59ed261b21ac6e2a",
+      "src/routing-proposals.js": "3a2baa35d8c8950aa9202a39ea4e336e7415efb758ce0a3bd5ad402f5b00990f",
+      "src/run-report.js": "9ceea1c0b7eb83a442b15c571eb0c940c9fb4ac6f8ab5649d2a8fae36feceb7e",
+      "src/runner.js": "0d83fadaae8dfe52f2abc57370de107e14a2e0484e163ae812f173c25aafc6b6",
+      "src/runtime-hook.cjs": "0e039982b4187ffdf9547f6c78d97c4d1ac0ca2b71d714201d1020883b47e57c",
+      "src/selector.js": "c126fe6e513c0529cc3e933efdfb9a5896bca81418fd0b6603178360882730db",
+      "src/swarm.js": "23f09e9a5ce9feb87f9b8527a771d6fa5808c44994516276d901f4ee702c7f68",
+      "src/timing.js": "045a575dbf260914314adedbddf546419c1e6f3b919e88b84d40af82bab221ce",
+      "src/reporters/node.js": "c5fbf1bf0841fd7e36f716198ac00a5481fa288a9662997257b385f64687b24c",
+      "src/reporters/playwright.cjs": "0f919f4972d6487d596a0ca66b738257cdee6364bd2d2c53d288573efb274965",
+      "src/reporters/resolve.js": "a3188630990bba79c9d338dfc2e327145159aa1ec9614219c33682b89959251c",
+      "src/adapters/aqe.js": "8ef5b425622ee6798e4a7c68bb42e95c46922b5c0473b064073254d640f80082",
+      "src/adapters/codex-protocol.js": "bcb5a1a902bd253e90b879e6f89575885afe236ee6b86ec9b2acafaa3bf91dc1",
+      "src/adapters/codex.js": "8ebc36a83ab8c2381ed0d1d40dcc1a82d34ecd47cb8427e523009fe385b8f421",
+      "src/adapters/ruvector-worker.js": "80c8a6dcaf3014adc5e8fc3d01a50493af4679ea2b3713226ae08a97e5d34a07",
+      "src/adapters/ruvector.js": "d306a37df25e47b864c42211dc1b17a191f36f3518e979b1a5442a555569ad71"
+    },
+    "nativeFrameworkHashes": [
+      "943ddc2cfd3676087e243b5adc450ea8c25ad941ba678b48a679b68f67ef297a",
+      "39db22f579acf5639bbb17a261408debbde03f4692c0c439e77e7f13aeba74d6"
+    ],
+    "node": {
+      "version": "v22.19.0",
+      "sha256": "0d005c18e095027ca8f9fe1cc1126f767ee4ad7b004f4d6fb781ec4228a7c5d1",
+      "bytes": 110712624
+    },
+    "vitest": "5.0.2",
+    "requestedScenarios": 2,
+    "repetitions": 3,
+    "requestedAttempts": 24,
+    "startedAttempts": 24,
+    "completedAttempts": 24,
+    "uncompletedAttempts": 0,
+    "qualifiedConstructedScenarios": 2,
+    "qualifiedPublicBugfixes": 0,
+    "controllerElapsedMs": 31315,
+    "observations": [
+      {
+        "origin": "constructed-independent-assertions",
+        "nativeFramework": {
+          "version": "5.0.2",
+          "hashes": [
+            "943ddc2cfd3676087e243b5adc450ea8c25ad941ba678b48a679b68f67ef297a",
+            "39db22f579acf5639bbb17a261408debbde03f4692c0c439e77e7f13aeba74d6"
+          ]
+        },
+        "repetitions": [
+          {
+            "repetition": 0,
+            "armOrder": [
+              "full",
+              "native",
+              "legacy",
+              "unified"
+            ],
+            "demonstrated": true,
+            "referenceFailures": 1,
+            "nativeSpeedComparisonEligible": true,
+            "arms": {
+              "full": {
+                "outerMs": 1225.8026659999996,
+                "complete": true,
+                "casePreservation": true,
+                "qualityEquivalent": true,
+                "missedFailures": 0,
+                "unexpectedFailures": 0,
+                "cases": 12,
+                "files": 12,
+                "mode": null,
+                "unifiedContextUsed": null
+              },
+              "native": {
+                "outerMs": 297.7893750000003,
+                "complete": true,
+                "casePreservation": true,
+                "qualityEquivalent": true,
+                "missedFailures": 0,
+                "unexpectedFailures": 0,
+                "cases": 1,
+                "files": 1,
+                "mode": null,
+                "unifiedContextUsed": null
+              },
+              "legacy": {
+                "outerMs": 1397.3554999999997,
+                "complete": true,
+                "casePreservation": true,
+                "qualityEquivalent": true,
+                "missedFailures": 0,
+                "unexpectedFailures": 0,
+                "cases": 1,
+                "files": 1,
+                "mode": "affected",
+                "unifiedContextUsed": null
+              },
+              "unified": {
+                "outerMs": 1458.7648749999998,
+                "complete": true,
+                "casePreservation": true,
+                "qualityEquivalent": true,
+                "missedFailures": 0,
+                "unexpectedFailures": 0,
+                "cases": 1,
+                "files": 1,
+                "mode": "affected",
+                "unifiedContextUsed": true
+              }
+            }
+          },
+          {
+            "repetition": 1,
+            "armOrder": [
+              "native",
+              "legacy",
+              "unified",
+              "full"
+            ],
+            "demonstrated": true,
+            "referenceFailures": 1,
+            "nativeSpeedComparisonEligible": true,
+            "arms": {
+              "full": {
+                "outerMs": 1281.0335000000014,
+                "complete": true,
+                "casePreservation": true,
+                "qualityEquivalent": true,
+                "missedFailures": 0,
+                "unexpectedFailures": 0,
+                "cases": 12,
+                "files": 12,
+                "mode": null,
+                "unifiedContextUsed": null
+              },
+              "native": {
+                "outerMs": 301.7808329999998,
+                "complete": true,
+                "casePreservation": true,
+                "qualityEquivalent": true,
+                "missedFailures": 0,
+                "unexpectedFailures": 0,
+                "cases": 1,
+                "files": 1,
+                "mode": null,
+                "unifiedContextUsed": null
+              },
+              "legacy": {
+                "outerMs": 1443.437,
+                "complete": true,
+                "casePreservation": true,
+                "qualityEquivalent": true,
+                "missedFailures": 0,
+                "unexpectedFailures": 0,
+                "cases": 1,
+                "files": 1,
+                "mode": "affected",
+                "unifiedContextUsed": null
+              },
+              "unified": {
+                "outerMs": 1632.1733750000003,
+                "complete": true,
+                "casePreservation": true,
+                "qualityEquivalent": true,
+                "missedFailures": 0,
+                "unexpectedFailures": 0,
+                "cases": 1,
+                "files": 1,
+                "mode": "affected",
+                "unifiedContextUsed": true
+              }
+            }
+          },
+          {
+            "repetition": 2,
+            "armOrder": [
+              "legacy",
+              "unified",
+              "full",
+              "native"
+            ],
+            "demonstrated": true,
+            "referenceFailures": 1,
+            "nativeSpeedComparisonEligible": true,
+            "arms": {
+              "full": {
+                "outerMs": 1240.4321660000005,
+                "complete": true,
+                "casePreservation": true,
+                "qualityEquivalent": true,
+                "missedFailures": 0,
+                "unexpectedFailures": 0,
+                "cases": 12,
+                "files": 12,
+                "mode": null,
+                "unifiedContextUsed": null
+              },
+              "native": {
+                "outerMs": 297.01166699999885,
+                "complete": true,
+                "casePreservation": true,
+                "qualityEquivalent": true,
+                "missedFailures": 0,
+                "unexpectedFailures": 0,
+                "cases": 1,
+                "files": 1,
+                "mode": null,
+                "unifiedContextUsed": null
+              },
+              "legacy": {
+                "outerMs": 1364.4762920000012,
+                "complete": true,
+                "casePreservation": true,
+                "qualityEquivalent": true,
+                "missedFailures": 0,
+                "unexpectedFailures": 0,
+                "cases": 1,
+                "files": 1,
+                "mode": "affected",
+                "unifiedContextUsed": null
+              },
+              "unified": {
+                "outerMs": 1440.272167000001,
+                "complete": true,
+                "casePreservation": true,
+                "qualityEquivalent": true,
+                "missedFailures": 0,
+                "unexpectedFailures": 0,
+                "cases": 1,
+                "files": 1,
+                "mode": "affected",
+                "unifiedContextUsed": true
+              }
+            }
+          }
+        ]
+      },
+      {
+        "origin": "constructed-independent-assertions",
+        "nativeFramework": {
+          "version": "5.0.2",
+          "hashes": [
+            "943ddc2cfd3676087e243b5adc450ea8c25ad941ba678b48a679b68f67ef297a",
+            "39db22f579acf5639bbb17a261408debbde03f4692c0c439e77e7f13aeba74d6"
+          ]
+        },
+        "repetitions": [
+          {
+            "repetition": 0,
+            "armOrder": [
+              "full",
+              "native",
+              "legacy",
+              "unified"
+            ],
+            "demonstrated": true,
+            "referenceFailures": 1,
+            "nativeSpeedComparisonEligible": false,
+            "arms": {
+              "full": {
+                "outerMs": 426.19837499999994,
+                "complete": true,
+                "casePreservation": true,
+                "qualityEquivalent": true,
+                "missedFailures": 0,
+                "unexpectedFailures": 0,
+                "cases": 2,
+                "files": 2,
+                "mode": null,
+                "unifiedContextUsed": null
+              },
+              "native": {
+                "outerMs": 258.22775000000183,
+                "complete": true,
+                "casePreservation": true,
+                "qualityEquivalent": false,
+                "missedFailures": 1,
+                "unexpectedFailures": 0,
+                "cases": 0,
+                "files": 0,
+                "mode": null,
+                "unifiedContextUsed": null
+              },
+              "legacy": {
+                "outerMs": 1557.9569160000028,
+                "complete": true,
+                "casePreservation": true,
+                "qualityEquivalent": true,
+                "missedFailures": 0,
+                "unexpectedFailures": 0,
+                "cases": 1,
+                "files": 1,
+                "mode": "affected",
+                "unifiedContextUsed": null
+              },
+              "unified": {
+                "outerMs": 1414.0819999999985,
+                "complete": true,
+                "casePreservation": true,
+                "qualityEquivalent": true,
+                "missedFailures": 0,
+                "unexpectedFailures": 0,
+                "cases": 1,
+                "files": 1,
+                "mode": "affected",
+                "unifiedContextUsed": true
+              }
+            }
+          },
+          {
+            "repetition": 1,
+            "armOrder": [
+              "native",
+              "legacy",
+              "unified",
+              "full"
+            ],
+            "demonstrated": true,
+            "referenceFailures": 1,
+            "nativeSpeedComparisonEligible": false,
+            "arms": {
+              "full": {
+                "outerMs": 418.57216699999844,
+                "complete": true,
+                "casePreservation": true,
+                "qualityEquivalent": true,
+                "missedFailures": 0,
+                "unexpectedFailures": 0,
+                "cases": 2,
+                "files": 2,
+                "mode": null,
+                "unifiedContextUsed": null
+              },
+              "native": {
+                "outerMs": 250.5290840000016,
+                "complete": true,
+                "casePreservation": true,
+                "qualityEquivalent": false,
+                "missedFailures": 1,
+                "unexpectedFailures": 0,
+                "cases": 0,
+                "files": 0,
+                "mode": null,
+                "unifiedContextUsed": null
+              },
+              "legacy": {
+                "outerMs": 1320.6144999999997,
+                "complete": true,
+                "casePreservation": true,
+                "qualityEquivalent": true,
+                "missedFailures": 0,
+                "unexpectedFailures": 0,
+                "cases": 1,
+                "files": 1,
+                "mode": "affected",
+                "unifiedContextUsed": null
+              },
+              "unified": {
+                "outerMs": 1352.8693329999987,
+                "complete": true,
+                "casePreservation": true,
+                "qualityEquivalent": true,
+                "missedFailures": 0,
+                "unexpectedFailures": 0,
+                "cases": 1,
+                "files": 1,
+                "mode": "affected",
+                "unifiedContextUsed": true
+              }
+            }
+          },
+          {
+            "repetition": 2,
+            "armOrder": [
+              "legacy",
+              "unified",
+              "full",
+              "native"
+            ],
+            "demonstrated": true,
+            "referenceFailures": 1,
+            "nativeSpeedComparisonEligible": false,
+            "arms": {
+              "full": {
+                "outerMs": 448.7067500000012,
+                "complete": true,
+                "casePreservation": true,
+                "qualityEquivalent": true,
+                "missedFailures": 0,
+                "unexpectedFailures": 0,
+                "cases": 2,
+                "files": 2,
+                "mode": null,
+                "unifiedContextUsed": null
+              },
+              "native": {
+                "outerMs": 255.04162500000166,
+                "complete": true,
+                "casePreservation": true,
+                "qualityEquivalent": false,
+                "missedFailures": 1,
+                "unexpectedFailures": 0,
+                "cases": 0,
+                "files": 0,
+                "mode": null,
+                "unifiedContextUsed": null
+              },
+              "legacy": {
+                "outerMs": 1393.6211250000015,
+                "complete": true,
+                "casePreservation": true,
+                "qualityEquivalent": true,
+                "missedFailures": 0,
+                "unexpectedFailures": 0,
+                "cases": 1,
+                "files": 1,
+                "mode": "affected",
+                "unifiedContextUsed": null
+              },
+              "unified": {
+                "outerMs": 1500.2256249999991,
+                "complete": true,
+                "casePreservation": true,
+                "qualityEquivalent": true,
+                "missedFailures": 0,
+                "unexpectedFailures": 0,
+                "cases": 1,
+                "files": 1,
+                "mode": "affected",
+                "unifiedContextUsed": true
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "privateOriginalSha256": "0f00804bc27bffa7d129e06541588a3af36e81da892fce54a9a2810b562751e4",
+    "limitations": [
+      "Two constructed workloads plus optional one real upstream fix; not the 100-change/10-project target.",
+      "Outer spans include CLI/Node startup, native execution and child-side report/history/source sealing; parent normalization and fixture creation excluded and controller elapsed separately retained.",
+      "First plan starts with empty pure analysis cache; repeat retains only that cache and resets history. Shared OS/dependency/native framework caches are uncontrolled; no fully cold-machine claim.",
+      "Framework metadata/CLI and core source/Node bytes are bound; imported native dependencies and arbitrary test subprocesses are not fully attested.",
+      "Native zero-case selectors can be complete within their chosen scope yet miss a demonstrated fault; such timing is never credited as quality-equivalent speed."
+    ]
+  },
+  "candidate": {
+    "schemaVersion": 1,
+    "kind": "public-four-arm-whole-cli-proof",
+    "complete": true,
+    "qualified": true,
+    "sourceRevision": "032469b26584ceebb7fe16561bea009baa5c1965",
+    "implementationHashes": {
+      "scripts/unified-native-proof.js": "824b8b83893bd0b496a43f4eda1fcff295413fb1c76f2204bc57823fb2ae339f",
+      "scripts/worker-identity.js": "10fe0b51f032c71bf475f7d8e788dd3c6d6452ba53c072f08783b0bce1b446a6",
+      "scripts/evaluation-commitment.js": "8e1e6e7c586bf3b2f38f3202f7b2d1c4b2e37d0054fca4315e3434c6b368251a",
+      "scripts/regression-corpus.js": "497797b7ac14c2cd8efcf5663dfa2faf8e3df6a1d7cde86f942e29f2bb40c9ed",
+      "scripts/public-corpus.js": "67349f62983d61feb925d146ba7ed043f8ec4803e64e7bfdc1f75a365cee1416",
+      "package-lock.json": "f4099c07e38ac8a9bf7311a7f048e3844ff06c91933fb7325e1ef9a71f2764ba",
+      "src/adoption-readiness.js": "739f6f9cc4c0a91c9ffb96ca352ac6548c67be0317fc09afe1162e4a12839870",
+      "src/agent-contract.js": "f7df563d2f77d3dbacea7607495916a22df8fcbee655ca69ed57ef2960886376",
+      "src/agent-profile.js": "85a636f66ed1f939a3b32e175e470a3adc00549c7c7b243e46079cfe93836814",
+      "src/audit.js": "023f15549f498f7ef5a5e9cc38056d1cd2b0b80a868dd36498e7b43a09f770ad",
+      "src/browser-evidence.js": "43d3e66283e7172c83f71d19c8377843ce0315ad8f49550371525e35ce7bb803",
+      "src/browser-fixture.d.ts": "5dbb0d7c1a2a6f05dba93f00ed5e88eea823bb0f08d8b9eead60bcbe808cc80e",
+      "src/browser-fixture.js": "5dce6ad7342cf298af5cf798330b7c3110fc2372aa435543a4e4495b001ce855",
+      "src/candidates.js": "cf376d249374c147f93458750490769bc0b9542029da761f7424fb78220f83e8",
+      "src/cli.js": "73e0c8f60d7c08e533dacd6d2d06cd55ce39398a3d3aa4e487295aa43d6028b1",
+      "src/evidence-loop.js": "283ea660a8bb45e3eb0cce8a3f165b63d695be389aaf03c46c933955e2843c64",
+      "src/evidence.js": "a8a4970738d9e1f55a4dcd27c901b2e3280b1109383e16e932ec29bf72b7b545",
+      "src/execution.js": "c2a2009bbff209ad61b079d5e3498bd5df1e95d17a69b51281d23da238b5aed7",
+      "src/fallback-diagnostics.js": "5b08914a7cfffa466407e08b264262d63ed20be285a5668a5a14ed28c4bb7def",
+      "src/files.js": "fc0da0c73986d8178c78aeff3529664fc6afe8ea3cfff58eb003c1f53b314b1f",
+      "src/graph-cache.js": "5a17633fa29a98ae8f09b2e6b988ac0c7b9c9958df33aba53ab3ac39d8a08f5c",
+      "src/graph.js": "e982b9499171ce472fd0e0cb856eae062c7c9335398e668a2c18882c02da0e06",
+      "src/improvement.js": "086ecc931459b05425d28ce47c65faf05a70b7e85ce7935fe1be2f9acc1d1695",
+      "src/index.js": "e74796adfb506a5fdec2b7a5b1512af579696abb0e5775124d1c540cc6e49025",
+      "src/inputs.js": "b60751753fef2e11d65b88ce69e866a273289312ce65c1a1fb8bed7a49fd6da7",
+      "src/integrations.js": "ba103a3f9f975f605f1d2013db1606ed6bb0bb12f24044da90cbcfc506ea8fe8",
+      "src/learning.js": "b20f3b143015543f5ad5f339b33eeffe350da3f3ca310b07c740365e47d9d273",
+      "src/mapping-qualification.js": "e74fc34b398c2272c16e30d5a6d467cf9294a42ca4de1da5e5ad166e4a5a6f96",
+      "src/mcp-worker.js": "0114989a9a3bfd185cd149d73ed2bfa7142e3bf009dd6ecee911089af0dad697",
+      "src/mcp.js": "c5a337d38cfd82d743d3905e8f32b9e0e89b52ba50c5b321b0c7c07f605602e1",
+      "src/native-protocol.js": "71330430c930ddb5c8640f2b9f1482a3a1f16cf81af9aab6aae56c0b147dbf11",
+      "src/native-session.js": "8afe774c1cddb99da7d7b9df9e2a54ef0e3d44c93b83fd302eeb03449d2ee3cb",
+      "src/pilot-history.js": "ac6ec6e866fc696a45115823d82d8d05c8ee8d3e7db7a52d422db7572e89e004",
+      "src/pilot-worker.js": "a0fee2254f3a55079bc92321c0fd559ba083912331065fb6a9fad717d61afaa7",
+      "src/pilot.js": "9e7a63336c78eb54c54c2ebb6cb84a09f65a3fecd0d07b58a877ba62452f7643",
+      "src/plugin-config.js": "43cbdc3450288a49c8ee02b27b4178ea4b3baae43745b9f0de87c5b8d771fcc4",
+      "src/plugin-recommendations.js": "d626dce84e63156d74b32697dc32a61e456afe9ef1e39142d1af9a4c138dc0d4",
+      "src/plugins.js": "1ba8a5d5e4db4bce3c48ec1042cc23e5779803dfaba69b28a7a632ae34479413",
+      "src/provenance.js": "31729e07bb832015805752e26221b43bd25d440c12c4230e4399d812c60793a3",
+      "src/pull-request.js": "40111c2d70fc30f87adac6691860404741c584756b1035975d97f25e80f2f009",
+      "src/quality-layer.js": "2c7f0613df6eac15835201b99a305ca80ac0fd7ace59b8af28dbd1564a6ad62d",
+      "src/quality-measurement.js": "2ce9eaf57ead7366e9ec91dc563d08a67db6ac74081f1e5a59ed261b21ac6e2a",
+      "src/routing-proposals.js": "3a2baa35d8c8950aa9202a39ea4e336e7415efb758ce0a3bd5ad402f5b00990f",
+      "src/run-report.js": "9ceea1c0b7eb83a442b15c571eb0c940c9fb4ac6f8ab5649d2a8fae36feceb7e",
+      "src/runner.js": "f3b82deed6a44b38590d51eb0a4f1aa8b55bdd09815a8bc65192172a475f1f18",
+      "src/runtime-hook.cjs": "0e039982b4187ffdf9547f6c78d97c4d1ac0ca2b71d714201d1020883b47e57c",
+      "src/selector.js": "787fa4acea21ad4e0d28ae49fb8bd7ba865c0814fd0eba954a6257cafcee2589",
+      "src/swarm.js": "23f09e9a5ce9feb87f9b8527a771d6fa5808c44994516276d901f4ee702c7f68",
+      "src/timing.js": "045a575dbf260914314adedbddf546419c1e6f3b919e88b84d40af82bab221ce",
+      "src/reporters/node.js": "c5fbf1bf0841fd7e36f716198ac00a5481fa288a9662997257b385f64687b24c",
+      "src/reporters/playwright.cjs": "0f919f4972d6487d596a0ca66b738257cdee6364bd2d2c53d288573efb274965",
+      "src/reporters/resolve.js": "a3188630990bba79c9d338dfc2e327145159aa1ec9614219c33682b89959251c",
+      "src/adapters/aqe.js": "8ef5b425622ee6798e4a7c68bb42e95c46922b5c0473b064073254d640f80082",
+      "src/adapters/codex-protocol.js": "bcb5a1a902bd253e90b879e6f89575885afe236ee6b86ec9b2acafaa3bf91dc1",
+      "src/adapters/codex.js": "8ebc36a83ab8c2381ed0d1d40dcc1a82d34ecd47cb8427e523009fe385b8f421",
+      "src/adapters/ruvector-worker.js": "80c8a6dcaf3014adc5e8fc3d01a50493af4679ea2b3713226ae08a97e5d34a07",
+      "src/adapters/ruvector.js": "d306a37df25e47b864c42211dc1b17a191f36f3518e979b1a5442a555569ad71"
+    },
+    "nativeFrameworkHashes": [
+      "943ddc2cfd3676087e243b5adc450ea8c25ad941ba678b48a679b68f67ef297a",
+      "39db22f579acf5639bbb17a261408debbde03f4692c0c439e77e7f13aeba74d6"
+    ],
+    "node": {
+      "version": "v22.19.0",
+      "sha256": "0d005c18e095027ca8f9fe1cc1126f767ee4ad7b004f4d6fb781ec4228a7c5d1",
+      "bytes": 110712624
+    },
+    "vitest": "5.0.2",
+    "requestedScenarios": 3,
+    "repetitions": 3,
+    "requestedAttempts": 36,
+    "startedAttempts": 36,
+    "completedAttempts": 36,
+    "uncompletedAttempts": 0,
+    "qualifiedConstructedScenarios": 2,
+    "qualifiedPublicBugfixes": 1,
+    "controllerElapsedMs": 73500,
+    "observations": [
+      {
+        "origin": "constructed-independent-assertions",
+        "nativeFramework": {
+          "version": "5.0.2",
+          "hashes": [
+            "943ddc2cfd3676087e243b5adc450ea8c25ad941ba678b48a679b68f67ef297a",
+            "39db22f579acf5639bbb17a261408debbde03f4692c0c439e77e7f13aeba74d6"
+          ]
+        },
+        "repetitions": [
+          {
+            "repetition": 0,
+            "armOrder": [
+              "full",
+              "native",
+              "legacy",
+              "unified"
+            ],
+            "demonstrated": true,
+            "referenceFailures": 1,
+            "nativeSpeedComparisonEligible": true,
+            "arms": {
+              "full": {
+                "outerMs": 1393.0452079999995,
+                "complete": true,
+                "casePreservation": true,
+                "qualityEquivalent": true,
+                "missedFailures": 0,
+                "unexpectedFailures": 0,
+                "cases": 12,
+                "files": 12,
+                "mode": null,
+                "unifiedContextUsed": null
+              },
+              "native": {
+                "outerMs": 336.4132500000005,
+                "complete": true,
+                "casePreservation": true,
+                "qualityEquivalent": true,
+                "missedFailures": 0,
+                "unexpectedFailures": 0,
+                "cases": 1,
+                "files": 1,
+                "mode": null,
+                "unifiedContextUsed": null
+              },
+              "legacy": {
+                "outerMs": 1483.4012090000006,
+                "complete": true,
+                "casePreservation": true,
+                "qualityEquivalent": true,
+                "missedFailures": 0,
+                "unexpectedFailures": 0,
+                "cases": 1,
+                "files": 1,
+                "mode": "affected",
+                "unifiedContextUsed": null
+              },
+              "unified": {
+                "outerMs": 1375.6705000000002,
+                "complete": true,
+                "casePreservation": true,
+                "qualityEquivalent": true,
+                "missedFailures": 0,
+                "unexpectedFailures": 0,
+                "cases": 1,
+                "files": 1,
+                "mode": "affected",
+                "unifiedContextUsed": true
+              }
+            }
+          },
+          {
+            "repetition": 1,
+            "armOrder": [
+              "native",
+              "legacy",
+              "unified",
+              "full"
+            ],
+            "demonstrated": true,
+            "referenceFailures": 1,
+            "nativeSpeedComparisonEligible": true,
+            "arms": {
+              "full": {
+                "outerMs": 1381.0995829999993,
+                "complete": true,
+                "casePreservation": true,
+                "qualityEquivalent": true,
+                "missedFailures": 0,
+                "unexpectedFailures": 0,
+                "cases": 12,
+                "files": 12,
+                "mode": null,
+                "unifiedContextUsed": null
+              },
+              "native": {
+                "outerMs": 335.31254199999967,
+                "complete": true,
+                "casePreservation": true,
+                "qualityEquivalent": true,
+                "missedFailures": 0,
+                "unexpectedFailures": 0,
+                "cases": 1,
+                "files": 1,
+                "mode": null,
+                "unifiedContextUsed": null
+              },
+              "legacy": {
+                "outerMs": 1372.6887079999997,
+                "complete": true,
+                "casePreservation": true,
+                "qualityEquivalent": true,
+                "missedFailures": 0,
+                "unexpectedFailures": 0,
+                "cases": 1,
+                "files": 1,
+                "mode": "affected",
+                "unifiedContextUsed": null
+              },
+              "unified": {
+                "outerMs": 1411.184000000001,
+                "complete": true,
+                "casePreservation": true,
+                "qualityEquivalent": true,
+                "missedFailures": 0,
+                "unexpectedFailures": 0,
+                "cases": 1,
+                "files": 1,
+                "mode": "affected",
+                "unifiedContextUsed": true
+              }
+            }
+          },
+          {
+            "repetition": 2,
+            "armOrder": [
+              "legacy",
+              "unified",
+              "full",
+              "native"
+            ],
+            "demonstrated": true,
+            "referenceFailures": 1,
+            "nativeSpeedComparisonEligible": true,
+            "arms": {
+              "full": {
+                "outerMs": 1385.6326249999984,
+                "complete": true,
+                "casePreservation": true,
+                "qualityEquivalent": true,
+                "missedFailures": 0,
+                "unexpectedFailures": 0,
+                "cases": 12,
+                "files": 12,
+                "mode": null,
+                "unifiedContextUsed": null
+              },
+              "native": {
+                "outerMs": 334.5328750000008,
+                "complete": true,
+                "casePreservation": true,
+                "qualityEquivalent": true,
+                "missedFailures": 0,
+                "unexpectedFailures": 0,
+                "cases": 1,
+                "files": 1,
+                "mode": null,
+                "unifiedContextUsed": null
+              },
+              "legacy": {
+                "outerMs": 1457.9929170000014,
+                "complete": true,
+                "casePreservation": true,
+                "qualityEquivalent": true,
+                "missedFailures": 0,
+                "unexpectedFailures": 0,
+                "cases": 1,
+                "files": 1,
+                "mode": "affected",
+                "unifiedContextUsed": null
+              },
+              "unified": {
+                "outerMs": 1428.629417,
+                "complete": true,
+                "casePreservation": true,
+                "qualityEquivalent": true,
+                "missedFailures": 0,
+                "unexpectedFailures": 0,
+                "cases": 1,
+                "files": 1,
+                "mode": "affected",
+                "unifiedContextUsed": true
+              }
+            }
+          }
+        ]
+      },
+      {
+        "origin": "constructed-independent-assertions",
+        "nativeFramework": {
+          "version": "5.0.2",
+          "hashes": [
+            "943ddc2cfd3676087e243b5adc450ea8c25ad941ba678b48a679b68f67ef297a",
+            "39db22f579acf5639bbb17a261408debbde03f4692c0c439e77e7f13aeba74d6"
+          ]
+        },
+        "repetitions": [
+          {
+            "repetition": 0,
+            "armOrder": [
+              "full",
+              "native",
+              "legacy",
+              "unified"
+            ],
+            "demonstrated": true,
+            "referenceFailures": 1,
+            "nativeSpeedComparisonEligible": false,
+            "arms": {
+              "full": {
+                "outerMs": 532.4409159999996,
+                "complete": true,
+                "casePreservation": true,
+                "qualityEquivalent": true,
+                "missedFailures": 0,
+                "unexpectedFailures": 0,
+                "cases": 2,
+                "files": 2,
+                "mode": null,
+                "unifiedContextUsed": null
+              },
+              "native": {
+                "outerMs": 263.2887919999994,
+                "complete": true,
+                "casePreservation": true,
+                "qualityEquivalent": false,
+                "missedFailures": 1,
+                "unexpectedFailures": 0,
+                "cases": 0,
+                "files": 0,
+                "mode": null,
+                "unifiedContextUsed": null
+              },
+              "legacy": {
+                "outerMs": 1348.869666999999,
+                "complete": true,
+                "casePreservation": true,
+                "qualityEquivalent": true,
+                "missedFailures": 0,
+                "unexpectedFailures": 0,
+                "cases": 1,
+                "files": 1,
+                "mode": "affected",
+                "unifiedContextUsed": null
+              },
+              "unified": {
+                "outerMs": 1338.324708,
+                "complete": true,
+                "casePreservation": true,
+                "qualityEquivalent": true,
+                "missedFailures": 0,
+                "unexpectedFailures": 0,
+                "cases": 1,
+                "files": 1,
+                "mode": "affected",
+                "unifiedContextUsed": true
+              }
+            }
+          },
+          {
+            "repetition": 1,
+            "armOrder": [
+              "native",
+              "legacy",
+              "unified",
+              "full"
+            ],
+            "demonstrated": true,
+            "referenceFailures": 1,
+            "nativeSpeedComparisonEligible": false,
+            "arms": {
+              "full": {
+                "outerMs": 509.19145800000115,
+                "complete": true,
+                "casePreservation": true,
+                "qualityEquivalent": true,
+                "missedFailures": 0,
+                "unexpectedFailures": 0,
+                "cases": 2,
+                "files": 2,
+                "mode": null,
+                "unifiedContextUsed": null
+              },
+              "native": {
+                "outerMs": 266.2119160000002,
+                "complete": true,
+                "casePreservation": true,
+                "qualityEquivalent": false,
+                "missedFailures": 1,
+                "unexpectedFailures": 0,
+                "cases": 0,
+                "files": 0,
+                "mode": null,
+                "unifiedContextUsed": null
+              },
+              "legacy": {
+                "outerMs": 1368.818083000002,
+                "complete": true,
+                "casePreservation": true,
+                "qualityEquivalent": true,
+                "missedFailures": 0,
+                "unexpectedFailures": 0,
+                "cases": 1,
+                "files": 1,
+                "mode": "affected",
+                "unifiedContextUsed": null
+              },
+              "unified": {
+                "outerMs": 1334.8263750000006,
+                "complete": true,
+                "casePreservation": true,
+                "qualityEquivalent": true,
+                "missedFailures": 0,
+                "unexpectedFailures": 0,
+                "cases": 1,
+                "files": 1,
+                "mode": "affected",
+                "unifiedContextUsed": true
+              }
+            }
+          },
+          {
+            "repetition": 2,
+            "armOrder": [
+              "legacy",
+              "unified",
+              "full",
+              "native"
+            ],
+            "demonstrated": true,
+            "referenceFailures": 1,
+            "nativeSpeedComparisonEligible": false,
+            "arms": {
+              "full": {
+                "outerMs": 450.96250000000146,
+                "complete": true,
+                "casePreservation": true,
+                "qualityEquivalent": true,
+                "missedFailures": 0,
+                "unexpectedFailures": 0,
+                "cases": 2,
+                "files": 2,
+                "mode": null,
+                "unifiedContextUsed": null
+              },
+              "native": {
+                "outerMs": 266.9494169999998,
+                "complete": true,
+                "casePreservation": true,
+                "qualityEquivalent": false,
+                "missedFailures": 1,
+                "unexpectedFailures": 0,
+                "cases": 0,
+                "files": 0,
+                "mode": null,
+                "unifiedContextUsed": null
+              },
+              "legacy": {
+                "outerMs": 1419.3962079999983,
+                "complete": true,
+                "casePreservation": true,
+                "qualityEquivalent": true,
+                "missedFailures": 0,
+                "unexpectedFailures": 0,
+                "cases": 1,
+                "files": 1,
+                "mode": "affected",
+                "unifiedContextUsed": null
+              },
+              "unified": {
+                "outerMs": 1282.1161670000001,
+                "complete": true,
+                "casePreservation": true,
+                "qualityEquivalent": true,
+                "missedFailures": 0,
+                "unexpectedFailures": 0,
+                "cases": 1,
+                "files": 1,
+                "mode": "affected",
+                "unifiedContextUsed": true
+              }
+            }
+          }
+        ]
+      },
+      {
+        "origin": "public-bugfix-inversion",
+        "nativeFramework": {
+          "version": "5.0.2",
+          "hashes": [
+            "943ddc2cfd3676087e243b5adc450ea8c25ad941ba678b48a679b68f67ef297a",
+            "39db22f579acf5639bbb17a261408debbde03f4692c0c439e77e7f13aeba74d6"
+          ]
+        },
+        "repetitions": [
+          {
+            "repetition": 0,
+            "armOrder": [
+              "full",
+              "native",
+              "legacy",
+              "unified"
+            ],
+            "demonstrated": true,
+            "referenceFailures": 4,
+            "nativeSpeedComparisonEligible": true,
+            "arms": {
+              "full": {
+                "outerMs": 1661.0721249999988,
+                "complete": true,
+                "casePreservation": true,
+                "qualityEquivalent": true,
+                "missedFailures": 0,
+                "unexpectedFailures": 0,
+                "cases": 489,
+                "files": 13,
+                "mode": null,
+                "unifiedContextUsed": null
+              },
+              "native": {
+                "outerMs": 1534.343375000004,
+                "complete": true,
+                "casePreservation": true,
+                "qualityEquivalent": true,
+                "missedFailures": 0,
+                "unexpectedFailures": 0,
+                "cases": 465,
+                "files": 12,
+                "mode": null,
+                "unifiedContextUsed": null
+              },
+              "legacy": {
+                "outerMs": 3260.558541999999,
+                "complete": true,
+                "casePreservation": true,
+                "qualityEquivalent": true,
+                "missedFailures": 0,
+                "unexpectedFailures": 0,
+                "cases": 465,
+                "files": 12,
+                "mode": "affected",
+                "unifiedContextUsed": null
+              },
+              "unified": {
+                "outerMs": 2867.2880000000005,
+                "complete": true,
+                "casePreservation": true,
+                "qualityEquivalent": true,
+                "missedFailures": 0,
+                "unexpectedFailures": 0,
+                "cases": 465,
+                "files": 12,
+                "mode": "affected",
+                "unifiedContextUsed": true
+              }
+            }
+          },
+          {
+            "repetition": 1,
+            "armOrder": [
+              "native",
+              "legacy",
+              "unified",
+              "full"
+            ],
+            "demonstrated": true,
+            "referenceFailures": 4,
+            "nativeSpeedComparisonEligible": true,
+            "arms": {
+              "full": {
+                "outerMs": 2058.1976250000007,
+                "complete": true,
+                "casePreservation": true,
+                "qualityEquivalent": true,
+                "missedFailures": 0,
+                "unexpectedFailures": 0,
+                "cases": 489,
+                "files": 13,
+                "mode": null,
+                "unifiedContextUsed": null
+              },
+              "native": {
+                "outerMs": 1531.9690420000043,
+                "complete": true,
+                "casePreservation": true,
+                "qualityEquivalent": true,
+                "missedFailures": 0,
+                "unexpectedFailures": 0,
+                "cases": 465,
+                "files": 12,
+                "mode": null,
+                "unifiedContextUsed": null
+              },
+              "legacy": {
+                "outerMs": 8683.326249999998,
+                "complete": true,
+                "casePreservation": true,
+                "qualityEquivalent": true,
+                "missedFailures": 0,
+                "unexpectedFailures": 0,
+                "cases": 465,
+                "files": 12,
+                "mode": "affected",
+                "unifiedContextUsed": null
+              },
+              "unified": {
+                "outerMs": 4902.257792000004,
+                "complete": true,
+                "casePreservation": true,
+                "qualityEquivalent": true,
+                "missedFailures": 0,
+                "unexpectedFailures": 0,
+                "cases": 465,
+                "files": 12,
+                "mode": "affected",
+                "unifiedContextUsed": true
+              }
+            }
+          },
+          {
+            "repetition": 2,
+            "armOrder": [
+              "legacy",
+              "unified",
+              "full",
+              "native"
+            ],
+            "demonstrated": true,
+            "referenceFailures": 4,
+            "nativeSpeedComparisonEligible": true,
+            "arms": {
+              "full": {
+                "outerMs": 1659.3302910000057,
+                "complete": true,
+                "casePreservation": true,
+                "qualityEquivalent": true,
+                "missedFailures": 0,
+                "unexpectedFailures": 0,
+                "cases": 489,
+                "files": 13,
+                "mode": null,
+                "unifiedContextUsed": null
+              },
+              "native": {
+                "outerMs": 1637.0665829999925,
+                "complete": true,
+                "casePreservation": true,
+                "qualityEquivalent": true,
+                "missedFailures": 0,
+                "unexpectedFailures": 0,
+                "cases": 465,
+                "files": 12,
+                "mode": null,
+                "unifiedContextUsed": null
+              },
+              "legacy": {
+                "outerMs": 3193.1670830000003,
+                "complete": true,
+                "casePreservation": true,
+                "qualityEquivalent": true,
+                "missedFailures": 0,
+                "unexpectedFailures": 0,
+                "cases": 465,
+                "files": 12,
+                "mode": "affected",
+                "unifiedContextUsed": null
+              },
+              "unified": {
+                "outerMs": 2672.983791999999,
+                "complete": true,
+                "casePreservation": true,
+                "qualityEquivalent": true,
+                "missedFailures": 0,
+                "unexpectedFailures": 0,
+                "cases": 465,
+                "files": 12,
+                "mode": "affected",
+                "unifiedContextUsed": true
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "privateOriginalSha256": "2543df29ecc2598fca62154b8a9710c62d610a9e4a6727de9dbb2d88c79b640b",
+    "limitations": [
+      "Two constructed workloads plus optional one real upstream fix; not the 100-change/10-project target.",
+      "Outer spans include CLI/Node startup, native execution and child-side report/history/source sealing; parent normalization and fixture creation excluded and controller elapsed separately retained.",
+      "First plan starts with empty pure analysis cache; repeat retains only that cache and resets history. Shared OS/dependency/native framework caches are uncontrolled; no fully cold-machine claim.",
+      "Framework metadata/CLI and core source/Node bytes are bound; imported native dependencies and arbitrary test subprocesses are not fully attested.",
+      "Native zero-case selectors can be complete within their chosen scope yet miss a demonstrated fault; such timing is never credited as quality-equivalent speed."
+    ]
+  },
+  "diagnostics": {
+    "baselineDemo": {
+      "exitCode": 0,
+      "executionComplete": true,
+      "nativeExitCode": 0,
+      "gitCalls": 11,
+      "gitMs": 398.98391899999996,
+      "gitOperations": {},
+      "hashes": {
+        "calls": 60,
+        "bytes": 39294,
+        "operationMs": 0.2869939999998792
+      },
+      "moduleLoads": 21,
+      "childSpans": [
+        {
+          "method": "spawnSync",
+          "program": "node",
+          "durationMs": 149.06854199999998
+        }
+      ],
+      "reportedTimings": {
+        "planningMs": 275,
+        "executionMs": 153,
+        "totalMs": 577,
+        "finalReportSealingExcluded": true,
+        "otherMs": 149
+      },
+      "planningPhases": {
+        "totalMs": 274.43533299999996,
+        "phases": {
+          "configuration": 0.11250000000001137,
+          "provenance": 73.87295799999998,
+          "graph": 67.18658399999998,
+          "changeDetection": 132.41933300000005,
+          "runtimeAndServices": 0.3019170000000031,
+          "baselineAndIgnore": 0.007624999999961801,
+          "uncertaintyAndMapping": 0.05025000000000546,
+          "history": 0.3575829999999769,
+          "decisionsAndFingerprint": 0.11216699999999946
+        },
+        "graph": {
+          "totalMs": 66.936667,
+          "phases": {
+            "inventory": 51.61295799999999,
+            "discovery": 0.006624999999985448,
+            "configuration": 0.47145899999998164,
+            "sourceReads": 0.4038330000000201,
+            "sourceAnalysisAndResolution": 14.217208000000028,
+            "declaredInputsAndConfigurationClosure": 0.10316699999998491,
+            "warningClassification": 0.10641700000002174
+          }
+        }
+      },
+      "traceSha256": "8d6b0e8bda8e3f714b7fe5251167e4089bcec1ec518bc19b23c42e9f2781754c",
+      "stdoutSha256": "a9e924e1794d3095d52696e1396aa7d2d8e07949a1ea6762c7f37bdf41c121fb"
+    },
+    "candidateDemo": {
+      "exitCode": 0,
+      "executionComplete": true,
+      "nativeExitCode": 0,
+      "gitCalls": 9,
+      "gitMs": 293.78037600000005,
+      "gitOperations": {
+        "ls-files": 4,
+        "rev-parse": 4,
+        "diff": 1
+      },
+      "hashes": {
+        "calls": 58,
+        "bytes": 39645,
+        "operationMs": 0.25642200000007165
+      },
+      "moduleLoads": 21,
+      "childSpans": [
+        {
+          "method": "spawnSync",
+          "program": "node",
+          "durationMs": 137.648208
+        }
+      ],
+      "reportedTimings": {
+        "planningMs": 171,
+        "executionMs": 141,
+        "totalMs": 458,
+        "finalReportSealingExcluded": true,
+        "otherMs": 146
+      },
+      "planningPhases": {
+        "totalMs": 170.24716599999996,
+        "phases": {
+          "configuration": 0.11966599999999517,
+          "provenance": 63.14337500000002,
+          "graph": 12.311083999999994,
+          "changeDetection": 93.38062499999995,
+          "runtimeAndServices": 0.6701660000000516,
+          "baselineAndIgnore": 0.20191699999998036,
+          "uncertaintyAndMapping": 0.0432920000000081,
+          "history": 0.2589580000000069,
+          "decisionsAndFingerprint": 0.10608299999995552
+        },
+        "graph": {
+          "totalMs": 12.06129100000004,
+          "phases": {
+            "inventory": 0.25691600000004655,
+            "discovery": 0.004041999999969903,
+            "configuration": 0.4539169999999899,
+            "sourceReads": 0.32704100000000835,
+            "sourceAnalysisAndResolution": 10.785292000000027,
+            "declaredInputsAndConfigurationClosure": 0.07658299999997098,
+            "warningClassification": 0.14408400000002075
+          }
+        }
+      },
+      "traceSha256": "a988def7af228b7dfc9b1ede9c7a5f91e3b0d82f57e3dce07cf005827dd486fa",
+      "stdoutSha256": "d7bb6962dc8536be14ec7b023ac9787f6982bb952029e93cc8bbcbd63b22e747"
+    },
+    "candidatePublicUnified": {
+      "exitCode": 1,
+      "executionComplete": true,
+      "nativeExitCode": 1,
+      "gitCalls": 18,
+      "gitMs": 532.7467079999999,
+      "gitOperations": {
+        "ls-files": 7,
+        "rev-parse": 7,
+        "diff": 2,
+        "show": 2
+      },
+      "hashes": {
+        "calls": 800,
+        "bytes": 4377765,
+        "operationMs": 3.0014350000048466
+      },
+      "moduleLoads": 21,
+      "childSpans": [
+        {
+          "method": "spawn",
+          "program": "node",
+          "durationMs": 2312.673666,
+          "complete": true,
+          "exitCode": 1,
+          "signal": null
+        }
+      ],
+      "reportedTimings": {
+        "planningMs": 1036,
+        "executionMs": 1430,
+        "totalMs": 2616,
+        "finalReportSealingExcluded": true,
+        "otherMs": 150
+      },
+      "planningPhases": {
+        "totalMs": 202.10904099999993,
+        "phases": {
+          "configuration": 0.07683300000007875,
+          "provenance": 57.78708299999994,
+          "graph": 29.815875000000005,
+          "changeDetection": 83.19279200000005,
+          "runtimeAndServices": 0.21229199999993398,
+          "baselineAndIgnore": 29.6412499999999,
+          "uncertaintyAndMapping": 0.21879100000001017,
+          "history": 0.3930840000000444,
+          "decisionsAndFingerprint": 0.7517500000001291
+        },
+        "graph": {
+          "totalMs": 29.54645800000003,
+          "phases": {
+            "inventory": 0.32150000000001455,
+            "discovery": 0.12370799999985138,
+            "configuration": 4.659500000000207,
+            "sourceReads": 1.430749999999989,
+            "sourceAnalysisAndResolution": 22.67708299999981,
+            "declaredInputsAndConfigurationClosure": 0.09758400000009715,
+            "warningClassification": 0.2239159999999174
+          }
+        }
+      },
+      "traceSha256": "396dcb3ac69d7da02990d9fb5ed2283150f2abfe855462a8edaa98b1d53c1adc",
+      "stdoutSha256": "578ede0cefee7c63aad604fe772abd04bd5cc19b7e907862b1c20aa865079b53"
+    },
+    "checkedStartupCandidate": {
+      "exitCode": 1,
+      "executionComplete": true,
+      "nativeExitCode": 1,
+      "gitCalls": 15,
+      "gitMs": 464.32275000000044,
+      "gitOperations": {
+        "ls-files": 5,
+        "rev-parse": 6,
+        "diff": 2,
+        "show": 2
+      },
+      "hashes": {
+        "calls": 762,
+        "bytes": 3591445,
+        "operationMs": 2.5939349999935644
+      },
+      "moduleLoads": 21,
+      "childSpans": [
+        {
+          "method": "spawn",
+          "program": "node",
+          "durationMs": 2310.2347919999997,
+          "complete": true,
+          "exitCode": 1,
+          "signal": null
+        }
+      ],
+      "reportedTimings": {
+        "planningMs": 1003,
+        "executionMs": 1457,
+        "totalMs": 2590,
+        "finalReportSealingExcluded": true,
+        "otherMs": 130
+      },
+      "planningPhases": {
+        "totalMs": 142.0976250000001,
+        "phases": {
+          "configuration": 0.11658299999999144,
+          "provenance": 0.0026250000000800355,
+          "graph": 28.83174999999983,
+          "changeDetection": 82.22462500000006,
+          "runtimeAndServices": 0.23266699999999219,
+          "baselineAndIgnore": 29.56750000000011,
+          "uncertaintyAndMapping": 0.2231249999999818,
+          "history": 0.2372499999999036,
+          "decisionsAndFingerprint": 0.6480000000001382
+        },
+        "graph": {
+          "totalMs": 28.641458000000057,
+          "phases": {
+            "inventory": 0.25891599999999926,
+            "discovery": 0.10808399999996254,
+            "configuration": 5.039166000000023,
+            "sourceReads": 1.1148339999999735,
+            "sourceAnalysisAndResolution": 21.770750000000135,
+            "declaredInputsAndConfigurationClosure": 0.09945799999991323,
+            "warningClassification": 0.23754200000007586
+          }
+        }
+      },
+      "traceSha256": "a996c5722b61d03e7610ea02c54d26a98bf1646fa23024a41d6f6d53290490a1",
+      "stdoutSha256": "7734120b393ece2b4e79a9f52f172af164116cfc6d28714c6ddec050c7b0d673"
+    }
+  },
+  "publicScenario": {
+    "repository": "https://github.com/unjs/ufo",
+    "fixRevision": "5cd9e676711af3f4e4b5398ddf6ca8d52c1c7e1f",
+    "candidateId": "unjs-ufo-5cd9e676711a",
+    "selectionCommitmentSha256": "065b79f7f345a971e76b0a2d1bdc4f4ab34c9c3b254837b693dee552b71af65a",
+    "nativeVitest": "5.0.2",
+    "upstreamDeclared": "^4.1.5",
+    "upstreamLockInstallationVerified": false
+  },
+  "retainedFailures": [
+    {
+      "scope": "pre-implementation demo diagnostic",
+      "reason": "first attempt inherited a PATH without native node executable; corrected explicit PATH attempt is separately retained",
+      "expectedExit": 0,
+      "actualExit": 1,
+      "credited": false
+    },
+    {
+      "scope": "native related selector on constructed declared-asset scenario",
+      "missedFailuresPerExposure": 1,
+      "exposures": 9,
+      "creditedAsQualityEquivalentSpeed": false
+    }
+  ],
+  "limitations": [
+    "Baseline and candidate source campaigns ran in separate quiet windows; shifted native/full timings and outliers do not establish a causal wall-clock improvement.",
+    "Every process sample includes CLI startup, native execution, reporting and process shutdown; no fully cold OS/dependency-cache claim.",
+    "First execution starts with an empty pure analysis cache. Later executions retain only that cache and reset namespaced test history.",
+    "The public ufo workload uses the previously qualified projected Vitest runtime, not the genuine upstream lock installation. It is not an additional unique public benchmark change.",
+    "Instrumented diagnostics are excluded from uninstrumented proof timings. Native child spans combine startup, resolution and execution; resolver startup alone is not isolated.",
+    "Parent hash timings exclude child work. Ongoing Git snapshots independently preserve startup, decision and execution boundaries.",
+    "Both TestLore execution paths remain slower than native selection on these static/public workloads; no general speed advantage is demonstrated.",
+    "Final source campaign paused peer benchmark/framework native work, but a concurrent parent generation protocol had intermittent native oracle subprocesses. No resource telemetry attributes the observed outliers; they remain in the published sample distribution."
+  ],
+  "inventoryCandidate": {
+    "schemaVersion": 1,
+    "kind": "public-four-arm-whole-cli-proof",
+    "complete": true,
+    "qualified": true,
+    "sourceRevision": "de5d40320a7be7c6427503666fc62425cd1f82c8",
+    "implementationHashes": {
+      "scripts/unified-native-proof.js": "824b8b83893bd0b496a43f4eda1fcff295413fb1c76f2204bc57823fb2ae339f",
+      "scripts/worker-identity.js": "10fe0b51f032c71bf475f7d8e788dd3c6d6452ba53c072f08783b0bce1b446a6",
+      "scripts/evaluation-commitment.js": "8e1e6e7c586bf3b2f38f3202f7b2d1c4b2e37d0054fca4315e3434c6b368251a",
+      "scripts/regression-corpus.js": "497797b7ac14c2cd8efcf5663dfa2faf8e3df6a1d7cde86f942e29f2bb40c9ed",
+      "scripts/public-corpus.js": "67349f62983d61feb925d146ba7ed043f8ec4803e64e7bfdc1f75a365cee1416",
+      "package-lock.json": "f4099c07e38ac8a9bf7311a7f048e3844ff06c91933fb7325e1ef9a71f2764ba",
+      "src/adoption-readiness.js": "739f6f9cc4c0a91c9ffb96ca352ac6548c67be0317fc09afe1162e4a12839870",
+      "src/agent-contract.js": "f7df563d2f77d3dbacea7607495916a22df8fcbee655ca69ed57ef2960886376",
+      "src/agent-profile.js": "85a636f66ed1f939a3b32e175e470a3adc00549c7c7b243e46079cfe93836814",
+      "src/audit.js": "023f15549f498f7ef5a5e9cc38056d1cd2b0b80a868dd36498e7b43a09f770ad",
+      "src/browser-evidence.js": "43d3e66283e7172c83f71d19c8377843ce0315ad8f49550371525e35ce7bb803",
+      "src/browser-fixture.d.ts": "5dbb0d7c1a2a6f05dba93f00ed5e88eea823bb0f08d8b9eead60bcbe808cc80e",
+      "src/browser-fixture.js": "5dce6ad7342cf298af5cf798330b7c3110fc2372aa435543a4e4495b001ce855",
+      "src/candidates.js": "cf376d249374c147f93458750490769bc0b9542029da761f7424fb78220f83e8",
+      "src/cli.js": "73e0c8f60d7c08e533dacd6d2d06cd55ce39398a3d3aa4e487295aa43d6028b1",
+      "src/evidence-loop.js": "283ea660a8bb45e3eb0cce8a3f165b63d695be389aaf03c46c933955e2843c64",
+      "src/evidence.js": "a8a4970738d9e1f55a4dcd27c901b2e3280b1109383e16e932ec29bf72b7b545",
+      "src/execution.js": "c2a2009bbff209ad61b079d5e3498bd5df1e95d17a69b51281d23da238b5aed7",
+      "src/fallback-diagnostics.js": "5b08914a7cfffa466407e08b264262d63ed20be285a5668a5a14ed28c4bb7def",
+      "src/files.js": "fc0da0c73986d8178c78aeff3529664fc6afe8ea3cfff58eb003c1f53b314b1f",
+      "src/graph-cache.js": "5a17633fa29a98ae8f09b2e6b988ac0c7b9c9958df33aba53ab3ac39d8a08f5c",
+      "src/graph.js": "e982b9499171ce472fd0e0cb856eae062c7c9335398e668a2c18882c02da0e06",
+      "src/improvement.js": "086ecc931459b05425d28ce47c65faf05a70b7e85ce7935fe1be2f9acc1d1695",
+      "src/index.js": "e74796adfb506a5fdec2b7a5b1512af579696abb0e5775124d1c540cc6e49025",
+      "src/inputs.js": "b60751753fef2e11d65b88ce69e866a273289312ce65c1a1fb8bed7a49fd6da7",
+      "src/integrations.js": "ba103a3f9f975f605f1d2013db1606ed6bb0bb12f24044da90cbcfc506ea8fe8",
+      "src/learning.js": "b20f3b143015543f5ad5f339b33eeffe350da3f3ca310b07c740365e47d9d273",
+      "src/mapping-qualification.js": "e74fc34b398c2272c16e30d5a6d467cf9294a42ca4de1da5e5ad166e4a5a6f96",
+      "src/mcp-worker.js": "0114989a9a3bfd185cd149d73ed2bfa7142e3bf009dd6ecee911089af0dad697",
+      "src/mcp.js": "c5a337d38cfd82d743d3905e8f32b9e0e89b52ba50c5b321b0c7c07f605602e1",
+      "src/native-protocol.js": "71330430c930ddb5c8640f2b9f1482a3a1f16cf81af9aab6aae56c0b147dbf11",
+      "src/native-session.js": "0a65a144f644a71694d909e535df868323df72a54443fd436ffb576d00885b28",
+      "src/pilot-history.js": "ac6ec6e866fc696a45115823d82d8d05c8ee8d3e7db7a52d422db7572e89e004",
+      "src/pilot-worker.js": "a0fee2254f3a55079bc92321c0fd559ba083912331065fb6a9fad717d61afaa7",
+      "src/pilot.js": "9e7a63336c78eb54c54c2ebb6cb84a09f65a3fecd0d07b58a877ba62452f7643",
+      "src/plugin-config.js": "43cbdc3450288a49c8ee02b27b4178ea4b3baae43745b9f0de87c5b8d771fcc4",
+      "src/plugin-recommendations.js": "d626dce84e63156d74b32697dc32a61e456afe9ef1e39142d1af9a4c138dc0d4",
+      "src/plugins.js": "1ba8a5d5e4db4bce3c48ec1042cc23e5779803dfaba69b28a7a632ae34479413",
+      "src/provenance.js": "31729e07bb832015805752e26221b43bd25d440c12c4230e4399d812c60793a3",
+      "src/pull-request.js": "40111c2d70fc30f87adac6691860404741c584756b1035975d97f25e80f2f009",
+      "src/quality-layer.js": "2c7f0613df6eac15835201b99a305ca80ac0fd7ace59b8af28dbd1564a6ad62d",
+      "src/quality-measurement.js": "2ce9eaf57ead7366e9ec91dc563d08a67db6ac74081f1e5a59ed261b21ac6e2a",
+      "src/routing-proposals.js": "3a2baa35d8c8950aa9202a39ea4e336e7415efb758ce0a3bd5ad402f5b00990f",
+      "src/run-report.js": "9ceea1c0b7eb83a442b15c571eb0c940c9fb4ac6f8ab5649d2a8fae36feceb7e",
+      "src/runner.js": "0d83fadaae8dfe52f2abc57370de107e14a2e0484e163ae812f173c25aafc6b6",
+      "src/runtime-hook.cjs": "0e039982b4187ffdf9547f6c78d97c4d1ac0ca2b71d714201d1020883b47e57c",
+      "src/selector.js": "1b4b8a7c94cf55cae8783b7e6c62ebbfeef81823d0aef593618b64178769e9d1",
+      "src/swarm.js": "23f09e9a5ce9feb87f9b8527a771d6fa5808c44994516276d901f4ee702c7f68",
+      "src/timing.js": "045a575dbf260914314adedbddf546419c1e6f3b919e88b84d40af82bab221ce",
+      "src/reporters/node.js": "c5fbf1bf0841fd7e36f716198ac00a5481fa288a9662997257b385f64687b24c",
+      "src/reporters/playwright.cjs": "0f919f4972d6487d596a0ca66b738257cdee6364bd2d2c53d288573efb274965",
+      "src/reporters/resolve.js": "a3188630990bba79c9d338dfc2e327145159aa1ec9614219c33682b89959251c",
+      "src/adapters/aqe.js": "8ef5b425622ee6798e4a7c68bb42e95c46922b5c0473b064073254d640f80082",
+      "src/adapters/codex-protocol.js": "bcb5a1a902bd253e90b879e6f89575885afe236ee6b86ec9b2acafaa3bf91dc1",
+      "src/adapters/codex.js": "8ebc36a83ab8c2381ed0d1d40dcc1a82d34ecd47cb8427e523009fe385b8f421",
+      "src/adapters/ruvector-worker.js": "80c8a6dcaf3014adc5e8fc3d01a50493af4679ea2b3713226ae08a97e5d34a07",
+      "src/adapters/ruvector.js": "d306a37df25e47b864c42211dc1b17a191f36f3518e979b1a5442a555569ad71"
+    },
+    "nativeFrameworkHashes": [
+      "943ddc2cfd3676087e243b5adc450ea8c25ad941ba678b48a679b68f67ef297a",
+      "39db22f579acf5639bbb17a261408debbde03f4692c0c439e77e7f13aeba74d6"
+    ],
+    "node": {
+      "version": "v22.19.0",
+      "sha256": "0d005c18e095027ca8f9fe1cc1126f767ee4ad7b004f4d6fb781ec4228a7c5d1",
+      "bytes": 110712624
+    },
+    "vitest": "5.0.2",
+    "requestedScenarios": 3,
+    "repetitions": 3,
+    "requestedAttempts": 36,
+    "startedAttempts": 36,
+    "completedAttempts": 36,
+    "uncompletedAttempts": 0,
+    "qualifiedConstructedScenarios": 2,
+    "qualifiedPublicBugfixes": 1,
+    "controllerElapsedMs": 73576,
+    "observations": [
+      {
+        "origin": "constructed-independent-assertions",
+        "nativeFramework": {
+          "version": "5.0.2",
+          "hashes": [
+            "943ddc2cfd3676087e243b5adc450ea8c25ad941ba678b48a679b68f67ef297a",
+            "39db22f579acf5639bbb17a261408debbde03f4692c0c439e77e7f13aeba74d6"
+          ]
+        },
+        "repetitions": [
+          {
+            "repetition": 0,
+            "armOrder": [
+              "full",
+              "native",
+              "legacy",
+              "unified"
+            ],
+            "demonstrated": true,
+            "referenceFailures": 1,
+            "nativeSpeedComparisonEligible": true,
+            "arms": {
+              "full": {
+                "outerMs": 1521.6755830000002,
+                "complete": true,
+                "casePreservation": true,
+                "qualityEquivalent": true,
+                "missedFailures": 0,
+                "unexpectedFailures": 0,
+                "cases": 12,
+                "files": 12,
+                "mode": null,
+                "unifiedContextUsed": null
+              },
+              "native": {
+                "outerMs": 390.1942080000008,
+                "complete": true,
+                "casePreservation": true,
+                "qualityEquivalent": true,
+                "missedFailures": 0,
+                "unexpectedFailures": 0,
+                "cases": 1,
+                "files": 1,
+                "mode": null,
+                "unifiedContextUsed": null
+              },
+              "legacy": {
+                "outerMs": 1454.4357500000006,
+                "complete": true,
+                "casePreservation": true,
+                "qualityEquivalent": true,
+                "missedFailures": 0,
+                "unexpectedFailures": 0,
+                "cases": 1,
+                "files": 1,
+                "mode": "affected",
+                "unifiedContextUsed": null
+              },
+              "unified": {
+                "outerMs": 1475.2438330000004,
+                "complete": true,
+                "casePreservation": true,
+                "qualityEquivalent": true,
+                "missedFailures": 0,
+                "unexpectedFailures": 0,
+                "cases": 1,
+                "files": 1,
+                "mode": "affected",
+                "unifiedContextUsed": true
+              }
+            }
+          },
+          {
+            "repetition": 1,
+            "armOrder": [
+              "native",
+              "legacy",
+              "unified",
+              "full"
+            ],
+            "demonstrated": true,
+            "referenceFailures": 1,
+            "nativeSpeedComparisonEligible": true,
+            "arms": {
+              "full": {
+                "outerMs": 1429.8709999999992,
+                "complete": true,
+                "casePreservation": true,
+                "qualityEquivalent": true,
+                "missedFailures": 0,
+                "unexpectedFailures": 0,
+                "cases": 12,
+                "files": 12,
+                "mode": null,
+                "unifiedContextUsed": null
+              },
+              "native": {
+                "outerMs": 340.8297079999993,
+                "complete": true,
+                "casePreservation": true,
+                "qualityEquivalent": true,
+                "missedFailures": 0,
+                "unexpectedFailures": 0,
+                "cases": 1,
+                "files": 1,
+                "mode": null,
+                "unifiedContextUsed": null
+              },
+              "legacy": {
+                "outerMs": 1469.8264580000014,
+                "complete": true,
+                "casePreservation": true,
+                "qualityEquivalent": true,
+                "missedFailures": 0,
+                "unexpectedFailures": 0,
+                "cases": 1,
+                "files": 1,
+                "mode": "affected",
+                "unifiedContextUsed": null
+              },
+              "unified": {
+                "outerMs": 1497.1635420000002,
+                "complete": true,
+                "casePreservation": true,
+                "qualityEquivalent": true,
+                "missedFailures": 0,
+                "unexpectedFailures": 0,
+                "cases": 1,
+                "files": 1,
+                "mode": "affected",
+                "unifiedContextUsed": true
+              }
+            }
+          },
+          {
+            "repetition": 2,
+            "armOrder": [
+              "legacy",
+              "unified",
+              "full",
+              "native"
+            ],
+            "demonstrated": true,
+            "referenceFailures": 1,
+            "nativeSpeedComparisonEligible": true,
+            "arms": {
+              "full": {
+                "outerMs": 1356.8840000000018,
+                "complete": true,
+                "casePreservation": true,
+                "qualityEquivalent": true,
+                "missedFailures": 0,
+                "unexpectedFailures": 0,
+                "cases": 12,
+                "files": 12,
+                "mode": null,
+                "unifiedContextUsed": null
+              },
+              "native": {
+                "outerMs": 346.5713750000032,
+                "complete": true,
+                "casePreservation": true,
+                "qualityEquivalent": true,
+                "missedFailures": 0,
+                "unexpectedFailures": 0,
+                "cases": 1,
+                "files": 1,
+                "mode": null,
+                "unifiedContextUsed": null
+              },
+              "legacy": {
+                "outerMs": 1390.5282079999997,
+                "complete": true,
+                "casePreservation": true,
+                "qualityEquivalent": true,
+                "missedFailures": 0,
+                "unexpectedFailures": 0,
+                "cases": 1,
+                "files": 1,
+                "mode": "affected",
+                "unifiedContextUsed": null
+              },
+              "unified": {
+                "outerMs": 1492.5743750000001,
+                "complete": true,
+                "casePreservation": true,
+                "qualityEquivalent": true,
+                "missedFailures": 0,
+                "unexpectedFailures": 0,
+                "cases": 1,
+                "files": 1,
+                "mode": "affected",
+                "unifiedContextUsed": true
+              }
+            }
+          }
+        ]
+      },
+      {
+        "origin": "constructed-independent-assertions",
+        "nativeFramework": {
+          "version": "5.0.2",
+          "hashes": [
+            "943ddc2cfd3676087e243b5adc450ea8c25ad941ba678b48a679b68f67ef297a",
+            "39db22f579acf5639bbb17a261408debbde03f4692c0c439e77e7f13aeba74d6"
+          ]
+        },
+        "repetitions": [
+          {
+            "repetition": 0,
+            "armOrder": [
+              "full",
+              "native",
+              "legacy",
+              "unified"
+            ],
+            "demonstrated": true,
+            "referenceFailures": 1,
+            "nativeSpeedComparisonEligible": false,
+            "arms": {
+              "full": {
+                "outerMs": 455.281167000001,
+                "complete": true,
+                "casePreservation": true,
+                "qualityEquivalent": true,
+                "missedFailures": 0,
+                "unexpectedFailures": 0,
+                "cases": 2,
+                "files": 2,
+                "mode": null,
+                "unifiedContextUsed": null
+              },
+              "native": {
+                "outerMs": 270.8365420000009,
+                "complete": true,
+                "casePreservation": true,
+                "qualityEquivalent": false,
+                "missedFailures": 1,
+                "unexpectedFailures": 0,
+                "cases": 0,
+                "files": 0,
+                "mode": null,
+                "unifiedContextUsed": null
+              },
+              "legacy": {
+                "outerMs": 1401.7289170000004,
+                "complete": true,
+                "casePreservation": true,
+                "qualityEquivalent": true,
+                "missedFailures": 0,
+                "unexpectedFailures": 0,
+                "cases": 1,
+                "files": 1,
+                "mode": "affected",
+                "unifiedContextUsed": null
+              },
+              "unified": {
+                "outerMs": 1381.403624999999,
+                "complete": true,
+                "casePreservation": true,
+                "qualityEquivalent": true,
+                "missedFailures": 0,
+                "unexpectedFailures": 0,
+                "cases": 1,
+                "files": 1,
+                "mode": "affected",
+                "unifiedContextUsed": true
+              }
+            }
+          },
+          {
+            "repetition": 1,
+            "armOrder": [
+              "native",
+              "legacy",
+              "unified",
+              "full"
+            ],
+            "demonstrated": true,
+            "referenceFailures": 1,
+            "nativeSpeedComparisonEligible": false,
+            "arms": {
+              "full": {
+                "outerMs": 457.14279199999874,
+                "complete": true,
+                "casePreservation": true,
+                "qualityEquivalent": true,
+                "missedFailures": 0,
+                "unexpectedFailures": 0,
+                "cases": 2,
+                "files": 2,
+                "mode": null,
+                "unifiedContextUsed": null
+              },
+              "native": {
+                "outerMs": 265.3680000000022,
+                "complete": true,
+                "casePreservation": true,
+                "qualityEquivalent": false,
+                "missedFailures": 1,
+                "unexpectedFailures": 0,
+                "cases": 0,
+                "files": 0,
+                "mode": null,
+                "unifiedContextUsed": null
+              },
+              "legacy": {
+                "outerMs": 2163.955249999999,
+                "complete": true,
+                "casePreservation": true,
+                "qualityEquivalent": true,
+                "missedFailures": 0,
+                "unexpectedFailures": 0,
+                "cases": 1,
+                "files": 1,
+                "mode": "affected",
+                "unifiedContextUsed": null
+              },
+              "unified": {
+                "outerMs": 2857.104124999998,
+                "complete": true,
+                "casePreservation": true,
+                "qualityEquivalent": true,
+                "missedFailures": 0,
+                "unexpectedFailures": 0,
+                "cases": 1,
+                "files": 1,
+                "mode": "affected",
+                "unifiedContextUsed": true
+              }
+            }
+          },
+          {
+            "repetition": 2,
+            "armOrder": [
+              "legacy",
+              "unified",
+              "full",
+              "native"
+            ],
+            "demonstrated": true,
+            "referenceFailures": 1,
+            "nativeSpeedComparisonEligible": false,
+            "arms": {
+              "full": {
+                "outerMs": 454.39425000000483,
+                "complete": true,
+                "casePreservation": true,
+                "qualityEquivalent": true,
+                "missedFailures": 0,
+                "unexpectedFailures": 0,
+                "cases": 2,
+                "files": 2,
+                "mode": null,
+                "unifiedContextUsed": null
+              },
+              "native": {
+                "outerMs": 264.0238339999996,
+                "complete": true,
+                "casePreservation": true,
+                "qualityEquivalent": false,
+                "missedFailures": 1,
+                "unexpectedFailures": 0,
+                "cases": 0,
+                "files": 0,
+                "mode": null,
+                "unifiedContextUsed": null
+              },
+              "legacy": {
+                "outerMs": 1355.1834999999992,
+                "complete": true,
+                "casePreservation": true,
+                "qualityEquivalent": true,
+                "missedFailures": 0,
+                "unexpectedFailures": 0,
+                "cases": 1,
+                "files": 1,
+                "mode": "affected",
+                "unifiedContextUsed": null
+              },
+              "unified": {
+                "outerMs": 1416.0261660000033,
+                "complete": true,
+                "casePreservation": true,
+                "qualityEquivalent": true,
+                "missedFailures": 0,
+                "unexpectedFailures": 0,
+                "cases": 1,
+                "files": 1,
+                "mode": "affected",
+                "unifiedContextUsed": true
+              }
+            }
+          }
+        ]
+      },
+      {
+        "origin": "public-bugfix-inversion",
+        "nativeFramework": {
+          "version": "5.0.2",
+          "hashes": [
+            "943ddc2cfd3676087e243b5adc450ea8c25ad941ba678b48a679b68f67ef297a",
+            "39db22f579acf5639bbb17a261408debbde03f4692c0c439e77e7f13aeba74d6"
+          ]
+        },
+        "repetitions": [
+          {
+            "repetition": 0,
+            "armOrder": [
+              "full",
+              "native",
+              "legacy",
+              "unified"
+            ],
+            "demonstrated": true,
+            "referenceFailures": 4,
+            "nativeSpeedComparisonEligible": true,
+            "arms": {
+              "full": {
+                "outerMs": 1824.5176250000004,
+                "complete": true,
+                "casePreservation": true,
+                "qualityEquivalent": true,
+                "missedFailures": 0,
+                "unexpectedFailures": 0,
+                "cases": 489,
+                "files": 13,
+                "mode": null,
+                "unifiedContextUsed": null
+              },
+              "native": {
+                "outerMs": 2900.2217079999973,
+                "complete": true,
+                "casePreservation": true,
+                "qualityEquivalent": true,
+                "missedFailures": 0,
+                "unexpectedFailures": 0,
+                "cases": 465,
+                "files": 12,
+                "mode": null,
+                "unifiedContextUsed": null
+              },
+              "legacy": {
+                "outerMs": 5405.607624999997,
+                "complete": true,
+                "casePreservation": true,
+                "qualityEquivalent": true,
+                "missedFailures": 0,
+                "unexpectedFailures": 0,
+                "cases": 465,
+                "files": 12,
+                "mode": "affected",
+                "unifiedContextUsed": null
+              },
+              "unified": {
+                "outerMs": 2845.3042919999934,
+                "complete": true,
+                "casePreservation": true,
+                "qualityEquivalent": true,
+                "missedFailures": 0,
+                "unexpectedFailures": 0,
+                "cases": 465,
+                "files": 12,
+                "mode": "affected",
+                "unifiedContextUsed": true
+              }
+            }
+          },
+          {
+            "repetition": 1,
+            "armOrder": [
+              "native",
+              "legacy",
+              "unified",
+              "full"
+            ],
+            "demonstrated": true,
+            "referenceFailures": 4,
+            "nativeSpeedComparisonEligible": true,
+            "arms": {
+              "full": {
+                "outerMs": 1622.5568339999954,
+                "complete": true,
+                "casePreservation": true,
+                "qualityEquivalent": true,
+                "missedFailures": 0,
+                "unexpectedFailures": 0,
+                "cases": 489,
+                "files": 13,
+                "mode": null,
+                "unifiedContextUsed": null
+              },
+              "native": {
+                "outerMs": 1778.869083999998,
+                "complete": true,
+                "casePreservation": true,
+                "qualityEquivalent": true,
+                "missedFailures": 0,
+                "unexpectedFailures": 0,
+                "cases": 465,
+                "files": 12,
+                "mode": null,
+                "unifiedContextUsed": null
+              },
+              "legacy": {
+                "outerMs": 3114.849417000005,
+                "complete": true,
+                "casePreservation": true,
+                "qualityEquivalent": true,
+                "missedFailures": 0,
+                "unexpectedFailures": 0,
+                "cases": 465,
+                "files": 12,
+                "mode": "affected",
+                "unifiedContextUsed": null
+              },
+              "unified": {
+                "outerMs": 2633.9850420000002,
+                "complete": true,
+                "casePreservation": true,
+                "qualityEquivalent": true,
+                "missedFailures": 0,
+                "unexpectedFailures": 0,
+                "cases": 465,
+                "files": 12,
+                "mode": "affected",
+                "unifiedContextUsed": true
+              }
+            }
+          },
+          {
+            "repetition": 2,
+            "armOrder": [
+              "legacy",
+              "unified",
+              "full",
+              "native"
+            ],
+            "demonstrated": true,
+            "referenceFailures": 4,
+            "nativeSpeedComparisonEligible": true,
+            "arms": {
+              "full": {
+                "outerMs": 1594.289957999994,
+                "complete": true,
+                "casePreservation": true,
+                "qualityEquivalent": true,
+                "missedFailures": 0,
+                "unexpectedFailures": 0,
+                "cases": 489,
+                "files": 13,
+                "mode": null,
+                "unifiedContextUsed": null
+              },
+              "native": {
+                "outerMs": 1503.9201250000042,
+                "complete": true,
+                "casePreservation": true,
+                "qualityEquivalent": true,
+                "missedFailures": 0,
+                "unexpectedFailures": 0,
+                "cases": 465,
+                "files": 12,
+                "mode": null,
+                "unifiedContextUsed": null
+              },
+              "legacy": {
+                "outerMs": 3027.400833000007,
+                "complete": true,
+                "casePreservation": true,
+                "qualityEquivalent": true,
+                "missedFailures": 0,
+                "unexpectedFailures": 0,
+                "cases": 465,
+                "files": 12,
+                "mode": "affected",
+                "unifiedContextUsed": null
+              },
+              "unified": {
+                "outerMs": 2701.6213750000024,
+                "complete": true,
+                "casePreservation": true,
+                "qualityEquivalent": true,
+                "missedFailures": 0,
+                "unexpectedFailures": 0,
+                "cases": 465,
+                "files": 12,
+                "mode": "affected",
+                "unifiedContextUsed": true
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "privateOriginalSha256": "962b50ca5cfaa84beb708f8d20c820ab1b45010925cd7eb227aa83c719ec11c1",
+    "limitations": [
+      "Two constructed workloads plus optional one real upstream fix; not the 100-change/10-project target.",
+      "Outer spans include CLI/Node startup, native execution and child-side report/history/source sealing; parent normalization and fixture creation excluded and controller elapsed separately retained.",
+      "First plan starts with empty pure analysis cache; repeat retains only that cache and resets history. Shared OS/dependency/native framework caches are uncontrolled; no fully cold-machine claim.",
+      "Framework metadata/CLI and core source/Node bytes are bound; imported native dependencies and arbitrary test subprocesses are not fully attested.",
+      "Native zero-case selectors can be complete within their chosen scope yet miss a demonstrated fault; such timing is never credited as quality-equivalent speed."
+    ]
+  },
+  "gitEntrypointProbe": {
+    "kind": "local-git-entrypoint-diagnostic",
+    "complete": true,
+    "binaries": [
+      {
+        "id": "system-entrypoint",
+        "sha256": "b8763cf250e607a778bb4603cecb5b90338814d0a3dfcba0d57b1de242f610e9",
+        "bytes": 118640,
+        "version": "git version 2.50.1 (Apple Git-155)"
+      },
+      {
+        "id": "active-developer-git",
+        "sha256": "e64103dcf6e7686a5dc58e44d380d65eb298a94210c1a00558558890da355750",
+        "bytes": 7604272,
+        "version": "git version 2.50.1 (Apple Git-155)"
+      }
+    ],
+    "rows": [
+      {
+        "id": "system-entrypoint",
+        "repetition": 0,
+        "durationMs": 29.673583,
+        "exitCode": 0,
+        "revision": "032469b26584ceebb7fe16561bea009baa5c1965"
+      },
+      {
+        "id": "active-developer-git",
+        "repetition": 0,
+        "durationMs": 11.539625000000001,
+        "exitCode": 0,
+        "revision": "032469b26584ceebb7fe16561bea009baa5c1965"
+      },
+      {
+        "id": "active-developer-git",
+        "repetition": 1,
+        "durationMs": 10.372625,
+        "exitCode": 0,
+        "revision": "032469b26584ceebb7fe16561bea009baa5c1965"
+      },
+      {
+        "id": "system-entrypoint",
+        "repetition": 1,
+        "durationMs": 25.765708000000004,
+        "exitCode": 0,
+        "revision": "032469b26584ceebb7fe16561bea009baa5c1965"
+      },
+      {
+        "id": "system-entrypoint",
+        "repetition": 2,
+        "durationMs": 27.389749999999992,
+        "exitCode": 0,
+        "revision": "032469b26584ceebb7fe16561bea009baa5c1965"
+      },
+      {
+        "id": "active-developer-git",
+        "repetition": 2,
+        "durationMs": 13.596665999999999,
+        "exitCode": 0,
+        "revision": "032469b26584ceebb7fe16561bea009baa5c1965"
+      }
+    ],
+    "privateReceiptSha256": "6df687a8b8a5b4ea9106fb56d324d5029c299f14f191760154298f9a6033422e",
+    "limitations": [
+      "Single local host with 3 probes per binary, no complete CLI speed comparison.",
+      "No production executable selection changed; the regular Git PATH remains authoritative.",
+      "Selecting an alternative default requires separately qualified developer-tool resolution, environment parity and executable freshness."
+    ]
+  },
+  "phaseBoundaries": {
+    "independentSnapshots": [
+      "before-native-startup",
+      "after-native-startup",
+      "before-native-execution",
+      "after-native-execution"
+    ],
+    "startupReuse": "Only inventory before the startup await and the immediately checked post-startup snapshot are reused inside their own synchronous planning phases. Fresh JSON policy is read and compared by digest; public run/plan options cannot inject these observations."
+  }
+}

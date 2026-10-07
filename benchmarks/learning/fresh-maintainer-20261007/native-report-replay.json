@@ -1,0 +1,310 @@
+{
+  "schemaVersion": 1,
+  "sourceRevision": "c996cfda7d69b1abb88a57c0b4d33f7fed61000d",
+  "kind": "post-fix-native-report-replay",
+  "trials": [
+    {
+      "fixture": "milliseconds",
+      "repetition": 0,
+      "arm": "with_memory",
+      "originalRawSHA256": "2506fb21b50dc99cf1248d1e22c064c68b2e6aab9323c2781463b8b4c0a0acdf",
+      "originalError": null,
+      "replayed": true,
+      "baselineCases": 24,
+      "defects": [
+        {
+          "id": "historical-parent",
+          "detected": false,
+          "failedCaseNames": [],
+          "stable": true
+        }
+      ]
+    },
+    {
+      "fixture": "milliseconds",
+      "repetition": 0,
+      "arm": "without_memory",
+      "originalRawSHA256": "24d43d289ce7fbf35de32621ac2f59d1435a59be188dc88f7aa90afada4a0ec6",
+      "originalError": null,
+      "replayed": true,
+      "baselineCases": 27,
+      "defects": [
+        {
+          "id": "historical-parent",
+          "detected": false,
+          "failedCaseNames": [],
+          "stable": true
+        }
+      ]
+    },
+    {
+      "fixture": "milliseconds",
+      "repetition": 1,
+      "arm": "with_memory",
+      "originalRawSHA256": "14b32f4095ede9730b109f3a4e49996417073109afa00be6f7a9f1c61500bee2",
+      "originalError": "Generated candidate failed independent review or execution validation",
+      "replayed": false
+    },
+    {
+      "fixture": "milliseconds",
+      "repetition": 1,
+      "arm": "without_memory",
+      "originalRawSHA256": "367c4e8db624ec698ba2babcf3e361adde94c10adccc443e8e088ef851c4ed06",
+      "originalError": null,
+      "replayed": true,
+      "baselineCases": 36,
+      "defects": [
+        {
+          "id": "historical-parent",
+          "detected": false,
+          "failedCaseNames": [],
+          "stable": true
+        }
+      ]
+    },
+    {
+      "fixture": "plain",
+      "repetition": 0,
+      "arm": "with_memory",
+      "originalRawSHA256": "242f888fd8bcb91149097991ab9fffb621765bd02bd82809af44643fe0370bc1",
+      "originalError": null,
+      "replayed": true,
+      "baselineCases": 31,
+      "defects": [
+        {
+          "id": "historical-parent",
+          "detected": true,
+          "failedCaseNames": [
+            "accepts cross-realm empty object literal",
+            "accepts cross-realm populated object literal",
+            "accepts cross-realm new Object()"
+          ],
+          "stable": true
+        }
+      ]
+    },
+    {
+      "fixture": "plain",
+      "repetition": 0,
+      "arm": "without_memory",
+      "originalRawSHA256": "51f579192b52baeb9301d4b6b38caec89c954a1cc9f6a218e17dec4fbf6938d0",
+      "originalError": null,
+      "replayed": true,
+      "baselineCases": 36,
+      "defects": [
+        {
+          "id": "historical-parent",
+          "detected": true,
+          "failedCaseNames": [
+            "returns true for cross-realm empty object literal",
+            "returns true for cross-realm populated object literal",
+            "returns true for cross-realm new Object()"
+          ],
+          "stable": true
+        }
+      ]
+    },
+    {
+      "fixture": "plain",
+      "repetition": 1,
+      "arm": "with_memory",
+      "originalRawSHA256": "cdee8e1246a665751d6ba3db7b1123472f961eae77d562bcf5eb49ac2aa46828",
+      "originalError": null,
+      "replayed": true,
+      "baselineCases": 4,
+      "defects": [
+        {
+          "id": "historical-parent",
+          "detected": true,
+          "failedCaseNames": [
+            "accepts the documented plain-object forms across realms"
+          ],
+          "stable": true
+        }
+      ]
+    },
+    {
+      "fixture": "plain",
+      "repetition": 1,
+      "arm": "without_memory",
+      "originalRawSHA256": "a5d3caeb9427e285b131d5a690e7638e6b56313f16b80bfa7396d6903710e437",
+      "originalError": null,
+      "replayed": true,
+      "baselineCases": 38,
+      "defects": [
+        {
+          "id": "historical-parent",
+          "detected": true,
+          "failedCaseNames": [
+            "accepts foreign-realm empty object literal",
+            "accepts foreign-realm populated object literal",
+            "accepts foreign-realm new Object()",
+            "accepts foreign-realm populated new Object()"
+          ],
+          "stable": true
+        }
+      ]
+    },
+    {
+      "fixture": "promise",
+      "repetition": 0,
+      "arm": "with_memory",
+      "originalRawSHA256": "60e83d7a0d1e0a1d3823ec743ff13d20b683e7257922283aafba4dae9fa81b4d",
+      "originalError": null,
+      "replayed": true,
+      "baselineCases": 4,
+      "defects": [
+        {
+          "id": "historical-parent",
+          "detected": true,
+          "failedCaseNames": [
+            "returns false for null"
+          ],
+          "stable": true
+        }
+      ]
+    },
+    {
+      "fixture": "promise",
+      "repetition": 0,
+      "arm": "without_memory",
+      "originalRawSHA256": "4e18c46300c45dc059e2794f34d8a2a0a4c76f645c90fb8a0563135709365a60",
+      "originalError": null,
+      "replayed": true,
+      "baselineCases": 9,
+      "defects": [
+        {
+          "id": "historical-parent",
+          "detected": true,
+          "failedCaseNames": [
+            "rejects null"
+          ],
+          "stable": true
+        }
+      ]
+    },
+    {
+      "fixture": "promise",
+      "repetition": 1,
+      "arm": "with_memory",
+      "originalRawSHA256": "e985546aced818adcfe25b1e06ea581e3d28ec2653da5cd19d96a515917ba8d7",
+      "originalError": null,
+      "replayed": true,
+      "baselineCases": 4,
+      "defects": [
+        {
+          "id": "historical-parent",
+          "detected": true,
+          "failedCaseNames": [
+            "returns false for null"
+          ],
+          "stable": true
+        }
+      ]
+    },
+    {
+      "fixture": "promise",
+      "repetition": 1,
+      "arm": "without_memory",
+      "originalRawSHA256": "b2911de01347f7531de6d0f46ea2e6aa293f4192abe7aba08a95d28497c01eef",
+      "originalError": null,
+      "replayed": true,
+      "baselineCases": 4,
+      "defects": [
+        {
+          "id": "historical-parent",
+          "detected": true,
+          "failedCaseNames": [
+            "README: null returns false"
+          ],
+          "stable": true
+        }
+      ]
+    },
+    {
+      "fixture": "stream",
+      "repetition": 0,
+      "arm": "with_memory",
+      "originalRawSHA256": "8d7a80a0821d1171dd3d5a04475df6f256141d2b2c5c906e7607c26f52c75705",
+      "originalError": null,
+      "replayed": true,
+      "baselineCases": 72,
+      "defects": [
+        {
+          "id": "historical-parent",
+          "detected": true,
+          "failedCaseNames": [
+            "Transform has the documented stream classifications",
+            "PassThrough has the documented stream classifications"
+          ],
+          "stable": true
+        }
+      ]
+    },
+    {
+      "fixture": "stream",
+      "repetition": 0,
+      "arm": "without_memory",
+      "originalRawSHA256": "677d99082d41f5f6f3734b1df5751ddb2836ea1bc8ad81aa35f0b60e02bebe08",
+      "originalError": null,
+      "replayed": true,
+      "baselineCases": 20,
+      "defects": [
+        {
+          "id": "historical-parent",
+          "detected": true,
+          "failedCaseNames": [
+            "Transform has the documented stream memberships",
+            "PassThrough has the documented stream memberships"
+          ],
+          "stable": true
+        }
+      ]
+    },
+    {
+      "fixture": "stream",
+      "repetition": 1,
+      "arm": "with_memory",
+      "originalRawSHA256": "95e0a73b9f40fed95294c229f8d2ffa9283b0a6f5017322fab5ea6a75d52aa01",
+      "originalError": null,
+      "replayed": true,
+      "baselineCases": 19,
+      "defects": [
+        {
+          "id": "historical-parent",
+          "detected": true,
+          "failedCaseNames": [
+            "classifies a fresh Transform with all five predicates",
+            "classifies a fresh PassThrough with all five predicates"
+          ],
+          "stable": true
+        }
+      ]
+    },
+    {
+      "fixture": "stream",
+      "repetition": 1,
+      "arm": "without_memory",
+      "originalRawSHA256": "d25361ff29e91b265076ef5a4d5bf7e22bb3a1895c0229de56febc43ca2b9d17",
+      "originalError": null,
+      "replayed": true,
+      "baselineCases": 22,
+      "defects": [
+        {
+          "id": "historical-parent",
+          "detected": true,
+          "failedCaseNames": [
+            "classifies a fresh Node Transform",
+            "classifies a fresh Node PassThrough"
+          ],
+          "stable": true
+        }
+      ]
+    }
+  ],
+  "providerCalls": 0,
+  "limitations": [
+    "Re-executes existing frozen generated outputs under the later reporter; no new generation, no changed original receipts and no new learning inference. Original review rejection remains excluded from replay and retained as failed. Native labels and statuses are validated within this new replay only."
+  ],
+  "rawSummarySHA256": "03fd9ae555eddac52389ce5e62f91a766bd0dfce39feb84e8b462ea5bbc27b67"
+}

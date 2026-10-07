@@ -1,0 +1,134 @@
+{
+  "schemaVersion": 1,
+  "kind": "public-upstream-lock-installation-pending-qualification",
+  "recordedDate": "2026-10-07",
+  "candidateId": "unjs-mlly-abef19c940da",
+  "repository": "https://github.com/unjs/mlly",
+  "fixRevision": "abef19c940da8ff31d5cf2c96deefc1035bac1c3",
+  "parentRevision": "1b09363bd6f95859aea329627ae8e19877f426ed",
+  "selectionCommitmentSha256": "065b79f7f345a971e76b0a2d1bdc4f4ab34c9c3b254837b693dee552b71af65a",
+  "upstreamByteBindings": [
+    {
+      "kind": "dependency",
+      "path": "package.json",
+      "bytes": 1425,
+      "sha256": "3aa398010a5bf8f7a2da805dc3060e1450d97e136e919d1127539fecda22962d",
+      "gitBlob": "a524079777bb41540621ddabf6a419c5ca3dfd73"
+    },
+    {
+      "kind": "dependency",
+      "path": "pnpm-lock.yaml",
+      "bytes": 140831,
+      "sha256": "120aa89ec48165beb38b0e6452051d401c709a91a8af30666123870d550edd2f",
+      "gitBlob": "8235965c75f57e3a096323774b96e0a63fccf27e"
+    },
+    {
+      "kind": "fixed-source",
+      "path": "src/analyze.ts",
+      "bytes": 24344,
+      "sha256": "8bcd9cae33a0bc4a7e8f319bd00ed6f1e69eab2b33b438ee90a95c5d6735c7a0",
+      "gitBlob": "2ceb50742f50e1c28836b0b593e96ae75196b478"
+    },
+    {
+      "kind": "prior-source",
+      "path": "src/analyze.ts",
+      "bytes": 23477,
+      "sha256": "fdbf05f9f759c4a5ccd946111cf48d9423af6eb388457129bfe0d6b1b7f58b64",
+      "gitBlob": "52caecb22ecff3ad55d82029d4ba255255f23fde"
+    },
+    {
+      "kind": "oracle",
+      "path": "test/exports.test.ts",
+      "bytes": 17365,
+      "sha256": "f4037834d64c0ebf35d7fe9642224c7156c13f5b7e4aba8b9d541c354cb7297c",
+      "gitBlob": "e18d4b065e50793b1de06ceca6797415fa7f468f"
+    }
+  ],
+  "environment": {
+    "node": "v22.19.0",
+    "platform": "darwin",
+    "arch": "arm64",
+    "packageManager": "pnpm@10.20.0",
+    "framework": {
+      "package": "vitest",
+      "installed": "4.1.0"
+    },
+    "installation": {
+      "upstreamLockInstallationVerified": true,
+      "installerSha256": "49460df80702b5a117a4fda97245d7e5cedb93b0e940b417e1e9acb61f814946",
+      "installedTree": {
+        "sha256": "068af9ffca9f38a65dad984a2508220bdbf5373370cb27f03aa8114f7631803c",
+        "files": 9892,
+        "bytes": 141188966
+      },
+      "installMs": 2821,
+      "installControllerMs": 5630,
+      "sharedStoreReused": true,
+      "lifecyclePolicy": "Pinned package-manager defaults with lifecycle scripts enabled and personal npm config excluded; upstream project configuration retained; no --ignore-scripts, production-only, optional-dependency or package filtering flags",
+      "lifecycleWarnings": false
+    }
+  },
+  "qualification": {
+    "qualified": false,
+    "nativeBaselineRuns": 0,
+    "independentFaultRuns": 0,
+    "threeArmTrials": 0,
+    "status": "pending-resource-reserve",
+    "reason": "Shared disk dropped below the conservative 2 GiB execution/install reserve; no fresh baseline or fault was attempted after source-object repair."
+  },
+  "retainedNegatives": [
+    {
+      "kind": "post-install-hardlink-admission",
+      "reason": "Original v1 blocked a complete internal esbuild binary alias group; no qualification. A later source revision requires every inode alias to be inventoried and match nlink, rejects outside aliases and drift, and was prospectively applied to a fresh v2 install."
+    },
+    {
+      "kind": "preflight-input",
+      "reason": "Initial v2 preflight stopped before native tests because the filtered source clone had not materialized the exact historical source blob before local cloning. Original failure retained, exact Git object subsequently materialized without working-tree changes. No successful rerun claimed."
+    }
+  ],
+  "historicalSourceMaterialization": {
+    "kind": "exact-original-git-blob-materialization",
+    "parentRevision": "1b09363bd6f95859aea329627ae8e19877f426ed",
+    "path": "src/analyze.ts",
+    "gitBlob": "52caecb22ecff3ad55d82029d4ba255255f23fde",
+    "sha256": "fdbf05f9f759c4a5ccd946111cf48d9423af6eb388457129bfe0d6b1b7f58b64",
+    "bytes": 23477,
+    "retainsPreflightMissingBlobFailure": true,
+    "workingTreeSourceModified": false
+  },
+  "rejectedDependencyTreeRetention": {
+    "originalAttempt": "v1",
+    "archiveSha256": "aeaa8a5821d448faacbde67a4e287d6238a05e5d1e4e456bb42329cb35b457c8",
+    "archiveBytes": 42231897,
+    "inventorySha256": "a3811811d738bdae248f6acef81c77604e9ed22ff6a5ea7cdac8d9a9b612931c",
+    "entries": 12120,
+    "contentAndModeVerified": true,
+    "hardlinkGroupsInventoried": true,
+    "onlyRejectedDuplicateDependencyTreeRetired": true,
+    "sourceLockLogsCacheReceiptsRetained": true,
+    "originalReceiptReclassified": false
+  },
+  "receiptSha256": {
+    "installation": "765fccff81a735fd71653334153f7a29d194e4cbc2f1194382578775a4e06154",
+    "originalRejectedInstallation": "fbdd6d24c78295e49e273c24f7a276c6d92d8428b81dd9fbea2272b6b84e8417",
+    "missingHistoricalBlobError": "4b0a9b567d224c6e44668aa07a0cefcb73c74d58f9186fa4c539297bf45ff72c",
+    "historicalBlobMaterialization": "9788ce5112e41d04ac82a175a448e933b8d5ab6809536f92f7367a467220c3ad"
+  },
+  "accounting": {
+    "addedQualifiedChanges": 0,
+    "qualifiedUniqueChanges": 11,
+    "qualifiedRepositories": 4,
+    "actualUpstreamLockQualifiedChanges": 1,
+    "actualUpstreamLockQualifiedRepositories": 1,
+    "earlierComparativeReceiptsReclassified": false,
+    "target30Changes5RepositoriesMet": false,
+    "target100Changes10RepositoriesMet": false
+  },
+  "limitations": [
+    "Installation is not baseline, fault, routing, performance or learning qualification.",
+    "Original full dependency manifest and frozen lock preserved; platform optional dependencies and upstream lifecycle policy remain native defaults.",
+    "The same-parent historical source blob repair changes only Git object availability, not source/test/config bytes.",
+    "Lossless archive commits contents, modes and internal hardlink groups for recovery; archived dependency tree cannot authorize execution without extraction and fresh verification.",
+    "No native speed, selective routing or additional defect detection claim."
+  ]
+}

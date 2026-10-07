@@ -48,6 +48,7 @@ export function analyze(file, text) {
 
 const ANALYSIS_ENGINE = createHash('sha256').update(JSON.stringify({ schemaVersion: 1, typescript: ts.version, node: process.version, graph: createHash('sha256').update(fs.readFileSync(fileURLToPath(import.meta.url))).digest('hex'), cache: ANALYSIS_CACHE_IMPLEMENTATION })).digest('hex');
 const SUMMARY_CACHE = Symbol('sourceAnalysisCache');
+const RESOLUTION_CACHE = Symbol('planningModuleResolutionCache');
 function summaries(graph) {
   if (!graph[SUMMARY_CACHE]) {
     graph[SUMMARY_CACHE] = createAnalysisCache(graph.root, graph.config?.analysisCache, ANALYSIS_ENGINE);
@@ -68,10 +69,13 @@ export function resolveImport(file, spec, files) {
   return found.length === 1 ? { path: found[0] } : { unresolved: true };
 }
 
-export function buildGraph(root, nativeSession) {
+export function buildGraph(root, nativeSession) { return build(root,nativeSession); }
+// Internal planner entrypoint; never sourced from public run/plan options.
+export function buildPlanningGraph(root, nativeSession, config, files) { return build(root,nativeSession,{config,files}); }
+function build(root, nativeSession, planningInputs) {
   const timing = phaseTimings();
-  const config = readConfig(root);
-  const files = listFiles(root);
+  const config = planningInputs?.config ?? readConfig(root);
+  const files = planningInputs?.files ?? listFiles(root);
   const selected = files.filter(f => (config.testMatch ? config.testMatch.some(pattern => path.matchesGlob(f,pattern)) : TEST.test(f)) && !(config.testExclude || []).some(pattern => path.matchesGlob(f,pattern)));
   const graph = { files, tests: selected, edges: {}, warnings: [], sources: {}, root, config, discovery: {complete:true,method:'configured-static-conventions'} };
   graph.configFiles = new Set();
@@ -108,6 +112,9 @@ export function buildGraph(root, nativeSession) {
   for (const file of configurationSeeds(root,config,files)) graph.configFiles.add(file);
   if(graph.configFiles.has('__external_runner_config__'))graph.warnings.push({file:'configuration',reason:'external-resolution-config'});
   graph.compilerOptions = compilerOptions(root,config,graph.warnings,graph.configFiles);
+  // Resolution filesystem observations live only on this fresh graph, after
+  // executable native configuration and JSON compiler options have been read.
+  graph[RESOLUTION_CACHE] = ts.createModuleResolutionCache(root, name=>name, graph.compilerOptions);
   graph.packageNames = new Set();
   const set = new Set(files);
   for (const file of files.filter(f => /(?:^|\/)package\.json$/.test(f))) {
@@ -203,7 +210,7 @@ export function evidencePath(graph, start, target) {
 function configurationSeeds(root,config,files = listFiles(root)) {
   const seeds = new Set();
   if(config.tsconfig)seeds.add(normalize(config.tsconfig));
-  for(const file of files) if(/^(?:tsconfig\.json|jsconfig\.json|(?:vitest|vite|jest|playwright)\.config\.[cm]?[jt]s)$/.test(file))seeds.add(file);
+  for(const file of files) if(/^(?:pnpm-workspace\.yaml|tsconfig\.json|jsconfig\.json|(?:vitest|vite|jest|playwright)\.config\.[cm]?[jt]s)$/.test(file))seeds.add(file);
   const argv=config.runner||[];
   for(let i=0;i<argv.length;i++) {
     let file;
@@ -233,7 +240,7 @@ function resolveGraphImport(graph,file,spec,files) {
   if(isBuiltin(spec))return {external:true};
   if(!graph.root)return direct;
   const paths = new Set(direct.path ? [direct.path] : []);
-  const module=ts.resolveModuleName(spec,path.join(graph.root,file),graph.compilerOptions||{},ts.sys).resolvedModule;
+  const module=ts.resolveModuleName(spec,path.join(graph.root,file),graph.compilerOptions||{},ts.sys,graph[RESOLUTION_CACHE]).resolvedModule;
   const resolved=module?.resolvedFileName;
   const isInternal=[...(graph.packageNames||[])].some(name=>spec===name||spec.startsWith(name+'/'));
   const matchesAlias=Object.keys(graph.compilerOptions?.paths||{}).some(pattern=>path.matchesGlob(spec,pattern));
