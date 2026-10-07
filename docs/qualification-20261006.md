@@ -1,5 +1,7 @@
 # October 6 engineering qualification
 
+The [October 7 follow-up](qualification-20261007.md) records later successful generation and Codex-host trials, complete one-context execution measurements and resolved hosted main CI. The historical attempts below retain their original outcomes.
+
 TestLore now has sealed workspace/asset/style proposals, a guarded fresh shared Vitest context, named regression corpora, prospective dataset commitments and actionable adoption diagnostics. General speed, improved learning, complete native agent-host execution and npm publication remain unestablished.
 
 ## Routing and native context

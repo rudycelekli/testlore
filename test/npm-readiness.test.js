@@ -7,6 +7,10 @@ test('npm diagnostics never turn CLI identity or public metadata into publishing
   assert.equal(r.ready,false);assert.equal(r.exactMain,true);assert.equal(r.protectedEnvironment,true);
   assert.deepEqual(r.blockers,['npm-trusted-publisher-and-direct-publish-permission-require-account-verification']);
   assert.equal(r.publisher.allowedAction,'npm publish');
+  assert.equal(r.publisher.npmOwner,null);assert.equal(r.publisher.npmOwnershipVerified,false);
+  assert.equal(r.publisher.ownerKind,'github-repository-owner');
+  assert.equal(r.publisherConfigurationCliSupported,false);
+  assert.equal(npmReadiness({cliVersion:'11.15.0'}).publisherConfigurationCliSupported,true);
 });
 test('missing identity, older CLI, wrong main and unprotected environment remain actionable blockers',()=>{
   const r=npmReadiness({cliVersion:'11.5.0',identity:false,metadata:null,environment:{name:'npm-alpha'},sourceRevision:sha,mainRevision:'b'.repeat(40)});

@@ -49,6 +49,7 @@ jobs:
         run: |
           node scripts/incremental-quality-proof.js --output .tddswarm/alpha-incremental.json
           node scripts/native-selection-proof.js .tddswarm/alpha-native-selector.json
+          node scripts/unified-native-proof.js --output .tddswarm/alpha-unified-cli
           node scripts/quality-proof.js --output .tddswarm/alpha-quality.json
           node scripts/generated-defects.js > .tddswarm/alpha-defects.json
       - name: Independently rerun browser qualification
@@ -79,6 +80,11 @@ jobs:
           path: |
             .tddswarm/alpha-source-tests.json*
             .tddswarm/alpha-*.json
+            .tddswarm/alpha-unified-cli/assessment.json
+            .tddswarm/alpha-unified-cli/protocol.json
+            .tddswarm/alpha-unified-cli/attempts.jsonl
+            .tddswarm/alpha-unified-cli/static/*
+            .tddswarm/alpha-unified-cli/asset/*
           include-hidden-files: true
           if-no-files-found: warn
   publish:

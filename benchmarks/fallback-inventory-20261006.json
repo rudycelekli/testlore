@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "type": "fallback-campaign-summary",
+  "plans": 8,
+  "fullFallbackPlans": 8,
+  "causeOccurrences": {
+    "configuration": 2,
+    "unmapped-input": 8
+  },
+  "warningOccurrences": {
+    "unreachable-source": 170,
+    "test-closure": 108
+  },
+  "unmappedChangeOccurrences": 62,
+  "unmappedCategories": {
+    "source-or-configuration": 26,
+    "document-or-contract": 20,
+    "database-or-command": 10,
+    "browser-or-asset": 6
+  },
+  "omittedTestOccurrences": 0,
+  "freshnessVerified": false,
+  "sourceMutation": false,
+  "nativeExecution": false,
+  "reviewRequired": true,
+  "closedWorld": false,
+  "scope": "Retained plan explanations only; repeated plans count separately. No source freshness, failure recall, speed improvement, or contract completeness is inferred.",
+  "diagnosticProducerSha256": "5b08914a7cfffa466407e08b264262d63ed20be285a5668a5a14ed28c4bb7def",
+  "campaignProducerSha256": "46562e9f6d33f9378b09a0bbcc6f73a7878e84bd6d3b0adf978494f3638a9fc1",
+  "histories": 4,
+  "repositories": 3,
+  "privateAggregateOriginalSha256": "953e91b3200a86fec9d2c8bb431340ecef39c816228ab89871fe96c2597c29b9",
+  "originalProjectNamesExported": false
+}

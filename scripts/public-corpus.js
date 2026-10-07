@@ -1,0 +1,89 @@
+#!/usr/bin/env node
+/** Frozen public selections, reviewed local profiles and existing isolated corpus execution. */
+import fs from 'node:fs';
+import path from 'node:path';
+import {fileURLToPath} from 'node:url';
+import {execFileSync} from 'node:child_process';
+import {digest} from '../src/provenance.js';
+import {TEST, safePath} from '../src/files.js';
+import {readBoundedJson} from './evaluation-commitment.js';
+import {fileIdentity} from './worker-identity.js';
+import {validateCorpus, runCorpus} from './regression-corpus.js';
+const SHA=/^[a-f0-9]{40}$/, HASH=/^[a-f0-9]{64}$/;
+const wrapper=fileURLToPath(import.meta.url);
+const git=(root,...args)=>execFileSync('git',['-C',root,...args],{encoding:'utf8',timeout:10000,maxBuffer:2*1024*1024});
+const binding=value=>digest(JSON.stringify(value));
+const validPath=file=>typeof file==='string'&&!path.isAbsolute(file)&&!file.split('/').some(part=>!part||part==='.'||part==='..')&&!file.includes('\\')&&!file.includes('\0');
+export function freezePublicCandidates(data){
+ if(!Array.isArray(data?.candidates)||data.candidates.length<1||data.candidates.length>100||!Array.isArray(data.accounting))throw Error('Supply 1–100 selected upstream candidates and retained search accounting');
+ const manifest={schemaVersion:1,kind:'public-regression-preregistration',target:{uniqueChanges:100,projects:10},createdAt:new Date().toISOString(),candidates:data.candidates,accounting:data.accounting,protocol:{repetitions:2,timeoutMs:30000,maxControllerMs:1800000,execution:'Sequential existing runCorpus; reviewed local profiles only; no installation or model calls',cache:'Fresh child processes; first analytical plan starts in a new workspace; repeat can reuse pure analysis caches. Baseline/discovery warm shared OS/dependency caches; no fully cold-run claim.',oracle:'Fixed upstream tests stay byte-identical while exact prior source bytes are restored',promotion:'No candidate, title, commit signature or preparation constitutes qualification'},qualifiedChanges:0};
+ validateCandidates(manifest);return {...manifest,commitmentSha256:binding(manifest)};
+}
+export function validateCandidates(value){
+ if(value?.schemaVersion!==1||value.kind!=='public-regression-preregistration'||!Array.isArray(value.candidates)||value.candidates.length<1||value.candidates.length>100||value.qualifiedChanges!==0||value.protocol?.repetitions!==2||value.protocol?.timeoutMs!==30000||value.protocol?.maxControllerMs!==1800000)throw Error('Invalid bounded preregistration');
+ if(value.commitmentSha256){const {commitmentSha256,...body}=value;if(!HASH.test(commitmentSha256)||binding(body)!==commitmentSha256)throw Error('Selection commitment mismatch');}
+ const seen=new Set(),ids=new Set(),patches=new Set();
+ for(const c of value.candidates){
+  const key=c.repository+'/'+c.fixRevision;
+  if(!/^https:\/\/github\.com\/[\w.-]+\/[\w.-]+$/.test(c.repository)||!SHA.test(c.fixRevision)||!SHA.test(c.parentRevision)||c.fixRevision===c.parentRevision||!SHA.test(c.treeRevision)||seen.has(key)||ids.has(c.id)||!/^[a-z0-9][a-z0-9-]{0,95}$/.test(c.id)||c.status!=='unmeasured'||c.kind!=='public-bugfix-inversion-candidate'||!Array.isArray(c.blockers)||!Array.isArray(c.changedFiles)||c.changedFiles.length>300||!Array.isArray(c.sourcePaths)||!c.sourcePaths.length||!Array.isArray(c.maintainerOraclePaths))throw Error('Invalid or duplicate upstream candidate');
+  seen.add(key);ids.add(c.id);
+  for(const f of c.changedFiles)if(!validPath(f.path)||!SHA.test(f.headGitBlob)||!(f.patchSha256===null||HASH.test(f.patchSha256)))throw Error('Invalid changed-file identity');
+  for(const f of [...c.sourcePaths,...c.maintainerOraclePaths])if(!validPath(f)||!c.changedFiles.some(changed=>changed.path===f))throw Error('Source/oracle must belong to upstream change inventory');
+  if(c.byteBindings){const byteKeys=new Set();for(const b of c.byteBindings){const key=b.kind+'/'+b.path;if(!['fixed-source','prior-source','oracle','dependency'].includes(b.kind)||!validPath(b.path)||!HASH.test(b.sha256)||!SHA.test(b.gitBlob)||!Number.isSafeInteger(b.bytes)||b.bytes<0||b.bytes>2*1024*1024||byteKeys.has(key))throw Error('Invalid bounded upstream byte binding');byteKeys.add(key);}}
+  const patchKey=c.repository+'/'+binding(c.changedFiles.map(f=>[f.path,f.patchSha256]));if(patches.has(patchKey))throw Error('Repeated identical change cannot fill target');patches.add(patchKey);
+ }
+ return value;
+}
+/** Build a corpus only from a separately reviewed profile; never borrow TestLore SDK paths. */
+export function preparePublicCandidate(preregistration,id,profile){
+ validateCandidates(preregistration);const c=preregistration.candidates.find(c=>c.id===id);if(!c)throw Error('Candidate absent from frozen selection');
+ if(c.sourcePaths.length!==1||!c.maintainerOraclePaths.length)throw Error('Candidate requires reviewed multi-source support or maintainer oracles');
+ if(!profile||!['legacy','unified-native'].includes(profile.executionMode??'legacy')||profile.reviewed!==true||profile.candidateId!==id||!path.isAbsolute(profile.root||'')||!['vitest','jest','playwright','node'].includes(profile.config?.adapter)||profile.config.discovery!=='native'||!Array.isArray(profile.expectedFailureNames)||!profile.expectedFailureNames.length||profile.expectedFailureNames.length>32)throw Error('Supply a reviewed native profile and independently demonstrated named failures');
+ if(profile.executionMode==='unified-native'&&profile.config.adapter!=='vitest')throw Error('Unified public corpus mode currently requires the Vitest adapter');
+ const root=fs.realpathSync(profile.root);if(git(root,'rev-parse','HEAD').trim()!==c.fixRevision||git(root,'status','--porcelain').trim()||git(root,'rev-parse',c.fixRevision+'^').trim()!==c.parentRevision)throw Error('Use clean exact pinned upstream checkout with parent present');
+ const remote=git(root,'remote','get-url','origin').trim().replace(/\.git$/,'');if(remote!==c.repository)throw Error('Checkout remote does not match frozen upstream repository');
+ const file=c.sourcePaths[0],before=git(root,'show',c.fixRevision+':'+file),after=git(root,'show',c.parentRevision+':'+file);
+ if(Buffer.byteLength(before)+Buffer.byteLength(after)>65536||before===after||fileIdentity(safePath(root,file)).sha256!==digest(before))throw Error('Source inversion exceeds bound or current bytes differ');
+ const oracleFiles=c.maintainerOraclePaths.map(file=>{if(!TEST.test(file))throw Error('Existing native adapter cannot bind this oracle filename');const sha256=digest(git(root,'show',c.fixRevision+':'+file));if(fileIdentity(safePath(root,file)).sha256!==sha256)throw Error('Maintainer oracle bytes changed');return {path:file,sha256};});
+ for(const f of c.byteBindings||[]){if(f.kind==='fixed-source'&&f.path===file&&f.sha256!==digest(before))throw Error('Frozen fixed-source mismatch');if(f.kind==='prior-source'&&f.path===file&&f.sha256!==digest(after))throw Error('Frozen prior-source mismatch');if(f.kind==='oracle'&&oracleFiles.some(o=>o.path===f.path&&o.sha256!==f.sha256))throw Error('Frozen oracle mismatch');}
+ const dependencyFiles=['package.json','package-lock.json','pnpm-lock.yaml','yarn.lock','bun.lock'].filter(file=>fs.existsSync(path.join(root,file))).map(file=>({logicalPath:file,...fileIdentity(path.join(root,file),2*1024*1024)}));
+ const nativePackage={vitest:'vitest',jest:'jest',playwright:'@playwright/test'}[profile.config.adapter];
+ let framework=null;const runtimeFiles=[];
+ if(nativePackage){const filename=path.join(root,'node_modules',nativePackage,'package.json'),metadata=readBoundedJson(filename,128*1024);framework={package:nativePackage,version:metadata.version,identity:fileIdentity(filename,128*1024)};runtimeFiles.push(framework.identity);if(typeof framework.version!=='string')throw Error('Native framework version unavailable');const declared=c.runtimeIdentity?.nativeVersions?.[nativePackage]??null;framework.upstreamDeclared=declared;framework.upstreamLockInstallationVerified=false;if(declared!==framework.version&&profile.allowFrameworkVersionMismatch!==true)throw Error('Installed framework differs from exact upstream declaration; require an explicit reviewed comparative-scope exception');}
+ const config=structuredClone(profile.config);if(config.runner&&config.runner[1]?.includes('node_modules/')&&path.isAbsolute(config.runner[1])&&!config.runner[1].startsWith(root+path.sep))throw Error('Native CLI must resolve from upstream project, not TestLore dependency copy');
+ if(config.runner?.[1]&&!config.runner[1].startsWith('-')){const launcher=path.resolve(root,config.runner[1]);if(!launcher.startsWith(root+path.sep))throw Error('Native entrypoint must be project-local');runtimeFiles.push(fileIdentity(launcher,2*1024*1024));}
+ const name='public-'+id.slice(0,40),change={name:'inverse-'+c.fixRevision.slice(0,12),file,before,after,expectedFailure:true};
+ const corpus={schemaVersion:1,executionMode:profile.executionMode??'legacy',pilot:{schemaVersion:1,repetitions:2,timeoutMs:30000,projects:[{name,root,scope:profile.scope,config,changes:[change]}]},labels:[{project:name,change:change.name,expectedFailureNames:profile.expectedFailureNames,oracleFiles,origin:{kind:'public-bugfix-inversion',maintainer:c.repository.slice('https://github.com/'.length)+' maintainers',repository:c.repository,fixRevision:c.fixRevision,parentRevision:c.parentRevision,fixedSourceHash:digest(before),buggySourceHash:digest(after),independenceNotes:'Upstream fixed maintainer oracle bytes remain unchanged; only exact prior source bytes restored. Failures supplied by separate full-run preflight. GitHub association/bytes do not prove semantic independence or general ecosystem representation.'}}]};
+ validateCorpus(corpus);
+ const prepared={schemaVersion:1,kind:'prepared-public-regression',candidateId:id,selectionCommitmentSha256:preregistration.commitmentSha256,profileHash:digest(profile),dependencyFiles,framework,runtimeFiles,executionMode:profile.executionMode??'legacy',controllerNode:{version:process.version,...fileIdentity(process.execPath,512*1024*1024)},corpus,preparedAt:new Date().toISOString(),qualified:false};return {...prepared,preparedCommitmentSha256:binding(prepared)};
+}
+const qualifiedAttempt=a=>a.status==='completed'&&a.assessment?.qualified===true&&a.assessment.implementationUnchanged===true&&a.assessment.scenarios===1&&a.assessment.faultScenarios===1&&a.assessment.requestedTrials===2&&a.assessment.completedTrials===2&&a.assessment.preservedFaultTrials===2&&a.assessment.independentlyDemonstratedFaultTrials===2&&a.assessment.stableScenarios===1&&a.assessment.qualifiedScenarios===1;
+export function publicAttemptSummary(selection,attempts){
+ validateCandidates(selection);const ids=new Set(selection.candidates.map(c=>c.id)),seen=new Set();
+ for(const a of attempts)if(!ids.has(a.candidateId)||seen.has(a.candidateId)||!['blocked','completed','partial'].includes(a.status))throw Error('Keep one retained accounting entry per frozen candidate');else seen.add(a.candidateId);
+ return {schemaVersion:1,kind:'public-corpus-accounting',selectionCommitmentSha256:selection.commitmentSha256,selectedUniqueChanges:selection.candidates.length,selectedProjects:new Set(selection.candidates.map(c=>c.repository)).size,attempted:attempts.length,unattempted:selection.candidates.length-attempts.length,blocked:attempts.filter(a=>a.status==='blocked').length,partial:attempts.filter(a=>a.status==='partial').length,qualified:attempts.filter(qualifiedAttempt).length,qualifiedProjects:new Set(attempts.filter(qualifiedAttempt).map(a=>selection.candidates.find(c=>c.id===a.candidateId).repository)).size,targetMet:attempts.filter(qualifiedAttempt).length===100&&new Set(selection.candidates.filter(c=>attempts.some(a=>a.candidateId===c.id&&qualifiedAttempt(a))).map(c=>c.repository)).size>=10,limitations:['Selections and upstream fix labels are not measured qualification.', 'Repeated trials never increase unique-change or project counts.', 'Cold/warm comparisons require explicit unchanged source/runtime/cache protocol; shared OS caches are uncontrolled.']};
+}
+export function executePreparedPublic(root,selection,prepared,relative){
+ validateCandidates(selection);const {preparedCommitmentSha256,...body}=prepared;
+ if(!HASH.test(preparedCommitmentSha256||'')||binding(body)!==preparedCommitmentSha256||prepared.selectionCommitmentSha256!==selection.commitmentSha256||!selection.candidates.some(c=>c.id===prepared.candidateId)||prepared.qualified!==false)throw Error('Prepared trial does not match frozen selection and preparation commitment');
+ for(const dependency of prepared.dependencyFiles||[])if(JSON.stringify(fileIdentity(dependency.path,2*1024*1024))!==JSON.stringify((({logicalPath:_,...identity})=>identity)(dependency)))throw Error('Dependency identity changed after preparation');
+ if(JSON.stringify(fileIdentity(process.execPath,512*1024*1024))!==JSON.stringify((({version:_,...identity})=>identity)(prepared.controllerNode)))throw Error('Runtime identity changed after preparation');
+ for(const file of prepared.runtimeFiles||[])if(JSON.stringify(fileIdentity(file.path,2*1024*1024))!==JSON.stringify(file))throw Error('Native framework identity changed after preparation');
+ const before=digest(prepared),implementation=fileIdentity(wrapper);const assessment=runCorpus(root,prepared.corpus,relative);
+ const unchanged=(actual,expected)=>{try{return JSON.stringify(actual())===JSON.stringify(expected);}catch{return false;}};
+ if(digest(prepared)!==before||!unchanged(()=>fileIdentity(wrapper),implementation)){assessment.qualified=false;assessment.controllerError='Public corpus wrapper changed during execution';}
+ for(const dependency of prepared.dependencyFiles||[])if(!unchanged(()=>fileIdentity(dependency.path,2*1024*1024),(({logicalPath:_,...identity})=>identity)(dependency))){assessment.qualified=false;assessment.controllerError='Dependency identity changed during execution';}
+ for(const file of prepared.runtimeFiles||[])if(!unchanged(()=>fileIdentity(file.path,2*1024*1024),file)){assessment.qualified=false;assessment.controllerError='Native framework identity changed during execution';}
+ let trialSpans=[];try{const report=readBoundedJson(path.join(root,relative,'pilot/summary.json'),16*1024*1024);trialSpans=(report.projects?.[0]?.changes?.[0]?.trials||[]).map((trial,index)=>({repetition:index+1,analysisCachePhase:index===0?'first-plan-in-new-workspace':prepared.corpus.pilot.projects[0].config.analysisCache?.enabled?'repeat-analysis-cache-enabled':'repeat-analysis-cache-disabled',armOrder:trial.order,fullMs:trial.fullMs,testLoreMs:trial.testLoreMs,nativeMs:trial.nativeMs,planningMs:trial.planningMs,subsetExecutionMs:trial.subsetMs,analysisCache:readBoundedJson(path.join(root,relative,'pilot',report.projects[0].name,'change-0-trial-'+index+'-plan.json')).analysisCache,mode:trial.mode,selectedFiles:trial.selectedFiles,totalFiles:trial.totalFiles,missedFailures:trial.missedFailures,nativeMissedFailures:trial.nativeMissedFailures,valid:trial.valid,stable:trial.stable}));if(trialSpans.length!==assessment.completedTrials||trialSpans.some(trial=>['fullMs','testLoreMs','nativeMs','planningMs','subsetExecutionMs'].some(key=>!Number.isFinite(trial[key])||trial[key]<0)))throw Error('Incomplete trial spans');}catch{assessment.qualified=false;assessment.controllerError='Public timing/cache spans incomplete; preserve raw pilot and assessment receipts';}
+ const result={candidateId:prepared.candidateId,status:assessment.error||assessment.controllerError?'partial':'completed',assessment,trialSpans,preparedHash:before,wrapperSha256:implementation.sha256,cacheProtocol:selection.protocol.cache};
+ fs.writeFileSync(path.join(root,relative,'public-attempt.json'),JSON.stringify(result,null,2)+'\n',{flag:'wx',mode:0o600});return result;
+}
+if(process.argv[1]&&path.resolve(process.argv[1])===fileURLToPath(import.meta.url)){
+ try{const [mode,...args]=process.argv.slice(2);let result,output;
+  if(mode==='freeze'&&args.length===4&&args[0]==='--input'&&args[2]==='--output'){result=freezePublicCandidates(readBoundedJson(args[1],16*1024*1024));output=args[3];}
+  else if(mode==='prepare'&&[8,10].includes(args.length)&&args[0]==='--selection'&&args[2]==='--candidate'&&args[4]==='--profile'&&((args.length===8&&args[6]==='--output')||(args.length===10&&args[6]==='--root'&&args[8]==='--output'))){const profile=readBoundedJson(args[5]);if(args.length===10)profile.root=path.resolve(args[7]);result=preparePublicCandidate(readBoundedJson(args[1],16*1024*1024),args[3],profile);output=args.at(-1);}
+  else if(mode==='run'&&args.length===6&&args[0]==='--selection'&&args[2]==='--prepared'&&args[4]==='--output'){result=executePreparedPublic(process.cwd(),readBoundedJson(args[1],16*1024*1024),readBoundedJson(args[3],16*1024*1024),args[5]);console.log(JSON.stringify(result,null,2));process.exitCode=result.assessment.qualified?0:1;}
+  else throw Error('Use freeze --input DATA --output NEW_SELECTION; prepare --selection SELECTION --candidate ID --profile PROFILE [--root CHECKOUT] --output NEW_PREPARED; or run --selection SELECTION --prepared PREPARED --output .tddswarm/pilots/NEW_ALIAS');
+  if(output){fs.writeFileSync(output,JSON.stringify(result,null,2)+'\n',{flag:'wx',mode:0o600});console.log('Frozen public corpus input written; qualification remains unmeasured.');}
+ }catch(error){console.error(error.message);process.exitCode=1;}
+}

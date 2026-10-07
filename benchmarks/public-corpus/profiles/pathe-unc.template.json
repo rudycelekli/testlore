@@ -1,0 +1,37 @@
+{
+  "reviewed": true,
+  "candidateId": "unjs-pathe-b52fcacc5971",
+  "root": null,
+  "scope": "Pinned pathe runtime unit suite; unchanged maintainer tests import local src. Comparative installed Vitest differs from upstream lock; exclude lint/types/build.",
+  "config": {
+    "adapter": "vitest",
+    "discovery": "native",
+    "runner": [
+      "node",
+      "node_modules/vitest/vitest.mjs",
+      "run",
+      "--maxWorkers=1",
+      "{files}"
+    ],
+    "analysisCache": {
+      "enabled": true,
+      "maxEntries": 2000,
+      "maxBytes": 33554432
+    }
+  },
+  "allowFrameworkVersionMismatch": true,
+  "expectedFailureNames": [
+    "resolve resolve('//server/share/file','../path') should be '//server/share/path'",
+    "resolve resolve('//server/share/file','../path') should be '//server/share/path' on Windows",
+    "resolve resolve('\\\\\\\\server\\\\share\\\\file') should be '//server/share/file'",
+    "resolve resolve('\\\\\\\\server\\\\share\\\\file') should be '//server/share/file' on Windows",
+    "resolve resolve('\\\\\\\\server\\\\share\\\\file','..\\\\path') should be '//server/share/path'",
+    "resolve resolve('\\\\\\\\server\\\\share\\\\file','..\\\\path') should be '//server/share/path' on Windows",
+    "resolve resolve('\\\\\\\\server\\\\share\\\\file','sub') should be '//server/share/file/sub'",
+    "resolve resolve('\\\\\\\\server\\\\share\\\\file','sub') should be '//server/share/file/sub' on Windows",
+    "resolve resolve('\\\\\\\\unc-server-name\\\\unc-path') should be '//unc-server-name/unc-path'",
+    "resolve resolve('\\\\\\\\unc-server-name\\\\unc-path') should be '//unc-server-name/unc-path' on Windows"
+  ],
+  "labelEvidence": "After frozen candidate selection, fixed maintainer tests passed, and two independent full runs of exact prior source bytes produced the same ten failures. Three-arm qualification remains unmeasured.",
+  "executionMode": "unified-native"
+}

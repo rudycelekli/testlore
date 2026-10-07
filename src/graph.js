@@ -6,6 +6,7 @@ import { createHash } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import { createAnalysisCache, ANALYSIS_CACHE_IMPLEMENTATION } from './graph-cache.js';
 import { discover as nativeDiscovery, resolveNativeBatch, combinedNativePlanningSupported } from './execution.js';
+import { sessionPlanning } from './native-session.js';
 import { declaredInputs } from './inputs.js';
 import { phaseTimings } from './timing.js';
 import { SOURCE, TEST, listFiles, normalize, safePath, readConfig } from './files.js';
@@ -67,7 +68,7 @@ export function resolveImport(file, spec, files) {
   return found.length === 1 ? { path: found[0] } : { unresolved: true };
 }
 
-export function buildGraph(root) {
+export function buildGraph(root, nativeSession) {
   const timing = phaseTimings();
   const config = readConfig(root);
   const files = listFiles(root);
@@ -77,7 +78,12 @@ export function buildGraph(root) {
   timing.mark('inventory');
   if(config.discovery === 'native' || Array.isArray(config.discovery)) {
     let combined, sharedAttempt;
-    if(combinedNativePlanningSupported(root,config)) {
+    if(nativeSession) {
+      combined=sessionPlanning(nativeSession,root);
+      graph.nativePlanning={method:'fresh-unified-native-context',complete:true};
+      graph.nativeResolutions=new Map(combined.additionalResolutions.map(item=>[JSON.stringify([item.file,item.specifier]),item.resolution]));
+      for(const file of combined.configFiles)graph.configFiles.add(file);
+    } else if(combinedNativePlanningSupported(root,config)) {
       combined=resolveNativeBatch(root,[],config,{discover:true,transitive:true,roots:[...configurationSeeds(root,config,files)]});
       sharedAttempt={complete:combined.complete,error:combined.error};
       // A failed shared context contributes no authority. Preserve fresh native

@@ -94,6 +94,13 @@ function fake(t, script) {
 }
 const emitValid = `fs.writeFileSync(output,${JSON.stringify(JSON.stringify(reply))});process.stdout.write(${JSON.stringify(jsonl(valid))});`;
 
+test('native catalog budget is explicit without relaxing rejection of warning/error items', t => {
+  const directory = fixture(t);
+  const request = codexRequest({role:'architect'}, directory);
+  assert.ok(request.args.includes('skills.max_context_tokens=10000'));
+  assert.throws(() => audit([...prefix, {type:'item.completed',item:{id:'warning',type:'error',message:'Skill descriptions were shortened to fit the skills context budget.'}}, message(), completed]), code('NATIVE_ERROR_ITEM'));
+});
+
 test('fake native executable must pass terminal, file and identity audit', async t => {
   const { directory, request, env, executable } = fake(t, emitValid);
   const { value, audit } = await runCodex(request.args, request.prompt, directory, env);

@@ -6,6 +6,7 @@ import { execute, adapterFor } from './execution.js';
 import { rememberServices, serviceInputs } from './inputs.js';
 import { runnerIdentity, snapshot, freshness } from './provenance.js';
 import { renderRunReport } from './run-report.js';
+import { openNativeSession, unifiedNativeEligibility } from './native-session.js';
 import { externalRun } from './integrations.js';
 
 export function compareShadow(selection, execution) {
@@ -30,30 +31,63 @@ export function compareSubsetCases(full, subset, files) {
  return {complete:full.complete===true&&subset.complete===true&&!missing.length&&!changed.length&&!extra.length,missing,changed,extra};
 }
 
-export function run(root, options = {}) {
-  const started = performance.now();
+export function run(root,options={}) {
+ const prepared=prepareRun(root,options);
+ if(prepared.terminal)return prepared.terminal;
+ return finishRun(prepared,execute(root,prepared.executedTests,prepared.config,prepared.options));
+}
+
+/** Opt-in single fresh context; unsupported preflight retains the synchronous path. */
+export async function runUnifiedNative(root,options={}) {
+ root=path.resolve(root);const started=performance.now(),config=readConfig(root);
+ if(options.changed)throw new Error('--changed is diagnostic only. Unified execution requires Git change discovery.');
+ if(options.shadow&&options.selective)throw new Error('Choose shadow or selective execution');
+ if(options.signal?.aborted)return {exitCode:2,executed:false,complete:false,error:'Unified execution cancelled'};
+ const unsupported=unifiedNativeEligibility(root,config);
+ if(unsupported){const result=run(root,options);return {...result,unifiedNative:{prototype:true,used:false,fallbackReason:unsupported}};}
+ const initial=snapshot(root,config);let session,prepared,executionAttempted=false;
+ try {
+  session=await openNativeSession(root,config,options);
+  if(session.unsupported)throw new Error('Native command eligibility changed before startup; rerun after inputs stabilize');
+  const startupCheck=freshness(initial,snapshot(root,config));
+  if(!startupCheck.fresh)throw new Error('Inputs changed during native context startup: '+startupCheck.reasons.join(', '));
+  prepared=prepareRun(root,options,session.token,started);
+  if(prepared.terminal)return {...prepared.terminal,unifiedNative:{prototype:true,used:true,contexts:1}};
+  executionAttempted=true;
+  const execution=await session.execute(prepared.executedTests);
+  if(!options.capture){if(execution.stdout)process.stdout.write(execution.stdout);if(execution.stderr)process.stderr.write(execution.stderr);}
+  return finishRun(prepared,execution);
+ } catch(error) {
+  if(prepared&&executionAttempted)return finishRun(prepared,{adapter:'vitest',exitCode:2,complete:false,tests:[],collectionFiles:[],requestedFiles:prepared.executedTests,executedFiles:prepared.executedTests,actualExecutedFilesUnverified:true,durationMs:Math.round(performance.now()-started-prepared.planningMs),...session?.failureEvidence?.(),error:error.message,unifiedNative:{prototype:true,used:true,contexts:1,partial:true}});
+  return {exitCode:2,executed:executionAttempted,complete:false,tests:[],requestedFiles:prepared?.executedTests||[],...(prepared?{plan:prepared.selection}:{}),...session?.failureEvidence?.(),...error.nativeFailureEvidence,error:error.message,unifiedNative:{prototype:true,used:true,reason:'Unified context rejected; no automatic replan after configuration execution'}};
+ } finally {await session?.close?.();}
+}
+
+function prepareRun(root, options = {}, nativeSession, started = performance.now()) {
   const config = readConfig(root);
   if(options.shadow && options.selective)throw new Error('Choose shadow or selective execution');
   options = {...options, shadow: Boolean(options.shadow || (config.executionMode === 'shadow' && !options.selective && !options.full))};
   if (config.integration) {
     if (options.changed) throw new Error('--changed is diagnostic only. run uses the native engine to discover changes.');
-    return externalRun(root, config, options);
+    return {terminal:externalRun(root, config, options)};
   }
   const planningStart=performance.now();
-  const selection = plan(root, options);
-  const planningMs=Math.round(performance.now()-planningStart);
-  if (selection.discovery?.complete===false)return {plan:selection,exitCode:2,error:'Native discovery is incomplete. Run the native full-suite command and repair discovery before selection.'};
+  const selection = plan(root, options,nativeSession);
+  const planningMs=Math.round(performance.now()-(nativeSession?started:planningStart));
+  if (selection.discovery?.complete===false)return {terminal:{plan:selection,exitCode:2,error:'Native discovery is incomplete. Run the native full-suite command and repair discovery before selection.'}};
   const before=snapshot(root,config);
   const serviceBefore=serviceInputs(root,config);
   const decisionCheck=freshness(selection.provenance,before);
   const plannedServices=JSON.stringify(selection.serviceTokens||{});
   if(!decisionCheck.fresh || serviceBefore.warnings.length || plannedServices!==JSON.stringify(before.services||{}) || plannedServices!==JSON.stringify(serviceBefore.values))
-    return {plan:selection,exitCode:2,executed:false,complete:false,error:'Inputs changed during selection; rerun after source and service versions stabilize.',decisionDrift:[...decisionCheck.reasons,...(plannedServices!==JSON.stringify(before.services||{}) || plannedServices!==JSON.stringify(serviceBefore.values) ? ['planned-service-versions-changed'] : [])]};
-  if (!selection.total) return { plan: selection, exitCode: 2, error: 'No test files detected. Run generate or configure a supported project.' };
-  if (!selection.selected.length && !options.shadow) return { plan: selection, exitCode: 0, executed: false };
-  if (!config.runner && adapterFor(config)!=='playwright' && selection.selected.some(f => !/\.[cm]?js$/.test(f))) return { plan: selection, exitCode: 2, error: 'Configure a TypeScript/JSX-capable runner. See docs/configuration.md.' };
+    return {terminal:{plan:selection,exitCode:2,executed:false,complete:false,error:'Inputs changed during selection; rerun after source and service versions stabilize.',decisionDrift:[...decisionCheck.reasons,...(plannedServices!==JSON.stringify(before.services||{}) || plannedServices!==JSON.stringify(serviceBefore.values) ? ['planned-service-versions-changed'] : [])]}};
+  if (!selection.total) return {terminal:{ plan: selection, exitCode: 2, error: 'No test files detected. Run generate or configure a supported project.' }};
+  if (!selection.selected.length && !options.shadow) return {terminal:{ plan: selection, exitCode: 0, executed: false }};
+  if (!config.runner && adapterFor(config)!=='playwright' && selection.selected.some(f => !/\.[cm]?js$/.test(f))) return {terminal:{ plan: selection, exitCode: 2, error: 'Configure a TypeScript/JSX-capable runner. See docs/configuration.md.' }};
   const executedTests = options.shadow ? selection.decisions.map(d => d.test) : selection.selected;
-  const execution = execute(root, executedTests, config, options);
+  return {root,options,config,selection,before,serviceBefore,executedTests,planningMs,started};
+}
+function finishRun({root,options,config,selection,before,serviceBefore,executedTests,planningMs,started},execution) {
   const actualFiles=[...new Set(execution.executedFiles||executedTests)];
   const sourceCheck=freshness(before,snapshot(root,config));
   const serviceAfter=serviceInputs(root,config);

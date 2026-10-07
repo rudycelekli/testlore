@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import {spawnSync} from 'node:child_process';
 import { fileURLToPath } from 'node:url';
-import { audit, modules, plan, generate, run, snapshot, ingestQuality, measureStability, captureRuntime, stagePatch, validateCandidates, applyPatch, externalPlan, externalRun, aqeGenerate, improve, installQualityLayer, installQualityWorkflow, publishImprovement, recallLessons, reflectLearning, exportLearning, ensureQualityAgent, seedRequirements, initializeWitness, observeQuality, inspectEvidenceLoop, challengeEvidence, reviewEvidence, recallOutcomeLessons } from './index.js';
+import { audit, modules, plan, generate, run, runUnifiedNative, snapshot, ingestQuality, measureStability, captureRuntime, stagePatch, validateCandidates, applyPatch, externalPlan, externalRun, aqeGenerate, improve, installQualityLayer, installQualityWorkflow, publishImprovement, recallLessons, reflectLearning, exportLearning, ensureQualityAgent, seedRequirements, initializeWitness, observeQuality, inspectEvidenceLoop, challengeEvidence, reviewEvidence, recallOutcomeLessons } from './index.js';
 import { safePath, readConfig, git } from './files.js';
 import { pluginCatalog, configurePlugin, checkPlugins, configurePluginsAutomatically } from './plugins.js';
 import { recommendPlugins } from './plugin-recommendations.js';
@@ -71,6 +71,7 @@ Options:
   --changed <paths>   Comma-separated paths for a diagnostic plan (not run)
   --full             Force the full discovered test suite
   --selective        Explicitly execute only the selection (override configured shadow)
+  --unified-native   Opt in to one fresh Vitest planning/execution context (prototype)
   --shadow           Run the full suite while recording the proposed selection
   --execute          Invoke an agent (generate) or apply a validated patch (apply)
   --local            Keep a tested improvement branch without opening a PR
@@ -86,7 +87,7 @@ export function parseArgs(args) {
   const options = {};
   let command = 'help';
   const values = new Set(['root','base','changed','output','report','type','provenance','repeat','id','patch','target','framework','head','action-ref','base-branch','query','name','enable','disable','select','plugin','settings','manifest','mutate','defects','revision','deadline-ms','trusted-key','checkpoint','claim','verdict','reviewer']);
-  const flags = new Set(['json', 'full', 'shadow', 'execute', 'help', 'version', 'local', 'no-ci','check','recommend','auto','selective','allow-execution']);
+  const flags = new Set(['json', 'full', 'shadow', 'execute', 'help', 'version', 'local', 'no-ci','check','recommend','auto','selective','allow-execution','unified-native']);
   if (args[0] && !args[0].startsWith('-')) command = args.shift();
   for (let i = 0; i < args.length; i++) {
     const key = args[i].replace(/^--/, '');
@@ -174,6 +175,7 @@ export async function main(args = process.argv.slice(2)) {
     await startMcpServer({root, allowExecution: options['allow-execution'] === true});
     return 0;
   }
+  if (options['unified-native'] && command !== 'run') throw new Error('--unified-native applies only to run');
   if (options['allow-execution']) throw new Error('--allow-execution applies only to mcp');
   if ((options.auto || options.recommend) && command !== 'plugins') throw new Error('--auto and --recommend require the plugins command');
   if(options.shadow && options.selective)throw new Error('Choose --shadow or --selective');
@@ -288,7 +290,7 @@ export async function main(args = process.argv.slice(2)) {
     case 'init': result = init(root); break;
     case 'audit': result = audit(root); break;
     case 'plan': result = plan(root, options); break;
-    case 'run': result = run(root, { ...options, capture: options.json }); break;
+    case 'run': result = options['unified-native'] ? await runUnifiedNative(root, { ...options, capture: options.json }) : run(root, { ...options, capture: options.json }); break;
     case 'modules': result = modules(root); break;
     case 'generate': result = await generate(root, options); break;
     case 'demo': {

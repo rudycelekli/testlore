@@ -1,6 +1,6 @@
 # Qualification campaign: September 30, 2026
 
-The [October 6 follow-up](qualification-20261006.md) contains fresh integrated real-history, boundary and external upstream-oracle results, plus the prospective live learning attempt. Earlier frozen results below remain unchanged.
+The [October 7 follow-up](qualification-20261007.md) adds complete four-arm CLI measurements, a reviewed real asset challenge, bounded native generation completion, public-corpus accounting and successful real Codex fixture execution. The [October 6 follow-up](qualification-20261006.md) retains the preceding real-history and learning attempt. Earlier frozen results below remain unchanged.
 
 TestLore has stronger evidence contracts. These results do not establish a general speed advantage, improved learning, complete native agent compatibility or npm publication.
 

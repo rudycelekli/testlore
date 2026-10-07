@@ -8,6 +8,7 @@ const root=fileURLToPath(new URL('../',import.meta.url));
 export function npmReadiness({cliVersion,identity,metadata,environment,mainRevision,sourceRevision}) {
   const version=/^(\d+)\.(\d+)\.(\d+)$/.exec(cliVersion || ''), numbers=version?.slice(1).map(Number);
   const oidcCliSupported=!!numbers&&(numbers[0]>11||(numbers[0]===11&&(numbers[1]>5||(numbers[1]===5&&numbers[2]>=1))));
+  const publisherConfigurationCliSupported=!!numbers&&(numbers[0]>11||(numbers[0]===11&&numbers[1]>=15));
   const packageObserved=metadata?.name==='testlore';
   const protectedEnvironment=environment?.name==='npm-alpha' && environment.protection_rules?.some(r=>r.type==='required_reviewers'&&r.reviewers?.length>0)===true && environment.protection_rules?.some(r=>r.type==='branch_policy')===true;
   const exactMain=/^[a-f0-9]{40}$/.test(sourceRevision || '') && mainRevision===sourceRevision;
@@ -19,10 +20,10 @@ export function npmReadiness({cliVersion,identity,metadata,environment,mainRevis
   if(!exactMain)blockers.push('source-is-not-current-main');
   // npm whoami is interactive authentication only; it cannot test a CI OIDC mapping.
   blockers.push('npm-trusted-publisher-and-direct-publish-permission-require-account-verification');
-  return {schemaVersion:1,kind:'read-only-npm-readiness',ready:false,oidcCliSupported,interactiveIdentityAvailable:identity===true,publicPackageObserved:packageObserved,protectedEnvironment,exactMain,blockers,
-    publisher:{owner:'rudycelekli',repository:'testlore',workflow:'alpha-release.yml',environment:'npm-alpha',allowedAction:'npm publish'},
+  return {schemaVersion:1,kind:'read-only-npm-readiness',ready:false,oidcCliSupported,publisherConfigurationCliSupported,interactiveIdentityAvailable:identity===true,publicPackageObserved:packageObserved,protectedEnvironment,exactMain,blockers,
+    publisher:{owner:'rudycelekli',ownerKind:'github-repository-owner',githubOwner:'rudycelekli',npmOwner:null,npmOwnershipVerified:false,repository:'testlore',workflow:'alpha-release.yml',environment:'npm-alpha',allowedAction:'npm publish'},
     nextActions:[...(!packageObserved?['Use maintainer npm access to establish ownership and first-package bootstrap; do not infer name availability from a public 404.']:[]),'Configure or verify the exact trusted publisher on npmjs.com; new mappings must explicitly allow npm publish.','Dispatch the protected exact-SHA workflow only after qualification and publisher verification.'],
-    limitations:['Read-only diagnostics, not a release seal or proof of package ownership.','Interactive npm authentication does not establish CI OIDC readiness.','The npm account mapping and publishing permission are not exposed by these probes; no readiness claim is inferred.']};
+    limitations:['Read-only diagnostics, not a release seal or proof of package ownership.','Interactive npm authentication does not establish CI OIDC readiness.','GitHub repository ownership does not establish npm account or package ownership.','Publishing via OIDC requires npm >=11.5.1; configuring publishers through the npm CLI requires >=11.15.0 and authenticated package write access. The website is a separate configuration path.','The npm account mapping and publishing permission are not exposed by these probes; no readiness claim is inferred.']};
 }
 function invoke(command,args){const result=spawnSync(command,args,{cwd:root,encoding:'utf8',shell:false,timeout:15000,maxBuffer:256*1024});return {ok:!result.error&&result.status===0,output:result.stdout?.trim()||''};}
 function json(result){try{return result.ok?JSON.parse(result.output):null;}catch{return null;}}

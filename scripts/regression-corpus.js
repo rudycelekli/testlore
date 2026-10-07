@@ -2,7 +2,8 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { pilot, validatePilotManifest, exportPilot } from '../src/pilot.js';
+import * as pilotApi from '../src/pilot.js';
+const {pilot,validatePilotManifest,exportPilot}=pilotApi;
 import { digest } from '../src/provenance.js';
 import { git, safePath, TEST } from '../src/files.js';
 import { readBoundedJson } from './evaluation-commitment.js';
@@ -22,7 +23,9 @@ const named = run => run.complete === true && Array.isArray(run.tests) && run.te
 const percentile = (values, p) => values.length ? [...values].sort((a,b)=>a-b)[Math.ceil(values.length * p)-1] : null;
 
 export function validateCorpus(manifest) {
+  if(manifest?.executionMode!==undefined&&!['legacy','unified-native'].includes(manifest.executionMode))throw new Error('Unsupported explicit corpus execution mode');
   const validated = validatePilotManifest(manifest?.pilot);
+  if(manifest.executionMode==='unified-native'&&validated.projects.some(project=>project.config.adapter!=='vitest'))throw new Error('Unified corpus mode currently requires only Vitest projects');
   if (manifest.schemaVersion !== 1 || !Array.isArray(manifest.labels) || manifest.labels.length !== validated.projects.reduce((n,p)=>n+p.changes.length,0)) throw new Error('Exactly one independent outcome label per declared change is required');
   const seen = new Set();
   for (const label of manifest.labels) {
@@ -77,7 +80,9 @@ export function runCorpus(root, manifest, relative) {
   try {
     identity=captureIdentity();
     fs.writeFileSync(path.join(output,'implementation-identity.json'),JSON.stringify(identity.public,null,2),{flag:'wx',mode:0o600});
-    report = pilot(root,manifest.pilot,{execute:true,output:relative+'/pilot'});
+    const executionMode=manifest.executionMode??'legacy';
+    if(executionMode==='unified-native'&&!pilotApi.PILOT_EXECUTION_MODES?.includes('unified-native'))throw new Error('Current pilot implementation does not support the frozen unified-native execution mode');
+    report = pilot(root,manifest.pilot,{execute:true,output:relative+'/pilot',unifiedNative:executionMode==='unified-native'});
     aggregate = { ...assessCorpus(report,manifest.labels), corpusHash:digest(manifest), pilot:exportPilot(report), implementationIdentity:identity.public };
   } catch (error) {
     fs.writeFileSync(path.join(output,'controller-error.json'),JSON.stringify({error:error.message}),{flag:'wx',mode:0o600});
@@ -86,6 +91,7 @@ export function runCorpus(root, manifest, relative) {
   }
   aggregate.implementationUnchanged=false;
   if(identity)try{assertFileIdentities(identity.bindings);if(JSON.stringify(fileIdentity(process.execPath,512*1024*1024))!==JSON.stringify(identity.nodeBinding))throw new Error('Controller Node identity drift');aggregate.implementationUnchanged=true;}catch{aggregate.qualified=false;aggregate.controllerError='Controller implementation identity changed during measurement';}
+  aggregate.executionMode=manifest.executionMode??'legacy';
   aggregate.controllerElapsedMs = Math.round(performance.now()-started);
   fs.writeFileSync(path.join(output,'assessment.json'),JSON.stringify(aggregate,null,2)+'\n',{flag:'wx',mode:0o600});
   return aggregate;

@@ -6,8 +6,25 @@ import { createRequire } from 'node:module';
 import { pathToFileURL } from 'node:url';
 import { spawnSync } from 'node:child_process';
 import ts from 'typescript';
+import {encodeNativeFrame,nativeFrameReader,readNativeJson} from '../native-protocol.js';
+let protocolOutput, instruction;
+function sendBounded(message) {
+ const frame=encodeNativeFrame(message);
+ return new Promise((resolve,reject)=>protocolOutput.write(frame,error=>error?reject(error):resolve()));
+}
 const request = JSON.parse(fs.readFileSync(process.argv[2], 'utf8'));
 const { root, adapter, command, imports } = request;
+if(request.unified) {
+ protocolOutput=fs.createWriteStream(null,{fd:4,autoClose:false});
+ const input=fs.createReadStream(null,{fd:3,autoClose:false});
+ instruction=new Promise((resolve,reject)=>{
+  let received=false;const frames=nativeFrameReader({onError:reject,onFrame:value=>{if(received)return reject(new Error('Duplicate unified execution instruction'));received=true;resolve(value);}});
+  input.on('data',bytes=>frames.push(bytes));input.once('end',()=>{frames.end();if(!received)reject(new Error('Unified controller disconnected'));});input.once('error',reject);
+ });
+ // Keep an early input-channel rejection observed until its execution await.
+ instruction.catch(()=>{});
+}
+
 const queue = [...imports];
 const seen = new Set(imports.map(item=>JSON.stringify([item.file,item.specifier])));
 const expanded = new Set();
@@ -72,6 +89,19 @@ function rejectArgvConfiguration(files) {
   }
 }
 
+function rejectUnifiedProjectPlugins(files,plugins) {
+  // This prototype has not established stateful user-plugin planning/run parity.
+  // Reject both observed configuration declarations and unknown resolved plugins.
+  for(const file of files) {
+    if(!file.startsWith(root+path.sep)||file.includes(path.sep+'node_modules'+path.sep)||!fs.existsSync(file)||!/\.[cm]?[jt]sx?$/.test(file))continue;
+    const ast=ts.createSourceFile(file,fs.readFileSync(file,'utf8'),ts.ScriptTarget.Latest,true);let declared=false;
+    const visit=node=>{if((ts.isIdentifier(node)||ts.isStringLiteralLike(node))&&node.text==='plugins')declared=true;ts.forEachChild(node,visit);};visit(ast);
+    if(declared)throw new Error('Unified native prototype does not support project plugins; verify with the legacy native full run');
+  }
+  const known=new Set(['vite:optimized-deps','vite:watch-package-data','vite:pre-alias','alias','vitest:capture-raw-test-config','vitest:config:cli','vitest:config','vitest:css-disable','vitest:resolve-core','vitest:meta-env-replacer','vitest:ssr-module-runner-fixer','vitest:browser:loader','vite:modulepreload-polyfill','vite:resolve-dev','vite:resolve-builtin:get-environment','vite:resolve-builtin','vite:html-inline-proxy','vite:css','builtin:oxc-runtime','vite:oxc','builtin:vite-json','vite:wasm-helper','vite:worker','vite:asset','vite:forward-console','vitest:test-config','vitest:config:server-defaults','vitest:environments-module-runner','vite:define','vite:css-post','vite:build-html','vite:worker-import-meta-url','vite:asset-import-meta-url','vite:dynamic-import-vars','vite:import-glob','vitest:config:server','vitest:config:append','vitest:css-empty-post','vitest:mocks','vitest:automock','vitest:coverage-transform','vitest:normalize-url','vitest:ui-injector','vitest:browser:loader:post','vite:client-inject','vite:css-analysis','vite:import-analysis','vitest','vite:resolve','vite:esbuild','vite:json','vitest:normalize-optimizer','vite:wasm-fallback']);
+  if(!Array.isArray(plugins)||plugins.some(plugin=>!known.has(plugin.name)))throw new Error('Unified native prototype encountered an unqualified resolved plugin; use the legacy native full run');
+}
+
 try {
   if (adapter === 'jest') {
     const result = spawnSync(command[0], [...command.slice(1), '--showConfig'], { cwd: root, encoding: 'utf8', env: process.env, timeout: 30000, maxBuffer: 16 * 1024 * 1024 });
@@ -106,7 +136,7 @@ try {
     process.env.TEST = 'true'; process.env.VITEST = 'true'; process.env.NODE_ENV ??= 'test';
     const unsupported = command.some(arg => /^(?:--(?:workspace|project|browser|root|configLoader|environment|no-isolate|isolate)|-r)(?:=|$)/.test(arg));
     if (unsupported) throw new Error('Unsupported native resolution context; use a full suite');
-    let context;
+    let context, unifiedSpecs;
     if(request.discover) {
       if(!Array.isArray(request.invocation))throw new Error('Missing native invocation binding');
       process.argv=[...request.invocation];
@@ -116,7 +146,7 @@ try {
       const version=JSON.parse(fs.readFileSync(requireCLI.resolve('vitest/package.json'),'utf8')).version;
       const parsed=vitest.parseCLI(['vitest',...command.slice(index+1)]);
       if(parsed.filter.length)throw new Error('Shared native planning does not accept positional scope filters');
-      const options={...parsed.options,root,run:true,watch:false};
+      const options={...parsed.options,root,run:true,watch:false,...(request.unified?{reporters:['json'],outputFile:request.reportFile}: {})};
       if(/^4\.1\./.test(version))context=await vitest.createVitest('test',options,{logLevel:'silent'});
       else if(/^5\./.test(version))context=await vitest.createVitest(options,{logLevel:'silent'});
       else throw new Error('Unsupported shared native planning API version');
@@ -135,6 +165,7 @@ try {
     globals(base.test || {},['setupFiles','globalSetup']);
     if(context) {
       const specs=await context.getRelevantTestSpecifications([]);
+      if(request.unified)unifiedSpecs=specs;
       output.discovery={files:[...new Set(specs.map(spec=>spec.moduleId))],complete:true};
       for(const file of output.discovery.files)expand(file);
     }
@@ -142,6 +173,7 @@ try {
     output.configFiles.push(...(loaded?.dependencies || []), ...(loaded?.path ? [loaded.path] : []));
     if(context)output.configFiles.push(...(context.vite.config.configFileDependencies||[]),...(context.vite.config.configFile?[context.vite.config.configFile]:[]));
     rejectArgvConfiguration(output.configFiles);
+    if(request.unified)rejectUnifiedProjectPlugins(output.configFiles,context.vite.config.plugins);
     const aliases = value => Array.isArray(value) ? value : Object.entries(value || {}).map(([find, replacement]) => ({ find, replacement }));
     const server = context ? context.vite : await vite.createServer({ ...base, root, mode, configFile: false, logLevel: 'silent', server: { ...base.server, middlewareMode: true, watch: null }, resolve: { ...base.resolve, alias: [...aliases(base.test?.alias), ...aliases(base.resolve?.alias)] } });
     try {
@@ -156,6 +188,20 @@ try {
         record(resolution(resolved),queue[index],index);
       }
     } finally { if(!context)await server.close(); }
+    if(request.unified) {
+      await sendBounded({phase:'planned',value:output});
+      const selectedInstruction=await instruction;
+      if(selectedInstruction.phase!=='execute'||!Array.isArray(selectedInstruction.files)||selectedInstruction.files.length>10000||selectedInstruction.files.some(file=>typeof file!=='string'))throw new Error('Invalid unified execution request');
+      const expected=new Set(selectedInstruction.files.map(file=>path.resolve(root,file)));
+      const specs=unifiedSpecs;
+      const selected=specs.filter(spec=>expected.has(spec.moduleId));
+      if(expected.size!==selected.length)throw new Error('Unified requested specifications are missing or duplicated');
+      if(typeof context.standalone==='function')await context.standalone();else await context.init();
+      const result=await context.runTestSpecifications(selected,selected.length===specs.length);
+      if(result.unhandledErrors?.length)throw new Error('Unified native execution has unhandled errors');
+      const value=readNativeJson(request.reportFile);
+      await sendBounded({phase:'executed',value});
+    }
     } finally {if(context)await context.close();}
   }
 } catch (error) {
@@ -163,4 +209,4 @@ try {
   output.additionalResolutions = [];
   output.resolutions = imports.map(() => ({ paths: [], unresolved: true }));
 }
-process.stdout.write(JSON.stringify(output));
+if(request.unified){if(!output.complete)await sendBounded({phase:'failed',error:String(output.error||'Native session failed').slice(0,500)});protocolOutput.end();}else process.stdout.write(JSON.stringify(output));

@@ -1,0 +1,13 @@
+# One fresh Vitest context (prototype)
+
+`testlore run --unified-native --shadow` opts into a fresh context for discovery, dependency resolution, baseline import recovery, and execution. Shadow mode still executes the full suite and records proposed omissions. `--selective` explicitly executes the proposed selection. Existing synchronous `run` and `plan` APIs remain available; the programmatic prototype is `await runUnifiedNative(root, options)`.
+
+The supported profile is a POSIX host, the current Node executable, a canonical installed Vitest 4.1 or 5 CLI, narrow admitted flags, native discovery, and one root project. The command must retain its configuration semantics. Unsupported command profiles visibly use the legacy path. Unsupported loaded projects, browser/custom environments, shared isolation, argument-dependent configuration, declared or unknown project plugins, or changed inputs produce an incomplete result after startup; they do not silently reload configuration and continue. A stateful resolver counterexample showed why extra planning calls cannot assume plugin parity.
+
+The context lives for one invocation. Parsed source caching can remain enabled, but configuration, native discovery, resolver edges, and execution context are not reused across commits. The same source/service freshness and failure-history rules apply. Native JSON collection and exact legacy case identities remain checked. Programmatic execution is labeled explicitly; the receipt does not invent a spawned CLI command.
+
+Broker messages use length-prefixed dedicated pipes; declared sizes are rejected before allocation or JSON decoding. Native JSON reports use bounded regular descriptors with no-follow and before/after identity checks. The deadline bounds the native session and rejects late results; synchronous parent planning, hashing, or probes cannot be preempted by its timer. Incomplete runs retain requested failure scopes with `actualExecutedFilesUnverified`; those files and empty case lists must not be described as confirmed execution.
+
+Focused qualification covers both supported Vitest versions, independently asserted faults, selected/full case identities, removed imports, fresh aliases, drift, unsupported loaded contexts, bounded output, cancellation, and descendant cleanup. This is configuration parity for those cases, not proof about arbitrary plugin behavior. Total cold/warm campaigns must include planning, execution, provenance, reporting, and process startup before claiming a speed gain.
+
+See the official [Vitest programmatic API](https://vitest.dev/api/advanced/vitest). TestLore binds admitted installed versions rather than treating a documentation example as universal API parity.

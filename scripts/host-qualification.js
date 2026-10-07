@@ -127,6 +127,7 @@ export function hostEvents(host, stdout) {
     nativeApiRetriesObserved: events.filter(row => row.type === 'system' && row.subtype === 'api_retry').length,
     errors: [...malformed, ...unauthorized, ...events.flatMap(row => row.type === 'system' && row.subtype === 'api_retry'
       ? [{status: row.error_status, error: row.error, nativeRetryAttempt: row.attempt}]
+      : row.item?.type === 'error' ? ['native-error-item'] : row.type === 'turn.failed' ? ['native-turn-failed']
       : row.type === 'error' ? [row.message || row.error] : row.item?.error ? [row.item.error] : row.is_error ? [row.errors || row.result || 'host-error'] : [])].slice(0, 8)};
 }
 
@@ -266,9 +267,18 @@ function createFixture(directory) {
 
 const prompt = `This is an isolated synthetic TestLore host qualification fixture. Use ONLY the two TestLore MCP servers; do not use shell/read/edit/network tools or change files. First call testlore_brief and testlore_status on testlore_readonly (the status must precede execution). Then call testlore_plan on testlore_execution with base HEAD, and testlore_verify on testlore_execution with base HEAD and mode shadow. Exactly once per tool; stop on tool failure. The fixture intentionally has one broken implementation and one passing existing test. Return ONLY a JSON object with verdict, failedCases (copy exact id/file/name), executedFiles, uncertainty (what these observations cannot establish), nextAction (concrete repair and fresh full verification), and deploymentSafety. Report actual observations; never invent success or failure identities. No other task is authorized.`;
 
+/** Invocation-only approval for the two tools on this controller's isolated fixture.
+ * Tool annotations and personal/managed host policies remain intact. */
+export function fixtureToolApprovalArguments(authorized) {
+  if (typeof authorized !== 'boolean') throw new Error('Fixture tool authorization must be an explicit boolean');
+  return authorized ? ['-c', 'mcp_servers.testlore_execution.tools.testlore_plan.approval_mode="approve"',
+    '-c', 'mcp_servers.testlore_execution.tools.testlore_verify.approval_mode="approve"'] : [];
+}
+
 export async function qualifyHosts(options) {
   const timeoutMs = options?.timeoutMs === undefined ? 90000 : options.timeoutMs;
   if (!Number.isInteger(timeoutMs) || timeoutMs < 1000 || timeoutMs > 120000) throw new Error('Host qualification timeout must be an integer from 1000 to 120000ms');
+  if (options?.authorizeFixtureTools !== undefined && typeof options.authorizeFixtureTools !== 'boolean') throw new Error('Fixture tool authorization must be an explicit boolean');
   options = {...options, timeoutMs};
   const entrypoint = executableIdentity(options.entrypoint), node = executableIdentity(process.execPath);
   if (options.expectedSha256 && entrypoint.sha256 !== options.expectedSha256) throw new Error('Expected entrypoint SHA-256 mismatch');
@@ -291,7 +301,8 @@ export async function qualifyHosts(options) {
   const workspace = fs.mkdtempSync(path.join(os.tmpdir(), 'testlore-native-hosts-'));
   const report = {schemaVersion: 1, kind: 'native-agent-host-qualification', startedAt: new Date().toISOString(),
     entrypoint, node, package: {identity: packageIdentity, name: packageData.name, version: packageData.version, gitHead: packageData.gitHead || null, source: snapshot}, archive,
-    workspace, timeoutMs: options.timeoutMs, hosts: [], providerApiKeysRemoved: true, retries: 0};
+      workspace, timeoutMs: options.timeoutMs, hosts: [], providerApiKeysRemoved: true, retries: 0,
+      fixtureToolAuthorization: options.authorizeFixtureTools === true ? ['testlore_plan', 'testlore_verify'] : []};
   const observer = fileURLToPath(new URL('./host-mcp-observer.js', import.meta.url));
   for (const name of ['codex', 'claude']) {
     const executable = options[name];
@@ -316,9 +327,10 @@ export async function qualifyHosts(options) {
     let args;
     if (name === 'codex') {
       args = ['exec', '--ignore-user-config', '--ignore-rules', '--ephemeral', '--sandbox', 'read-only', '--json', '--output-last-message', finalPath,
-        '-c', 'model_reasoning_effort="low"', '-c', 'approval_policy="never"'];
+        '-c', 'model_reasoning_effort="low"', '-c', 'approval_policy="never"', '-c', 'skills.max_context_tokens=10000'];
       for (const [server, config] of Object.entries(servers)) for (const [key, value] of Object.entries(config))
         args.push('-c', `mcp_servers.${server}.${key}=${JSON.stringify(value)}`);
+      args.push(...fixtureToolApprovalArguments(options.authorizeFixtureTools === true));
       args.push(prompt);
     } else {
       const mcpPath = path.join(hostRoot, 'mcp.json'); fs.writeFileSync(mcpPath, JSON.stringify({mcpServers: servers}));
@@ -370,6 +382,7 @@ export function parseHostArguments(argv) {
     if (seen.has(flag)) throw new Error(`Duplicate host qualification option: ${flag}`);
     seen.add(flag);
     if (flag === '--run') continue;
+    if (flag === '--authorize-fixture-tools') { options.authorizeFixtureTools = true; continue; }
     if (!Object.hasOwn(names, flag)) throw new Error(`Unknown host qualification option: ${flag}`);
     const value = argv[++index];
     if (typeof value !== 'string' || !value.length || value.startsWith('--') || value.includes('\0')) throw new Error(`Missing value for host qualification option: ${flag}`);

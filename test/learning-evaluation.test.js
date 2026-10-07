@@ -28,6 +28,16 @@ test('paired controller executes withheld defects, retains raw outputs, and neve
   const commitment=commitDataset(dataset,{owner:'Protocol test fixture',source:'constructed test',independentlyMaintained:false,independenceNotes:'This exercises transport exclusion, not AI quality or independent external authorship.'});
   const summary = await evaluateLearning({output,agent:[process.execPath,worker],identity:'controlled-protocol-fixture',dataset,commitment,repeat:1,seed:4,maxCalls:12,evidenceKind:'protocol-fixture'});
   assert.equal(summary.calls,12); assert.equal(summary.comparison.complete,true); assert.equal(summary.comparison.inference,'inconclusive-protocol-fixture'); assert.equal(summary.arms.every(arm => arm.detected===2),true);
+  const reliabilityOutput=path.join(root,'reliability');
+  const reliability=await evaluateLearning({output:reliabilityOutput,agent:[process.execPath,worker],identity:'controlled-protocol-fixture',dataset,commitment,repeat:1,maxCalls:6,evidenceKind:'protocol-fixture',mode:'generation-reliability'});
+  assert.equal(reliability.calls,6);assert.equal(reliability.comparison.complete,true);
+  assert.equal(reliability.comparison.inference,'not-a-learning-comparison');assert.equal(reliability.comparison.learningCompared,false);
+  assert.deepEqual(reliability.arms.map(row=>row.arm),['without_memory']);assert.equal(reliability.learningPromotion.enabled,false);
+  const reliabilityManifest=JSON.parse(fs.readFileSync(path.join(reliabilityOutput,'manifest.json')));
+  assert.equal(reliabilityManifest.budget.callsRequired,6);assert.ok(reliabilityManifest.schedule.every(pair=>JSON.stringify(pair.arms)==='["without_memory"]'));
+  const reliabilityFailed=await evaluateLearning({output:path.join(root,'reliability-failed'),agent:[process.execPath,'-e','process.exit(9)'],identity:'failed-protocol-fixture',dataset,repeat:1,maxCalls:6,evidenceKind:'protocol-fixture',mode:'generation-reliability'});
+  assert.equal(reliabilityFailed.calls,2);assert.equal(reliabilityFailed.comparison.complete,false);assert.equal(reliabilityFailed.arms[0].failedTrials,2);assert.equal(reliabilityFailed.arms[0].detected,0);
+  await assert.rejects(evaluateLearning({output:path.join(root,'unknown-mode'),agent:[process.execPath,worker],identity:'fixture',dataset,mode:'unknown'}),/Invalid evaluation mode/);
   const warm = JSON.parse(fs.readFileSync(path.join(output,'trial-normalize-0-with_memory.json'))); const cold = JSON.parse(fs.readFileSync(path.join(output,'trial-normalize-0-without_memory.json')));
   assert.equal(summary.datasetCommitment.verified,true);assert.equal(summary.learningPromotion.enabled,false);assert.equal(fs.existsSync(path.join(output,'dataset-commitment.json')),true);
   for(const row of [warm,cold])for(const call of row.calls){const input=JSON.stringify(call.input);assert.ok(!input.includes(commitment.datasetHash));assert.ok(!input.includes('referenceTests'));assert.ok(!input.includes('trim-omitted'));assert.ok(!input.includes('independenceNotes'));}

@@ -4,13 +4,14 @@ import { spawnSync } from 'node:child_process';
 import { git, safePath } from './files.js';
 import { discover, execute, executeNativeRelated } from './execution.js';
 import { plan, gitChanges } from './selector.js';
-import { run, compareSubsetCases } from './runner.js';
+import { run, runUnifiedNative, compareSubsetCases } from './runner.js';
 import { snapshot, freshness } from './provenance.js';
 import { inspectHistoricalChange, linkInstalledDependencies } from './pilot-history.js';
 
-const { project, revision, repetitions, timeoutMs, directory } = JSON.parse(fs.readFileSync(process.argv[2], 'utf8'));
+const { project, revision, repetitions, timeoutMs, directory, unifiedNative=false } = JSON.parse(fs.readFileSync(process.argv[2], 'utf8'));
+if(typeof unifiedNative!=='boolean')throw new Error('Invalid pilot native execution mode');
 const root = path.join(directory, 'workspace');
-const receipt = { schemaVersion: 1, name: project.name, framework: project.config.adapter, scope: project.scope, revision, valid: false, changes: [] };
+const receipt = { schemaVersion: 1, executionMode:unifiedNative?'unified-native':'legacy', name: project.name, framework: project.config.adapter, scope: project.scope, revision, valid: false, changes: [] };
 function command(cwd, argv) {
   const result = spawnSync(argv[0], argv.slice(1), { cwd, env: process.env, encoding: 'utf8', shell: false, timeout: timeoutMs, killSignal: 'SIGKILL', maxBuffer: 4 * 1024 * 1024 });
   if (result.status !== 0) throw new Error(`${argv[0]} failed: ${result.error?.message || result.stderr}`);
@@ -86,7 +87,7 @@ try {
           for(const file of fs.readdirSync(metadata).filter(file=>/^history.*\.json$/.test(file)))fs.rmSync(path.join(metadata,file));
           for(const [file,content]of history)fs.writeFileSync(path.join(metadata,file),content);
           if(mode==='subset'){
-            const started=performance.now();runs.subset=run(root,{base,capture:true,selective:true,timeoutMs});testLoreMs=Math.round(performance.now()-started);
+            const started=performance.now();runs.subset=unifiedNative?await runUnifiedNative(root,{base,capture:true,selective:true,timeoutMs}):run(root,{base,capture:true,selective:true,timeoutMs});testLoreMs=Math.round(performance.now()-started);
             selection=runs.subset.plan;
             if (runs.subset.executed === false && runs.subset.exitCode === 0 && !runs.subset.error && selection?.selected.length === 0) runs.subset = {...runs.subset, complete:true, tests:[], executedFiles:[], durationMs:0};
             planningMs=runs.subset.timings?.planningMs??testLoreMs;

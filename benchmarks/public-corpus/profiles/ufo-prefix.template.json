@@ -1,0 +1,31 @@
+{
+  "reviewed": true,
+  "candidateId": "unjs-ufo-eb29945470c8",
+  "root": null,
+  "scope": "Pinned ufo runtime unit suite; unchanged maintainer tests importing local src. Installed comparative Vitest may differ from upstream lock; exclude lint/types/build.",
+  "config": {
+    "adapter": "vitest",
+    "discovery": "native",
+    "runner": [
+      "node",
+      "node_modules/vitest/vitest.mjs",
+      "run",
+      "--maxWorkers=1",
+      "{files}"
+    ],
+    "analysisCache": {
+      "enabled": true,
+      "maxEntries": 2000,
+      "maxBytes": 33554432
+    }
+  },
+  "allowFrameworkVersionMismatch": true,
+  "expectedFailureNames": [
+    "withBase \"/admin/\" + \"/admin-dashboard\"",
+    "withBase \"/admin\" + \"/admin-dashboard\"",
+    "withoutBase \"/admin-dashboard\"-\"/admin/\"",
+    "withoutBase \"/admin-dashboard\"-\"/admin\""
+  ],
+  "labelEvidence": "The Oct 6 preflight retained two independent full executions of this inverse and unchanged upstream assertions. Labels were recorded before this new public-corpus run; this is the same one upstream bug, not an additional unique change.",
+  "executionMode": "unified-native"
+}

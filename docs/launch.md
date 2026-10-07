@@ -47,6 +47,8 @@ The publish job additionally runs `scripts/registry-proof.js`: it revalidates so
 
 ## Read-only npm readiness
 
+The diagnostic distinguishes GitHub repository ownership from unknown npm account ownership. Configuring publishers through `npm trust` requires npm >=11.15.0, authenticated package write access, account 2FA and an existing registry package; publishing through an already configured OIDC mapping has a separate >=11.5.1 CLI requirement. The website offers the other publisher-configuration path. No successful diagnostic substitutes for a real exact-archive publish and registry verification. [Official CLI prerequisites](https://docs.npmjs.com/cli/v11/commands/npm-trust/).
+
 Run `node scripts/npm-readiness.js` to inspect CLI OIDC support, interactive identity, public package presence, protected GitHub environment and exact main revision. It does not authenticate, grant access, or publish, and it never certifies the npm account mapping from CLI identity. The publish job checks that main still equals the qualified source immediately before publishing.
 
 As of the npm documentation checked on 2026-09-30, newly configured trusted publishers default to staged publishing permission. This workflow uses direct `npm publish`; explicitly enable that allowed action in the exact mapping. Keep the existing `npm-alpha` review protection. Interactive login, first-package bootstrapping and the npm account mapping remain required maintainer operations. See [npm trusted publishing](https://docs.npmjs.com/trusted-publishers/).

@@ -17,7 +17,7 @@ export function adapterFor(config = {}) {
   if (argv.some(x => /(?:^|[/\\])playwright(?:\.m?js|\.cmd)?$/.test(x)) || argv.some(x => /[/\\](?:@playwright[/\\]test|playwright)[/\\]cli\.js$/.test(x))) return 'playwright';
   return argv.includes('--test') ? 'node' : 'custom';
 }
-function environment(config) {
+export function nativeEnvironment(config) {
   const env = { ...process.env, ...config.env };
   delete env.NODE_TEST_CONTEXT;
   return env;
@@ -26,7 +26,7 @@ function spawn(root, command, config, options = {}) {
   const requestedTimeout=options.timeoutMs ?? config.runnerTimeoutMs ?? 120000;
   const timeout=Number.isInteger(requestedTimeout)&&requestedTimeout>0?requestedTimeout:120000;
   return spawnSync(command[0], command.slice(1), {
-    cwd: root, env: environment(config), shell: false, encoding: 'utf8',
+    cwd: root, env: nativeEnvironment(config), shell: false, encoding: 'utf8',
     stdio: 'pipe', maxBuffer: 64 * 1024 * 1024,
     timeout, killSignal: 'SIGKILL'
   });
@@ -370,11 +370,11 @@ function vitestInterpreterBound(root,config) {
       const selected=canonicalVitestCLI(root,base[0]);if(!selected)return false;
       const line=readNativeIdentityFile(selected.cli,256).toString('utf8').split('\n',1)[0];
       const node=line==='#!/usr/bin/env node'?'node':/^#!(\/[^\s]+)$/.exec(line)?.[1];
-      return Boolean(node)&&effectiveExecutable(root,node,environment(config))===fs.realpathSync(process.execPath);
+      return Boolean(node)&&effectiveExecutable(root,node,nativeEnvironment(config))===fs.realpathSync(process.execPath);
     }
     // Legacy wrapper contexts retain their existing conservative resolver;
     // an explicit Node + CLI pair must not certify another runtime's config.
-    return index!==1||effectiveExecutable(root,base[0],environment(config))===fs.realpathSync(process.execPath)&&canonicalVitestCLI(root,base[1])!==null;
+    return index!==1||effectiveExecutable(root,base[0],nativeEnvironment(config))===fs.realpathSync(process.execPath)&&canonicalVitestCLI(root,base[1])!==null;
   }catch{return false;}
 }
 function canonicalVitestCLI(root,requested) {
@@ -411,14 +411,14 @@ function readNativeIdentityFile(file,limit=1024*1024) {
     return bytes;
   }finally{fs.closeSync(fd);}
 }
-function sharedVitestCommand(root,config) {
+export function sharedVitestCommand(root,config) {
   if(adapterFor(config)!=='vitest')return null;
   let base;try{base=frameworkBase(commandBase(config,'vitest',root),'vitest');}catch{return null;}
   const index=base.findIndex(arg=>/(?:^|[/\\])vitest(?:\.mjs)?$/.test(arg));
   // A direct CLI shebang could select another interpreter. Bind an explicit
   // Node + CLI pair; PATH lookup follows the configured child's cwd and env.
   if(index!==1)return null;
-  try {if(effectiveExecutable(root,base[0],environment(config))!==fs.realpathSync(process.execPath))return null;}catch{return null;}
+  try {if(effectiveExecutable(root,base[0],nativeEnvironment(config))!==fs.realpathSync(process.execPath))return null;}catch{return null;}
   // Match the explicitly selected CLI installation, not an unrelated project
   // package or an unresolved executable somewhere on PATH.
   if(!path.isAbsolute(base[index])&&!base[index].includes(path.sep))return null;
@@ -439,4 +439,15 @@ function sharedVitestCommand(root,config) {
 /** Compatibility lookup. Graph construction uses the batched API. */
 export function resolveNative(root, file, specifier, config = {}) {
   return resolveNativeBatch(root, [{file,specifier}], config).resolutions[0]?.paths?.[0] || null;
+}
+
+/** Internal shared JSON normalization: unified runs retain legacy case identities. */
+export function normalizeUnifiedExecution(root, files, value, details) {
+  const normalized=frameworkResults(root,value);
+  const missingFiles=files.filter(file=>!normalized.collectionFiles.includes(file));
+  const unknownFiles=normalized.collectionFiles.filter(file=>!files.includes(file));
+  const complete=normalized.valid&&!missingFiles.length&&!unknownFiles.length&&!normalized.errors.length&&!details.signal&&[0,1].includes(details.nativeExitCode);
+  const tests=identities(normalized.tests);
+  const exitCode=complete?(tests.some(test=>test.status==='failed')?1:details.nativeExitCode):2;
+  return {adapter:'vitest',...details,tests,collectionFiles:normalized.collectionFiles,requestedFiles:files,executedFiles:files,missingFiles,unknownFiles,dependencyFiles:[],complete,exitCode,reportErrors:normalized.errors};
 }
