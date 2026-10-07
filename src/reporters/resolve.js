@@ -93,20 +93,41 @@ try {
     process.env.VITEST = 'true'; process.env.NODE_ENV ??= 'test';
     const unsupported = command.some(arg => /^(?:--(?:workspace|project|browser|root|configLoader|environment|no-isolate|isolate)|-r)(?:=|$)/.test(arg));
     if (unsupported) throw new Error('Unsupported native resolution context; use a full suite');
-    const vite = await import(pathToFileURL(loadPath('vite')).href);
+    let context;
+    if(request.discover) {
+      const index=command.findIndex(arg=>/(?:^|[/\\])vitest(?:\.mjs)?$/.test(arg));
+      const requireCLI=createRequire(command[index]);
+      const vitest=await import(pathToFileURL(requireCLI.resolve('vitest/node')).href);
+      const version=JSON.parse(fs.readFileSync(requireCLI.resolve('vitest/package.json'),'utf8')).version;
+      const parsed=vitest.parseCLI(['vitest',...command.slice(index+1)]);
+      if(parsed.filter.length)throw new Error('Shared native planning does not accept positional scope filters');
+      const options={...parsed.options,root,run:true,watch:false};
+      if(/^4\.1\./.test(version))context=await vitest.createVitest('test',options,{logLevel:'silent'});
+      else if(/^5\./.test(version))context=await vitest.createVitest(options,{logLevel:'silent'});
+      else throw new Error('Unsupported shared native planning API version');
+    }
+    try {
+    const vite = context ? null : await import(pathToFileURL(loadPath('vite')).href);
     let configFile = argument('--config', '-c');
     if (configFile) configFile = path.resolve(root, configFile);
     configFile ||= ['vitest.config.ts', 'vitest.config.js', 'vitest.config.mts', 'vitest.config.mjs', 'vitest.config.cts', 'vitest.config.cjs'].map(f => path.join(root, f)).find(f => fs.existsSync(f));
     const mode = argument('--mode') || 'test';
-    const loaded = await vite.loadConfigFromFile({ command: 'serve', mode, isSsrBuild: false, isPreview: false }, configFile, root, 'silent');
-    const base = loaded?.config || {};
+    const loaded = context ? null : await vite.loadConfigFromFile({ command: 'serve', mode, isSsrBuild: false, isPreview: false }, configFile, root, 'silent');
+    const base = context ? { ...context.vite.config, test:context.getRootProject().config } : loaded?.config || {};
     if (base.test?.isolate === false) throw new Error('Shared test isolation requires a full suite');
     if (base.test?.projects?.length || base.test?.browser?.enabled || base.test?.workspace || base.root && path.resolve(root,base.root)!==root || base.test?.environment && !['node','jsdom','happy-dom'].includes(base.test.environment)) throw new Error('Multiple projects/browser resolution requires a native project graph');
+    if(context && (context.projects.length!==1||context.projects[0]!==context.getRootProject()))throw new Error('Shared native planning requires one root project');
     globals(base.test || {},['setupFiles','globalSetup']);
+    if(context) {
+      const specs=await context.getRelevantTestSpecifications([]);
+      output.discovery={files:[...new Set(specs.map(spec=>spec.moduleId))],complete:true};
+      for(const file of output.discovery.files)expand(file);
+    }
     for(const file of request.roots || [])expand(path.resolve(root,file));
     output.configFiles.push(...(loaded?.dependencies || []), ...(loaded?.path ? [loaded.path] : []));
+    if(context)output.configFiles.push(...(context.vite.config.configFileDependencies||[]),...(context.vite.config.configFile?[context.vite.config.configFile]:[]));
     const aliases = value => Array.isArray(value) ? value : Object.entries(value || {}).map(([find, replacement]) => ({ find, replacement }));
-    const server = await vite.createServer({ ...base, root, mode, configFile: false, logLevel: 'silent', server: { ...base.server, middlewareMode: true, watch: null }, resolve: { ...base.resolve, alias: [...aliases(base.test?.alias), ...aliases(base.resolve?.alias)] } });
+    const server = context ? context.vite : await vite.createServer({ ...base, root, mode, configFile: false, logLevel: 'silent', server: { ...base.server, middlewareMode: true, watch: null }, resolve: { ...base.resolve, alias: [...aliases(base.test?.alias), ...aliases(base.resolve?.alias)] } });
     try {
       for (let index=0;index<queue.length;index++) {
         const { file, specifier } = queue[index];
@@ -118,7 +139,8 @@ try {
         }
         record(resolution(resolved),queue[index],index);
       }
-    } finally { await server.close(); }
+    } finally { if(!context)await server.close(); }
+    } finally {if(context)await context.close();}
   }
 } catch (error) {
   output.complete = false; output.error = error.message;

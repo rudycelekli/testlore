@@ -315,7 +315,7 @@ export function resolveNativeBatch(root, imports, config = {}, options = {}) {
   const temporary = fs.mkdtempSync(path.join(os.tmpdir(), 'tddswarm-resolution-'));
   const requestFile = path.join(temporary, 'request.json');
   try {
-    fs.writeFileSync(requestFile, JSON.stringify({ root: fs.realpathSync(root), adapter, imports, transitive: options.transitive === true, roots: options.roots || [], command: frameworkBase(commandBase(config, adapter), adapter) }));
+    fs.writeFileSync(requestFile, JSON.stringify({ root: fs.realpathSync(root), adapter, imports, discover: options.discover === true, transitive: options.transitive === true, roots: options.roots || [], command: frameworkBase(commandBase(config, adapter), adapter) }));
     const script = fileURLToPath(new URL('./reporters/resolve.js', import.meta.url));
     const result = spawn(root, [process.execPath, script, requestFile], config);
     if (result.status !== 0 || result.error) throw new Error(result.error?.message || 'Native resolver failed');
@@ -330,10 +330,39 @@ export function resolveNativeBatch(root, imports, config = {}, options = {}) {
       if(typeof file==='string' && file.split(path.sep).includes('node_modules'))return [];
       try { return [localFile(root, file)]; } catch { value.complete=false; value.error='Native config dependency is outside the observed project'; return []; }
     });
-    return { ...value, resolutions, additionalResolutions, configFiles, adapter, supported: true };
+    let discovery;
+    if(options.discover) {
+      if(!Array.isArray(value.discovery?.files)||typeof value.discovery?.complete!=='boolean')throw new Error(value.error||'Invalid combined native discovery report');
+      const files=[...new Set(value.discovery.files.map(file=>localFile(root,file)))].sort();
+      for(const file of files)if(!fs.statSync(safePath(root,file)).isFile())throw new Error('Combined native discovery reported a missing file');
+      discovery={files,complete:value.discovery.complete,adapter,method:'fresh-shared-native-context',warnings:[]};
+    }
+    return { ...value, ...(discovery?{discovery}:{}), resolutions, additionalResolutions, configFiles, adapter, supported: true };
   } catch (error) {
     return { resolutions: imports.map(() => ({paths: [], unresolved: true})), configFiles: [], adapter, supported: true, complete: false, error: error.message };
   } finally { fs.rmSync(temporary, { recursive: true, force: true }); }
+}
+
+/** Only the explicitly supported CLI/version gets the shared fresh-context path. */
+export function combinedNativePlanningSupported(root, config={}) {
+  if(config.discovery!=='native'||adapterFor(config)!=='vitest')return false;
+  let base;try{base=frameworkBase(commandBase(config,'vitest',root),'vitest');}catch{return false;}
+  const index=base.findIndex(arg=>/(?:^|[/\\])vitest(?:\.mjs)?$/.test(arg));
+  if(index<0||index>1||index===1&&base[0]!==process.execPath)return false;
+  // Match the explicitly selected CLI installation, not an unrelated project
+  // package or an unresolved executable somewhere on PATH.
+  if(!path.isAbsolute(base[index]))return false;
+  const valued=new Set(['--config','-c','--mode','--maxWorkers','--minWorkers','--pool']);
+  const switches=new Set(['--no-file-parallelism','--passWithNoTests']);
+  for(let i=index+1;i<base.length;i++) {
+    const option=base[i].split('=')[0];
+    if(valued.has(option)) {if(!base[i].includes('=')){if(!base[i+1]||base[i+1].startsWith('-'))return false;i++;}}
+    else if(!switches.has(base[i]))return false;
+  }
+  try {
+    const filename=createRequire(base[index]).resolve('vitest/package.json');
+    return /^(?:4\.1\.|5\.)/.test(JSON.parse(fs.readFileSync(filename,'utf8')).version);
+  }catch{return false;}
 }
 
 /** Compatibility lookup. Graph construction uses the batched API. */

@@ -5,7 +5,7 @@ import { isBuiltin } from 'node:module';
 import { createHash } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import { createAnalysisCache, ANALYSIS_CACHE_IMPLEMENTATION } from './graph-cache.js';
-import { discover as nativeDiscovery, resolveNativeBatch } from './execution.js';
+import { discover as nativeDiscovery, resolveNativeBatch, combinedNativePlanningSupported } from './execution.js';
 import { declaredInputs } from './inputs.js';
 import { phaseTimings } from './timing.js';
 import { SOURCE, TEST, listFiles, normalize, safePath, readConfig } from './files.js';
@@ -73,16 +73,28 @@ export function buildGraph(root) {
   const files = listFiles(root);
   const selected = files.filter(f => (config.testMatch ? config.testMatch.some(pattern => path.matchesGlob(f,pattern)) : TEST.test(f)) && !(config.testExclude || []).some(pattern => path.matchesGlob(f,pattern)));
   const graph = { files, tests: selected, edges: {}, warnings: [], sources: {}, root, config, discovery: {complete:true,method:'configured-static-conventions'} };
+  graph.configFiles = new Set();
   timing.mark('inventory');
   if(config.discovery === 'native' || Array.isArray(config.discovery)) {
-    const discovered = nativeDiscovery(root,config);
+    let combined, sharedAttempt;
+    if(combinedNativePlanningSupported(root,config)) {
+      combined=resolveNativeBatch(root,[],config,{discover:true,transitive:true,roots:[...configurationSeeds(root,config,files)]});
+      sharedAttempt={complete:combined.complete,error:combined.error};
+      // A failed shared context contributes no authority. Preserve fresh native
+      // collection and the conservative legacy resolver path on failure.
+      if(combined.complete&&combined.discovery?.complete) {
+        graph.nativePlanning={method:'fresh-shared-native-context',complete:true};
+        graph.nativeResolutions=new Map((combined.additionalResolutions||[]).map(item=>[JSON.stringify([item.file,item.specifier]),item.resolution]));
+        for(const file of combined.configFiles)graph.configFiles.add(file);
+      } else combined=null;
+    }
+    const discovered = combined?.discovery || nativeDiscovery(root,config);
     graph.tests = discovered.files;
-    graph.discovery = discovered;
+    graph.discovery = {...discovered,...(sharedAttempt?{sharedContextAttempt:sharedAttempt}:{})};
     for(const file of discovered.files)if(!files.includes(file))graph.warnings.push({file,reason:'discovered-file-outside-graph'});
     if(!discovered.complete)graph.warnings.push({file:'discovery',reason:'incomplete-native-discovery'});
   }
   timing.mark('discovery');
-  graph.configFiles = new Set();
   // NODE_OPTIONS is parsed by Node before our runner starts. Its quoting, inline
   // data URLs and package preloads are not an argv contract we can certify.
   const nodeOptions = config.env?.NODE_OPTIONS ?? process.env.NODE_OPTIONS ?? '';
@@ -101,7 +113,7 @@ export function buildGraph(root) {
   timing.mark('configuration');
   for (const file of files.filter(f => SOURCE.test(f))) graph.sources[file] = fs.readFileSync(safePath(root,file),'utf8');
   timing.mark('sourceReads');
-  addSources(graph,Object.entries(graph.sources),set,{ roots: [...graph.tests,...graph.configFiles] });
+  addSources(graph,Object.entries(graph.sources),set,{ roots: [...graph.tests,...graph.configFiles], resolved:graph.nativePlanning?.complete===true });
   timing.mark('sourceAnalysisAndResolution');
   const declared = declaredInputs(config);
   for (const [test,deps] of Object.entries(config.dependencies || {})) declared[test] = [...(declared[test]||[]),...deps];
@@ -123,7 +135,7 @@ export function buildGraph(root) {
 
 // A single native config/server resolves all literal imports, including baseline edges.
 export function addSources(graph, entries, files = new Set(graph.files), options = {}) {
-  if(graph.root && (graph.config?.discovery === 'native' || Array.isArray(graph.config?.discovery))) {
+  if(!options.resolved && graph.root && (graph.config?.discovery === 'native' || Array.isArray(graph.config?.discovery))) {
     const relevant = options.roots ? entries.filter(([file])=>options.roots.includes(file)) : entries;
     const imports = relevant.flatMap(([file,text]) => sourceSummary(graph,file,text).imports.filter(specifier=>!isBuiltin(specifier)).map(specifier=>({file,specifier})));
     // A root pass must load native configuration even without imports. Baseline

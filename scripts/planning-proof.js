@@ -10,7 +10,7 @@ const repository = path.resolve(fileURLToPath(new URL('..', import.meta.url)));
 const hash = text => createHash('sha256').update(typeof text==='string'?text:JSON.stringify(text)).digest('hex');
 const implementationHash = root => hash(fs.readdirSync(path.join(root,'src'),{recursive:true,withFileTypes:true}).filter(entry=>entry.isFile()).map(entry=>path.join(entry.parentPath,entry.name)).sort().map(file=>[path.relative(root,file),fs.readFileSync(file,'utf8')]));
 async function worker() {
-  const [implementation, fixture, method, scenario] = process.argv.slice(3);
+  const [implementation, fixture, method, scenario, cacheState='disabled'] = process.argv.slice(3);
   const { plan } = await import(pathToFileURL(path.join(implementation, 'src/selector.js')));
   const { run } = await import(pathToFileURL(path.join(implementation, 'src/runner.js')));
   const { execute, executeNativeRelated } = await import(pathToFileURL(path.join(implementation, 'src/execution.js')));
@@ -24,7 +24,7 @@ async function worker() {
   const after = snapshot(fixture,config);
   assert.equal(freshness(before,after).fresh,true);
   const normalized = method === 'plan' ? { mode:result.mode,selected:result.selected,reasons:result.reasons,decisionDigest:hash(JSON.stringify({decisions:result.decisions,warnings:result.warnings})),fingerprint:result.fingerprint } : {complete:result.complete,exitCode:result.exitCode,files:result.executedFiles,tests:result.tests};
-  console.log(JSON.stringify({method,elapsedMs,config,sourceBefore:before.fingerprint,sourceAfter:after.fingerprint,timings:method==='plan'?result.timings:result.plan?.timings,normalized}));
+  console.log(JSON.stringify({method,cacheState,elapsedMs,config,sourceBefore:before.fingerprint,sourceAfter:after.fingerprint,analysisCache:method==='plan'?result.analysisCache:result.plan?.analysisCache,timings:method==='plan'?result.timings:result.plan?.timings,normalized}));
 }
 
 export function reserveReceipt(output) {
@@ -33,6 +33,23 @@ export function reserveReceipt(output) {
   const fd=fs.openSync(output,'wx');
   fs.writeSync(fd,JSON.stringify({schemaVersion:1,complete:false,trials:[]}));
   return fd;
+}
+
+/** Preserve the reserved receipt and journal if a disk write cannot seal it. */
+export function sealReceipt(output, reserved, report, {write=fs.writeSync}={}) {
+  const partial=output+'.partial',fd=fs.openSync(partial,'wx',0o600);
+  try {
+    const bytes=Buffer.from(JSON.stringify(report,null,2)+'\n');
+    for(let offset=0;offset<bytes.length;) {
+      const count=write(fd,bytes,offset,bytes.length-offset,null);
+      if(!Number.isInteger(count)||count<=0)throw new Error('Receipt writer made no progress');
+      offset+=count;
+    }
+    fs.fsyncSync(fd);
+    const original=fs.fstatSync(reserved),current=fs.statSync(output);
+    if(original.dev!==current.dev||original.ino!==current.ino)throw new Error('Reserved receipt was replaced during qualification');
+    fs.renameSync(partial,output);
+  } finally {fs.closeSync(fd);}
 }
 
 export function validateNativeFull(full) {
@@ -47,28 +64,33 @@ export function validateNativeFull(full) {
 function summarize(trials) {
   const median=values=>[...values].sort((a,b)=>a-b)[Math.floor(values.length/2)];
   const summary=[];
-  for(const scenario of ['traversal','native'])for(const arm of ['baseline','candidate'])for(const method of ['plan','testlore','native','full']) {
-    const attempts=trials.filter(t=>t.scenario===scenario&&t.arm===arm&&t.method===method);
+  for(const cacheState of [...new Set(trials.map(t=>t.cacheState||'disabled'))])for(const scenario of ['traversal','native'])for(const arm of ['baseline','candidate'])for(const method of ['plan','testlore','native','full']) {
+    const attempts=trials.filter(t=>(t.cacheState||'disabled')===cacheState&&t.scenario===scenario&&t.arm===arm&&t.method===method);
     const rows=attempts.filter(t=>t.workerComplete===true&&Number.isFinite(t.elapsedMs));
     if(!attempts.length)continue;
-    summary.push({scenario,arm,method,attempts:attempts.length,completedWorkers:rows.length,...(rows.length?{medianMs:median(rows.map(t=>t.elapsedMs)),minimumMs:Math.min(...rows.map(t=>t.elapsedMs)),maximumMs:Math.max(...rows.map(t=>t.elapsedMs)),medianOuterMs:median(rows.map(t=>t.outerMs))}:{})});
+    summary.push({cacheState,scenario,arm,method,attempts:attempts.length,completedWorkers:rows.length,...(rows.length?{medianMs:median(rows.map(t=>t.elapsedMs)),minimumMs:Math.min(...rows.map(t=>t.elapsedMs)),maximumMs:Math.max(...rows.map(t=>t.elapsedMs)),medianOuterMs:median(rows.map(t=>t.outerMs)),medianWarmupMs:median(rows.map(t=>t.warmupMs||0))}:{})});
   }
   return summary;
 }
 
-export function runPlanningProof({baseline,output,repetitions=3,spawnWorker=spawnSync}) {
+export function runPlanningProof({baseline,output,repetitions=3,cacheStates=['disabled'],baselineDescription,spawnWorker=spawnSync}) {
   baseline=path.resolve(baseline);output=path.resolve(output);
   assert.ok(Number.isInteger(repetitions)&&repetitions>=1&&repetitions<=10);
+  assert.ok(Array.isArray(cacheStates)&&cacheStates.length&&new Set(cacheStates).size===cacheStates.length&&cacheStates.every(state=>['disabled','cold','warm'].includes(state)));
   const fd=reserveReceipt(output);
+  let journal;
   let temporary;
   const trials=[];
   const report={schemaVersion:1,kind:'authored-fixtures-only',complete:false,generatedAt:new Date().toISOString(),runtime:process.version,platform:process.platform,arch:process.arch,harnessDigest:hash(fs.readFileSync(fileURLToPath(import.meta.url),'utf8')),baselineSourcePreparation:'Instrumented pre-optimization planning commit f37f134f3c98f72948c8c3f9fb665890ce2dd78c; full src snapshot only, dependencies shared, source hashes recorded.',summary:[],trials,limitations:['Fresh fixture and process for every arm; analysis disk cache disabled and cold history. OS and dependency caches are not flushed.','Traversal fixture deliberately concentrates 40 changes in one shared closure; results do not estimate typical production speedup.','Native fixture has twelve Vitest files with one independently asserted regression. TestLore and native related execute the same one-file case scope; full executes all twelve.','Internal spans exclude module import and fixture setup; outer spans include fresh process/module startup and equal harness source verification but exclude fixture creation.','Local timing, three repetitions and a narrow authored workload cannot establish universal speed advantage. No private repository was executed.','Dependencies are shared and identified by lockfile/version; installed dependency bytes and Node executable bytes are not frozen.']};
+  if(baselineDescription)report.baselineSourcePreparation=baselineDescription;
+  report.cacheStates=cacheStates;
+  if(cacheStates.some(state=>state!=='disabled'))report.limitations[0]='Fresh fixture and measured process for every arm; disabled and cold caches start empty. Warm TestLore spans follow one explicit separate-process planning warmup, whose time and status are recorded separately and excluded from measured spans. Only pure source summaries persist; native comparison does not use that cache. OS and dependency caches are not flushed.';
   const write=(root,file,value)=>{const target=path.join(root,file);fs.mkdirSync(path.dirname(target),{recursive:true});fs.writeFileSync(target,typeof value==='string'?value:JSON.stringify(value));};
-  function fixture(scenario,label) {
+  function fixture(scenario,label,cacheState) {
     const root=path.join(temporary,label);fs.mkdirSync(root);
     write(root,'package.json',{type:'module'});write(root,'.gitignore','.tddswarm/\nnode_modules/\n');
     const native=scenario==='native';
-    write(root,'tddswarm.config.json',native?{adapter:'vitest',discovery:'native',analysisCache:{enabled:false},runner:[process.execPath,path.join(repository,'node_modules/vitest/vitest.mjs'),'run','--maxWorkers=1','--no-file-parallelism','{files}']}:{analysisCache:{enabled:false}});
+    write(root,'tddswarm.config.json',native?{adapter:'vitest',discovery:'native',analysisCache:{enabled:cacheState!=='disabled'},runner:[process.execPath,path.join(repository,'node_modules/vitest/vitest.mjs'),'run','--maxWorkers=1','--no-file-parallelism','{files}']}:{analysisCache:{enabled:cacheState!=='disabled'}});
     const count=native?12:120;
     if(!native)for(let i=0;i<100;i++)write(root,`src/shared-${i}.js`,i<99?`export {value} from './shared-${i+1}.js';`:'export const value=1;');
     for(let i=0;i<count;i++) {
@@ -82,19 +104,38 @@ export function runPlanningProof({baseline,output,repetitions=3,spawnWorker=spaw
     return root;
   }
   try {
+    journal=fs.openSync(output+'.attempts.jsonl','wx',0o600);
+    const append=value=>{fs.writeSync(journal,JSON.stringify(value)+'\n');fs.fsyncSync(journal);};
     temporary=fs.mkdtempSync(path.join(os.tmpdir(),'testlore-planning-proof-'));
     report.baselineImplementation=implementationHash(baseline);
     report.candidateImplementation=implementationHash(repository);
     report.dependencies={vitest:JSON.parse(fs.readFileSync(path.join(repository,'node_modules/vitest/package.json'),'utf8')).version,packageLock:hash(fs.readFileSync(path.join(repository,'package-lock.json'),'utf8'))};
-    for(const scenario of ['traversal','native'])for(let repetition=0;repetition<repetitions;repetition++) {
+    append({event:'qualification-started',baselineImplementation:report.baselineImplementation,candidateImplementation:report.candidateImplementation,harnessDigest:report.harnessDigest,runtime:report.runtime,dependencies:report.dependencies,cacheStates});
+    for(const cacheState of cacheStates)for(const scenario of ['traversal','native'])for(let repetition=0;repetition<repetitions;repetition++) {
       const methods=scenario==='traversal'?[['baseline','plan'],['candidate','plan']]:[['baseline','testlore'],['candidate','testlore'],['candidate','native'],['candidate','full']];
       if(repetition%2)methods.reverse();
       for(const [arm,method] of methods) {
-        const attempt={scenario,repetition,arm,method,workerComplete:false};
+        const attempt={cacheState,scenario,repetition,arm,method,workerComplete:false};
         trials.push(attempt); // Retain even fixture/worker/JSON/assertion failure.
-        const root=fixture(scenario,`${scenario}-${repetition}-${arm}-${method}`),implementation=arm==='baseline'?baseline:repository;
+        append({event:'attempt-started',attempt});
+        const root=fixture(scenario,`${cacheState}-${scenario}-${repetition}-${arm}-${method}`,cacheState),implementation=arm==='baseline'?baseline:repository;
+        if(cacheState==='warm'&&['plan','testlore'].includes(method)) {
+          const primingStart=performance.now();
+          const priming=spawnWorker(process.execPath,[fileURLToPath(import.meta.url),'--worker',implementation,root,'plan',scenario,'cold'],{encoding:'utf8',timeout:30000,maxBuffer:4*1024*1024});
+          attempt.warmupMs=performance.now()-primingStart;
+          attempt.warmup={status:priming.status,signal:priming.signal||null,error:priming.error?.message};
+          if(priming.status!==0||priming.error||priming.signal) {
+            attempt.warmup.stdout=String(priming.stdout||'').slice(0,16384);attempt.warmup.stderr=String(priming.stderr||'').slice(0,16384);
+            attempt.warmup.outputTruncated=String(priming.stdout||'').length>16384||String(priming.stderr||'').length>16384;
+            throw new Error(`Warmup worker failed for ${scenario}/${arm}/${method}`);
+          }
+          const warmReceipt=JSON.parse(priming.stdout);
+          if(warmReceipt.sourceBefore!==warmReceipt.sourceAfter)throw new Error('Warmup provenance drift');
+          attempt.warmup.sourceFingerprint=warmReceipt.sourceAfter;
+          append({event:'warmup-completed',attempt});
+        }
         const start=performance.now();
-        const result=spawnWorker(process.execPath,[fileURLToPath(import.meta.url),'--worker',implementation,root,method,scenario],{encoding:'utf8',timeout:30000,maxBuffer:4*1024*1024});
+        const result=spawnWorker(process.execPath,[fileURLToPath(import.meta.url),'--worker',implementation,root,method,scenario,cacheState],{encoding:'utf8',timeout:30000,maxBuffer:4*1024*1024});
         attempt.outerMs=performance.now()-start;
         attempt.worker={status:result.status,signal:result.signal||null,error:result.error?.message};
         if(result.status!==0||result.error||result.signal) {
@@ -110,11 +151,12 @@ export function runPlanningProof({baseline,output,repetitions=3,spawnWorker=spaw
         }
         Object.assign(attempt,receipt,{workerComplete:true});
         attempt.nativeCaseCount=scenario==='native'?receipt.normalized?.tests?.length:undefined;
+        append({event:'worker-completed',attempt});
         fs.rmSync(root,{recursive:true,force:true});
       }
     }
-    for(let repetition=0;repetition<repetitions;repetition++) {
-      const rows=trials.filter(t=>t.repetition===repetition);
+    for(const cacheState of cacheStates)for(let repetition=0;repetition<repetitions;repetition++) {
+      const rows=trials.filter(t=>t.cacheState===cacheState&&t.repetition===repetition);
       assert.deepEqual(rows.find(t=>t.scenario==='traversal'&&t.arm==='candidate').normalized,rows.find(t=>t.scenario==='traversal'&&t.arm==='baseline').normalized);
       const native=rows.filter(t=>t.scenario==='native'),full=native.find(t=>t.method==='full').normalized;
       validateNativeFull(full);
@@ -128,15 +170,18 @@ export function runPlanningProof({baseline,output,repetitions=3,spawnWorker=spaw
     assert.equal(implementationHash(baseline),report.baselineImplementation);
     assert.equal(implementationHash(repository),report.candidateImplementation);
     report.complete=true;
+    append({event:'qualification-validated',complete:true,attempts:trials.length});
   } catch(error) {
     report.failure={message:error.message};
+    if(journal!==undefined)try{fs.writeSync(journal,JSON.stringify({event:'qualification-failed',failure:report.failure,attempt:trials.at(-1)})+'\n');fs.fsyncSync(journal);}catch{}
   } finally {
     report.summary=summarize(trials);
     report.nativeCaseObservations=trials.reduce((n,t)=>n+(t.nativeCaseCount||0),0);
     try {
-      fs.ftruncateSync(fd,0);fs.writeSync(fd,JSON.stringify(report,null,2)+'\n',0,'utf8');
+      sealReceipt(output,fd,report);
     } finally {
       fs.closeSync(fd);
+      if(journal!==undefined)fs.closeSync(journal);
       if(temporary)fs.rmSync(temporary,{recursive:true,force:true});
     }
   }

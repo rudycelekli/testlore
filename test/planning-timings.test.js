@@ -8,7 +8,7 @@ import { addSources } from '../src/graph.js';
 import { run } from '../src/runner.js';
 import { snapshot, freshness } from '../src/provenance.js';
 import { fixture, write, commit, twoModules } from './helpers.js';
-const vitest = path.join(path.dirname(createRequire(import.meta.url).resolve('vitest/package.json')),'vitest.mjs');
+const vitest = process.env.TDDSWARM_VITEST_BIN || path.join(path.dirname(createRequire(import.meta.url).resolve('vitest/package.json')),'vitest.mjs');
 
 function assertTimings(value) {
   assert.ok(Number.isFinite(value.totalMs) && value.totalMs >= 0);
@@ -46,7 +46,8 @@ test('empty baseline imports avoid a second resolver while root native config st
   const root=nativeFixture(t,'export const value=1;');
   const selection=plan(root);
   assert.equal(selection.discovery.complete,true);
-  assert.equal(fs.readFileSync(path.join(root,'.tddswarm/config-loads'),'utf8'),'xx');
+  assert.equal(fs.readFileSync(path.join(root,'.tddswarm/config-loads'),'utf8'),'x');
+  assert.equal(selection.discovery.method,'fresh-shared-native-context');
   assert.ok(selection.configurationFiles.includes('vitest.config.mjs'));
   assertTimings(selection.timings);
 });
@@ -54,7 +55,7 @@ test('nonempty removed baseline imports still resolve and retain their evidence 
   const root=nativeFixture(t,"export {value} from './shared.js';");
   write(root,'src/shared.js','export const value=9;');
   const selection=plan(root);
-  assert.equal(fs.readFileSync(path.join(root,'.tddswarm/config-loads'),'utf8'),'xxx');
+  assert.equal(fs.readFileSync(path.join(root,'.tddswarm/config-loads'),'utf8'),'xx');
   assert.ok(selection.decisions[0].paths.some(chain=>chain.at(-1)==='src/shared.js'));
 });
 test('source mutation in native config is still rejected before execution', t => {

@@ -118,7 +118,7 @@ export function plan(root, options = {}) {
   const fingerprint = createHash('sha256').update(JSON.stringify({ config, sources: graph.sources, edges: graph.edges, changed, baseSha })).digest('hex');
   timing.mark('decisionsAndFingerprint');
   return {
-    schemaVersion: 1, timings: { ...timing.finish(), graph: graph.timings }, provenance, serviceTokens: services.values, configurationFiles: [...graph.configFiles].sort(), mode: mode === 'none' && selected.length ? 'policy' : mode, base: baseSha, changed, ignored, selected,
+    schemaVersion: 1, timings: { ...timing.finish(), graph: graph.timings }, analysisCache:graph.analysisCache, provenance, serviceTokens: services.values, configurationFiles: [...graph.configFiles].sort(), mode: mode === 'none' && selected.length ? 'policy' : mode, base: baseSha, changed, ignored, selected,
     total: graph.tests.length, omitted: graph.tests.length - selected.length,
     uncertainty: { global: globalWarnings.length, retainedTests: [...uncertainTests].sort(), unreachableSources: [...new Set(unresolvedWarnings.filter(w=>w.scope==='unreachable-source').map(w=>w.file))].sort() },
     selectionReduction: graph.tests.length ? 1 - selected.length / graph.tests.length : 0,

@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { runPlanningProof, validateNativeFull } from '../scripts/planning-proof.js';
+import { runPlanningProof, validateNativeFull, reserveReceipt,sealReceipt } from '../scripts/planning-proof.js';
 import { fixture } from './helpers.js';
 const repository=fileURLToPath(new URL('..',import.meta.url));
 const full=()=>({complete:true,exitCode:1,files:Array.from({length:12},(_,i)=>`test/leaf-${i}.test.js`),tests:Array.from({length:12},(_,i)=>({id:`case-${i}`,file:`test/leaf-${i}.test.js`,name:`leaf ${i}`,status:i===0?'failed':'passed'}))});
@@ -28,6 +28,10 @@ test('benchmark retains earlier trials, the failed native worker and partial sum
   assert.equal(report.summary.find(row=>row.method==='native').completedWorkers,0);
   assert.match(report.failure.message,/Worker failed/);
   assert.deepEqual(JSON.parse(fs.readFileSync(output,'utf8')),JSON.parse(JSON.stringify(report)));
+  const journal=fs.readFileSync(output+'.attempts.jsonl','utf8').trim().split('\n').map(line=>JSON.parse(line));
+  assert.equal(journal.filter(row=>row.event==='attempt-started').length,5);
+  assert.equal(journal.filter(row=>row.event==='worker-completed').length,4);
+  assert.equal(journal.at(-1).event,'qualification-failed');assert.equal(journal.at(-1).attempt.worker.status,7);
 });
 test('benchmark full oracle rejects missing, duplicate, file-load and wrong failing cases',()=>{
   assert.doesNotThrow(()=>validateNativeFull(full()));
@@ -51,4 +55,35 @@ test('benchmark seals failed full oracle evidence rather than discarding complet
   assert.equal(report.trials.at(-1).nativeCaseCount,12);
   assert.ok(report.failure.message.includes('<file-load>'));
   assert.equal(JSON.parse(fs.readFileSync(output,'utf8')).complete,false);
+});
+test('warm cache proof retains failed priming before any measured worker',t=>{
+  const root=fixture(t),output=path.join(root,'warmup-failure.json');let calls=0;
+  const report=runPlanningProof({baseline:repository,output,repetitions:1,cacheStates:['warm'],spawnWorker:()=>{
+    calls++;return {status:9,signal:null,stdout:'partial',stderr:'priming failed'};
+  }});
+  assert.equal(report.complete,false);assert.equal(calls,1);assert.equal(report.trials.length,1);
+  assert.equal(report.trials[0].workerComplete,false);assert.equal(report.trials[0].warmup.status,9);
+  assert.equal(report.trials[0].warmup.stderr,'priming failed');assert.match(report.failure.message,/Warmup worker failed/);
+  assert.equal(JSON.parse(fs.readFileSync(output)).trials[0].cacheState,'warm');
+});
+test('receipt seal disk failure preserves reserved evidence and partial bytes',t=>{
+  const root=fixture(t),output=path.join(root,'disk-failure.json'),fd=reserveReceipt(output);
+  const initial=fs.readFileSync(output,'utf8');let calls=0;
+  try {
+    assert.throws(()=>sealReceipt(output,fd,{complete:true,trials:['measured']},{write:(descriptor,bytes,offset,length,position)=>{
+      if(++calls>1)throw Object.assign(new Error('No space'),{code:'ENOSPC'});
+      return fs.writeSync(descriptor,bytes,offset,Math.min(8,length),position);
+    }}),{code:'ENOSPC'});
+    assert.equal(fs.readFileSync(output,'utf8'),initial);
+    assert.equal(fs.readFileSync(output+'.partial','utf8').length,8);
+  } finally {fs.closeSync(fd);}
+});
+test('atomic receipt sealing refuses replacement of the original reserved artifact',t=>{
+  const root=fixture(t),output=path.join(root,'replaced.json'),fd=reserveReceipt(output);
+  try {
+    fs.renameSync(output,output+'.original');fs.writeFileSync(output,'replacement owner');
+    assert.throws(()=>sealReceipt(output,fd,{complete:true,trials:[]}),/replaced during qualification/);
+    assert.equal(fs.readFileSync(output,'utf8'),'replacement owner');
+    assert.equal(JSON.parse(fs.readFileSync(output+'.original')).complete,false);
+  } finally {fs.closeSync(fd);}
 });

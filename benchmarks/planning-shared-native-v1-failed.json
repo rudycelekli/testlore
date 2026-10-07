@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "kind": "qualification-artifact-write-failure",
+  "complete": false,
+  "stage": "final-receipt-seal",
+  "reason": "ENOSPC",
+  "plannedWorkers": 54,
+  "completedWorkers": null,
+  "attemptCount": null,
+  "metricsAvailable": false,
+  "unsealedReceiptBytes": 0,
+  "unsealedReceiptSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderrSha256": "46910ddb97e7a8e0575dab20935f227c4f3fdd859eadf97bb045c61760b2cbd4",
+  "limitations": [
+    "The original harness truncated the reserved receipt before the failing write. No trial count or timing can be recovered or inferred from this failure. Original empty artifact and stderr are retained locally.",
+    "The replacement harness journals attempts and seals atomically; a later successful run is a separate attempt."
+  ]
+}
