@@ -32,6 +32,19 @@ test('shadow executes full native inventory and compares proposed omissions',asy
  assert.equal(report.executedTests.length,2);assert.equal(report.plan.selected.length,1);assert.equal(report.comparison.noObservedMisses,true);
  assert.equal(JSON.parse(fs.readFileSync(path.join(root,'.tddswarm/last-run.json'))).tests.length,2);
 });
+test('cache-disabled unified native preserves independent failures and reloads executable configuration',async t=>{
+ const {root,config}=project(t);config.runner.splice(config.runner.length-1,0,'--cache=false');
+ write(root,'tddswarm.config.json',config);commit(root);write(root,'src/a.js','export default 2;');
+ const report=await runUnifiedNative(root,{selective:true,capture:true});
+ assert.equal(report.complete,true,report.error);assert.equal(report.exitCode,1);assert.equal(report.unifiedNative.used,true);
+ assert.ok(report.unifiedNative.sourceSummaryReuse.validatedHits>0);assert.equal(report.stdout.split('TESTLORE_CONFIG_LOADED').length-1,1);
+ const full=execute(root,['checks/a.check.js','checks/b.check.js'],config,{capture:true});
+ assert.equal(full.complete,true);assert.equal(compareSubsetCases(full,report,report.executedTests).complete,true);
+ assert.deepEqual(report.tests.filter(row=>row.status==='failed').map(row=>row.id),full.tests.filter(row=>row.status==='failed').map(row=>row.id));
+ write(root,'vitest.config.mjs',`export default {test:{include:['checks/a.check.js'],alias:{'@subject':new URL('./src/b.js',import.meta.url).pathname}}};`);
+ const changed=await runUnifiedNative(root,{selective:true,capture:true});
+ assert.equal(changed.complete,true,changed.error);assert.equal(changed.exitCode,0);assert.equal(changed.plan.total,1);
+});
 test('removed baseline imports resolve in the same session and retain the affected test',async t=>{
  const {root}=project(t);write(root,'src/a.js','export default 1;');
  write(root,'checks/a.check.js',`import {test,expect} from 'vitest';test('independent subject oracle',()=>expect(1).toBe(1));`);

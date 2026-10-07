@@ -27,6 +27,12 @@ test('portable profiles bind frozen commits, exact manager and original lock; ar
  assert.equal(validatePortableProfile(selection,profile).id,profile.candidateId);
  for(const change of [{fixRevision:'a'.repeat(40)},{packageManager:'pnpm@99.0.0'},{candidateId:'unjs-unctx-other'},{config:{env:{TOKEN:'secret'}}},{expectedFailureNames:['inferred-title']}])assert.throws(()=>validatePortableProfile(selection,{...profile,...change}));
  assert.throws(()=>validatePortableProfile(selection,{...profile,dependencySha256:{...profile.dependencySha256,'pnpm-lock.yaml':'0'.repeat(64)}}),/manifest\/lock/);
+ assert.throws(()=>validatePortableProfile(selection,{...profile,scope:'x'.repeat(201)}),/closed reviewed/);
+ assert.throws(()=>validatePortableProfile(selection,{...profile,scope:'   '}),/closed reviewed/);
+ assert.throws(()=>validatePortableProfile(selection,{...profile,executionMode:'unified-native'}),/execution mode/);
+ const ufo=JSON.parse(fs.readFileSync(path.join(repository,'benchmarks/public-corpus/profiles/unjs-ufo-5cd9e676711a-campaign.json')));
+ assert.equal(validatePortableProfile(selection,ufo).id,ufo.candidateId);
+ assert.throws(()=>validatePortableProfile(selection,{...ufo,executionMode:'legacy'}),/execution mode/);
  assert.throws(()=>{campaignLimits.phases.install.maxGrowthBytes=Number.MAX_SAFE_INTEGER;},TypeError);
 });
 test('ordinary CLI requests remain dry plans; explicit opt-in is a closed exact final flag',()=>{

@@ -9,15 +9,16 @@ import {pilotEnvironment} from '../src/pilot.js';
 import {fileIdentity} from './worker-identity.js';
 import {readBoundedJson} from './evaluation-commitment.js';
 import {validateCandidates,preparePublicCandidate,executePreparedPublic,publicAttemptSummary} from './public-corpus.js';
-import {installUpstreamCandidate,boundedInstallProcess} from './public-corpus-upstream.js';
+import {installUpstreamCandidate,boundedInstallProcess,verifyUpstreamInstallation} from './public-corpus-upstream.js';
 import {preflightPublicCandidate} from './public-corpus-preflight.js';
 import {captureCorpusIdentity} from './regression-corpus.js';
+import {runUnifiedCLIProof,exportUnifiedCLIProof} from './unified-native-proof.js';
 
 const controller=fileURLToPath(import.meta.url),repository=fileURLToPath(new URL('../',import.meta.url));
 export const campaignSelection='065b79f7f345a971e76b0a2d1bdc4f4ab34c9c3b254837b693dee552b71af65a';
 const frozen=value=>{for(const child of Object.values(value))if(child&&typeof child==='object')frozen(child);return Object.freeze(value);};
-export const campaignLimits=frozen({maxCampaignMs:480000,minFreeBytes:2*1024**3,maxLogBytes:2*1024**2,phases:{clone:{timeoutMs:60000,maxGrowthBytes:128*1024**2},install:{timeoutMs:180000,maxGrowthBytes:450*1024**2},preflight:{timeoutMs:90000,maxGrowthBytes:64*1024**2},prepare:{timeoutMs:30000,maxGrowthBytes:16*1024**2},run:{timeoutMs:120000,maxGrowthBytes:128*1024**2}}});
-const ids=new Set(['unjs-unctx-1bb220dccf40','unjs-mlly-abef19c940da']);
+export const campaignLimits=frozen({maxCampaignMs:480000,minFreeBytes:2*1024**3,maxLogBytes:2*1024**2,phases:{clone:{timeoutMs:60000,maxGrowthBytes:128*1024**2},install:{timeoutMs:180000,maxGrowthBytes:450*1024**2},preflight:{timeoutMs:90000,maxGrowthBytes:64*1024**2},prepare:{timeoutMs:30000,maxGrowthBytes:16*1024**2},run:{timeoutMs:120000,maxGrowthBytes:128*1024**2},'whole-cli':{timeoutMs:180000,maxGrowthBytes:128*1024**2}}});
+const ids=new Set(['unjs-unctx-1bb220dccf40','unjs-mlly-abef19c940da','unjs-ufo-5cd9e676711a']);
 const save=(file,value)=>fs.writeFileSync(file,JSON.stringify(value,null,2)+'\n',{flag:'wx',mode:0o600});
 const git=(root,...args)=>execFileSync('git',['-C',root,...args],{encoding:'utf8',timeout:15000,maxBuffer:2*1024**2}).trim();
 const freeBytes=root=>{const s=fs.statfsSync(root);return s.bavail*s.bsize;};
@@ -25,7 +26,8 @@ const keys=(object,expected)=>object&&JSON.stringify(Object.keys(object).sort())
 
 export function validatePortableProfile(selection,profile){
  validateCandidates(selection);
- if(selection.commitmentSha256!==campaignSelection||!keys(profile,['schemaVersion','kind','reviewed','candidateId','selectionCommitmentSha256','fixRevision','parentRevision','packageManager','dependencySha256','installedVitest','scope'])||profile.schemaVersion!==1||profile.kind!=='reviewed-original-upstream-campaign-profile'||profile.reviewed!==true||!ids.has(profile.candidateId)||profile.selectionCommitmentSha256!==campaignSelection||typeof profile.scope!=='string'||!profile.scope||profile.scope.length>500)throw Error('Require a closed reviewed portable profile and original frozen selection');
+ if(selection.commitmentSha256!==campaignSelection||!keys(profile,['schemaVersion','kind','reviewed','candidateId','selectionCommitmentSha256','fixRevision','parentRevision','packageManager','dependencySha256','installedVitest','executionMode','scope'])||profile.schemaVersion!==1||profile.kind!=='reviewed-original-upstream-campaign-profile'||profile.reviewed!==true||!ids.has(profile.candidateId)||profile.selectionCommitmentSha256!==campaignSelection||typeof profile.scope!=='string'||!profile.scope.trim()||profile.scope.length>200)throw Error('Require a closed reviewed portable profile and original frozen selection');
+ if(profile.executionMode!==(profile.candidateId==='unjs-ufo-5cd9e676711a'?'unified-native':'legacy'))throw Error('Portable execution mode differs from reviewed candidate');
  const candidate=selection.candidates.find(c=>c.id===profile.candidateId);
  if(!candidate||candidate.fixRevision!==profile.fixRevision||candidate.parentRevision!==profile.parentRevision||candidate.runtimeIdentity?.packageManager!==profile.packageManager||candidate.sourcePaths.length!==1||!candidate.maintainerOraclePaths.length||!keys(profile.dependencySha256,['package.json','pnpm-lock.yaml'])||!/^\d+\.\d+\.\d+$/.test(profile.installedVitest))throw Error('Portable candidate commit, manager or native profile mismatch');
  for(const file of ['package.json','pnpm-lock.yaml'])if(candidate.byteBindings.find(b=>b.kind==='dependency'&&b.path===file)?.sha256!==profile.dependencySha256[file])throw Error('Portable original manifest/lock mismatch');
@@ -39,7 +41,7 @@ function sourceBinding(selectionPath,profilePath){
  if(process.version!=='v22.19.0')throw Error('Hosted campaign requires exact Node v22.19.0');
  if(git(repository,'status','--porcelain'))throw Error('Campaign requires a clean TestLore source checkout');
  for(const filename of [selectionPath,profilePath]){const relative=path.relative(repository,filename);if(relative.startsWith('..')||path.isAbsolute(relative)||digest(fs.readFileSync(filename))!==digest(execFileSync('git',['-C',repository,'show','HEAD:'+relative],{maxBuffer:16*1024**2,timeout:15000})))throw Error('Use exact tracked selection and reviewed profile bytes');}
- const core=captureCorpusIdentity();const additional=['public-corpus-campaign.js','public-corpus-upstream.js','public-corpus-preflight.js','public-corpus.js'].map(file=>fileIdentity(path.join(repository,'scripts',file)));
+ const core=captureCorpusIdentity();const additional=['public-corpus-campaign.js','public-corpus-upstream.js','public-corpus-preflight.js','public-corpus.js','unified-native-proof.js'].map(file=>fileIdentity(path.join(repository,'scripts',file)));
  return {sourceRevision:git(repository,'rev-parse','HEAD'),sourceTreeClean:true,files:[...core.bindings,core.nodeBinding,...additional,fileIdentity(selectionPath,16*1024**2),fileIdentity(profilePath)],core:core.public};
 }
 function assertBinding(binding){
@@ -70,7 +72,7 @@ function runtimeProfile(plan,installation){
  const project=path.join(plan.directory,'installation/project');
  const framework=readBoundedJson(path.join(project,'node_modules/vitest/package.json'),128*1024);
  if(framework.version!==plan.profile.installedVitest)throw Error('Installed original Vitest version differs from reviewed portable profile');
- return {reviewed:true,candidateId:plan.candidateId,root:project,scope:plan.profile.scope,config:{adapter:'vitest',discovery:'native',runner:[process.execPath,path.join(project,'node_modules/vitest/vitest.mjs'),'run','--maxWorkers=1','--cache=false','{files}'],analysisCache:{enabled:false}},executionMode:'legacy',expectedFailureNames:['__preflight_pending__'],upstreamInstallation:{receiptPath:path.join(plan.directory,'installation/receipt.json'),expectedSha256:fileIdentity(path.join(plan.directory,'installation/receipt.json')).sha256},cachePolicy:{jitiFilesystem:false}};
+ return {reviewed:true,candidateId:plan.candidateId,root:project,scope:plan.profile.scope,config:{adapter:'vitest',discovery:'native',runner:[process.execPath,path.join(project,'node_modules/vitest/vitest.mjs'),'run','--maxWorkers=1','--cache=false','{files}'],analysisCache:{enabled:false}},executionMode:plan.profile.executionMode,expectedFailureNames:['__preflight_pending__'],upstreamInstallation:{receiptPath:path.join(plan.directory,'installation/receipt.json'),expectedSha256:fileIdentity(path.join(plan.directory,'installation/receipt.json')).sha256},cachePolicy:{jitiFilesystem:false}};
 }
 
 async function worker(phase,input){
@@ -100,9 +102,20 @@ async function worker(phase,input){
   save(path.join(out,'reviewed-native-profile.json'),profile);result=preparePublicCandidate(selection,plan.candidateId,profile);save(path.join(out,'prepared.json'),result);
  }else if(phase==='run'){
   result=executePreparedPublic(repository,selection,readBoundedJson(path.join(out,'prepared.json'),16*1024**2),plan.relative+'/corpus');
+ }else if(phase==='whole-cli'){
+  if(plan.profile.executionMode==='unified-native'){
+   const prepared=readBoundedJson(path.join(out,'prepared.json'),16*1024**2),installation=prepared.upstreamInstallation;
+   if(!installation)throw Error('Whole-CLI public comparison requires a verified original installation');
+   const verify=()=>verifyUpstreamInstallation(selection,plan.candidateId,prepared.corpus.pilot.projects[0].root,installation.receiptPath,installation.expectedSha256);
+   verify();
+   const proof=await runUnifiedCLIProof({output:path.join(out,'whole-cli'),prepared,selection,repetitions:2,timeoutMs:35000,totalBudgetMs:campaignLimits.phases['whole-cli'].timeoutMs});
+   verify();
+   result=exportUnifiedCLIProof(proof);
+  }else result={completed:true,requested:false,reason:'Reviewed legacy profile; no unified whole-CLI comparison requested'};
  }else throw Error('Unsupported campaign worker phase');
  assertBinding(plan.binding);save(path.join(out,'phases',phase,'result.json'),result);
  if(phase==='run'&&!result.assessment?.qualified)throw Error('Three-arm qualification rejected; retain public attempt');
+ if(phase==='whole-cli'&&plan.profile.executionMode==='unified-native'&&(!result.qualified||!result.complete))throw Error('Whole-CLI failure/configuration parity rejected; retain every attempt');
  return result;
 }
 

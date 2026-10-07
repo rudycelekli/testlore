@@ -10,7 +10,7 @@ on:
         description: Original upstream candidates to execute on fresh runners
         default: both
         type: choice
-        options: [both, unctx, mlly]
+        options: [both, unctx, mlly, ufo]
 permissions:
   contents: read
 concurrency:
@@ -25,7 +25,7 @@ jobs:
       fail-fast: false
       max-parallel: 1
       matrix:
-        candidate: ${{ fromJSON(inputs.candidate == 'unctx' && '["unctx"]' || inputs.candidate == 'mlly' && '["mlly"]' || '["unctx","mlly"]') }}
+        candidate: ${{ fromJSON(inputs.candidate == 'unctx' && '["unctx"]' || inputs.candidate == 'mlly' && '["mlly"]' || inputs.candidate == 'ufo' && '["ufo"]' || '["unctx","mlly"]') }}
     steps:
       - uses: actions/checkout@v7.0.1
         with:
@@ -38,7 +38,7 @@ jobs:
           REQUESTED_CANDIDATE: ${{ inputs.candidate }}
         run: |
           [[ "$SOURCE_SHA" =~ ^[0-9a-f]{40}$ ]]
-          case "$REQUESTED_CANDIDATE" in both|unctx|mlly) ;; *) exit 1 ;; esac
+          case "$REQUESTED_CANDIDATE" in both|unctx|mlly|ufo) ;; *) exit 1 ;; esac
           test "$(git rev-parse HEAD)" = "$SOURCE_SHA"
           test "$(git rev-parse origin/main)" = "$SOURCE_SHA"
       - uses: actions/setup-node@v7.0.0
@@ -52,6 +52,7 @@ jobs:
           case "$CANDIDATE" in
             unctx) PROFILE=unjs-unctx-1bb220dccf40-campaign.json ;;
             mlly) PROFILE=unjs-mlly-abef19c940da-campaign.json ;;
+            ufo) PROFILE=unjs-ufo-5cd9e676711a-campaign.json ;;
             *) exit 1 ;;
           esac
           node scripts/public-corpus-campaign.js --selection benchmarks/public-corpus/preregistration-20261006.json --profile "benchmarks/public-corpus/profiles/$PROFILE" --directory "$RUNNER_TEMP/testlore-$CANDIDATE" --output ".tddswarm/public-campaigns/$CANDIDATE"

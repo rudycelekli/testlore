@@ -434,7 +434,7 @@ export function sharedVitestCommand(root,config) {
   const selected=canonicalVitestCLI(root,base[index]);if(!selected)return null;
   base=[...base];base[0]=process.execPath;base[index]=selected.cli;
   const valued=new Set(['--config','-c','--mode','--maxWorkers','--minWorkers','--pool']);
-  const switches=new Set(['--no-file-parallelism','--passWithNoTests']);
+  const switches=new Set(['--no-file-parallelism','--passWithNoTests','--cache=false']);
   for(let i=index+1;i<base.length;i++) {
     const option=base[i].split('=')[0];
     if(valued.has(option)) {if(!base[i].includes('=')){if(!base[i+1]||base[i+1].startsWith('-'))return null;i++;}}
