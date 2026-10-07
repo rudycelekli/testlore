@@ -5,6 +5,7 @@ import { isBuiltin } from 'node:module';
 import { createRequire } from 'node:module';
 import { pathToFileURL } from 'node:url';
 import { spawnSync } from 'node:child_process';
+import ts from 'typescript';
 const request = JSON.parse(fs.readFileSync(process.argv[2], 'utf8'));
 const { root, adapter, command, imports } = request;
 const queue = [...imports];
@@ -58,6 +59,18 @@ function globals(config, keys) {
     const file=path.resolve(root,item);output.configFiles.push(file);expand(file);
   }
 }
+function rejectArgvConfiguration(files) {
+  for(const file of files) {
+    if(!file.startsWith(root+path.sep)||file.includes(path.sep+'node_modules'+path.sep)||!fs.existsSync(file)||!/\.[cm]?[jt]sx?$/.test(file))continue;
+    const ast=ts.createSourceFile(file,fs.readFileSync(file,'utf8'),ts.ScriptTarget.Latest,true);
+    let dependent=false;
+    function visit(node) {
+      if((ts.isIdentifier(node)||ts.isStringLiteralLike(node))&&['argv','execArgv'].includes(node.text))dependent=true;
+      ts.forEachChild(node,visit);
+    }
+    visit(ast);if(dependent)throw new Error('runtime-argv-dependent-native-configuration');
+  }
+}
 
 try {
   if (adapter === 'jest') {
@@ -90,11 +103,13 @@ try {
     }
   } else {
     // Match Vitest's config-loading environment, including CLI-supplied mode.
-    process.env.VITEST = 'true'; process.env.NODE_ENV ??= 'test';
+    process.env.TEST = 'true'; process.env.VITEST = 'true'; process.env.NODE_ENV ??= 'test';
     const unsupported = command.some(arg => /^(?:--(?:workspace|project|browser|root|configLoader|environment|no-isolate|isolate)|-r)(?:=|$)/.test(arg));
     if (unsupported) throw new Error('Unsupported native resolution context; use a full suite');
     let context;
     if(request.discover) {
+      if(!Array.isArray(request.invocation))throw new Error('Missing native invocation binding');
+      process.argv=[...request.invocation];
       const index=command.findIndex(arg=>/(?:^|[/\\])vitest(?:\.mjs)?$/.test(arg));
       const requireCLI=createRequire(command[index]);
       const vitest=await import(pathToFileURL(requireCLI.resolve('vitest/node')).href);
@@ -126,6 +141,7 @@ try {
     for(const file of request.roots || [])expand(path.resolve(root,file));
     output.configFiles.push(...(loaded?.dependencies || []), ...(loaded?.path ? [loaded.path] : []));
     if(context)output.configFiles.push(...(context.vite.config.configFileDependencies||[]),...(context.vite.config.configFile?[context.vite.config.configFile]:[]));
+    rejectArgvConfiguration(output.configFiles);
     const aliases = value => Array.isArray(value) ? value : Object.entries(value || {}).map(([find, replacement]) => ({ find, replacement }));
     const server = context ? context.vite : await vite.createServer({ ...base, root, mode, configFile: false, logLevel: 'silent', server: { ...base.server, middlewareMode: true, watch: null }, resolve: { ...base.resolve, alias: [...aliases(base.test?.alias), ...aliases(base.resolve?.alias)] } });
     try {

@@ -150,6 +150,7 @@ export function addSources(graph, entries, files = new Set(graph.files), options
       for(const item of batch.additionalResolutions || [])graph.nativeResolutions.set(JSON.stringify([item.file,item.specifier]),item.resolution);
       for(const file of batch.configFiles) graph.configFiles.add(file);
       if(!batch.complete)graph.warnings.push({file:'configuration',reason:'incomplete-native-resolution'});
+      if(batch.error==='runtime-argv-dependent-native-configuration')graph.discovery={...graph.discovery,complete:false,warnings:[...(graph.discovery.warnings||[]),'runtime-argv-dependent-native-configuration']};
     }
   }
   for(const [file,text] of entries) addSource(graph,file,text,files);

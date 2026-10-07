@@ -312,10 +312,16 @@ export function discover(root, config = {}) {
 export function resolveNativeBatch(root, imports, config = {}, options = {}) {
   const adapter = adapterFor(config);
   if (!['jest', 'vitest'].includes(adapter)) return { resolutions: [], configFiles: [], complete: true, adapter, supported: false };
+  if(adapter==='vitest'&&!vitestInterpreterBound(root,config))return {resolutions:imports.map(()=>({paths:[],unresolved:true})),configFiles:[],adapter,supported:true,complete:false,error:'Requested native Node interpreter is unbound or differs from the resolver runtime'};
+  const sharedCommand=options.discover?sharedVitestCommand(root,config):null;
+  if(options.discover&&!sharedCommand)return {resolutions:imports.map(()=>({paths:[],unresolved:true})),configFiles:[],adapter,supported:true,complete:false,error:'Unsupported or unbound shared native command'};
   const temporary = fs.mkdtempSync(path.join(os.tmpdir(), 'tddswarm-resolution-'));
   const requestFile = path.join(temporary, 'request.json');
   try {
-    fs.writeFileSync(requestFile, JSON.stringify({ root: fs.realpathSync(root), adapter, imports, discover: options.discover === true, transitive: options.transitive === true, roots: options.roots || [], command: frameworkBase(commandBase(config, adapter), adapter) }));
+    const originalCommand=frameworkBase(commandBase(config,adapter),adapter);
+    const cliIndex=originalCommand.findIndex(arg=>/(?:^|[/\\])vitest(?:\.mjs)?$/.test(arg));
+    const invocation=sharedCommand?[process.execPath,path.resolve(root,originalCommand[cliIndex]),...originalCommand.slice(cliIndex+1),'list','--filesOnly',`--json=${path.join(temporary,'native-files.json')}`]:undefined;
+    fs.writeFileSync(requestFile, JSON.stringify({ root: fs.realpathSync(root), adapter, imports, invocation, discover: options.discover === true, transitive: options.transitive === true, roots: options.roots || [], command: sharedCommand||originalCommand }));
     const script = fileURLToPath(new URL('./reporters/resolve.js', import.meta.url));
     const result = spawn(root, [process.execPath, script, requestFile], config);
     if (result.status !== 0 || result.error) throw new Error(result.error?.message || 'Native resolver failed');
@@ -346,23 +352,63 @@ export function resolveNativeBatch(root, imports, config = {}, options = {}) {
 /** Only the explicitly supported CLI/version gets the shared fresh-context path. */
 export function combinedNativePlanningSupported(root, config={}) {
   if(config.discovery!=='native'||adapterFor(config)!=='vitest')return false;
-  let base;try{base=frameworkBase(commandBase(config,'vitest',root),'vitest');}catch{return false;}
+  return sharedVitestCommand(root,config)!==null;
+}
+function effectiveExecutable(root,executable,env) {
+  const candidates=path.isAbsolute(executable)||executable.includes(path.sep)?[path.resolve(root,executable)]
+    :typeof env.PATH==='string'?env.PATH.split(path.delimiter).map(directory=>path.resolve(root,directory||'.',executable)):[];
+  for(const candidate of candidates) {
+    try {fs.accessSync(candidate,fs.constants.X_OK);if(fs.statSync(candidate).isFile())return fs.realpathSync(candidate);}catch{}
+  }
+  return null;
+}
+function vitestInterpreterBound(root,config) {
+  try {
+    const base=frameworkBase(commandBase(config,'vitest',root),'vitest');
+    const index=base.findIndex(arg=>/(?:^|[/\\])vitest(?:\.mjs)?$/.test(arg));
+    if(index===0) {
+      const selected=canonicalVitestCLI(root,base[0]);if(!selected)return false;
+      const line=fs.readFileSync(selected.cli,'utf8').split('\n',1)[0];
+      const node=line==='#!/usr/bin/env node'?'node':/^#!(\/[^\s]+)$/.exec(line)?.[1];
+      return Boolean(node)&&effectiveExecutable(root,node,environment(config))===fs.realpathSync(process.execPath);
+    }
+    // Legacy wrapper contexts retain their existing conservative resolver;
+    // an explicit Node + CLI pair must not certify another runtime's config.
+    return index!==1||effectiveExecutable(root,base[0],environment(config))===fs.realpathSync(process.execPath)&&canonicalVitestCLI(root,base[1])!==null;
+  }catch{return false;}
+}
+function canonicalVitestCLI(root,requested) {
+  if(!path.isAbsolute(requested)&&!requested.includes(path.sep))return null;
+  try {
+    const cli=fs.realpathSync(path.resolve(root,requested)),metadata=createRequire(cli).resolve('vitest/package.json'),pkg=JSON.parse(fs.readFileSync(metadata,'utf8'));
+    const target=typeof pkg.bin==='object'&&pkg.bin?.vitest;
+    if(pkg.name!=='vitest'||typeof target!=='string'||!fs.statSync(cli).isFile()||fs.realpathSync(path.resolve(path.dirname(metadata),target))!==cli)return null;
+    return {cli,version:pkg.version};
+  }catch{return null;}
+}
+function sharedVitestCommand(root,config) {
+  if(adapterFor(config)!=='vitest')return null;
+  let base;try{base=frameworkBase(commandBase(config,'vitest',root),'vitest');}catch{return null;}
   const index=base.findIndex(arg=>/(?:^|[/\\])vitest(?:\.mjs)?$/.test(arg));
-  if(index<0||index>1||index===1&&base[0]!==process.execPath)return false;
+  // A direct CLI shebang could select another interpreter. Bind an explicit
+  // Node + CLI pair; PATH lookup follows the configured child's cwd and env.
+  if(index!==1)return null;
+  try {if(effectiveExecutable(root,base[0],environment(config))!==fs.realpathSync(process.execPath))return null;}catch{return null;}
   // Match the explicitly selected CLI installation, not an unrelated project
   // package or an unresolved executable somewhere on PATH.
-  if(!path.isAbsolute(base[index]))return false;
+  if(!path.isAbsolute(base[index])&&!base[index].includes(path.sep))return null;
+  const selected=canonicalVitestCLI(root,base[index]);if(!selected)return null;
+  base=[...base];base[0]=process.execPath;base[index]=selected.cli;
   const valued=new Set(['--config','-c','--mode','--maxWorkers','--minWorkers','--pool']);
   const switches=new Set(['--no-file-parallelism','--passWithNoTests']);
   for(let i=index+1;i<base.length;i++) {
     const option=base[i].split('=')[0];
-    if(valued.has(option)) {if(!base[i].includes('=')){if(!base[i+1]||base[i+1].startsWith('-'))return false;i++;}}
-    else if(!switches.has(base[i]))return false;
+    if(valued.has(option)) {if(!base[i].includes('=')){if(!base[i+1]||base[i+1].startsWith('-'))return null;i++;}}
+    else if(!switches.has(base[i]))return null;
   }
   try {
-    const filename=createRequire(base[index]).resolve('vitest/package.json');
-    return /^(?:4\.1\.|5\.)/.test(JSON.parse(fs.readFileSync(filename,'utf8')).version);
-  }catch{return false;}
+    return /^(?:4\.1\.|5\.)/.test(selected.version)?base:null;
+  }catch{return null;}
 }
 
 /** Compatibility lookup. Graph construction uses the batched API. */

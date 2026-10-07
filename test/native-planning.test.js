@@ -62,3 +62,54 @@ test('combined empty root request still loads config and expands native-discover
   assert.equal(batch.discovery.files.length,2);
   assert.ok(batch.additionalResolutions.some(row=>row.file==='checks/subject.check.js'&&row.specifier==='@subject'&&row.resolution.paths.includes('src/a.js')));
 });
+test('portable Node and project-relative CLI bind the effective child PATH to the current runtime',t=>{
+  const {root,config}=project(t),portable={...config,runner:['node','node_modules/vitest/vitest.mjs','run','--maxWorkers=1','{files}'],env:{PATH:path.dirname(process.execPath)}};
+  write(root,'tddswarm.config.json',portable);write(root,'src/a.js','export default 2;');
+  assert.equal(combinedNativePlanningSupported(root,portable),true);
+  const selection=plan(root,{changed:['src/a.js']});assert.equal(selection.discovery.method,'fresh-shared-native-context');
+  assert.equal(selection.mode,'affected');assert.deepEqual(selection.selected,['checks/subject.check.js']);
+  const selected=execute(root,selection.selected,portable,{capture:true});const full=execute(root,['checks/subject.check.js','checks/other.check.js'],portable,{capture:true});
+  assert.equal(selected.complete,true);assert.equal(selected.exitCode,1);assert.equal(full.complete,true);
+  assert.deepEqual(selected.tests.filter(row=>row.status==='failed').map(row=>row.id),full.tests.filter(row=>row.status==='failed').map(row=>row.id));
+});
+test('relative PATH entries resolve from the project and unknown Node wrappers cannot qualify',t=>{
+  const {root,config}=project(t),portable={...config,runner:['node','node_modules/vitest/vitest.mjs','run','{files}']};
+  fs.mkdirSync(path.join(root,'tools'));fs.symlinkSync(process.execPath,path.join(root,'tools/node'));
+  assert.equal(combinedNativePlanningSupported(root,{...portable,env:{PATH:'tools'}}),true);
+  write(root,'tools/wrapper','#!/bin/sh\nexit 0\n');fs.chmodSync(path.join(root,'tools/wrapper'),0o755);
+  assert.equal(combinedNativePlanningSupported(root,{...portable,runner:['tools/wrapper',...portable.runner.slice(1)]}),false);
+  assert.equal(combinedNativePlanningSupported(root,{...portable,env:{PATH:'missing-directory'}}),false);
+  assert.equal(combinedNativePlanningSupported(root,{...portable,runner:['npx','--no-install','vitest','run','{files}']}),false);
+  const batch=resolveNativeBatch(root,[],{...portable,env:{PATH:'missing-directory'}},{discover:true,transitive:true});
+  assert.equal(batch.complete,false);assert.match(batch.error,/unbound/);
+  const legacy=resolveNativeBatch(root,[{file:'checks/subject.check.js',specifier:'@subject'}],{...portable,runner:['tools/wrapper',...portable.runner.slice(1)]},{roots:['checks/subject.check.js'],transitive:true});
+  assert.equal(legacy.complete,false);assert.equal(legacy.resolutions[0].unresolved,true);
+});
+test('selected CLI must be the installed package declared bin, and shebang runtime remains bound',t=>{
+  const {root,config}=project(t);write(root,'tools/vitest.mjs',`import ${JSON.stringify(vitest)};`);
+  const wrapped={...config,runner:[process.execPath,path.join(root,'tools/vitest.mjs'),'run','{files}']};
+  assert.equal(combinedNativePlanningSupported(root,wrapped),false);
+  assert.equal(resolveNativeBatch(root,[],wrapped,{transitive:true,roots:[]}).complete,false);
+  const direct={...config,runner:[vitest,'run','{files}'],env:{PATH:'missing-directory'}};
+  assert.equal(combinedNativePlanningSupported(root,direct),false);
+  assert.equal(resolveNativeBatch(root,[],direct,{transitive:true,roots:[]}).complete,false);
+});
+test('native TEST and VITEST preparation overrides prior false values for conditional aliases',t=>{
+  const {root,config}=project(t,{'vitest.config.mjs':`export default {test:{include:process.env.TEST==='true'?['checks/*.check.js']:[],alias:{'@subject':new URL(process.env.TEST==='true'&&process.env.VITEST==='true'?'./src/b.js':'./src/a.js',import.meta.url).pathname}}};`});
+  const native={...config,env:{TEST:'false',VITEST:'false'}};write(root,'tddswarm.config.json',native);write(root,'src/b.js','export default 2;');
+  const selection=plan(root,{changed:['src/b.js']});assert.equal(selection.discovery.method,'fresh-shared-native-context');
+  assert.equal(selection.mode,'affected');assert.deepEqual(selection.selected,['checks/other.check.js','checks/subject.check.js']);
+  const result=execute(root,selection.selected,native,{capture:true});assert.equal(result.complete,true);
+  assert.equal(result.tests.filter(row=>row.status==='failed').length,2);
+});
+for(const condition of ["process.argv[1].endsWith('vitest.mjs')","process.argv.includes('--mode')"])
+test(`argv-conditioned configuration cannot establish discovery/run scope completeness: ${condition}`,t=>{
+  const {root,config}=project(t,{'vitest.config.mjs':`export default {test:{include:${condition}?['checks/*.check.js']:['checks/other.check.js'],alias:{'@subject':new URL('./src/b.js',import.meta.url).pathname}}};`});
+  const native={...config,runner:[process.execPath,vitest,'run','--mode','production','{files}']};write(root,'tddswarm.config.json',native);write(root,'src/b.js','export default 2;');
+  const selection=plan(root,{changed:['src/b.js']});assert.equal(selection.mode,'full');assert.equal(selection.discovery.complete,false);
+  assert.equal(selection.discovery.sharedContextAttempt.complete,false);
+  assert.equal(selection.discovery.sharedContextAttempt.error,'runtime-argv-dependent-native-configuration');
+  assert.ok(selection.reasons.includes('discovery-incomplete'));
+  const result=execute(root,selection.selected,native,{capture:true});assert.equal(result.complete,true);
+  assert.equal(result.tests.filter(row=>row.status==='failed').length,2);
+});
