@@ -1,0 +1,27 @@
+# Original upstream campaigns on fresh runners
+
+The portable controller admits two inspected candidates from the unchanged 100-candidate selection. It does not assert that either candidate succeeds on another platform, and does not complete the 30/5 or 100/10 benchmark. Mlly has no qualified native run yet. Failure names are obtained from independently executed unchanged fixed and exact historical-source full runs, never inferred from a title.
+
+Use a clean committed TestLore checkout with its own frozen SDK dependencies and exact Node **22.19.0**. Upstream dependencies are installed separately from their original complete manifest and lock using their original exact pnpm version. The fresh installation directory must be outside TestLore, with an existing parent. No command accepts arbitrary project environment, native runner, provider credentials or package projections.
+
+This command validates tracked inputs and returns a plan. It creates no directories and performs no network requests, installs or native test execution:
+
+```sh
+node scripts/public-corpus-campaign.js \
+  --selection benchmarks/public-corpus/preregistration-20261006.json \
+  --profile benchmarks/public-corpus/profiles/unjs-unctx-1bb220dccf40-campaign.json \
+  --directory "$RUNNER_TEMP/testlore-unctx" \
+  --output .tddswarm/public-campaigns/unctx
+```
+
+Append **`--install-and-execute`** to opt into cloning, original installation, independent preflight, preparation and two repetitions of full/TestLore/native execution. Use the mlly profile `benchmarks/public-corpus/profiles/unjs-mlly-abef19c940da-campaign.json`, a distinct private directory, and a distinct output alias for mlly. Every invocation requires new directories. Interrupted or rejected output is retained and cannot be retried in the same invocation directory.
+
+The frozen selection commitment is `065b79f7f345a971e76b0a2d1bdc4f4ab34c9c3b254837b693dee552b71af65a`. Reviewed portable profiles bind the immutable fix, first parent, original manager, manifest and lock hashes, and the inspected installed Vitest version. Node, core source, controller scripts, tracked profile and selection are bound before execution and checked after phases. Existing installation/tree checks remain authoritative; the portable wrapper does not bypass them.
+
+Limits are fixed: eight minutes for the campaign, a minimum **2 GiB free reserve**, combined stdout/stderr at most **2 MiB per phase**, one native worker, and no automatic retries. Clone is capped at 60 seconds/128 MiB growth; installation at 180 seconds/450 MiB; preflight at 90 seconds/64 MiB; preparation at 30 seconds/16 MiB; qualification at 120 seconds/128 MiB. Limits are observed during execution and again after child completion. Disk changes from concurrent workloads can cause a conservative stop.
+
+Every phase preserves started, process and finished receipts, logs, and available native results. Installation negatives remain installation negatives. Preflight negatives remain unqualified. Only unchanged original fixed baselines, stable genuine maintainer faults, completed full/native/subset runs and failure-preservation checks can yield a scoped qualified outcome. `summary.json` contains sanitized counts, total arm timings, fallbacks, misses and scoped qualification. Raw artifacts contain absolute paths and detailed diagnostics and should be treated accordingly.
+
+JITI filesystem caches, Vitest results caches and TestLore disk analysis are disabled equally for all arms. OS and package caches remain uncontrolled, so these runs are not native-default caching comparisons or OS-cold timings. Original upstream lifecycle and optional/platform dependency policy is retained; ignored-build warnings are recorded rather than overridden. Observed descendant-tree termination is best effort, not a security sandbox or containment of arbitrary subprocesses.
+
+A hosting workflow should use **manual `workflow_dispatch` only**, read-only repository permissions, an immutable source commit, exact Node 22.19.0, no forwarded authentication/secrets, one candidate per job, matrix `max-parallel: 1`, and a 15-minute job timeout. Always preserve raw and sanitized artifacts even on rejection. The root workflow integration and actual hosted executions are separate qualification steps; this document and controller alone establish no additional benchmark result.

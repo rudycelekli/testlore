@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "kind": "reviewed-original-upstream-campaign-profile",
+  "reviewed": true,
+  "candidateId": "unjs-mlly-abef19c940da",
+  "selectionCommitmentSha256": "065b79f7f345a971e76b0a2d1bdc4f4ab34c9c3b254837b693dee552b71af65a",
+  "fixRevision": "abef19c940da8ff31d5cf2c96deefc1035bac1c3",
+  "parentRevision": "1b09363bd6f95859aea329627ae8e19877f426ed",
+  "packageManager": "pnpm@10.20.0",
+  "dependencySha256": {
+    "package.json": "3aa398010a5bf8f7a2da805dc3060e1450d97e136e919d1127539fecda22962d",
+    "pnpm-lock.yaml": "120aa89ec48165beb38b0e6452051d401c709a91a8af30666123870d550edd2f"
+  },
+  "installedVitest": "4.1.0",
+  "scope": "Original upstream runtime unit sources/config/maintainer cases and full frozen dev dependencies. Excludes lint/types/build/coverage. JITI filesystem/Vitest results caches and TestLore disk analysis disabled equally; OS/package caches uncontrolled."
+}
