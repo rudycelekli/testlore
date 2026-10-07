@@ -1,0 +1,112 @@
+{
+  "schemaVersion": 1,
+  "type": "framework-profile-preflight",
+  "qualified": false,
+  "status": "blocked-incomplete-upstream-environment",
+  "source": {
+    "repository": "https://github.com/openapi-ts/openapi-typescript",
+    "revision": "d46a319ae2efab30e135ba9b223a3cffd1a67eab",
+    "inputHashes": {
+      "package.json": "c20022b4e3672fd8b58747f319ef4dccf178e101bc61d1ecb107b8687d73d9eb",
+      "pnpm-workspace.yaml": "07547ff4384f62f5206015d4639785f6620b87f3f17b88297ddac0f537ed9b77",
+      "pnpm-lock.yaml": "065e1fdaf1fde0d7fc2beda51a8c39fe2128de0936c96468562698189af7ae27",
+      "packages/openapi-fetch/package.json": "1dd6ef49d75e7098831c12ae9fc2ab375e1f4fe063086dc8bbb5d554a6bbac7e",
+      "packages/openapi-fetch/playwright.config.ts": "ff8c93636cd6dd306f36cb1ea59600dab4fd540be56e3f163facd01c8d10e347",
+      "packages/openapi-fetch/test/e2e/index.e2e.ts": "b87c60fc2114d62e09228467da98e3248e03b5dd6bf0982e96d25feed64c28e4",
+      "packages/openapi-fetch/test/e2e/app/index.html": "9134b13bd7bc75c20c44b62663df26ad69f5627912a838f92b37a59843b1ab58",
+      "packages/openapi-fetch/test/e2e/app/app.ts": "a6c4dd3f7c046fc8f5dab908f24bdae19b3fa04c0555cc7140922f0cf2908ace",
+      "packages/openapi-fetch/test/e2e/app/vite.config.ts": "8c9d6a408322060d4b58c80b8088452ab723b28fba3c946c0845b151382c7587"
+    }
+  },
+  "producer": {
+    "baseline": "6648f7b5690fedb4e09236c72fc97c1d698ee35b",
+    "candidate": "0b86793de97b4e1a4aeb93eb5b60d79cc4a2532d",
+    "baselineModule": {
+      "module": "routing-proposals.js",
+      "sha256": "3a2baa35d8c8950aa9202a39ea4e336e7415efb758ce0a3bd5ad402f5b00990f"
+    },
+    "candidateModule": {
+      "module": "routing-proposals.js",
+      "sha256": "68532116a268ba8fcabfd97be52f5bfcf459f0121eca527d70026f0ad9992c50"
+    }
+  },
+  "proposalComparison": {
+    "baseline": {
+      "total": 8,
+      "workspace": 0,
+      "warnings": 63
+    },
+    "candidate": {
+      "total": 15,
+      "workspace": 7,
+      "warnings": 63,
+      "stable": true,
+      "truncated": false,
+      "applied": false,
+      "closedWorld": false
+    },
+    "validation": "Current producer, configuration, source and workspace declaration bytes revalidated"
+  },
+  "environment": {
+    "upstreamPackageManager": "pnpm@10.30.3",
+    "observedPackageManager": "pnpm@10.17.1",
+    "strictPackageManagerVersion": false,
+    "install": {
+      "frozenLockfile": true,
+      "offline": true,
+      "ignoreScripts": true,
+      "filter": "openapi-fetch...",
+      "selectedWorkspaces": 3,
+      "totalWorkspaces": 9,
+      "plannedRegistryPackages": 592,
+      "completed": false,
+      "error": "ERR_PNPM_NO_OFFLINE_TARBALL",
+      "firstMissing": "axios@1.16.0",
+      "partialDependenciesRetired": true
+    }
+  },
+  "nativeApplicationExecution": {
+    "attempted": false,
+    "qualifiedChanges": 0,
+    "reason": "Frozen filtered installation did not complete; no native unit or browser qualification"
+  },
+  "coverage": {
+    "workspaceImports": "7 review hypotheses only",
+    "routesAndBundles": "Maintainer Vite/Playwright sources inspected; no browser execution",
+    "stylesAndAssets": "Representative contracts absent in this browser fixture",
+    "serviceInputs": "Maintainer browser tests intercept API calls; actual backend behavior unqualified"
+  },
+  "controlledVerification": {
+    "origin": "Constructed Node native-case fixture; no genuine historical application defect",
+    "fullCases": 2,
+    "selectedCases": 1,
+    "sameFailurePreserved": true,
+    "mappingsApplied": false,
+    "closedWorld": false,
+    "unknownServerInput": "full fallback",
+    "focused": {
+      "tests": 41,
+      "passed": 41,
+      "failed": 0,
+      "skipped": 0
+    },
+    "exclusionRemovalMutant": "Detected additional excluded package group; source restored",
+    "priorFailures": [
+      "First focused run lacked native Node on PATH: two preexisting native checks incomplete",
+      "Concurrent focused run retained 30-second overall budget rejection; unchanged sequential run passed"
+    ]
+  },
+  "receipts": {
+    "candidateProposal": "23ffd3878385d6557631320ba35fb93b51cacb1824c682f7545c3f7a0ba7b2c4",
+    "baselineProposal": "1e46a694edd90bd8d03039158541106a2a97819774a09087a31103a783236f97",
+    "incompleteInstall": "c773c3585e6fe20b04ac40a2d5bb5e1afea14c70e77b1212159c9d8f90c502ac",
+    "retiredPartialDependencies": "142577b3c6ee5729dbe858d99049ca96358a57fef55eddb4e9c818bc6232ebc0",
+    "focused": "6a5e38635d7adcb143843968850edba960be8d967e4fd442c157982f4e5fb1ba",
+    "exclusionMutant": "4dc6dc8cacea19e8bc4e87a62a128e67aab513ff255cfc7e04fe0f77c66663b1"
+  },
+  "limitations": [
+    "No whole-application profile qualification, no Vitest/Playwright execution claim, no omission authority, no speed comparison.",
+    "Proposed workspace groups do not establish native export bindings, transitive services or complete browser dependencies.",
+    "A filtered, incomplete install is not the genuine complete upstream environment."
+  ]
+}
