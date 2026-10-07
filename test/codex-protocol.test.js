@@ -137,6 +137,15 @@ test('main preserves exact structured stdout and strips provider keys without au
   assert.equal(result.status, 0, result.stderr); assert.equal(result.stdout, JSON.stringify(reply));
   assert.equal(result.stderr, '');
 });
+test('opt-in evaluation worker retains audited usage without changing role fields',t=>{
+ const {env}=fake(t,emitValid);
+ const worker=fileURLToPath(new URL('../scripts/codex-evaluation-worker.js',import.meta.url));
+ const result=spawnSync(process.execPath,[worker],{env,input:JSON.stringify({role:'architect'}),encoding:'utf8',timeout:5000});
+ assert.equal(result.status,0,result.stderr);const {_testloreNativeAudit:audit,...value}=JSON.parse(result.stdout);
+ assert.deepEqual(value,reply);assert.equal(audit.complete,true);assert.equal(audit.toolAttempts,0);
+ assert.deepEqual(audit.usage,valid.at(-1).usage);assert.equal(audit.observedModel,null);
+ const rejected=spawnSync(process.execPath,[worker,'--unexpected'],{env,input:'{}',encoding:'utf8',timeout:5000});assert.equal(rejected.status,1);
+});
 
 
 test('preexisting response evidence is rejected intact and CLI/schema drift invalidates success', async t => {

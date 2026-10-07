@@ -1,5 +1,9 @@
 # Paired evaluation of learning
 
+For Codex-native evaluation, `scripts/codex-evaluation-worker.js` opts into retaining the adapter's audited completion metadata beside each role result. Ordinary adapter output remains unchanged. The summary counts reported input/cached-input/output tokens only when completion and local worker identity checks succeeded. Missing, timed-out, rejected or drifting calls retain unknown usage; reported token totals cover only observed calls. Provider models, externally attested usage and dollar billing remain unknown. Cached input is part of input and must not be added to it as another token total. Source-bound native counters do not establish a price, a spending cap or successful execution in an MCP host.
+
+Use the worker's absolute path in the evaluation `--agent` JSON argv. All role output, including audit metadata, counts toward the existing response-byte bound. Prospective dataset commitments must be prepared before invocation; the worker never receives withheld reference tests or fault payloads. Constructed prospective specifications remain labeled as such, even when their digest was frozen before generation.
+
 Historical examples reaching an author is evidence of integration. It does not establish better tests. The original [single-task ablation](../benchmarks/learning/2026-09-29-native-ablation/summary.json) remains visible: both variants caught four mutations, memory produced fewer cases and took longer. Its order and default model were unpinned.
 
 The [repeated native run](../benchmarks/learning/2026-09-30-paired-native/README.md) covers two specifications and two repetitions. The no-memory arm caught 12/12 defects; the memory arm caught 9/12, with one author timeout. This result is inconclusive and establishes no learning benefit. Implementation hashes, raw receipts, development-lineage limits and a delayed-timeout caveat remain visible.

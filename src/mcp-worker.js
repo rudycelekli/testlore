@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 import { plan } from './selector.js';
 import { run } from './runner.js';
+import {nextVerificationAction} from './run-report.js';
 
 // This is an internal, fixed-argv worker. Project runner output never shares the
 // MCP protocol stream; the parent supervises this process and its descendants.
@@ -47,11 +48,7 @@ export function summarizeRun(report, mode, receipts) {
       noObservedMisses: report.comparison.noObservedMisses,
       decisionRecall: report.comparison.decisionRecall, limitation: report.comparison.limitation },
     receipts,
-    nextAction: report.executed !== true || report.complete !== true
-      ? 'Repair the reported execution/discovery problem and rerun full native verification; no complete current result is available.'
-      : report.exitCode !== 0
-        ? 'Inspect the failed case identities and durable receipts, repair the independently established defect, then rerun the full suite.'
-        : 'Review remaining routing uncertainty and independent defect obligations before relying on this scoped observation.',
+    nextAction: nextVerificationAction(report),
     deploymentSafety: 'not-established', learningImprovement: 'not-established'
   };
 }

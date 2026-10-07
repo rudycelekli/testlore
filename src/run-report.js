@@ -1,5 +1,12 @@
 // Render bounded, escaped decision evidence; test output is retained only in JSON.
 const escape = value => String(value ?? '').replace(/[\\`*_{}[\]<>|]/g, '\\$&').replace(/[\r\n]+/g, ' ').slice(0, 1000);
+export function nextVerificationAction(report={}){
+ if(report.executed!==true||report.complete!==true)return 'Inspect the execution or discovery issue and run testlore doctor --json; repair the prerequisites, then rerun full native verification.';
+ if(report.comparison?.omittedFailures?.length)return 'Keep shadow mode enabled. Investigate the omitted failing case identities and revise dependency mappings before considering selective execution.';
+ if(report.exitCode!==0)return 'Inspect the failed case identities and durable receipts, repair the independently established defect, then rerun the full suite.';
+ if(report.delegated)return 'Inspect the native engine report and target decisions; individual case preservation and omitted-test safety remain unverified.';
+ return 'Review remaining dependency uncertainty and independent defect obligations. Keep shadow mode until representative full/subset comparisons support selective execution; rerun verification after changes.';
+}
 export function renderRunReport(report = {}) {
  const selection = report.plan || {}, decisions = selection.decisions || [];
  if(report.delegated || selection.targets !== undefined){
@@ -7,7 +14,7 @@ export function renderRunReport(report = {}) {
    if(Array.isArray(targets))rows.push('');
    if(Array.isArray(targets))for(const target of targets.slice(0,200))rows.push(`- ${escape(target)}`);
    if(report.error)rows.push('',`Execution issue: ${escape(report.error)}`);
-   rows.push('','Omitted targets and their dependency decisions are owned by the native engine; inspect the JSON command and native report. This report makes no individual-case safety claim.');return rows.join('\n')+'\n';
+   rows.push('','Omitted targets and their dependency decisions are owned by the native engine; inspect the JSON command and native report. This report makes no individual-case safety claim.','',`Next action: ${nextVerificationAction(report)}`);return rows.join('\n')+'\n';
  }
  const ran = new Set(report.executedTests || report.executedFiles || []);
  const proposed = new Set(selection.selected || []);
@@ -26,5 +33,6 @@ export function renderRunReport(report = {}) {
  if(!warnings.length)text.push('', '- No unresolved analyzer warnings were reported for this scope. Undeclared runtime inputs and unexercised browser paths remain limitations.');
  else for(const w of warnings.slice(0,100))text.push(`- ${escape(typeof w==='string'?w:[w.file,w.reason,w.scope].filter(Boolean).join(': '))}`);
  if(warnings.length>100)text.push('- Remaining warnings are retained in the JSON receipt.');
+ text.push('',`Next action: ${nextVerificationAction(report)}`);
  return text.join('\n')+'\n';
 }

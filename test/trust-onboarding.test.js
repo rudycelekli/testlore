@@ -7,6 +7,7 @@ import {installQualityLayer} from '../src/quality-layer.js';
 import {run,compareSubsetCases} from '../src/runner.js';
 import {renderRunReport} from '../src/run-report.js';
 import {readConfig} from '../src/files.js';
+import {summarizeRun} from '../src/mcp-worker.js';
 test('new onboarding shadows a planted failure in an omitted file; explicit selection override is observable',t=>{
  const root=fixture(t,twoModules);installQualityLayer(root,{ci:false});commit(root);
  write(root,'src/a.js','export const a = 1; // edit');
@@ -44,4 +45,14 @@ test('Playwright helper imports cannot silently close undeclared browser inputs'
 test('delegated native reports describe targets without inventing individual case evidence',()=>{
  const text=renderRunReport({delegated:true,adapter:'nx',complete:true,exitCode:0,plan:{mode:'affected',targets:['web','api'],evidence:'nx-project-graph'}});
  assert.match(text,/Native targets: 2/);assert.match(text,/Individual case inventory and independent subset recall are not established/);assert.equal(text.includes('0 passed'),false);
+});
+test('human and agent results prioritize repair and shadow routing misses over passing claims',()=>{
+ const incomplete={executed:true,complete:false,exitCode:0};
+ assert.match(renderRunReport(incomplete),/Next action: .*repair the prerequisites/);
+ const missed={executed:true,complete:true,exitCode:1,shadow:true,comparison:{complete:true,omittedFailures:[{id:'independent-fault'}]}};
+ assert.match(renderRunReport(missed),/Keep shadow mode enabled/);
+ assert.match(summarizeRun(missed,'shadow',null).nextAction,/omitted failing case identities/);
+ const passed={executed:true,complete:true,exitCode:0,tests:[{id:'ok',status:'passed'}]};
+ assert.match(renderRunReport(passed),/rerun verification after changes/);
+ assert.equal(summarizeRun(passed,'shadow',null).deploymentSafety,'not-established');
 });

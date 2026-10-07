@@ -134,7 +134,8 @@ export function runCodex(args, prompt, directory, env, budget = {}) {
     child.stdin.end(prompt);
   });
 }
-export async function main() {
+export async function main({includeAudit=false}={}) {
+  if(typeof includeAudit!=='boolean')throw failure('REQUEST_INVALID','Audit presentation requires an explicit boolean');
   let input = '', inputBytes = 0;
   const decoder = new TextDecoder('utf-8', { fatal: true });
   for await (const data of process.stdin) {
@@ -152,8 +153,8 @@ export async function main() {
     const env = { ...process.env };
     for (const name of ['OPENAI_API_KEY', 'CODEX_API_KEY', 'AZURE_OPENAI_API_KEY', 'ANTHROPIC_API_KEY', 'OPENROUTER_API_KEY']) delete env[name];
     // Requires existing Codex login. No API-key fallback and no selected model override.
-    const { value } = await runCodex(args, prompt, directory, env, payload.transportBudget);
-    process.stdout.write(JSON.stringify(value));
+    const { value, audit } = await runCodex(args, prompt, directory, env, payload.transportBudget);
+    process.stdout.write(JSON.stringify(includeAudit?{...value,_testloreNativeAudit:audit}:value));
   } finally { fs.rmSync(directory, { recursive: true, force: true }); }
 }
 if (process.argv[1] && fs.realpathSync(process.argv[1]) === fs.realpathSync(fileURLToPath(import.meta.url))) {

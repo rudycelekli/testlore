@@ -1,5 +1,21 @@
 # Regression corpus qualification
 
+## External maintainer oracle recipe
+
+`scripts/public-regression.js` constructs a manifest from a clean local checkout of [unjs/ufo fix #313](https://github.com/unjs/ufo/pull/313), pinned to `eb29945470c8629309764f026a36e7f477a9a1ff`. It hashes the unchanged upstream tests and inverts only the complete `src/utils.ts` source from its parent. The maintainer assertions cover false URL-prefix matches; TestLore does not write their expected values. The constructor reads Git/source bytes without running tests, downloading dependencies or modifying the checkout.
+
+```sh
+git clone https://github.com/unjs/ufo.git .tddswarm/ufo-NEW
+git -C .tddswarm/ufo-NEW checkout --detach eb29945470c8629309764f026a36e7f477a9a1ff
+ln -s "$PWD/node_modules" .tddswarm/ufo-NEW/node_modules
+node scripts/public-regression.js --root .tddswarm/ufo-NEW --manifest .tddswarm/ufo-manifest-NEW.json
+node scripts/regression-corpus.js --manifest .tddswarm/ufo-manifest-NEW.json --output .tddswarm/pilots/ufo-NEW --execute
+```
+
+This recipe uses TestLore's installed Vitest for unchanged upstream runtime unit tests. It excludes the upstream lint/typecheck/build workflow and differs from its original development dependency installation. It is one actual library bug, with repeated observations of its assertions; it does not establish production-wide performance or browser recall. Original clone bytes remain unchanged; fault execution occurs in disposable copies. Preserve unsuccessful baselines and incomplete trials.
+
+## Corpus contract
+
 `scripts/regression-corpus.js` adds named-failure and repetition gates around the existing isolated pilot. It accepts operator-supplied real repository histories, exact public bugfix inversions, and explicitly labeled authored changes. These origins are counted separately. A self-project bugfix is useful regression evidence, but does not establish independent external application performance.
 
 Each change supplies `expectedFailureNames`, immutable `oracleFiles` hashes, and origin/maintainer/independence metadata. Fault patches cannot modify test files. For historical faults, both immutable revisions must contain the same oracle bytes. Public inversions bind the complete fixed and buggy source payloads to hashes and pin the upstream fix and parent revision. The caller must separately verify the upstream commit/source association; a repository URL in a manifest is a declaration, not a verified fetch.
