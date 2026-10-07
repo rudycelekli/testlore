@@ -1,5 +1,7 @@
 # Qualification campaign: September 30, 2026
 
+The [October 6 follow-up](qualification-20261006.md) contains fresh integrated real-history, boundary and external upstream-oracle results, plus the prospective live learning attempt. Earlier frozen results below remain unchanged.
+
 TestLore has stronger evidence contracts. These results do not establish a general speed advantage, improved learning, complete native agent compatibility or npm publication.
 
 ## Real change histories

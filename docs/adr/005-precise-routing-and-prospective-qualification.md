@@ -1,6 +1,6 @@
 # Precise routing and prospective qualification
 
-Status: In progress
+Status: Implemented mechanics; broader qualification and external publication gates open
 Date: 2026-10-06
 Related: [ADR 003](003-qualification-campaign.md), [ADR 004](004-measured-planning-and-worker-completion.md)
 
@@ -19,11 +19,11 @@ Independent implementation lanes extend mapping proposals, optimize native plann
 - Proposed mappings retain integrity, source/producer provenance, unresolved inputs and review requirements; they never assert closed-world authority or apply themselves.
 - Planning optimization preserves fresh native configuration, scope, removed-import edges and conservative fallback. Any cache must reject drift and incomplete evidence.
 - Qualification retains all attempts, matches real case identities, counts independently demonstrated faults and includes discovery/planning/reporting costs. Constructed fixtures remain labeled as constructed.
-- New generation evaluations freeze external specifications before invocation, with reference implementations and defects excluded from worker inputs. Learning remains advisory until a prospective experiment demonstrates a repeated gain.
+- New generation evaluations freeze prospectively supplied specifications before invocation, with reference implementations and defects excluded from worker inputs. Externally maintained authorship is a separate gate. Learning remains advisory until a prospective experiment demonstrates a repeated gain.
 - Installation and agent results identify blockers and next actions without turning static inspection into a passing verification result. npm publication and native host success require their actual external evidence.
 
 ## Measurement limits
 
 The September 30 history replay used full fallback throughout; later controlled planning improvements have not established broad application speed. A zero-miss corpus bounds only observed behavior. Browser coverage cannot establish unexercised server or service dependencies. Native host completion is distinct from SDK compatibility, and a qualified archive is distinct from registry publication.
 
-Implementation status and new frozen receipts will be recorded here after integration; unresolved gates will remain explicit.
+October 6 implementation includes sealed proposals, fresh shared native planning with bounded CLI/runtime guards, invocation uncertainty retention, named repeated corpora, prospective commitments, partial native usage accounting and prerequisite/action diagnostics. [Fresh receipts](../qualification-20261006.md) retain eight real-history trials, sixteen boundary trials, two external upstream-oracle trials and eight live generation attempts. No broad speed or learning gain was established. Publication/account access, successful full native MCP-host execution, broader independent applications and reliable live generation remain open.

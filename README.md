@@ -90,6 +90,7 @@ Want a useful report before configuring agents?
 ```sh
 npm exec --yes --package=github:rudycelekli/testlore -- testlore init
 npm install --save-dev github:rudycelekli/testlore
+npx --no-install testlore doctor --json
 npx --no-install testlore audit --json
 npx --no-install testlore run --shadow --base HEAD
 ```
@@ -245,6 +246,10 @@ On **12 controlled changes across four Node fixtures**, TestLore caught all 63 o
 | **Six-contract live evaluation** | 36 trials: without memory 42/54 fault detections; with memory 39/54. Eight timeouts and one candidate rejection retained. No demonstrated learning gain. | [Aggregate](benchmarks/learning/six-contracts-live-aggregate.json) · [Scope and costs](docs/qualification-campaign.md) |
 | **Real change histories** | Three repositories, four Git revision pairs, eight trials: TestLore 201.5 s; full 149.0 s; native 140.0 s. No speed advantage established. | [Aggregate](benchmarks/history-pilot-aggregate.json) · [Campaign and limitations](docs/qualification-campaign.md) |
 | **Fresh planning overhead** | Strict authored fixture: TestLore median 1,747 → 1,277 ms; native related 300 ms on the same failing case. Reduced overhead; no general speed lead. | [Receipts and limits](docs/planning-performance.md) |
+| **Fresh real-history replay** | Same three repositories, eight valid trials: TestLore 112.77 s; full 82.39 s; native 79.42 s. All full fallback; no speed lead or fault-recall evidence. | [Aggregate](benchmarks/qualification-20261006/own-history.json) · [Scope](docs/qualification-20261006.md) |
+| **Named boundary regressions** | 16/16 stable trials; all 14 demonstrated fault trials preserved. Native selection missed eight runtime/deletion observations; TestLore took longer overall. | [Aggregate](benchmarks/qualification-20261006/boundary-corpus.json) |
+| **External maintainer oracles** | Actual ufo prefix bug, unchanged upstream tests: four assertions fail and are preserved twice by both selectors. TestLore 9.68 s; native 4.85 s. | [Aggregate](benchmarks/qualification-20261006/external-ufo.json) · [Reproduce](docs/regression-corpus.md) |
+| **Prospective audited learning** | Eight trials, seven native protocol rejections. One trial caught three withheld faults twice; all pairs incomplete. No learning-gain claim; partial token usage and unknown billing retained. | [Aggregate](benchmarks/qualification-20261006/prospective-learning.json) |
 | **Audited native generation** | Corrected retest: three roles, 43 stable baseline cases, three authored faults caught twice. Initial layout rejection retained; no learning-gain claim. | [Both attempts](benchmarks/worker/codex-completion-aggregate.json) · [Method](docs/worker-completion.md) |
 | **Native agent hosts** | Actual Codex readonly calls; execution blocked by MCP policy. Claude authentication failed before tool calls. Neither host fully qualified. | [Aggregate](benchmarks/host-native-aggregate.json) · [Procedure](docs/mcp.md) |
 | **Packed installation** | Production-only install, native shadow fault detection, runtime capture, and a fully tested improvement branch. | `node scripts/packed-proof.js` |

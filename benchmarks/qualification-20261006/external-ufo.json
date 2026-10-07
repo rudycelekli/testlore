@@ -1,0 +1,173 @@
+{
+  "schemaVersion": 1,
+  "kind": "regression-corpus-assessment",
+  "requestedTrials": 2,
+  "completedTrials": 2,
+  "uncompletedTrials": 0,
+  "scenarios": 1,
+  "faultScenarios": 1,
+  "faultOpportunities": 2,
+  "independentlyDemonstratedFaultTrials": 2,
+  "preservedFaultTrials": 2,
+  "stableScenarios": 1,
+  "qualifiedScenarios": 1,
+  "fullFallbackTrials": 0,
+  "selectiveTrials": 2,
+  "qualified": true,
+  "provenance": {
+    "authoredScenarios": 0,
+    "repositoryHistoryScenarios": 0,
+    "publicBugfixInversions": 1,
+    "maintainerIndependenceVerified": false
+  },
+  "timing": {
+    "full": {
+      "observed": 2,
+      "totalMs": 6305,
+      "p50Ms": 2329,
+      "p95Ms": 3976
+    },
+    "testLore": {
+      "observed": 2,
+      "totalMs": 9679,
+      "p50Ms": 4010,
+      "p95Ms": 5669
+    },
+    "native": {
+      "observed": 2,
+      "totalMs": 4854,
+      "p50Ms": 2040,
+      "p95Ms": 2814
+    }
+  },
+  "timingScope": "Per-arm native process execution and TestLore discovery/planning/execution/receipt work. Corpus orchestration and independent verification discovery excluded; separately report controller elapsed time. Shared OS/dependency caches are not flushed; repetitions are not independent projects.",
+  "limitations": [
+    "Named assertion failures are independently executed; labels and maintainer independence remain operator declarations.",
+    "No observed misses on this bounded corpus establishes universal recall. Passing scenarios alone do not qualify fault preservation.",
+    "Missing trials, unstable case identities/statuses and incomplete/module-load outcomes cannot qualify.",
+    "Raw test identities and labels remain private; this aggregate does not contain repository paths or case names.",
+    "No model calls, provider billing or generation/learning claim. Native and TestLore implementations are not fully runtime-attested."
+  ],
+  "corpusHash": "83af249d20b7297521ab0af240661b3b28929a9d102cdc7e9a3a5070de11e819",
+  "pilot": {
+    "schemaVersion": 1,
+    "kind": "local-pilot-aggregate",
+    "projects": 1,
+    "validProjects": 1,
+    "frameworks": [
+      "vitest"
+    ],
+    "trials": 2,
+    "validTrials": 2,
+    "requestedTrials": 2,
+    "uncompletedTrials": 0,
+    "unknownTrialCounts": 0,
+    "changeErrors": 0,
+    "sourceCheckoutsVerifiedUnchanged": 1,
+    "sourceCheckoutsUnverified": 0,
+    "nativeUnverifiedTrials": 0,
+    "caseObservations": {
+      "full": 970,
+      "testLore": 922,
+      "native": 922
+    },
+    "fileObservations": {
+      "full": 26,
+      "testLore": 24,
+      "native": 24
+    },
+    "negativeSavingsVsNative": 2,
+    "observedFailures": 8,
+    "missedFailures": 0,
+    "unexpectedSubsetFailures": 0,
+    "nativeValidTrials": 2,
+    "nativeMissedFailures": 0,
+    "nativeUnexpectedFailures": 0,
+    "invalidTrials": 0,
+    "errorProjects": 0,
+    "historicalChanges": 0,
+    "negativeSavings": 2,
+    "allTrialTimings": {
+      "fullMs": 6305,
+      "testLoreMs": 9679,
+      "nativeMs": 4854,
+      "netVsFullMs": -3374,
+      "netVsNativeMs": -4825
+    },
+    "validTrialTimings": {
+      "fullMs": 6305,
+      "subsetMs": 5219,
+      "planningMs": 4053,
+      "testLoreMs": 9679,
+      "nativeMs": 4854
+    },
+    "limitation": "Unauthenticated local aggregates; planted changes, historical revision pairs and declared scopes only. Not an independent leaderboard."
+  },
+  "implementationIdentity": {
+    "sourceRevision": "9e129a5976719f07e5c9743e1d8d1a68b65aea66",
+    "sourceTreeClean": true,
+    "controllerNode": {
+      "version": "v22.19.0",
+      "sha256": "0d005c18e095027ca8f9fe1cc1126f767ee4ad7b004f4d6fb781ec4228a7c5d1",
+      "bytes": 110712624
+    },
+    "implementationHashes": {
+      "scripts/regression-corpus.js": "dedcb78b6bafd531aa214f47bbcfd22abea18f1ea921875181c22bd3abb65c76",
+      "scripts/evaluation-commitment.js": "8e1e6e7c586bf3b2f38f3202f7b2d1c4b2e37d0054fca4315e3434c6b368251a",
+      "scripts/worker-identity.js": "10fe0b51f032c71bf475f7d8e788dd3c6d6452ba53c072f08783b0bce1b446a6",
+      "src/adoption-readiness.js": "739f6f9cc4c0a91c9ffb96ca352ac6548c67be0317fc09afe1162e4a12839870",
+      "src/agent-contract.js": "f7df563d2f77d3dbacea7607495916a22df8fcbee655ca69ed57ef2960886376",
+      "src/agent-profile.js": "85a636f66ed1f939a3b32e175e470a3adc00549c7c7b243e46079cfe93836814",
+      "src/audit.js": "023f15549f498f7ef5a5e9cc38056d1cd2b0b80a868dd36498e7b43a09f770ad",
+      "src/browser-evidence.js": "43d3e66283e7172c83f71d19c8377843ce0315ad8f49550371525e35ce7bb803",
+      "src/browser-fixture.d.ts": "5dbb0d7c1a2a6f05dba93f00ed5e88eea823bb0f08d8b9eead60bcbe808cc80e",
+      "src/browser-fixture.js": "5dce6ad7342cf298af5cf798330b7c3110fc2372aa435543a4e4495b001ce855",
+      "src/candidates.js": "cf376d249374c147f93458750490769bc0b9542029da761f7424fb78220f83e8",
+      "src/cli.js": "e62006eeda3138799adc6d13d21d901f2998c7e158b3588f219eab4a85d47a1f",
+      "src/evidence-loop.js": "283ea660a8bb45e3eb0cce8a3f165b63d695be389aaf03c46c933955e2843c64",
+      "src/evidence.js": "a8a4970738d9e1f55a4dcd27c901b2e3280b1109383e16e932ec29bf72b7b545",
+      "src/execution.js": "84dba367df6435f2bcaf01e6639b307a9a53d397470fdd0251b41c5aeca5ddb5",
+      "src/files.js": "3b3222eac493d93f6f9997fa6e49e96302e521991cd46250673af18fddf30283",
+      "src/graph-cache.js": "5a17633fa29a98ae8f09b2e6b988ac0c7b9c9958df33aba53ab3ac39d8a08f5c",
+      "src/graph.js": "8dc09d25360b0e0ca9ca44c30283a671307023feffadd64f050f0d379ffdea87",
+      "src/improvement.js": "086ecc931459b05425d28ce47c65faf05a70b7e85ce7935fe1be2f9acc1d1695",
+      "src/index.js": "60e43df2b92b6b365e254aed152f159540011b839b7c83a4c8bb2b90362bf921",
+      "src/inputs.js": "b60751753fef2e11d65b88ce69e866a273289312ce65c1a1fb8bed7a49fd6da7",
+      "src/integrations.js": "ba103a3f9f975f605f1d2013db1606ed6bb0bb12f24044da90cbcfc506ea8fe8",
+      "src/learning.js": "b20f3b143015543f5ad5f339b33eeffe350da3f3ca310b07c740365e47d9d273",
+      "src/mapping-qualification.js": "e74fc34b398c2272c16e30d5a6d467cf9294a42ca4de1da5e5ad166e4a5a6f96",
+      "src/mcp-worker.js": "25cd20189b401ecee88c95aaf51040e62f82cef2f8b98da6ffff43693dcb90b0",
+      "src/mcp.js": "c5a337d38cfd82d743d3905e8f32b9e0e89b52ba50c5b321b0c7c07f605602e1",
+      "src/pilot-history.js": "ac6ec6e866fc696a45115823d82d8d05c8ee8d3e7db7a52d422db7572e89e004",
+      "src/pilot-worker.js": "48d468c1ac4ca5c1e9115b6544107a98cdec40e0ac4ed31345ac81026124c3fc",
+      "src/pilot.js": "9606839d54a262243a10298f29cfdbee99d3e04ae8c7c06cca809ac4ca3c6869",
+      "src/plugin-config.js": "43cbdc3450288a49c8ee02b27b4178ea4b3baae43745b9f0de87c5b8d771fcc4",
+      "src/plugin-recommendations.js": "d626dce84e63156d74b32697dc32a61e456afe9ef1e39142d1af9a4c138dc0d4",
+      "src/plugins.js": "1ba8a5d5e4db4bce3c48ec1042cc23e5779803dfaba69b28a7a632ae34479413",
+      "src/provenance.js": "31729e07bb832015805752e26221b43bd25d440c12c4230e4399d812c60793a3",
+      "src/pull-request.js": "40111c2d70fc30f87adac6691860404741c584756b1035975d97f25e80f2f009",
+      "src/quality-layer.js": "dba9536d621c2aa100a22c01229bd627ce14b075a61f0008b83727271cfe7e3b",
+      "src/quality-measurement.js": "2ce9eaf57ead7366e9ec91dc563d08a67db6ac74081f1e5a59ed261b21ac6e2a",
+      "src/routing-proposals.js": "3a2baa35d8c8950aa9202a39ea4e336e7415efb758ce0a3bd5ad402f5b00990f",
+      "src/run-report.js": "9257a0a2b44ea4367bfd50933116a62be5f9621d55ca0c4078588d6785103a9d",
+      "src/runner.js": "5929a3713de4519a502221a4ef982a2b0c116db3a3889995da807f14e6fd6225",
+      "src/runtime-hook.cjs": "0e039982b4187ffdf9547f6c78d97c4d1ac0ca2b71d714201d1020883b47e57c",
+      "src/selector.js": "0eaf686cdef1c2ceefed362c2aef7e7c91f35cce142408f8f8d902cd6c7e18ff",
+      "src/swarm.js": "23f09e9a5ce9feb87f9b8527a771d6fa5808c44994516276d901f4ee702c7f68",
+      "src/timing.js": "045a575dbf260914314adedbddf546419c1e6f3b919e88b84d40af82bab221ce",
+      "src/reporters/node.js": "c5fbf1bf0841fd7e36f716198ac00a5481fa288a9662997257b385f64687b24c",
+      "src/reporters/playwright.cjs": "0f919f4972d6487d596a0ca66b738257cdee6364bd2d2c53d288573efb274965",
+      "src/reporters/resolve.js": "2e09c6c3e996fcef2c0cba94f75b09e7185c6080cdf7b77cb04dc69d1a6f131f",
+      "src/adapters/aqe.js": "8ef5b425622ee6798e4a7c68bb42e95c46922b5c0473b064073254d640f80082",
+      "src/adapters/codex-protocol.js": "9990337657931282a4b84199e32f47937bc66e051237995ffebfc0367a872a0c",
+      "src/adapters/codex.js": "038922188d47ba254b02a92f6bb7e8129772ff3ed013d19ad26f53b9394b1863",
+      "src/adapters/ruvector-worker.js": "80c8a6dcaf3014adc5e8fc3d01a50493af4679ea2b3713226ae08a97e5d34a07",
+      "src/adapters/ruvector.js": "d306a37df25e47b864c42211dc1b17a191f36f3518e979b1a5442a555569ad71"
+    },
+    "identityScope": "Controller, all existing core source modules and controller Node binary bound by content hashes. Installed native framework dependencies, runtime children, environment and models are not fully attested."
+  },
+  "implementationUnchanged": true,
+  "controllerElapsedMs": 26995,
+  "privateOriginalSha256": "544e77d9f903b801a55a5651519cf16a0e55136602fffb12c1617e1a64f98d21",
+  "publicExport": "Fixed assessment fields; no source, private paths, project aliases or case names. Counts and timings preserved."
+}

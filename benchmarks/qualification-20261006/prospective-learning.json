@@ -1,0 +1,235 @@
+{
+  "schemaVersion": 1,
+  "kind": "prospective-learning-aggregate",
+  "sourceRevision": "9e129a5976719f07e5c9743e1d8d1a68b65aea66",
+  "implementationHashes": {
+    "scripts/learning-evaluation.js": "21e9f887a69af925a79cec73b1ee0d5a1bd95d25164404cafe8f8dee8224d3be",
+    "scripts/evaluation-commitment.js": "8e1e6e7c586bf3b2f38f3202f7b2d1c4b2e37d0054fca4315e3434c6b368251a",
+    "scripts/evaluation-usage.js": "c4a0a0de89d1aaf30b384d68da5b45b50cd89995bce5e6376d2de46b1cbf7e42",
+    "scripts/worker-identity.js": "10fe0b51f032c71bf475f7d8e788dd3c6d6452ba53c072f08783b0bce1b446a6",
+    "src/learning.js": "b20f3b143015543f5ad5f339b33eeffe350da3f3ca310b07c740365e47d9d273",
+    "src/swarm.js": "23f09e9a5ce9feb87f9b8527a771d6fa5808c44994516276d901f4ee702c7f68",
+    "src/candidates.js": "cf376d249374c147f93458750490769bc0b9542029da761f7424fb78220f83e8",
+    "src/execution.js": "84dba367df6435f2bcaf01e6639b307a9a53d397470fdd0251b41c5aeca5ddb5",
+    "src/adapters/aqe.js": "8ef5b425622ee6798e4a7c68bb42e95c46922b5c0473b064073254d640f80082",
+    "src/adapters/codex-protocol.js": "9990337657931282a4b84199e32f47937bc66e051237995ffebfc0367a872a0c",
+    "src/adapters/codex.js": "038922188d47ba254b02a92f6bb7e8129772ff3ed013d19ad26f53b9394b1863",
+    "src/adapters/ruvector-worker.js": "80c8a6dcaf3014adc5e8fc3d01a50493af4679ea2b3713226ae08a97e5d34a07",
+    "src/adapters/ruvector.js": "d306a37df25e47b864c42211dc1b17a191f36f3518e979b1a5442a555569ad71"
+  },
+  "dataset": "prospective-contracts-20261006-v1",
+  "datasetHash": "d6076042090b8d558640430149092124bb8532e3b24c1fc03ee379ec6d5cc479",
+  "datasetCommitment": {
+    "schemaVersion": 1,
+    "kind": "evaluation-dataset-commitment",
+    "datasetId": "prospective-contracts-20261006-v1",
+    "datasetHash": "d6076042090b8d558640430149092124bb8532e3b24c1fc03ee379ec6d5cc479",
+    "units": [
+      {
+        "specificationId": "prospective-mergePatch-20261006-v1",
+        "requirementsHash": "7d7e748fd7e818c7e5b3fa49a877ab8f8fc4c213272d31ae4985b45fa8631a77",
+        "sourceHash": "f8c47a552e047bdd18a85dd9b65b46bcd25a97f4770315caafbd153db0c6aa9e",
+        "referenceHash": "0ffa67c1806254dde85b308eb77e5d04310af48611f45e23f51d332ee5ab68d3",
+        "defectsHash": "03aa01e4a2a9222de44fa587feb82882ff904bb2aeaff313d8e7196c8567ea1a"
+      },
+      {
+        "specificationId": "prospective-retryDelay-20261006-v1",
+        "requirementsHash": "20dd6dce967724e18509737eb9f55c43776015c3a1ba42e3aa381930c6e0dab7",
+        "sourceHash": "0453ba95bf6505866b3473041f79516144b8843087014ea44d37d3c65ee731b1",
+        "referenceHash": "6e79cdefc9b348ad4698363c862caeedd7541bbac472215b43c620639dbd0e11",
+        "defectsHash": "90e52842c03f86783841e08c9a0c6ac6819061a63ad7bf665998587e202eb7a5"
+      }
+    ],
+    "provenance": {
+      "owner": "TestLore project",
+      "source": "scripts/prospective-contracts.js",
+      "independenceNotes": "New constructed requirements and separately executed reference bugs frozen before worker runs. Authored by tool maintainers; not independent external authorship. Prior six-contract measurements are retained and not tuned.",
+      "independentlyMaintained": false
+    },
+    "createdAt": "2026-10-07T02:17:46.368Z",
+    "scope": "Local content commitment; owner and independence are declarations. No trusted timestamp, external publication, access isolation or semantic independence attestation.",
+    "verified": true,
+    "authorshipVerified": false,
+    "independenceVerified": false,
+    "externallyAnchored": false
+  },
+  "repeat": 2,
+  "seed": 20260930,
+  "budget": {
+    "maxCalls": 24,
+    "timeoutMs": 115000,
+    "maxOutputBytes": 65536,
+    "stabilityRuns": 2
+  },
+  "calls": 16,
+  "attemptedCalls": 16,
+  "spawnedCalls": 16,
+  "arms": [
+    {
+      "arm": "without_memory",
+      "trials": 4,
+      "failedTrials": 4,
+      "detected": 0,
+      "totalDefects": 12,
+      "meanCases": 0,
+      "meanGenerationMs": 26061.25,
+      "meanOutputBytes": 3569.25,
+      "meanInputBytes": 6067.5,
+      "meanTotalMs": 26067.25,
+      "meanSetupMs": 6.25,
+      "meanRetrievalMs": 0,
+      "calls": 7,
+      "attemptedCalls": 7,
+      "spawnedCalls": 7,
+      "stableTrials": 0,
+      "billingUSD": null
+    },
+    {
+      "arm": "with_memory",
+      "trials": 4,
+      "failedTrials": 3,
+      "detected": 3,
+      "totalDefects": 12,
+      "meanCases": 1.75,
+      "meanGenerationMs": 54581.5,
+      "meanOutputBytes": 8168.25,
+      "meanInputBytes": 14440,
+      "meanTotalMs": 55461,
+      "meanSetupMs": 3.25,
+      "meanRetrievalMs": 74,
+      "calls": 9,
+      "attemptedCalls": 9,
+      "spawnedCalls": 9,
+      "stableTrials": 1,
+      "billingUSD": null
+    }
+  ],
+  "comparison": {
+    "pairs": [
+      {
+        "fixture": "mergePatch",
+        "repetition": 0,
+        "recallDelta": 0,
+        "caseDelta": 0,
+        "generationMsDelta": 81591,
+        "outputBytesDelta": 13214,
+        "inputBytesDelta": 18281,
+        "totalMsDelta": 81667,
+        "complete": false
+      },
+      {
+        "fixture": "mergePatch",
+        "repetition": 1,
+        "recallDelta": 0,
+        "caseDelta": 0,
+        "generationMsDelta": -853,
+        "outputBytesDelta": 0,
+        "inputBytesDelta": 2223,
+        "totalMsDelta": -789,
+        "complete": false
+      },
+      {
+        "fixture": "retryDelay",
+        "repetition": 0,
+        "recallDelta": 0,
+        "caseDelta": 0,
+        "generationMsDelta": 17112,
+        "outputBytesDelta": 2947,
+        "inputBytesDelta": 8116,
+        "totalMsDelta": 17192,
+        "complete": false
+      },
+      {
+        "fixture": "retryDelay",
+        "repetition": 1,
+        "recallDelta": 1,
+        "caseDelta": 7,
+        "generationMsDelta": 16231,
+        "outputBytesDelta": 2235,
+        "inputBytesDelta": 4870,
+        "totalMsDelta": 19505,
+        "complete": false
+      }
+    ],
+    "applicableMemoryInAllTrials": true,
+    "independentSpecificationUnits": [
+      {
+        "fixture": "mergePatch",
+        "recallDelta": 0
+      },
+      {
+        "fixture": "retryDelay",
+        "recallDelta": 0.5
+      }
+    ],
+    "complete": false,
+    "inference": "inconclusive",
+    "exactTwoSidedSignTest": {
+      "unit": "independent specification mean across repetitions; ties excluded",
+      "positive": 1,
+      "negative": 0,
+      "ties": 1,
+      "p": 1
+    },
+    "pairedMeans": {
+      "recallDelta": 0.25,
+      "caseDelta": 1.75,
+      "generationMsDelta": 28520.25,
+      "outputBytesDelta": 4599,
+      "inputBytesDelta": 8372.5,
+      "totalMsDelta": 29393.75
+    }
+  },
+  "nativeUsage": {
+    "attemptedCalls": 16,
+    "auditedCompletedCalls": 9,
+    "callsWithoutUsage": 7,
+    "usageCoverageComplete": false,
+    "reportedTokenTotals": {
+      "input_tokens": 161579,
+      "cached_input_tokens": 0,
+      "output_tokens": 11014
+    },
+    "billingUSD": null,
+    "verifiedProviderModel": null,
+    "limitation": "Worker-reported counters from audited native completion events, with locally checked worker identities. Provider counters are not externally attested. Failed, timed-out or rejected calls can consume unreported tokens; totals cover only the reported calls. Cached input is a subset of input. No token pricing or dollar estimate is inferred."
+  },
+  "controller": {
+    "elapsedMs": 334134,
+    "setupMs": 917,
+    "sharedPreparationMs": 3360,
+    "groundTruthMs": 3715,
+    "completed": true,
+    "error": null,
+    "scope": "evaluateLearning entry through disposable workspace cleanup; process startup and final summary/controller receipt writes excluded"
+  },
+  "learningPromotion": {
+    "enabled": false,
+    "reason": "Evaluation remains advisory; local commitments do not prove semantic independence or establish repeatable deployment benefit."
+  },
+  "failures": {
+    "unsupportedNativeItemTrials": 7,
+    "timeouts": 0,
+    "validTrials": 1,
+    "attemptedTrials": 8,
+    "controllerRetries": 0,
+    "nativeProviderRequestCount": null
+  },
+  "privateOriginalSha256": "34e7bf4fecc7a39cd851ca540f46862c6cde0c16698ae06697ced85ed83ddd48",
+  "limitations": [
+    "Constructed authored contract dataset; different IDs/hashes prevent exact overlap, but maintainers must audit semantic independence. No production-corpus or competitor claim.",
+    "Repeated outputs are clustered by specification, not treated as independent samples.",
+    "Worker launcher and explicit file operands are bound by local SHA-256 and resolved-path checks before/after each role. Imported dependencies and spawned provider/runtime children are not fully attested; fullRuntimeAttestation is false. Operator declarations and requested model flags do not verify the provider model; verified model, provider seed and billing remain unknown.",
+    "Fixed three calls per successful arm; identical argv, time and response-byte limits. Input size increases with memory.",
+    "Transport rejects responses exceeding the identical declared byte budget in both arms; this is not a provider token or dollar cap. Requested deadlines propagate to adapters; host suspension can delay timers and late successes are rejected.",
+    "Hold-out reference tests and defect payloads are absent from agent stdin and trial roots; trusted custom workers are not a security sandbox.",
+    "Each reference baseline, generated baseline and held-out defect executes independently at least twice; changed case identities/statuses, skips and incomplete runs invalidate the trial.",
+    "Input/output counters measure normalized JSON payload bytes, excluding appended transportBudget and raw stdout bytes; they are not complete transport sizes or provider token counts. billingUSD is unknown, never zero or an invented estimate.",
+    "Generation time covers architect/author/reviewer; total time starts before project/source setup and frozen memory copy, includes retrieval, candidate validation, repeated stability and defect execution, and excludes run-level historical/ground-truth execution and final receipt writing.",
+    "Failures and incomplete trials remain visible and contribute zero recall; raw receipts stay local until explicitly reviewed for publication.",
+    "Seven original ITEM_UNKNOWN rejections retain their original diagnosis. Later diagnostics are separate protocol evidence and do not qualify this experiment.",
+    "One qualified advisory-memory trial caught three withheld faults twice with stable seven-case baselines. The remaining pairs were incomplete; no demonstrated learning improvement.",
+    "Prospective source/requirements/reference/defect hashes were committed locally before calls, without external time anchoring or independently maintained authorship.",
+    "Provider token counters cover nine audited role completions only; usage for seven rejected calls and dollar billing are unknown."
+  ]
+}

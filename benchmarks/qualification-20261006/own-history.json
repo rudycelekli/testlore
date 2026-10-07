@@ -1,0 +1,78 @@
+{
+  "schemaVersion": 1,
+  "kind": "local-pilot-aggregate",
+  "projects": 3,
+  "validProjects": 3,
+  "frameworks": [
+    "node",
+    "vitest"
+  ],
+  "trials": 8,
+  "validTrials": 8,
+  "requestedTrials": 8,
+  "uncompletedTrials": 0,
+  "unknownTrialCounts": 0,
+  "changeErrors": 0,
+  "sourceCheckoutsVerifiedUnchanged": 3,
+  "sourceCheckoutsUnverified": 0,
+  "nativeUnverifiedTrials": 0,
+  "caseObservations": {
+    "full": 3152,
+    "testLore": 3152,
+    "native": 2028
+  },
+  "fileObservations": {
+    "full": 422,
+    "testLore": 422,
+    "native": 342
+  },
+  "negativeSavingsVsNative": 6,
+  "observedFailures": 0,
+  "missedFailures": 0,
+  "unexpectedSubsetFailures": 0,
+  "nativeValidTrials": 8,
+  "nativeMissedFailures": 0,
+  "nativeUnexpectedFailures": 0,
+  "invalidTrials": 0,
+  "errorProjects": 0,
+  "historicalChanges": 4,
+  "negativeSavings": 7,
+  "allTrialTimings": {
+    "fullMs": 82391,
+    "testLoreMs": 112767,
+    "nativeMs": 79422,
+    "netVsFullMs": -30376,
+    "netVsNativeMs": -33345
+  },
+  "validTrialTimings": {
+    "fullMs": 82391,
+    "subsetMs": 81086,
+    "planningMs": 28313,
+    "testLoreMs": 112767,
+    "nativeMs": 79422
+  },
+  "limitation": "Unauthenticated local aggregates; planted changes, historical revision pairs and declared scopes only. Not an independent leaderboard.",
+  "sourceRevision": "9e129a5976719f07e5c9743e1d8d1a68b65aea66",
+  "implementationHashes": {
+    "pilot.js": "9606839d54a262243a10298f29cfdbee99d3e04ae8c7c06cca809ac4ca3c6869",
+    "pilot-worker.js": "48d468c1ac4ca5c1e9115b6544107a98cdec40e0ac4ed31345ac81026124c3fc",
+    "pilot-history.js": "ac6ec6e866fc696a45115823d82d8d05c8ee8d3e7db7a52d422db7572e89e004",
+    "runner.js": "5929a3713de4519a502221a4ef982a2b0c116db3a3889995da807f14e6fd6225",
+    "execution.js": "84dba367df6435f2bcaf01e6639b307a9a53d397470fdd0251b41c5aeca5ddb5",
+    "selector.js": "0eaf686cdef1c2ceefed362c2aef7e7c91f35cce142408f8f8d902cd6c7e18ff",
+    "graph.js": "8dc09d25360b0e0ca9ca44c30283a671307023feffadd64f050f0d379ffdea87",
+    "provenance.js": "31729e07bb832015805752e26221b43bd25d440c12c4230e4399d812c60793a3"
+  },
+  "environment": {
+    "node": "v22.19.0",
+    "platform": "darwin",
+    "arch": "arm64"
+  },
+  "privateOriginalSha256": "b625208151b4acd863aed78808c624a89d20a4c30b00c2698fcb9e831d5730ac",
+  "limitations": [
+    "Same four immutable revision pairs and three original repositories as the September 30 pilot. All originals unchanged.",
+    "All observations retained full fallback; no demonstrated failures in these revisions.",
+    "Complete per-arm spans include TestLore discovery, planning, execution and report retention. Native discovery/selection included.",
+    "Sequential local campaign, without other intentional heavy qualification lanes. Host activity, OS caches and installed dependency/runtime bytes are not fully controlled; cross-date timing differences cannot be attributed to the optimization."
+  ]
+}
