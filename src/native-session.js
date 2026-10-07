@@ -8,6 +8,7 @@ import {safePath,listFiles,SOURCE,git,gitBaseline,gitSources} from './files.js';
 import {analyze} from './graph.js';
 import {encodeNativeFrame,nativeFrameReader} from './native-protocol.js';
 import {digest} from './provenance.js';
+import {prepareNativeSourceSummaries} from './native-source-summaries.js';
 
 // Authority is minted only from a live, canonical worker, never public options.
 const sessions=new WeakMap();
@@ -59,7 +60,8 @@ export async function openNativeSession(root,config,options={},startupInventory)
   const reportFile=path.join(temporary,'results.json'),requestFile=path.join(temporary,'request.json');
   const invocation=[...command,'run','--reporter=json',`--outputFile=${reportFile}`];
   const files=startupInventory?startupInventory.files:listFiles(root);
-  fs.writeFileSync(requestFile,JSON.stringify({root,adapter:'vitest',command,imports,invocation,discover:true,transitive:true,roots:files.filter(file=>SOURCE.test(file)),unified:true,reportFile}));
+  const sourceSummaries=prepareNativeSourceSummaries(root,files);
+  fs.writeFileSync(requestFile,JSON.stringify({root,adapter:'vitest',command,imports,invocation,discover:true,transitive:true,roots:files.filter(file=>SOURCE.test(file)),sourceSummaries,unified:true,reportFile}));
   workerSpawned=performance.now();
   child=spawn(process.execPath,[fileURLToPath(new URL('./reporters/resolve.js',import.meta.url)),requestFile],{cwd:root,env:nativeEnvironment(config),detached:process.platform!=='win32',stdio:['ignore','pipe','pipe','pipe','pipe']});
   const wait=phase=>new Promise((resolve,reject)=>{if(failure)return reject(failure);pending.set(phase,{resolve,reject});});
@@ -90,7 +92,7 @@ export async function openNativeSession(root,config,options={},startupInventory)
    const value=await execution,executedReceived=performance.now();if(Date.now()>=deadline)throw new Error('Unified native-session deadline exceeded');
    if(child.exitCode===null&&child.signalCode===null)await new Promise(resolve=>child.once('close',resolve));
    if(failure)throw failure;if(Date.now()>=deadline)throw new Error('Unified native-session deadline exceeded');terminate();
-   return normalizeUnifiedExecution(root,files,value,{durationMs:Math.round(performance.now()-started),command:[],nativeInvocation:invocation,nativeExitCode:child.exitCode,signal:child.signalCode,stdout,stderr,unifiedNative:{prototype:true,used:true,programmatic:true,contexts:1,fresh:true,scope:'single root project',deadlineScope:'native-session; synchronous parent work is not preemptible',timings:{requestPreparationMs:workerSpawned-opened,workerStartupAndPlanningMs:plannedReceived-workerSpawned,executionRequestAndResultMs:executedReceived-started,resultToChildExitMs:performance.now()-executedReceived,worker:workerTimings,scope:'Diagnostic spans; worker starts after static module imports, parent startup includes imports and native planning. Spans overlap and never confer authority.'}}});
+   return normalizeUnifiedExecution(root,files,value,{durationMs:Math.round(performance.now()-started),command:[],nativeInvocation:invocation,nativeExitCode:child.exitCode,signal:child.signalCode,stdout,stderr,unifiedNative:{prototype:true,used:true,programmatic:true,contexts:1,fresh:true,scope:'single root project',sourceSummaryReuse:batch.sourceSummaryReuse,deadlineScope:'native-session; synchronous parent work is not preemptible',timings:{requestPreparationMs:workerSpawned-opened,workerStartupAndPlanningMs:plannedReceived-workerSpawned,executionRequestAndResultMs:executedReceived-started,resultToChildExitMs:performance.now()-executedReceived,worker:workerTimings,scope:'Diagnostic spans; worker starts after static module imports, parent startup includes imports and native planning. Spans overlap and never confer authority.'}}});
   }};
  }catch(error){error.nativeFailureEvidence={stdout,stderr};await close();throw error;}
 }

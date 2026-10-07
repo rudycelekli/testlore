@@ -60,8 +60,16 @@ test('unsupported loaded isolation rejects rather than reloading executable conf
 });
 test('public options cannot inject fabricated native discovery',async t=>{
  const {root}=project(t);write(root,'src/a.js','export default 2;');
- const report=await runUnifiedNative(root,{selective:true,capture:true,nativeSession:{discovery:{files:[],complete:true}},nativeBatch:{complete:true},startupInventory:{files:[]},startupPhase:{provenance:{files:[]}}});
+ const report=await runUnifiedNative(root,{selective:true,capture:true,nativeSession:{discovery:{files:[],complete:true}},nativeBatch:{complete:true},startupInventory:{files:[]},startupPhase:{provenance:{files:[]}},sourceSummaries:{used:true,records:{}}});
  assert.equal(report.complete,true,report.error);assert.equal(report.exitCode,1);assert.equal(report.tests.length,1);
+});
+test('unobserved ignored source uses the fresh canonical parser and retains native case parity',async t=>{
+ const {root,config}=project(t,{'src/a.js':`import value from '../.tddswarm/hidden.js';export default value;`});
+ fs.mkdirSync(path.join(root,'.tddswarm'),{recursive:true});fs.writeFileSync(path.join(root,'.tddswarm/hidden.js'),'export default 1;');write(root,'src/a.js',`import value from '../.tddswarm/hidden.js';export default value;\n`);
+ const result=await runUnifiedNative(root,{selective:true,capture:true});
+ assert.equal(result.complete,true,result.error);assert.equal(result.exitCode,0);assert.deepEqual(result.executedTests,['checks/a.check.js']);
+ assert.ok(result.unifiedNative.sourceSummaryReuse.validatedHits>0);assert.ok(result.unifiedNative.sourceSummaryReuse.freshParses>0);
+ const full=execute(root,['checks/a.check.js','checks/b.check.js'],config,{capture:true});assert.equal(compareSubsetCases(full,result,result.executedTests).complete,true);
 });
 
 test('fresh JSON configuration changing after startup snapshot rejects same-phase reuse',async t=>{

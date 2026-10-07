@@ -1,13 +1,12 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { analyze } from '../graph.js';
 import { isBuiltin } from 'node:module';
 import { createRequire } from 'node:module';
 import { pathToFileURL } from 'node:url';
 import { spawnSync } from 'node:child_process';
-import ts from 'typescript';
 import {encodeNativeFrame,nativeFrameReader,readNativeJson} from '../native-protocol.js';
 import {phaseTimings} from '../timing.js';
+import {nativeSourceSummaryReader} from '../native-source-summaries.js';
 const workerTiming=phaseTimings();
 let protocolOutput, instruction;
 function sendBounded(message) {
@@ -16,6 +15,7 @@ function sendBounded(message) {
 }
 const request = JSON.parse(fs.readFileSync(process.argv[2], 'utf8'));
 const { root, adapter, command, imports } = request;
+const sourceSummary=nativeSourceSummaryReader(root,request.sourceSummaries);
 if(request.unified) {
  protocolOutput=fs.createWriteStream(null,{fd:4,autoClose:false});
  const input=fs.createReadStream(null,{fd:3,autoClose:false});
@@ -50,7 +50,7 @@ function resolution(paths) {
   const local = found.filter(file => path.isAbsolute(file) && !file.includes(`${path.sep}node_modules${path.sep}`) && file.startsWith(root + path.sep));
   return { paths: local, external: found.length > 0 && local.length === 0, unresolved: found.length === 0 };
 }
-const output = { resolutions: [], additionalResolutions: [], configFiles: [], complete: true };
+const output = { resolutions: [], additionalResolutions: [], configFiles: [], complete: true, sourceSummaryReuse:sourceSummary.stats };
 function expand(file) {
   if(!request.transitive || expanded.has(file) || !file.startsWith(root+path.sep) || file.includes(path.sep+'node_modules'+path.sep) || !/\.[cm]?[jt]sx?$/.test(file))return;
   expanded.add(file);
@@ -60,7 +60,7 @@ function expand(file) {
   const physical=fs.realpathSync(file);
   if(!physical.startsWith(root+path.sep) || physical!==file)throw new Error('Native graph source crosses an unsupported symlink boundary');
   if(fs.statSync(file).size>8*1024*1024)throw new Error('Native graph source exceeds bounded traversal input');
-  for(const specifier of analyze(relative,fs.readFileSync(file,'utf8')).imports) {
+  for(const specifier of sourceSummary.read(relative,fs.readFileSync(file)).imports) {
     const key=JSON.stringify([relative,specifier]);
     if(isBuiltin(specifier) || seen.has(key))continue;
     if(queue.length>=50000)throw new Error('Native graph exceeds bounded import traversal');
@@ -81,13 +81,8 @@ function globals(config, keys) {
 function rejectArgvConfiguration(files) {
   for(const file of files) {
     if(!file.startsWith(root+path.sep)||file.includes(path.sep+'node_modules'+path.sep)||!fs.existsSync(file)||!/\.[cm]?[jt]sx?$/.test(file))continue;
-    const ast=ts.createSourceFile(file,fs.readFileSync(file,'utf8'),ts.ScriptTarget.Latest,true);
-    let dependent=false;
-    function visit(node) {
-      if((ts.isIdentifier(node)||ts.isStringLiteralLike(node))&&['argv','execArgv'].includes(node.text))dependent=true;
-      ts.forEachChild(node,visit);
-    }
-    visit(ast);if(dependent)throw new Error('runtime-argv-dependent-native-configuration');
+    const relative=path.relative(root,file).split(path.sep).join('/');
+    if(sourceSummary.read(relative,fs.readFileSync(file)).argvDependent)throw new Error('runtime-argv-dependent-native-configuration');
   }
 }
 
@@ -96,9 +91,8 @@ function rejectUnifiedProjectPlugins(files,plugins) {
   // Reject both observed configuration declarations and unknown resolved plugins.
   for(const file of files) {
     if(!file.startsWith(root+path.sep)||file.includes(path.sep+'node_modules'+path.sep)||!fs.existsSync(file)||!/\.[cm]?[jt]sx?$/.test(file))continue;
-    const ast=ts.createSourceFile(file,fs.readFileSync(file,'utf8'),ts.ScriptTarget.Latest,true);let declared=false;
-    const visit=node=>{if((ts.isIdentifier(node)||ts.isStringLiteralLike(node))&&node.text==='plugins')declared=true;ts.forEachChild(node,visit);};visit(ast);
-    if(declared)throw new Error('Unified native prototype does not support project plugins; verify with the legacy native full run');
+    const relative=path.relative(root,file).split(path.sep).join('/');
+    if(sourceSummary.read(relative,fs.readFileSync(file)).projectPlugins)throw new Error('Unified native prototype does not support project plugins; verify with the legacy native full run');
   }
   const known=new Set(['vite:optimized-deps','vite:watch-package-data','vite:pre-alias','alias','vitest:capture-raw-test-config','vitest:config:cli','vitest:config','vitest:css-disable','vitest:resolve-core','vitest:meta-env-replacer','vitest:ssr-module-runner-fixer','vitest:browser:loader','vite:modulepreload-polyfill','vite:resolve-dev','vite:resolve-builtin:get-environment','vite:resolve-builtin','vite:html-inline-proxy','vite:css','builtin:oxc-runtime','vite:oxc','builtin:vite-json','vite:wasm-helper','vite:worker','vite:asset','vite:forward-console','vitest:test-config','vitest:config:server-defaults','vitest:environments-module-runner','vite:define','vite:css-post','vite:build-html','vite:worker-import-meta-url','vite:asset-import-meta-url','vite:dynamic-import-vars','vite:import-glob','vitest:config:server','vitest:config:append','vitest:css-empty-post','vitest:mocks','vitest:automock','vitest:coverage-transform','vitest:normalize-url','vitest:ui-injector','vitest:browser:loader:post','vite:client-inject','vite:css-analysis','vite:import-analysis','vitest','vite:resolve','vite:esbuild','vite:json','vitest:normalize-optimizer','vite:wasm-fallback']);
   if(!Array.isArray(plugins)||plugins.some(plugin=>!known.has(plugin.name)))throw new Error('Unified native prototype encountered an unqualified resolved plugin; use the legacy native full run');

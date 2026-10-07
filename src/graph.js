@@ -11,42 +11,10 @@ import { declaredInputs } from './inputs.js';
 import { phaseTimings } from './timing.js';
 import { SOURCE, TEST, listFiles, normalize, safePath, readConfig } from './files.js';
 
-export function analyze(file, text) {
-  const ast = ts.createSourceFile(file, text, ts.ScriptTarget.Latest, true);
-  const imports = new Set();
-  const warnings = [];
-  if (ast.parseDiagnostics.length) warnings.push('parse-error');
-  const add = node => {
-    if (node && ts.isStringLiteralLike(node)) imports.add(node.text);
-    else warnings.push('dynamic-dependency');
-  };
-  function visit(node) {
-    if (ts.isImportDeclaration(node) || ts.isExportDeclaration(node)) {
-      if (node.moduleSpecifier) add(node.moduleSpecifier);
-    }
-    if (ts.isImportEqualsDeclaration(node) && ts.isExternalModuleReference(node.moduleReference)) add(node.moduleReference.expression);
-    if (ts.isCallExpression(node)) {
-      const name = node.expression.getText(ast);
-      if (node.expression.kind === ts.SyntaxKind.ImportKeyword || name === 'require' || name === 'require.resolve') add(node.arguments[0]);
-      if (['eval', 'Function', 'import.meta.glob', 'import.meta.globEager', 'require.context'].includes(name)) warnings.push('dynamic-dependency');
-      if (name === 'fetch' || name === 'globalThis.fetch' || name.endsWith('.fetch')) warnings.push('runtime-dependency');
-      if (name.endsWith('.register') || name === 'module.register') warnings.push('runtime-registration');
-    }
-    if (ts.isNewExpression(node)) {
-      const name=node.expression.getText(ast);
-      if(name==='Function')warnings.push('dynamic-dependency');
-      if(['Worker','SharedWorker','WebSocket','EventSource'].includes(name)|| /(?:^|\.)(?:Worker|SharedWorker|WebSocket|EventSource)$/.test(name))warnings.push('runtime-dependency');
-    }
-    ts.forEachChild(node, visit);
-  }
-  visit(ast);
-  for (const spec of imports) {
-    if (/^(?:node:)?(?:fs|fs\/promises|vm|child_process|module|worker_threads|http|https|http2|net|tls|dns|dns\/promises|dgram|wasi)$/.test(spec)) warnings.push('runtime-dependency');
-  }
-  return { ast, imports: [...imports], warnings: [...new Set(warnings)] };
-}
+import {analyze} from './source-analysis.cjs';
+export {analyze};
 
-const ANALYSIS_ENGINE = createHash('sha256').update(JSON.stringify({ schemaVersion: 1, typescript: ts.version, node: process.version, graph: createHash('sha256').update(fs.readFileSync(fileURLToPath(import.meta.url))).digest('hex'), cache: ANALYSIS_CACHE_IMPLEMENTATION })).digest('hex');
+const ANALYSIS_ENGINE = createHash('sha256').update(JSON.stringify({ schemaVersion: 1, typescript: ts.version, node: process.version, graph: createHash('sha256').update(fs.readFileSync(fileURLToPath(import.meta.url))).digest('hex'), parser: createHash('sha256').update(fs.readFileSync(fileURLToPath(new URL('./source-analysis.cjs',import.meta.url)))).digest('hex'), cache: ANALYSIS_CACHE_IMPLEMENTATION })).digest('hex');
 const SUMMARY_CACHE = Symbol('sourceAnalysisCache');
 const RESOLUTION_CACHE = Symbol('planningModuleResolutionCache');
 function summaries(graph) {
