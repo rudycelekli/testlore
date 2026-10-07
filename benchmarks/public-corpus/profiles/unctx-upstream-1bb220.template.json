@@ -1,0 +1,33 @@
+{
+  "reviewed": true,
+  "candidateId": "unjs-unctx-1bb220dccf40",
+  "root": null,
+  "scope": "Pinned upstream runtime units/config/oracles; excludes lint/types/build/coverage. JITI filesystem and Vitest results caches disabled equally; TestLore analysis cache disabled.",
+  "config": {
+    "adapter": "vitest",
+    "discovery": "native",
+    "runner": [
+      "node",
+      "node_modules/vitest/vitest.mjs",
+      "run",
+      "--maxWorkers=1",
+      "--cache=false",
+      "{files}"
+    ],
+    "analysisCache": {
+      "enabled": false
+    }
+  },
+  "executionMode": "legacy",
+  "expectedFailureNames": [
+    "Async context does not leak instances pinned by long-lived async resources"
+  ],
+  "upstreamInstallation": {
+    "receiptPath": null,
+    "expectedSha256": null
+  },
+  "cachePolicy": {
+    "jitiFilesystem": false
+  },
+  "baselineDeclaredSkips": []
+}
