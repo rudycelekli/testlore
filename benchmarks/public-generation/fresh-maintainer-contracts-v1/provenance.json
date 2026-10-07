@@ -1,0 +1,268 @@
+{
+  "schemaVersion": 1,
+  "profiles": [
+    {
+      "id": "milliseconds",
+      "repo": "vercel/ms",
+      "fixed": "2669f23e99be0bb6b65d365151884de52434301c",
+      "parent": "fe0bae301a6c41f68a01595658a4f4f0dcba0e84",
+      "oracle": "2669f23e99be0bb6b65d365151884de52434301c",
+      "test": "tests.js",
+      "readme": "readme.md",
+      "license": "license.md",
+      "specificationId": "maintainer-time-conversion",
+      "adaptation": {
+        "content": "const {describe,it}=require('node:test');\nconst assert=require('node:assert/strict');\nconst ms=require('../src/milliseconds.cjs');\nconst expect=value=>({to:{be:expected=>assert.strictEqual(value,expected),throwError:()=>assert.throws(value),not:{throwError:()=>assert.doesNotThrow(value)}}});\n\n// strings\n\ndescribe('ms(string)', function() {\n  it('should not throw an error', function() {\n    expect(function() {\n      ms('1m');\n    }).to.not.throwError();\n  });\n\n  it('should preserve ms', function() {\n    expect(ms('100')).to.be(100);\n  });\n\n  it('should convert from m to ms', function() {\n    expect(ms('1m')).to.be(60000);\n  });\n\n  it('should convert from h to ms', function() {\n    expect(ms('1h')).to.be(3600000);\n  });\n\n  it('should convert d to ms', function() {\n    expect(ms('2d')).to.be(172800000);\n  });\n\n  it('should convert w to ms', function() {\n    expect(ms('3w')).to.be(1814400000);\n  });\n\n  it('should convert s to ms', function() {\n    expect(ms('1s')).to.be(1000);\n  });\n\n  it('should convert ms to ms', function() {\n    expect(ms('100ms')).to.be(100);\n  });\n\n  it('should work with decimals', function() {\n    expect(ms('1.5h')).to.be(5400000);\n  });\n\n  it('should work with multiple spaces', function() {\n    expect(ms('1   s')).to.be(1000);\n  });\n\n  it('should return NaN if invalid', function() {\n    expect(isNaN(ms('☃'))).to.be(true);\n  });\n\n  it('should be case-insensitive', function() {\n    expect(ms('1.5H')).to.be(5400000);\n  });\n\n  it('should work with numbers starting with .', function() {\n    expect(ms('.5ms')).to.be(0.5);\n  });\n\n  it('should work with negative integers', function() {\n    expect(ms('-100ms')).to.be(-100);\n  });\n\n  it('should work with negative decimals', function() {\n    expect(ms('-1.5h')).to.be(-5400000);\n    expect(ms('-10.5h')).to.be(-37800000);\n  });\n\n  it('should work with negative decimals starting with \".\"', function() {\n    expect(ms('-.5h')).to.be(-1800000);\n  });\n});\n\n// long strings\n\ndescribe('ms(long string)', function() {\n  it('should not throw an error', function() {\n    expect(function() {\n      ms('53 milliseconds');\n    }).to.not.throwError();\n  });\n\n  it('should convert milliseconds to ms', function() {\n    expect(ms('53 milliseconds')).to.be(53);\n  });\n\n  it('should convert msecs to ms', function() {\n    expect(ms('17 msecs')).to.be(17);\n  });\n\n  it('should convert sec to ms', function() {\n    expect(ms('1 sec')).to.be(1000);\n  });\n\n  it('should convert from min to ms', function() {\n    expect(ms('1 min')).to.be(60000);\n  });\n\n  it('should convert from hr to ms', function() {\n    expect(ms('1 hr')).to.be(3600000);\n  });\n\n  it('should convert days to ms', function() {\n    expect(ms('2 days')).to.be(172800000);\n  });\n\n  it('should work with decimals', function() {\n    expect(ms('1.5 hours')).to.be(5400000);\n  });\n\n  it('should work with negative integers', function() {\n    expect(ms('-100 milliseconds')).to.be(-100);\n  });\n\n  it('should work with negative decimals', function() {\n    expect(ms('-1.5 hours')).to.be(-5400000);\n  });\n\n  it('should work with negative decimals starting with \".\"', function() {\n    expect(ms('-.5 hr')).to.be(-1800000);\n  });\n});\n\n// numbers\n\ndescribe('ms(number, { long: true })', function() {\n  it('should not throw an error', function() {\n    expect(function() {\n      ms(500, { long: true });\n    }).to.not.throwError();\n  });\n\n  it('should support milliseconds', function() {\n    expect(ms(500, { long: true })).to.be('500 ms');\n\n    expect(ms(-500, { long: true })).to.be('-500 ms');\n  });\n\n  it('should support seconds', function() {\n    expect(ms(1000, { long: true })).to.be('1 second');\n    expect(ms(1200, { long: true })).to.be('1 second');\n    expect(ms(10000, { long: true })).to.be('10 seconds');\n\n    expect(ms(-1000, { long: true })).to.be('-1 second');\n    expect(ms(-1200, { long: true })).to.be('-1 second');\n    expect(ms(-10000, { long: true })).to.be('-10 seconds');\n  });\n\n  it('should support minutes', function() {\n    expect(ms(60 * 1000, { long: true })).to.be('1 minute');\n    expect(ms(60 * 1200, { long: true })).to.be('1 minute');\n    expect(ms(60 * 10000, { long: true })).to.be('10 minutes');\n\n    expect(ms(-1 * 60 * 1000, { long: true })).to.be('-1 minute');\n    expect(ms(-1 * 60 * 1200, { long: true })).to.be('-1 minute');\n    expect(ms(-1 * 60 * 10000, { long: true })).to.be('-10 minutes');\n  });\n\n  it('should support hours', function() {\n    expect(ms(60 * 60 * 1000, { long: true })).to.be('1 hour');\n    expect(ms(60 * 60 * 1200, { long: true })).to.be('1 hour');\n    expect(ms(60 * 60 * 10000, { long: true })).to.be('10 hours');\n\n    expect(ms(-1 * 60 * 60 * 1000, { long: true })).to.be('-1 hour');\n    expect(ms(-1 * 60 * 60 * 1200, { long: true })).to.be('-1 hour');\n    expect(ms(-1 * 60 * 60 * 10000, { long: true })).to.be('-10 hours');\n  });\n\n  it('should support days', function() {\n    expect(ms(24 * 60 * 60 * 1000, { long: true })).to.be('1 day');\n    expect(ms(24 * 60 * 60 * 1200, { long: true })).to.be('1 day');\n    expect(ms(24 * 60 * 60 * 10000, { long: true })).to.be('10 days');\n\n    expect(ms(-1 * 24 * 60 * 60 * 1000, { long: true })).to.be('-1 day');\n    expect(ms(-1 * 24 * 60 * 60 * 1200, { long: true })).to.be('-1 day');\n    expect(ms(-1 * 24 * 60 * 60 * 10000, { long: true })).to.be('-10 days');\n  });\n\n  it('should round', function() {\n    expect(ms(234234234, { long: true })).to.be('3 days');\n\n    expect(ms(-234234234, { long: true })).to.be('-3 days');\n  });\n});\n\n// numbers\n\ndescribe('ms(number)', function() {\n  it('should not throw an error', function() {\n    expect(function() {\n      ms(500);\n    }).to.not.throwError();\n  });\n\n  it('should support milliseconds', function() {\n    expect(ms(500)).to.be('500ms');\n\n    expect(ms(-500)).to.be('-500ms');\n  });\n\n  it('should support seconds', function() {\n    expect(ms(1000)).to.be('1s');\n    expect(ms(10000)).to.be('10s');\n\n    expect(ms(-1000)).to.be('-1s');\n    expect(ms(-10000)).to.be('-10s');\n  });\n\n  it('should support minutes', function() {\n    expect(ms(60 * 1000)).to.be('1m');\n    expect(ms(60 * 10000)).to.be('10m');\n\n    expect(ms(-1 * 60 * 1000)).to.be('-1m');\n    expect(ms(-1 * 60 * 10000)).to.be('-10m');\n  });\n\n  it('should support hours', function() {\n    expect(ms(60 * 60 * 1000)).to.be('1h');\n    expect(ms(60 * 60 * 10000)).to.be('10h');\n\n    expect(ms(-1 * 60 * 60 * 1000)).to.be('-1h');\n    expect(ms(-1 * 60 * 60 * 10000)).to.be('-10h');\n  });\n\n  it('should support days', function() {\n    expect(ms(24 * 60 * 60 * 1000)).to.be('1d');\n    expect(ms(24 * 60 * 60 * 10000)).to.be('10d');\n\n    expect(ms(-1 * 24 * 60 * 60 * 1000)).to.be('-1d');\n    expect(ms(-1 * 24 * 60 * 60 * 10000)).to.be('-10d');\n  });\n\n  it('should round', function() {\n    expect(ms(234234234)).to.be('3d');\n\n    expect(ms(-234234234)).to.be('-3d');\n  });\n});\n\n// invalid inputs\n\ndescribe('ms(invalid inputs)', function() {\n  it('should throw an error, when ms(\"\")', function() {\n    expect(function() {\n      ms('');\n    }).to.throwError();\n  });\n\n  it('should throw an error, when ms(undefined)', function() {\n    expect(function() {\n      ms(undefined);\n    }).to.throwError();\n  });\n\n  it('should throw an error, when ms(null)', function() {\n    expect(function() {\n      ms(null);\n    }).to.throwError();\n  });\n\n  it('should throw an error, when ms([])', function() {\n    expect(function() {\n      ms([]);\n    }).to.throwError();\n  });\n\n  it('should throw an error, when ms({})', function() {\n    expect(function() {\n      ms({});\n    }).to.throwError();\n  });\n\n  it('should throw an error, when ms(NaN)', function() {\n    expect(function() {\n      ms(NaN);\n    }).to.throwError();\n  });\n});\n",
+        "adapter": "node-test-import-shim-v1",
+        "originalHash": "b1855ee1f105811d014c8f5b284feb50b0dda8412df78ac751c454ba2029aa5f",
+        "bodyHash": "253f99a31147474f3162918dd5fd35b48d8e7c47de7a43a9a11726e4f33c98da",
+        "adaptedHash": "f5c77c278dd78f279ab61b6dfd015186b017bf1ac4403ffced1408c4c2751c20",
+        "scope": "Only imports/framework entry points change. Maintainer assertion bodies remain byte-identical. This is not an upstream runner qualification."
+      },
+      "sourceScope": "Exact fixed and parent source bytes; later independent oracle revision is declared separately when applicable. No full upstream dependency installation; only built-in Node assertion runner shims."
+    },
+    {
+      "id": "promise",
+      "repo": "then/is-promise",
+      "fixed": "ed0eaa4dec17597f0dae892a0472a9b7f459320d",
+      "parent": "2dfb684306b6f3b8b374478c86e63f8bab4a7f06",
+      "oracle": "ed0eaa4dec17597f0dae892a0472a9b7f459320d",
+      "test": "test.js",
+      "readme": "readme.md",
+      "license": "LICENSE",
+      "specificationId": "maintainer-promise-predicate",
+      "adaptation": {
+        "content": "const {describe,it}=require('node:test');\nvar isPromise=require('../src/promise.cjs');\nvar assert=require('node:assert/strict').ok;\n\n// This looks similar enough to a promise\n// that promises/A+ says we should treat\n// it as a promise.\nvar promise = {then: function () {}};\n\ndescribe('calling isPromise', function () {\n  describe('with a promise', function () {\n    it('returns true', function () {\n      assert(isPromise(promise));\n    });\n  });\n  describe('with null', function () {\n    it('returns false', function () {\n      assert(isPromise(null) === false);\n    });\n  });\n  describe('with undefined', function () {\n    it('returns false', function () {\n      assert(isPromise(undefined) === false);\n    });\n  });\n  describe('with a number', function () {\n    it('returns false', function () {\n      assert(!isPromise(0));\n      assert(!isPromise(-42));\n      assert(!isPromise(42));\n    });\n  });\n  describe('with a string', function () {\n    it('returns false', function () {\n      assert(!isPromise(''));\n      assert(!isPromise('then'));\n    });\n  });\n  describe('with a bool', function () {\n    it('returns false', function () {\n      assert(!isPromise(false));\n      assert(!isPromise(true));\n    });\n  });\n  describe('with an object', function () {\n    it('returns false', function () {\n      assert(!isPromise({}));\n      assert(!isPromise({then: true}));\n    });\n  });\n  describe('with an array', function () {\n    it('returns false', function () {\n      assert(!isPromise([]));\n      assert(!isPromise([true]));\n    });\n  });\n});\n",
+        "adapter": "node-test-import-shim-v1",
+        "originalHash": "0fce78dda44690c59ba7b397dea9683242d5ce7a1cf7c260a1d92cc4a4dd2b34",
+        "bodyHash": "8fd39a8b83ea4a94375d1a822a9552bd2cb5f83077d1feedb55336cfb46ada50",
+        "adaptedHash": "16c34847cebbc85ed84ed991a7608da6b0bd2697514f3a5003e58e7973108dbf",
+        "scope": "Only imports/framework entry points change. Maintainer assertion bodies remain byte-identical. This is not an upstream runner qualification."
+      },
+      "sourceScope": "Exact fixed and parent source bytes; later independent oracle revision is declared separately when applicable. No full upstream dependency installation; only built-in Node assertion runner shims."
+    },
+    {
+      "id": "plain",
+      "repo": "sindresorhus/is-plain-obj",
+      "fixed": "b51c26ace163a0761fbe0603cdc270192ef23ce9",
+      "parent": "d88f6db1ec1b5aeb4f4d6ed2655e0e8d049ab602",
+      "oracle": "b51c26ace163a0761fbe0603cdc270192ef23ce9",
+      "test": "test.js",
+      "readme": "readme.md",
+      "license": "license",
+      "extension": "mjs",
+      "specificationId": "maintainer-plain-object-predicate",
+      "adaptation": {
+        "content": "import nodeTest from 'node:test';\nimport assert from 'node:assert/strict';\nimport isPlainObject from '../src/plain.mjs';\nimport {runInNewContext} from 'node:vm';\nconst test=(name,fn)=>nodeTest(name,()=>fn({true:value=>assert.strictEqual(value,true),false:value=>assert.strictEqual(value,false)}));\n\nfunction Foo(x) {\n\tthis.x = x;\n}\n\nfunction ObjectConstructor() {}\n\nObjectConstructor.prototype.constructor = Object;\n\ntest('main', t => {\n\tt.true(isPlainObject({}));\n\tt.true(isPlainObject({foo: true}));\n\tt.true(isPlainObject({constructor: Foo}));\n\tt.true(isPlainObject({valueOf: 0}));\n\tt.true(isPlainObject(Object.create(null)));\n\tt.true(isPlainObject(new Object())); // eslint-disable-line no-new-object\n\tt.true(isPlainObject(runInNewContext('({})')));\n\tt.false(isPlainObject(['foo', 'bar']));\n\tt.false(isPlainObject(new Foo(1)));\n\tt.false(isPlainObject(Math));\n\tt.false(isPlainObject(Error));\n\tt.false(isPlainObject(() => {}));\n\tt.false(isPlainObject(/./));\n\tt.false(isPlainObject(null));\n\tt.false(isPlainObject(undefined));\n\tt.false(isPlainObject(Number.NaN));\n\tt.false(isPlainObject(''));\n\tt.false(isPlainObject(0));\n\tt.false(isPlainObject(false));\n\tt.false(isPlainObject(new ObjectConstructor()));\n\tt.false(isPlainObject(Object.create({})));\n\n\t(function () {\n\t\tt.false(isPlainObject(arguments)); // eslint-disable-line prefer-rest-params\n\t})();\n\n\tconst foo = new Foo();\n\tfoo.constructor = Object;\n\tt.false(isPlainObject(foo));\n});\n",
+        "adapter": "node-test-import-shim-v1",
+        "originalHash": "f0e13f477daa2ded61c7ada19531084cefc8a9007abc783fcaefb0f47055194f",
+        "bodyHash": "b78eda0146e2194b2771abe00f532e4b045f3086a0065b9a2f053f007297fb42",
+        "adaptedHash": "8a8e6d382c76fbe8a022ec9225e2edc1347222d7b4e09e28c97b34ef032e6cc3",
+        "scope": "Only imports/framework entry points change. Maintainer assertion bodies remain byte-identical. This is not an upstream runner qualification."
+      },
+      "sourceScope": "Exact fixed and parent source bytes; later independent oracle revision is declared separately when applicable. No full upstream dependency installation; only built-in Node assertion runner shims."
+    },
+    {
+      "id": "stream",
+      "repo": "sindresorhus/is-stream",
+      "fixed": "2070240b28cb734eb34c70dac92b6064260a0621",
+      "parent": "23a6c15f83866c3c59f509d7515ab43ed8e6e367",
+      "oracle": "2070240b28cb734eb34c70dac92b6064260a0621",
+      "test": "test.js",
+      "readme": "readme.md",
+      "license": "license",
+      "specificationId": "maintainer-stream-predicates",
+      "adaptation": {
+        "content": "import nodeTest from 'node:test';\nimport assert from 'node:assert/strict';\nimport nativeFs from 'node:fs';\nimport os from 'node:os';\nimport path from 'node:path';\nimport {fileURLToPath} from 'node:url';\nimport Stream from 'node:stream';\nimport net from 'node:net';\nimport isStream from '../src/stream.cjs';\nconst test=(name,fn)=>nodeTest(name,async()=>{const streams=[],directory=nativeFs.mkdtempSync(path.join(os.tmpdir(),'testlore-maintainer-stream-'));let count=0;\nconst track=stream=>(streams.push(stream),stream);\nfs={createReadStream:file=>track(nativeFs.createReadStream(file==='test.js'?fileURLToPath(import.meta.url):file)),createWriteStream:file=>track(nativeFs.createWriteStream(file))};\ntempy={file:()=>path.join(directory,String(count++))};\ntry{fn({true:value=>assert.strictEqual(value,true),false:value=>assert.strictEqual(value,false)});}finally{await Promise.all(streams.map(stream=>new Promise(resolve=>{stream.once('close',resolve);stream.destroy();})));nativeFs.rmSync(directory,{recursive:true,force:true});}});\nlet fs,tempy;\n\ntest('isStream()', t => {\n\tt.true(isStream(new Stream.Stream()));\n\tt.true(isStream(new Stream.Readable()));\n\tt.true(isStream(new Stream.Writable()));\n\tt.true(isStream(new Stream.Duplex()));\n\tt.true(isStream(new Stream.Transform()));\n\tt.true(isStream(new Stream.PassThrough()));\n\tt.true(isStream(fs.createReadStream('test.js')));\n\tt.true(isStream(fs.createWriteStream(tempy.file())));\n\tt.true(isStream(new net.Socket()));\n\tt.false(isStream({}));\n\tt.false(isStream(null));\n\tt.false(isStream(undefined));\n\tt.false(isStream(''));\n});\n\ntest('isStream.writable()', t => {\n\tt.true(isStream.writable(new Stream.Writable()));\n\tt.true(isStream.writable(new Stream.Duplex()));\n\tt.true(isStream.writable(new Stream.Transform()));\n\tt.true(isStream.writable(new Stream.PassThrough()));\n\tt.true(isStream.writable(fs.createWriteStream(tempy.file())));\n\tt.true(isStream.writable(new net.Socket()));\n\tt.false(isStream.writable(new Stream.Stream()));\n\tt.false(isStream.writable(new Stream.Readable()));\n\tt.false(isStream.writable(fs.createReadStream('test.js')));\n});\n\ntest('isStream.readable()', t => {\n\tt.true(isStream.readable(new Stream.Readable()));\n\tt.true(isStream.readable(new Stream.Duplex()));\n\tt.true(isStream.readable(new Stream.Transform()));\n\tt.true(isStream.readable(new Stream.PassThrough()));\n\tt.true(isStream.readable(fs.createReadStream('test.js')));\n\tt.true(isStream.readable(new net.Socket()));\n\tt.false(isStream.readable(new Stream.Stream()));\n\tt.false(isStream.readable(new Stream.Writable()));\n\tt.false(isStream.readable(fs.createWriteStream(tempy.file())));\n});\n\ntest('isStream.duplex()', t => {\n\tt.true(isStream.duplex(new Stream.Duplex()));\n\tt.true(isStream.duplex(new Stream.Transform()));\n\tt.true(isStream.duplex(new Stream.PassThrough()));\n\tt.false(isStream.duplex(new Stream.Stream()));\n\tt.false(isStream.duplex(new Stream.Readable()));\n\tt.false(isStream.duplex(new Stream.Writable()));\n\tt.false(isStream.duplex(fs.createReadStream('test.js')));\n\tt.false(isStream.duplex(fs.createWriteStream(tempy.file())));\n});\n\ntest('isStream.transform()', t => {\n\tt.true(isStream.transform(new Stream.Transform()));\n\tt.true(isStream.transform(new Stream.PassThrough()));\n\tt.false(isStream.transform(new Stream.Duplex()));\n\tt.false(isStream.transform(new Stream.Stream()));\n\tt.false(isStream.transform(new Stream.Readable()));\n\tt.false(isStream.transform(new Stream.Writable()));\n\tt.false(isStream.transform(fs.createReadStream('test.js')));\n\tt.false(isStream.transform(fs.createWriteStream(tempy.file())));\n});\n",
+        "adapter": "node-test-import-shim-v1",
+        "originalHash": "ba8b06a1611971a6662a31857beb507ea04cbe4a300207a5f77e78bab6ea0e20",
+        "bodyHash": "1f23f388bc798f17ca21350d7b7f5f8d2c7d96df6d507e03adb73e5341ecd263",
+        "adaptedHash": "420172aca9c20d19359f1a99ca151cf85b445fee390d2a83d991f205af3a2537",
+        "scope": "Maintainer assertion bodies remain byte-identical. Imports use Node assertions; tempy uses a disposable directory, relocated test.js reads target this test file, and opened streams are closed after each case. This is not upstream AVA/tempy or historical Node qualification."
+      },
+      "sourceScope": "Exact fixed and parent source bytes; later independent oracle revision is declared separately when applicable. No full upstream dependency installation; only built-in Node assertion runner shims."
+    }
+  ],
+  "bindings": [
+    {
+      "repo": "vercel/ms",
+      "revision": "2669f23e99be0bb6b65d365151884de52434301c",
+      "path": "index.js",
+      "gitBlob": "a1d2ea4f9fd3cb36a24e22b67ecbd357498155a0",
+      "sha256": "c7f636a83e981d670b06bc11dfd28d1524cea95473571f2ea2b4d2083717413b",
+      "bytes": 3038,
+      "url": "https://github.com/vercel/ms/blob/2669f23e99be0bb6b65d365151884de52434301c/index.js"
+    },
+    {
+      "repo": "vercel/ms",
+      "revision": "fe0bae301a6c41f68a01595658a4f4f0dcba0e84",
+      "path": "index.js",
+      "gitBlob": "72297501f9b9bb09acdddb134fa5c5af0d013315",
+      "sha256": "7c9083207b648e648c4d076e7bd7d85af73daae58738199eb8c20a465dfdcd19",
+      "bytes": 3034,
+      "url": "https://github.com/vercel/ms/blob/fe0bae301a6c41f68a01595658a4f4f0dcba0e84/index.js"
+    },
+    {
+      "repo": "vercel/ms",
+      "revision": "2669f23e99be0bb6b65d365151884de52434301c",
+      "path": "tests.js",
+      "gitBlob": "9427390359a51da0faaf8758e04f0ccae0fe95f2",
+      "sha256": "b1855ee1f105811d014c8f5b284feb50b0dda8412df78ac751c454ba2029aa5f",
+      "bytes": 7518,
+      "url": "https://github.com/vercel/ms/blob/2669f23e99be0bb6b65d365151884de52434301c/tests.js"
+    },
+    {
+      "repo": "vercel/ms",
+      "revision": "2669f23e99be0bb6b65d365151884de52434301c",
+      "path": "readme.md",
+      "gitBlob": "bb767293ac740d34654a0c793670f4ce66e7a984",
+      "sha256": "28268cd98a8ca41f6053e325b1c45efe82671f6242513306420618b935cbb8c3",
+      "bytes": 2002,
+      "url": "https://github.com/vercel/ms/blob/2669f23e99be0bb6b65d365151884de52434301c/readme.md"
+    },
+    {
+      "repo": "vercel/ms",
+      "revision": "2669f23e99be0bb6b65d365151884de52434301c",
+      "path": "license.md",
+      "gitBlob": "69b61253a38926757b7de1d4df4880fc2105c2c9",
+      "sha256": "6652830c2607c722b66f1b57de15877ab8fc5dca406cc5b335afeb365d0f32c1",
+      "bytes": 1077,
+      "url": "https://github.com/vercel/ms/blob/2669f23e99be0bb6b65d365151884de52434301c/license.md"
+    },
+    {
+      "repo": "then/is-promise",
+      "revision": "ed0eaa4dec17597f0dae892a0472a9b7f459320d",
+      "path": "index.js",
+      "gitBlob": "ca2444c6f69540f83504b8f54f4518af0ffc4cd5",
+      "sha256": "748c681ba64081193dc5fbb27f8b3539c09ba08f4e31ec6d588e2ae8c39234a8",
+      "bytes": 165,
+      "url": "https://github.com/then/is-promise/blob/ed0eaa4dec17597f0dae892a0472a9b7f459320d/index.js"
+    },
+    {
+      "repo": "then/is-promise",
+      "revision": "2dfb684306b6f3b8b374478c86e63f8bab4a7f06",
+      "path": "index.js",
+      "gitBlob": "772600b79091369385ce9b5a3adc779548d41970",
+      "sha256": "1bcef4c606ce23b0a7334bb7e01bec64266b7947c0a9c6acd715d94865c3a25d",
+      "bytes": 163,
+      "url": "https://github.com/then/is-promise/blob/2dfb684306b6f3b8b374478c86e63f8bab4a7f06/index.js"
+    },
+    {
+      "repo": "then/is-promise",
+      "revision": "ed0eaa4dec17597f0dae892a0472a9b7f459320d",
+      "path": "test.js",
+      "gitBlob": "d971c2828fab264d68b662c230e61af5dcaa6e0e",
+      "sha256": "0fce78dda44690c59ba7b397dea9683242d5ce7a1cf7c260a1d92cc4a4dd2b34",
+      "bytes": 1483,
+      "url": "https://github.com/then/is-promise/blob/ed0eaa4dec17597f0dae892a0472a9b7f459320d/test.js"
+    },
+    {
+      "repo": "then/is-promise",
+      "revision": "ed0eaa4dec17597f0dae892a0472a9b7f459320d",
+      "path": "readme.md",
+      "gitBlob": "50d5d989111aa5071420d76fb796e9f9215f8625",
+      "sha256": "2831cabb33577b1054b575c0b7cca7b4f446510d59cab316414122e43234410f",
+      "bytes": 872,
+      "url": "https://github.com/then/is-promise/blob/ed0eaa4dec17597f0dae892a0472a9b7f459320d/readme.md"
+    },
+    {
+      "repo": "then/is-promise",
+      "revision": "ed0eaa4dec17597f0dae892a0472a9b7f459320d",
+      "path": "LICENSE",
+      "gitBlob": "27cc9f3771540a450dae91b1e04dd1383ff1a4d1",
+      "sha256": "44191656d296391e0ec97e32f5385f0d02b6f2992694082d22ea04ba0f66f9e4",
+      "bytes": 1058,
+      "url": "https://github.com/then/is-promise/blob/ed0eaa4dec17597f0dae892a0472a9b7f459320d/LICENSE"
+    },
+    {
+      "repo": "sindresorhus/is-plain-obj",
+      "revision": "b51c26ace163a0761fbe0603cdc270192ef23ce9",
+      "path": "index.js",
+      "gitBlob": "e4deb75c6002615f0f89def3fa252d296f7409ae",
+      "sha256": "04914943a5c616233496c6a421349add9b58cdd0e2991b16558ac81ea5720082",
+      "bytes": 259,
+      "url": "https://github.com/sindresorhus/is-plain-obj/blob/b51c26ace163a0761fbe0603cdc270192ef23ce9/index.js"
+    },
+    {
+      "repo": "sindresorhus/is-plain-obj",
+      "revision": "d88f6db1ec1b5aeb4f4d6ed2655e0e8d049ab602",
+      "path": "index.js",
+      "gitBlob": "418b0795ce1f497bff74ff5f2d07844fee097d1d",
+      "sha256": "35038a61818cddfa75ab503d26af4496cf6ad401f42c614c5cb1456f260e0daf",
+      "bytes": 248,
+      "url": "https://github.com/sindresorhus/is-plain-obj/blob/d88f6db1ec1b5aeb4f4d6ed2655e0e8d049ab602/index.js"
+    },
+    {
+      "repo": "sindresorhus/is-plain-obj",
+      "revision": "b51c26ace163a0761fbe0603cdc270192ef23ce9",
+      "path": "test.js",
+      "gitBlob": "d5f6883009e2b77a3484178da7cf290622debb9f",
+      "sha256": "f0e13f477daa2ded61c7ada19531084cefc8a9007abc783fcaefb0f47055194f",
+      "bytes": 1237,
+      "url": "https://github.com/sindresorhus/is-plain-obj/blob/b51c26ace163a0761fbe0603cdc270192ef23ce9/test.js"
+    },
+    {
+      "repo": "sindresorhus/is-plain-obj",
+      "revision": "b51c26ace163a0761fbe0603cdc270192ef23ce9",
+      "path": "readme.md",
+      "gitBlob": "db3e5400cb4032501cc9048582f07b770c7ae13d",
+      "sha256": "9f8375a86c49836a1e695aeaed65d0b90a96aad5a021b68f23c6632efcee6fa3",
+      "bytes": 1198,
+      "url": "https://github.com/sindresorhus/is-plain-obj/blob/b51c26ace163a0761fbe0603cdc270192ef23ce9/readme.md"
+    },
+    {
+      "repo": "sindresorhus/is-plain-obj",
+      "revision": "b51c26ace163a0761fbe0603cdc270192ef23ce9",
+      "path": "license",
+      "gitBlob": "fa7ceba3eb4a9657a9db7f3ffca4e4e97a9019de",
+      "sha256": "5c932d88256b4ab958f64a856fa48e8bd1f55bc1d96b8149c65689e0c61789d3",
+      "bytes": 1117,
+      "url": "https://github.com/sindresorhus/is-plain-obj/blob/b51c26ace163a0761fbe0603cdc270192ef23ce9/license"
+    },
+    {
+      "repo": "sindresorhus/is-stream",
+      "revision": "2070240b28cb734eb34c70dac92b6064260a0621",
+      "path": "index.js",
+      "gitBlob": "2e43434daa19bc911c0dce631cadca79733497f4",
+      "sha256": "14cddb2ce9959337b9f9f018ee57171ec8c4eacf1b27de9d5b5c268a2167288c",
+      "bytes": 677,
+      "url": "https://github.com/sindresorhus/is-stream/blob/2070240b28cb734eb34c70dac92b6064260a0621/index.js"
+    },
+    {
+      "repo": "sindresorhus/is-stream",
+      "revision": "23a6c15f83866c3c59f509d7515ab43ed8e6e367",
+      "path": "index.js",
+      "gitBlob": "a8d571f1cc7670f9015f6df1b294518a90fb6de5",
+      "sha256": "ddd2e942ddbcb3eb9655d759362e1cdde1382a625203e5646578d6185372e9f8",
+      "bytes": 724,
+      "url": "https://github.com/sindresorhus/is-stream/blob/23a6c15f83866c3c59f509d7515ab43ed8e6e367/index.js"
+    },
+    {
+      "repo": "sindresorhus/is-stream",
+      "revision": "2070240b28cb734eb34c70dac92b6064260a0621",
+      "path": "test.js",
+      "gitBlob": "6cf9653f062068df4d6717cb21cc8bbbf7c3f0ad",
+      "sha256": "ba8b06a1611971a6662a31857beb507ea04cbe4a300207a5f77e78bab6ea0e20",
+      "bytes": 2661,
+      "url": "https://github.com/sindresorhus/is-stream/blob/2070240b28cb734eb34c70dac92b6064260a0621/test.js"
+    },
+    {
+      "repo": "sindresorhus/is-stream",
+      "revision": "2070240b28cb734eb34c70dac92b6064260a0621",
+      "path": "readme.md",
+      "gitBlob": "19308e7335a2965c55ec679488d6688118ea892c",
+      "sha256": "fc9d1b1c9e8e0775fb36b36f31c8e0db1537035d3be16bd150a0b43b15fb83b9",
+      "bytes": 1621,
+      "url": "https://github.com/sindresorhus/is-stream/blob/2070240b28cb734eb34c70dac92b6064260a0621/readme.md"
+    },
+    {
+      "repo": "sindresorhus/is-stream",
+      "revision": "2070240b28cb734eb34c70dac92b6064260a0621",
+      "path": "license",
+      "gitBlob": "fa7ceba3eb4a9657a9db7f3ffca4e4e97a9019de",
+      "sha256": "5c932d88256b4ab958f64a856fa48e8bd1f55bc1d96b8149c65689e0c61789d3",
+      "bytes": 1117,
+      "url": "https://github.com/sindresorhus/is-stream/blob/2070240b28cb734eb34c70dac92b6064260a0621/license"
+    }
+  ]
+}
