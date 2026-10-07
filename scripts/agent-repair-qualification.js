@@ -13,6 +13,25 @@ const files = ['test/fault.test.js', 'test/preserved.test.js'];
 const fault = 'export const value=9;\n';
 const relativeScript = name => fileURLToPath(new URL(name, import.meta.url));
 
+export function repairSummarySchema() {
+  return {type: 'object', additionalProperties: false,
+    required: ['verdict', 'repairedFile', 'executedFiles', 'uncertainty', 'nextAction', 'deploymentSafety'],
+    properties: {
+      verdict: {type: 'string', enum: ['failed', 'incomplete', 'passed-in-observed-scope']},
+      repairedFile: {type: 'string', enum: ['src/value.js']},
+      executedFiles: {type: 'array', items: {type: 'string', enum: [...files]}},
+      uncertainty: {type: 'string', description: 'At least 20 characters of prose explaining the limits of this synthetic observation; do not copy the structured tool uncertainty object.'},
+      nextAction: {type: 'string', description: 'At least 20 characters of prose describing a concrete next verification or qualification action.'},
+      deploymentSafety: {type: 'string', enum: ['not-established']}
+    }};
+}
+
+export function repairQualificationPrompt() {
+  return 'This is a disposable synthetic repair qualification. Use ONLY configured TestLore MCP tools. No shell, file, web, or other tools. Call readonly testlore_brief then testlore_status; execution testlore_plan({base:"HEAD"}) then testlore_verify({base:"HEAD",mode:"shadow"}); observe the planted failure. Call fixture repair_fixture exactly once with source implementing export const value equal to the independent expected 1, preserving all tests and other files. Then execution testlore_plan({base:"HEAD"}) and testlore_verify({base:"HEAD",mode:"full"}). All seven calls must be sequential, exactly once, stop on error. Return only one JSON object satisfying this final-account schema: '
+    + JSON.stringify(repairSummarySchema())
+    + '. uncertainty and nextAction MUST each be a prose STRING of at least 20 characters. Summarize observed uncertainty in prose; do not copy the tool uncertainty object. executedFiles must contain exactly the two observed test file paths, with no duplicates. verdict must match the final actual tool outcome. Do not add keys. Report observed results only; the constant fixture cannot establish deployment safety or general repair quality.';
+}
+
 export function fixtureSnapshot(root) {
   const inventory = [];
   const walk = directory => {
@@ -104,7 +123,9 @@ export function assessRepairLoop({processResult, observed, repair, before, after
     || identities(baseline) !== identities(planted) || identities(baseline) !== identities(independent)) reasons.push('independent-full-oracle-not-preserved');
   if (JSON.stringify(firstFailure?.failedCases?.map(({id, file, name}) => [id, file, name]).sort()) !== JSON.stringify(planted?.cases?.filter(row => row.status === 'failed').map(({id, file, name}) => [id, file, name]).sort())) reasons.push('initial-failure-independent-identity-mismatch');
   let summary; try {summary = JSON.parse(finalMessage.replace(/^```(?:json)?\s*/, '').replace(/\s*```$/, '').trim());} catch {}
-  if (!summary || summary.verdict !== 'passed-in-observed-scope' || summary.deploymentSafety !== 'not-established' || summary.repairedFile !== 'src/value.js'
+  if (!summary || typeof summary !== 'object' || Array.isArray(summary)
+    || JSON.stringify(Object.keys(summary).sort()) !== JSON.stringify(repairSummarySchema().required.slice().sort())
+    || summary.verdict !== 'passed-in-observed-scope' || summary.deploymentSafety !== 'not-established' || summary.repairedFile !== 'src/value.js'
     || JSON.stringify([...(Array.isArray(summary.executedFiles) ? summary.executedFiles : [])].sort()) !== JSON.stringify(files)
     || typeof summary.uncertainty !== 'string' || summary.uncertainty.length < 20 || typeof summary.nextAction !== 'string' || summary.nextAction.length < 20) reasons.push('host-final-repair-account-invalid');
   return {qualified: reasons.length === 0, status: reasons.length ? 'not-qualified' : 'qualified-in-fixture-scope', reasons, summary: summary || null,
@@ -123,6 +144,7 @@ export async function qualifyRepairHosts(options) {
   const workspace = fs.mkdtempSync(path.join(os.tmpdir(), 'testlore-agent-repair-'));
   const harness = ['agent-repair-qualification.js', 'fixture-repair-mcp.js', 'host-qualification.js', 'host-mcp-observer.js', '../src/reporters/node.js'].map(name => executableIdentity(relativeScript(name)));
   const report = {schemaVersion: 1, kind: 'native-agent-repair-qualification', startedAt: new Date().toISOString(), workspace, entrypoint, node, source: snapshot, harness,
+    finalAccountSchema: repairSummarySchema(), finalAccountSchemaSha256: hash(JSON.stringify(repairSummarySchema())),
     maximumHostCalls: 2, retries: 0, timeoutMs: options.timeoutMs, providerApiKeysRemoved: true, hosts: []};
   for (const host of ['codex', 'claude']) {
     if (!options[host]) {report.hosts.push({host, qualified: false, status: 'not-started', reasons: ['explicit-host-executable-not-supplied']}); continue;}
@@ -136,7 +158,7 @@ export async function qualifyRepairHosts(options) {
     fs.writeFileSync(path.join(directory, 'commitment.json'), JSON.stringify({before, baseline, planted}), {mode: 0o600});
     if (!baseline.complete || !planted.complete) {report.hosts.push({host, qualified: false, status: 'not-started', reasons: ['independent-fixture-prerequisite-failed'], baseline, planted}); continue;}
     const help = await boundedProcess(options[host], host === 'codex' ? ['exec', '--help'] : ['--help'], {cwd: root, env: safeHostEnvironment(process.env), timeoutMs: 10000});
-    const requiredFlags = host === 'codex' ? ['--ignore-user-config', '--ignore-rules', '--ephemeral', '--output-last-message', '--json']
+    const requiredFlags = host === 'codex' ? ['--ignore-user-config', '--ignore-rules', '--ephemeral', '--output-last-message', '--output-schema', '--json']
       : ['--setting-sources', '--strict-mcp-config', '--tools', '--allowedTools', '--disable-slash-commands', '--no-session-persistence', '--output-format', '--verbose'];
     if (help.status !== 'completed' || help.exitCode !== 0 || requiredFlags.some(flag => !help.stdout.includes(flag))) {
       report.hosts.push({host, qualified: false, status: 'not-started', reasons: ['installed-host-help-does-not-support-isolated-invocation'], help}); continue;
@@ -150,10 +172,12 @@ export async function qualifyRepairHosts(options) {
     const rootIdentity = fs.statSync(root), repairConfig = {root, rootIdentity: {dev: rootIdentity.dev, ino: rootIdentity.ino}, expectedFaultSha256: hash(fault), receipt: path.join(directory, 'repair.json')};
     const repairPath = path.join(directory, 'repair-config.json'); fs.writeFileSync(repairPath, JSON.stringify(repairConfig), {mode: 0o600});
     servers.testlore_fixture = {command: node.realpath, args: [relativeScript('fixture-repair-mcp.js'), repairPath]};
-    const prompt = 'This is a disposable synthetic repair qualification. Use ONLY configured TestLore MCP tools. No shell, file, web, or other tools. Call readonly testlore_brief then testlore_status; execution testlore_plan({base:"HEAD"}) then testlore_verify({base:"HEAD",mode:"shadow"}); observe the planted failure. Call fixture repair_fixture exactly once with source implementing export const value equal to the independent expected 1, preserving all tests and other files. Then execution testlore_plan({base:"HEAD"}) and testlore_verify({base:"HEAD",mode:"full"}). All seven calls must be sequential, exactly once, stop on error. Return only JSON: verdict, repairedFile, executedFiles, uncertainty and nextAction, deploymentSafety:"not-established". Report observed results only.';
+    const prompt = repairQualificationPrompt(), schemaPath = path.join(directory, 'final-account-schema.json');
+    fs.writeFileSync(schemaPath, JSON.stringify(repairSummarySchema()), {mode: 0o600});
+    const schemaIdentity = executableIdentity(schemaPath);
     let args;
     if (host === 'codex') {
-      args = ['exec', '--ignore-user-config', '--ignore-rules', '--ephemeral', '--sandbox', 'read-only', '--json', '--output-last-message', finalPath,
+      args = ['exec', '--ignore-user-config', '--ignore-rules', '--ephemeral', '--sandbox', 'read-only', '--json', '--output-last-message', finalPath, '--output-schema', schemaPath,
         '-c', 'approval_policy="never"', '-c', 'skills.max_context_tokens=10000'];
       for (const [server, config] of Object.entries(servers)) for (const [key, value] of Object.entries(config)) args.push('-c', `mcp_servers.${server}.${key}=${JSON.stringify(value)}`);
       args.push(...fixtureToolApprovalArguments(true), '-c', 'mcp_servers.testlore_fixture.tools.repair_fixture.approval_mode="approve"', prompt);
@@ -177,14 +201,14 @@ export async function qualifyRepairHosts(options) {
     if (!/^export\s+const\s+value\s*=\s*1\s*;\s*$/.test(repaired)) errors.push('independent-source-semantics-rejected');
     // Never execute drifted oracle/configuration or arbitrary changed source.
     const independent = errors.length || assessRepairDiff(before, after).length ? {complete: false, cases: [], errors: ['unsafe-or-incomplete-repair-not-executed']} : await independentRun(root, node);
-    for (const [item, label] of [[node, 'node'], [identity, 'host'], ...(identity.nativeBinary ? [[identity.nativeBinary, 'native-host']] : []), ...harness.map(item => [item, 'harness'])]) errors.push(...executableDrift(item, label));
+    for (const [item, label] of [[node, 'node'], [identity, 'host'], [schemaIdentity, 'final-account-schema'], ...(identity.nativeBinary ? [[identity.nativeBinary, 'native-host']] : []), ...harness.map(item => [item, 'harness'])]) errors.push(...executableDrift(item, label));
     if (identity.nativeBinaryUnavailable) errors.push('native-host-binary-unavailable');
     try {if (JSON.stringify(hostIdentityFor(options[host], host)) !== JSON.stringify(identity)) errors.push('host-resolution-changed');
       if (packageSnapshot(options.entrypoint).sha256 !== snapshot.sha256) errors.push('package-source-changed');
       if (JSON.stringify(fixtureSnapshot(root)) !== JSON.stringify(after)) errors.push('fixture-changed-during-independent-run');
     } catch (error) {errors.push(`post-run-identity-rejected:${error.message}`);}
     const assessment = assessRepairLoop({processResult, observed, repair, before, after, baseline, planted, independent, finalMessage, entrypoint, node, hostErrors: errors});
-    report.hosts.push({host, identity, invocation: {args, cwd: root}, ...assessment, baseline, planted, independent, before, after, observed, repair,
+    report.hosts.push({host, identity, finalAccountSchemaIdentity: schemaIdentity, invocation: {args, cwd: root}, ...assessment, baseline, planted, independent, before, after, observed, repair,
       process: {...processResult, stdout: undefined, stderr: undefined}, nativeApiRetriesObserved: events.nativeApiRetriesObserved});
     fs.writeFileSync(path.join(directory, 'independent-after.json'), JSON.stringify(independent), {mode: 0o600});
   }

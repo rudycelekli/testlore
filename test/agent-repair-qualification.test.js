@@ -6,7 +6,7 @@ import {createHash} from 'node:crypto';
 import {fixture} from './helpers.js';
 import {createFixture, boundedProcess, safeHostEnvironment, hostEvents} from '../scripts/host-qualification.js';
 import {repairFixture} from '../scripts/fixture-repair-mcp.js';
-import {fixtureSnapshot, assessRepairDiff, parseIndependentRun, assessRepairLoop, parseRepairArguments, qualifyRepairHosts} from '../scripts/agent-repair-qualification.js';
+import {fixtureSnapshot, assessRepairDiff, parseIndependentRun, assessRepairLoop, parseRepairArguments, qualifyRepairHosts, repairSummarySchema, repairQualificationPrompt} from '../scripts/agent-repair-qualification.js';
 import {execute} from '../src/execution.js';
 import {Client} from '@modelcontextprotocol/client';
 import {StdioClientTransport} from '@modelcontextprotocol/client/stdio';
@@ -74,7 +74,10 @@ test('independent full execution preserves the actual fixed Node case identities
     value => {value.observed[1].calls[3].result.complete = false;},
     value => {value.observed[1].calls[3].arguments.mode = 'shadow';},
     value => {value.processResult.status = 'timeout';},
-    value => {value.finalMessage = '{"verdict":"passed-in-observed-scope"}';}
+    value => {value.finalMessage = '{"verdict":"passed-in-observed-scope"}';},
+    value => {const summary = JSON.parse(value.finalMessage); summary.uncertainty = {global: 0, retainedTests: [], scopeLimitation: 'Observed test-file scope only.'}; value.finalMessage = JSON.stringify(summary);},
+    value => {const summary = JSON.parse(value.finalMessage); summary.nextAction = {action: 'continue'}; value.finalMessage = JSON.stringify(summary);},
+    value => {const summary = JSON.parse(value.finalMessage); summary.extraClaim = 'gold standard'; value.finalMessage = JSON.stringify(summary);}
   ]) {const altered = structuredClone(input); mutate(altered); assert.equal(assessRepairLoop(altered).qualified, false);}
   for (const mutate of [
     value => {value.stdout += '\nall passed';},
@@ -82,6 +85,15 @@ test('independent full execution preserves the actual fixed Node case identities
     value => {value.stdout = '';},
     value => {value.status = 'timeout';}
   ]) {const bad = structuredClone(post.process); mutate(bad); assert.equal(parseIndependentRun(bad, root).complete, false);}
+});
+
+test('native repair prompt declares the exact final account schema and actionable prose requirements', () => {
+  const schema = repairSummarySchema(), prompt = repairQualificationPrompt();
+  assert.equal(schema.properties.uncertainty.type, 'string'); assert.equal(schema.properties.nextAction.type, 'string');
+  assert.equal(schema.additionalProperties, false);
+  assert.deepEqual(schema.required.slice().sort(), Object.keys(schema.properties).sort());
+  assert.ok(prompt.includes(JSON.stringify(schema))); assert.match(prompt, /prose STRING of at least 20 characters/);
+  assert.match(prompt, /do not copy the tool uncertainty object/); assert.match(prompt, /constant fixture cannot establish/);
 });
 
 test('real fixture-only MCP capability repairs source and records rejected duplicate edits', async t => {
