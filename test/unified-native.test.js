@@ -44,6 +44,15 @@ test('configuration source mutation during startup rejects without a second nati
  const report=await runUnifiedNative(root,{selective:true,capture:true});assert.equal(report.complete,false);assert.equal(report.exitCode,2);assert.match(report.error,/changed during native context startup/);
  assert.equal(fs.readFileSync(path.join(root,'.tddswarm/config-count'),'utf8').trim(),'1');
 });
+test('initial inventory reuse rejects tests created by executable configuration during startup',async t=>{
+ const extra=`import {test,expect} from 'vitest';test('new failing native oracle',()=>expect(9).toBe(1));`;
+ const {root}=project(t,{'vitest.config.mjs':`import fs from 'node:fs';console.log('TESTLORE_CONFIG_LOADED');fs.writeFileSync('checks/late.check.js',${JSON.stringify(extra)});export default {test:{include:['checks/*.check.js']}};`});
+ const result=await runUnifiedNative(root,{selective:true,capture:true});
+ assert.equal(result.complete,false);assert.equal(result.exitCode,2);assert.equal(result.executed,false);
+ assert.match(result.error,/changed during native context startup.*checks\/late.check.js/);
+ assert.equal(result.stdout.split('TESTLORE_CONFIG_LOADED').length-1,1);
+ assert.equal(fs.existsSync(path.join(root,'.tddswarm/last-run.json')),false);
+});
 test('unsupported loaded isolation rejects rather than reloading executable config',async t=>{
  const {root}=project(t,{'vitest.config.mjs':`console.log('TESTLORE_CONFIG_LOADED');export default {test:{include:['checks/*.check.js'],isolate:false}};`});
  const report=await runUnifiedNative(root,{capture:true});assert.equal(report.complete,false);assert.match(report.error,/isolation/);
@@ -51,8 +60,28 @@ test('unsupported loaded isolation rejects rather than reloading executable conf
 });
 test('public options cannot inject fabricated native discovery',async t=>{
  const {root}=project(t);write(root,'src/a.js','export default 2;');
- const report=await runUnifiedNative(root,{selective:true,capture:true,nativeSession:{discovery:{files:[],complete:true}},nativeBatch:{complete:true}});
+ const report=await runUnifiedNative(root,{selective:true,capture:true,nativeSession:{discovery:{files:[],complete:true}},nativeBatch:{complete:true},startupInventory:{files:[]},startupPhase:{provenance:{files:[]}}});
  assert.equal(report.complete,true,report.error);assert.equal(report.exitCode,1);assert.equal(report.tests.length,1);
+});
+
+test('fresh JSON configuration changing after startup snapshot rejects same-phase reuse',async t=>{
+ const {root}=project(t,{'vitest.config.mjs':`import fs from 'node:fs';console.log('TESTLORE_CONFIG_LOADED');fs.mkdirSync('.tddswarm',{recursive:true});fs.writeFileSync('.tddswarm/native-started','1');export default {test:{include:['checks/*.check.js']}};`});
+ const file=path.join(root,'tddswarm.config.json'),marker=path.join(root,'.tddswarm/native-started'),read=fs.readFileSync;let reads=0,mutated=false;
+ fs.readFileSync=function(target,...args){if(String(target)===file&&fs.existsSync(marker)&&++reads===2){const config=JSON.parse(read.call(this,target,'utf8'));config.executionMode='shadow';fs.writeFileSync(file,JSON.stringify(config));mutated=true;}return read.call(this,target,...args);};
+ let result;try{result=await runUnifiedNative(root,{selective:true,capture:true});}finally{fs.readFileSync=read;}
+ assert.equal(mutated,true);assert.equal(result.complete,false);assert.equal(result.exitCode,2);assert.equal(result.executed,false);
+ assert.match(result.error,/fresh configuration does not match/);assert.equal(result.stdout.split('TESTLORE_CONFIG_LOADED').length-1,1);
+ assert.equal(fs.existsSync(path.join(root,'.tddswarm/last-run.json')),false);
+});
+
+test('new inputs after startup snapshot still reject at independent pre-execution boundary',async t=>{
+ const {root}=project(t,{'vitest.config.mjs':`import fs from 'node:fs';fs.mkdirSync('.tddswarm',{recursive:true});fs.writeFileSync('.tddswarm/native-started','1');export default {test:{include:['checks/*.check.js']}};`});
+ const file=path.join(root,'tddswarm.config.json'),marker=path.join(root,'.tddswarm/native-started'),read=fs.readFileSync;let reads=0,mutated=false;
+ fs.readFileSync=function(target,...args){if(String(target)===file&&fs.existsSync(marker)&&++reads===2){fs.writeFileSync(path.join(root,'src/late.js'),'export default 9;');mutated=true;}return read.call(this,target,...args);};
+ let result;try{result=await runUnifiedNative(root,{selective:true,capture:true});}finally{fs.readFileSync=read;}
+ assert.equal(mutated,true);assert.equal(result.complete,false);assert.equal(result.exitCode,2);assert.equal(result.executed,false);
+ assert.match(result.error,/Inputs changed during selection/);assert.ok(result.decisionDrift.includes('source-drift:src/late.js'));
+ assert.equal(fs.existsSync(path.join(root,'.tddswarm/last-run.json')),false);
 });
 test('deadline bounds hung native configuration and pre-abort starts no project code',async t=>{
  const {root}=project(t,{'vitest.config.mjs':`await new Promise(()=>{});export default {};`});

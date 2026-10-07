@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { createHash } from 'node:crypto';
 import { SOURCE, git, gitBaseline, gitSources, normalize, readConfig } from './files.js';
-import { snapshot } from './provenance.js';
+import { snapshot, digest, freshness } from './provenance.js';
 import { changedServices } from './inputs.js';
 import { runtimeEvidence } from './evidence.js';
 import { buildPlanningGraph, addSources, evidencePath, dependencies, classifyWarnings } from './graph.js';
@@ -21,16 +21,24 @@ export function gitChanges(root, base) {
 }
 
 export function plan(root, options = {}, nativeSession) {
+  return planPhase(root,options,nativeSession);
+}
+// Runner-only entrypoint, never populated from public plan/run options.
+export function planWithinStartupPhase(root, options, nativeSession, phase) {
+  return planPhase(root,options,nativeSession,phase);
+}
+function planPhase(root, options = {}, nativeSession, phase) {
   const timing = phaseTimings();
   root = path.resolve(root);
   const config = readConfig(root);
+  if(phase && (phase.root!==root || phase.configurationDigest!==digest(config) || !freshness(phase.provenance,phase.provenance).fresh))throw new Error('Inputs changed within startup planning phase; fresh configuration does not match its independently checked snapshot');
   timing.mark('configuration');
   if (config.integration) {
     const result = externalPlan(root, config, options);
     timing.mark('externalPlan');
     return { ...result, timings: timing.finish() };
   }
-  const provenance = snapshot(root,config);
+  const provenance = phase ? phase.provenance : snapshot(root,config);
   timing.mark('provenance');
   // Inventory and JSON policy belong to this synchronous planning phase.
   // Execution still independently snapshots before and after the native run.
