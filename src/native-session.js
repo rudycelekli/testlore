@@ -31,6 +31,7 @@ export function unifiedNativeEligibility(root,config) {
  return null;
 }
 export async function openNativeSession(root,config,options={},startupInventory) {
+ const opened=performance.now();
  const requestedRoot=path.resolve(root);
  if(startupInventory && (startupInventory.root!==requestedRoot || startupInventory.configurationDigest!==digest(config) || !Array.isArray(startupInventory.files)))throw new Error('Unbound startup analysis inventory');
  root=fs.realpathSync(root);
@@ -41,7 +42,7 @@ export async function openNativeSession(root,config,options={},startupInventory)
  if(!Number.isInteger(timeout)||timeout<1||timeout>600000)throw new Error('Unified deadline must be 1–600000 milliseconds');
  if(options.signal?.aborted)throw new Error('Unified execution cancelled');
  const deadline=Date.now()+timeout,temporary=fs.mkdtempSync(path.join(os.tmpdir(),'testlore-unified-'));
- let child,closed=false,timer,stdout='',stderr='',outputBytes=0,failure,stage='planned';const pending=new Map();
+ let child,closed=false,timer,stdout='',stderr='',outputBytes=0,failure,stage='planned',workerSpawned,plannedReceived;const pending=new Map(),workerTimings={};
  const terminate=()=>{if(child?.pid){try{if(process.platform==='win32')child.kill('SIGKILL');else process.kill(-child.pid,'SIGKILL');}catch{}}};
  const rejectAll=error=>{if(failure)return;failure=error;for(const waiter of pending.values())waiter.reject(error);pending.clear();terminate();};
  const cancel=()=>rejectAll(new Error('Unified execution cancelled'));
@@ -59,6 +60,7 @@ export async function openNativeSession(root,config,options={},startupInventory)
   const invocation=[...command,'run','--reporter=json',`--outputFile=${reportFile}`];
   const files=startupInventory?startupInventory.files:listFiles(root);
   fs.writeFileSync(requestFile,JSON.stringify({root,adapter:'vitest',command,imports,invocation,discover:true,transitive:true,roots:files.filter(file=>SOURCE.test(file)),unified:true,reportFile}));
+  workerSpawned=performance.now();
   child=spawn(process.execPath,[fileURLToPath(new URL('./reporters/resolve.js',import.meta.url)),requestFile],{cwd:root,env:nativeEnvironment(config),detached:process.platform!=='win32',stdio:['ignore','pipe','pipe','pipe','pipe']});
   const wait=phase=>new Promise((resolve,reject)=>{if(failure)return reject(failure);pending.set(phase,{resolve,reject});});
   const planning=wait('planned');
@@ -66,12 +68,15 @@ export async function openNativeSession(root,config,options={},startupInventory)
   const frames=nativeFrameReader({onError:rejectAll,onFrame:message=>{
    if(message?.phase==='failed')return rejectAll(new Error(`Unified native session failed: ${String(message.error).slice(0,500)}`));
    if(message?.phase!==stage||!pending.has(stage))return rejectAll(new Error('Unexpected unified native protocol event'));
+   const timings=message.timings;
+   // Passive diagnostics cannot mint execution or dependency authority.
+   if(timings && Number.isFinite(timings.totalMs) && timings.totalMs>=0 && timings.totalMs<=600000 && timings.phases && typeof timings.phases==='object' && Object.keys(timings.phases).length<=20 && Object.entries(timings.phases).every(([key,value])=>/^[A-Za-z]+$/.test(key)&&Number.isFinite(value)&&value>=0&&value<=600000))workerTimings[stage]=timings;
    const waiter=pending.get(stage);pending.delete(stage);stage=stage==='planned'?'executed':'closed';waiter.resolve(message.value);
   }});
   child.stdio[4].on('data',chunk=>frames.push(chunk));child.stdio[4].once('end',()=>frames.end());child.stdio[4].once('error',rejectAll);child.stdio[3].once('error',rejectAll);
   child.once('error',rejectAll);child.once('exit',(code,signal)=>{if(stage!=='closed'&&!closed)rejectAll(new Error(`Unified native session exited before completion (${code??signal})`));});
   timer=setTimeout(()=>rejectAll(new Error('Unified native deadline exceeded')),Math.max(1,deadline-Date.now()));options.signal?.addEventListener('abort',cancel,{once:true});
-  const planned=await planning;if(Date.now()>=deadline)throw new Error('Unified native-session deadline exceeded');
+  const planned=await planning;plannedReceived=performance.now();if(Date.now()>=deadline)throw new Error('Unified native-session deadline exceeded');
   const batch=normalize(root,planned);
   // Initial baseline imports precede additional traversal records.
   if(!Array.isArray(batch.resolutions)||batch.resolutions.length!==imports.length)throw new Error('Invalid unified baseline resolution count');
@@ -82,10 +87,10 @@ export async function openNativeSession(root,config,options={},startupInventory)
    if(failure)throw failure;if(Date.now()>=deadline)throw new Error('Unified native deadline exceeded');if(options.signal?.aborted)throw new Error('Unified execution cancelled');
    files=[...new Set(files)].sort();files.forEach(file=>safePath(root,file));
    const started=performance.now(),execution=wait('executed');child.stdio[3].end(encodeNativeFrame({phase:'execute',files}));
-   const value=await execution;if(Date.now()>=deadline)throw new Error('Unified native-session deadline exceeded');
+   const value=await execution,executedReceived=performance.now();if(Date.now()>=deadline)throw new Error('Unified native-session deadline exceeded');
    if(child.exitCode===null&&child.signalCode===null)await new Promise(resolve=>child.once('close',resolve));
    if(failure)throw failure;if(Date.now()>=deadline)throw new Error('Unified native-session deadline exceeded');terminate();
-   return normalizeUnifiedExecution(root,files,value,{durationMs:Math.round(performance.now()-started),command:[],nativeInvocation:invocation,nativeExitCode:child.exitCode,signal:child.signalCode,stdout,stderr,unifiedNative:{prototype:true,used:true,programmatic:true,contexts:1,fresh:true,scope:'single root project',deadlineScope:'native-session; synchronous parent work is not preemptible'}});
+   return normalizeUnifiedExecution(root,files,value,{durationMs:Math.round(performance.now()-started),command:[],nativeInvocation:invocation,nativeExitCode:child.exitCode,signal:child.signalCode,stdout,stderr,unifiedNative:{prototype:true,used:true,programmatic:true,contexts:1,fresh:true,scope:'single root project',deadlineScope:'native-session; synchronous parent work is not preemptible',timings:{requestPreparationMs:workerSpawned-opened,workerStartupAndPlanningMs:plannedReceived-workerSpawned,executionRequestAndResultMs:executedReceived-started,resultToChildExitMs:performance.now()-executedReceived,worker:workerTimings,scope:'Diagnostic spans; worker starts after static module imports, parent startup includes imports and native planning. Spans overlap and never confer authority.'}}});
   }};
  }catch(error){error.nativeFailureEvidence={stdout,stderr};await close();throw error;}
 }

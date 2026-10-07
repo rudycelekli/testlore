@@ -7,6 +7,8 @@ import { pathToFileURL } from 'node:url';
 import { spawnSync } from 'node:child_process';
 import ts from 'typescript';
 import {encodeNativeFrame,nativeFrameReader,readNativeJson} from '../native-protocol.js';
+import {phaseTimings} from '../timing.js';
+const workerTiming=phaseTimings();
 let protocolOutput, instruction;
 function sendBounded(message) {
  const frame=encodeNativeFrame(message);
@@ -142,7 +144,9 @@ try {
       process.argv=[...request.invocation];
       const index=command.findIndex(arg=>/(?:^|[/\\])vitest(?:\.mjs)?$/.test(arg));
       const requireCLI=createRequire(command[index]);
+      workerTiming.mark('requestAndAdmission');
       const vitest=await import(pathToFileURL(requireCLI.resolve('vitest/node')).href);
+      workerTiming.mark('frameworkImport');
       const version=JSON.parse(fs.readFileSync(requireCLI.resolve('vitest/package.json'),'utf8')).version;
       const parsed=vitest.parseCLI(['vitest',...command.slice(index+1)]);
       if(parsed.filter.length)throw new Error('Shared native planning does not accept positional scope filters');
@@ -150,6 +154,7 @@ try {
       if(/^4\.1\./.test(version))context=await vitest.createVitest('test',options,{logLevel:'silent'});
       else if(/^5\./.test(version))context=await vitest.createVitest(options,{logLevel:'silent'});
       else throw new Error('Unsupported shared native planning API version');
+      workerTiming.mark('frameworkInitializationAndConfiguration');
     }
     try {
     const vite = context ? null : await import(pathToFileURL(loadPath('vite')).href);
@@ -163,17 +168,20 @@ try {
     if (base.test?.projects?.length || base.test?.browser?.enabled || base.test?.workspace || base.root && path.resolve(root,base.root)!==root || base.test?.environment && !['node','jsdom','happy-dom'].includes(base.test.environment)) throw new Error('Multiple projects/browser resolution requires a native project graph');
     if(context && (context.projects.length!==1||context.projects[0]!==context.getRootProject()))throw new Error('Shared native planning requires one root project');
     globals(base.test || {},['setupFiles','globalSetup']);
+    workerTiming.mark('contextAndGlobalInputs');
     if(context) {
       const specs=await context.getRelevantTestSpecifications([]);
       if(request.unified)unifiedSpecs=specs;
       output.discovery={files:[...new Set(specs.map(spec=>spec.moduleId))],complete:true};
       for(const file of output.discovery.files)expand(file);
     }
+    workerTiming.mark('nativeDiscoveryAndDiscoveredSourceExpansion');
     for(const file of request.roots || [])expand(path.resolve(root,file));
     output.configFiles.push(...(loaded?.dependencies || []), ...(loaded?.path ? [loaded.path] : []));
     if(context)output.configFiles.push(...(context.vite.config.configFileDependencies||[]),...(context.vite.config.configFile?[context.vite.config.configFile]:[]));
     rejectArgvConfiguration(output.configFiles);
     if(request.unified)rejectUnifiedProjectPlugins(output.configFiles,context.vite.config.plugins);
+    workerTiming.mark('sourceExpansionAndConfigurationAdmission');
     const aliases = value => Array.isArray(value) ? value : Object.entries(value || {}).map(([find, replacement]) => ({ find, replacement }));
     const server = context ? context.vite : await vite.createServer({ ...base, root, mode, configFile: false, logLevel: 'silent', server: { ...base.server, middlewareMode: true, watch: null }, resolve: { ...base.resolve, alias: [...aliases(base.test?.alias), ...aliases(base.resolve?.alias)] } });
     try {
@@ -188,19 +196,25 @@ try {
         record(resolution(resolved),queue[index],index);
       }
     } finally { if(!context)await server.close(); }
+    workerTiming.mark('nativeImportResolution');
     if(request.unified) {
-      await sendBounded({phase:'planned',value:output});
+      const plannedTiming=workerTiming.finish();
+      await sendBounded({phase:'planned',value:output,timings:plannedTiming});
       const selectedInstruction=await instruction;
+      workerTiming.mark('parentPlanningAndProtocolWait');
       if(selectedInstruction.phase!=='execute'||!Array.isArray(selectedInstruction.files)||selectedInstruction.files.length>10000||selectedInstruction.files.some(file=>typeof file!=='string'))throw new Error('Invalid unified execution request');
       const expected=new Set(selectedInstruction.files.map(file=>path.resolve(root,file)));
       const specs=unifiedSpecs;
       const selected=specs.filter(spec=>expected.has(spec.moduleId));
       if(expected.size!==selected.length)throw new Error('Unified requested specifications are missing or duplicated');
       if(typeof context.standalone==='function')await context.standalone();else await context.init();
+      workerTiming.mark('runnerInitialization');
       const result=await context.runTestSpecifications(selected,selected.length===specs.length);
+      workerTiming.mark('nativeTestsAndReporter');
       if(result.unhandledErrors?.length)throw new Error('Unified native execution has unhandled errors');
       const value=readNativeJson(request.reportFile);
-      await sendBounded({phase:'executed',value});
+      workerTiming.mark('nativeReportRead');
+      await sendBounded({phase:'executed',value,timings:workerTiming.finish()});
     }
     } finally {if(context)await context.close();}
   }
