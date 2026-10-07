@@ -63,3 +63,18 @@ After manifest creation, `controller.json` is retained on success and controller
 The frozen `six-frozen-contracts-20260930-v1` campaign remains bound to its original evaluator and dataset hashes. Its recorded `totalMs` starts after project setup, memory copying and retrieval, so those costs are omitted and cannot be recovered from the totals. Its input/output counters likewise measure normalized JSON payloads, excluding appended `transportBudget` and raw stdout bytes. Two frozen fault labels overstate what their implementations exercise: `duplicate-last` changes the binary search to an upper-bound search and then fails its equality check, returning a miss rather than the last duplicate; `lexical-components` leaves version components as strings and the existing safe-integer check rejects otherwise valid version strings. Those implementations are held-out conformance faults, but the labels do not establish last-duplicate or lexical-comparison fault coverage. The dataset and prior receipts are preserved, not relabeled or tuned using run outcomes.
 
 Repeated attempts are clustered by specification. A two-sided exact sign test uses the mean recall difference for each independent specification, with ties excluded. A scoped positive/negative difference is labeled only with at least six specifications, three repetitions, complete trials, and p < 0.05. The default three-specification experiment therefore remains **inconclusive** for learning improvement even when an observed average differs. The test is a coarse exploratory statistic, not a power analysis or production-corpus guarantee. It does not establish superiority over other memory systems, train model weights, or authorize different test selection.
+# Prospective independently supplied datasets
+
+An external maintainer can supply the existing bounded dataset format without changing the evaluator. Freeze it before selecting worker outputs, tuning prompts or inspecting trial results:
+
+```sh
+node scripts/evaluation-commitment.js --dataset private-dataset.json \
+  --provenance private-provenance.json --output new-commitment.json
+node scripts/learning-evaluation.js --fixtures private-dataset.json \
+  --commitment new-commitment.json --output new-trials \
+  --agent '["your-worker"]' --identity 'declared provider/model/version'
+```
+
+The provenance object declares `owner`, `source`, `independenceNotes` and boolean `independentlyMaintained`. A content commitment binds the complete dataset and each specification's requirements, implementation, reference tests and defects. Changed bytes reject before any worker invocation. The matching commitment stays beside private receipts; it is never added to role payloads. Hash matching cannot authenticate the owner, prove semantic independence, establish secrecy, or supply a trusted publication timestamp. Publish the commitment separately in advance if external anchoring is needed. Existing worker input excludes reference tests and defect variants, but the custom worker is not an OS security boundary.
+
+`scripts/prospective-contracts.js` contains two newly authored contracts frozen on 2026-10-06: JSON Merge Patch behavior and deterministic HTTP retry delays. Each has three independently executable reference defects, validated repeatedly. They are prospectively constructed tool-maintainer specifications, not externally maintained datasets, production bugs, or a demonstrated learning improvement. Their old six-contract counterparts remain unchanged. The evaluator explicitly keeps learning promotion disabled regardless of a local commitment or favorable small comparison.

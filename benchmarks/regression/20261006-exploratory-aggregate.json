@@ -1,0 +1,127 @@
+{
+  "schemaVersion": 1,
+  "kind": "regression-corpus-assessment",
+  "requestedTrials": 16,
+  "completedTrials": 14,
+  "uncompletedTrials": 2,
+  "scenarios": 8,
+  "faultScenarios": 7,
+  "faultOpportunities": 14,
+  "independentlyDemonstratedFaultTrials": 14,
+  "preservedFaultTrials": 14,
+  "stableScenarios": 7,
+  "qualifiedScenarios": 7,
+  "fullFallbackTrials": 8,
+  "selectiveTrials": 0,
+  "qualified": false,
+  "provenance": {
+    "authoredScenarios": 7,
+    "repositoryHistoryScenarios": 0,
+    "publicBugfixInversions": 1,
+    "maintainerIndependenceVerified": false
+  },
+  "timing": {
+    "full": {
+      "observed": 14,
+      "totalMs": 24127,
+      "p50Ms": 1608,
+      "p95Ms": 3325
+    },
+    "testLore": {
+      "observed": 14,
+      "totalMs": 40787,
+      "p50Ms": 2938,
+      "p95Ms": 5867
+    },
+    "native": {
+      "observed": 14,
+      "totalMs": 5275,
+      "p50Ms": 331,
+      "p95Ms": 608
+    }
+  },
+  "timingScope": "Per-arm native process execution and TestLore discovery/planning/execution/receipt work. Corpus orchestration and independent verification discovery excluded; separately report controller elapsed time. Shared OS/dependency caches are not flushed; repetitions are not independent projects.",
+  "limitations": [
+    "Prototype exploratory attempt before final oracle hash and harness freshness gates. No exact immutable source/harness qualification claim.",
+    "Named assertion failures are independently executed; labels and maintainer independence remain operator declarations.",
+    "No observed misses on this bounded corpus establishes universal recall. Passing scenarios alone do not qualify fault preservation.",
+    "Missing trials, unstable case identities/statuses and incomplete/module-load outcomes cannot qualify.",
+    "Raw test identities and labels remain private; this aggregate does not contain repository paths or case names.",
+    "No model calls, provider billing or generation/learning claim. Native and TestLore implementations are not fully runtime-attested.",
+    "14 of16 trials completed. Constructed rename baseline produced a module-load failure, leaving2 trials uncompleted. Cause not established; no successful reclassification."
+  ],
+  "corpusHash": "9ba6e46bb5e3d8eb5bfc653dc2f4ce08dfea9582b401622c3cf2e32a9ebf968b",
+  "pilot": {
+    "schemaVersion": 1,
+    "kind": "local-pilot-aggregate",
+    "projects": 2,
+    "validProjects": 1,
+    "frameworks": [
+      "node",
+      "vitest"
+    ],
+    "trials": 14,
+    "validTrials": 14,
+    "requestedTrials": 16,
+    "uncompletedTrials": 2,
+    "unknownTrialCounts": 0,
+    "changeErrors": 1,
+    "sourceCheckoutsVerifiedUnchanged": 2,
+    "sourceCheckoutsUnverified": 0,
+    "nativeUnverifiedTrials": 0,
+    "caseObservations": {
+      "full": 146,
+      "testLore": 118,
+      "native": 6
+    },
+    "fileObservations": {
+      "full": 146,
+      "testLore": 118,
+      "native": 6
+    },
+    "negativeSavingsVsNative": 14,
+    "observedFailures": 14,
+    "missedFailures": 0,
+    "unexpectedSubsetFailures": 0,
+    "nativeValidTrials": 6,
+    "nativeMissedFailures": 8,
+    "nativeUnexpectedFailures": 0,
+    "invalidTrials": 0,
+    "errorProjects": 1,
+    "historicalChanges": 2,
+    "negativeSavings": 14,
+    "allTrialTimings": {
+      "fullMs": 24127,
+      "testLoreMs": 40787,
+      "nativeMs": 5275,
+      "netVsFullMs": -16660,
+      "netVsNativeMs": -35512
+    },
+    "validTrialTimings": {
+      "fullMs": 24127,
+      "subsetMs": 22106,
+      "planningMs": 16063,
+      "testLoreMs": 40787,
+      "nativeMs": 5275
+    },
+    "limitation": "Unauthenticated local aggregates; planted changes, historical revision pairs and declared scopes only. Not an independent leaderboard."
+  },
+  "harnessHash": "af5a02a059836510fc98e9e9616a26132efa76832b8f3863d6427707aea4555d",
+  "controllerElapsedMs": 92789,
+  "status": "retained-development-attempt",
+  "harnessIdentityVerified": false,
+  "developmentFailures": {
+    "focusedTests": {
+      "tests": 4,
+      "passed": 2,
+      "failed": 2,
+      "cause": "ENOSPC during corpus receipt write and next fixture setup"
+    },
+    "focusedRerun": {
+      "tests": 4,
+      "passed": 4,
+      "failed": 0
+    },
+    "providerCalls": 0
+  }
+}
