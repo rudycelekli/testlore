@@ -36,7 +36,7 @@ const help = `TestLore — know why each test runs.
 
 Usage: testlore <command> [options]
 
-  setup       Configure a quality agent, native runner and shadow CI in one command
+  setup       Configure a quality agent and shadow CI; --verify records a full shadow run
   doctor      Inspect setup prerequisites and next actions without project execution
   brief       Give agents a bounded verification contract without running project code
   mcp         Serve project quality tools over MCP stdio (inspection only by default)
@@ -102,7 +102,7 @@ export function parseArgs(args) {
   const options = {};
   let command = 'help';
   const values = new Set(['root','base','changed','output','report','type','provenance','repeat','id','patch','target','framework','head','action-ref','base-branch','query','name','enable','disable','select','plugin','settings','manifest','mutate','defects','revision','deadline-ms','trusted-key','checkpoint','claim','verdict','reviewer']);
-  const flags = new Set(['json', 'full', 'shadow', 'execute', 'help', 'version', 'local', 'no-ci','check','recommend','auto','selective','allow-execution','unified-native']);
+  const flags = new Set(['json', 'full', 'shadow', 'execute', 'help', 'version', 'local', 'no-ci','check','recommend','auto','selective','allow-execution','unified-native','verify']);
   if (args[0] && !args[0].startsWith('-')) command = args.shift();
   for (let i = 0; i < args.length; i++) {
     const key = args[i].replace(/^--/, '');
@@ -191,6 +191,8 @@ export async function main(args = process.argv.slice(2)) {
     return 0;
   }
   if (options['unified-native'] && command !== 'run') throw new Error('--unified-native applies only to run');
+  if(options.verify&&command!=='setup')throw new Error('--verify applies only to setup');
+  if(options.verify&&options.selective)throw new Error('setup --verify always uses full shadow verification');
   if (options['allow-execution']) throw new Error('--allow-execution applies only to mcp');
   if ((options.auto || options.recommend) && command !== 'plugins') throw new Error('--auto and --recommend require the plugins command');
   if(options.shadow && options.selective)throw new Error('Choose --shadow or --selective');
@@ -232,7 +234,13 @@ export async function main(args = process.argv.slice(2)) {
     case 'setup': {
       const written=installQualityLayer(root,{ci:!options['no-ci'],actionRef:options['action-ref']});
       const agent=ensureQualityAgent(root,{name:options.name});
-      result={written,agent,executionMode:readConfig(root).executionMode||'existing-policy',readiness:adoptionReadiness(root),plugins:recommendPlugins(root),next:['testlore doctor --json','testlore run --shadow --base HEAD --json','testlore report','testlore mappings --json']};break;
+      result={written,agent,executionMode:readConfig(root).executionMode||'existing-policy',readiness:adoptionReadiness(root),plugins:recommendPlugins(root),next:['testlore doctor --json','testlore run --shadow --base HEAD --json','testlore report','testlore mappings --json']};
+      if(options.verify){
+        const {run:verify}=await import('./runner.js');
+        result.verification=verify(root,{base:options.base||'HEAD',shadow:true,capture:true});
+        result.next=['testlore report','Review the retained full-run outcomes and uncertainties before permitting omissions.','testlore mappings --json'];
+      }
+      break;
     }
     case 'report': result=JSON.parse(fs.readFileSync(safePath(root,options.report||'.tddswarm/last-run.json'),'utf8'));if(!options.json){console.log(renderRunReport(result));return result.exitCode||0;}break;
     case 'mappings': result=routingProposals(root);break;
@@ -352,6 +360,7 @@ export async function main(args = process.argv.slice(2)) {
   if(command==='mapping-qualify')return !result.complete?2:result.qualified?0:1;
   if(command==='capture')return result.complete?0:2;
   if(command==='stability')return !result.complete?2:result.metrics.unstable?1:0;
+  if(command==='setup'&&options.verify)return result.verification.exitCode||(!result.verification.complete?2:0);
   return 0;
 }
 if (process.argv[1] && fs.realpathSync(process.argv[1]) === fs.realpathSync(fileURLToPath(import.meta.url))) {

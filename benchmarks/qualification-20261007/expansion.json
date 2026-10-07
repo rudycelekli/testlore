@@ -1,0 +1,182 @@
+{
+  "schemaVersion": 1,
+  "kind": "public-application-generation-expansion",
+  "generation": {
+    "sourceRevision": "baf30bc4090bedbc8d31015b7c08edd73dc8873e",
+    "dataset": "public-maintainer-contracts-20261007-v1",
+    "datasetHash": "55cf8e79a1f2b44847aca447ab58e2b50964025f3d0557e4839ee904e88bb8db",
+    "mode": "generation-reliability",
+    "trials": 4,
+    "failedTrials": 0,
+    "stableTrials": 4,
+    "detectedFaultTrials": 3,
+    "totalFaultTrials": 4,
+    "distinctHistoricalFaults": 2,
+    "attemptedCalls": 12,
+    "spawnedCalls": 12,
+    "budget": {
+      "maxCalls": 12,
+      "timeoutMs": 115000,
+      "maxOutputBytes": 65536,
+      "stabilityRuns": 2
+    },
+    "meanGenerationMs": 90049.5,
+    "meanTotalMs": 93906.75,
+    "controllerElapsedMs": 378457,
+    "nativeUsage": {
+      "attemptedCalls": 12,
+      "auditedCompletedCalls": 12,
+      "callsWithoutUsage": 0,
+      "usageCoverageComplete": true,
+      "reportedTokenTotals": {
+        "input_tokens": 245044,
+        "cached_input_tokens": 18304,
+        "output_tokens": 9784
+      },
+      "billingUSD": null,
+      "verifiedProviderModel": null,
+      "limitation": "Worker-reported counters from audited native completion events, with locally checked worker identities. Provider counters are not externally attested. Failed, timed-out or rejected calls can consume unreported tokens; totals cover only the reported calls. Cached input is a subset of input. No token pricing or dollar estimate is inferred."
+    },
+    "learningCompared": false,
+    "learningPromotion": {
+      "enabled": false,
+      "reason": "Evaluation remains advisory; local commitments do not prove semantic independence or establish repeatable deployment benefit."
+    },
+    "rawReceiptSha256": "255c55086a64f4f9d0f5a4c96245599b2db4000cd7064d1f1119e558fdca6094",
+    "limitations": [
+      "Two pinned public maintained specifications and historical faults, selected by TestLore; adapted Node framework imports, unchanged assertion bodies.",
+      "Each reference baseline, generated baseline and fault runs twice. Repeated trials are not new independent specifications.",
+      "Four stable completions detected three of four fault-trials: one generated regex suite had26cases yet missed the historical Unicode-hyphen fault.",
+      "No blind model-training isolation, billing attestation, general bug recall or learning improvement claim.",
+      "The preceding shell setup failed before any provider call and remains retained separately; fixed assay has zero retries."
+    ]
+  },
+  "workspace": {
+    "framework": "vitest-workspace-aliases-and-runtime-contract-input",
+    "originalUnchanged": true,
+    "baselineCases": 647,
+    "reviewRequired": true,
+    "closedWorld": false,
+    "applied": false,
+    "proposalCount": 14,
+    "trials": [
+      {
+        "qualified": true,
+        "complete": true,
+        "mode": "affected",
+        "fullFiles": 24,
+        "subsetFiles": 6,
+        "fullCases": 647,
+        "subsetCases": 346,
+        "fullFailures": 1,
+        "missedFailures": 0,
+        "reasons": []
+      },
+      {
+        "qualified": true,
+        "complete": true,
+        "mode": "affected",
+        "fullFiles": 24,
+        "subsetFiles": 6,
+        "fullCases": 647,
+        "subsetCases": 346,
+        "fullFailures": 1,
+        "missedFailures": 0,
+        "reasons": []
+      }
+    ],
+    "rawReceiptSha256": "a98152d48cd8436c469a938959212c05f3c7344c0cae77605faec1f61d1d5fd1",
+    "limitations": [
+      "Private app source and case names stay local.",
+      "Trusted installed upstream dependencies are reused; not a fresh lock installation.",
+      "Constructed contract-file fault; not a demonstrated historical upstream regression.",
+      "Unit workspace profile only; no browser or remote service completeness claim."
+    ]
+  },
+  "browser": {
+    "toolSourceRevision": "2edd461918bca16da35d2735b128d8e59c66eb26",
+    "oracle": "New authored Chromium assertions over pinned existing static frontend bytes; not unchanged maintainer or public benchmark",
+    "scenarios": {
+      "observedRouteHypothesis": {
+        "qualified": true,
+        "complete": true,
+        "fullCases": 2,
+        "subsetCases": 1,
+        "fullFailures": 1,
+        "subsetFailures": 1,
+        "missedFailures": 0,
+        "reasons": [],
+        "closedWorld": false,
+        "applied": false,
+        "fallbackRequired": true,
+        "negativeControlMisses": 1,
+        "negativeControlRejected": true
+      },
+      "explicitSharedServerHypothesis": {
+        "qualified": true,
+        "complete": true,
+        "fullCases": 2,
+        "subsetCases": 2,
+        "missedFailures": 0,
+        "reasons": [],
+        "closedWorld": false,
+        "applied": false,
+        "fallbackRequired": true,
+        "uncertainServerDependencyRetained": true,
+        "negativeControlCannotOmitFailure": true,
+        "allCasesRetained": true
+      }
+    },
+    "originalStatusUnchanged": true,
+    "pinnedBytesUnchanged": true,
+    "unknownAssetFallsBack": true,
+    "changedServerFallsBack": true,
+    "closedWorld": false,
+    "applied": false,
+    "performanceClaim": false,
+    "rawReceiptSha256": "bc80ccb01a7a36a9aa6daae3d022ce9f8bb3d9cfc6c86747c7ac8e16dca7edca",
+    "limitations": [
+      "Observed route subset is only a review hypothesis; shared server closure remains incomplete.",
+      "Server-inclusive uncertainty correctly retains all cases, so it demonstrates no selective execution or speed gain.",
+      "No JavaScript bundle or source-map claim: these actual static routes have neither.",
+      "Original application server and remaining routes are not qualified.",
+      "One constructed CSS visibility defect, two authored cases; not an independent historical regression or broad effectiveness claim."
+    ]
+  },
+  "agentInitial": {
+    "hosts": [
+      {
+        "host": "codex",
+        "status": "not-qualified",
+        "qualified": false,
+        "reasons": [
+          "host-final-repair-account-invalid"
+        ],
+        "process": {
+          "status": "completed",
+          "reason": null,
+          "exitCode": 0,
+          "signal": null,
+          "durationMs": 42291,
+          "outputBytes": 31300
+        }
+      },
+      {
+        "host": "claude",
+        "status": "not-started",
+        "qualified": false,
+        "reasons": [
+          "explicit-host-executable-not-supplied"
+        ],
+        "process": null
+      }
+    ],
+    "complete": false,
+    "rawReceiptSha256": "c34739ef5f67a464807aa3f2caff14df6957ea31ba163a0fa8cf261d7d7b1f24",
+    "limitations": [
+      "Original real Codex attempt executed the stages but was rejected for the final-account schema; receipt remains rejected.",
+      "Only the sealed disposable constant fixture is in scope. No general repair or production deployment claim.",
+      "Claude CLI read-only auth inspection still reports loggedIn:false."
+    ]
+  }
+}
