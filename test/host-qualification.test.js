@@ -167,6 +167,11 @@ test('native host file evidence rejects oversized, symlinked, malformed and nonc
 });
 
 test('native streamed authentication errors retain the observed cause without a provider fallback', () => {
+  for (const row of [{type:'item.completed',item:{id:'warning',type:'error',message:'private source sentinel'}}, {type:'turn.failed',error:{message:'private source sentinel'}}]) {
+    const errors=hostEvents('codex',JSON.stringify(row)+'\n').errors;
+    assert.equal(errors.length,1);assert.equal(JSON.stringify(errors).includes('private source sentinel'),false);
+    assert.equal(assessHost({...successfulObservation(),hostErrors:errors}).qualified,false);
+  }
   const events = hostEvents('claude', JSON.stringify({type: 'system', subtype: 'api_retry', error_status: 401, error: 'authentication_failed', attempt: 1}) + '\n');
   assert.equal(events.nativeApiRetriesObserved, 1);
   const input = successfulObservation(); input.hostErrors = events.errors;

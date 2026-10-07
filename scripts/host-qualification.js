@@ -127,6 +127,7 @@ export function hostEvents(host, stdout) {
     nativeApiRetriesObserved: events.filter(row => row.type === 'system' && row.subtype === 'api_retry').length,
     errors: [...malformed, ...unauthorized, ...events.flatMap(row => row.type === 'system' && row.subtype === 'api_retry'
       ? [{status: row.error_status, error: row.error, nativeRetryAttempt: row.attempt}]
+      : row.item?.type === 'error' ? ['native-error-item'] : row.type === 'turn.failed' ? ['native-turn-failed']
       : row.type === 'error' ? [row.message || row.error] : row.item?.error ? [row.item.error] : row.is_error ? [row.errors || row.result || 'host-error'] : [])].slice(0, 8)};
 }
 
@@ -326,7 +327,7 @@ export async function qualifyHosts(options) {
     let args;
     if (name === 'codex') {
       args = ['exec', '--ignore-user-config', '--ignore-rules', '--ephemeral', '--sandbox', 'read-only', '--json', '--output-last-message', finalPath,
-        '-c', 'model_reasoning_effort="low"', '-c', 'approval_policy="never"'];
+        '-c', 'model_reasoning_effort="low"', '-c', 'approval_policy="never"', '-c', 'skills.max_context_tokens=10000'];
       for (const [server, config] of Object.entries(servers)) for (const [key, value] of Object.entries(config))
         args.push('-c', `mcp_servers.${server}.${key}=${JSON.stringify(value)}`);
       args.push(...fixtureToolApprovalArguments(options.authorizeFixtureTools === true));

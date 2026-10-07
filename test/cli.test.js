@@ -28,6 +28,14 @@ test('CLI JSON runner failure remains a nonzero process exit', t => {
   const result = exec(root,['run','--full','--json']);
   assert.equal(result.status,1); assert.equal(JSON.parse(result.stdout).exitCode,1);
 });
+test('unified opt-in preserves fallback failure status and cannot change inspection commands', t => {
+  const root=fixture(t,{...twoModules,'src/a.js':'export const a=9;'});
+  const result=exec(root,['run','--unified-native','--full','--json']);
+  assert.equal(result.status,1);const report=JSON.parse(result.stdout);
+  assert.equal(report.complete,true);assert.equal(report.unifiedNative.used,false);assert.ok(report.unifiedNative.fallbackReason);
+  const rejected=exec(root,['brief','--unified-native','--json']);
+  assert.equal(rejected.status,2);assert.match(rejected.stderr,/applies only to run/);
+});
 test('npm-style symlinked bin entrypoints actually execute the CLI', t => {
   const root = fixture(t);
   const bin = path.join(root,'tddswarm');
