@@ -1,0 +1,555 @@
+{
+  "schemaVersion": 1,
+  "kind": "native-upstream-baseline-status",
+  "date": "2026-10-07",
+  "completeApplicationProfile": false,
+  "repository": "https://github.com/vitejs/vite-plugin-react",
+  "revision": "80417060f7bc239d5100e1b47c819e8364c7d551",
+  "scope": "Original root playground serve/build suites plus packages/plugin-react unit tests; not all upstream suites",
+  "sourceBindings": {
+    "package.json": "62e1590fecd51b81533b3e94d752b3e22e0a532e8dce8e8be6ca6df3c7bbff4c",
+    "pnpm-lock.yaml": "11fb71cbb8fd7c558f526f578ed2a58d3c0de7c0c37ff64f2eb93c3402934f63",
+    "pnpm-workspace.yaml": "afe3ed356db3eead38c2962b1c9cf6567bc648ef5dc7a4060b465bf09987240d",
+    "playground/vitest.config.e2e.ts": "fa917ab51042b753f4cce0b8d36dab2e99d06713ae6da78b57c72a2ce50d92f0",
+    "playground/vitestGlobalSetup.ts": "11ad4b32d2b016b85232cc64793e782c2c1a5ee044bbacfc9d61658d2812856f",
+    "playground/vitestSetup.ts": "d1b039868c7df8159fce8f1d706b85c858415951e375391160eafcfe7ec5c4e4",
+    "LICENSE": "29b68325fe026047d13e187b44c33b2acacf7dc647dec4583702e59f235e13b5"
+  },
+  "unchangedAssertionBindings": {
+    "playground/class-components/__tests__/class-components.spec.ts": "d16c1a8f60707ec660745019bfabefaf044757dedffc472d37931e30c74d9907",
+    "playground/class-components/__tests__/oxc/class-components.spec.ts": "1e9e464183f4ae964a31344f148b44510b8d5b44e21589efcef4667af952d5be",
+    "playground/compiler-react-18/__tests__/compiler-react-18.spec.ts": "80486c97bec6f0142496956e18a638da07e3b1fd25e4e75caf9f89a6c292d87c",
+    "playground/compiler/__tests__/compiler.spec.ts": "80486c97bec6f0142496956e18a638da07e3b1fd25e4e75caf9f89a6c292d87c",
+    "playground/hmr-false/__tests__/hmr-false.spec.ts": "eb05992e9449e568914510b6ef38f2d3b5eee4a54863c4ba0c59f9aa43cee2a7",
+    "playground/hmr-false/__tests__/oxc/hmr-false.spec.ts": "f2d66998168defce9d94d7d35692bbc01f16ee6f3e337763232c2660582afab3",
+    "playground/hook-with-jsx/__tests__/hook-with-jsx.spec.ts": "f8cabbc84510cbd2c8ab8784ef48edaef510ac5bbcd26eba72bd46283acea0d5",
+    "playground/hook-with-jsx/__tests__/oxc/hook-with-jsx.spec.ts": "875bee68d88fca943a8a54335f4abc90b778930ac3b6c0b72bf91303da026fd1",
+    "playground/mdx/__tests__/mdx.spec.ts": "46252b488b7cd9ffcbc65c4998628824bcb67ed2871054907f10b85ff44b6d22",
+    "playground/mdx/__tests__/oxc/mdx.spec.ts": "351a7da4b50c56e1fca37c4bcea65151c08283c2dd614a39d55886e41cad2900",
+    "playground/react-classic/__tests__/react.spec.ts": "9598aaa5b468f10d2494e06c7f1fdbb8714c3f80fd40b4cc2a3a4bc8cfe2a81a",
+    "playground/react-emotion/__tests__/react.spec.ts": "4c5ba4dba8342550923e9b05cfff8e2beb85b761fd0d4aef882f65500617bccf",
+    "playground/react-env/__tests__/oxc/react.spec.ts": "b7c2faa43ae1923e9e8c32d21926d0b66d25edeca78b3a80101f321773dd321f",
+    "playground/react-env/__tests__/react.spec.ts": "d5154864d97b9e96dee23d678f0a4afbdd660b86305612c04f6d2c9f6bcc3055",
+    "playground/react-sourcemap/__tests__/oxc/react-sourcemap.spec.ts": "946826b7aa40fd3792417ab04a1f3e602dcf533c19c32363769393adcfd695ea",
+    "playground/react-sourcemap/__tests__/react-sourcemap.spec.ts": "47033c57f986acce5dd747546ecf55178f2104f24f741b09578b8300946cc145",
+    "playground/react/__tests__/oxc/react.spec.ts": "b7c2faa43ae1923e9e8c32d21926d0b66d25edeca78b3a80101f321773dd321f",
+    "playground/react/__tests__/react.spec.ts": "d9a1ae2e7a3fbd333d8328f203b53db56512da9731f0b4a39dde353a2a1c4e32",
+    "playground/ssr-react/__tests__/oxc/ssr-react.spec.ts": "c96227f34c9306d1d5e445d5f000f39d35011d31beb83274e3437b1112e41feb",
+    "playground/ssr-react/__tests__/ssr-react.spec.ts": "f0901d07e1601016f9c1d57b07c6ccf59a81337b9a79759b7513cf6b68c1d2f7",
+    "packages/plugin-react/tests/rolldown.test.ts": "d6aebf078dd3d505f007c9b6728e3dc0c83563bc0543ae2a5c22edc7a7e59d24"
+  },
+  "packageManager": {
+    "package": "pnpm",
+    "version": "10.13.1",
+    "source": "https://registry.npmjs.org/pnpm/-/pnpm-10.13.1.tgz",
+    "integrity": "sha512-N+vxpcejDV+r4MXfRO6NpMllygxa89urKMOhaBtwolYhjQXIHJwNz3Z+9rhVHrW5YAQrntQwDFkkIzY3fgHPrQ==",
+    "archiveSha256": "0f9ed48d808996ae007835fb5c4641cf9a300def2eddc9e957d9bbe4768c5f28",
+    "archiveBytes": 4201507,
+    "verified": true
+  },
+  "runtimeIdentities": {
+    "vitest": {
+      "version": "3.2.4",
+      "package": {
+        "file": "upstream/node_modules/.pnpm/vitest@3.2.4_@types+debug@4.1.12_@types+node@22.16.3_jiti@2.4.2_lightningcss@1.30.1_tsx@4.20.3_yaml@2.7.1/node_modules/vitest/package.json",
+        "bytes": 5029,
+        "sha256": "555361762b31957f3960220aad50df9f43c9f82d830862ef6e3588168fbe111c"
+      },
+      "entry": {
+        "file": "upstream/node_modules/.pnpm/vitest@3.2.4_@types+debug@4.1.12_@types+node@22.16.3_jiti@2.4.2_lightningcss@1.30.1_tsx@4.20.3_yaml@2.7.1/node_modules/vitest/vitest.mjs",
+        "bytes": 43,
+        "sha256": "39db22f579acf5639bbb17a261408debbde03f4692c0c439e77e7f13aeba74d6"
+      }
+    },
+    "playwrightChromium": {
+      "version": "1.54.1",
+      "package": {
+        "file": "upstream/node_modules/.pnpm/playwright-chromium@1.54.1/node_modules/playwright-chromium/package.json",
+        "bytes": 734,
+        "sha256": "63e9f29f92a46a7fd733f7fb8f347b568872ece6ca79ee0ac491550a16bb08f3"
+      },
+      "entry": {
+        "file": "upstream/node_modules/.pnpm/playwright-chromium@1.54.1/node_modules/playwright-chromium/cli.js",
+        "bytes": 716,
+        "sha256": "ed8c5d72d0df20c6a0aa39cdc387a7e15c99610729ec510c08aff646e3ef4586"
+      }
+    },
+    "playwrightCore": {
+      "version": "1.54.1",
+      "package": {
+        "file": "upstream/node_modules/.pnpm/playwright-core@1.54.1/node_modules/playwright-core/package.json",
+        "bytes": 1550,
+        "sha256": "00a00301cd9834406cca65267ec47af05ff49f92e8c2aff415bfa0ef6471e6de"
+      },
+      "registry": {
+        "file": "upstream/node_modules/.pnpm/playwright-core@1.54.1/node_modules/playwright-core/browsers.json",
+        "bytes": 1857,
+        "sha256": "52828df829faf189381ce88febded0dfb392558d18b67830c714a4034b32bb2d"
+      }
+    },
+    "headlessShell": [
+      {
+        "file": "private/browser/chromium_headless_shell-1181/chrome-mac/headless_shell",
+        "bytes": 146052592,
+        "sha256": "4f6a03129fd8b304568f4c86b64826a5506f680143b7e12980b3ea62054b7e21"
+      }
+    ],
+    "node": {
+      "version": "22.19.0",
+      "platform": "darwin",
+      "architecture": "arm64",
+      "bytes": 110712624,
+      "sha256": "0d005c18e095027ca8f9fe1cc1126f767ee4ad7b004f4d6fb781ec4228a7c5d1"
+    }
+  },
+  "phases": [
+    {
+      "phase": "install",
+      "status": "passed",
+      "exitCode": 0,
+      "stopReason": null,
+      "elapsedSeconds": 13.716,
+      "trackedBytesUnchanged": true,
+      "rawReceiptSha256": "07fceebb8b0e502d207127b4eb446f0780b1d018e6b97f5f10d496cbd05f8cc7"
+    },
+    {
+      "phase": "browser-install",
+      "status": "passed",
+      "exitCode": 0,
+      "stopReason": null,
+      "elapsedSeconds": 12.119,
+      "trackedBytesUnchanged": true,
+      "rawReceiptSha256": "7d8c72221bb12ad107252debf76e939d8b826f70eb35f05e1088174668e7d8b9"
+    },
+    {
+      "phase": "native-build",
+      "status": "passed",
+      "exitCode": 0,
+      "stopReason": null,
+      "elapsedSeconds": 9.69,
+      "trackedBytesUnchanged": true,
+      "rawReceiptSha256": "3c86902802e36b30a3dc66725eaf09debabfe59d8ae71aeea7ac95fa78414bb4"
+    },
+    {
+      "phase": "native-unit-baseline",
+      "status": "passed",
+      "exitCode": 0,
+      "stopReason": null,
+      "elapsedSeconds": 5.144,
+      "trackedBytesUnchanged": true,
+      "rawReceiptSha256": "5ef82d4b4d928283938e1b87d5034ff6441905bb2b2575581c9e479517080462"
+    },
+    {
+      "phase": "native-serve-baseline",
+      "status": "passed",
+      "exitCode": 0,
+      "stopReason": null,
+      "elapsedSeconds": 15.574,
+      "trackedBytesUnchanged": true,
+      "rawReceiptSha256": "56fe3fe4f4a501a60ece677313b72fbe229c4b681c22621d1dc2ae975a9b2176"
+    },
+    {
+      "phase": "build-browser-baseline",
+      "status": "not-started",
+      "exitCode": null,
+      "stopReason": "free-space-reserve-stop",
+      "elapsedSeconds": 0.838,
+      "trackedBytesUnchanged": true,
+      "rawReceiptSha256": "1ba58764a3744f8dd4f2ee2458a781a603d1cabdf13ec2e75b1f2ca90c8b1c01"
+    }
+  ],
+  "suites": [
+    {
+      "phase": "native-unit-baseline",
+      "success": true,
+      "files": 1,
+      "leafCases": 2,
+      "passed": 2,
+      "pending": 0,
+      "failed": 0,
+      "cases": [
+        {
+          "file": "packages/plugin-react/tests/rolldown.test.ts",
+          "name": "HMR related code should not be included when using rolldown",
+          "status": "passed"
+        },
+        {
+          "file": "packages/plugin-react/tests/rolldown.test.ts",
+          "name": "HMR related code should not be included when using rolldown with babel plugin",
+          "status": "passed"
+        }
+      ],
+      "nativeReportSha256": "af0025da68a546641955f4377f331198c541b7a878f5ddca46a99e1853da6a5d"
+    },
+    {
+      "phase": "native-serve-baseline",
+      "success": true,
+      "files": 20,
+      "leafCases": 64,
+      "passed": 62,
+      "pending": 2,
+      "failed": 0,
+      "cases": [
+        {
+          "file": "playground/class-components/__tests__/class-components.spec.ts",
+          "name": "should render",
+          "status": "passed"
+        },
+        {
+          "file": "playground/class-components/__tests__/class-components.spec.ts",
+          "name": "Class component HMR",
+          "status": "passed"
+        },
+        {
+          "file": "playground/compiler/__tests__/compiler.spec.ts",
+          "name": "should render",
+          "status": "passed"
+        },
+        {
+          "file": "playground/compiler/__tests__/compiler.spec.ts",
+          "name": "should hmr",
+          "status": "passed"
+        },
+        {
+          "file": "playground/compiler-react-18/__tests__/compiler-react-18.spec.ts",
+          "name": "should render",
+          "status": "passed"
+        },
+        {
+          "file": "playground/compiler-react-18/__tests__/compiler-react-18.spec.ts",
+          "name": "should hmr",
+          "status": "passed"
+        },
+        {
+          "file": "playground/hmr-false/__tests__/hmr-false.spec.ts",
+          "name": "basic",
+          "status": "passed"
+        },
+        {
+          "file": "playground/mdx/__tests__/mdx.spec.ts",
+          "name": "should render",
+          "status": "passed"
+        },
+        {
+          "file": "playground/mdx/__tests__/mdx.spec.ts",
+          "name": ".md extension should work",
+          "status": "passed"
+        },
+        {
+          "file": "playground/mdx/__tests__/mdx.spec.ts",
+          "name": "should hmr",
+          "status": "passed"
+        },
+        {
+          "file": "playground/mdx/__tests__/mdx.spec.ts",
+          "name": "should hmr with .md extension",
+          "status": "passed"
+        },
+        {
+          "file": "playground/hook-with-jsx/__tests__/hook-with-jsx.spec.ts",
+          "name": "should render",
+          "status": "passed"
+        },
+        {
+          "file": "playground/hook-with-jsx/__tests__/hook-with-jsx.spec.ts",
+          "name": "Hook with JSX HMR",
+          "status": "passed"
+        },
+        {
+          "file": "playground/react/__tests__/react.spec.ts",
+          "name": "should render",
+          "status": "passed"
+        },
+        {
+          "file": "playground/react/__tests__/react.spec.ts",
+          "name": "should update",
+          "status": "passed"
+        },
+        {
+          "file": "playground/react/__tests__/react.spec.ts",
+          "name": "should hmr",
+          "status": "passed"
+        },
+        {
+          "file": "playground/react/__tests__/react.spec.ts",
+          "name": "should not invalidate when code is invalid",
+          "status": "passed"
+        },
+        {
+          "file": "playground/react/__tests__/react.spec.ts",
+          "name": "should have annotated jsx with file location metadata",
+          "status": "passed"
+        },
+        {
+          "file": "playground/react/__tests__/react.spec.ts",
+          "name": "import attributes",
+          "status": "passed"
+        },
+        {
+          "file": "playground/react/__tests__/react.spec.ts",
+          "name": "should only hmr files with exported react components",
+          "status": "passed"
+        },
+        {
+          "file": "playground/react/__tests__/react.spec.ts",
+          "name": "should hmr react context",
+          "status": "passed"
+        },
+        {
+          "file": "playground/react/__tests__/react.spec.ts",
+          "name": "should hmr files with \"react/jsx-runtime\"",
+          "status": "passed"
+        },
+        {
+          "file": "playground/react/__tests__/react.spec.ts",
+          "name": "should hmr compound components",
+          "status": "passed"
+        },
+        {
+          "file": "playground/react-classic/__tests__/react.spec.ts",
+          "name": "should render",
+          "status": "passed"
+        },
+        {
+          "file": "playground/react-classic/__tests__/react.spec.ts",
+          "name": "should update",
+          "status": "passed"
+        },
+        {
+          "file": "playground/react-classic/__tests__/react.spec.ts",
+          "name": "should hmr",
+          "status": "passed"
+        },
+        {
+          "file": "playground/react-classic/__tests__/react.spec.ts",
+          "name": "should have annotated jsx with file location metadata",
+          "status": "passed"
+        },
+        {
+          "file": "playground/react-emotion/__tests__/react.spec.ts",
+          "name": "should render",
+          "status": "passed"
+        },
+        {
+          "file": "playground/react-emotion/__tests__/react.spec.ts",
+          "name": "should update",
+          "status": "passed"
+        },
+        {
+          "file": "playground/react-emotion/__tests__/react.spec.ts",
+          "name": "should hmr",
+          "status": "passed"
+        },
+        {
+          "file": "playground/react-emotion/__tests__/react.spec.ts",
+          "name": "should update button style",
+          "status": "passed"
+        },
+        {
+          "file": "playground/react-env/__tests__/react.spec.ts",
+          "name": "should work",
+          "status": "passed"
+        },
+        {
+          "file": "playground/react-sourcemap/__tests__/react-sourcemap.spec.ts",
+          "name": "should not output sourcemap warning",
+          "status": "skipped"
+        },
+        {
+          "file": "playground/ssr-react/__tests__/ssr-react.spec.ts",
+          "name": "/env",
+          "status": "passed"
+        },
+        {
+          "file": "playground/ssr-react/__tests__/ssr-react.spec.ts",
+          "name": "/about",
+          "status": "passed"
+        },
+        {
+          "file": "playground/ssr-react/__tests__/ssr-react.spec.ts",
+          "name": "/",
+          "status": "passed"
+        },
+        {
+          "file": "playground/ssr-react/__tests__/ssr-react.spec.ts",
+          "name": "hmr",
+          "status": "passed"
+        },
+        {
+          "file": "playground/ssr-react/__tests__/ssr-react.spec.ts",
+          "name": "client navigation",
+          "status": "passed"
+        },
+        {
+          "file": "playground/class-components/__tests__/oxc/class-components.spec.ts",
+          "name": "should render",
+          "status": "passed"
+        },
+        {
+          "file": "playground/class-components/__tests__/oxc/class-components.spec.ts",
+          "name": "Class component HMR",
+          "status": "passed"
+        },
+        {
+          "file": "playground/hmr-false/__tests__/oxc/hmr-false.spec.ts",
+          "name": "basic",
+          "status": "passed"
+        },
+        {
+          "file": "playground/mdx/__tests__/oxc/mdx.spec.ts",
+          "name": "should render",
+          "status": "passed"
+        },
+        {
+          "file": "playground/mdx/__tests__/oxc/mdx.spec.ts",
+          "name": ".md extension should work",
+          "status": "passed"
+        },
+        {
+          "file": "playground/mdx/__tests__/oxc/mdx.spec.ts",
+          "name": "should hmr",
+          "status": "passed"
+        },
+        {
+          "file": "playground/mdx/__tests__/oxc/mdx.spec.ts",
+          "name": "should hmr with .md extension",
+          "status": "passed"
+        },
+        {
+          "file": "playground/hook-with-jsx/__tests__/oxc/hook-with-jsx.spec.ts",
+          "name": "should render",
+          "status": "passed"
+        },
+        {
+          "file": "playground/hook-with-jsx/__tests__/oxc/hook-with-jsx.spec.ts",
+          "name": "Hook with JSX HMR",
+          "status": "passed"
+        },
+        {
+          "file": "playground/react/__tests__/oxc/react.spec.ts",
+          "name": "should render",
+          "status": "passed"
+        },
+        {
+          "file": "playground/react/__tests__/oxc/react.spec.ts",
+          "name": "should update",
+          "status": "passed"
+        },
+        {
+          "file": "playground/react/__tests__/oxc/react.spec.ts",
+          "name": "should hmr",
+          "status": "passed"
+        },
+        {
+          "file": "playground/react/__tests__/oxc/react.spec.ts",
+          "name": "should not invalidate when code is invalid",
+          "status": "passed"
+        },
+        {
+          "file": "playground/react/__tests__/oxc/react.spec.ts",
+          "name": "should have annotated jsx with file location metadata",
+          "status": "passed"
+        },
+        {
+          "file": "playground/react/__tests__/oxc/react.spec.ts",
+          "name": "import attributes",
+          "status": "passed"
+        },
+        {
+          "file": "playground/react/__tests__/oxc/react.spec.ts",
+          "name": "should only hmr files with exported react components",
+          "status": "passed"
+        },
+        {
+          "file": "playground/react/__tests__/oxc/react.spec.ts",
+          "name": "should hmr react context",
+          "status": "passed"
+        },
+        {
+          "file": "playground/react/__tests__/oxc/react.spec.ts",
+          "name": "should hmr files with \"react/jsx-runtime\"",
+          "status": "passed"
+        },
+        {
+          "file": "playground/react/__tests__/oxc/react.spec.ts",
+          "name": "should hmr compound components",
+          "status": "passed"
+        },
+        {
+          "file": "playground/react-env/__tests__/oxc/react.spec.ts",
+          "name": "should work",
+          "status": "passed"
+        },
+        {
+          "file": "playground/react-sourcemap/__tests__/oxc/react-sourcemap.spec.ts",
+          "name": "should not output sourcemap warning",
+          "status": "skipped"
+        },
+        {
+          "file": "playground/ssr-react/__tests__/oxc/ssr-react.spec.ts",
+          "name": "/env",
+          "status": "passed"
+        },
+        {
+          "file": "playground/ssr-react/__tests__/oxc/ssr-react.spec.ts",
+          "name": "/about",
+          "status": "passed"
+        },
+        {
+          "file": "playground/ssr-react/__tests__/oxc/ssr-react.spec.ts",
+          "name": "/",
+          "status": "passed"
+        },
+        {
+          "file": "playground/ssr-react/__tests__/oxc/ssr-react.spec.ts",
+          "name": "hmr",
+          "status": "passed"
+        },
+        {
+          "file": "playground/ssr-react/__tests__/oxc/ssr-react.spec.ts",
+          "name": "client navigation",
+          "status": "passed"
+        }
+      ],
+      "nativeReportSha256": "b1193234d6a53a33c55e219bf0720e594be2b5eab90ef1de447e09e4a67a3ba8"
+    }
+  ],
+  "originalInstallPolicy": "Exact pnpm10.13.1 full frozen lock installation; pnpm default blocked dependency lifecycle scripts. Explicit original Playwright Chromium installation followed; no approve-builds override or manifest/config changes.",
+  "independentRuns": "Original maintainer unit and whole root playground serve scripts; reporters overridden only to retain native JSON. No TestLore selection/runner result defines these baselines.",
+  "pendingCases": [
+    {
+      "file": "playground/react-sourcemap/__tests__/react-sourcemap.spec.ts",
+      "name": "should not output sourcemap warning",
+      "status": "skipped"
+    },
+    {
+      "file": "playground/react-sourcemap/__tests__/oxc/react-sourcemap.spec.ts",
+      "name": "should not output sourcemap warning",
+      "status": "skipped"
+    }
+  ],
+  "headlessProof": {
+    "exitCode": 0,
+    "version": "139.0.7258.5",
+    "playwrightBuild": "1181",
+    "headlessShellObserved": true,
+    "fullChromiumProcesses": 0,
+    "rawTraceSha256": "8b161b9b06d50a0f9bfc46e8a6dc0394f723b326b01d7a05ab02711aee768003",
+    "resourceLimitation": "Subsecond probe was not behind phase watchdog; its receipt observed free space below reserve. Subsequent work stopped."
+  },
+  "notQualified": [
+    "original build-mode browser suite (stopped before launch)",
+    "TestLore planning/execution on this custom Vitest-to-Playwright bridge",
+    "selective routing, independent full/subset fault preservation or omitted-test decisions",
+    "asset/favicon defect detection: original maintainer assertions do not assert these resources",
+    "SWC/RSC test suites and entire upstream monorepo qualification",
+    "general speed advantage or deployment safety"
+  ],
+  "remainingSteps": [
+    "Run original build-mode browser baseline on a fresh runner.",
+    "Review a hash-bound fixture-root contract; retain dynamic/global uncertainty and full fallback.",
+    "Independently challenge full/subset plans with constructed faults and unknown/swapped controls."
+  ],
+  "privateRawPrefix": ".tddswarm/vite-react-profile-20261007/",
+  "nativeProviderCalls": 0
+}
