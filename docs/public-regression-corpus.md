@@ -1,4 +1,4 @@
-TestLore's public regression campaign separates **selected candidates**, **independently demonstrated defects**, and **qualified three-arm trials**. The [frozen October 6 selection](../benchmarks/public-corpus/preregistration-20261006.json) contains 100 distinct upstream fix commits across 10 projects. The [October 7 campaign](qualification-20261007.md) executed three candidates: **two qualified changes in one project**, one completed unqualified attempt, 97 unattempted. Candidate counts do not satisfy the proposed 100-qualified-change benchmark.
+TestLore's public regression campaign separates **selected candidates**, **independently demonstrated defects**, and **qualified three-arm trials**. The [frozen October 6 selection](../benchmarks/public-corpus/preregistration-20261006.json) contains 100 distinct upstream fix commits across 10 projects. The earlier [October 7 campaign](qualification-20261007.md) executed three candidates: **two qualified changes in one project**, one completed unqualified attempt, 97 unattempted. Candidate counts do not satisfy the proposed 100-qualified-change benchmark.
 
 The inventory contains ufo, pathe, destr, ofetch, h3, defu, unctx, mlly, Vite and Playwright. It represents a narrow JavaScript/TypeScript ecosystem, dominated by related UnJS projects. The selected upstream histories include service inputs, browser behavior and workspace boundaries, but those categories are not experimentally qualified by their inclusion.
 
@@ -43,3 +43,30 @@ Cache evidence is specific: the first analytical plan begins in a new workspace;
 A larger campaign must add reviewed browser/monorepo profiles, exact project-lock installations, independent complete cold/warm controls and broader project diversity. It must preserve all rejected candidates and publish the denominator. The target is 100 genuinely demonstrated unique changes across at least 10 projects; the checked-in selection is a reproducible starting inventory, not completion of that target.
 
 For a new dated selection, use `node scripts/public-corpus-curation.js --directory .tddswarm/NEW_PUBLIC_CURATION --cutoff YYYY-MM-DD`. The read-only curator uses the [official GitHub commit API](https://docs.github.com/en/rest/commits/commits), retains API byte hashes/failed-request accounting, caps request/time/blob/cache budgets and creates a fresh selection. Never refresh a frozen manifest in place after seeing results.
+
+The later [October 7 expansion](../benchmarks/public-corpus/expansion-20261007.json) reaches **five unique qualified changes across three projects**, with 95 candidates still unattempted in a three-arm campaign. Across eight retained attempt executions, five qualify and three remain rejected. Two new genuine defu bugs preserved their unchanged upstream failures under reviewed legacy profiles; a new pathe attempt preserved ten runnable defect assertions under a prospective exact baseline-skip policy. The earlier pathe rejection and two new unified defu rejections remain unchanged. This still falls far short of 100/10, and every new TestLore arm remained slower than native selection.
+
+Defu's upstream lock pins Vitest 4.1.2 and Vite 8.0.3. The one-context prototype conservatively rejected a resolved plugin on that runtime, returning no planning decision. Fresh profiles explicitly froze legacy execution after those retained rejections. The [runtime package](../benchmarks/public-corpus/runtime-projections/defu-node22.package.json) and [npm lock](../benchmarks/public-corpus/runtime-projections/defu-node22.npm-lock.json) freeze a reproducible runtime projection: selected top-level versions match the upstream lock, while the full development dependency graph is omitted. Install the two files as `package.json` and `package-lock.json` in a disposable runtime directory with `npm ci --ignore-scripts --no-audit --no-fund`, then link its `node_modules` into the clean pinned checkout. This **is not a full upstream-lock installation**. Installed package metadata, local native entrypoint, Node and projection-lock hashes are bound; entire installed package contents are not independently runtime-attested. Lint, type checks, coverage and build scripts are outside these profiles.
+
+For independent preflight, provide a reviewed profile with a bounded scope, clean exact checkout, native discovery and project-local runner:
+
+```sh
+node scripts/public-corpus-preflight.js \
+  --selection benchmarks/public-corpus/preregistration-20261006.json \
+  --candidate unjs-defu-3942bfbbcaa7 \
+  --profile .tddswarm/reviewed-defu-profile.json \
+  --output .tddswarm/NEW-defu-preflight
+```
+
+Preflight uses a disposable clone, runs the unchanged fixed baseline, restores exact prior source bytes and independently executes the full fault twice. It retains all reports and requires each defect oracle to have passed in the baseline. Copy the resulting failure names into a separately reviewed profile before preparation. For an optional skip policy, freeze `baselineDeclaredSkips` as exact `{id,file,name}` triples before the campaign; the corpus independently checks them against its fixed-baseline report. Extra skips, skipped defect oracles, changed skip identities, missing baselines and module-load outcomes remain disqualifying. `pathe-unc-declared-skips.template.json` is a new profile; the older strict profile is unchanged.
+
+Use the sequential batch controller after preparing each reviewed candidate. Its private JSON plan binds each absolute prepared-input path and SHA-256, the frozen selection commitment, `maxCandidateMs` (up to 30 minutes), `maxCampaignMs` (up to two hours), and `minFreeBytes` (at least 1 GiB). Each entry contains one `candidateId` and either the bound prepared input or an explicit reviewed `blockedReason`. The plan may cover fewer than 100 candidates; omitted entries remain unattempted.
+
+```sh
+node scripts/public-corpus-batch.js \
+  --selection benchmarks/public-corpus/preregistration-20261006.json \
+  --plan .tddswarm/reviewed-batch.json \
+  --output .tddswarm/public-batches/NEW_CAMPAIGN
+```
+
+Repeating that exact command resumes the same immutable plan and source implementation. Exclusive starts and terminal receipts preserve completed, rejected, interrupted and blocked attempts. An interrupted start becomes a terminal partial attempt, never an automatic retry. To change a prerequisite or execution policy, create a new named campaign and retain the old receipts. The controller stops at deadline, output-byte or disk-reserve limits; a resource stop leaves subsequent candidates unattempted. Controller deadlines are bounded and observed descendant groups are terminated on timeout, with best-effort cleanup explicitly recorded. This is not containment of arbitrary upstream subprocesses. The controller performs no installations, downloads, model calls or account changes.

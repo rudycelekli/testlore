@@ -1,0 +1,119 @@
+{
+  "reviewed": true,
+  "candidateId": "unjs-pathe-b52fcacc5971",
+  "root": null,
+  "scope": "Pinned pathe runtime unit suite; unchanged maintainer tests import local src. Comparative installed Vitest differs from upstream lock; exclude lint/types/build.",
+  "config": {
+    "adapter": "vitest",
+    "discovery": "native",
+    "runner": [
+      "node",
+      "node_modules/vitest/vitest.mjs",
+      "run",
+      "--maxWorkers=1",
+      "{files}"
+    ],
+    "analysisCache": {
+      "enabled": true,
+      "maxEntries": 2000,
+      "maxBytes": 33554432
+    }
+  },
+  "allowFrameworkVersionMismatch": true,
+  "expectedFailureNames": [
+    "resolve resolve('\\\\\\\\server\\\\share\\\\file') should be '//server/share/file'",
+    "resolve resolve('\\\\\\\\server\\\\share\\\\file') should be '//server/share/file' on Windows",
+    "resolve resolve('\\\\\\\\unc-server-name\\\\unc-path') should be '//unc-server-name/unc-path'",
+    "resolve resolve('\\\\\\\\unc-server-name\\\\unc-path') should be '//unc-server-name/unc-path' on Windows",
+    "resolve resolve('\\\\\\\\server\\\\share\\\\file','..\\\\path') should be '//server/share/path'",
+    "resolve resolve('\\\\\\\\server\\\\share\\\\file','..\\\\path') should be '//server/share/path' on Windows",
+    "resolve resolve('\\\\\\\\server\\\\share\\\\file','sub') should be '//server/share/file/sub'",
+    "resolve resolve('\\\\\\\\server\\\\share\\\\file','sub') should be '//server/share/file/sub' on Windows",
+    "resolve resolve('//server/share/file','../path') should be '//server/share/path'",
+    "resolve resolve('//server/share/file','../path') should be '//server/share/path' on Windows"
+  ],
+  "labelEvidence": "After frozen candidate selection, fixed maintainer tests passed, and two independent full runs of exact prior source bytes produced the same ten failures. Three-arm qualification remains unmeasured.",
+  "executionMode": "unified-native",
+  "baselineDeclaredSkips": [
+    {
+      "id": "986763f148a4c0f33693eaecd9415f360fd03bd2f81610597f123334f08829bf",
+      "file": "test/glob.spec.ts",
+      "name": "Zeptomatch native_grammar_partial"
+    },
+    {
+      "id": "3555f7a9406d7ac5f9afbbdeab413186272ee78c91a694625dc58054b37e0a4f",
+      "file": "test/glob.spec.ts",
+      "name": "Zeptomatch native_memoization"
+    },
+    {
+      "id": "7f91c1abd1621ea782b2f97c8eb37daef2f98e2ce23a2cd5a3ee6c7d3f057f90",
+      "file": "test/glob.spec.ts",
+      "name": "Zeptomatch native_partial_0"
+    },
+    {
+      "id": "c506283bbee7f331a35d8d1918bbfafba13d14bd6697d0a7f56292c3a4d236d5",
+      "file": "test/glob.spec.ts",
+      "name": "Zeptomatch native_partial_1"
+    },
+    {
+      "id": "1d9475916a523e659f73096a4d5b982580abb761c21029eee8a378a7b8099da8",
+      "file": "test/glob.spec.ts",
+      "name": "Zeptomatch native_partial_2"
+    },
+    {
+      "id": "c9fdfe66003ac7fe3e6eb66e9c55566f1b6f5807a6f75065f96927dd1f5062cd",
+      "file": "test/glob.spec.ts",
+      "name": "Zeptomatch native_partial_3"
+    },
+    {
+      "id": "1b6a6f2b6d404c21ca6a89382a78729d54dc4e8a124560248d294174521c359f",
+      "file": "test/glob.spec.ts",
+      "name": "Zeptomatch posix_classes"
+    },
+    {
+      "id": "5152bd09c23267803c8f3ddae84a37306baff842493c103181513de08179a8ad",
+      "file": "test/glob.spec.ts",
+      "name": "Zeptomatch extglobs"
+    },
+    {
+      "id": "5ceeb0a68784357ae89433febd0706e372da991805d33fb604497b6d70f84582",
+      "file": "test/node-glob.spec.ts",
+      "name": "node:path matchesGlob (win32) \"foo\\\\bar\\\\baz\" matches \"foo\\\\[bcr]ar\\\\baz\""
+    },
+    {
+      "id": "9b3aa7ccfd99a71de12c99f46b9bf0a7bffbab0b078f7370b28413957b80759e",
+      "file": "test/node-glob.spec.ts",
+      "name": "node:path matchesGlob (win32) \"foo\\\\bar\\\\baz\" matches \"foo\\\\[bc-r]ar\\\\baz\""
+    },
+    {
+      "id": "693fa7ccb3110ca0704dc7b7afa82ef2e0f09052f807af9be32876471035597b",
+      "file": "test/node-glob.spec.ts",
+      "name": "node:path matchesGlob (win32) \"foo\\\\bar1\\\\baz\" matches \"foo\\\\bar[0-9]\\\\baz\""
+    },
+    {
+      "id": "f9d883ca7c58f6f1c706749f2829f44fd4d16ff5fb41a407bb36108c40f25b90",
+      "file": "test/node-glob.spec.ts",
+      "name": "node:path matchesGlob (win32) \"foo\\\\bar5\\\\baz\" matches \"foo\\\\bar[0-9]\\\\baz\""
+    },
+    {
+      "id": "935144e09b1cb1a69e1e997f7ce63def1cfb310f2f39610e3bb47f40694fefd2",
+      "file": "test/node-glob.spec.ts",
+      "name": "node:path matchesGlob (win32) \"foo\\\\barx\\\\baz\" matches \"foo\\\\bar[a-z]\\\\baz\""
+    },
+    {
+      "id": "6a02a85534acf9616636451683ee5bad523f18dc035c2151ec4da410424ad6e1",
+      "file": "test/node-glob.spec.ts",
+      "name": "node:path matchesGlob (win32) \"foo\\\\bar\\\\baz\\\\boo\" matches \"foo\\\\[bc-r]ar\\\\baz\\\\*\""
+    },
+    {
+      "id": "814d3979ccdb1b892c1e3fe26b0f46e7e7fca7d2d843a1342af5842d25881428",
+      "file": "test/node-glob.spec.ts",
+      "name": "node:path matchesGlob (non-string input) throws for a non-string path"
+    },
+    {
+      "id": "7e1c53985c6e5de9a9c9a59ac0e9b798bec38188b8c7f045fa31e262598c90c7",
+      "file": "test/node-glob.spec.ts",
+      "name": "node:path matchesGlob (non-string input) throws for a non-string pattern"
+    }
+  ]
+}
