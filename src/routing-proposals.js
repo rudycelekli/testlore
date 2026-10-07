@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
-import ts from 'typescript';
+import {typescript as ts} from './syntax-engine.cjs';
 import {buildGraph, evidencePath} from './graph.js';
 import {snapshot, digest, freshness} from './provenance.js';
 import {safePath, readConfig, TEST} from './files.js';

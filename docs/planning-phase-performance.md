@@ -98,3 +98,35 @@ The next performance experiment should use paired whole CLI arms on the same
 frozen inputs with resource telemetry. Preserve the execution checks while
 isolating native initialization and qualifying any Git executable optimization.
 Additional precise dependency contracts must earn their omissions independently.
+
+## Syntax engine binding and worker diagnostics
+
+The follow-up exposes bounded diagnostic spans for native framework import,
+initialization/configuration, discovery, resolution, parent planning wait,
+native execution/reporting and process close. Worker timing begins after static
+module imports; the parent startup span also includes those imports. These
+nested spans overlap and do not confer dependency or execution authority.
+
+The opt-in unified worker can consume internally generated import literals and
+lexical configuration flags for source bytes it rereads and hashes independently.
+These are pure syntax observations, not resolved edges or permission to omit a
+test. A missing or mismatched observation uses the canonical parser. Native
+configuration and plugin admission and the four independent snapshots remain
+fresh.
+
+The canonical loader binds parser and TypeScript content **before loading**, then
+verifies them after loading. Producers retain that immutable loaded identity,
+check it before and after observation production, and never label cached ASTs
+with a later disk digest. Consumers independently capture content identities and
+check dev/inode/size/mtimeNs/ctimeNs seals on every consumption; changed engine
+files fail closed. Unknown externally preloaded compiler/parser instances keep
+legacy analysis available while disabling summary production and persistent
+syntax caching. Unified fresh-parser fallback rejects an unbound engine with a
+specific error. TestLore-owned compiler imports use the shared loader.
+
+Disposable source tests exercise actual cached parser/compiler file changes,
+including preserved modification timestamps, late reader drift, changes during
+loading/production and external-preload compatibility. Modified file contents
+are never executed. These changes have correctness verification; no additional
+complete-run speed advantage is claimed until source-bound native measurements
+can run with adequate disk and memory resources.

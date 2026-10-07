@@ -115,7 +115,7 @@ export function proposeBrowserMappings(root,evidence,options={}){
 
 /** AST-supported SDK imports only. Returns edits for an improvement branch; never writes tests. */
 export async function proposeBrowserInstrumentation(root,options={}){
-  const {default:ts}=await import('typescript');const config=readConfig(root),provenance=snapshot(root,config);
+  const {typescript:ts}=await import('./syntax-engine.cjs');const config=readConfig(root),provenance=snapshot(root,config);
   const files=options.files||discover(root,config).files;if(!Array.isArray(files)||files.length>MAX_CASES)throw new Error('Instrumentation files must be a bounded array');
   const patches=[],rejected=[];
   for(const file of files){

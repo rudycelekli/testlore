@@ -1,0 +1,80 @@
+name: Original upstream qualification
+on:
+  workflow_dispatch:
+    inputs:
+      source_sha:
+        description: Reviewed full 40-character current main commit
+        required: true
+        type: string
+      candidate:
+        description: Original upstream candidates to execute on fresh runners
+        default: both
+        type: choice
+        options: [both, unctx, mlly]
+permissions:
+  contents: read
+concurrency:
+  group: public-upstream-campaign
+  cancel-in-progress: false
+jobs:
+  campaign:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      max-parallel: 1
+      matrix:
+        candidate: ${{ fromJSON(inputs.candidate == 'unctx' && '["unctx"]' || inputs.candidate == 'mlly' && '["mlly"]' || '["unctx","mlly"]') }}
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          ref: ${{ inputs.source_sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Require the reviewed immutable main revision
+        env:
+          SOURCE_SHA: ${{ inputs.source_sha }}
+          REQUESTED_CANDIDATE: ${{ inputs.candidate }}
+        run: |
+          [[ "$SOURCE_SHA" =~ ^[0-9a-f]{40}$ ]]
+          case "$REQUESTED_CANDIDATE" in both|unctx|mlly) ;; *) exit 1 ;; esac
+          test "$(git rev-parse HEAD)" = "$SOURCE_SHA"
+          test "$(git rev-parse origin/main)" = "$SOURCE_SHA"
+      - uses: actions/setup-node@v7.0.0
+        with:
+          node-version: '22.19.0'
+      - run: npm ci --ignore-scripts
+      - name: Plan and execute one bounded original-lock campaign
+        env:
+          CANDIDATE: ${{ matrix.candidate }}
+        run: |
+          case "$CANDIDATE" in
+            unctx) PROFILE=unjs-unctx-1bb220dccf40-campaign.json ;;
+            mlly) PROFILE=unjs-mlly-abef19c940da-campaign.json ;;
+            *) exit 1 ;;
+          esac
+          node scripts/public-corpus-campaign.js --selection benchmarks/public-corpus/preregistration-20261006.json --profile "benchmarks/public-corpus/profiles/$PROFILE" --directory "$RUNNER_TEMP/testlore-$CANDIDATE" --output ".tddswarm/public-campaigns/$CANDIDATE"
+          node scripts/public-corpus-campaign.js --selection benchmarks/public-corpus/preregistration-20261006.json --profile "benchmarks/public-corpus/profiles/$PROFILE" --directory "$RUNNER_TEMP/testlore-$CANDIDATE" --output ".tddswarm/public-campaigns/$CANDIDATE" --install-and-execute
+      - name: Preserve scoped aggregate even on rejection
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: public-upstream-summary-${{ matrix.candidate }}-${{ inputs.source_sha }}
+          path: .tddswarm/public-campaigns/${{ matrix.candidate }}/summary.json
+          include-hidden-files: true
+          if-no-files-found: warn
+          retention-days: 14
+      - name: Preserve phase, installation and native receipts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: public-upstream-raw-${{ matrix.candidate }}-${{ inputs.source_sha }}
+          path: |
+            .tddswarm/public-campaigns/${{ matrix.candidate }}/
+            ${{ runner.temp }}/testlore-${{ matrix.candidate }}/installation/*.json
+            ${{ runner.temp }}/testlore-${{ matrix.candidate }}/installation/bootstrap/*.log
+            ${{ runner.temp }}/testlore-${{ matrix.candidate }}/installation/install/*.log
+          include-hidden-files: true
+          if-no-files-found: warn
+          retention-days: 14
