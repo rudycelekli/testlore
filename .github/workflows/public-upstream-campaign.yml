@@ -73,9 +73,12 @@ jobs:
           name: public-upstream-raw-${{ matrix.candidate }}-${{ inputs.source_sha }}
           path: |
             .tddswarm/public-campaigns/${{ matrix.candidate }}/
+            .tddswarm/pilots/public-upstream-${{ matrix.candidate }}/
             ${{ runner.temp }}/testlore-${{ matrix.candidate }}/installation/*.json
             ${{ runner.temp }}/testlore-${{ matrix.candidate }}/installation/bootstrap/*.log
             ${{ runner.temp }}/testlore-${{ matrix.candidate }}/installation/install/*.log
+            !**/node_modules/**
+            !**/.git/**
           include-hidden-files: true
           if-no-files-found: warn
           retention-days: 14
