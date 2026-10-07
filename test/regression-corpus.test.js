@@ -5,14 +5,16 @@ import path from 'node:path';
 import {fixture,commit,twoModules} from './helpers.js';
 import {digest} from '../src/provenance.js';
 import {validateCorpus,runCorpus,assessCorpus} from '../scripts/regression-corpus.js';
+import {campaignCorpusRelative} from '../scripts/public-corpus-campaign.js';
 
 function corpus(root){return {schemaVersion:1,pilot:{schemaVersion:1,repetitions:2,timeoutMs:10000,projects:[{name:'assertions',root,scope:'Two exact native Node assertion cases',config:{adapter:'node',discovery:'native'},changes:[{name:'fault',file:'src/a.js',before:'export const a = 1;',after:'export const a = 9;',expectedFailure:true}]}]},labels:[{project:'assertions',change:'fault',expectedFailureNames:['a'],oracleFiles:[{path:'test/a.test.js',sha256:digest(fs.readFileSync(path.join(root,'test/a.test.js')))}],origin:{kind:'authored',maintainer:'Test fixture',independenceNotes:'Explicit a=1 expectation, separately executed. Constructed test, no external independence claim.'}}]};}
 test('regression corpus preserves named independent failures, omits unrelated files and retains bad evidence',t=>{
   const source=fixture(t,twoModules);commit(source);const root=fixture(t,{}),manifest=corpus(source);
-  const aggregate=runCorpus(root,manifest,'.tddswarm/pilots/native');
+  const comparative=campaignCorpusRelative('.tddswarm/public-campaigns/native');
+  const aggregate=runCorpus(root,manifest,comparative);
   assert.equal(aggregate.qualified,true,JSON.stringify(aggregate));assert.equal(aggregate.faultOpportunities,2);assert.equal(aggregate.preservedFaultTrials,2);assert.equal(aggregate.stableScenarios,1);assert.equal(aggregate.selectiveTrials,2);assert.equal(aggregate.pilot.caseObservations.testLore,2);assert.equal(aggregate.pilot.caseObservations.full,4);
-  assert.throws(()=>runCorpus(root,manifest,'.tddswarm/pilots/native'),/exist/i);assert.ok(!JSON.stringify(aggregate).includes(source));
-  const report=JSON.parse(fs.readFileSync(path.join(root,'.tddswarm/pilots/native/pilot/summary.json')));
+  assert.throws(()=>runCorpus(root,manifest,comparative),/exist/i);assert.ok(!JSON.stringify(aggregate).includes(source));
+  const report=JSON.parse(fs.readFileSync(path.join(root,comparative,'pilot/summary.json')));
   const evidence=path.join(report.output,'assertions/change-0-trial-1-full.json'),run=JSON.parse(fs.readFileSync(evidence));
   run.tests.find(test=>test.name==='a').name='different assertion';fs.writeFileSync(evidence,JSON.stringify(run));
   const unstable=assessCorpus(report,manifest.labels);assert.equal(unstable.qualified,false);assert.equal(unstable.stableScenarios,0);assert.equal(unstable.independentlyDemonstratedFaultTrials,1);

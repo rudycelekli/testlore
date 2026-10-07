@@ -24,6 +24,11 @@ const git=(root,...args)=>execFileSync('git',['-C',root,...args],{encoding:'utf8
 const freeBytes=root=>{const s=fs.statfsSync(root);return s.bavail*s.bsize;};
 const keys=(object,expected)=>object&&JSON.stringify(Object.keys(object).sort())===JSON.stringify([...expected].sort());
 
+export function campaignCorpusRelative(relative){
+ if(!/^\.tddswarm\/public-campaigns\/[A-Za-z0-9_-]{1,64}$/.test(relative))throw Error('Require a bounded public campaign alias');
+ return '.tddswarm/pilots/public-upstream-'+path.posix.basename(relative);
+}
+
 export function validatePortableProfile(selection,profile){
  validateCandidates(selection);
  if(selection.commitmentSha256!==campaignSelection||!keys(profile,['schemaVersion','kind','reviewed','candidateId','selectionCommitmentSha256','fixRevision','parentRevision','packageManager','dependencySha256','installedVitest','executionMode','scope'])||profile.schemaVersion!==1||profile.kind!=='reviewed-original-upstream-campaign-profile'||profile.reviewed!==true||!ids.has(profile.candidateId)||profile.selectionCommitmentSha256!==campaignSelection||typeof profile.scope!=='string'||!profile.scope.trim()||profile.scope.length>200)throw Error('Require a closed reviewed portable profile and original frozen selection');
@@ -66,6 +71,7 @@ export function campaignPlan({selectionPath,profilePath,directory,relative}){
  const selection=readBoundedJson(selectionPath,16*1024**2),profile=readBoundedJson(profilePath);validatePortableProfile(selection,profile);
  if(!/^\.tddswarm\/public-campaigns\/[A-Za-z0-9_-]{1,64}$/.test(relative)||directory===repository||directory.startsWith(repository+path.sep)||fs.existsSync(directory))throw Error('Use a new private installation directory outside TestLore and .tddswarm/public-campaigns/ALIAS');
  if(!fs.statSync(path.dirname(directory)).isDirectory())throw Error('Private installation parent must already exist');
+ if(fs.existsSync(path.join(repository,campaignCorpusRelative(relative))))throw Error('Comparative corpus output must be new');
  return {schemaVersion:1,kind:'original-upstream-campaign-plan',execute:false,candidateId:profile.candidateId,selectionPath,profilePath,profile,selectionCommitmentSha256:campaignSelection,directory,relative,limits:campaignLimits,binding:sourceBinding(selectionPath,profilePath),cachePolicy:{jitiFilesystem:false},automaticRetries:0};
 }
 function runtimeProfile(plan,installation){
@@ -101,7 +107,7 @@ async function worker(phase,input){
   profile.expectedFailureNames=preflight.expectedFailureNames;profile.baselineDeclaredSkips=preflight.baselineDeclaredSkips;
   save(path.join(out,'reviewed-native-profile.json'),profile);result=preparePublicCandidate(selection,plan.candidateId,profile);save(path.join(out,'prepared.json'),result);
  }else if(phase==='run'){
-  result=executePreparedPublic(repository,selection,readBoundedJson(path.join(out,'prepared.json'),16*1024**2),plan.relative+'/corpus');
+  result=executePreparedPublic(repository,selection,readBoundedJson(path.join(out,'prepared.json'),16*1024**2),campaignCorpusRelative(plan.relative));
  }else if(phase==='whole-cli'){
   if(plan.profile.executionMode==='unified-native'){
    const prepared=readBoundedJson(path.join(out,'prepared.json'),16*1024**2),installation=prepared.upstreamInstallation;
@@ -123,7 +129,7 @@ async function worker(phase,input){
 export async function runCampaign(plan,{executePhase=boundedInstallProcess,availableBytes=freeBytes,now=()=>performance.now()}={}){
  if(plan.execute!==false||JSON.stringify(plan.limits)!==JSON.stringify(campaignLimits))throw Error('Require an unchanged dry-run campaign plan before explicit execution');
  assertBinding(plan.binding);const output=path.join(repository,plan.relative);
- if(fs.existsSync(output)||fs.existsSync(plan.directory))throw Error('Campaign output/private directory must be new; interrupted phases cannot be retried');
+ if(fs.existsSync(output)||fs.existsSync(plan.directory)||fs.existsSync(path.join(repository,campaignCorpusRelative(plan.relative))))throw Error('Campaign output/private directory must be new; interrupted phases cannot be retried');
  fs.mkdirSync(path.dirname(output),{recursive:true});fs.mkdirSync(output,{mode:0o700});fs.mkdirSync(path.join(output,'phases'));
  const executed={...plan,execute:true};save(path.join(output,'plan.json'),executed);const executionInputIdentity=fileIdentity(path.join(output,'plan.json'),16*1024**2),start=now(),phases=[];let failedPhase=null,stopReason=null;
  try{
@@ -143,7 +149,7 @@ export async function runCampaign(plan,{executePhase=boundedInstallProcess,avail
    if(!completed){failedPhase=phase;throw Error(finalReason||'phase-rejected');}try{assertBinding(plan.binding);}catch(error){failedPhase=phase;throw error;}
   }
  }catch(error){stopReason=['disk-reserve','campaign-deadline','timeout','disk-growth','log-budget','phase-rejected'].includes(error.message)?error.message:'controller-rejected';save(path.join(output,'controller-failure.json'),{failedPhase,reason:stopReason,detail:String(error.message).slice(0,500),qualified:false});}
- let attempt=null;try{attempt=readBoundedJson(path.join(output,'corpus/public-attempt.json'),16*1024**2);}catch{}
+ let attempt=null;try{attempt=readBoundedJson(path.join(repository,campaignCorpusRelative(plan.relative),'public-attempt.json'),16*1024**2);}catch{}
  const selection=readBoundedJson(plan.selectionPath,16*1024**2),accounted=attempt||{candidateId:plan.candidateId,status:phases.length?'partial':'blocked',reason:stopReason||'unfinished',assessment:{qualified:false}};
  if(stopReason)accounted.assessment={...accounted.assessment,qualified:false};
  const accounting=publicAttemptSummary(selection,[accounted]);
