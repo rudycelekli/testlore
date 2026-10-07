@@ -8,6 +8,7 @@ import { inspectHistoricalChange } from './pilot-history.js';
 
 const worker = fileURLToPath(new URL('./pilot-worker.js', import.meta.url));
 const frameworks = ['node', 'jest', 'vitest', 'playwright'];
+export const PILOT_EXECUTION_MODES = Object.freeze(['legacy','unified-native']);
 export function validatePilotManifest(value) {
   if (value?.schemaVersion !== 1 || !Array.isArray(value.projects) || !value.projects.length || value.projects.length > 20) throw new Error('Pilot manifest needs schemaVersion:1 and 1–20 projects');
   const repetitions = value.repetitions ?? 3, timeoutMs = value.timeoutMs ?? 120000;
@@ -61,6 +62,7 @@ function environment() {
 
 /** Local pilot execution is explicit. No downloads, provider calls, or remote publication. */
 export function pilot(root, manifest, options = {}) {
+  if (options.unifiedNative !== undefined && typeof options.unifiedNative !== 'boolean') throw new Error('unifiedNative must be an explicit boolean');
   const validated = validatePilotManifest(manifest);
   const inspected = validated.projects.map(inspect);
   if (!options.execute) return { executed: false, projects: inspected, repetitions: validated.repetitions, next: 'Use pilot --manifest <file> --execute to run isolated local copies. Native discovery can execute top-level test code.' };
@@ -74,7 +76,7 @@ export function pilot(root, manifest, options = {}) {
     const project = validated.projects[index], directory = path.join(output, project.name);
     fs.mkdirSync(directory);
     const request = path.join(directory, 'request.json');
-    fs.writeFileSync(request, JSON.stringify({ project, revision: inspected[index].revision, repetitions: validated.repetitions, timeoutMs: validated.timeoutMs, directory }));
+    fs.writeFileSync(request, JSON.stringify({ project, revision: inspected[index].revision, repetitions: validated.repetitions, timeoutMs: validated.timeoutMs, directory, unifiedNative:options.unifiedNative===true }));
     const result = spawnSync(process.execPath, [worker, request], { encoding: 'utf8', env: environment(), shell: false, timeout: Math.min(1800000, validated.timeoutMs * (3 + project.changes.length * validated.repetitions * 5)), killSignal: 'SIGKILL', maxBuffer: 4 * 1024 * 1024 });
     fs.writeFileSync(path.join(directory, 'worker-log.json'), JSON.stringify({ status: result.status, signal: result.signal, error: result.error?.message, stdout: result.stdout, stderr: result.stderr }, null, 2));
     let receipt;
@@ -85,7 +87,7 @@ export function pilot(root, manifest, options = {}) {
     if (result.status !== 0 || !unchanged) receipt.valid = false;
     projects.push(receipt);
   }
-  const report = { schemaVersion: 1, executed: true, output, environment: { node: process.version, platform: process.platform, arch: process.arch }, repetitions: validated.repetitions, projects,
+  const report = { schemaVersion: 1, executed: true, executionMode:options.unifiedNative===true?'unified-native':'legacy', output, environment: { node: process.version, platform: process.platform, arch: process.arch }, repetitions: validated.repetitions, projects,
     valid: projects.every(p => p.valid), implementationHashes:Object.fromEntries(['pilot.js','pilot-worker.js','pilot-history.js','runner.js','execution.js','selector.js','graph.js','provenance.js'].map(file=>[file,digest(fs.readFileSync(new URL(file,import.meta.url)))])),limitations: ['Local declared scopes, planted changes and bounded historical Git pairs only; no production or whole-project certification.', 'Installed dependencies are shared read-only by convention, not an OS sandbox. Native test code may access network or local files.', 'Provider credentials are removed from inherited environment; no dependency installation or agent invocation occurs.', 'Three execution arms rotate order; TestLore discovery, planning, execution, provenance and receipt retention are included. Native related selection runs through the native CLI where available. Timing results are environment-specific.'] };
   fs.writeFileSync(path.join(output, 'summary.json'), JSON.stringify(report, null, 2));
   return report;

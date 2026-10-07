@@ -3,10 +3,25 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
-import { pilot, validatePilotManifest, exportPilot } from '../src/pilot.js';
+import { pilot, validatePilotManifest, exportPilot, PILOT_EXECUTION_MODES } from '../src/pilot.js';
 import { fixture, commit, git, twoModules, write } from './helpers.js';
 
 function manifest(root) { return {schemaVersion:1,repetitions:2,timeoutMs:5000,projects:[{name:'controlled',root,scope:'two native Node cases',config:{adapter:'node',discovery:'native'},changes:[{name:'comment',file:'src/a.js',before:'export const a = 1;',after:'export const a = 1; // edit',expectedFailure:false},{name:'fault',file:'src/a.js',before:'export const a = 1;',after:'export const a = 9;',expectedFailure:true}]}]}; }
+test('pilot unified mode relays actual Vitest execution and preserves independent failure identity',t=>{
+  const bin=fileURLToPath(new URL('../node_modules/vitest/vitest.mjs',import.meta.url));
+  const root=fixture(t,{'package.json':{type:'module'},'.gitignore':'.tddswarm/\nnode_modules\n','src/a.js':'export default 1;','src/b.js':'export default 1;',
+    'vitest.config.mjs':"export default {test:{include:['checks/*.check.js']}};",
+    'checks/a.check.js':"import {test,expect} from 'vitest';import a from '../src/a.js';test('independent one',()=>expect(a).toBe(1));",
+    'checks/b.check.js':"import {test,expect} from 'vitest';import b from '../src/b.js';test('preserved one',()=>expect(b).toBe(1));"});
+  fs.symlinkSync(path.dirname(path.dirname(bin)),path.join(root,'node_modules'),'dir');commit(root);
+  const m={schemaVersion:1,repetitions:1,timeoutMs:20000,projects:[{name:'native',root,scope:'Two independently asserted Vitest cases',config:{adapter:'vitest',discovery:'native',runner:[process.execPath,bin,'run','--maxWorkers=1','{files}']},changes:[{name:'fault',file:'src/a.js',before:'export default 1;',after:'export default 2;',expectedFailure:true}]}]};
+  const output=fixture(t,{});const report=pilot(output,m,{execute:true,unifiedNative:true});
+  assert.equal(report.valid,true,JSON.stringify(report));assert.equal(report.executionMode,'unified-native');assert.ok(PILOT_EXECUTION_MODES.includes(report.executionMode));
+  const subset=JSON.parse(fs.readFileSync(path.join(report.output,'native/change-0-trial-0-subset.json')));
+  assert.equal(subset.unifiedNative.used,true);assert.equal(subset.unifiedNative.contexts,1);assert.equal(subset.tests.filter(row=>row.status==='failed').length,1);
+  assert.equal(report.projects[0].changes[0].trials[0].missedFailures,0);
+  assert.throws(()=>pilot('/unused',null,{unifiedNative:'true'}),/explicit boolean/);
+});
 test('pilot preflight is read-only and exact-patch guarded',t=>{
   const root=fixture(t,twoModules);commit(root);
   const before=git(root,'status','--porcelain');assert.equal(pilot(root,manifest(root)).executed,false);
