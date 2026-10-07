@@ -1,0 +1,31 @@
+{
+  "reviewed": true,
+  "candidateId": "unjs-ufo-5cd9e676711a",
+  "root": null,
+  "scope": "Pinned ufo runtime unit suite; unchanged maintainer tests importing local src. Installed comparative Vitest may differ from upstream lock; exclude lint/types/build.",
+  "config": {
+    "adapter": "vitest",
+    "discovery": "native",
+    "runner": [
+      "node",
+      "node_modules/vitest/vitest.mjs",
+      "run",
+      "--maxWorkers=1",
+      "{files}"
+    ],
+    "analysisCache": {
+      "enabled": true,
+      "maxEntries": 2000,
+      "maxBytes": 33554432
+    }
+  },
+  "allowFrameworkVersionMismatch": true,
+  "expectedFailureNames": [
+    "withoutBase \"/legacy//\"-\"/legacy\"",
+    "withoutBase \"/legacy///evil.com\"-\"/legacy\"",
+    "withoutBase \"/legacy//evil.com\"-\"/legacy\"",
+    "withoutBase \"/legacy//evil.com\"-\"/legacy/\""
+  ],
+  "labelEvidence": "After frozen candidate selection, fixed maintainer tests passed, and two independent full runs of exact prior source bytes produced these same four failures. Three-arm qualification remains unmeasured.",
+  "executionMode": "unified-native"
+}

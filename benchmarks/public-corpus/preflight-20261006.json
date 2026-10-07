@@ -1,0 +1,89 @@
+{
+  "schemaVersion": 1,
+  "kind": "public-corpus-preflight-accounting",
+  "selectionCommitmentSha256": "065b79f7f345a971e76b0a2d1bdc4f4ab34c9c3b254837b693dee552b71af65a",
+  "createdAt": "2026-10-07T04:04:03.741Z",
+  "attempts": [
+    {
+      "candidateId": "unjs-ufo-5cd9e676711a",
+      "phase": "independent-full-preflight",
+      "qualified": false,
+      "completed": true,
+      "fixedBaseline": {
+        "complete": true,
+        "exitCode": 0,
+        "cases": 489,
+        "assertionFailures": 0
+      },
+      "independentFullFaultRuns": 2,
+      "stableNamedFailuresPerFaultRun": 4,
+      "blocker": null,
+      "receiptSha256": {
+        "unjs-ufo-5cd9e676711a-preflight.json": "a9b51d4556b779ba0534d37812eed5cb08bc04c376ff91e47c9127d1c3e1824e",
+        "unjs-ufo-5cd9e676711a-baseline.json": "25815b7c7c2ad5a95a80994e5e99d9207a5210b4c8d73a49cbd677f2a66a3790",
+        "unjs-ufo-5cd9e676711a-fault-0.json": "d6857f2dc2dfce15886423bd297639a965f9d009494402a83b5d83e7e4778b31",
+        "unjs-ufo-5cd9e676711a-fault-1.json": "ce8a8788355e18559a20c3e5eedc89d9ec31c253b2075547fb476f396e86a200"
+      }
+    },
+    {
+      "candidateId": "unjs-pathe-b52fcacc5971",
+      "phase": "independent-full-preflight",
+      "qualified": false,
+      "completed": true,
+      "fixedBaseline": {
+        "complete": true,
+        "exitCode": 0,
+        "cases": 483,
+        "assertionFailures": 0
+      },
+      "independentFullFaultRuns": 2,
+      "stableNamedFailuresPerFaultRun": 10,
+      "blocker": null,
+      "receiptSha256": {
+        "unjs-pathe-b52fcacc5971-preflight.json": "390fe631151a0c449ab96da436175a11eabb368b86bc9ee59ac9f80c679c6c55",
+        "unjs-pathe-b52fcacc5971-baseline.json": "69093142e26df9e1faf0cabbd420de36acf14fb82a825f572c5a011c406aafbb",
+        "unjs-pathe-b52fcacc5971-fault-0.json": "0abd1498a65f51552c923f5cb2f79a0373acddfc7f1f25a91c26e1a7e4811311",
+        "unjs-pathe-b52fcacc5971-fault-1.json": "3ee85c047810ac42bc4b3eed542372662552304b47f5f9d82fe63a6e1652aca6"
+      }
+    },
+    {
+      "candidateId": "unjs-destr-f9c78d402556",
+      "phase": "independent-full-preflight",
+      "qualified": false,
+      "completed": false,
+      "fixedBaseline": {
+        "complete": true,
+        "exitCode": 1,
+        "cases": 17,
+        "assertionFailures": 1
+      },
+      "independentFullFaultRuns": 0,
+      "stableNamedFailuresPerFaultRun": null,
+      "blocker": "Fixed unchanged maintainer baseline does not pass on comparative runtime",
+      "receiptSha256": {
+        "unjs-destr-f9c78d402556-preflight.json": "2bf2322ffbc760c67a89f155ab84f0bef5bdf1f64c7a9655778751d98365446e",
+        "unjs-destr-f9c78d402556-baseline.json": "df92ede3aed7a9979401a9f6edaedf5a95f131c27125672c93bfd48998a0bdc0"
+      }
+    }
+  ],
+  "qualifiedUniqueChanges": 0,
+  "controllerNode": {
+    "version": "v22.19.0",
+    "sha256": "0d005c18e095027ca8f9fe1cc1126f767ee4ad7b004f4d6fb781ec4228a7c5d1",
+    "bytes": 110712624
+  },
+  "installedComparativeVitest": "5.0.2",
+  "implementationHashes": {
+    "src/execution.js": "84dba367df6435f2bcaf01e6639b307a9a53d397470fdd0251b41c5aeca5ddb5",
+    "src/provenance.js": "31729e07bb832015805752e26221b43bd25d440c12c4230e4399d812c60793a3",
+    "scripts/worker-identity.js": "10fe0b51f032c71bf475f7d8e788dd3c6d6452ba53c072f08783b0bce1b446a6",
+    "preflight.mjs": "601630cec1d83285d3b71dba56184806d80b986e3e1895ab3b60606d7d1c1c71",
+    "preflight-pathe.mjs": "04e9ebfd6de6c2522c78b96c4fa56ac4334b163e01e642b04646b9f3cf425fce"
+  },
+  "limitations": [
+    "Native full-run preflight only; no TestLore/native-selection three-arm trials and no speed claim.",
+    "Fixed maintainer tests import upstream local src; comparative Vitest is not verified upstream-lock installation.",
+    "Two repeated faults count as one unique candidate; original oracles remain unchanged.",
+    "Controller bytes/receipt hashes are local evidence, not external authorship or trusted timestamp attestation."
+  ]
+}
