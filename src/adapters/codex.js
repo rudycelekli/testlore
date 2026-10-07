@@ -14,7 +14,9 @@ export const schemas = {
   author: object({ files: { type: 'array', items: object({ path: string, content: string }) } }),
   reviewer: object({ accepted: { type: 'boolean' }, findings: { type: 'array', items: string }, oracle:object({independent:{type:'boolean'},basis:{type:'array',items:string}}) })
 };
-const requestArgs = (schema, output) => ['exec', '--json', '--ignore-user-config', '--ephemeral', '--sandbox', 'read-only', '--skip-git-repo-check', '-c', 'approval_policy="never"', '--output-schema', schema, '--output-last-message', output, '-'];
+// An inherited skill catalog can exceed the native default and emit an error item.
+// Set the documented maximum catalog budget; error/tool events still fail closed.
+const requestArgs = (schema, output) => ['exec', '--json', '--ignore-user-config', '--ephemeral', '--sandbox', 'read-only', '--skip-git-repo-check', '-c', 'approval_policy="never"', '-c', 'skills.max_context_tokens=10000', '--output-schema', schema, '--output-last-message', output, '-'];
 export function codexRequest(payload, directory) {
   if (!payload || !Object.hasOwn(schemas, payload.role)) throw failure('INPUT_ROLE', 'Unknown Codex agent role');
   const schema = path.join(directory, 'schema.json');

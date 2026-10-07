@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {assessHost, safeHostEnvironment, boundedProcess, executableIdentity, qualifyHosts, packageSnapshot, hostEvents,
-  readBoundedText, readObserverReceipt, executableDrift, assertCanonicalEntrypoint, main as hostMain, parseHostArguments} from '../scripts/host-qualification.js';
+  readBoundedText, readObserverReceipt, executableDrift, assertCanonicalEntrypoint, fixtureToolApprovalArguments, main as hostMain, parseHostArguments} from '../scripts/host-qualification.js';
 import {boundedSummary, summarizeRun} from '../src/mcp-worker.js';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -23,6 +23,17 @@ function successfulObservation() {
     finalMessage: JSON.stringify({verdict: 'failed', failedCases, executedFiles, uncertainty: 'Fixture observations do not establish deployment safety or defect effectiveness.',
       nextAction: 'Repair the value to match the independent expectation and rerun the full suite.', deploymentSafety: 'not-established'})};
 }
+
+test('isolated fixture authorization grants only the two explicitly named execution tools', () => {
+  assert.deepEqual(fixtureToolApprovalArguments(false), []);
+  assert.deepEqual(fixtureToolApprovalArguments(true), ['-c', 'mcp_servers.testlore_execution.tools.testlore_plan.approval_mode="approve"',
+    '-c', 'mcp_servers.testlore_execution.tools.testlore_verify.approval_mode="approve"']);
+  assert.throws(() => fixtureToolApprovalArguments('true'), /explicit boolean/);
+  const argv = ['--run', '--entrypoint', '/package/src/cli.js', '--output', '/tmp/new.json'];
+  assert.equal(parseHostArguments(argv).authorizeFixtureTools, undefined);
+  assert.equal(parseHostArguments([...argv, '--authorize-fixture-tools']).authorizeFixtureTools, true);
+  assert.throws(() => parseHostArguments([...argv, '--authorize-fixture-tools', '--authorize-fixture-tools']), /Duplicate/);
+});
 
 test('host qualification requires actual scoped tool observations and an actionable final account', () => {
   assert.equal(assessHost(successfulObservation()).qualified, true);
