@@ -4,11 +4,12 @@ import {createRequire} from 'node:module';
 import {createHash} from 'node:crypto';
 import {safePath, validateConfig} from './files.js';
 import {adapterFor} from './execution.js';
+import {declaredInputs} from './inputs.js';
 
 const hash = value => createHash('sha256').update(value).digest('hex');
 const MAX_BYTES = 128 * 1024;
 function readJson(filename) {
-  const fd = fs.openSync(filename, fs.constants.O_RDONLY | (fs.constants.O_NOFOLLOW || 0));
+  const fd = fs.openSync(filename, fs.constants.O_RDONLY | (fs.constants.O_NOFOLLOW || 0) | (fs.constants.O_NONBLOCK || 0));
   try {
     const stat = fs.fstatSync(fd);
     if (!stat.isFile() || stat.size > MAX_BYTES) throw new Error('metadata-byte-or-file-budget');
@@ -24,10 +25,19 @@ function readJson(filename) {
 function installedPackage(root, name) {
   try {
     const require = createRequire(path.join(root, 'package.json'));
-    const filename = fs.realpathSync(require.resolve(name + '/package.json'));
-    const {value, sha256} = readJson(filename);
-    if (value.name !== name || typeof value.version !== 'string' || value.version.length > 80 || !/^\d+\.\d+\.\d+(?:[-+][A-Za-z0-9.+-]+)?$/.test(value.version)) throw new Error('package-identity-invalid');
-    return {name, installed: true, version: value.version, manifestSha256: sha256, codeExecuted: false};
+    // resolve() reads package manifests internally before our byte/type checks.
+    // Inspect its search directories instead; exports and runtime resolution
+    // remain explicitly unverified by this static prerequisite diagnostic.
+    const directories = require.resolve.paths(name) || [];
+    if (directories.length > 100) throw new Error('package-search-budget');
+    for (const directory of directories) {
+      const candidate = path.join(directory, name, 'package.json');
+      try {fs.lstatSync(candidate);} catch (error) {if (error.code === 'ENOENT' || error.code === 'ENOTDIR') continue; throw error;}
+      const filename = fs.realpathSync(candidate), {value, sha256} = readJson(filename);
+      if (value.name !== name || typeof value.version !== 'string' || value.version.length > 80 || !/^\d+\.\d+\.\d+(?:[-+][A-Za-z0-9.+-]+)?$/.test(value.version)) throw new Error('package-identity-invalid');
+      return {name, installed: true, version: value.version, manifestSha256: sha256, codeExecuted: false, moduleResolutionVerified: false};
+    }
+    throw new Error('package-metadata-unavailable');
   } catch {return {name, installed: false, version: null, codeExecuted: false, reason: 'package-metadata-unavailable-or-invalid'};}
 }
 
@@ -46,6 +56,11 @@ export function adoptionReadiness(root) {
     configuration.present = fs.existsSync(filename);
     if (configuration.present) {
       const input = readJson(filename); config = validateConfig(input.value);
+      declaredInputs(config); // Structure only: no service probe is invoked.
+      for (const service of Object.values(config.services || {})) {
+        if (service.env !== undefined && (typeof service.env !== 'string' || !service.env)) throw new Error('invalid-service-variable');
+        if (service.probe !== undefined && (!Array.isArray(service.probe) || !service.probe.length || service.probe.some(arg => typeof arg !== 'string' || !arg))) throw new Error('invalid-service-probe');
+      }
       configuration = {present: true, valid: true, sha256: input.sha256};
     }
   } catch {configuration.valid = false; configuration.present = true;}
@@ -56,7 +71,7 @@ export function adoptionReadiness(root) {
   if (configuration.valid) {
     const requested = adapterFor(config);
     adapter = typeof requested === 'string' && ['node', 'vitest', 'jest', 'playwright', 'custom'].includes(requested) ? requested : 'custom';
-    backend = typeof config.integration?.type === 'string' && /^[a-z-]{1,40}$/.test(config.integration.type) ? config.integration.type : config.integration ? 'custom' : null;
+    backend = ['nx', 'bazel', 'pytest-testmon'].includes(config.integration?.type) ? config.integration.type : config.integration ? 'custom' : null;
     add('shadow-policy', config.executionMode === 'shadow' ? 'observed' : 'review-required',
       config.executionMode === 'shadow' ? 'Shadow mode is configured.' : 'Shadow mode is not explicitly configured; current policy is preserved.',
       'Keep full CI execution and use testlore run --shadow --base YOUR_REVIEWED_BASE_COMMIT --json.');

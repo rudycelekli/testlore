@@ -17,7 +17,7 @@ test('doctor returns actionable missing setup without writing files or executing
   assert.equal(report.projectCommandsInvoked, false); assert.equal(report.verification.complete, false);
   assert.deepEqual(fs.readdirSync(root), []);
   const command = [process.execPath, '-e', "require('fs').writeFileSync('executed','unsafe')"];
-  write(root, 'tddswarm.config.json', {...configuration, runner: [...command, '{files}'], discovery: command, services: {api: {probe: command}}, env: {SECRET: 'private-value'}});
+  write(root, 'tddswarm.config.json', {...configuration, runner: [...command, '{files}'], discovery: command, services: {api: {tests: ['test/entry.test.js'], probe: command}}, env: {SECRET: 'private-value'}});
   const ready = adoptionReadiness(root);
   assert.equal(ready.state, 'ready-for-shadow-attempt'); assert.equal(ready.commandsExecuted, 0);
   assert.equal(ready.verification.nativeScopeEstablished, false); assert.equal(fs.existsSync(path.join(root, 'executed')), false);
@@ -63,6 +63,10 @@ test('arbitrary adapter and backend metadata is bounded and not echoed', t => {
   const report = adoptionReadiness(root);
   assert.equal(report.adapter, 'custom'); assert.equal(report.backend, 'custom');
   assert.ok(!JSON.stringify(report).includes('hidden-'));
+  write(root, 'tddswarm.config.json', {...configuration, adapter: 'token:private-adapter', integration: {type: 'private-backend'}});
+  const brief = verificationBrief(root);
+  assert.equal(brief.execution.nativeAdapter, 'custom'); assert.equal(brief.execution.backend, 'custom');
+  assert.ok(!JSON.stringify(brief).includes('private-adapter')); assert.ok(!JSON.stringify(brief).includes('private-backend'));
 });
 
 test('doctor CLI preserves blocker exit codes and rejects execution flags', t => {
@@ -73,4 +77,34 @@ test('doctor CLI preserves blocker exit codes and rejects execution flags', t =>
   const ready = call(['--json']); assert.equal(ready.status, 0); assert.equal(JSON.parse(ready.stdout).verification.complete, false);
   const invalid = call(['--execute']); assert.equal(invalid.status, 2); assert.match(invalid.stderr, /doctor accepts only/);
   assert.equal(fs.existsSync(path.join(root, '.tddswarm')), false);
+});
+
+test('doctor rejects malformed browser and service declarations before any native command', t => {
+  const root = fixture(t);
+  for (const extra of [{browser: {routes: {'/': {tests: ['test/a.test.js']}}}}, {contracts: {'assets/a.json': 'test/a.test.js'}},
+    {services: {api: {version: 'v1'}}}, {services: {api: {tests: ['test/a.test.js'], env: 42}}}, {services: {api: {tests: ['test/a.test.js'], probe: ['']}}}]) {
+    write(root, 'tddswarm.config.json', {...configuration, ...extra});
+    const report = adoptionReadiness(root);
+    assert.equal(report.state, 'blocked-on-prerequisites'); assert.ok(report.blocked.includes('configuration'));
+    assert.equal(report.commandsExecuted, 0);
+  }
+});
+
+test('doctor FIFO configuration cannot block bounded static inspection', {skip: process.platform === 'win32'}, t => {
+  const root = fixture(t), filename = path.join(root, 'tddswarm.config.json');
+  const created = spawnSync('mkfifo', [filename], {encoding: 'utf8', timeout: 2000});
+  assert.equal(created.status, 0, created.stderr);
+  const result = spawnSync(process.execPath, [cli, 'doctor', '--json'], {cwd: root, encoding: 'utf8', timeout: 5000});
+  assert.equal(result.error, undefined); assert.equal(result.status, 1);
+  assert.equal(JSON.parse(result.stdout).configuration.valid, false);
+});
+
+test('doctor FIFO SDK metadata is rejected before Node tries package resolution', {skip: process.platform === 'win32'}, t => {
+  const root = fixture(t, {'tddswarm.config.json': {...configuration, adapter: 'vitest'}});
+  fs.mkdirSync(path.join(root, 'node_modules/vitest'), {recursive: true});
+  const created = spawnSync('mkfifo', [path.join(root, 'node_modules/vitest/package.json')], {encoding: 'utf8', timeout: 2000});
+  assert.equal(created.status, 0, created.stderr);
+  const result = spawnSync(process.execPath, [cli, 'doctor', '--json'], {cwd: root, encoding: 'utf8', timeout: 5000});
+  assert.equal(result.error, undefined); assert.equal(result.status, 1);
+  assert.ok(JSON.parse(result.stdout).blocked.includes('native-sdk'));
 });

@@ -75,9 +75,10 @@ export function verificationBrief(root, {task = '', changed = []} = {}) {
   if (!observed.complete || uninspected) risks.push('static-inspection-incomplete');
   if (observed.warnings.length) risks.push('uninspected-filesystem-inputs');
   if (totals.exclusive || totals.skipped) risks.push('disabled-or-exclusive-static-test-signals');
+  const adoption = adoptionReadiness(root);
   const brief = {schemaVersion: 1, kind: 'agent-verification-brief', authority: 'advisory', task, changed,
-    execution: {projectCommandsInvoked: false, configuredMode: ['shadow', 'selective'].includes(config.executionMode) ? config.executionMode : 'unspecified', recommendedMode: 'shadow', nativeAdapter: typeof config.adapter === 'string' ? config.adapter.slice(0, 80) : 'unspecified', backend: typeof config.integration?.type === 'string' ? config.integration.type.slice(0, 80) : null},
-    independentContract, adoption: adoptionReadiness(root),
+    execution: {projectCommandsInvoked: false, configuredMode: ['shadow', 'selective'].includes(config.executionMode) ? config.executionMode : 'unspecified', recommendedMode: 'shadow', nativeAdapter: adoption.adapter || 'unspecified', backend: adoption.backend},
+    independentContract, adoption,
     inventory: {method: 'bounded-static-conventions', nativeScopeEstablished: false, completeWithinStaticScope: observed.complete && uninspected === 0 && !observed.warnings.length,
       observedTestFiles: testFiles.length, inspectedTestFiles: files.length, files: files.slice(0, 100), truncated: files.length > 100 || uninspected > 0 || !observed.complete, uninspectedTestFiles: uninspected},
     triage: {label: 'Static signals only; assertion counts do not measure bugs caught.', totals}, risks,
