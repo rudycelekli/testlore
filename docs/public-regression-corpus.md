@@ -1,4 +1,4 @@
-TestLore's public regression campaign separates **selected candidates**, **independently demonstrated defects**, and **qualified three-arm trials**. The [frozen October 6 selection](../benchmarks/public-corpus/preregistration-20261006.json) contains 100 distinct upstream fix commits across 10 projects. **Zero changes in this new campaign are qualified yet.** Candidate counts do not satisfy the proposed 100-qualified-change benchmark.
+TestLore's public regression campaign separates **selected candidates**, **independently demonstrated defects**, and **qualified three-arm trials**. The [frozen October 6 selection](../benchmarks/public-corpus/preregistration-20261006.json) contains 100 distinct upstream fix commits across 10 projects. The [October 7 campaign](qualification-20261007.md) executed three candidates: **two qualified changes in one project**, one completed unqualified attempt, 97 unattempted. Candidate counts do not satisfy the proposed 100-qualified-change benchmark.
 
 The inventory contains ufo, pathe, destr, ofetch, h3, defu, unctx, mlly, Vite and Playwright. It represents a narrow JavaScript/TypeScript ecosystem, dominated by related UnJS projects. The selected upstream histories include service inputs, browser behavior and workspace boundaries, but those categories are not experimentally qualified by their inclusion.
 
@@ -10,9 +10,9 @@ Three reviewed profiles are ready for sequential qualification:
 
 | Profile | Exact upstream fix | Independent oracle preflight | Three-arm campaign |
 | --- | --- | --- | --- |
-| ufo prefix | [eb299454](https://github.com/unjs/ufo/commit/eb29945470c8629309764f026a36e7f477a9a1ff) | Earlier retained full executions demonstrated four unchanged maintainer assertion failures | Unmeasured in this frozen campaign |
-| ufo leading slashes | [5cd9e676](https://github.com/unjs/ufo/commit/5cd9e676711af3f4e4b5398ddf6ca8d52c1c7e1f) | Fixed baseline passed; exact prior source failed the same four assertions twice | Unmeasured |
-| pathe UNC prefix | [b52fcacc](https://github.com/unjs/pathe/commit/b52fcacc59717a1e4a8783d4bbfae7fa81b4db07) | Fixed baseline passed; exact prior source failed the same ten assertions twice | Unmeasured |
+| ufo prefix | [eb299454](https://github.com/unjs/ufo/commit/eb29945470c8629309764f026a36e7f477a9a1ff) | Earlier retained full executions demonstrated four unchanged maintainer assertion failures | Qualified twice; no speed lead over native |
+| ufo leading slashes | [5cd9e676](https://github.com/unjs/ufo/commit/5cd9e676711af3f4e4b5398ddf6ca8d52c1c7e1f) | Fixed baseline passed; exact prior source failed the same four assertions twice | Qualified twice; no speed lead over native |
+| pathe UNC prefix | [b52fcacc](https://github.com/unjs/pathe/commit/b52fcacc59717a1e4a8783d4bbfae7fa81b4db07) | Fixed baseline passed; exact prior source failed the same ten assertions twice | Failures preserved twice; unqualified due to skipped upstream cases |
 
 A destr candidate was also attempted. Its unchanged fixed maintainer baseline failed on the available Node/Vitest runtime, so no inverse or selection trial was admitted. Its receipt stays in the [preflight accounting](../benchmarks/public-corpus/preflight-20261006.json). Assertions were not modified. These preflights are not new speed, routing, browser, or learning results. Windows path assertions executed on the local host do not establish qualification on Windows.
 

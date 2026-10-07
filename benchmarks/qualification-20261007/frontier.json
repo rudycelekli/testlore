@@ -1,0 +1,454 @@
+{
+  "schemaVersion": 1,
+  "kind": "frontier-qualification-aggregate",
+  "recordedDate": "2026-10-07",
+  "generation": {
+    "sourceRevision": "725dc604d30c8ff7918161d4d83ea35c6018c77a",
+    "datasetHash": "e89900ad9496b38dfc0d9c488917304df11e88ddce33846b05126058946a2883",
+    "rawReceiptSha256": "2c47739e70a80773a4d1c5af8120ea78c671d639680da041d30e564ff0b3dc78",
+    "mode": "generation-reliability",
+    "contracts": 2,
+    "repetitions": 2,
+    "trials": 4,
+    "failedTrials": 0,
+    "stableTrials": 4,
+    "calls": 12,
+    "attemptedCalls": 12,
+    "spawnedCalls": 12,
+    "budget": {
+      "maxCalls": 12,
+      "timeoutMs": 115000,
+      "maxOutputBytes": 65536,
+      "stabilityRuns": 2
+    },
+    "distinctConstructedFaults": 6,
+    "faultTrialDetections": 12,
+    "faultTrialOpportunities": 12,
+    "meanGenerationMs": 62779.5,
+    "meanTotalMs": 66026.25,
+    "controllerElapsedMs": 268708,
+    "comparison": {
+      "complete": true,
+      "inference": "not-a-learning-comparison",
+      "learningCompared": false
+    },
+    "reportedTokenTotals": {
+      "input_tokens": 227905,
+      "cached_input_tokens": 34944,
+      "output_tokens": 6784
+    },
+    "billingUSD": null,
+    "verifiedProviderModel": null,
+    "learningPromotionEnabled": false,
+    "retries": 0,
+    "limitations": [
+      "Two prospectively frozen authored contract specifications based on RFCs; not independently maintained project specifications.",
+      "Three roles per trial, baseline and faults checked twice; repetitions do not increase unique faults.",
+      "Diagnostic calls are separate from trials and retained; the earlier seven protocol rejections are not relabeled successful.",
+      "No learning comparison or improvement claim. Timing excludes process startup and final receipt writes; provider model and billing unverified."
+    ]
+  },
+  "assetContract": {
+    "rawReceiptSha256": "26995f131393b0375f0f314d49609308e88b160cb5cfdb59b5d03baf5762ea6b",
+    "qualified": true,
+    "complete": true,
+    "applied": false,
+    "reviewRequired": true,
+    "closedWorld": false,
+    "fullFiles": 82,
+    "subsetFiles": 16,
+    "fullCases": 424,
+    "subsetCases": 86,
+    "fullNamedFailures": 3,
+    "missedFailures": 0,
+    "unexpectedFailures": 0,
+    "limitations": [
+      "One existing upstream HTTP asset assertion and explicit reviewed mapping hypothesis, executed in independent full/subset copies.",
+      "Runtime-uncertain consumers stay selected; this does not establish complete dependency coverage or speed advantage.",
+      "Original user checkout and configuration remain unchanged; proposal requires review."
+    ]
+  },
+  "nativeHosts": {
+    "sourceRevision": "7807c98fcbbbe113ed8670b19864f658fbaaf1ce",
+    "archiveSha256": "d9f431d84d3419649611ff828f6efc9d6363c0d923fed5e2f92d071c632378b1",
+    "rawReceiptSha256": "39ac7a48b7eae607fc58f18206ebca1bbe00a3c732cef4516a4e8d9a65127939",
+    "codex": {
+      "qualified": true,
+      "status": "qualified-in-fixture-scope",
+      "failedCases": 1,
+      "observedFiles": 2,
+      "orderedCalls": 4,
+      "fixtureToolAuthorization": [
+        "testlore_plan",
+        "testlore_verify"
+      ],
+      "deploymentSafety": "not-established"
+    },
+    "claude": {
+      "qualified": false,
+      "status": "native-authentication-unavailable",
+      "loggedIn": false
+    },
+    "limitations": [
+      "Actual installed exact hosted main archive; this receipt does not qualify a later frontier archive.",
+      "Scoped opt-in authorization only for disposable plan/verify tools; no personal configuration changes.",
+      "Real Codex native host observed structured failure, uncertainty and repair/fresh-full next action. Claude requires existing native account authentication."
+    ]
+  },
+  "hostedMain": {
+    "sourceRevision": "7807c98fcbbbe113ed8670b19864f658fbaaf1ce",
+    "ciRun": "https://github.com/rudycelekli/testlore/actions/runs/37567899757",
+    "allSixChecksPassed": true,
+    "sourceTestsPassed": 481,
+    "sourceTestsSkipped": 0,
+    "requiredChromiumCases": 3,
+    "archiveSha256": "d9f431d84d3419649611ff828f6efc9d6363c0d923fed5e2f92d071c632378b1",
+    "rawVerificationSha256": "67ac801b09af48b74e2d4d70c1ff3715dd8a66531b53193471145f489e130721",
+    "publisherVerified": false
+  },
+  "publicCorpus": {
+    "schemaVersion": 1,
+    "kind": "public-corpus-accounting",
+    "selectionCommitmentSha256": "065b79f7f345a971e76b0a2d1bdc4f4ab34c9c3b254837b693dee552b71af65a",
+    "selectedUniqueChanges": 100,
+    "selectedProjects": 10,
+    "attempted": 3,
+    "unattempted": 97,
+    "blocked": 0,
+    "partial": 0,
+    "qualified": 2,
+    "qualifiedProjects": 1,
+    "targetMet": false,
+    "limitations": [
+      "Selections and upstream fix labels are not measured qualification.",
+      "Repeated trials never increase unique-change or project counts.",
+      "Cold/warm comparisons require explicit unchanged source/runtime/cache protocol; shared OS caches are uncontrolled.",
+      "Two qualified changes are from one upstream project; this is not a representative independent benchmark.",
+      "Original preflight failures and completed unqualified trials are retained, including a destr baseline incompatibility and pathe skipped cases.",
+      "Comparative installed Vitest differs from upstream-lock installations. No public browser or monorepo executions qualify.",
+      "No speed advantage over native selection demonstrated."
+    ],
+    "rawPreflightAccounting": "../public-corpus/preflight-20261006.json",
+    "attempts": [
+      {
+        "candidateId": "unjs-ufo-eb29945470c8",
+        "status": "completed",
+        "qualified": true,
+        "rawReceiptSha256": "52a62b3b421f44c52f02e0739f531462da47d54ad95dd2ec3c635e2b4044aa44",
+        "sourceRevision": "137c0b651a36faca4d1ce57c20976abd3a6b07d3",
+        "implementationUnchanged": true,
+        "executionMode": "unified-native",
+        "completedTrials": 2,
+        "qualifiedScenarios": 1,
+        "demonstratedFaultTrials": 2,
+        "preservedFaultTrials": 2,
+        "missedFailures": 0,
+        "nativeMissedFailures": 0,
+        "fullFallbackTrials": 0,
+        "timing": {
+          "full": {
+            "observed": 2,
+            "totalMs": 3248,
+            "p50Ms": 1598,
+            "p95Ms": 1650
+          },
+          "testLore": {
+            "observed": 2,
+            "totalMs": 4866,
+            "p50Ms": 2336,
+            "p95Ms": 2530
+          },
+          "native": {
+            "observed": 2,
+            "totalMs": 2857,
+            "p50Ms": 1416,
+            "p95Ms": 1441
+          }
+        },
+        "controllerElapsedMs": 15007,
+        "trialSpans": [
+          {
+            "repetition": 1,
+            "analysisCachePhase": "first-plan-in-new-workspace",
+            "armOrder": [
+              "full",
+              "subset",
+              "native"
+            ],
+            "fullMs": 1650,
+            "testLoreMs": 2530,
+            "nativeMs": 1416,
+            "planningMs": 1071,
+            "subsetExecutionMs": 1331,
+            "analysisCache": {
+              "enabled": true,
+              "engine": "b526be74a607cc4df67794f8dd5d0bd35f6c6c9e32df08c84a792dd6fd1dd86a",
+              "memoryHits": 0,
+              "diskHits": 0,
+              "parses": 23,
+              "writes": 23,
+              "corruptions": 0,
+              "evictions": 0,
+              "skipped": 0,
+              "unavailable": false
+            },
+            "mode": "affected",
+            "selectedFiles": 12,
+            "totalFiles": 13,
+            "missedFailures": 0,
+            "nativeMissedFailures": 0,
+            "valid": true,
+            "stable": true
+          },
+          {
+            "repetition": 2,
+            "analysisCachePhase": "repeat-analysis-cache-enabled",
+            "armOrder": [
+              "subset",
+              "native",
+              "full"
+            ],
+            "fullMs": 1598,
+            "testLoreMs": 2336,
+            "nativeMs": 1441,
+            "planningMs": 959,
+            "subsetExecutionMs": 1259,
+            "analysisCache": {
+              "enabled": true,
+              "engine": "b526be74a607cc4df67794f8dd5d0bd35f6c6c9e32df08c84a792dd6fd1dd86a",
+              "memoryHits": 0,
+              "diskHits": 23,
+              "parses": 0,
+              "writes": 0,
+              "corruptions": 0,
+              "evictions": 0,
+              "skipped": 0,
+              "unavailable": false
+            },
+            "mode": "affected",
+            "selectedFiles": 12,
+            "totalFiles": 13,
+            "missedFailures": 0,
+            "nativeMissedFailures": 0,
+            "valid": true,
+            "stable": true
+          }
+        ],
+        "qualificationLimitation": null
+      },
+      {
+        "candidateId": "unjs-ufo-5cd9e676711a",
+        "status": "completed",
+        "qualified": true,
+        "rawReceiptSha256": "e7571ff02410d5b01ffd9e8503d20f7273821ac527a9e2e9bb8431dedf7bbc97",
+        "sourceRevision": "137c0b651a36faca4d1ce57c20976abd3a6b07d3",
+        "implementationUnchanged": true,
+        "executionMode": "unified-native",
+        "completedTrials": 2,
+        "qualifiedScenarios": 1,
+        "demonstratedFaultTrials": 2,
+        "preservedFaultTrials": 2,
+        "missedFailures": 0,
+        "nativeMissedFailures": 0,
+        "fullFallbackTrials": 0,
+        "timing": {
+          "full": {
+            "observed": 2,
+            "totalMs": 3403,
+            "p50Ms": 1536,
+            "p95Ms": 1867
+          },
+          "testLore": {
+            "observed": 2,
+            "totalMs": 4955,
+            "p50Ms": 2414,
+            "p95Ms": 2541
+          },
+          "native": {
+            "observed": 2,
+            "totalMs": 2869,
+            "p50Ms": 1402,
+            "p95Ms": 1467
+          }
+        },
+        "controllerElapsedMs": 15392,
+        "trialSpans": [
+          {
+            "repetition": 1,
+            "analysisCachePhase": "first-plan-in-new-workspace",
+            "armOrder": [
+              "full",
+              "subset",
+              "native"
+            ],
+            "fullMs": 1867,
+            "testLoreMs": 2541,
+            "nativeMs": 1467,
+            "planningMs": 1143,
+            "subsetExecutionMs": 1266,
+            "analysisCache": {
+              "enabled": true,
+              "engine": "b526be74a607cc4df67794f8dd5d0bd35f6c6c9e32df08c84a792dd6fd1dd86a",
+              "memoryHits": 0,
+              "diskHits": 0,
+              "parses": 23,
+              "writes": 23,
+              "corruptions": 0,
+              "evictions": 0,
+              "skipped": 0,
+              "unavailable": false
+            },
+            "mode": "affected",
+            "selectedFiles": 12,
+            "totalFiles": 13,
+            "missedFailures": 0,
+            "nativeMissedFailures": 0,
+            "valid": true,
+            "stable": true
+          },
+          {
+            "repetition": 2,
+            "analysisCachePhase": "repeat-analysis-cache-enabled",
+            "armOrder": [
+              "subset",
+              "native",
+              "full"
+            ],
+            "fullMs": 1536,
+            "testLoreMs": 2414,
+            "nativeMs": 1402,
+            "planningMs": 997,
+            "subsetExecutionMs": 1294,
+            "analysisCache": {
+              "enabled": true,
+              "engine": "b526be74a607cc4df67794f8dd5d0bd35f6c6c9e32df08c84a792dd6fd1dd86a",
+              "memoryHits": 0,
+              "diskHits": 23,
+              "parses": 0,
+              "writes": 0,
+              "corruptions": 0,
+              "evictions": 0,
+              "skipped": 0,
+              "unavailable": false
+            },
+            "mode": "affected",
+            "selectedFiles": 12,
+            "totalFiles": 13,
+            "missedFailures": 0,
+            "nativeMissedFailures": 0,
+            "valid": true,
+            "stable": true
+          }
+        ],
+        "qualificationLimitation": null
+      },
+      {
+        "candidateId": "unjs-pathe-b52fcacc5971",
+        "status": "completed",
+        "qualified": false,
+        "rawReceiptSha256": "9d27032da252eb1cef9c5e5d8dd50ad75df8b803f897ffe584192e72b07d0c92",
+        "sourceRevision": "137c0b651a36faca4d1ce57c20976abd3a6b07d3",
+        "implementationUnchanged": true,
+        "executionMode": "unified-native",
+        "completedTrials": 2,
+        "qualifiedScenarios": 0,
+        "demonstratedFaultTrials": 0,
+        "preservedFaultTrials": 0,
+        "missedFailures": 0,
+        "nativeMissedFailures": 0,
+        "fullFallbackTrials": 0,
+        "timing": {
+          "full": {
+            "observed": 2,
+            "totalMs": 13976,
+            "p50Ms": 6530,
+            "p95Ms": 7446
+          },
+          "testLore": {
+            "observed": 2,
+            "totalMs": 13004,
+            "p50Ms": 4648,
+            "p95Ms": 8356
+          },
+          "native": {
+            "observed": 2,
+            "totalMs": 2660,
+            "p50Ms": 1328,
+            "p95Ms": 1332
+          }
+        },
+        "controllerElapsedMs": 36993,
+        "trialSpans": [
+          {
+            "repetition": 1,
+            "analysisCachePhase": "first-plan-in-new-workspace",
+            "armOrder": [
+              "full",
+              "subset",
+              "native"
+            ],
+            "fullMs": 7446,
+            "testLoreMs": 4648,
+            "nativeMs": 1328,
+            "planningMs": 2537,
+            "subsetExecutionMs": 1233,
+            "analysisCache": {
+              "enabled": true,
+              "engine": "b526be74a607cc4df67794f8dd5d0bd35f6c6c9e32df08c84a792dd6fd1dd86a",
+              "memoryHits": 0,
+              "diskHits": 0,
+              "parses": 13,
+              "writes": 13,
+              "corruptions": 0,
+              "evictions": 0,
+              "skipped": 0,
+              "unavailable": false
+            },
+            "mode": "affected",
+            "selectedFiles": 3,
+            "totalFiles": 4,
+            "missedFailures": 0,
+            "nativeMissedFailures": 0,
+            "valid": true,
+            "stable": true
+          },
+          {
+            "repetition": 2,
+            "analysisCachePhase": "repeat-analysis-cache-enabled",
+            "armOrder": [
+              "subset",
+              "native",
+              "full"
+            ],
+            "fullMs": 6530,
+            "testLoreMs": 8356,
+            "nativeMs": 1332,
+            "planningMs": 6521,
+            "subsetExecutionMs": 1315,
+            "analysisCache": {
+              "enabled": true,
+              "engine": "b526be74a607cc4df67794f8dd5d0bd35f6c6c9e32df08c84a792dd6fd1dd86a",
+              "memoryHits": 0,
+              "diskHits": 13,
+              "parses": 0,
+              "writes": 0,
+              "corruptions": 0,
+              "evictions": 0,
+              "skipped": 0,
+              "unavailable": false
+            },
+            "mode": "affected",
+            "selectedFiles": 3,
+            "totalFiles": 4,
+            "missedFailures": 0,
+            "nativeMissedFailures": 0,
+            "valid": true,
+            "stable": true
+          }
+        ],
+        "qualificationLimitation": "Upstream skipped cases prevent strict named-outcome qualification. Observed failures were preserved; do not promote this receipt."
+      }
+    ],
+    "timingScope": "Per-arm native process execution and TestLore discovery/planning/execution/receipt work. Corpus orchestration and independent verification discovery excluded; separately report controller elapsed time. Shared OS/dependency caches are not flushed; repetitions are not independent projects."
+  }
+}
