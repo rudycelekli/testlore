@@ -26,6 +26,11 @@ test('prepared upstream inversion reuses native corpus, preserves actual failure
  const root=fixture(t,{}),attempt=executePreparedPublic(root,selection,prepared,'.tddswarm/pilots/actual');assert.equal(attempt.assessment.qualified,true,JSON.stringify(attempt));assert.equal(attempt.assessment.preservedFaultTrials,2);assert.equal(git(source,'rev-parse','HEAD'),head);assert.equal(git(source,'status','--porcelain'),'');
  assert.equal(publicAttemptSummary(selection,[attempt]).qualified,1);assert.equal(publicAttemptSummary(selection,[attempt]).targetMet,false);
  assert.ok(fs.existsSync(path.join(root,'.tddswarm/pilots/actual/public-attempt.json')));assert.throws(()=>executePreparedPublic(root,selection,prepared,'.tddswarm/pilots/actual'),/exist/i);
+ const originalWrite=fs.writeFileSync;let removed=false,partial;
+ fs.writeFileSync=function(file,...args){const result=originalWrite.call(this,file,...args);if(String(file).endsWith('/missing-spans/assessment.json')){removed=true;fs.unlinkSync(path.join(root,'.tddswarm/pilots/missing-spans/pilot',prepared.corpus.pilot.projects[0].name,'change-0-trial-1-plan.json'));}return result;};
+ try{partial=executePreparedPublic(root,selection,prepared,'.tddswarm/pilots/missing-spans');}finally{fs.writeFileSync=originalWrite;}
+ assert.equal(removed,true);assert.equal(partial.status,'partial');assert.equal(partial.assessment.qualified,false);assert.equal(partial.assessment.completedTrials,2);assert.equal(partial.assessment.preservedFaultTrials,2);assert.match(partial.assessment.controllerError,/spans incomplete/);assert.equal(publicAttemptSummary(selection,[partial]).qualified,0);
+
  fs.writeFileSync(path.join(source,'package.json'),'{"type":"module","changed":true}');assert.throws(()=>executePreparedPublic(root,selection,prepared,'.tddswarm/pilots/drift'),/Dependency identity/);
 });
 test('blocked candidates and partial attempts stay visible without counting repetitions as unique changes',()=>{
