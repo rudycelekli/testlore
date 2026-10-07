@@ -6,9 +6,9 @@ import {normalizeUnifiedExecution} from '../src/execution.js';import {compareSub
 import {linkInstalledDependencies} from '../src/pilot-history.js';import {fileIdentity,assertFileIdentities} from './worker-identity.js';
 import {readBoundedJson} from './evaluation-commitment.js';import {validateCorpus} from './regression-corpus.js';import {validateCandidates} from './public-corpus.js';
 const repository=fileURLToPath(new URL('../',import.meta.url)),self=fileURLToPath(import.meta.url),arms=['full','native','legacy','unified'];
-const flags=['--maxWorkers=1','--no-file-parallelism'];
+const flags=['--maxWorkers=1','--no-file-parallelism','--cache=false'];
 const git=(root,...args)=>execFileSync('git',['-C',root,...args],{encoding:'utf8',timeout:10000,maxBuffer:2*1024*1024}).trim();
-const environment=()=>Object.fromEntries([...['PATH','HOME','TMPDIR','TEMP','TMP','LANG','LC_ALL'].filter(key=>process.env[key]).map(key=>[key,process.env[key]]),['CI','1'],['NODE_ENV','test']]);
+const environment=()=>Object.fromEntries([...['PATH','HOME','TMPDIR','TEMP','TMP','LANG','LC_ALL'].filter(key=>process.env[key]).map(key=>[key,process.env[key]]),['CI','1'],['NODE_ENV','test'],['JITI_FS_CACHE','false']]);
 const write=(filename,value)=>fs.writeFileSync(filename,JSON.stringify(value,null,2)+'\n',{flag:'wx',mode:0o600});
 const failed=run=>(run.tests||[]).filter(test=>test.status==='failed'&&test.name!=='<file-load>');
 const named=run=>run?.complete===true&&Array.isArray(run.tests)&&new Set(run.tests.map(test=>test.id)).size===run.tests.length&&run.tests.every(test=>/^[a-f0-9]{64}$/.test(test.id||'')&&typeof test.file==='string'&&typeof test.name==='string'&&test.name&&test.name!=='<file-load>'&&['passed','failed'].includes(test.status));

@@ -12,11 +12,12 @@ import {validateCandidates,preparePublicCandidate,executePreparedPublic,publicAt
 import {installUpstreamCandidate,boundedInstallProcess} from './public-corpus-upstream.js';
 import {preflightPublicCandidate} from './public-corpus-preflight.js';
 import {captureCorpusIdentity} from './regression-corpus.js';
+import {runUnifiedCLIProof,exportUnifiedCLIProof} from './unified-native-proof.js';
 
 const controller=fileURLToPath(import.meta.url),repository=fileURLToPath(new URL('../',import.meta.url));
 export const campaignSelection='065b79f7f345a971e76b0a2d1bdc4f4ab34c9c3b254837b693dee552b71af65a';
 const frozen=value=>{for(const child of Object.values(value))if(child&&typeof child==='object')frozen(child);return Object.freeze(value);};
-export const campaignLimits=frozen({maxCampaignMs:480000,minFreeBytes:2*1024**3,maxLogBytes:2*1024**2,phases:{clone:{timeoutMs:60000,maxGrowthBytes:128*1024**2},install:{timeoutMs:180000,maxGrowthBytes:450*1024**2},preflight:{timeoutMs:90000,maxGrowthBytes:64*1024**2},prepare:{timeoutMs:30000,maxGrowthBytes:16*1024**2},run:{timeoutMs:120000,maxGrowthBytes:128*1024**2}}});
+export const campaignLimits=frozen({maxCampaignMs:480000,minFreeBytes:2*1024**3,maxLogBytes:2*1024**2,phases:{clone:{timeoutMs:60000,maxGrowthBytes:128*1024**2},install:{timeoutMs:180000,maxGrowthBytes:450*1024**2},preflight:{timeoutMs:90000,maxGrowthBytes:64*1024**2},prepare:{timeoutMs:30000,maxGrowthBytes:16*1024**2},run:{timeoutMs:120000,maxGrowthBytes:128*1024**2},'whole-cli':{timeoutMs:180000,maxGrowthBytes:128*1024**2}}});
 const ids=new Set(['unjs-unctx-1bb220dccf40','unjs-mlly-abef19c940da','unjs-ufo-5cd9e676711a']);
 const save=(file,value)=>fs.writeFileSync(file,JSON.stringify(value,null,2)+'\n',{flag:'wx',mode:0o600});
 const git=(root,...args)=>execFileSync('git',['-C',root,...args],{encoding:'utf8',timeout:15000,maxBuffer:2*1024**2}).trim();
@@ -40,7 +41,7 @@ function sourceBinding(selectionPath,profilePath){
  if(process.version!=='v22.19.0')throw Error('Hosted campaign requires exact Node v22.19.0');
  if(git(repository,'status','--porcelain'))throw Error('Campaign requires a clean TestLore source checkout');
  for(const filename of [selectionPath,profilePath]){const relative=path.relative(repository,filename);if(relative.startsWith('..')||path.isAbsolute(relative)||digest(fs.readFileSync(filename))!==digest(execFileSync('git',['-C',repository,'show','HEAD:'+relative],{maxBuffer:16*1024**2,timeout:15000})))throw Error('Use exact tracked selection and reviewed profile bytes');}
- const core=captureCorpusIdentity();const additional=['public-corpus-campaign.js','public-corpus-upstream.js','public-corpus-preflight.js','public-corpus.js'].map(file=>fileIdentity(path.join(repository,'scripts',file)));
+ const core=captureCorpusIdentity();const additional=['public-corpus-campaign.js','public-corpus-upstream.js','public-corpus-preflight.js','public-corpus.js','unified-native-proof.js'].map(file=>fileIdentity(path.join(repository,'scripts',file)));
  return {sourceRevision:git(repository,'rev-parse','HEAD'),sourceTreeClean:true,files:[...core.bindings,core.nodeBinding,...additional,fileIdentity(selectionPath,16*1024**2),fileIdentity(profilePath)],core:core.public};
 }
 function assertBinding(binding){
@@ -101,9 +102,15 @@ async function worker(phase,input){
   save(path.join(out,'reviewed-native-profile.json'),profile);result=preparePublicCandidate(selection,plan.candidateId,profile);save(path.join(out,'prepared.json'),result);
  }else if(phase==='run'){
   result=executePreparedPublic(repository,selection,readBoundedJson(path.join(out,'prepared.json'),16*1024**2),plan.relative+'/corpus');
+ }else if(phase==='whole-cli'){
+  if(plan.profile.executionMode==='unified-native'){
+   const proof=await runUnifiedCLIProof({output:path.join(out,'whole-cli'),prepared:readBoundedJson(path.join(out,'prepared.json'),16*1024**2),selection,repetitions:2,timeoutMs:35000,totalBudgetMs:campaignLimits.phases['whole-cli'].timeoutMs});
+   result=exportUnifiedCLIProof(proof);
+  }else result={completed:true,requested:false,reason:'Reviewed legacy profile; no unified whole-CLI comparison requested'};
  }else throw Error('Unsupported campaign worker phase');
  assertBinding(plan.binding);save(path.join(out,'phases',phase,'result.json'),result);
  if(phase==='run'&&!result.assessment?.qualified)throw Error('Three-arm qualification rejected; retain public attempt');
+ if(phase==='whole-cli'&&plan.profile.executionMode==='unified-native'&&(!result.qualified||!result.complete))throw Error('Whole-CLI failure/configuration parity rejected; retain every attempt');
  return result;
 }
 
