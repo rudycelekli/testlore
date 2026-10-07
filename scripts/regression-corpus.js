@@ -5,8 +5,18 @@ import { fileURLToPath } from 'node:url';
 import { pilot, validatePilotManifest, exportPilot } from '../src/pilot.js';
 import { digest } from '../src/provenance.js';
 import { git, safePath, TEST } from '../src/files.js';
+import { readBoundedJson } from './evaluation-commitment.js';
+import { fileIdentity, assertFileIdentities } from './worker-identity.js';
 
-const read = file => { const stat = fs.lstatSync(file); if (!stat.isFile() || stat.size > 16 * 1024 * 1024) throw new Error('Evidence must be a bounded regular file'); return JSON.parse(fs.readFileSync(file)); };
+const read = file => readBoundedJson(file,16*1024*1024);
+const repository = fileURLToPath(new URL('../',import.meta.url));
+function captureIdentity() {
+  const files=['scripts/regression-corpus.js','scripts/evaluation-commitment.js','scripts/worker-identity.js'], queue=['src'];
+  while(queue.length){const directory=queue.pop();for(const name of fs.readdirSync(path.join(repository,directory)).sort()){const file=directory+'/'+name,stat=fs.lstatSync(path.join(repository,file));if(stat.isDirectory())queue.push(file);else if(stat.isFile())files.push(file);else throw new Error('Controller source inventory requires regular files');if(files.length+queue.length>256)throw new Error('Controller source inventory exceeded its bound');}}
+  const bindings=files.map(file=>fileIdentity(path.join(repository,file))),node=fileIdentity(process.execPath,512*1024*1024);
+  let sourceRevision=null,sourceTreeClean=null;try{sourceRevision=git(repository,['rev-parse','HEAD']).trim();sourceTreeClean=!git(repository,['status','--porcelain']).trim();}catch{}
+  return {bindings,nodeBinding:node,public:{sourceRevision,sourceTreeClean,controllerNode:{version:process.version,sha256:node.sha256,bytes:node.bytes},implementationHashes:Object.fromEntries(files.map((file,index)=>[file,bindings[index].sha256])),identityScope:'Controller, all existing core source modules and controller Node binary bound by content hashes. Installed native framework dependencies, runtime children, environment and models are not fully attested.'}};
+}
 const signatures = run => JSON.stringify((run.tests || []).map(test => [test.id, test.file, test.name, test.status]).sort((a,b) => JSON.stringify(a).localeCompare(JSON.stringify(b))));
 const named = run => run.complete === true && Array.isArray(run.tests) && run.tests.length > 0 && run.tests.every(test => ['passed','failed'].includes(test.status) && test.name !== '<file-load>');
 const percentile = (values, p) => values.length ? [...values].sort((a,b)=>a-b)[Math.ceil(values.length * p)-1] : null;
@@ -19,7 +29,7 @@ export function validateCorpus(manifest) {
     const project = validated.projects.find(project => project.name === label.project), change = project?.changes.find(change => change.name === label.change), key = `${label.project}/${label.change}`;
     if (!change || seen.has(key) || !Array.isArray(label.expectedFailureNames) || label.expectedFailureNames.length > 32 || label.expectedFailureNames.some(name=>typeof name!=='string'||!name||name==='<file-load>'||name.length>300) || new Set(label.expectedFailureNames).size !== label.expectedFailureNames.length || change.expectedFailure !== (label.expectedFailureNames.length > 0)) throw new Error('Labels need distinct bounded named assertion failures matching expectedFailure');
     seen.add(key);
-    if (!Array.isArray(label.oracleFiles) || !label.oracleFiles.length || label.oracleFiles.length>32 || label.oracleFiles.some(file=>!file || !TEST.test(file.path) || !/^[a-f0-9]{64}$/.test(file.sha256) || digest(fs.readFileSync(safePath(project.root,file.path)))!==file.sha256)) throw new Error('Bind existing native oracle files by source hash');
+    if (!Array.isArray(label.oracleFiles) || !label.oracleFiles.length || label.oracleFiles.length>32 || label.oracleFiles.some(file=>!file || !TEST.test(file.path) || !/^[a-f0-9]{64}$/.test(file.sha256) || fileIdentity(safePath(project.root,file.path)).sha256!==file.sha256)) throw new Error('Bind existing native oracle files by source hash');
     if (change.kind !== 'history' && TEST.test(change.file)) throw new Error('A fault patch cannot modify its test oracle');
     if (change.kind === 'history' && change.expectedFailure) for (const file of label.oracleFiles) for (const revision of [change.baseRevision,change.headRevision]) if(digest(git(project.root,['show',`${revision}:${file.path}`]))!==file.sha256)throw new Error('Historical fault oracle must be unchanged in both revisions');
     if (!['authored','repository-history','public-bugfix-inversion'].includes(label.origin?.kind) || typeof label.origin.maintainer !== 'string' || !label.origin.maintainer.trim() || label.origin.maintainer.length > 200 || typeof label.origin.independenceNotes !== 'string' || !label.origin.independenceNotes.trim() || label.origin.independenceNotes.length > 2000) throw new Error('Declare honest origin, maintainer and oracle independence limits');
@@ -43,7 +53,8 @@ export function assessCorpus(report, labels) {
       } catch (failure) { error = failure.message; }
       const failures = runs?.full.tests?.filter(test=>test.status==='failed' && test.name!=='<file-load>') || [];
       const demonstrated = Boolean(runs && named(runs.full) && label.expectedFailureNames.every(name=>failures.some(test=>test.name===name && label.oracleFiles.some(file=>file.path===test.file))) && (label.expectedFailureNames.length || runs.full.exitCode===0));
-      const preserved = Boolean(demonstrated && named(runs.subset) && failures.every(failure=>runs.subset.tests.some(test=>test.id===failure.id && test.name===failure.name && test.status==='failed')) && trial.valid && trial.casePreservation?.complete);
+      const emptyPassingSubset = runs?.subset.complete === true && runs.subset.exitCode === 0 && Array.isArray(runs.subset.tests) && runs.subset.tests.length === 0 && failures.length === 0;
+      const preserved = Boolean(demonstrated && (named(runs.subset) || emptyPassingSubset) && failures.every(failure=>runs.subset.tests.some(test=>test.id===failure.id && test.name===failure.name && test.status==='failed')) && trial.valid && trial.casePreservation?.complete);
       rows.push({ demonstrated, preserved, error, signatures: runs ? Object.fromEntries(Object.entries(runs).map(([arm,run])=>[arm,signatures(run)])) : null });
       for (const [arm,key] of [['full','fullMs'],['testLore','testLoreMs'],['native','nativeMs']]) if (Number.isFinite(trial[key]) && trial[key]>=0) timing[arm].push(trial[key]);
     }
@@ -58,16 +69,23 @@ export function assessCorpus(report, labels) {
 
 export function runCorpus(root, manifest, relative) {
   validateCorpus(manifest);
+  const repetitions = manifest.pilot.repetitions ?? 3;
   if (!/^\.tddswarm\/pilots\/[A-Za-z0-9_-]+$/.test(relative)) throw new Error('Use a new .tddswarm/pilots/ALIAS directory');
   const output = path.join(root,relative); fs.mkdirSync(path.dirname(output),{recursive:true}); fs.mkdirSync(output);
   fs.writeFileSync(path.join(output,'manifest.json'),JSON.stringify(manifest,null,2),{flag:'wx',mode:0o600});
-  const started = performance.now(), harnessHash = digest(fs.readFileSync(fileURLToPath(import.meta.url))); let report, aggregate;
+  const started = performance.now(); let report, aggregate, identity;
   try {
+    identity=captureIdentity();
+    fs.writeFileSync(path.join(output,'implementation-identity.json'),JSON.stringify(identity.public,null,2),{flag:'wx',mode:0o600});
     report = pilot(root,manifest.pilot,{execute:true,output:relative+'/pilot'});
-    aggregate = { ...assessCorpus(report,manifest.labels), corpusHash:digest(manifest), pilot:exportPilot(report), harnessHash };
-  } catch (error) { fs.writeFileSync(path.join(output,'controller-error.json'),JSON.stringify({error:error.message}),{flag:'wx',mode:0o600}); aggregate = {schemaVersion:1,kind:'regression-corpus-assessment',qualified:false,error:'Controller failed; inspect the retained private receipt',requestedTrials:manifest.labels.length*manifest.pilot.repetitions,completedTrials:0,uncompletedTrials:manifest.labels.length*manifest.pilot.repetitions,corpusHash:digest(manifest)}; }
-  aggregate.harnessUnchanged = harnessHash === digest(fs.readFileSync(fileURLToPath(import.meta.url)));
-  if (!aggregate.harnessUnchanged) { aggregate.qualified=false; aggregate.controllerError='Harness changed during measurement'; }
+    aggregate = { ...assessCorpus(report,manifest.labels), corpusHash:digest(manifest), pilot:exportPilot(report), implementationIdentity:identity.public };
+  } catch (error) {
+    fs.writeFileSync(path.join(output,'controller-error.json'),JSON.stringify({error:error.message}),{flag:'wx',mode:0o600});
+    try{report ||= read(path.join(output,'pilot/summary.json'));aggregate={...assessCorpus(report,manifest.labels),pilot:exportPilot(report)};}catch{aggregate={schemaVersion:1,kind:'regression-corpus-assessment',requestedTrials:manifest.labels.length*repetitions,completedTrials:null,uncompletedTrials:null,accountingIncomplete:true};}
+    aggregate={...aggregate,qualified:false,error:'Controller failed; inspect the retained private receipt',corpusHash:digest(manifest),implementationIdentity:identity?.public||null};
+  }
+  aggregate.implementationUnchanged=false;
+  if(identity)try{assertFileIdentities(identity.bindings);if(JSON.stringify(fileIdentity(process.execPath,512*1024*1024))!==JSON.stringify(identity.nodeBinding))throw new Error('Controller Node identity drift');aggregate.implementationUnchanged=true;}catch{aggregate.qualified=false;aggregate.controllerError='Controller implementation identity changed during measurement';}
   aggregate.controllerElapsedMs = Math.round(performance.now()-started);
   fs.writeFileSync(path.join(output,'assessment.json'),JSON.stringify(aggregate,null,2)+'\n',{flag:'wx',mode:0o600});
   return aggregate;

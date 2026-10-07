@@ -122,6 +122,17 @@
       "passed": 4,
       "failed": 0
     },
-    "providerCalls": 0
+    "providerCalls": 0,
+    "followupIdentityTests": {
+      "tests": 6,
+      "passed": 4,
+      "failed": 2,
+      "cause": "Controller binary incorrectly rechecked with8MB source-file bound; corrected to512MB executable bound."
+    },
+    "followupCorrected": {
+      "tests": 6,
+      "passed": 6,
+      "failed": 0
+    }
   }
 }

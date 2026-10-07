@@ -27,3 +27,9 @@ test('regression labels reject changed test oracles, false public-history claims
   const fake=structuredClone(original);fake.labels[0].origin.kind='public-bugfix-inversion';assert.throws(()=>validateCorpus(fake),/pinned/);
   const historic=structuredClone(original);historic.labels[0].origin.kind='repository-history';assert.throws(()=>validateCorpus(historic),/immutable/);
 });
+test('post-pilot controller failures recover completed evidence instead of resetting counts',t=>{
+  const source=fixture(t,twoModules);commit(source);const root=fixture(t,{}),manifest=corpus(source),original=fs.writeFileSync;let failed=false;
+  fs.writeFileSync=function(file,...args){const result=original.call(this,file,...args);if(!failed&&String(file).endsWith('/pilot/summary.json')){failed=true;throw new Error('deliberate private controller failure');}return result;};
+  let result;try{result=runCorpus(root,manifest,'.tddswarm/pilots/recovery');}finally{fs.writeFileSync=original;}
+  assert.equal(failed,true);assert.equal(result.qualified,false);assert.equal(result.completedTrials,2);assert.equal(result.preservedFaultTrials,2);assert.equal(result.uncompletedTrials,0);assert.equal(result.implementationUnchanged,true);assert.match(result.implementationIdentity.sourceRevision,/^[a-f0-9]{40}$/);assert.ok(result.implementationIdentity.implementationHashes['src/pilot-worker.js']);assert.ok(result.implementationIdentity.implementationHashes['scripts/evaluation-commitment.js']);assert.equal(JSON.stringify(result).includes('deliberate private'),false);
+});

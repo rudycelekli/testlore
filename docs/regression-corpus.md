@@ -8,6 +8,8 @@ The full native arm must independently produce the declared named assertion fail
 
 Private evidence includes requests, source copies, per-arm named case results, plans and failures. Output directories are exclusive: failed attempts stay in their original directories. The public assessment contains bounded counts, hashes, provenance categories and p50/p95/total arm time, with no project aliases, paths or case names. The full controller time is reported separately. Discovery used to establish the independent full oracle is outside per-arm comparisons. Cache state is shared and not experimentally controlled; report this limitation.
 
+Inputs and case evidence use bounded, no-follow, nonblocking file descriptors; non-regular files, excessive size and changes during reading reject before unbounded allocation. Oracle hashes stream through bounded readers. The controller records its Git revision, clean-state observation, all existing core module hashes, helper-module hashes and Node binary identity, and checks the implementation again at completion. Native framework dependencies and child runtimes remain outside this attestation. A controller failure after completed pilot work recovers the retained summary; if its completed count cannot be reconstructed, accounting is explicitly incomplete with null completed/uncompleted counts.
+
 ```sh
 node scripts/regression-fixtures.js \
   --directory .tddswarm/regression-input-NEW \

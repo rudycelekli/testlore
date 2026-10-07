@@ -12,7 +12,7 @@ import { recallLessons } from '../src/learning.js';
 import { digest,snapshot,freshness } from '../src/provenance.js';
 import {TEST} from '../src/files.js';
 import { fileIdentity, captureWorkerIdentity, assertWorkerIdentity, assertFileIdentities } from './worker-identity.js';
-import { verifyDatasetCommitment } from './evaluation-commitment.js';
+import { verifyDatasetCommitment, readBoundedJson } from './evaluation-commitment.js';
 
 const repository = fileURLToPath(new URL('../', import.meta.url));
 const byteAccounting = { encoding: 'UTF-8', inputBytes: 'JSON.stringify(role payload) before transportBudget is appended', outputBytes: 'JSON.stringify(parsed JSON response)', transportBudgetBytes: 'excluded', rawStdoutBytes: 'not measured; whitespace and other raw transport bytes are excluded', providerTokens: 'not measured' };
@@ -256,8 +256,8 @@ export async function evaluateLearning({ output, agent, identity, dataset = defa
 export async function main(argv = process.argv.slice(2)) {
   const options = {}; for (let i = 0; i < argv.length; i += 2) { if (!/^--(output|agent|identity|fixtures|commitment|repeat|seed|timeout-ms|max-output-bytes|max-calls|evidence-kind|stability-runs)$/.test(argv[i]) || argv[i+1] === undefined) throw new Error('Expected explicit --option value'); const key = argv[i].slice(2); if (Object.hasOwn(options,key)) throw new Error('Duplicate evaluation option'); options[key] = argv[i+1]; }
   if (!options.output || !options.agent || !options.identity) throw new Error('--output new-directory --agent JSON-argv --identity provider/model/version required');
-  let dataset; if (options.fixtures) { const stat = fs.statSync(options.fixtures); if (!stat.isFile() || stat.size > 2 * 1024 * 1024) throw new Error('Fixture manifest exceeds bound'); const bytes = fs.readFileSync(options.fixtures); if (bytes.length > 2 * 1024 * 1024) throw new Error('Fixture manifest grew beyond bound'); dataset = JSON.parse(bytes.toString('utf8')); }
-  let commitment; if (options.commitment) { const bytes = fs.readFileSync(options.commitment); if (bytes.length > 32768) throw new Error('Commitment exceeds 32 KB'); commitment = JSON.parse(bytes); }
+  const dataset = options.fixtures ? readBoundedJson(options.fixtures) : undefined;
+  const commitment = options.commitment ? readBoundedJson(options.commitment,32768) : undefined;
   const result = await evaluateLearning({ commitment, output: options.output, agent: JSON.parse(options.agent), identity: options.identity, dataset, repeat: options.repeat === undefined ? 3 : Number(options.repeat), seed: options.seed === undefined ? 20260930 : Number(options.seed), timeoutMs: options['timeout-ms'] === undefined ? 115000 : Number(options['timeout-ms']), maxOutputBytes: options['max-output-bytes'] === undefined ? 65536 : Number(options['max-output-bytes']), maxCalls: options['max-calls'] === undefined ? 54 : Number(options['max-calls']), evidenceKind: options['evidence-kind'] || 'live-worker', stabilityRuns: options['stability-runs'] === undefined ? 2 : Number(options['stability-runs']) });
   console.log(JSON.stringify(result,null,2)); return result.comparison.complete ? 0 : 1;
 }

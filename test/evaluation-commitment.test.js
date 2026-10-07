@@ -4,10 +4,15 @@ import fs from 'node:fs';
 import path from 'node:path';
 import {fixture} from './helpers.js';
 import {defaultDataset,evaluateLearning,validateDataset,stableOutcomes} from '../scripts/learning-evaluation.js';
-import {commitDataset,verifyDatasetCommitment,main} from '../scripts/evaluation-commitment.js';
+import {commitDataset,verifyDatasetCommitment,main,readBoundedJson} from '../scripts/evaluation-commitment.js';
 import {prospectiveContracts} from '../scripts/prospective-contracts.js';
 import {execute} from '../src/execution.js';
 const provenance={owner:'Explicit fixture owner',source:'local prospectively supplied dataset',independentlyMaintained:false,independenceNotes:'Hash binding cannot establish independent authorship or secrecy.'};
+test('JSON input rejects oversized and symlinked files before allocation and detects growth',t=>{
+  const root=fixture(t,{}),large=path.join(root,'large.json'),good=path.join(root,'good.json');fs.writeFileSync(large,'');fs.truncateSync(large,1024*1024*1024);assert.throws(()=>readBoundedJson(large),/bounded regular/);
+  fs.writeFileSync(good,'{}');const link=path.join(root,'link.json');fs.symlinkSync(good,link);assert.throws(()=>readBoundedJson(link),/bounded regular/);assert.deepEqual(readBoundedJson(good),{});
+  const original=fs.readSync;let changed=false;fs.readSync=function(...args){if(!changed){changed=true;fs.appendFileSync(good,' ');}return original.apply(this,args);};try{assert.throws(()=>readBoundedJson(good),/changed or grew/);}finally{fs.readSync=original;}
+});
 test('prospective commitments bind specifications, references, faults and declared ownership without authenticating them',async t=>{
   const dataset=defaultDataset(),commitment=commitDataset(dataset,provenance),verified=verifyDatasetCommitment(dataset,commitment);
   assert.equal(verified.verified,true);assert.equal(verified.authorshipVerified,false);assert.equal(verified.independenceVerified,false);assert.equal(verified.externallyAnchored,false);

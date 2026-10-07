@@ -7,6 +7,22 @@ import { digest } from '../src/provenance.js';
 const text = (value, max) => typeof value === 'string' && value.trim() && !value.includes('\0') && Buffer.byteLength(value) <= max;
 const units = dataset => dataset.fixtures.map(fixture => ({ specificationId: fixture.specificationId, requirementsHash: digest(fixture.requirements), sourceHash: digest(fixture.files), referenceHash: digest(fixture.referenceTests), defectsHash: digest(fixture.defects) }));
 
+export function readBoundedJson(filename, maximumBytes = 2 * 1024 * 1024) {
+  if (!Number.isSafeInteger(maximumBytes) || maximumBytes < 1 || maximumBytes > 32 * 1024 * 1024) throw new Error('Invalid JSON byte budget');
+  const initial = fs.lstatSync(filename);
+  if (!initial.isFile() || initial.isSymbolicLink() || initial.size > maximumBytes) throw new Error('JSON input must be a bounded regular file');
+  const fd = fs.openSync(filename,fs.constants.O_RDONLY | (fs.constants.O_NOFOLLOW || 0) | (fs.constants.O_NONBLOCK || 0));
+  try {
+    const before = fs.fstatSync(fd);
+    if (!before.isFile() || before.size > maximumBytes || initial.dev !== before.dev || initial.ino !== before.ino) throw new Error('JSON input identity changed before opening');
+    const bytes = Buffer.alloc(before.size+1); let total=0, count;
+    while(total<bytes.length && (count=fs.readSync(fd,bytes,total,bytes.length-total,null))>0)total+=count;
+    const after=fs.fstatSync(fd),named=fs.lstatSync(filename);
+    if(total!==before.size || after.size!==before.size || after.mtimeMs!==before.mtimeMs || after.ctimeMs!==before.ctimeMs || named.isSymbolicLink() || named.dev!==before.dev || named.ino!==before.ino)throw new Error('JSON input changed or grew while reading');
+    return JSON.parse(bytes.subarray(0,total).toString('utf8'));
+  } finally {fs.closeSync(fd);}
+}
+
 /** A commitment binds supplied bytes; it cannot verify authorship, secrecy or publication time. */
 export function commitDataset(dataset, provenance) {
   if (!dataset || dataset.schemaVersion !== 1 || !Array.isArray(dataset.fixtures) || dataset.fixtures.length < 2 || dataset.fixtures.length > 12) throw new Error('Commitment requires a bounded evaluation dataset');
@@ -22,7 +38,7 @@ export function verifyDatasetCommitment(dataset, commitment) {
 export async function main(argv = process.argv.slice(2)) {
   if (argv.length !== 6 || argv[0] !== '--dataset' || argv[2] !== '--provenance' || argv[4] !== '--output') throw new Error('Use --dataset dataset.json --provenance provenance.json --output new-commitment.json');
   const { validateDataset } = await import('./learning-evaluation.js');
-  const read = filename => { const bytes = fs.readFileSync(filename); if (bytes.length > 2 * 1024 * 1024) throw new Error('Commitment input exceeds 2 MB'); return JSON.parse(bytes); };
+  const read = readBoundedJson;
   const dataset = validateDataset(read(argv[1])), commitment = commitDataset(dataset, read(argv[3]));
   fs.writeFileSync(path.resolve(argv[5]), JSON.stringify(commitment, null, 2) + '\n', { flag: 'wx', mode: 0o600 });
   return commitment;
