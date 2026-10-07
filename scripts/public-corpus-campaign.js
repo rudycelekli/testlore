@@ -9,7 +9,7 @@ import {pilotEnvironment} from '../src/pilot.js';
 import {fileIdentity} from './worker-identity.js';
 import {readBoundedJson} from './evaluation-commitment.js';
 import {validateCandidates,preparePublicCandidate,executePreparedPublic,publicAttemptSummary} from './public-corpus.js';
-import {installUpstreamCandidate,boundedInstallProcess} from './public-corpus-upstream.js';
+import {installUpstreamCandidate,boundedInstallProcess,verifyUpstreamInstallation} from './public-corpus-upstream.js';
 import {preflightPublicCandidate} from './public-corpus-preflight.js';
 import {captureCorpusIdentity} from './regression-corpus.js';
 import {runUnifiedCLIProof,exportUnifiedCLIProof} from './unified-native-proof.js';
@@ -104,7 +104,12 @@ async function worker(phase,input){
   result=executePreparedPublic(repository,selection,readBoundedJson(path.join(out,'prepared.json'),16*1024**2),plan.relative+'/corpus');
  }else if(phase==='whole-cli'){
   if(plan.profile.executionMode==='unified-native'){
-   const proof=await runUnifiedCLIProof({output:path.join(out,'whole-cli'),prepared:readBoundedJson(path.join(out,'prepared.json'),16*1024**2),selection,repetitions:2,timeoutMs:35000,totalBudgetMs:campaignLimits.phases['whole-cli'].timeoutMs});
+   const prepared=readBoundedJson(path.join(out,'prepared.json'),16*1024**2),installation=prepared.upstreamInstallation;
+   if(!installation)throw Error('Whole-CLI public comparison requires a verified original installation');
+   const verify=()=>verifyUpstreamInstallation(selection,plan.candidateId,prepared.corpus.pilot.projects[0].root,installation.receiptPath,installation.expectedSha256);
+   verify();
+   const proof=await runUnifiedCLIProof({output:path.join(out,'whole-cli'),prepared,selection,repetitions:2,timeoutMs:35000,totalBudgetMs:campaignLimits.phases['whole-cli'].timeoutMs});
+   verify();
    result=exportUnifiedCLIProof(proof);
   }else result={completed:true,requested:false,reason:'Reviewed legacy profile; no unified whole-CLI comparison requested'};
  }else throw Error('Unsupported campaign worker phase');
