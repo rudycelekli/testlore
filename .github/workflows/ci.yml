@@ -95,13 +95,18 @@ jobs:
         with:
           name: measured-quality-proof
           path: .tddswarm/ci-*.json
-          # Complete native/CLI receipts retain incomplete attempts as well.
-          # The constructed fixture contains no user repository data.
+          include-hidden-files: true
+          if-no-files-found: error
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: unified-cli-proof
-          path: .tddswarm/ci-unified-cli/
+          path: |
+            .tddswarm/ci-unified-cli/assessment.json
+            .tddswarm/ci-unified-cli/protocol.json
+            .tddswarm/ci-unified-cli/attempts.jsonl
+            .tddswarm/ci-unified-cli/static/*
+            .tddswarm/ci-unified-cli/asset/*
           include-hidden-files: true
           if-no-files-found: error
   browser-quality:

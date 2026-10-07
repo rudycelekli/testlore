@@ -80,7 +80,11 @@ jobs:
           path: |
             .tddswarm/alpha-source-tests.json*
             .tddswarm/alpha-*.json
-            .tddswarm/alpha-unified-cli/
+            .tddswarm/alpha-unified-cli/assessment.json
+            .tddswarm/alpha-unified-cli/protocol.json
+            .tddswarm/alpha-unified-cli/attempts.jsonl
+            .tddswarm/alpha-unified-cli/static/*
+            .tddswarm/alpha-unified-cli/asset/*
           include-hidden-files: true
           if-no-files-found: warn
   publish:
