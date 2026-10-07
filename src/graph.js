@@ -1,6 +1,5 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import ts from 'typescript';
 import { isBuiltin } from 'node:module';
 import { createHash } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
@@ -11,15 +10,16 @@ import { declaredInputs } from './inputs.js';
 import { phaseTimings } from './timing.js';
 import { SOURCE, TEST, listFiles, normalize, safePath, readConfig } from './files.js';
 
-import {analyze} from './source-analysis.cjs';
+import {analyze,typescript as ts,loadedIdentity,assertCurrentEngine,optimizationAvailable} from './syntax-engine.cjs';
 export {analyze};
 
-const ANALYSIS_ENGINE = createHash('sha256').update(JSON.stringify({ schemaVersion: 1, typescript: ts.version, node: process.version, graph: createHash('sha256').update(fs.readFileSync(fileURLToPath(import.meta.url))).digest('hex'), parser: createHash('sha256').update(fs.readFileSync(fileURLToPath(new URL('./source-analysis.cjs',import.meta.url)))).digest('hex'), cache: ANALYSIS_CACHE_IMPLEMENTATION })).digest('hex');
+const ANALYSIS_ENGINE = createHash('sha256').update(JSON.stringify({ schemaVersion: 1, typescript: ts.version, node: process.version, graph: createHash('sha256').update(fs.readFileSync(fileURLToPath(import.meta.url))).digest('hex'), syntaxEngine: loadedIdentity, cache: ANALYSIS_CACHE_IMPLEMENTATION })).digest('hex');
 const SUMMARY_CACHE = Symbol('sourceAnalysisCache');
 const RESOLUTION_CACHE = Symbol('planningModuleResolutionCache');
 function summaries(graph) {
+  assertCurrentEngine();
   if (!graph[SUMMARY_CACHE]) {
-    graph[SUMMARY_CACHE] = createAnalysisCache(graph.root, graph.config?.analysisCache, ANALYSIS_ENGINE);
+    graph[SUMMARY_CACHE] = createAnalysisCache(graph.root, optimizationAvailable?graph.config?.analysisCache:{enabled:false}, ANALYSIS_ENGINE);
     graph.analysisCache = graph[SUMMARY_CACHE].stats;
   }
   return graph[SUMMARY_CACHE];

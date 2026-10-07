@@ -1,4 +1,4 @@
-import ts from 'typescript';
+import {typescript as ts} from './syntax-engine.cjs';
 import { buildGraph, analyze, dependencies } from './graph.js';
 import fs from 'node:fs';
 import path from 'node:path';

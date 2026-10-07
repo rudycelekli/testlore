@@ -7,7 +7,7 @@ import { performance } from 'node:perf_hooks';
 import { createHash } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import { plan } from '../src/selector.js';
-import ts from 'typescript';
+import {typescript as ts} from '../src/syntax-engine.cjs';
 import { buildGraph } from '../src/graph.js';
 
 const args = process.argv.slice(2), option = (name, fallback) => args.includes(name) ? args[args.indexOf(name) + 1] : fallback;

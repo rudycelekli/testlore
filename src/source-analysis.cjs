@@ -43,3 +43,5 @@ function configurationFlags(ast) {
 exports.analyze=analyze;
 exports.configurationFlags=configurationFlags;
 exports.typescriptVersion=ts.version;
+
+exports.typescript=ts;

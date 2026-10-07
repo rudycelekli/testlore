@@ -15,7 +15,7 @@ function sendBounded(message) {
 }
 const request = JSON.parse(fs.readFileSync(process.argv[2], 'utf8'));
 const { root, adapter, command, imports } = request;
-const sourceSummary=nativeSourceSummaryReader(root,request.sourceSummaries);
+const sourceSummary=nativeSourceSummaryReader(root,request.sourceSummaries,{requireBoundEngine:request.unified===true});
 if(request.unified) {
  protocolOutput=fs.createWriteStream(null,{fd:4,autoClose:false});
  const input=fs.createReadStream(null,{fd:3,autoClose:false});
