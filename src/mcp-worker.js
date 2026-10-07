@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import { plan } from './selector.js';
 import { run } from './runner.js';
-import {nextVerificationAction} from './run-report.js';
+import {nextVerificationAction,executionFileEvidence} from './run-report.js';
 
 // This is an internal, fixed-argv worker. Project runner output never shares the
 // MCP protocol stream; the parent supervises this process and its descendants.
@@ -27,26 +27,28 @@ export function summarizePlan(selection) {
 
 export function summarizeRun(report, mode, receipts) {
   const tests = report.tests || [];
+  const fileEvidence=executionFileEvidence(report),unverified=fileEvidence.unverified;
   const caseOutcomesAvailable = Array.isArray(report.tests);
-  const observedScope = caseOutcomesAvailable ? tests.some(t => ['passed', 'failed'].includes(t.status))
+  const observedScope = unverified?fileEvidence.executedFiles.length>0:caseOutcomesAvailable ? tests.some(t => ['passed', 'failed'].includes(t.status))
     : Array.isArray(report.plan?.targets) && report.plan.targets.length > 0;
   return {
     kind: 'agent-verification-run', authority: 'observed-run', mode,
-    executed: report.executed === true, complete: report.complete === true,
-    verdict: report.complete !== true || report.executed !== true ? 'incomplete'
+    executed: report.executed === true, complete: report.complete === true&&!unverified,
+    verdict: report.complete !== true || report.executed !== true || unverified ? 'incomplete'
       : report.exitCode !== 0 ? 'failed' : observedScope ? 'passed-in-observed-scope' : 'incomplete',
     observedScopeEstablished: observedScope,
-    exitCode: report.exitCode, error: report.error, executedFiles: report.executedTests || [],
+    exitCode: report.exitCode, error: report.error, executedFiles: fileEvidence.executedFiles,
+    ...(unverified?{actualExecutedFilesUnverified:true,requestedFiles:fileEvidence.requestedFiles,requestedFileCount:fileEvidence.requestedFiles.length,executedFileCount:fileEvidence.executedFiles.length}:{}),
     delegated: report.delegated === true, adapter: report.adapter, nativeTargets: report.plan?.targets ?? null,
-    scopeLimitation: report.delegated ? 'Delegated native target execution; per-case identities and file membership are unavailable.' : 'Observed test-file scope only.',
+    scopeLimitation: unverified?'Requested file execution is unverified; only independently reported named case files are confirmed. File omissions and complete shadow preservation are not established.':report.delegated ? 'Delegated native target execution; per-case identities and file membership are unavailable.' : 'Observed test-file scope only.',
     outcomes: { available: caseOutcomesAvailable, passed: caseOutcomesAvailable ? tests.filter(t => t.status === 'passed').length : null,
       failed: caseOutcomesAvailable ? tests.filter(t => t.status === 'failed').length : null,
       skipped: caseOutcomesAvailable ? tests.filter(t => t.status === 'skipped').length : null },
     failedCases: tests.filter(t => t.status === 'failed').map(t => ({ id: t.id, file: t.file, name: t.name })),
     timings: report.timings, plan: report.plan && summarizePlan(report.plan),
-    comparison: report.comparison && { complete: report.comparison.complete,
-      noObservedMisses: report.comparison.noObservedMisses,
-      decisionRecall: report.comparison.decisionRecall, limitation: report.comparison.limitation },
+    comparison: report.comparison && { complete: unverified?false:report.comparison.complete,
+      noObservedMisses: unverified?null:report.comparison.noObservedMisses,
+      decisionRecall: unverified?null:report.comparison.decisionRecall, limitation: unverified?'Requested execution is unverified; omitted-test preservation cannot be established.':report.comparison.limitation },
     receipts,
     nextAction: nextVerificationAction(report),
     deploymentSafety: 'not-established', learningImprovement: 'not-established'
@@ -78,7 +80,11 @@ export function boundedSummary(value, maxBytes = 65536) {
       passed: count(value.outcomes.passed), failed: count(value.outcomes.failed), skipped: count(value.outcomes.skipped)},
     failedCases: Array.isArray(value.failedCases) ? value.failedCases.slice(0, 10).map(row => ({id: short(row?.id), file: short(row?.file), name: short(row?.name)})) : [],
     failedCaseCount: Array.isArray(value.failedCases) ? value.failedCases.length : null,
-    scopeLimitation: short(value.scopeLimitation), executedFileCount: Array.isArray(value.executedFiles) ? value.executedFiles.length : null,
+    scopeLimitation: short(value.scopeLimitation), executedFileCount: value.actualExecutedFilesUnverified===true&&Number.isInteger(value.executedFileCount)?value.executedFileCount:Array.isArray(value.executedFiles) ? value.executedFiles.length : null,
+    ...(value.actualExecutedFilesUnverified===true?{actualExecutedFilesUnverified:true,
+      requestedFiles:Array.isArray(value.requestedFiles)?value.requestedFiles.slice(0,10).map(short):[],
+      requestedFileCount:Number.isInteger(value.requestedFileCount)?value.requestedFileCount:Array.isArray(value.requestedFiles)?value.requestedFiles.length:null,
+      executedFiles:Array.isArray(value.executedFiles)?value.executedFiles.slice(0,10).map(short):[]}:{}),
     error: typeof value.error === 'string' ? value.error.slice(0, 1000) : undefined,
     nextAction: short(value.nextAction), deploymentSafety: 'not-established',
     presentation: { truncated: true, maximumBytes: maxBytes, limitation: 'Summary exceeds output bound; inspect project receipts.' },

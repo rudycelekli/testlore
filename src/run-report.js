@@ -1,7 +1,19 @@
 // Render bounded, escaped decision evidence; test output is retained only in JSON.
 const escape = value => String(value ?? '').replace(/[\\`*_{}[\]<>|]/g, '\\$&').replace(/[\r\n]+/g, ' ').slice(0, 1000);
+// Interrupted native execution can retain its requested scope for failed-run
+// history. That scope is not evidence that any particular file executed.
+export function executionFileEvidence(report={}){
+ const unverified=report.actualExecutedFilesUnverified===true;
+ const files=value=>Array.isArray(value)?[...new Set(value.filter(file=>typeof file==='string'&&file.length>0))]:[];
+ const requestedFiles=files(report.requestedFiles||report.executedTests||report.executedFiles||[]);
+ const executedFiles=unverified?files((Array.isArray(report.tests)?report.tests:[]).filter(test=>
+   test&&['passed','failed'].includes(test.status)&&typeof test.id==='string'&&test.id.length>0&&
+   typeof test.name==='string'&&test.name.length>0&&test.name!=='<file-load>').map(test=>test.file)):
+   files(report.executedTests||report.executedFiles||[]);
+ return {unverified,requestedFiles,executedFiles};
+}
 export function nextVerificationAction(report={}){
- if(report.executed!==true||report.complete!==true)return 'Inspect the execution or discovery issue and run testlore doctor --json; repair the prerequisites, then rerun full native verification.';
+ if(report.executed!==true||report.complete!==true||report.actualExecutedFilesUnverified===true)return 'Inspect the execution or discovery issue and run testlore doctor --json; repair the prerequisites, then rerun full native verification.';
  if(report.comparison?.omittedFailures?.length)return 'Keep shadow mode enabled. Investigate the omitted failing case identities and revise dependency mappings before considering selective execution.';
  if(report.exitCode!==0)return 'Inspect the failed case identities and durable receipts, repair the independently established defect, then rerun the full suite.';
  if(report.delegated)return 'Inspect the native engine report and target decisions; individual case preservation and omitted-test safety remain unverified.';
@@ -16,19 +28,21 @@ export function renderRunReport(report = {}) {
    if(report.error)rows.push('',`Execution issue: ${escape(report.error)}`);
    rows.push('','Omitted targets and their dependency decisions are owned by the native engine; inspect the JSON command and native report. This report makes no individual-case safety claim.','',`Next action: ${nextVerificationAction(report)}`);return rows.join('\n')+'\n';
  }
- const ran = new Set(report.executedTests || report.executedFiles || []);
+ const fileEvidence=executionFileEvidence(report),unverified=fileEvidence.unverified;
+ const ran = new Set(fileEvidence.executedFiles),requested=new Set(fileEvidence.requestedFiles);
  const proposed = new Set(selection.selected || []);
  const omitted = decisions.filter(d => !ran.has(d.test));
  const tests = report.tests || [];
  const warnings = selection.warnings || [];
  const text = ['## TestLore execution evidence', '',
-  `Mode: **${report.shadow ? 'shadow (full suite)' : selection.mode || report.mode || 'unavailable'}**. Reporting: **${report.complete === true ? 'complete' : 'incomplete'}**. Exit: **${report.exitCode ?? 'unknown'}**.`, '',
-  `Executed ${ran.size} files: ${tests.filter(t=>t.status==='passed').length} passed, ${tests.filter(t=>t.status==='failed').length} failed, ${tests.filter(t=>t.status==='skipped').length} skipped cases. Proposed selection: ${proposed.size}/${selection.total ?? '?'} files. Actually omitted: ${omitted.length}.`, '',
+  `Mode: **${report.shadow ? unverified?'shadow (full suite requested)':'shadow (full suite)' : selection.mode || report.mode || 'unavailable'}**. Reporting: **${report.complete === true&&!unverified ? 'complete' : 'incomplete'}**. Exit: **${report.exitCode ?? 'unknown'}**.`, '',
+  unverified?`Requested ${requested.size} files. Execution of the requested file scope is unverified; omissions cannot be confirmed. ${ran.size} files have independently reported named case outcomes. Reported cases: ${tests.filter(t=>t.status==='passed').length} passed, ${tests.filter(t=>t.status==='failed').length} failed, ${tests.filter(t=>t.status==='skipped').length} skipped. Proposed selection: ${proposed.size}/${selection.total ?? '?'} files.`:
+    `Executed ${ran.size} files: ${tests.filter(t=>t.status==='passed').length} passed, ${tests.filter(t=>t.status==='failed').length} failed, ${tests.filter(t=>t.status==='skipped').length} skipped cases. Proposed selection: ${proposed.size}/${selection.total ?? '?'} files. Actually omitted: ${omitted.length}.`, '',
   'Observed passing cases and dependency traces do not establish all possible behavior.'];
  if(report.error)text.push('', `Execution issue: ${escape(report.error)}`);
  if(report.timings)text.push('', `Measured work ${report.timings.totalMs} ms; planning (including discovery) ${report.timings.planningMs} ms; execution ${report.timings.executionMs} ms; other checks and history retention ${report.timings.otherMs} ms. Final report sealing is excluded here; pilot total spans include it.`);
- if(report.comparison)text.push('',`Shadow evidence: ${report.comparison.complete ? report.comparison.omittedFailures.length+' observed omitted failing cases' : 'incomplete; no certification'}. This compares file membership in one full run; independent subset runs can reveal order effects.`);
- if(decisions.length){text.push('', '| Test file | Executed | Proposed | Why |', '| --- | --- | --- | --- |');for(const d of decisions.slice(0,200))text.push(`| ${escape(d.test)} | ${ran.has(d.test)?'yes':'no'} | ${proposed.has(d.test)?'run':'omit'} | ${escape((d.reasons||[]).join('; ') || 'no changed dependency found')} |`);if(decisions.length>200)text.push('',`Showing 200/${decisions.length} decisions; full paths are in the JSON receipt.`);}
+ if(report.comparison)text.push('',`Shadow evidence: ${unverified?'incomplete; requested execution is unverified; no certification':report.comparison.complete ? report.comparison.omittedFailures.length+' observed omitted failing cases' : 'incomplete; no certification'}. This compares file membership in one full run; independent subset runs can reveal order effects.`);
+ if(decisions.length){text.push('', `| Test file | ${unverified?'Execution':'Executed'} | Proposed | Why |`, '| --- | --- | --- | --- |');for(const d of decisions.slice(0,200))text.push(`| ${escape(d.test)} | ${unverified?ran.has(d.test)?'observed case':'unverified':ran.has(d.test)?'yes':'no'} | ${proposed.has(d.test)?'run':'omit'} | ${escape((d.reasons||[]).join('; ') || 'no changed dependency found')} |`);if(decisions.length>200)text.push('',`Showing 200/${decisions.length} decisions; full paths are in the JSON receipt.`);}
  text.push('', 'Uncertainty:');
  if(!warnings.length)text.push('', '- No unresolved analyzer warnings were reported for this scope. Undeclared runtime inputs and unexercised browser paths remain limitations.');
  else for(const w of warnings.slice(0,100))text.push(`- ${escape(typeof w==='string'?w:[w.file,w.reason,w.scope].filter(Boolean).join(': '))}`);
