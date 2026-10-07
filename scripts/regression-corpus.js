@@ -11,7 +11,7 @@ import { fileIdentity, assertFileIdentities } from './worker-identity.js';
 
 const read = file => readBoundedJson(file,16*1024*1024);
 const repository = fileURLToPath(new URL('../',import.meta.url));
-function captureIdentity() {
+export function captureCorpusIdentity() {
   const files=['scripts/regression-corpus.js','scripts/evaluation-commitment.js','scripts/worker-identity.js'], queue=['src'];
   while(queue.length){const directory=queue.pop();for(const name of fs.readdirSync(path.join(repository,directory)).sort()){const file=directory+'/'+name,stat=fs.lstatSync(path.join(repository,file));if(stat.isDirectory())queue.push(file);else if(stat.isFile())files.push(file);else throw new Error('Controller source inventory requires regular files');if(files.length+queue.length>256)throw new Error('Controller source inventory exceeded its bound');}}
   const bindings=files.map(file=>fileIdentity(path.join(repository,file))),node=fileIdentity(process.execPath,512*1024*1024);
@@ -88,7 +88,7 @@ export function runCorpus(root, manifest, relative) {
   fs.writeFileSync(path.join(output,'manifest.json'),JSON.stringify(manifest,null,2),{flag:'wx',mode:0o600});
   const started = performance.now(); let report, aggregate, identity;
   try {
-    identity=captureIdentity();
+    identity=captureCorpusIdentity();
     fs.writeFileSync(path.join(output,'implementation-identity.json'),JSON.stringify(identity.public,null,2),{flag:'wx',mode:0o600});
     const executionMode=manifest.executionMode??'legacy';
     if(executionMode==='unified-native'&&!pilotApi.PILOT_EXECUTION_MODES?.includes('unified-native'))throw new Error('Current pilot implementation does not support the frozen unified-native execution mode');

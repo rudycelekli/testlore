@@ -1,0 +1,32 @@
+{
+  "reviewed": true,
+  "candidateId": "unjs-ufo-62199a0cc847",
+  "root": null,
+  "scope": "Unchanged upstream runtime units; frozen comparative Vitest4.1.2/Vite8.0.3 npm projection. Not full upstream-lock install; lint,types,build omitted.",
+  "config": {
+    "adapter": "vitest",
+    "discovery": "native",
+    "runner": [
+      "node",
+      "node_modules/vitest/vitest.mjs",
+      "run",
+      "--maxWorkers=1",
+      "{files}"
+    ],
+    "analysisCache": {
+      "enabled": true,
+      "maxEntries": 2000,
+      "maxBytes": 33554432
+    }
+  },
+  "allowFrameworkVersionMismatch": true,
+  "expectedFailureNames": [
+    "withProtocol //example.com"
+  ],
+  "executionMode": "legacy",
+  "runtimeProjection": {
+    "lockfilePath": null,
+    "expectedSha256": "b78e273b459a8843e6ab60c6b0f09dea56aa335d8e32957181fdefd6d3b60b13"
+  },
+  "baselineDeclaredSkips": []
+}
