@@ -1,11 +1,11 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { createHash } from 'node:crypto';
-import { SOURCE, git, normalize, readConfig } from './files.js';
-import { runnerIdentity, snapshot } from './provenance.js';
+import { SOURCE, git, gitBaseline, gitSources, normalize, readConfig } from './files.js';
+import { snapshot } from './provenance.js';
 import { changedServices } from './inputs.js';
 import { runtimeEvidence } from './evidence.js';
-import { buildGraph, addSources, evidencePath, dependencies, classifyWarnings } from './graph.js';
+import { buildPlanningGraph, addSources, evidencePath, dependencies, classifyWarnings } from './graph.js';
 import {adapterFor} from './execution.js';
 import { externalPlan } from './integrations.js';
 import { phaseTimings } from './timing.js';
@@ -13,8 +13,7 @@ import { phaseTimings } from './timing.js';
 const GLOBAL = /(?:^|\/)(?:package(?:-lock)?\.json|npm-shrinkwrap\.json|pnpm-lock\.yaml|yarn\.lock|bun\.lockb?|tsconfig[^/]*\.json|jsconfig\.json|tddswarm\.config\.json|[^/]*(?:vitest|vite|jest|babel|webpack|rollup|playwright|cypress)[^/]*\.(?:[cm]?[jt]s|json)|(?:setup|globalSetup|globalTeardown)[^/]*\.[cm]?[jt]s|\.env(?:\..*)?|\.gitignore)$/;
 
 export function gitChanges(root, base) {
-  const baseSha = git(root, ['rev-parse', '--verify', `${base}^{commit}`]).trim();
-  const prefix = git(root, ['rev-parse', '--show-prefix']).trim();
+  const {baseSha, prefix} = gitBaseline(root, base);
   const raw = git(root, ['diff', '--name-only', '--no-renames', '-z', baseSha, '--', '.']).split('\0').filter(Boolean);
   const changed = raw.map(f => prefix && f.startsWith(prefix) ? f.slice(prefix.length) : f);
   changed.push(...git(root, ['ls-files', '--others', '--exclude-standard', '-z', '--', '.']).split('\0').filter(Boolean));
@@ -33,7 +32,9 @@ export function plan(root, options = {}, nativeSession) {
   }
   const provenance = snapshot(root,config);
   timing.mark('provenance');
-  const graph = buildGraph(root,nativeSession);
+  // Inventory and JSON policy belong to this synchronous planning phase.
+  // Execution still independently snapshots before and after the native run.
+  const graph = buildPlanningGraph(root,nativeSession,config,Object.keys(provenance.files));
   timing.mark('graph');
   if(adapterFor(config)==='playwright'){
     const declared=new Set(Object.values(config.browser?.routes||{}).filter(route=>route.inputs?.length).flatMap(route=>route.tests||[]));
@@ -64,11 +65,7 @@ export function plan(root, options = {}, nativeSession) {
   if (baseSha) {
     const oldFiles = new Set(graph.files);
     for (const file of changed) oldFiles.add(file);
-    const oldSources=[];
-    for (const file of active.filter(f => SOURCE.test(f))) {
-      try { oldSources.push([file,git(root, ['show', `${baseSha}:${prefix}${file}`])]); }
-      catch { /* New file: current edges already describe it. */ }
-    }
+    const oldSources=gitSources(root,baseSha,prefix,active.filter(f => SOURCE.test(f)));
     if(oldSources.length)addSources(graph,oldSources,oldFiles,{resolved:Boolean(nativeSession)});
   }
   timing.mark('baselineAndIgnore');
@@ -87,7 +84,7 @@ export function plan(root, options = {}, nativeSession) {
   if (unmapped.length) reasons.push('change-without-test-evidence');
   timing.mark('uncertaintyAndMapping');
   let state = { count: 0, failed: [] };
-  const identity=runnerIdentity(root,config);
+  const identity=provenance.runner;
   const historyPath=path.join(root,'.tddswarm',`history-${identity}.json`);
   try {
     if(fs.existsSync(historyPath))state=JSON.parse(fs.readFileSync(historyPath,'utf8'));

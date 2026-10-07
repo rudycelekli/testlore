@@ -20,7 +20,9 @@ for (const name of ['execFileSync', 'spawnSync']) {
   childProcess[name] = function(program, ...args) {
     const start = performance.now();
     try {return original.call(this, program, ...args);} finally {
-      if (processes.length < 1000) processes.push({method: name, program: path.basename(String(program)), durationMs: performance.now() - start}); else truncated = true;
+      // Classify Git work without copying repository paths or input arguments.
+      const argv=Array.isArray(args[0])?args[0]:[], gitOperation=path.basename(String(program))==='git'?(argv[0]==='-C'?argv[2]:argv[0]):undefined;
+      if (processes.length < 1000) processes.push({method: name, program: path.basename(String(program)), ...(typeof gitOperation==='string'&&/^[a-z-]+$/.test(gitOperation)?{gitOperation}:{}), durationMs: performance.now() - start}); else truncated = true;
     }
   };
 }

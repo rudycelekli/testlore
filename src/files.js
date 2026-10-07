@@ -10,6 +10,47 @@ export const normalize = p => p.split(path.sep).join('/').replace(/^\.\//, '');
 export function git(root, args) {
   return execFileSync('git', ['-C', root, ...args], { encoding: 'utf8', maxBuffer: 32 * 1024 * 1024, stdio: ['ignore', 'pipe', 'pipe'] });
 }
+// One process binds the immutable commit and project prefix. It is read anew
+// for every planning phase; neither refs nor working-tree state are cached.
+export function gitBaseline(root, base = 'HEAD') {
+  const value = git(root, ['rev-parse', '--show-prefix', '--verify', `${base}^{commit}`]);
+  const match = /\n([a-f0-9]{40}|[a-f0-9]{64})\n?$/.exec(value);
+  if (!match) throw new Error('Invalid Git baseline response');
+  return {baseSha: match[1], prefix: value.slice(0, match.index)};
+}
+export function gitSources(root, baseSha, prefix, files) {
+  if (!/^(?:[a-f0-9]{40}|[a-f0-9]{64})$/.test(baseSha) || typeof prefix !== 'string' || prefix.includes('\0')) throw new Error('Invalid immutable Git source scope');
+  files.forEach(file=>safePath(root,file));
+  const individually = () => {
+    const sources=[];let total=0;
+    for(const file of files){let text;try{text=git(root,['show',`${baseSha}:${prefix}${file}`]);}catch(error){if(error.code==='ENOBUFS'||error.code==='ERR_CHILD_PROCESS_STDIO_MAXBUFFER')throw error;continue;}
+      total+=Buffer.byteLength(text);if(total>32*1024*1024)throw new Error('Git source response budget exceeded');sources.push([file,text]);}
+    return sources;
+  };
+  if (files.length < 3) return individually();
+  if (files.length > 10000) throw new Error('Git source request budget exceeded');
+  const requests=files.map(file=>`${baseSha}:${prefix}${file}`);
+  const input=Buffer.from(requests.join('\0')+'\0');
+  if(input.length>2*1024*1024)throw new Error('Git source input budget exceeded');
+  let bytes;
+  try {
+    bytes=execFileSync('git',['-C',root,'cat-file','--batch','-z'],{input,maxBuffer:32*1024*1024,stdio:['pipe','pipe','pipe']});
+  } catch(error) {if(error.code==='ENOBUFS'||error.code==='ERR_CHILD_PROCESS_STDIO_MAXBUFFER')throw error;return individually();} // Older Git retains the existing fresh show path.
+  const result=[];let cursor=0;
+  for(let index=0;index<requests.length;index++) {
+    const missing=Buffer.from(requests[index]+' missing\n');
+    if(bytes.subarray(cursor,cursor+missing.length).equals(missing)){cursor+=missing.length;continue;}
+    const end=bytes.indexOf(10,cursor);
+    if(end<0)throw new Error('Incomplete Git source batch header');
+    const match=/^(?:[a-f0-9]{40}|[a-f0-9]{64}) blob (\d+)$/.exec(bytes.subarray(cursor,end).toString());
+    if(!match)throw new Error('Invalid Git source batch object');
+    const size=Number(match[1]),start=end+1,next=start+size;
+    if(!Number.isSafeInteger(size)||next>=bytes.length||bytes[next]!==10)throw new Error('Incomplete Git source batch body');
+    result.push([files[index],bytes.subarray(start,next).toString('utf8')]);cursor=next+1;
+  }
+  if(cursor!==bytes.length)throw new Error('Unexpected Git source batch suffix');
+  return result;
+}
 export function safePath(root, file) {
   if (typeof file !== 'string' || !file || file.includes('\0') || file.includes('\\') || path.isAbsolute(file) || file.split('/').includes('..')) throw new Error(`Unsafe project path: ${file}`);
   const target = path.resolve(root, file);

@@ -4,7 +4,7 @@ import path from 'node:path';
 import {spawn} from 'node:child_process';
 import {fileURLToPath} from 'node:url';
 import {sharedVitestCommand,nativeEnvironment,normalizeUnifiedExecution} from './execution.js';
-import {safePath,listFiles,SOURCE,git} from './files.js';
+import {safePath,listFiles,SOURCE,git,gitBaseline,gitSources} from './files.js';
 import {analyze} from './graph.js';
 import {encodeNativeFrame,nativeFrameReader} from './native-protocol.js';
 
@@ -47,9 +47,10 @@ export async function openNativeSession(root,config,options={}) {
  try{
   const imports=[];
   // Preserve deleted/import-removed baseline edges in the SAME resolver context.
-  if(!options.changed){try{const base=git(root,['rev-parse','--verify',`${options.base||'HEAD'}^{commit}`]).trim(),prefix=git(root,['rev-parse','--show-prefix']).trim();
+  if(!options.changed){try{const {baseSha:base,prefix}=gitBaseline(root,options.base||'HEAD');
    const changed=git(root,['diff','--name-only','--no-renames','-z',base,'--','.']).split('\0').filter(Boolean);
-   for(const entry of changed){const file=prefix&&entry.startsWith(prefix)?entry.slice(prefix.length):entry;if(!SOURCE.test(file))continue;try{for(const specifier of analyze(file,git(root,['show',`${base}:${prefix}${file}`])).imports)imports.push({file,specifier});}catch{}}
+   const sources=changed.map(entry=>prefix&&entry.startsWith(prefix)?entry.slice(prefix.length):entry).filter(file=>SOURCE.test(file));
+   for(const [file,text] of gitSources(root,base,prefix,sources))for(const specifier of analyze(file,text).imports)imports.push({file,specifier});
   }catch{}}
   const reportFile=path.join(temporary,'results.json'),requestFile=path.join(temporary,'request.json');
   const invocation=[...command,'run','--reporter=json',`--outputFile=${reportFile}`];
