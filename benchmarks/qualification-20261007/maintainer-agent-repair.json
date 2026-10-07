@@ -1,0 +1,384 @@
+{
+  "schemaVersion": 1,
+  "kind": "native-agent-repair-qualification",
+  "startedAt": "2026-10-07T06:28:21.621Z",
+  "finishedAt": "2026-10-07T06:28:58.336Z",
+  "repairProfile": "maintainer-is-promise",
+  "maintainerProvenance": {
+    "repository": "https://github.com/then/is-promise",
+    "fixed": "ed0eaa4dec17597f0dae892a0472a9b7f459320d",
+    "parent": "2dfb684306b6f3b8b374478c86e63f8bab4a7f06",
+    "oracle": "ed0eaa4dec17597f0dae892a0472a9b7f459320d",
+    "datasetHash": "78d7e6127d15873b351f6c5128e951a39bd14a167fc2c9b8d9d1a5d354fedc0f",
+    "bindings": [
+      {
+        "repo": "then/is-promise",
+        "revision": "ed0eaa4dec17597f0dae892a0472a9b7f459320d",
+        "path": "index.js",
+        "gitBlob": "ca2444c6f69540f83504b8f54f4518af0ffc4cd5",
+        "sha256": "748c681ba64081193dc5fbb27f8b3539c09ba08f4e31ec6d588e2ae8c39234a8",
+        "bytes": 165,
+        "url": "https://github.com/then/is-promise/blob/ed0eaa4dec17597f0dae892a0472a9b7f459320d/index.js"
+      },
+      {
+        "repo": "then/is-promise",
+        "revision": "2dfb684306b6f3b8b374478c86e63f8bab4a7f06",
+        "path": "index.js",
+        "gitBlob": "772600b79091369385ce9b5a3adc779548d41970",
+        "sha256": "1bcef4c606ce23b0a7334bb7e01bec64266b7947c0a9c6acd715d94865c3a25d",
+        "bytes": 163,
+        "url": "https://github.com/then/is-promise/blob/2dfb684306b6f3b8b374478c86e63f8bab4a7f06/index.js"
+      },
+      {
+        "repo": "then/is-promise",
+        "revision": "ed0eaa4dec17597f0dae892a0472a9b7f459320d",
+        "path": "test.js",
+        "gitBlob": "d971c2828fab264d68b662c230e61af5dcaa6e0e",
+        "sha256": "0fce78dda44690c59ba7b397dea9683242d5ce7a1cf7c260a1d92cc4a4dd2b34",
+        "bytes": 1483,
+        "url": "https://github.com/then/is-promise/blob/ed0eaa4dec17597f0dae892a0472a9b7f459320d/test.js"
+      },
+      {
+        "repo": "then/is-promise",
+        "revision": "ed0eaa4dec17597f0dae892a0472a9b7f459320d",
+        "path": "readme.md",
+        "gitBlob": "50d5d989111aa5071420d76fb796e9f9215f8625",
+        "sha256": "2831cabb33577b1054b575c0b7cca7b4f446510d59cab316414122e43234410f",
+        "bytes": 872,
+        "url": "https://github.com/then/is-promise/blob/ed0eaa4dec17597f0dae892a0472a9b7f459320d/readme.md"
+      },
+      {
+        "repo": "then/is-promise",
+        "revision": "ed0eaa4dec17597f0dae892a0472a9b7f459320d",
+        "path": "LICENSE",
+        "gitBlob": "27cc9f3771540a450dae91b1e04dd1383ff1a4d1",
+        "sha256": "44191656d296391e0ec97e32f5385f0d02b6f2992694082d22ea04ba0f66f9e4",
+        "bytes": 1058,
+        "url": "https://github.com/then/is-promise/blob/ed0eaa4dec17597f0dae892a0472a9b7f459320d/LICENSE"
+      }
+    ],
+    "adaptation": "Only imports/framework entry points change; original maintainer assertion bodies remain byte-identical. Not a full upstream Mocha/better-assert qualification."
+  },
+  "limitation": "One genuine historical null/undefined boolean predicate defect, with eight unchanged maintainer assertion bodies on a Node import shim. No general application repair, upstream Mocha environment, or deployment safety claim.",
+  "maximumHostCalls": 1,
+  "retries": 0,
+  "timeoutMs": 115000,
+  "providerApiKeysRemoved": true,
+  "complete": false,
+  "sourceRevision": "c996cfda7d69b1abb88a57c0b4d33f7fed61000d",
+  "sourcePackageSHA256": "ceafa10cce2cd88d37ce10e941388475afdedc5ddf56985a2557ae0d31a62471",
+  "rawReceiptSHA256": "b13b29efc5d95468267b5d8adab5b0bf92dfd64f07a33ffab2b42936469c50b7",
+  "harness": [
+    {
+      "file": "agent-repair-qualification.js",
+      "sha256": "13f3212efc05541b3caf3bc29d739bac4421962756bb7d25e215e76b1978afdb",
+      "bytes": 33848
+    },
+    {
+      "file": "fixture-repair-mcp.js",
+      "sha256": "df1e9ebbeec4444c6035a6319e9c9d1d896f8e455ae252d1c6baf990b00d4393",
+      "bytes": 4702
+    },
+    {
+      "file": "maintainer-repair-profile.js",
+      "sha256": "cff8b730bc99d36dfe5969aa1699346b364e95d6ddcf4763dfb7419615a2d3a2",
+      "bytes": 7024
+    },
+    {
+      "file": "host-qualification.js",
+      "sha256": "2150ea05aecc79fc02eac6a9858a8c533228e50122e13e9e7c5807b97811db56",
+      "bytes": 34975
+    },
+    {
+      "file": "host-mcp-observer.js",
+      "sha256": "0bdb8d331a208080c4d7855aa796e7564dac6c3393ef4de447e9e90c8ead1df2",
+      "bytes": 3472
+    },
+    {
+      "file": "node.js",
+      "sha256": "c5fbf1bf0841fd7e36f716198ac00a5481fa288a9662997257b385f64687b24c",
+      "bytes": 1090
+    }
+  ],
+  "node": {
+    "sha256": "0d005c18e095027ca8f9fe1cc1126f767ee4ad7b004f4d6fb781ec4228a7c5d1",
+    "bytes": 110712624
+  },
+  "hosts": [
+    {
+      "host": "codex",
+      "qualified": true,
+      "status": "qualified-in-maintainer-contract-scope",
+      "reasons": [],
+      "summary": {
+        "verdict": "passed-in-observed-scope",
+        "repairedFile": "src/promise.cjs",
+        "executedFiles": [
+          "test/promise.test.cjs"
+        ],
+        "uncertainty": "Null and undefined failed before the exact !! guard repair; afterward all 8 cases passed. Evidence covers only the Node-adapted maintainer assertions, not a complete upstream Mocha environment or broad repair quality.",
+        "nextAction": "Review retained verification receipts and qualify the complete upstream environment before extending this scoped conclusion.",
+        "deploymentSafety": "not-established"
+      },
+      "nativeApiRetriesObserved": 0,
+      "process": {
+        "status": "completed",
+        "reason": null,
+        "exitCode": 0,
+        "signal": null,
+        "durationMs": 35636,
+        "outputBytes": 32700
+      },
+      "observed": [
+        {
+          "mode": "readonly",
+          "incomplete": false,
+          "exitCode": null,
+          "calls": [
+            {
+              "name": "testlore_brief",
+              "result": {
+                "kind": "agent-verification-brief"
+              }
+            },
+            {
+              "name": "testlore_status",
+              "result": {
+                "kind": "agent-verification-status"
+              }
+            }
+          ]
+        },
+        {
+          "mode": "execution",
+          "incomplete": false,
+          "exitCode": null,
+          "calls": [
+            {
+              "name": "testlore_plan",
+              "result": {
+                "kind": "agent-verification-plan",
+                "mode": "affected",
+                "complete": true,
+                "deploymentSafety": "not-established"
+              }
+            },
+            {
+              "name": "testlore_verify",
+              "result": {
+                "kind": "agent-verification-run",
+                "mode": "shadow",
+                "complete": true,
+                "verdict": "failed",
+                "exitCode": 1,
+                "executedFiles": [
+                  "test/promise.test.cjs"
+                ],
+                "outcomes": {
+                  "available": true,
+                  "passed": 6,
+                  "failed": 2,
+                  "skipped": 0
+                },
+                "failedCases": [
+                  {
+                    "id": "6746e9eb49b75e776a726ff572a2b0058675cb095c486b0608c9b2bd78b5a827",
+                    "file": "test/promise.test.cjs",
+                    "name": "calling isPromise > with null > returns false"
+                  },
+                  {
+                    "id": "56524740f7ff06425ccbea76baa7dacb3a32c3cb20d0ea79cb2aa63bd8fd12f8",
+                    "file": "test/promise.test.cjs",
+                    "name": "calling isPromise > with undefined > returns false"
+                  }
+                ],
+                "nextAction": "Inspect the failed case identities and durable receipts, repair the independently established defect, then rerun the full suite.",
+                "deploymentSafety": "not-established"
+              }
+            },
+            {
+              "name": "testlore_plan",
+              "result": {
+                "kind": "agent-verification-plan",
+                "mode": "policy",
+                "complete": true,
+                "deploymentSafety": "not-established"
+              }
+            },
+            {
+              "name": "testlore_verify",
+              "result": {
+                "kind": "agent-verification-run",
+                "mode": "full",
+                "complete": true,
+                "verdict": "passed-in-observed-scope",
+                "exitCode": 0,
+                "executedFiles": [
+                  "test/promise.test.cjs"
+                ],
+                "outcomes": {
+                  "available": true,
+                  "passed": 8,
+                  "failed": 0,
+                  "skipped": 0
+                },
+                "failedCases": [],
+                "nextAction": "Review remaining dependency uncertainty and independent defect obligations. Keep shadow mode until representative full/subset comparisons support selective execution; rerun verification after changes.",
+                "deploymentSafety": "not-established"
+              }
+            }
+          ]
+        }
+      ],
+      "repair": {
+        "schemaVersion": 1,
+        "kind": "bounded-fixture-repair",
+        "calls": [
+          {
+            "requestedAt": 1791354525145,
+            "sourceSha256": "748c681ba64081193dc5fbb27f8b3539c09ba08f4e31ec6d588e2ae8c39234a8",
+            "result": {
+              "complete": true,
+              "changedFile": "src/promise.cjs",
+              "beforeSha256": "1bcef4c606ce23b0a7334bb7e01bec64266b7947c0a9c6acd715d94865c3a25d",
+              "afterSha256": "748c681ba64081193dc5fbb27f8b3539c09ba08f4e31ec6d588e2ae8c39234a8",
+              "authority": "fixture-source-edit-only",
+              "deploymentSafety": "not-established"
+            },
+            "respondedAt": 1791354525157
+          }
+        ],
+        "rejectedAdditionalCalls": 0
+      },
+      "nativeReference": {
+        "baseline": {
+          "passed": 8
+        },
+        "historicalParent": {
+          "passed": 6,
+          "failed": 2
+        },
+        "repaired": {
+          "passed": 8
+        },
+        "complete": true
+      },
+      "protectedFilesBefore": [
+        {
+          "file": ".gitignore",
+          "sha256": "7fb44527b443495e92c61dccfc6b3adf4400dae72a66af52820f7a7b0827527c"
+        },
+        {
+          "file": "LICENSE.maintainer",
+          "sha256": "44191656d296391e0ec97e32f5385f0d02b6f2992694082d22ea04ba0f66f9e4"
+        },
+        {
+          "file": "maintainer-provenance.json",
+          "sha256": "8ab9f487ecbe4010fe566139f3576b2fbef26d1bf83c0636c1ee29cb6191ac95"
+        },
+        {
+          "file": "package.json",
+          "sha256": "6dc1b06d6b093e9cccb20bee06a93836eee0420ae26803ca2ce4065d82f070d1"
+        },
+        {
+          "file": "provenance/original-test.txt",
+          "sha256": "0fce78dda44690c59ba7b397dea9683242d5ce7a1cf7c260a1d92cc4a4dd2b34"
+        },
+        {
+          "file": "README.maintainer.md",
+          "sha256": "2831cabb33577b1054b575c0b7cca7b4f446510d59cab316414122e43234410f"
+        },
+        {
+          "file": "src/promise.cjs",
+          "sha256": "1bcef4c606ce23b0a7334bb7e01bec64266b7947c0a9c6acd715d94865c3a25d"
+        },
+        {
+          "file": "tddswarm.config.json",
+          "sha256": "264ed92591c4d523a65deed35fe9bd66b1b6e70a3843486e147c9dbf3b4e649a"
+        },
+        {
+          "file": "tddswarm.requirements.md",
+          "sha256": "6ee03bf4c17087f30e96e5880d3dcf5b57c2a75a37b5fbf10d1a2e9040722515"
+        },
+        {
+          "file": "test/promise.test.cjs",
+          "sha256": "16c34847cebbc85ed84ed991a7608da6b0bd2697514f3a5003e58e7973108dbf"
+        }
+      ],
+      "protectedFilesAfter": [
+        {
+          "file": ".gitignore",
+          "sha256": "7fb44527b443495e92c61dccfc6b3adf4400dae72a66af52820f7a7b0827527c"
+        },
+        {
+          "file": "LICENSE.maintainer",
+          "sha256": "44191656d296391e0ec97e32f5385f0d02b6f2992694082d22ea04ba0f66f9e4"
+        },
+        {
+          "file": "maintainer-provenance.json",
+          "sha256": "8ab9f487ecbe4010fe566139f3576b2fbef26d1bf83c0636c1ee29cb6191ac95"
+        },
+        {
+          "file": "package.json",
+          "sha256": "6dc1b06d6b093e9cccb20bee06a93836eee0420ae26803ca2ce4065d82f070d1"
+        },
+        {
+          "file": "provenance/original-test.txt",
+          "sha256": "0fce78dda44690c59ba7b397dea9683242d5ce7a1cf7c260a1d92cc4a4dd2b34"
+        },
+        {
+          "file": "README.maintainer.md",
+          "sha256": "2831cabb33577b1054b575c0b7cca7b4f446510d59cab316414122e43234410f"
+        },
+        {
+          "file": "src/promise.cjs",
+          "sha256": "748c681ba64081193dc5fbb27f8b3539c09ba08f4e31ec6d588e2ae8c39234a8"
+        },
+        {
+          "file": "tddswarm.config.json",
+          "sha256": "264ed92591c4d523a65deed35fe9bd66b1b6e70a3843486e147c9dbf3b4e649a"
+        },
+        {
+          "file": "tddswarm.requirements.md",
+          "sha256": "6ee03bf4c17087f30e96e5880d3dcf5b57c2a75a37b5fbf10d1a2e9040722515"
+        },
+        {
+          "file": "test/promise.test.cjs",
+          "sha256": "16c34847cebbc85ed84ed991a7608da6b0bd2697514f3a5003e58e7973108dbf"
+        }
+      ],
+      "identity": {
+        "sha256": "61b0194f3bb6534439c8d26a3ed57d0805f84b884588b761795323eeb92fcf70",
+        "bytes": 8790
+      }
+    },
+    {
+      "host": "claude",
+      "qualified": false,
+      "status": "not-started",
+      "reasons": [
+        "explicit-host-executable-not-supplied",
+        "local-native-authentication-not-established"
+      ]
+    }
+  ],
+  "nativeUsage": {
+    "reported": {
+      "input_tokens": 224419,
+      "cached_input_tokens": 194560,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 458,
+      "reasoning_output_tokens": 0
+    },
+    "externallyAttested": false,
+    "providerModel": null,
+    "billingUSD": null,
+    "nativeEventsSHA256": "cbdcfcfc5f88efce3c2cb7ce5af534c91efa138327a3a138f771e7a055345348"
+  },
+  "limitations": [
+    "One genuine historical null/undefined boolean predicate defect, with eight unchanged maintainer assertion bodies on a Node import shim. No general application repair, upstream Mocha environment, or deployment safety claim.",
+    "Prompt supplies the historical source and explicit boolean guard repair; this is workflow qualification, not independent bug solving. Original maintainer assertion bodies use declared Node imports, not an original complete Mocha installation.",
+    "Source/harness/host identities and all ten fixture files were checked before and after. Native observer and independent runs establish this local scope, not a security sandbox or deployment safety.",
+    "Claude has no authenticated native qualification. A successful Codex result does not make the two-host aggregate complete."
+  ]
+}
