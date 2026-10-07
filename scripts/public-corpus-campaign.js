@@ -79,7 +79,10 @@ async function worker(phase,input){
  if(phase==='clone'){
   // Fetch only the supplied immutable revision and its first parent, without authentication.
   fs.mkdirSync(checkout);git(checkout,'init');git(checkout,'remote','add','origin',candidate.repository);
-  git(checkout,'fetch','--depth=2','--filter=blob:none','origin',candidate.fixRevision);git(checkout,'checkout','--detach',candidate.fixRevision);
+  // Keep both shallow commits self-contained: local upload-pack cannot lazily
+  // retrieve unrelated promised parent blobs from a filtered checkout.
+  // The outer clone phase still enforces its fixed time/growth/reserve bounds.
+  git(checkout,'fetch','--depth=2','origin',candidate.fixRevision);git(checkout,'checkout','--detach',candidate.fixRevision);
   if(git(checkout,'rev-parse','HEAD')!==candidate.fixRevision||git(checkout,'rev-parse','HEAD^')!==candidate.parentRevision||git(checkout,'status','--porcelain'))throw Error('Fresh checkout identity mismatch');
   // Original installer materializes the bounded fixed/oracle/parent blobs before local cloning.
   result={completed:true,fixRevision:candidate.fixRevision,parentRevision:candidate.parentRevision};
