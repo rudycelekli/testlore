@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "kind": "reviewed-original-upstream-campaign-profile",
+  "reviewed": true,
+  "candidateId": "unjs-ufo-5cd9e676711a",
+  "selectionCommitmentSha256": "065b79f7f345a971e76b0a2d1bdc4f4ab34c9c3b254837b693dee552b71af65a",
+  "fixRevision": "5cd9e676711af3f4e4b5398ddf6ca8d52c1c7e1f",
+  "parentRevision": "a7b94e69ff6159de8ddfd4940c90db4708c0d67e",
+  "packageManager": "pnpm@10.33.2",
+  "dependencySha256": {
+    "package.json": "debcfaff13fd3173d8b901556af133749d9149b6c8ef82ad2ad013b1a90a609e",
+    "pnpm-lock.yaml": "330cbc5239289059a81a6e514c847207450c590e7f3e9ac29847657f5dd7f9b6"
+  },
+  "installedVitest": "4.1.5",
+  "executionMode": "unified-native",
+  "scope": "Original runtime units and full frozen dev dependencies; excludes lint/types/build/coverage. Native result/JITI and TestLore disk caches disabled equally; OS/package caches uncontrolled."
+}

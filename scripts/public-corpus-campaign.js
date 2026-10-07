@@ -17,7 +17,7 @@ const controller=fileURLToPath(import.meta.url),repository=fileURLToPath(new URL
 export const campaignSelection='065b79f7f345a971e76b0a2d1bdc4f4ab34c9c3b254837b693dee552b71af65a';
 const frozen=value=>{for(const child of Object.values(value))if(child&&typeof child==='object')frozen(child);return Object.freeze(value);};
 export const campaignLimits=frozen({maxCampaignMs:480000,minFreeBytes:2*1024**3,maxLogBytes:2*1024**2,phases:{clone:{timeoutMs:60000,maxGrowthBytes:128*1024**2},install:{timeoutMs:180000,maxGrowthBytes:450*1024**2},preflight:{timeoutMs:90000,maxGrowthBytes:64*1024**2},prepare:{timeoutMs:30000,maxGrowthBytes:16*1024**2},run:{timeoutMs:120000,maxGrowthBytes:128*1024**2}}});
-const ids=new Set(['unjs-unctx-1bb220dccf40','unjs-mlly-abef19c940da']);
+const ids=new Set(['unjs-unctx-1bb220dccf40','unjs-mlly-abef19c940da','unjs-ufo-5cd9e676711a']);
 const save=(file,value)=>fs.writeFileSync(file,JSON.stringify(value,null,2)+'\n',{flag:'wx',mode:0o600});
 const git=(root,...args)=>execFileSync('git',['-C',root,...args],{encoding:'utf8',timeout:15000,maxBuffer:2*1024**2}).trim();
 const freeBytes=root=>{const s=fs.statfsSync(root);return s.bavail*s.bsize;};
@@ -25,7 +25,8 @@ const keys=(object,expected)=>object&&JSON.stringify(Object.keys(object).sort())
 
 export function validatePortableProfile(selection,profile){
  validateCandidates(selection);
- if(selection.commitmentSha256!==campaignSelection||!keys(profile,['schemaVersion','kind','reviewed','candidateId','selectionCommitmentSha256','fixRevision','parentRevision','packageManager','dependencySha256','installedVitest','scope'])||profile.schemaVersion!==1||profile.kind!=='reviewed-original-upstream-campaign-profile'||profile.reviewed!==true||!ids.has(profile.candidateId)||profile.selectionCommitmentSha256!==campaignSelection||typeof profile.scope!=='string'||!profile.scope||profile.scope.length>500)throw Error('Require a closed reviewed portable profile and original frozen selection');
+ if(selection.commitmentSha256!==campaignSelection||!keys(profile,['schemaVersion','kind','reviewed','candidateId','selectionCommitmentSha256','fixRevision','parentRevision','packageManager','dependencySha256','installedVitest','executionMode','scope'])||profile.schemaVersion!==1||profile.kind!=='reviewed-original-upstream-campaign-profile'||profile.reviewed!==true||!ids.has(profile.candidateId)||profile.selectionCommitmentSha256!==campaignSelection||typeof profile.scope!=='string'||!profile.scope.trim()||profile.scope.length>200)throw Error('Require a closed reviewed portable profile and original frozen selection');
+ if(profile.executionMode!==(profile.candidateId==='unjs-ufo-5cd9e676711a'?'unified-native':'legacy'))throw Error('Portable execution mode differs from reviewed candidate');
  const candidate=selection.candidates.find(c=>c.id===profile.candidateId);
  if(!candidate||candidate.fixRevision!==profile.fixRevision||candidate.parentRevision!==profile.parentRevision||candidate.runtimeIdentity?.packageManager!==profile.packageManager||candidate.sourcePaths.length!==1||!candidate.maintainerOraclePaths.length||!keys(profile.dependencySha256,['package.json','pnpm-lock.yaml'])||!/^\d+\.\d+\.\d+$/.test(profile.installedVitest))throw Error('Portable candidate commit, manager or native profile mismatch');
  for(const file of ['package.json','pnpm-lock.yaml'])if(candidate.byteBindings.find(b=>b.kind==='dependency'&&b.path===file)?.sha256!==profile.dependencySha256[file])throw Error('Portable original manifest/lock mismatch');
@@ -70,7 +71,7 @@ function runtimeProfile(plan,installation){
  const project=path.join(plan.directory,'installation/project');
  const framework=readBoundedJson(path.join(project,'node_modules/vitest/package.json'),128*1024);
  if(framework.version!==plan.profile.installedVitest)throw Error('Installed original Vitest version differs from reviewed portable profile');
- return {reviewed:true,candidateId:plan.candidateId,root:project,scope:plan.profile.scope,config:{adapter:'vitest',discovery:'native',runner:[process.execPath,path.join(project,'node_modules/vitest/vitest.mjs'),'run','--maxWorkers=1','--cache=false','{files}'],analysisCache:{enabled:false}},executionMode:'legacy',expectedFailureNames:['__preflight_pending__'],upstreamInstallation:{receiptPath:path.join(plan.directory,'installation/receipt.json'),expectedSha256:fileIdentity(path.join(plan.directory,'installation/receipt.json')).sha256},cachePolicy:{jitiFilesystem:false}};
+ return {reviewed:true,candidateId:plan.candidateId,root:project,scope:plan.profile.scope,config:{adapter:'vitest',discovery:'native',runner:[process.execPath,path.join(project,'node_modules/vitest/vitest.mjs'),'run','--maxWorkers=1','--cache=false','{files}'],analysisCache:{enabled:false}},executionMode:plan.profile.executionMode,expectedFailureNames:['__preflight_pending__'],upstreamInstallation:{receiptPath:path.join(plan.directory,'installation/receipt.json'),expectedSha256:fileIdentity(path.join(plan.directory,'installation/receipt.json')).sha256},cachePolicy:{jitiFilesystem:false}};
 }
 
 async function worker(phase,input){
