@@ -140,6 +140,9 @@ export function recallLessons(root, query, options = {}) {
     const limit = options.limit ?? 5, maxChars = options.maxChars ?? 6000;
     if (options.contract !== undefined && (typeof options.contract !== 'string' || options.contract.length > 16000)) throw new Error('Learning contract must be bounded text');
     const generic = new Set(['boundary','error','independent','assertion','requirements','requirement','must','should','returns','return','invalid','value','values','input','inputs','test','tests','number','numbers','string','strings','function','true','false','with','when','that','this','only','zero','one','two','empty','throws','throw','negative','positive','integer','integers','finite','equal','equals','reject','rejects','deterministic']);
+    // README code fences and relocated module paths are transport context, not
+    // evidence that a historical behavior applies to the current API contract.
+    for (const token of ['javascript','typescript','js','ts','jsx','tsx','cjs','mjs','src']) generic.add(token);
     const contractTokens = options.contract === undefined ? null : tokens(options.contract).filter(token => !generic.has(token));
     if (!Number.isInteger(limit) || limit < 1 || limit > 20 || !Number.isInteger(maxChars) || maxChars < 256 || maxChars > 20000) throw new Error('Invalid learning retrieval budget');
     const entries = store(root).records, current = snapshot(root, config), requested = tokens(query), now = Date.now();
@@ -181,7 +184,7 @@ export function recallLessons(root, query, options = {}) {
     }
     const results = output.records; let remaining = maxChars - JSON.stringify(output).length - limit;
     for (const item of ranked.slice(0, limit)) {
-      const value = { id: item.record.id, outcome: item.record.outcome, framework: item.record.framework, tags: item.record.tags, warnings: item.record.warnings, context: item.record.context, evidence: item.record.evidence, historical: true, sourceCompatible: item.compatibility.fresh, compatibilityReasons: item.compatibility.reasons.map(reason => reason.split(':')[0]), ageDays: item.ageDays, score: item.score, patterns: item.record.patterns, advisoryOnly: true };
+      const value = { id: item.record.id, outcome: item.record.outcome, framework: item.record.framework, tags: item.record.tags, warnings: item.record.warnings, context: item.record.context, evidence: item.record.evidence, historical: true, sourceCompatible: item.compatibility.fresh, compatibilityReasons: item.compatibility.reasons.map(reason => reason.split(':')[0]), ageDays: item.ageDays, score: item.score, ...(contractTokens===null?{}:{contractMatches:item.contractMatched}), patterns: item.record.patterns, advisoryOnly: true };
       if (JSON.stringify(value).length > remaining) value.patterns = [];
       const length = JSON.stringify(value).length;
       if (length > remaining) break;

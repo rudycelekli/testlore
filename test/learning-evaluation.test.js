@@ -20,6 +20,16 @@ test('ties and fixture-only workers never establish a learning gain; repetitions
   for (const f of fixtures) for (let repetition=0;repetition<3;repetition++) for (const arm of ['with_memory','without_memory']) trials.push({fixture:f.id,repetition,arm,recall:1,cases:4,generationMs:10,outputBytes:100});
   const result = summarizeEvaluation(trials,fixtures,3); assert.equal(result.inference,'inconclusive'); assert.equal(result.exactTwoSidedSignTest.p,1); assert.equal(result.independentSpecificationUnits.length,2); assert.equal(result.pairs.length,6);
 });
+test('retrieval matches do not claim semantic applicability and missing memory trials cannot qualify', () => {
+  const fixtures = [{id:'one'}];
+  const rows = ['without_memory','with_memory'].map(arm => ({fixture:'one',repetition:0,arm,recall:1,cases:4,generationMs:10,outputBytes:100,recalledRecords:arm==='with_memory'?1:0}));
+  const result = summarizeEvaluation(rows,fixtures,1);
+  assert.equal(result.retrievalMatchedMemoryInAllTrials,true);
+  assert.equal(result.semanticMemoryApplicability,'unverified');
+  assert.equal(Object.hasOwn(result,'applicableMemoryInAllTrials'),false);
+  assert.equal(summarizeEvaluation(rows.slice(0,1),fixtures,1).retrievalMatchedMemoryInAllTrials,false);
+  assert.equal(summarizeEvaluation(rows.map(row=>({...row,recalledRecords:undefined})),fixtures,1).retrievalMatchedMemoryInAllTrials,false);
+});
 test('paired controller executes withheld defects, retains raw outputs, and never exposes labels to workers', async t => {
   const root = temporary(t), worker = path.join(root,'worker.cjs');
   fs.writeFileSync(worker, `const fs=require('node:fs');let input='';process.stdin.on('data',s=>input+=s);process.stdin.on('end',()=>{const p=JSON.parse(input);if(input.includes('referenceTests')||input.includes('trim-omitted')||input.includes('type-collapse')||fs.existsSync('test'))throw Error('Leaked holdout or preinstalled tests');const subject=p.context[0].file;const name=subject.split('/').pop().split('.')[0];let r;if(p.role==='architect')r={tasks:[{subject,instructions:p.requirements}]};if(p.role==='author'){const body=name==='normalize'?"assert.equal(normalize(' X '),'x');assert.equal(normalize(' A  B '),'a  b');assert.throws(()=>normalize(2),TypeError);":"assert.deepEqual(unique([3,1,3,'1',1]),[3,1,'1']);assert.deepEqual(unique([]),[]);assert.throws(()=>unique(null),TypeError);";r={files:[{path:'test/generated.test.js',content:"import test from 'node:test';import assert from 'node:assert/strict';import {"+name+"} from '../"+subject+"';test('contract',()=>{"+body+"});"}]};}if(p.role==='reviewer')r={accepted:true,findings:[],oracle:{independent:true,basis:[p.requirements]}};process.stdout.write(JSON.stringify(r));});`);
@@ -41,7 +51,7 @@ test('paired controller executes withheld defects, retains raw outputs, and neve
   const warm = JSON.parse(fs.readFileSync(path.join(output,'trial-normalize-0-with_memory.json'))); const cold = JSON.parse(fs.readFileSync(path.join(output,'trial-normalize-0-without_memory.json')));
   assert.equal(summary.datasetCommitment.verified,true);assert.equal(summary.learningPromotion.enabled,false);assert.equal(fs.existsSync(path.join(output,'dataset-commitment.json')),true);
   for(const row of [warm,cold])for(const call of row.calls){const input=JSON.stringify(call.input);assert.ok(!input.includes(commitment.datasetHash));assert.ok(!input.includes('referenceTests'));assert.ok(!input.includes('trim-omitted'));assert.ok(!input.includes('independenceNotes'));}
-  assert.equal(warm.recalledRecords,0); assert.equal(warm.noApplicableMemory,true); assert.equal(summary.comparison.applicableMemoryInAllTrials,false); assert.equal(cold.recalledRecords,0); assert.equal(warm.calls.length,3); assert.equal(warm.calls[2].input.learning,undefined); assert.equal(warm.defects[0].detected,true); assert.equal(warm.defects[0].result.tests.some(t => t.status==='failed' && t.name!=='<file-load>'),true);
+  assert.equal(warm.recalledRecords,0); assert.equal(warm.noApplicableMemory,true); assert.equal(summary.comparison.retrievalMatchedMemoryInAllTrials,false); assert.equal(cold.recalledRecords,0); assert.equal(warm.calls.length,3); assert.equal(warm.calls[2].input.learning,undefined); assert.equal(warm.defects[0].detected,true); assert.equal(warm.defects[0].result.tests.some(t => t.status==='failed' && t.name!=='<file-load>'),true);
   assert.equal(warm.baselines.length,2);assert.equal(warm.defects[0].executions.length,2);assert.equal(warm.defects[0].stable,true);assert.equal(warm.billing.amount,null);assert.ok(warm.inputBytes>0);assert.equal(summary.arms.every(a=>a.stableTrials===2&&a.billingUSD===null),true);
   assert.equal(warm.accountingVersion,2);assert.equal(warm.byteAccounting.transportBudgetBytes,'excluded');assert.ok(warm.setupMs>=0&&warm.retrievalMs>=0);assert.ok(warm.totalMs>=warm.setupMs+warm.retrievalMs-1);
   assert.equal(warm.inputBytes,warm.calls.reduce((bytes,call)=>bytes+Buffer.byteLength(JSON.stringify(call.input)),0));assert.equal(warm.outputBytes,warm.calls.reduce((bytes,call)=>bytes+Buffer.byteLength(JSON.stringify(call.output)),0));

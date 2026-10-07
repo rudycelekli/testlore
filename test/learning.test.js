@@ -205,3 +205,17 @@ test('contract filtering excludes generic unrelated patterns but retains relevan
  const result=recallLessons(root,'ledger boundary',{contract:'Ledger amounts retain the independent ledger boundary contract.'});assert.equal(result.records.length,1);assert.equal(result.contractFiltered,true);assert.equal(result.advisoryOnly,true);
  assert.equal(recallLessons(root,'ledger',{contract:'Ledger amounts',config:{adapter:'vitest'}}).records.length,0);
 });
+
+test('README language fences and source paths cannot make unrelated historical code applicable',t=>{
+ const root=rootFor(t),{manifest,validation}=proof(root,{content:good.replace('zero boundary','ledger boundary')});
+ assert.equal(validation.accepted,true);assert.equal(rememberValidation(root,manifest,validation).remembered,true);
+ for(const contract of [
+  'Convert time units to milliseconds. Import the CommonJS export at src/milliseconds.cjs.\n```javascript\nms(100)\n```',
+  'Normalize accented text. Use Node tests for src/normalize.js.\n```js\nnormalize("text")\n```',
+  'Detect stream capabilities in src/stream.mjs.\n```typescript\nstream.writable\n```'
+ ])assert.equal(recallLessons(root,contract.slice(0,4096),{contract}).records.length,0);
+ const relevant=recallLessons(root,'ledger values JavaScript',{contract:'The ledger retains its ledger entries.\n```javascript\nledger()\n```'});
+ assert.equal(relevant.records.length,1);assert.deepEqual(relevant.records[0].contractMatches,['ledger']);assert.equal(relevant.records[0].advisoryOnly,true);
+ // Generic search remains available when no behavioral contract was supplied.
+ assert.equal(recallLessons(root,'javascript').records.length,1);
+});
