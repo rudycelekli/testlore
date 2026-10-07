@@ -20,11 +20,12 @@ export function upstreamInputs(selection,id,root){
 }
 /** Hash regular installed bytes and link identities without following links or excluding package files. */
 export function installedTreeIdentity(root,{maxFiles=100000,maxBytes=512*1024*1024,maxMs=30000}={}){
- root=fs.realpathSync(root);const rows=[];let bytes=0;const started=performance.now();
+ if(fs.lstatSync(root).isSymbolicLink()||!fs.lstatSync(root).isDirectory())throw Error('Installed dependency root must be a real project-local directory');root=fs.realpathSync(root);const rows=[];let bytes=0;const started=performance.now();
  function walk(dir){for(const name of fs.readdirSync(dir).sort()){if(performance.now()-started>maxMs)throw Error('Installed inventory hashing deadline');const filename=path.join(dir,name),relative=path.relative(root,filename),stat=fs.lstatSync(filename);if(stat.isSymbolicLink()){const target=fs.readlinkSync(filename),resolved=path.resolve(path.dirname(filename),target);if(resolved!==root&&!resolved.startsWith(root+path.sep))throw Error('Installed dependency link escapes private installation');rows.push([relative,'link',target]);}else if(stat.isDirectory())walk(filename);else if(stat.isFile()){if(stat.nlink!==1)throw Error('Installed dependency hardlink is mutable outside observed tree');bytes+=stat.size;if(bytes>maxBytes)throw Error('Installed bytes exceed hashing budget');rows.push([relative,'file',stat.mode&0o777,stat.size,digest(fs.readFileSync(filename))]);}else throw Error('Unsupported installed dependency entry');if(rows.length>maxFiles)throw Error('Installed inventory exceeds file budget');}}
  walk(root);if(!rows.length)throw Error('Installed dependency inventory is empty');return {sha256:digest(rows),files:rows.length,bytes};
 }
 export async function boundedInstallProcess(command,args,{cwd,directory,timeoutMs=180000,reserveBytes=1024**3,maxGrowthBytes=450*1024**2,maxLogBytes=2*1024**2,env=process.env}={}){
+ if(process.platform==='win32')throw Error('Installation process-group deadlines unsupported on Windows');
  const free=()=>{const s=fs.statfsSync(directory);return s.bavail*s.bsize;};const initial=free();if(initial<reserveBytes)throw Error('Installation disk reserve unavailable');const stdoutFile=path.join(directory,'stdout.log'),stderrFile=path.join(directory,'stderr.log'),out=fs.openSync(stdoutFile,'wx',0o600),err=fs.openSync(stderrFile,'wx',0o600);const start=performance.now();let reason=null;
  const child=spawn(command,args,{cwd,env,stdio:['ignore',out,err],detached:true});fs.closeSync(out);fs.closeSync(err);
  const stop=why=>{if(reason)return;reason=why;try{process.kill(-child.pid,'SIGTERM');}catch{}setTimeout(()=>{try{process.kill(-child.pid,'SIGKILL');}catch{}},250).unref();};
