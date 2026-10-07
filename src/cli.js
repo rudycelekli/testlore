@@ -14,12 +14,14 @@ import { captureBrowserEvidence, proposeBrowserMappings, proposeBrowserInstrumen
 import { pilot, exportPilot } from './pilot.js';
 import {verificationBrief} from './agent-contract.js';
 import {qualifyRoutingMappings} from './mapping-qualification.js';
+import {adoptionReadiness} from './adoption-readiness.js';
 
 const help = `TestLore — know why each test runs.
 
 Usage: testlore <command> [options]
 
   setup       Configure a quality agent, native runner and shadow CI in one command
+  doctor      Inspect setup prerequisites and next actions without project execution
   brief       Give agents a bounded verification contract without running project code
   mcp         Serve project quality tools over MCP stdio (inspection only by default)
   report      Explain the last execution and every proposed omission
@@ -144,6 +146,7 @@ function init(root) {
   return { config: file, created, report, next: report.testFiles ? ['tddswarm plan --base HEAD', 'tddswarm run --shadow'] : ['tddswarm generate', 'Add tddswarm.requirements.md and configure an agent for generation.'] };
 }
 function human(command, result) {
+  if (command === 'doctor') return `${result.state}\n${result.checks.map(row => `${row.id}: ${row.status} — ${row.reason}`).join('\n')}\nNext: ${result.nextAction}\nStatic prerequisites only; native execution and routing remain unqualified.`;
   if ((command === 'plan' || command === 'run') && (result.delegated || result.targets !== undefined || result.plan?.targets !== undefined)) {
     const selection = result.plan || result;
     return `${result.adapter || selection.adapter} · ${selection.mode || 'native'} · ${Array.isArray(selection.targets) ? selection.targets.length + ' native targets' : 'selection delegated to native execution'}\n${result.error || (command === 'run' ? `Runner exited ${result.exitCode}; evidence ${result.complete ? 'complete' : 'incomplete'}.` : selection.reasons?.join(', ') || 'Native graph discovery.')}\nNative scope is preserved; no individual-case comparison is implied.`;
@@ -194,10 +197,14 @@ export async function main(args = process.argv.slice(2)) {
     case 'outcome': result = reviewEvidence(root, {id: options.id, claim: options.claim, verdict: options.verdict, reviewer: options.reviewer, trustedKey: path.resolve(root, options['trusted-key']), checkpoint: options.checkpoint && path.resolve(root, options.checkpoint)}); break;
     case 'outcome-lessons': result = recallOutcomeLessons(root, {query: options.query, trustedKey: path.resolve(root, options['trusted-key']), checkpoint: options.checkpoint && path.resolve(root, options.checkpoint)}); break;
     case 'brief': result = verificationBrief(root, {task: options.query || '', changed: options.changed || []}); break;
+    case 'doctor': {
+      if(Object.keys(options).some(key=>!['root','json'].includes(key)))throw new Error('doctor accepts only --root and --json; it never invokes project commands');
+      result=adoptionReadiness(root);break;
+    }
     case 'setup': {
       const written=installQualityLayer(root,{ci:!options['no-ci'],actionRef:options['action-ref']});
       const agent=ensureQualityAgent(root,{name:options.name});
-      result={written,agent,executionMode:readConfig(root).executionMode||'existing-policy',plugins:recommendPlugins(root),next:['testlore run --base HEAD --json','testlore report','testlore mappings --json']};break;
+      result={written,agent,executionMode:readConfig(root).executionMode||'existing-policy',readiness:adoptionReadiness(root),plugins:recommendPlugins(root),next:['testlore doctor --json','testlore run --shadow --base HEAD --json','testlore report','testlore mappings --json']};break;
     }
     case 'report': result=JSON.parse(fs.readFileSync(safePath(root,options.report||'.tddswarm/last-run.json'),'utf8'));if(!options.json){console.log(renderRunReport(result));return result.exitCode||0;}break;
     case 'mappings': result=routingProposals(root);break;
@@ -306,6 +313,7 @@ export async function main(args = process.argv.slice(2)) {
   if(command==='challenge')return result.supported ? 0 : 1;
   if(command==='improve')return result.status==='ready-for-review'&&(options.local||result.published)?0:2;
   if(command==='plugins' && options.check)return result.exitCode || 0;
+  if(command==='doctor')return result.blocked.length?1:0;
   if(command==='pilot' && result.executed)return result.valid?0:1;
   if(['plan','run','external-run','external-plan','aqe'].includes(command))return result.exitCode||0;
   if(command==='validate')return result.accepted?0:1;

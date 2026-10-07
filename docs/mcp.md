@@ -27,6 +27,8 @@ Configure your agent's MCP host with `command: "npx"` and `args: ["--yes", "gith
 
 Both tools advertise `readOnlyHint: true`. The brief is advisory. Neither a historical passing receipt nor static inventory establishes current test completeness, mutation strength, learning improvement or deployment safety. Untrusted repository text is source material for the agent to assess.
 
+The brief's `adoption` object identifies configuration, shadow-policy and native SDK prerequisites with bounded actionable checks. It never runs configured commands or reveals environment values. `ready-for-shadow-attempt` is a prerequisite status, not successful verification. The CLI exposes the same inspection with `testlore doctor --json`.
+
 The root is resolved to its real path once at startup. Tool calls cannot change the root, execution permission, configured commands, API keys or runner flags. A replaced root is rejected. Inputs are strict and bounded: unknown keys fail validation; task text is at most 2,000 characters and diagnostic changed paths are at most 1,000 entries of 1,000 characters each.
 
 ## Explicitly permit configured execution

@@ -3,6 +3,7 @@ import path from 'node:path';
 import {createHash} from 'node:crypto';
 import {safePath, TEST} from './files.js';
 import {inspectTest} from './audit.js';
+import {adoptionReadiness} from './adoption-readiness.js';
 
 const hash = bytes => createHash('sha256').update(bytes).digest('hex');
 const excluded = new Set(['.git', 'node_modules', '.tddswarm', '.firecrawl', 'coverage', 'dist', 'build', '.next']);
@@ -76,7 +77,7 @@ export function verificationBrief(root, {task = '', changed = []} = {}) {
   if (totals.exclusive || totals.skipped) risks.push('disabled-or-exclusive-static-test-signals');
   const brief = {schemaVersion: 1, kind: 'agent-verification-brief', authority: 'advisory', task, changed,
     execution: {projectCommandsInvoked: false, configuredMode: ['shadow', 'selective'].includes(config.executionMode) ? config.executionMode : 'unspecified', recommendedMode: 'shadow', nativeAdapter: typeof config.adapter === 'string' ? config.adapter.slice(0, 80) : 'unspecified', backend: typeof config.integration?.type === 'string' ? config.integration.type.slice(0, 80) : null},
-    independentContract,
+    independentContract, adoption: adoptionReadiness(root),
     inventory: {method: 'bounded-static-conventions', nativeScopeEstablished: false, completeWithinStaticScope: observed.complete && uninspected === 0 && !observed.warnings.length,
       observedTestFiles: testFiles.length, inspectedTestFiles: files.length, files: files.slice(0, 100), truncated: files.length > 100 || uninspected > 0 || !observed.complete, uninspectedTestFiles: uninspected},
     triage: {label: 'Static signals only; assertion counts do not measure bugs caught.', totals}, risks,

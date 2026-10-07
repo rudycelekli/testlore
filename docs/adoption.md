@@ -39,4 +39,12 @@ npm exec --yes --package=github:rudycelekli/testlore -- testlore setup
 
 This creates a named project quality-agent profile, native runner configuration with local analysis caching and shadow execution, and a shadow/full GitHub workflow. It preserves existing configuration/workflows and makes no agent calls or optional SDK downloads. Inspect and commit those files before running `improve`. A local TestLore dev dependency is required for the optional `testlore/playwright` fixture; temporary npm execution cannot supply a persistent project import.
 
+Inspect prerequisites before starting execution:
+
+```sh
+npx --no-install testlore doctor --json
+```
+
+`doctor` parses bounded configuration and installed native SDK metadata without importing SDK code, running discovery, probing services, downloading dependencies or changing files. Exit 1 means prerequisites are blocked; exit 0 means a shadow attempt can begin, not that tests passed or omissions are qualified. Each check gives a concrete next action. Existing selective policies are preserved and flagged for review. `setup` returns this diagnostic, and the default agent brief includes the same facts.
+
 The registry shorthand `npm exec --yes --package=testlore -- testlore setup` becomes valid only after a verified npm publication. Until then use the GitHub package and pin a reviewed commit for repeatability. The exact-artifact publisher workflow exists; npm ownership/bootstrap and trusted-publisher access remain maintainer operations.

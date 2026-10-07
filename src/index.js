@@ -24,3 +24,4 @@ export {measureMutation,measureTestEffectiveness} from './quality-measurement.js
 export {verificationBrief,inspectVerificationStatus} from './agent-contract.js';
 export {initializeWitness,observeQuality,inspectEvidenceLoop,challengeEvidence,reviewEvidence,recallOutcomeLessons} from './evidence-loop.js';
 export {qualifyRoutingMappings} from './mapping-qualification.js';
+export {adoptionReadiness} from './adoption-readiness.js';
