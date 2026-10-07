@@ -1,5 +1,7 @@
 # Bounded native generation qualification
 
+Native failures now return fixed diagnostic codes and next actions. Documented native `error` items are classified as rejected host-error observations, including coarse authentication, usage, context-limit and connectivity categories when present. Even a nonfatal error followed by a final response remains rejected under this qualification policy. Unsupported item kinds retain rejection and a type hash; provider error text, source and credentials are never copied into the diagnostic. This improves diagnosis without accepting tools, unknown items or late completions. Historical `ITEM_UNKNOWN` outcomes retain their original codes; a later diagnostic cannot retrospectively identify or qualify them.
+
 `scripts/codex-worker-proof.js` is an explicit, local native exercise. Importing it and running the ordinary test suite never invokes a model. It requires clean committed source, an installed Codex CLI and an existing CLI-reported ChatGPT login; it does not install tools, initiate login, alter permissions or fall back to API credentials.
 
 ```sh

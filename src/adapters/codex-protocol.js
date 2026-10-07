@@ -1,9 +1,27 @@
 import { isDeepStrictEqual } from 'node:util';
+import {createHash} from 'node:crypto';
 
 export class CodexWorkerError extends Error {
-  constructor(code, message) { super(message); this.name = 'CodexWorkerError'; this.code = code; }
+  constructor(code, message,diagnostics={}) { super(message); this.name = 'CodexWorkerError'; this.code = code; this.diagnostics=diagnostics; }
 }
-export const failure = (code, message) => new CodexWorkerError(code, message);
+export const failure = (code, message,diagnostics) => new CodexWorkerError(code, message,diagnostics);
+const nativeReasons=new Set(['authentication','usage-limit','context-limit','connectivity','unclassified']);
+function nativeErrorReason(value){
+ const message=typeof value==='string'?value.slice(0,2048):'';
+ if(/unauthorized|authentication|not logged|\b401\b|invalid.{0,20}(?:token|key)/i.test(message))return 'authentication';
+ if(/rate.limit|quota|usage.limit|too many requests|\b429\b/i.test(message))return 'usage-limit';
+ if(/context.window|maximum context|context_length/i.test(message))return 'context-limit';
+ if(/reconnect|connection|network|timed out|stream.{0,20}disconnect|transport/i.test(message))return 'connectivity';
+ return 'unclassified';
+}
+/** Fixed diagnostics only: never copy provider messages, prompts or credentials. */
+export function describeWorkerFailure(error){
+ const code=typeof error?.code==='string'&&/^[A-Z][A-Z_]{0,47}$/.test(error.code)?error.code:'INPUT_INVALID';
+ const nativeFailureReason=nativeReasons.has(error?.diagnostics?.nativeFailureReason)?error.diagnostics.nativeFailureReason:null;
+ const hash=error?.diagnostics?.nativeItemTypeSha256;
+ return {code,nativeFailureReason,nativeItemTypeSha256:typeof hash==='string'&&/^[a-f0-9]{64}$/.test(hash)?hash:null,
+  nextAction:nativeFailureReason==='authentication'?'Repair the existing native CLI login before a new bounded attempt.':nativeFailureReason==='usage-limit'?'Check native account usage and reset availability before a new bounded attempt.':nativeFailureReason==='connectivity'?'Check native CLI connectivity before a new bounded attempt.':nativeFailureReason==='context-limit'?'Review request size against native context limits; preserve this rejected attempt.':code.startsWith('INPUT_')?'Repair the supplied worker request before another bounded attempt.':code==='ITEM_UNKNOWN'?'Inspect the native CLI protocol version; unsupported items cannot establish a qualified result.':code==='TOOL_ATTEMPT'?'Reject this generation output; supplied-source-only workers must not attempt tools.':'Inspect the retained failure and native CLI prerequisites before another bounded attempt.'};
+}
 const record = value => value !== null && typeof value === 'object' && !Array.isArray(value);
 const text = value => typeof value === 'string' && value.length > 0;
 const shape = (value, keys) => record(value) && Object.keys(value).every(key => keys.includes(key));
@@ -33,7 +51,7 @@ export class CodexEventAudit {
   accept(event) {
     if (++this.events > this.maxEvents) throw failure('EVENT_LIMIT', 'Codex event count exceeds transport limit');
     if (!record(event) || typeof event.type !== 'string') throw failure('EVENT_MALFORMED', 'Codex event is missing its type');
-    if (event.type === 'error' || event.type === 'turn.failed') throw failure('TURN_FAILED', 'Codex reported an error or failed turn');
+    if (event.type === 'error' || event.type === 'turn.failed') throw failure('TURN_FAILED', 'Codex reported an error or failed turn',{nativeFailureReason:nativeErrorReason(event.message||event.error?.message)});
     if (this.state === 'completed') throw failure('EVENT_ORDER', 'Codex emitted events after terminal completion');
     if (event.type === 'thread.started') {
       if (this.state !== 'initial' || !shape(event, ['type', 'thread_id']) || !text(event.thread_id)) throw failure('EVENT_ORDER', 'Invalid Codex thread start');
@@ -56,7 +74,8 @@ export class CodexEventAudit {
       if (!record(item) || !text(item.type)) throw failure('EVENT_MALFORMED', 'Codex item is missing its type');
       // Reject attempts as soon as any lifecycle event exposes them, including failed tools.
       if (toolTypes.has(item.type)) throw failure('TOOL_ATTEMPT', 'Codex attempted a tool; generation response rejected');
-      if (!['agent_message', 'reasoning'].includes(item.type)) throw failure('ITEM_UNKNOWN', 'Codex emitted an unsupported item type');
+      if(item.type==='error')throw failure('NATIVE_ERROR_ITEM','Codex reported a native error item; generation response rejected',{nativeFailureReason:nativeErrorReason(item.message)});
+      if (!['agent_message', 'reasoning'].includes(item.type)) throw failure('ITEM_UNKNOWN', 'Codex emitted an unsupported item type',{nativeItemTypeSha256:createHash('sha256').update(item.type).digest('hex')});
       // Additional reasoning metadata is inert; item types and lifecycle remain audited.
       if (this.state !== 'turn' || !shape(event, ['type', 'item']) || !text(item.id) || typeof item.text !== 'string') throw failure('EVENT_MALFORMED', 'Codex item is malformed or outside its turn');
       if (item.type === 'agent_message' && !shape(item, ['id', 'type', 'text'])) throw failure('EVENT_MALFORMED', 'Codex agent message contains unsupported fields');

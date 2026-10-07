@@ -7,7 +7,7 @@ import { fileURLToPath } from 'node:url';
 import { fixture } from './helpers.js';
 import { callAgent } from '../src/swarm.js';
 import { codexRequest, runCodex, schemas } from '../src/adapters/codex.js';
-import { CodexEventAudit, agreeResponse } from '../src/adapters/codex-protocol.js';
+import { CodexEventAudit, agreeResponse,describeWorkerFailure } from '../src/adapters/codex-protocol.js';
 
 const reply = { tasks: [{ subject: 'src/a.js', instructions: 'Check public requirement ✓' }] };
 const message = (text = JSON.stringify(reply), id = 'item_0') => ({ type: 'item.completed', item: { id, type: 'agent_message', text } });
@@ -17,6 +17,14 @@ const valid = [...prefix, message(), completed];
 const jsonl = events => events.map(event => JSON.stringify(event) + '\n').join('');
 const audit = (events, limit = 2 * 1024 * 1024) => { const worker = new CodexEventAudit(limit); worker.push(Buffer.from(jsonl(events))); return worker.finish(); };
 const code = expected => error => error.code === expected;
+test('native error items remain rejected with bounded actionable diagnostics and no message disclosure',()=>{
+ for(const [nativeMessage,reason]of [['HTTP 401 authentication private source sentinel','authentication'],['429 quota exceeded private source sentinel','usage-limit'],['stream disconnected private source sentinel','connectivity'],['context window exceeded private source sentinel','context-limit'],['private source sentinel','unclassified']]){
+  try{audit([...prefix,{type:'item.completed',item:{id:'error',type:'error',message:nativeMessage}},message(),completed]);assert.fail('Native error item must reject');}catch(error){
+   assert.equal(error.code,'NATIVE_ERROR_ITEM');const result=describeWorkerFailure(error);assert.equal(result.nativeFailureReason,reason);assert.ok(result.nextAction);assert.equal(JSON.stringify(result).includes('private source sentinel'),false);
+  }
+ }
+ try{audit([...prefix,{type:'item.started',item:{id:'unknown',type:'future_private_source_sentinel',text:''}}]);assert.fail('Unknown native item must reject');}catch(error){const result=describeWorkerFailure(error);assert.equal(result.code,'ITEM_UNKNOWN');assert.match(result.nativeItemTypeSha256,/^[a-f0-9]{64}$/);assert.equal(JSON.stringify(result).includes('future_private_source_sentinel'),false);}
+});
 
 test('audited JSONL supports split UTF-8, reasoning metadata and tool-less item lifecycles', () => {
   const events = [...prefix,

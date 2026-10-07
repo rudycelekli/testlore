@@ -5,7 +5,7 @@ import path from 'node:path';
 import { spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { createHash } from 'node:crypto';
-import { CodexEventAudit, agreeResponse, failure } from './codex-protocol.js';
+import { CodexEventAudit, agreeResponse, failure,describeWorkerFailure } from './codex-protocol.js';
 
 const string = { type: 'string' };
 const object = properties => ({ type: 'object', properties, required: Object.keys(properties), additionalProperties: false });
@@ -158,5 +158,5 @@ export async function main({includeAudit=false}={}) {
   } finally { fs.rmSync(directory, { recursive: true, force: true }); }
 }
 if (process.argv[1] && fs.realpathSync(process.argv[1]) === fs.realpathSync(fileURLToPath(import.meta.url))) {
-  try { await main(); } catch (error) { console.error(`${error.code || 'INPUT_INVALID'}: ${error.code ? error.message : 'Codex adapter input failed'}`); process.exitCode = 1; }
+  try { await main(); } catch (error) { console.error(JSON.stringify(describeWorkerFailure(error))); process.exitCode = 1; }
 }
