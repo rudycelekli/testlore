@@ -39,6 +39,8 @@ npm exec --yes --package=github:rudycelekli/testlore -- testlore setup
 
 This creates a named project quality-agent profile, native runner configuration with local analysis caching and shadow execution, and a shadow/full GitHub workflow. It preserves existing configuration/workflows and makes no agent calls or optional SDK downloads. Inspect and commit those files before running `improve`. A local TestLore dev dependency is required for the optional `testlore/playwright` fixture; temporary npm execution cannot supply a persistent project import.
 
+An explicit `node --test` package script takes precedence over installed Vitest/Jest development dependencies. Otherwise setup chooses the installed native framework. Local Vitest commands use a portable project-relative CLI path; existing runner configuration stays explicit.
+
 Inspect prerequisites before starting execution:
 
 ```sh

@@ -4,6 +4,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import {installQualityLayer,defaultNativeRunner} from '../src/quality-layer.js';
 import {fixture,write,twoModules} from './helpers.js';
+import {run} from '../src/runner.js';
 test('quality onboarding creates native config and ongoing shadow/full workflow on a project branch',t=>{
  const root=fixture(t,twoModules);const paths=installQualityLayer(root,{actionRef:'abc123'});
  assert.ok(paths.includes('.github/workflows/tddswarm.yml'));assert.equal(JSON.parse(fs.readFileSync(path.join(root,'tddswarm.config.json'))).discovery,'native');
@@ -41,4 +42,11 @@ test('new Vitest setup uses a portable installed CLI and preserves ancestor-only
  assert.deepEqual(defaultNativeRunner(path.join(root,'packages/child'),'vitest'),['npx','--no-install','vitest','run','{files}']);
  assert.deepEqual(installQualityLayer(root,{ci:false}),[]);
  assert.deepEqual(JSON.parse(fs.readFileSync(path.join(root,'tddswarm.config.json'))).runner,config.runner);
+});
+test('explicit Node test scripts win over SDK dependencies and produce usable shadow evidence',t=>{
+ const root=fixture(t,{...twoModules,'package.json':{type:'module',scripts:{test:'node --test --test-concurrency=2 test/*.test.js'},devDependencies:{vitest:'5.0.2',jest:'30.2.0'}}});
+ installQualityLayer(root,{ci:false});
+ const config=JSON.parse(fs.readFileSync(path.join(root,'tddswarm.config.json')));
+ assert.equal(config.adapter,'node');assert.deepEqual(config.runner,['node','--test','{files}']);
+ const report=run(root,{capture:true});assert.equal(report.complete,true);assert.equal(report.shadow,true);assert.equal(report.exitCode,0);assert.equal(report.tests.length,2);
 });

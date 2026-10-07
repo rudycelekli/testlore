@@ -3,6 +3,13 @@ import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {safePath,readConfig,git} from './files.js';
 import {digest} from './provenance.js';
+export function defaultNativeAdapter(pkg={}){
+ // Integration SDKs may be development dependencies of a Node-test project.
+ // Respect an explicit built-in test command before dependency heuristics.
+ if(typeof pkg.scripts?.test==='string'&&/^\s*node\s+--test(?:\s|$)/.test(pkg.scripts.test))return 'node';
+ const deps={...pkg.dependencies,...pkg.devDependencies};
+ return deps.vitest?'vitest':deps.jest?'jest':'node';
+}
 // Keep generated commands portable between local workstations and CI. A local
 // Vitest CLI permits one fresh discovery/resolver context; ancestor-only or
 // not-yet-installed dependencies retain npm's existing no-download resolution.
@@ -94,7 +101,7 @@ export function installQualityLayer(root,options={}){
  const written=[];const configPath=safePath(root,'tddswarm.config.json');
  if(!fs.existsSync(configPath)){
   let pkg={};try{pkg=JSON.parse(fs.readFileSync(safePath(root,'package.json'),'utf8'));}catch{}
-  const deps={...pkg.dependencies,...pkg.devDependencies};const adapter=deps.vitest?'vitest':deps.jest?'jest':'node';
+  const adapter=defaultNativeAdapter(pkg);
   const runner=defaultNativeRunner(root,adapter);
   fs.writeFileSync(configPath,JSON.stringify({adapter,discovery:'native',executionMode:'shadow',runner,analysisCache:{enabled:true},alwaysRun:[],dependencies:{},ignoreChanges:[],fullRunEvery:20},null,2)+'\n');written.push('tddswarm.config.json');
  }
