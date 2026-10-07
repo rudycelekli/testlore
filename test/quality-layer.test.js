@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
-import {installQualityLayer} from '../src/quality-layer.js';
+import {installQualityLayer,defaultNativeRunner} from '../src/quality-layer.js';
 import {fixture,write,twoModules} from './helpers.js';
 test('quality onboarding creates native config and ongoing shadow/full workflow on a project branch',t=>{
  const root=fixture(t,twoModules);const paths=installQualityLayer(root,{actionRef:'abc123'});
@@ -28,4 +28,17 @@ test('Git installations pin the recorded TestLore commit and retain the former r
  const {installedActionReference}=await import(new URL('file://'+path.join(pkg,'src/quality-layer.js')));
  const sha='a'.repeat(40);
  for(const repository of ['testlore','tddswarm']){write(root,'node_modules/.package-lock.json',{packages:{'node_modules/testlore':{resolved:`git+ssh://git@github.com/rudycelekli/${repository}.git#${sha}`}}});assert.equal(installedActionReference(),sha);}
+});
+test('new Vitest setup uses a portable installed CLI and preserves ancestor-only resolution',t=>{
+ const root=fixture(t,{'package.json':{devDependencies:{vitest:'5.0.2'}}});
+ assert.deepEqual(defaultNativeRunner(root,'vitest'),['npx','--no-install','vitest','run','{files}']);
+ write(root,'node_modules/vitest/vitest.mjs','// installed CLI\n');
+ installQualityLayer(root,{ci:false});
+ const config=JSON.parse(fs.readFileSync(path.join(root,'tddswarm.config.json')));
+ assert.deepEqual(config.runner,['node','node_modules/vitest/vitest.mjs','run','{files}']);
+ assert.equal(config.executionMode,'shadow');
+ fs.mkdirSync(path.join(root,'packages/child'),{recursive:true});
+ assert.deepEqual(defaultNativeRunner(path.join(root,'packages/child'),'vitest'),['npx','--no-install','vitest','run','{files}']);
+ assert.deepEqual(installQualityLayer(root,{ci:false}),[]);
+ assert.deepEqual(JSON.parse(fs.readFileSync(path.join(root,'tddswarm.config.json'))).runner,config.runner);
 });

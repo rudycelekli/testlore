@@ -3,6 +3,19 @@ import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {safePath,readConfig,git} from './files.js';
 import {digest} from './provenance.js';
+// Keep generated commands portable between local workstations and CI. A local
+// Vitest CLI permits one fresh discovery/resolver context; ancestor-only or
+// not-yet-installed dependencies retain npm's existing no-download resolution.
+export function defaultNativeRunner(root,adapter){
+ if(adapter==='vitest'){
+  try{
+   const cli=fs.statSync(path.join(root,'node_modules/vitest/vitest.mjs'));
+   if(cli.isFile()&&cli.size<=1024*1024)return ['node','node_modules/vitest/vitest.mjs','run','{files}'];
+  }catch{}
+  return ['npx','--no-install','vitest','run','{files}'];
+ }
+ return adapter==='jest'?['npx','--no-install','jest','--runTestsByPath','{files}']:['node','--test','{files}'];
+}
 export function installedActionReference(){
  const packageRoot=fileURLToPath(new URL('../',import.meta.url));
  try{
@@ -82,7 +95,7 @@ export function installQualityLayer(root,options={}){
  if(!fs.existsSync(configPath)){
   let pkg={};try{pkg=JSON.parse(fs.readFileSync(safePath(root,'package.json'),'utf8'));}catch{}
   const deps={...pkg.dependencies,...pkg.devDependencies};const adapter=deps.vitest?'vitest':deps.jest?'jest':'node';
-  const runner=adapter==='vitest'?['npx','--no-install','vitest','run','{files}']:adapter==='jest'?['npx','--no-install','jest','--runTestsByPath','{files}']:['node','--test','{files}'];
+  const runner=defaultNativeRunner(root,adapter);
   fs.writeFileSync(configPath,JSON.stringify({adapter,discovery:'native',executionMode:'shadow',runner,analysisCache:{enabled:true},alwaysRun:[],dependencies:{},ignoreChanges:[],fullRunEvery:20},null,2)+'\n');written.push('tddswarm.config.json');
  }
  const ignorePath=safePath(root,'.gitignore');let ignore=fs.existsSync(ignorePath)?fs.readFileSync(ignorePath,'utf8'):'';let amended=false;

@@ -15,6 +15,7 @@ import { pilot, exportPilot } from './pilot.js';
 import {verificationBrief} from './agent-contract.js';
 import {qualifyRoutingMappings} from './mapping-qualification.js';
 import {adoptionReadiness} from './adoption-readiness.js';
+import {defaultNativeRunner} from './quality-layer.js';
 
 const help = `TestLore — know why each test runs.
 
@@ -131,8 +132,8 @@ function init(root) {
     let pkg = {};
     try { pkg = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf8')); } catch {}
     const deps = { ...pkg.dependencies, ...pkg.devDependencies };
-    const runner = deps.vitest ? ['npx', '--no-install', 'vitest', 'run', '{files}'] : deps.jest ? ['npx', '--no-install', 'jest', '--runTestsByPath', '{files}'] : ['node', '--test', '{files}'];
     const adapter=deps.vitest?'vitest':deps.jest?'jest':'node';
+    const runner = defaultNativeRunner(root,adapter);
     fs.writeFileSync(file, JSON.stringify({ runner, adapter, discovery:'native', executionMode:'shadow', analysisCache:{enabled:true}, alwaysRun: [], dependencies: {}, ignoreChanges: [], fullRunEvery: 20 }, null, 2) + '\n', { flag: 'wx' });
     created = true;
   }
