@@ -1,27 +1,42 @@
 #!/usr/bin/env node
 import fs from 'node:fs';
 import path from 'node:path';
-import {spawnSync} from 'node:child_process';
 import { fileURLToPath } from 'node:url';
-import { audit, modules, plan, generate, run, runUnifiedNative, snapshot, ingestQuality, measureStability, captureRuntime, stagePatch, validateCandidates, applyPatch, externalPlan, externalRun, aqeGenerate, improve, installQualityLayer, installQualityWorkflow, publishImprovement, recallLessons, reflectLearning, exportLearning, ensureQualityAgent, seedRequirements, initializeWitness, observeQuality, inspectEvidenceLoop, challengeEvidence, reviewEvidence, recallOutcomeLessons } from './index.js';
-import { safePath, readConfig, git } from './files.js';
-import { pluginCatalog, configurePlugin, checkPlugins, configurePluginsAutomatically } from './plugins.js';
-import { recommendPlugins } from './plugin-recommendations.js';
-import {measureMutation,measureTestEffectiveness} from './quality-measurement.js';
-import { renderRunReport } from './run-report.js';
-import { routingProposals } from './routing-proposals.js';
-import { captureBrowserEvidence, proposeBrowserMappings, proposeBrowserInstrumentation, inspectBrowserBuildArtifacts } from './browser-evidence.js';
-import { pilot, exportPilot } from './pilot.js';
-import {verificationBrief} from './agent-contract.js';
-import {qualifyRoutingMappings} from './mapping-qualification.js';
-import {adoptionReadiness} from './adoption-readiness.js';
-import {defaultNativeRunner,defaultNativeAdapter} from './quality-layer.js';
+// Load only the implementation graph of the requested command. Executable project
+// configuration remains inside each fresh invocation's existing planning/runner path.
+const commandModules = {
+  'witness-init': ['evidence-loop'], observe: ['evidence-loop'],
+  'loop-status': ['evidence-loop'], challenge: ['evidence-loop'],
+  outcome: ['evidence-loop'], 'outcome-lessons': ['evidence-loop'],
+  brief: ['agent-contract'], doctor: ['adoption-readiness'],
+  setup: ['quality-layer', 'agent-profile', 'files', 'adoption-readiness', 'plugin-recommendations'],
+  report: ['files', 'run-report'], mappings: ['routing-proposals'],
+  'mapping-qualify': ['files', 'mapping-qualification'],
+  'browser-build': ['files', 'browser-evidence'], 'browser-instrument': ['browser-evidence'],
+  'browser-capture': ['browser-evidence'], 'browser-mappings': ['files', 'browser-evidence'],
+  pilot: ['pilot'], 'pilot-export': ['pilot'],
+  plugins: ['files', 'plugins', 'plugin-recommendations'],
+  improve: ['files', 'agent-profile', 'improvement', 'quality-layer', 'pull-request'],
+  agent: ['agent-profile'], learn: ['learning'], recall: ['learning'], 'learning-export': ['learning'],
+  snapshot: ['files', 'provenance'], evidence: ['evidence'],
+  mutation: ['files', 'quality-measurement', 'evidence'], effectiveness: ['files', 'quality-measurement'],
+  stability: ['evidence'], capture: ['evidence'], modularize: ['candidates'],
+  validate: ['candidates'], apply: ['candidates'],
+  'external-plan': ['files', 'integrations'], 'external-run': ['files', 'integrations'],
+  aqe: ['adapters/aqe'], init: ['files', 'audit', 'quality-layer'],
+  audit: ['audit'], plan: ['selector'], run: ['runner'], modules: ['audit'],
+  generate: ['swarm'], demo: ['selector']
+};
+async function loadCommand(command) {
+  if (!Object.hasOwn(commandModules, command)) throw new Error(`Unknown command: ${command}`);
+  return Object.assign({}, ...await Promise.all(commandModules[command].map(module => import(`./${module}.js`))));
+}
 
 const help = `TestLore — know why each test runs.
 
 Usage: testlore <command> [options]
 
-  setup       Configure a quality agent, native runner and shadow CI in one command
+  setup       Configure a quality agent and shadow CI; --verify records a full shadow run
   doctor      Inspect setup prerequisites and next actions without project execution
   brief       Give agents a bounded verification contract without running project code
   mcp         Serve project quality tools over MCP stdio (inspection only by default)
@@ -87,7 +102,7 @@ export function parseArgs(args) {
   const options = {};
   let command = 'help';
   const values = new Set(['root','base','changed','output','report','type','provenance','repeat','id','patch','target','framework','head','action-ref','base-branch','query','name','enable','disable','select','plugin','settings','manifest','mutate','defects','revision','deadline-ms','trusted-key','checkpoint','claim','verdict','reviewer']);
-  const flags = new Set(['json', 'full', 'shadow', 'execute', 'help', 'version', 'local', 'no-ci','check','recommend','auto','selective','allow-execution','unified-native']);
+  const flags = new Set(['json', 'full', 'shadow', 'execute', 'help', 'version', 'local', 'no-ci','check','recommend','auto','selective','allow-execution','unified-native','verify']);
   if (args[0] && !args[0].startsWith('-')) command = args.shift();
   for (let i = 0; i < args.length; i++) {
     const key = args[i].replace(/^--/, '');
@@ -110,7 +125,7 @@ const loopOptions = {
   'outcome-lessons': ['query', 'trusted-key', 'checkpoint']
 };
 function validateLoopOptions(command, options) {
-  if (!loopOptions[command]) {
+  if (!Object.hasOwn(loopOptions, command)) {
     for (const key of ['revision', 'deadline-ms', 'trusted-key', 'checkpoint', 'claim', 'verdict', 'reviewer']) if (key in options) throw new Error(`--${key} requires an evidence-loop command`);
     return;
   }
@@ -126,7 +141,7 @@ function validateLoopOptions(command, options) {
   if (options['deadline-ms'] !== undefined && (!/^\d+$/.test(options['deadline-ms']) || !Number.isSafeInteger(Number(options['deadline-ms'])) || Number(options['deadline-ms']) <= 0)) throw new Error('--deadline-ms must be a positive integer');
 }
 
-function init(root) {
+function init(root, {safePath, defaultNativeAdapter, defaultNativeRunner, audit}) {
   const file = safePath(root, 'tddswarm.config.json');
   let created = false;
   if (!fs.existsSync(file)) {
@@ -176,10 +191,23 @@ export async function main(args = process.argv.slice(2)) {
     return 0;
   }
   if (options['unified-native'] && command !== 'run') throw new Error('--unified-native applies only to run');
+  if(options.verify&&command!=='setup')throw new Error('--verify applies only to setup');
+  if(options.verify&&options.selective)throw new Error('setup --verify always uses full shadow verification');
   if (options['allow-execution']) throw new Error('--allow-execution applies only to mcp');
   if ((options.auto || options.recommend) && command !== 'plugins') throw new Error('--auto and --recommend require the plugins command');
   if(options.shadow && options.selective)throw new Error('Choose --shadow or --selective');
   if (command === 'run' && options.changed) throw new Error('--changed is diagnostic only. run uses Git to discover the complete change set.');
+  const implementations = await loadCommand(command);
+  const {audit, modules, plan, generate, run, runUnifiedNative, snapshot, ingestQuality,
+    measureStability, captureRuntime, stagePatch, validateCandidates, applyPatch,
+    externalPlan, externalRun, aqeGenerate, improve, installQualityLayer, installQualityWorkflow,
+    publishImprovement, recallLessons, reflectLearning, exportLearning, ensureQualityAgent,
+    seedRequirements, initializeWitness, observeQuality, inspectEvidenceLoop, challengeEvidence,
+    reviewEvidence, recallOutcomeLessons, safePath, readConfig, git, pluginCatalog, configurePlugin,
+    checkPlugins, configurePluginsAutomatically, recommendPlugins, measureMutation,
+    measureTestEffectiveness, renderRunReport, routingProposals, captureBrowserEvidence,
+    proposeBrowserMappings, proposeBrowserInstrumentation, inspectBrowserBuildArtifacts,
+    pilot, exportPilot, verificationBrief, qualifyRoutingMappings, adoptionReadiness} = implementations;
   let result;
   switch (command) {
     case 'witness-init': result = initializeWitness(root, {output: path.resolve(root, options.output)}); break;
@@ -206,7 +234,13 @@ export async function main(args = process.argv.slice(2)) {
     case 'setup': {
       const written=installQualityLayer(root,{ci:!options['no-ci'],actionRef:options['action-ref']});
       const agent=ensureQualityAgent(root,{name:options.name});
-      result={written,agent,executionMode:readConfig(root).executionMode||'existing-policy',readiness:adoptionReadiness(root),plugins:recommendPlugins(root),next:['testlore doctor --json','testlore run --shadow --base HEAD --json','testlore report','testlore mappings --json']};break;
+      result={written,agent,executionMode:readConfig(root).executionMode||'existing-policy',readiness:adoptionReadiness(root),plugins:recommendPlugins(root),next:['testlore doctor --json','testlore run --shadow --base HEAD --json','testlore report','testlore mappings --json']};
+      if(options.verify){
+        const {run:verify}=await import('./runner.js');
+        result.verification=verify(root,{base:options.base||'HEAD',shadow:true,capture:true});
+        result.next=['testlore report','Review the retained full-run outcomes and uncertainties before permitting omissions.','testlore mappings --json'];
+      }
+      break;
     }
     case 'report': result=JSON.parse(fs.readFileSync(safePath(root,options.report||'.tddswarm/last-run.json'),'utf8'));if(!options.json){console.log(renderRunReport(result));return result.exitCode||0;}break;
     case 'mappings': result=routingProposals(root);break;
@@ -239,6 +273,7 @@ export async function main(args = process.argv.slice(2)) {
       break;
     }
     case 'improve': {
+      const {spawnSync} = await import('node:child_process');
       let agent;
       if(!options.id&&!options.patch&&!readConfig(root).agent){
         const installed=spawnSync('codex',['--version'],{encoding:'utf8',timeout:5000,shell:false});
@@ -287,7 +322,7 @@ export async function main(args = process.argv.slice(2)) {
     case 'external-plan': result=externalPlan(root,readConfig(root),options);break;
     case 'external-run': if(options.changed)throw new Error('--changed is diagnostic only');result=externalRun(root,readConfig(root),options);break;
     case 'aqe': result=aqeGenerate(root,options);break;
-    case 'init': result = init(root); break;
+    case 'init': result = init(root, implementations); break;
     case 'audit': result = audit(root); break;
     case 'plan': result = plan(root, options); break;
     case 'run': result = options['unified-native'] ? await runUnifiedNative(root, { ...options, capture: options.json }) : run(root, { ...options, capture: options.json }); break;
@@ -325,6 +360,7 @@ export async function main(args = process.argv.slice(2)) {
   if(command==='mapping-qualify')return !result.complete?2:result.qualified?0:1;
   if(command==='capture')return result.complete?0:2;
   if(command==='stability')return !result.complete?2:result.metrics.unstable?1:0;
+  if(command==='setup'&&options.verify)return result.verification.exitCode||(!result.verification.complete?2:0);
   return 0;
 }
 if (process.argv[1] && fs.realpathSync(process.argv[1]) === fs.realpathSync(fileURLToPath(import.meta.url))) {

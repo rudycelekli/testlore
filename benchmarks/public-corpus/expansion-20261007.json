@@ -1,0 +1,1024 @@
+{
+  "schemaVersion": 1,
+  "kind": "public-corpus-expansion-accounting",
+  "recordedDate": "2026-10-07",
+  "selectionCommitmentSha256": "065b79f7f345a971e76b0a2d1bdc4f4ab34c9c3b254837b693dee552b71af65a",
+  "selectedUniqueChanges": 100,
+  "selectedProjects": 10,
+  "threeArmAttemptExecutions": 13,
+  "attemptedUniqueChanges": 10,
+  "unattemptedUniqueChanges": 90,
+  "qualifiedUniqueChanges": 10,
+  "qualifiedProjects": 3,
+  "qualifiedFaultTrialExposures": 20,
+  "rejectedAttemptExecutions": 3,
+  "targetMet": false,
+  "earlierReceiptsReclassified": false,
+  "automaticRetries": 0,
+  "additionalPreflightOnlyFailures": [
+    {
+      "candidateId": "unjs-destr-f9c78d402556",
+      "qualification": false,
+      "reason": "Fixed baseline rejected on earlier comparative runtime; no three-arm campaign"
+    }
+  ],
+  "newAttempts": [
+    {
+      "candidateId": "unjs-defu-3942bfbbcaa7",
+      "repository": "https://github.com/unjs/defu",
+      "fixRevision": "3942bfbbcaa72084bd4284846c83bd61ed7c8b29",
+      "attemptPhase": "prospective-unified-native",
+      "status": "completed",
+      "qualified": false,
+      "rawReceiptSha256": "c6b8ae7d8ae0ecc95f26100e90e85e32c1daf00db072a19f292096cdc28637b8",
+      "sourceRevision": "da6298f2dcda3e0dfc6676ccde013463a8900045",
+      "implementationUnchanged": true,
+      "executionMode": "unified-native",
+      "completedTrials": 0,
+      "uncompletedTrials": 2,
+      "qualifiedScenarios": 0,
+      "demonstratedFaultTrials": 0,
+      "preservedFaultTrials": 0,
+      "fullFallbackTrials": 0,
+      "timing": {
+        "full": {
+          "observed": 0,
+          "totalMs": 0,
+          "p50Ms": null,
+          "p95Ms": null
+        },
+        "testLore": {
+          "observed": 0,
+          "totalMs": 0,
+          "p50Ms": null,
+          "p95Ms": null
+        },
+        "native": {
+          "observed": 0,
+          "totalMs": 0,
+          "p50Ms": null,
+          "p95Ms": null
+        }
+      },
+      "trialSpans": [],
+      "rejection": "Unified native rejected an unqualified Vitest 4.1.2 resolved plugin; no decision returned. Existing rejection retained.",
+      "declaredBaselineSkips": 0,
+      "runtimeScope": "Frozen npm v3 runtime projection, exact selected upstream-lock top-level versions; not full upstream-lock installation"
+    },
+    {
+      "candidateId": "unjs-defu-11ba02213d4b",
+      "repository": "https://github.com/unjs/defu",
+      "fixRevision": "11ba02213d4b1c6b02dd686041f75edc479c98e9",
+      "attemptPhase": "prospective-unified-native",
+      "status": "completed",
+      "qualified": false,
+      "rawReceiptSha256": "5bf2936acd52b2a9000ff9e8c7a8a7dcba9b383127cfe0e8b3a3f074ea6dd35e",
+      "sourceRevision": "da6298f2dcda3e0dfc6676ccde013463a8900045",
+      "implementationUnchanged": true,
+      "executionMode": "unified-native",
+      "completedTrials": 0,
+      "uncompletedTrials": 2,
+      "qualifiedScenarios": 0,
+      "demonstratedFaultTrials": 0,
+      "preservedFaultTrials": 0,
+      "fullFallbackTrials": 0,
+      "timing": {
+        "full": {
+          "observed": 0,
+          "totalMs": 0,
+          "p50Ms": null,
+          "p95Ms": null
+        },
+        "testLore": {
+          "observed": 0,
+          "totalMs": 0,
+          "p50Ms": null,
+          "p95Ms": null
+        },
+        "native": {
+          "observed": 0,
+          "totalMs": 0,
+          "p50Ms": null,
+          "p95Ms": null
+        }
+      },
+      "trialSpans": [],
+      "rejection": "Unified native rejected an unqualified Vitest 4.1.2 resolved plugin; no decision returned. Existing rejection retained.",
+      "declaredBaselineSkips": 0,
+      "runtimeScope": "Frozen npm v3 runtime projection, exact selected upstream-lock top-level versions; not full upstream-lock installation"
+    },
+    {
+      "candidateId": "unjs-pathe-b52fcacc5971",
+      "repository": "https://github.com/unjs/pathe",
+      "fixRevision": "b52fcacc59717a1e4a8783d4bbfae7fa81b4db07",
+      "attemptPhase": "prospective-unified-native",
+      "status": "completed",
+      "qualified": true,
+      "rawReceiptSha256": "3f991ff8c03776d5f3fbeaa1e3716159e80b11a68137b425bc05908203bdb69f",
+      "sourceRevision": "da6298f2dcda3e0dfc6676ccde013463a8900045",
+      "implementationUnchanged": true,
+      "executionMode": "unified-native",
+      "completedTrials": 2,
+      "uncompletedTrials": 0,
+      "qualifiedScenarios": 1,
+      "demonstratedFaultTrials": 2,
+      "preservedFaultTrials": 2,
+      "fullFallbackTrials": 0,
+      "timing": {
+        "full": {
+          "observed": 2,
+          "totalMs": 9736,
+          "p50Ms": 4147,
+          "p95Ms": 5589
+        },
+        "testLore": {
+          "observed": 2,
+          "totalMs": 6900,
+          "p50Ms": 1922,
+          "p95Ms": 4978
+        },
+        "native": {
+          "observed": 2,
+          "totalMs": 1740,
+          "p50Ms": 645,
+          "p95Ms": 1095
+        }
+      },
+      "trialSpans": [
+        {
+          "repetition": 1,
+          "analysisCachePhase": "first-plan-in-new-workspace",
+          "armOrder": [
+            "full",
+            "subset",
+            "native"
+          ],
+          "fullMs": 5589,
+          "testLoreMs": 4978,
+          "nativeMs": 1095,
+          "planningMs": 3728,
+          "subsetExecutionMs": 1040,
+          "analysisCache": {
+            "enabled": true,
+            "engine": "b526be74a607cc4df67794f8dd5d0bd35f6c6c9e32df08c84a792dd6fd1dd86a",
+            "memoryHits": 0,
+            "diskHits": 0,
+            "parses": 13,
+            "writes": 13,
+            "corruptions": 0,
+            "evictions": 0,
+            "skipped": 0,
+            "unavailable": false
+          },
+          "mode": "affected",
+          "selectedFiles": 3,
+          "totalFiles": 4,
+          "missedFailures": 0,
+          "nativeMissedFailures": 0,
+          "valid": true,
+          "stable": true
+        },
+        {
+          "repetition": 2,
+          "analysisCachePhase": "repeat-analysis-cache-enabled",
+          "armOrder": [
+            "subset",
+            "native",
+            "full"
+          ],
+          "fullMs": 4147,
+          "testLoreMs": 1922,
+          "nativeMs": 645,
+          "planningMs": 1340,
+          "subsetExecutionMs": 447,
+          "analysisCache": {
+            "enabled": true,
+            "engine": "b526be74a607cc4df67794f8dd5d0bd35f6c6c9e32df08c84a792dd6fd1dd86a",
+            "memoryHits": 0,
+            "diskHits": 13,
+            "parses": 0,
+            "writes": 0,
+            "corruptions": 0,
+            "evictions": 0,
+            "skipped": 0,
+            "unavailable": false
+          },
+          "mode": "affected",
+          "selectedFiles": 3,
+          "totalFiles": 4,
+          "missedFailures": 0,
+          "nativeMissedFailures": 0,
+          "valid": true,
+          "stable": true
+        }
+      ],
+      "rejection": null,
+      "declaredBaselineSkips": 16,
+      "runtimeScope": "Comparative installed Vitest 5.0.2, not upstream-lock installation"
+    },
+    {
+      "candidateId": "unjs-defu-3942bfbbcaa7",
+      "repository": "https://github.com/unjs/defu",
+      "fixRevision": "3942bfbbcaa72084bd4284846c83bd61ed7c8b29",
+      "attemptPhase": "prospective-legacy-after-unified-admission-rejection",
+      "status": "completed",
+      "qualified": true,
+      "rawReceiptSha256": "87db3dafdfe854062ffd054e64a54263e36c616cdfa663800ecd9afe5e4c0386",
+      "sourceRevision": "da6298f2dcda3e0dfc6676ccde013463a8900045",
+      "implementationUnchanged": true,
+      "executionMode": "legacy",
+      "completedTrials": 2,
+      "uncompletedTrials": 0,
+      "qualifiedScenarios": 1,
+      "demonstratedFaultTrials": 2,
+      "preservedFaultTrials": 2,
+      "fullFallbackTrials": 0,
+      "timing": {
+        "full": {
+          "observed": 2,
+          "totalMs": 984,
+          "p50Ms": 489,
+          "p95Ms": 495
+        },
+        "testLore": {
+          "observed": 2,
+          "totalMs": 3401,
+          "p50Ms": 1634,
+          "p95Ms": 1767
+        },
+        "native": {
+          "observed": 2,
+          "totalMs": 693,
+          "p50Ms": 340,
+          "p95Ms": 353
+        }
+      },
+      "trialSpans": [
+        {
+          "repetition": 1,
+          "analysisCachePhase": "first-plan-in-new-workspace",
+          "armOrder": [
+            "full",
+            "subset",
+            "native"
+          ],
+          "fullMs": 489,
+          "testLoreMs": 1767,
+          "nativeMs": 353,
+          "planningMs": 1255,
+          "subsetExecutionMs": 378,
+          "analysisCache": {
+            "enabled": true,
+            "engine": "b526be74a607cc4df67794f8dd5d0bd35f6c6c9e32df08c84a792dd6fd1dd86a",
+            "memoryHits": 1,
+            "diskHits": 0,
+            "parses": 9,
+            "writes": 9,
+            "corruptions": 0,
+            "evictions": 0,
+            "skipped": 0,
+            "unavailable": false
+          },
+          "mode": "affected",
+          "selectedFiles": 1,
+          "totalFiles": 2,
+          "missedFailures": 0,
+          "nativeMissedFailures": 0,
+          "valid": true,
+          "stable": true
+        },
+        {
+          "repetition": 2,
+          "analysisCachePhase": "repeat-analysis-cache-enabled",
+          "armOrder": [
+            "subset",
+            "native",
+            "full"
+          ],
+          "fullMs": 495,
+          "testLoreMs": 1634,
+          "nativeMs": 340,
+          "planningMs": 1130,
+          "subsetExecutionMs": 379,
+          "analysisCache": {
+            "enabled": true,
+            "engine": "b526be74a607cc4df67794f8dd5d0bd35f6c6c9e32df08c84a792dd6fd1dd86a",
+            "memoryHits": 1,
+            "diskHits": 9,
+            "parses": 0,
+            "writes": 0,
+            "corruptions": 0,
+            "evictions": 0,
+            "skipped": 0,
+            "unavailable": false
+          },
+          "mode": "affected",
+          "selectedFiles": 1,
+          "totalFiles": 2,
+          "missedFailures": 0,
+          "nativeMissedFailures": 0,
+          "valid": true,
+          "stable": true
+        }
+      ],
+      "rejection": null,
+      "declaredBaselineSkips": 0,
+      "runtimeScope": "Frozen npm v3 runtime projection, exact selected upstream-lock top-level versions; not full upstream-lock installation"
+    },
+    {
+      "candidateId": "unjs-defu-11ba02213d4b",
+      "repository": "https://github.com/unjs/defu",
+      "fixRevision": "11ba02213d4b1c6b02dd686041f75edc479c98e9",
+      "attemptPhase": "prospective-legacy-after-unified-admission-rejection",
+      "status": "completed",
+      "qualified": true,
+      "rawReceiptSha256": "e440e3183c2b2a504c4af478768649dc10b55f0697a70bf570691e835cef45dc",
+      "sourceRevision": "da6298f2dcda3e0dfc6676ccde013463a8900045",
+      "implementationUnchanged": true,
+      "executionMode": "legacy",
+      "completedTrials": 2,
+      "uncompletedTrials": 0,
+      "qualifiedScenarios": 1,
+      "demonstratedFaultTrials": 2,
+      "preservedFaultTrials": 2,
+      "fullFallbackTrials": 0,
+      "timing": {
+        "full": {
+          "observed": 2,
+          "totalMs": 1039,
+          "p50Ms": 490,
+          "p95Ms": 549
+        },
+        "testLore": {
+          "observed": 2,
+          "totalMs": 3633,
+          "p50Ms": 1738,
+          "p95Ms": 1895
+        },
+        "native": {
+          "observed": 2,
+          "totalMs": 712,
+          "p50Ms": 347,
+          "p95Ms": 365
+        }
+      },
+      "trialSpans": [
+        {
+          "repetition": 1,
+          "analysisCachePhase": "first-plan-in-new-workspace",
+          "armOrder": [
+            "full",
+            "subset",
+            "native"
+          ],
+          "fullMs": 549,
+          "testLoreMs": 1895,
+          "nativeMs": 365,
+          "planningMs": 1333,
+          "subsetExecutionMs": 436,
+          "analysisCache": {
+            "enabled": true,
+            "engine": "b526be74a607cc4df67794f8dd5d0bd35f6c6c9e32df08c84a792dd6fd1dd86a",
+            "memoryHits": 1,
+            "diskHits": 0,
+            "parses": 9,
+            "writes": 9,
+            "corruptions": 0,
+            "evictions": 0,
+            "skipped": 0,
+            "unavailable": false
+          },
+          "mode": "affected",
+          "selectedFiles": 1,
+          "totalFiles": 2,
+          "missedFailures": 0,
+          "nativeMissedFailures": 0,
+          "valid": true,
+          "stable": true
+        },
+        {
+          "repetition": 2,
+          "analysisCachePhase": "repeat-analysis-cache-enabled",
+          "armOrder": [
+            "subset",
+            "native",
+            "full"
+          ],
+          "fullMs": 490,
+          "testLoreMs": 1738,
+          "nativeMs": 347,
+          "planningMs": 1220,
+          "subsetExecutionMs": 389,
+          "analysisCache": {
+            "enabled": true,
+            "engine": "b526be74a607cc4df67794f8dd5d0bd35f6c6c9e32df08c84a792dd6fd1dd86a",
+            "memoryHits": 1,
+            "diskHits": 9,
+            "parses": 0,
+            "writes": 0,
+            "corruptions": 0,
+            "evictions": 0,
+            "skipped": 0,
+            "unavailable": false
+          },
+          "mode": "affected",
+          "selectedFiles": 1,
+          "totalFiles": 2,
+          "missedFailures": 0,
+          "nativeMissedFailures": 0,
+          "valid": true,
+          "stable": true
+        }
+      ],
+      "rejection": null,
+      "declaredBaselineSkips": 0,
+      "runtimeScope": "Frozen npm v3 runtime projection, exact selected upstream-lock top-level versions; not full upstream-lock installation"
+    },
+    {
+      "candidateId": "unjs-ufo-7959de5b49f5",
+      "repository": "https://github.com/unjs/ufo",
+      "fixRevision": "7959de5b49f52e7eb2919a33a9bfe30911e05712",
+      "attemptPhase": "additional-prospective-legacy-runtime-projection",
+      "status": "completed",
+      "qualified": true,
+      "rawReceiptSha256": "293830ed8eba3780cea598d34629ac9aa2cd959991be97b45475d31f8925f741",
+      "sourceRevision": "2f5fdd0a4d08ce240f662ee59f587252bcb10392",
+      "implementationUnchanged": true,
+      "executionMode": "legacy",
+      "completedTrials": 2,
+      "uncompletedTrials": 0,
+      "qualifiedScenarios": 1,
+      "demonstratedFaultTrials": 2,
+      "preservedFaultTrials": 2,
+      "fullFallbackTrials": 0,
+      "timing": {
+        "full": {
+          "observed": 2,
+          "totalMs": 3363,
+          "p50Ms": 1674,
+          "p95Ms": 1689
+        },
+        "testLore": {
+          "observed": 2,
+          "totalMs": 6078,
+          "p50Ms": 3031,
+          "p95Ms": 3047
+        },
+        "native": {
+          "observed": 2,
+          "totalMs": 3094,
+          "p50Ms": 1511,
+          "p95Ms": 1583
+        }
+      },
+      "trialSpans": [
+        {
+          "repetition": 1,
+          "analysisCachePhase": "first-plan-in-new-workspace",
+          "armOrder": [
+            "full",
+            "subset",
+            "native"
+          ],
+          "fullMs": 1689,
+          "testLoreMs": 3047,
+          "nativeMs": 1583,
+          "planningMs": 1254,
+          "subsetExecutionMs": 1641,
+          "analysisCache": {
+            "enabled": true,
+            "engine": "b526be74a607cc4df67794f8dd5d0bd35f6c6c9e32df08c84a792dd6fd1dd86a",
+            "memoryHits": 1,
+            "diskHits": 0,
+            "parses": 23,
+            "writes": 23,
+            "corruptions": 0,
+            "evictions": 0,
+            "skipped": 0,
+            "unavailable": false
+          },
+          "mode": "affected",
+          "selectedFiles": 12,
+          "totalFiles": 13,
+          "missedFailures": 0,
+          "nativeMissedFailures": 0,
+          "valid": true,
+          "stable": true
+        },
+        {
+          "repetition": 2,
+          "analysisCachePhase": "repeat-analysis-cache-enabled",
+          "armOrder": [
+            "subset",
+            "native",
+            "full"
+          ],
+          "fullMs": 1674,
+          "testLoreMs": 3031,
+          "nativeMs": 1511,
+          "planningMs": 1313,
+          "subsetExecutionMs": 1578,
+          "analysisCache": {
+            "enabled": true,
+            "engine": "b526be74a607cc4df67794f8dd5d0bd35f6c6c9e32df08c84a792dd6fd1dd86a",
+            "memoryHits": 1,
+            "diskHits": 23,
+            "parses": 0,
+            "writes": 0,
+            "corruptions": 0,
+            "evictions": 0,
+            "skipped": 0,
+            "unavailable": false
+          },
+          "mode": "affected",
+          "selectedFiles": 12,
+          "totalFiles": 13,
+          "missedFailures": 0,
+          "nativeMissedFailures": 0,
+          "valid": true,
+          "stable": true
+        }
+      ],
+      "rejection": null,
+      "declaredBaselineSkips": 0,
+      "runtimeScope": "Frozen npm v3 comparative Vitest4.1.2/Vite8.0.3 runtime projection; not full upstream-lock installation"
+    },
+    {
+      "candidateId": "unjs-ufo-4d024df0134e",
+      "repository": "https://github.com/unjs/ufo",
+      "fixRevision": "4d024df0134e2484b1e22ba17a08fea31e90de92",
+      "attemptPhase": "additional-prospective-legacy-runtime-projection",
+      "status": "completed",
+      "qualified": true,
+      "rawReceiptSha256": "847878251115e67a0e635fc9e39c9ee6a18360c257833df41ba5db837d51b8ad",
+      "sourceRevision": "2f5fdd0a4d08ce240f662ee59f587252bcb10392",
+      "implementationUnchanged": true,
+      "executionMode": "legacy",
+      "completedTrials": 2,
+      "uncompletedTrials": 0,
+      "qualifiedScenarios": 1,
+      "demonstratedFaultTrials": 2,
+      "preservedFaultTrials": 2,
+      "fullFallbackTrials": 0,
+      "timing": {
+        "full": {
+          "observed": 2,
+          "totalMs": 3348,
+          "p50Ms": 1666,
+          "p95Ms": 1682
+        },
+        "testLore": {
+          "observed": 2,
+          "totalMs": 5830,
+          "p50Ms": 2841,
+          "p95Ms": 2989
+        },
+        "native": {
+          "observed": 2,
+          "totalMs": 3216,
+          "p50Ms": 1562,
+          "p95Ms": 1654
+        }
+      },
+      "trialSpans": [
+        {
+          "repetition": 1,
+          "analysisCachePhase": "first-plan-in-new-workspace",
+          "armOrder": [
+            "full",
+            "subset",
+            "native"
+          ],
+          "fullMs": 1682,
+          "testLoreMs": 2841,
+          "nativeMs": 1562,
+          "planningMs": 1197,
+          "subsetExecutionMs": 1527,
+          "analysisCache": {
+            "enabled": true,
+            "engine": "b526be74a607cc4df67794f8dd5d0bd35f6c6c9e32df08c84a792dd6fd1dd86a",
+            "memoryHits": 1,
+            "diskHits": 0,
+            "parses": 23,
+            "writes": 23,
+            "corruptions": 0,
+            "evictions": 0,
+            "skipped": 0,
+            "unavailable": false
+          },
+          "mode": "affected",
+          "selectedFiles": 12,
+          "totalFiles": 13,
+          "missedFailures": 0,
+          "nativeMissedFailures": 0,
+          "valid": true,
+          "stable": true
+        },
+        {
+          "repetition": 2,
+          "analysisCachePhase": "repeat-analysis-cache-enabled",
+          "armOrder": [
+            "subset",
+            "native",
+            "full"
+          ],
+          "fullMs": 1666,
+          "testLoreMs": 2989,
+          "nativeMs": 1654,
+          "planningMs": 1176,
+          "subsetExecutionMs": 1666,
+          "analysisCache": {
+            "enabled": true,
+            "engine": "b526be74a607cc4df67794f8dd5d0bd35f6c6c9e32df08c84a792dd6fd1dd86a",
+            "memoryHits": 1,
+            "diskHits": 23,
+            "parses": 0,
+            "writes": 0,
+            "corruptions": 0,
+            "evictions": 0,
+            "skipped": 0,
+            "unavailable": false
+          },
+          "mode": "affected",
+          "selectedFiles": 12,
+          "totalFiles": 13,
+          "missedFailures": 0,
+          "nativeMissedFailures": 0,
+          "valid": true,
+          "stable": true
+        }
+      ],
+      "rejection": null,
+      "declaredBaselineSkips": 0,
+      "runtimeScope": "Frozen npm v3 comparative Vitest4.1.2/Vite8.0.3 runtime projection; not full upstream-lock installation"
+    },
+    {
+      "candidateId": "unjs-ufo-62199a0cc847",
+      "repository": "https://github.com/unjs/ufo",
+      "fixRevision": "62199a0cc84727b7b4666aaca8ff04cca2f68f3a",
+      "attemptPhase": "additional-prospective-legacy-runtime-projection",
+      "status": "completed",
+      "qualified": true,
+      "rawReceiptSha256": "b7f851ac044b0f4db7802efec2a13008f2261590d54ababf25162309a38bbff7",
+      "sourceRevision": "2f5fdd0a4d08ce240f662ee59f587252bcb10392",
+      "implementationUnchanged": true,
+      "executionMode": "legacy",
+      "completedTrials": 2,
+      "uncompletedTrials": 0,
+      "qualifiedScenarios": 1,
+      "demonstratedFaultTrials": 2,
+      "preservedFaultTrials": 2,
+      "fullFallbackTrials": 0,
+      "timing": {
+        "full": {
+          "observed": 2,
+          "totalMs": 3539,
+          "p50Ms": 1764,
+          "p95Ms": 1775
+        },
+        "testLore": {
+          "observed": 2,
+          "totalMs": 5882,
+          "p50Ms": 2898,
+          "p95Ms": 2984
+        },
+        "native": {
+          "observed": 2,
+          "totalMs": 3236,
+          "p50Ms": 1568,
+          "p95Ms": 1668
+        }
+      },
+      "trialSpans": [
+        {
+          "repetition": 1,
+          "analysisCachePhase": "first-plan-in-new-workspace",
+          "armOrder": [
+            "full",
+            "subset",
+            "native"
+          ],
+          "fullMs": 1764,
+          "testLoreMs": 2984,
+          "nativeMs": 1568,
+          "planningMs": 1255,
+          "subsetExecutionMs": 1597,
+          "analysisCache": {
+            "enabled": true,
+            "engine": "b526be74a607cc4df67794f8dd5d0bd35f6c6c9e32df08c84a792dd6fd1dd86a",
+            "memoryHits": 1,
+            "diskHits": 0,
+            "parses": 23,
+            "writes": 23,
+            "corruptions": 0,
+            "evictions": 0,
+            "skipped": 0,
+            "unavailable": false
+          },
+          "mode": "affected",
+          "selectedFiles": 12,
+          "totalFiles": 13,
+          "missedFailures": 0,
+          "nativeMissedFailures": 0,
+          "valid": true,
+          "stable": true
+        },
+        {
+          "repetition": 2,
+          "analysisCachePhase": "repeat-analysis-cache-enabled",
+          "armOrder": [
+            "subset",
+            "native",
+            "full"
+          ],
+          "fullMs": 1775,
+          "testLoreMs": 2898,
+          "nativeMs": 1668,
+          "planningMs": 1148,
+          "subsetExecutionMs": 1605,
+          "analysisCache": {
+            "enabled": true,
+            "engine": "b526be74a607cc4df67794f8dd5d0bd35f6c6c9e32df08c84a792dd6fd1dd86a",
+            "memoryHits": 1,
+            "diskHits": 23,
+            "parses": 0,
+            "writes": 0,
+            "corruptions": 0,
+            "evictions": 0,
+            "skipped": 0,
+            "unavailable": false
+          },
+          "mode": "affected",
+          "selectedFiles": 12,
+          "totalFiles": 13,
+          "missedFailures": 0,
+          "nativeMissedFailures": 0,
+          "valid": true,
+          "stable": true
+        }
+      ],
+      "rejection": null,
+      "declaredBaselineSkips": 0,
+      "runtimeScope": "Frozen npm v3 comparative Vitest4.1.2/Vite8.0.3 runtime projection; not full upstream-lock installation"
+    },
+    {
+      "candidateId": "unjs-ufo-229e83e6b6c9",
+      "repository": "https://github.com/unjs/ufo",
+      "fixRevision": "229e83e6b6c9c6edec4baa3a699bd6207ab031e1",
+      "attemptPhase": "additional-prospective-legacy-runtime-projection",
+      "status": "completed",
+      "qualified": true,
+      "rawReceiptSha256": "1dd229557996ba980ffe03087c037feeea22313f6fe651d74554092a62cb168d",
+      "sourceRevision": "2f5fdd0a4d08ce240f662ee59f587252bcb10392",
+      "implementationUnchanged": true,
+      "executionMode": "legacy",
+      "completedTrials": 2,
+      "uncompletedTrials": 0,
+      "qualifiedScenarios": 1,
+      "demonstratedFaultTrials": 2,
+      "preservedFaultTrials": 2,
+      "fullFallbackTrials": 0,
+      "timing": {
+        "full": {
+          "observed": 2,
+          "totalMs": 3406,
+          "p50Ms": 1701,
+          "p95Ms": 1705
+        },
+        "testLore": {
+          "observed": 2,
+          "totalMs": 5860,
+          "p50Ms": 2830,
+          "p95Ms": 3030
+        },
+        "native": {
+          "observed": 2,
+          "totalMs": 3333,
+          "p50Ms": 1558,
+          "p95Ms": 1775
+        }
+      },
+      "trialSpans": [
+        {
+          "repetition": 1,
+          "analysisCachePhase": "first-plan-in-new-workspace",
+          "armOrder": [
+            "full",
+            "subset",
+            "native"
+          ],
+          "fullMs": 1705,
+          "testLoreMs": 3030,
+          "nativeMs": 1775,
+          "planningMs": 1216,
+          "subsetExecutionMs": 1668,
+          "analysisCache": {
+            "enabled": true,
+            "engine": "b526be74a607cc4df67794f8dd5d0bd35f6c6c9e32df08c84a792dd6fd1dd86a",
+            "memoryHits": 1,
+            "diskHits": 0,
+            "parses": 22,
+            "writes": 22,
+            "corruptions": 0,
+            "evictions": 0,
+            "skipped": 0,
+            "unavailable": false
+          },
+          "mode": "affected",
+          "selectedFiles": 12,
+          "totalFiles": 13,
+          "missedFailures": 0,
+          "nativeMissedFailures": 0,
+          "valid": true,
+          "stable": true
+        },
+        {
+          "repetition": 2,
+          "analysisCachePhase": "repeat-analysis-cache-enabled",
+          "armOrder": [
+            "subset",
+            "native",
+            "full"
+          ],
+          "fullMs": 1701,
+          "testLoreMs": 2830,
+          "nativeMs": 1558,
+          "planningMs": 1142,
+          "subsetExecutionMs": 1561,
+          "analysisCache": {
+            "enabled": true,
+            "engine": "b526be74a607cc4df67794f8dd5d0bd35f6c6c9e32df08c84a792dd6fd1dd86a",
+            "memoryHits": 1,
+            "diskHits": 22,
+            "parses": 0,
+            "writes": 0,
+            "corruptions": 0,
+            "evictions": 0,
+            "skipped": 0,
+            "unavailable": false
+          },
+          "mode": "affected",
+          "selectedFiles": 12,
+          "totalFiles": 13,
+          "missedFailures": 0,
+          "nativeMissedFailures": 0,
+          "valid": true,
+          "stable": true
+        }
+      ],
+      "rejection": null,
+      "declaredBaselineSkips": 0,
+      "runtimeScope": "Frozen npm v3 comparative Vitest4.1.2/Vite8.0.3 runtime projection; not full upstream-lock installation"
+    },
+    {
+      "candidateId": "unjs-defu-1b9fcab2c147",
+      "repository": "https://github.com/unjs/defu",
+      "fixRevision": "1b9fcab2c1479f0295a5f867c6ec36a01fda2dfb",
+      "attemptPhase": "additional-prospective-legacy-runtime-projection",
+      "status": "completed",
+      "qualified": true,
+      "rawReceiptSha256": "80258980e1a67deb567b66f87e6c2ffaccf4e2a934008603be81b455422076ec",
+      "sourceRevision": "2f5fdd0a4d08ce240f662ee59f587252bcb10392",
+      "implementationUnchanged": true,
+      "executionMode": "legacy",
+      "completedTrials": 2,
+      "uncompletedTrials": 0,
+      "qualifiedScenarios": 1,
+      "demonstratedFaultTrials": 2,
+      "preservedFaultTrials": 2,
+      "fullFallbackTrials": 0,
+      "timing": {
+        "full": {
+          "observed": 2,
+          "totalMs": 958,
+          "p50Ms": 469,
+          "p95Ms": 489
+        },
+        "testLore": {
+          "observed": 2,
+          "totalMs": 2567,
+          "p50Ms": 1242,
+          "p95Ms": 1325
+        },
+        "native": {
+          "observed": 2,
+          "totalMs": 861,
+          "p50Ms": 430,
+          "p95Ms": 431
+        }
+      },
+      "trialSpans": [
+        {
+          "repetition": 1,
+          "analysisCachePhase": "first-plan-in-new-workspace",
+          "armOrder": [
+            "full",
+            "subset",
+            "native"
+          ],
+          "fullMs": 489,
+          "testLoreMs": 1325,
+          "nativeMs": 431,
+          "planningMs": 725,
+          "subsetExecutionMs": 484,
+          "analysisCache": {
+            "enabled": true,
+            "engine": "b526be74a607cc4df67794f8dd5d0bd35f6c6c9e32df08c84a792dd6fd1dd86a",
+            "memoryHits": 1,
+            "diskHits": 0,
+            "parses": 9,
+            "writes": 9,
+            "corruptions": 0,
+            "evictions": 0,
+            "skipped": 0,
+            "unavailable": false
+          },
+          "mode": "affected",
+          "selectedFiles": 2,
+          "totalFiles": 2,
+          "missedFailures": 0,
+          "nativeMissedFailures": 0,
+          "valid": true,
+          "stable": true
+        },
+        {
+          "repetition": 2,
+          "analysisCachePhase": "repeat-analysis-cache-enabled",
+          "armOrder": [
+            "subset",
+            "native",
+            "full"
+          ],
+          "fullMs": 469,
+          "testLoreMs": 1242,
+          "nativeMs": 430,
+          "planningMs": 666,
+          "subsetExecutionMs": 465,
+          "analysisCache": {
+            "enabled": true,
+            "engine": "b526be74a607cc4df67794f8dd5d0bd35f6c6c9e32df08c84a792dd6fd1dd86a",
+            "memoryHits": 1,
+            "diskHits": 9,
+            "parses": 0,
+            "writes": 0,
+            "corruptions": 0,
+            "evictions": 0,
+            "skipped": 0,
+            "unavailable": false
+          },
+          "mode": "affected",
+          "selectedFiles": 2,
+          "totalFiles": 2,
+          "missedFailures": 0,
+          "nativeMissedFailures": 0,
+          "valid": true,
+          "stable": true
+        }
+      ],
+      "rejection": null,
+      "declaredBaselineSkips": 0,
+      "runtimeScope": "Frozen npm v3 comparative Vitest4.1.2/Vite8.0.3 runtime projection; not full upstream-lock installation"
+    }
+  ],
+  "priorAccounting": "../qualification-20261007/frontier.json",
+  "runtimeProjection": {
+    "lockfileSha256": "b78e273b459a8843e6ab60c6b0f09dea56aa335d8e32957181fdefd6d3b60b13",
+    "topLevelVersions": {
+      "vitest": "4.1.2",
+      "vite": "8.0.3",
+      "expect-type": "1.3.0",
+      "jiti": "2.6.1",
+      "@types/node": "25.5.0"
+    },
+    "installedMetadataBindings": 48,
+    "upstreamLockInstallationVerified": false
+  },
+  "limitations": [
+    "Ten qualified changes across three related UnJS projects do not satisfy100/10 or represent broad ecosystem diversity.",
+    "No new timing observation beats native selection; results include negative performance outcomes.",
+    "All earlier unqualified attempts remain retained; prospective changed skip policy and explicitly different legacy profiles are separately identified.",
+    "Named skip declarations admit only stable fixed-baseline skips; every expected defect oracle is passing/runnable before prior-source inversion.",
+    "Native and TestLore arms use fresh processes but OS/framework caches are uncontrolled; observations are not fully cold machine benchmarks.",
+    "Corpus arm timing includes discovery/planning/execution/retained receipts but excludes corpus orchestration and independent verification discovery; full CLI spans are a separate qualification.",
+    "The runtime projection is reproducible from its npm lock but differs from full upstream-lock dependencies; lint, types and build scripts are out of the declared runtime scope.",
+    "Controller process deadlines and disk guards are enforced; descendant cleanup is best effort, not a sandbox for arbitrary upstream code.",
+    "No new public browser/monorepo history is qualified. No generation or learning claim."
+  ],
+  "additionalNativePreflightAccounting": "additional-preflight-20261007.json",
+  "anyNativeExecutionAccounting": {
+    "attemptedUniqueCandidates": 16,
+    "qualifiedThreeArmUniqueChanges": 10,
+    "preflightOnlyRejectedUniqueCandidates": 6,
+    "notNativeAttemptedUniqueCandidates": 84,
+    "scope": "Including original destr baseline rejection, five additional negative native preflights, and the ten qualified three-arm changes. Input-only controller rejection starts do not add native execution candidates."
+  },
+  "additionalComparativeController": {
+    "maxCampaignMs": 90000,
+    "controllerElapsedMs": 75136,
+    "summarySha256": "c2d96713e15a530efcfe08c435fbd9d4dd637ae3eea26f375f693a67e20dfa09",
+    "complete": true,
+    "deadlineStopped": false,
+    "diskStopped": false,
+    "installs": 0
+  }
+}

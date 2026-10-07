@@ -47,6 +47,14 @@ Give your repository its own quality engineer. One command sets up **shadow veri
 npm exec --yes --package=github:rudycelekli/testlore -- testlore setup
 ```
 
+Add `--verify` to configure the project and immediately record a **full shadow run** in the same command:
+
+```sh
+npm exec --yes --package=github:rudycelekli/testlore -- testlore setup --verify --json
+```
+
+This executes your configured native tests, preserves their failure exit, and saves an inspectable report. Ordinary setup only writes configuration. Run `testlore report` to inspect outcomes, proposed omissions and uncertainty.
+
 Review and commit the setup files. To generate independently reviewed test improvements on a new isolated branch and open a validated PR, run from a clean, committed checkout:
 
 ```sh
@@ -251,10 +259,12 @@ On **12 controlled changes across four Node fixtures**, TestLore caught all 63 o
 | **External maintainer oracles** | Actual ufo prefix bug, unchanged upstream tests: four assertions fail and are preserved twice by both selectors. TestLore 9.68 s; native 4.85 s. | [Aggregate](benchmarks/qualification-20261006/external-ufo.json) · [Reproduce](docs/regression-corpus.md) |
 | **Prospective audited learning** | Eight trials, seven native protocol rejections. One trial caught three withheld faults twice; all pairs incomplete. No learning-gain claim; partial token usage and unknown billing retained. | [Aggregate](benchmarks/qualification-20261006/prospective-learning.json) |
 | **Audited native generation** | Corrected retest: three roles, 43 stable baseline cases, three authored faults caught twice. Initial layout rejection retained; no learning-gain claim. | [Both attempts](benchmarks/worker/codex-completion-aggregate.json) · [Method](docs/worker-completion.md) |
-| **Fresh generation reliability** | Two frozen authored contracts, four trials, 12/12 audited calls within budget; six constructed faults caught in both repetitions. Learning disabled. | [Aggregate](benchmarks/qualification-20261007/frontier.json) · [Scope](docs/qualification-20261007.md) |
-| **One-context CLI comparison** | 24/24 executions preserved TestLore failures. Public ufo: about 2.8 s unified, 3.1 s legacy, 1.5 s native. No general speed lead. Native imports missed the declared asset fault. | [Complete spans](benchmarks/qualification-20261007/unified-cli.json) · [Prototype](docs/unified-native.md) |
+| **Public generation reliability** | Two maintained public contracts and real historical bugs: four stable trials, 12 audited calls, **3/4 fault-trial detections**. A 26-case generated suite still missed a bug. Learning unpromoted. | [Public contracts](benchmarks/public-generation/maintainer-contracts-v1) · [Aggregate](benchmarks/qualification-20261007/expansion.json) |
+| **One-context CLI comparison** | Fresh 24/24 executions preserved TestLore failures. Public ufo: **2.6–2.7 s unified vs 1.3–1.4 s native**. No general speed lead. Native imports missed the declared asset fault. | [Complete spans](benchmarks/qualification-20261007/unified-cli-expansion.json) · [Startup profile](benchmarks/qualification-20261007/cli-startup-expansion.json) |
 | **Reviewed real asset mapping** | 16/82 files selected, all three observed failures preserved in independent full/subset runs. Proposal unapplied; unknown consumers retain fallback. | [Receipt and limits](docs/qualification-20261007.md) |
-| **Real Codex host** | Exact hosted main archive completed four MCP calls and returned named failure, uncertainty and next action. Claude authentication and npm publication remain open. | [Campaign](docs/qualification-20261007.md) |
+| **Actual workspace and browser challenges** | Workspace contract: 24 → 6 files, named failure preserved twice. Real static frontend: reviewed CSS hypothesis selects 1/2; shared server uncertainty retains 2/2. | [Expansion and limitations](docs/qualification-20261007-expansion.md) |
+| **Independent public regressions** | **10 unique qualified fixes / 3 repositories**, 20 repeated qualified exposures. TestLore remains slower than native selection. The 100/10 target is open. | [Denominators and negative results](benchmarks/public-corpus/expansion-20261007.json) · [Reproduce](docs/public-regression-corpus.md) |
+| **Real Codex repair loop** | An exact hosted archive completed all seven ordered MCP calls and independent full verification, preserving the sealed tests. Synthetic constant repair only; Claude authentication and npm publication remain open. | [Installed-host evidence](docs/qualification-20261007-expansion.md) |
 | **Native agent hosts** | Actual Codex readonly calls; execution blocked by MCP policy. Claude authentication failed before tool calls. Neither host fully qualified. | [Aggregate](benchmarks/host-native-aggregate.json) · [Procedure](docs/mcp.md) |
 | **Packed installation** | Production-only install, native shadow fault detection, runtime capture, and a fully tested improvement branch. | `node scripts/packed-proof.js` |
 

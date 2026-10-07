@@ -11,7 +11,7 @@ import { fileIdentity, assertFileIdentities } from './worker-identity.js';
 
 const read = file => readBoundedJson(file,16*1024*1024);
 const repository = fileURLToPath(new URL('../',import.meta.url));
-function captureIdentity() {
+export function captureCorpusIdentity() {
   const files=['scripts/regression-corpus.js','scripts/evaluation-commitment.js','scripts/worker-identity.js'], queue=['src'];
   while(queue.length){const directory=queue.pop();for(const name of fs.readdirSync(path.join(repository,directory)).sort()){const file=directory+'/'+name,stat=fs.lstatSync(path.join(repository,file));if(stat.isDirectory())queue.push(file);else if(stat.isFile())files.push(file);else throw new Error('Controller source inventory requires regular files');if(files.length+queue.length>256)throw new Error('Controller source inventory exceeded its bound');}}
   const bindings=files.map(file=>fileIdentity(path.join(repository,file))),node=fileIdentity(process.execPath,512*1024*1024);
@@ -19,7 +19,16 @@ function captureIdentity() {
   return {bindings,nodeBinding:node,public:{sourceRevision,sourceTreeClean,controllerNode:{version:process.version,sha256:node.sha256,bytes:node.bytes},implementationHashes:Object.fromEntries(files.map((file,index)=>[file,bindings[index].sha256])),identityScope:'Controller, all existing core source modules and controller Node binary bound by content hashes. Installed native framework dependencies, runtime children, environment and models are not fully attested.'}};
 }
 const signatures = run => JSON.stringify((run.tests || []).map(test => [test.id, test.file, test.name, test.status]).sort((a,b) => JSON.stringify(a).localeCompare(JSON.stringify(b))));
-const named = run => run.complete === true && Array.isArray(run.tests) && run.tests.length > 0 && run.tests.every(test => ['passed','failed'].includes(test.status) && test.name !== '<file-load>');
+const named = (run, declaredSkips=[]) => run.complete === true && Array.isArray(run.tests) && run.tests.length > 0 && run.tests.every(test => test.name !== '<file-load>' && (['passed','failed'].includes(test.status) || test.status==='skipped' && declaredSkips.some(skip=>skip.id===test.id&&skip.file===test.file&&skip.name===test.name)));
+const skipSignature = tests => JSON.stringify(tests.map(test=>[test.id,test.file,test.name]).sort((a,b)=>JSON.stringify(a).localeCompare(JSON.stringify(b))));
+function baselineSkipPolicy(report, project, label) {
+  if(label.baselineDeclaredSkips===undefined)return {valid:true,skips:[]};
+  try {
+    const baseline=read(path.join(report.output,project.name,'patch-baseline.json'));
+    const skips=label.baselineDeclaredSkips;
+    return {skips,valid:baseline.exitCode===0&&named(baseline,skips)&&baseline.tests.some(test=>test.status==='passed')&&skipSignature(baseline.tests.filter(test=>test.status==='skipped'))===skipSignature(skips)&&label.expectedFailureNames.every(name=>baseline.tests.some(test=>test.name===name&&test.status==='passed'&&label.oracleFiles.some(file=>file.path===test.file)))};
+  } catch { return {valid:false,skips:[]}; }
+}
 const percentile = (values, p) => values.length ? [...values].sort((a,b)=>a-b)[Math.ceil(values.length * p)-1] : null;
 
 export function validateCorpus(manifest) {
@@ -31,6 +40,7 @@ export function validateCorpus(manifest) {
   for (const label of manifest.labels) {
     const project = validated.projects.find(project => project.name === label.project), change = project?.changes.find(change => change.name === label.change), key = `${label.project}/${label.change}`;
     if (!change || seen.has(key) || !Array.isArray(label.expectedFailureNames) || label.expectedFailureNames.length > 32 || label.expectedFailureNames.some(name=>typeof name!=='string'||!name||name==='<file-load>'||name.length>300) || new Set(label.expectedFailureNames).size !== label.expectedFailureNames.length || change.expectedFailure !== (label.expectedFailureNames.length > 0)) throw new Error('Labels need distinct bounded named assertion failures matching expectedFailure');
+    if(label.baselineDeclaredSkips!==undefined){const skips=label.baselineDeclaredSkips;if(change.kind==='history'||!Array.isArray(skips)||skips.length>10000||skips.some(skip=>typeof skip?.id!=='string'||!skip.id||skip.id.length>512||typeof skip.file!=='string'||!TEST.test(skip.file)||typeof skip.name!=='string'||!skip.name||skip.name.length>1000||skip.name==='<file-load>'||label.expectedFailureNames.includes(skip.name))||new Set(skips.map(skip=>skip.id)).size!==skips.length)throw new Error('Declare bounded exact fixed-baseline skip identities; regression oracles must remain runnable');}
     seen.add(key);
     if (!Array.isArray(label.oracleFiles) || !label.oracleFiles.length || label.oracleFiles.length>32 || label.oracleFiles.some(file=>!file || !TEST.test(file.path) || !/^[a-f0-9]{64}$/.test(file.sha256) || fileIdentity(safePath(project.root,file.path)).sha256!==file.sha256)) throw new Error('Bind existing native oracle files by source hash');
     if (change.kind !== 'history' && TEST.test(change.file)) throw new Error('A fault patch cannot modify its test oracle');
@@ -47,7 +57,7 @@ export function assessCorpus(report, labels) {
   const changes = [], timing = { full: [], testLore: [], native: [] };
   for (const label of labels) {
     const project = report.projects?.find(project => project.name === label.project), change = project?.changes?.find(change => change.name === label.change);
-    const trials = change?.trials || [], rows = [];
+    const trials = change?.trials || [], rows = [], skipPolicy=baselineSkipPolicy(report,project,label);
     for (let index=0; index<trials.length; index++) {
       const trial = trials[index]; let runs, error;
       try {
@@ -55,15 +65,15 @@ export function assessCorpus(report, labels) {
         runs = Object.fromEntries(['full','subset','native'].map(arm=>[arm, read(path.join(directory,`change-${c}-trial-${index}-${arm}.json`))]));
       } catch (failure) { error = failure.message; }
       const failures = runs?.full.tests?.filter(test=>test.status==='failed' && test.name!=='<file-load>') || [];
-      const demonstrated = Boolean(runs && named(runs.full) && label.expectedFailureNames.every(name=>failures.some(test=>test.name===name && label.oracleFiles.some(file=>file.path===test.file))) && (label.expectedFailureNames.length || runs.full.exitCode===0));
+      const demonstrated = Boolean(runs && skipPolicy.valid && named(runs.full,skipPolicy.skips) && skipSignature(runs.full.tests.filter(test=>test.status==='skipped'))===skipSignature(skipPolicy.skips) && label.expectedFailureNames.every(name=>failures.some(test=>test.name===name && label.oracleFiles.some(file=>file.path===test.file))) && (label.expectedFailureNames.length || runs.full.exitCode===0));
       const emptyPassingSubset = runs?.subset.complete === true && runs.subset.exitCode === 0 && Array.isArray(runs.subset.tests) && runs.subset.tests.length === 0 && failures.length === 0;
-      const preserved = Boolean(demonstrated && (named(runs.subset) || emptyPassingSubset) && failures.every(failure=>runs.subset.tests.some(test=>test.id===failure.id && test.name===failure.name && test.status==='failed')) && trial.valid && trial.casePreservation?.complete);
+      const preserved = Boolean(demonstrated && (named(runs.subset,skipPolicy.skips) || emptyPassingSubset) && failures.every(failure=>runs.subset.tests.some(test=>test.id===failure.id && test.name===failure.name && test.status==='failed')) && trial.valid && trial.casePreservation?.complete);
       rows.push({ demonstrated, preserved, error, signatures: runs ? Object.fromEntries(Object.entries(runs).map(([arm,run])=>[arm,signatures(run)])) : null });
       for (const [arm,key] of [['full','fullMs'],['testLore','testLoreMs'],['native','nativeMs']]) if (Number.isFinite(trial[key]) && trial[key]>=0) timing[arm].push(trial[key]);
     }
     const repeated = rows.length === report.repetitions && rows.length >= 2;
     const stable = repeated && rows.every(row=>row.signatures) && ['full','subset','native'].every(arm=>rows.every(row=>row.signatures[arm]===rows[0].signatures[arm]));
-    changes.push({ origin: label.origin.kind, expectedFault: label.expectedFailureNames.length>0, expectedTrials:report.repetitions, completedTrials:rows.length, demonstratedTrials:rows.filter(row=>row.demonstrated).length, preservedTrials:rows.filter(row=>row.preserved).length, stable, qualified:stable&&rows.every(row=>row.preserved)&&!change?.error&&project?.sourceCheckoutUnchanged===true });
+    changes.push({ origin: label.origin.kind, expectedFault: label.expectedFailureNames.length>0, expectedTrials:report.repetitions, completedTrials:rows.length, demonstratedTrials:rows.filter(row=>row.demonstrated).length, preservedTrials:rows.filter(row=>row.preserved).length, stable, baselineSkipPolicyValid:skipPolicy.valid,declaredBaselineSkips:skipPolicy.skips.length,qualified:stable&&skipPolicy.valid&&rows.every(row=>row.preserved)&&!change?.error&&project?.sourceCheckoutUnchanged===true });
   }
   const trials = report.projects?.flatMap(project=>(project.changes||[]).flatMap(change=>change.trials||[])) || [];
   const requested = changes.reduce((n,change)=>n+change.expectedTrials,0), completed = changes.reduce((n,change)=>n+change.completedTrials,0);
@@ -78,7 +88,7 @@ export function runCorpus(root, manifest, relative) {
   fs.writeFileSync(path.join(output,'manifest.json'),JSON.stringify(manifest,null,2),{flag:'wx',mode:0o600});
   const started = performance.now(); let report, aggregate, identity;
   try {
-    identity=captureIdentity();
+    identity=captureCorpusIdentity();
     fs.writeFileSync(path.join(output,'implementation-identity.json'),JSON.stringify(identity.public,null,2),{flag:'wx',mode:0o600});
     const executionMode=manifest.executionMode??'legacy';
     if(executionMode==='unified-native'&&!pilotApi.PILOT_EXECUTION_MODES?.includes('unified-native'))throw new Error('Current pilot implementation does not support the frozen unified-native execution mode');

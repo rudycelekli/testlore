@@ -1,0 +1,81 @@
+{
+  "schemaVersion": 1,
+  "id": "public-maintainer-contracts-20261007-v1",
+  "history": [
+    {
+      "id": "historical-clamp",
+      "specificationId": "numeric-clamping",
+      "requirements": "Clamp finite numbers to inclusive lower/upper bounds; reversed bounds throw RangeError. Include boundary, interior, negative and error cases.",
+      "files": [
+        {
+          "path": "src/clamp.js",
+          "content": "export function clamp(x,a,b){if(a>b)throw new RangeError();return Math.max(a,Math.min(b,x));}"
+        }
+      ],
+      "tests": [
+        {
+          "path": "test/clamp.test.js",
+          "content": "import test from 'node:test';import assert from 'node:assert/strict';import {clamp} from '../src/clamp.js';test('boundary interior negative error',()=>{assert.equal(clamp(-4,-2,3),-2);assert.equal(clamp(4,-2,3),3);assert.equal(clamp(0,-2,3),0);assert.throws(()=>clamp(0,2,1),RangeError);});"
+        }
+      ]
+    }
+  ],
+  "fixtures": [
+    {
+      "id": "regexp",
+      "specificationId": "maintainer-regexp-unicode-escaping",
+      "requirements": "Public maintainer API contract (sindresorhus/escape-string-regexp, 732905da074f0220487ad6a27590f89bd0819374). Test the CommonJS default export at src/regexp.cjs using Node's test runner. Write exact deterministic assertions from the contract, including boundaries. The README below is authoritative for this API scope. Do not assert undocumented behavior or derive expected values by running the implementation.\n\n# escape-string-regexp [![Build Status](https://travis-ci.org/sindresorhus/escape-string-regexp.svg?branch=master)](https://travis-ci.org/sindresorhus/escape-string-regexp)\n\n> Escape RegExp special characters\n\n\n## Install\n\n```\n$ npm install escape-string-regexp\n```\n\n\n## Usage\n\n```js\nconst escapeStringRegexp = require('escape-string-regexp');\n\nconst escapedString = escapeStringRegexp('How much $ for a 🦄?');\n//=> 'How much \\\\$ for a 🦄\\\\?'\n\nnew RegExp(escapedString);\n```\n\nYou can also use this to escape a string that is inserted into the middle of a regex, for example, into a character class.\n\n\n---\n\n<div align=\"center\">\n\t<b>\n\t\t<a href=\"https://tidelift.com/subscription/pkg/npm-escape-string-regexp?utm_source=npm-escape-string-regexp&utm_medium=referral&utm_campaign=readme\">Get professional support for this package with a Tidelift subscription</a>\n\t</b>\n\t<br>\n\t<sub>\n\t\tTidelift helps make open source sustainable for maintainers while giving companies<br>assurances about security, maintenance, and licensing for their dependencies.\n\t</sub>\n</div>\n",
+      "files": [
+        {
+          "path": "src/regexp.cjs",
+          "content": "'use strict';\n\nmodule.exports = string => {\n\tif (typeof string !== 'string') {\n\t\tthrow new TypeError('Expected a string');\n\t}\n\n\t// Escape characters with special meaning either inside or outside character sets.\n\t// Use a simple backslash escape when it’s always valid, and a \\unnnn escape when the simpler form would be disallowed by Unicode patterns’ stricter grammar.\n\treturn string\n\t\t.replace(/[|\\\\{}()[\\]^$+*?.]/g, '\\\\$&')\n\t\t.replace(/-/g, '\\\\u002d');\n};\n"
+        }
+      ],
+      "referenceTests": [
+        {
+          "path": "test/regexp.test.mjs",
+          "content": "import nodeTest from 'node:test';\nimport assert from 'node:assert/strict';\nimport escapeStringRegexp from '../src/regexp.cjs';\nconst test=(name,fn)=>nodeTest(name,()=>fn({is:assert.strictEqual,regex:assert.match}));\n\ntest('main', t => {\n\tt.is(\n\t\tescapeStringRegexp('\\\\ ^ $ * + ? . ( ) | { } [ ]'),\n\t\t'\\\\\\\\ \\\\^ \\\\$ \\\\* \\\\+ \\\\? \\\\. \\\\( \\\\) \\\\| \\\\{ \\\\} \\\\[ \\\\]'\n\t);\n});\n\ntest('escapes `-`', t => {\n\tt.is(\n\t\tescapeStringRegexp('foo - bar'),\n\t\t'foo \\\\u002d bar'\n\t);\n});\n\ntest('escapes `-` in a way compatible with the Unicode flag', t => {\n\tt.regex(\n\t\t'-',\n\t\tnew RegExp(escapeStringRegexp('-'), 'u')\n\t);\n});\n"
+        }
+      ],
+      "defects": [
+        {
+          "id": "historical-parent",
+          "files": [
+            {
+              "path": "src/regexp.cjs",
+              "content": "'use strict';\n\nconst matchOperatorsRegex = /[|\\\\{}()[\\]^$+*?.-]/g;\n\nmodule.exports = string => {\n\tif (typeof string !== 'string') {\n\t\tthrow new TypeError('Expected a string');\n\t}\n\n\treturn string.replace(matchOperatorsRegex, '\\\\$&');\n};\n"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "html",
+      "specificationId": "maintainer-html-text-escaping",
+      "requirements": "Public maintainer API contract (component/escape-html, 7a0e1a7139d03f5efca21322d58dfdbfb317f1dc). Test the CommonJS default export at src/html.cjs using Node's test runner. Write exact deterministic assertions from the contract, including boundaries. The README below is authoritative for this API scope. Do not assert undocumented behavior or derive expected values by running the implementation.\n\n# escape-html\n\n[![NPM Version][npm-image]][npm-url]\n[![NPM Downloads][downloads-image]][downloads-url]\n[![Build Status][travis-image]][travis-url]\n[![Test Coverage][coveralls-image]][coveralls-url]\n\n  Escape string for use in HTML\n\nThis module exports a single function, `escapeHtml`, that is used to escape\na string of content such that it can be interpolated in HTML content.\n\n## API\n\n### escapeHtml(string)\n\nEscape special characters in the given string of text, such that it can be\ninterpolated in HTML content.\n\nThis function will escape the following characters: `\"`, `'`, `&`, `<`, and\n`>`.\n\n**Note** that the escaped value is only suitable for being interpolated into\nHTML as the text content of elements in which the tag does not have different\nescaping mechanisms (it cannot be placed inside `<style>` or `<script>`, for\nexample, as those content bodies are not HTML, but CSS and JavaScript,\nrespectively; these are known as \"raw text elements\" in the HTML standard).\n\n**Note** when using the escaped value within a tag, it is only suitable as\nthe value of an attribute, where the value is quoted with either a double\nquote character (`\"`) or a single quote character (`'`).\n\n## Example\n\n```js\nvar escapeHtml = require('escape-html');\nvar html = escapeHtml('foo & bar');\n// -> foo &amp; bar\n```\n\n## Benchmark\n\n```\n$ npm run-script bench\n\n> escape-html@1.0.3 bench nodejs-escape-html\n> node benchmark/index.js\n\n\n  http_parser@1.0\n  node@0.10.33\n  v8@3.14.5.9\n  ares@1.9.0-DEV\n  uv@0.10.29\n  zlib@1.2.3\n  modules@11\n  openssl@1.0.1j\n\n  1 test completed.\n  2 tests completed.\n  3 tests completed.\n\n  no special characters    x 19,435,271 ops/sec ±0.85% (187 runs sampled)\n  single special character x  6,132,421 ops/sec ±0.67% (194 runs sampled)\n  many special characters  x  3,175,826 ops/sec ±0.65% (193 runs sampled)\n```\n\n## License\n\n  MIT\n\n[coveralls-image]: https://img.shields.io/coveralls/component/escape-html/master.svg\n[coveralls-url]: https://coveralls.io/r/component/escape-html?branch=master\n[downloads-image]: https://img.shields.io/npm/dm/escape-html.svg\n[downloads-url]: https://npmjs.org/package/escape-html\n[npm-image]: https://img.shields.io/npm/v/escape-html.svg\n[npm-url]: https://npmjs.org/package/escape-html\n[travis-image]: https://img.shields.io/travis/component/escape-html/master.svg\n[travis-url]: https://travis-ci.org/component/escape-html\n",
+      "files": [
+        {
+          "path": "src/html.cjs",
+          "content": "/**\n * Escape special characters in the given string of html.\n *\n * @param  {String} html\n * @return {String}\n * @api private\n */\n\nmodule.exports = function(html) {\n  return String(html)\n    .replace(/&/g, '&amp;')\n    .replace(/\"/g, '&quot;')\n    .replace(/'/g, '&#39;')\n    .replace(/</g, '&lt;')\n    .replace(/>/g, '&gt;');\n}\n"
+        }
+      ],
+      "referenceTests": [
+        {
+          "path": "test/html.test.cjs",
+          "content": "const {describe,it}=require('node:test');\nvar assert = require('assert')\nvar escapeHtml = require('../src/html.cjs')\n\ndescribe('escapeHtml(string)', function () {\n  describe('when string is undefined', function () {\n    it('should return \"undefined\"', function () {\n      assert.strictEqual(escapeHtml(undefined), 'undefined')\n    })\n  })\n\n  describe('when string is null', function () {\n    it('should return \"null\"', function () {\n      assert.strictEqual(escapeHtml(null), 'null')\n    })\n  })\n\n  describe('when string is a number', function () {\n    it('should return stringified number', function () {\n      assert.strictEqual(escapeHtml(42), '42')\n    })\n  })\n\n  describe('when string is an object', function () {\n    it('should return \"[object Object]\"', function () {\n      assert.strictEqual(escapeHtml({}), '[object Object]')\n    })\n  })\n\n  describe('when string contains \\'\"\\'', function () {\n    describe('as only character', function () {\n      it('should replace with \"&quot;\"', function () {\n        assert.strictEqual(escapeHtml('\"'), '&quot;')\n      })\n    })\n\n    describe('as first character', function () {\n      it('should replace with \"&quot;\"', function () {\n        assert.strictEqual(escapeHtml('\"bar'), '&quot;bar')\n      })\n    })\n\n    describe('as last character', function () {\n      it('should replace with \"&quot;\"', function () {\n        assert.strictEqual(escapeHtml('foo\"'), 'foo&quot;')\n      })\n    })\n\n    describe('as middle character', function () {\n      it('should replace with \"&quot;\"', function () {\n        assert.strictEqual(escapeHtml('foo\"bar'), 'foo&quot;bar')\n      })\n    })\n\n    describe('multiple times', function () {\n      it('should replace all occurrances with \"&quot;\"', function () {\n        assert.strictEqual(escapeHtml('foo\"\"bar'), 'foo&quot;&quot;bar')\n      })\n    })\n  })\n\n  describe('when string contains \"&\"', function () {\n    describe('as only character', function () {\n      it('should replace with \"&amp;\"', function () {\n        assert.strictEqual(escapeHtml('&'), '&amp;')\n      })\n    })\n\n    describe('as first character', function () {\n      it('should replace with \"&amp;\"', function () {\n        assert.strictEqual(escapeHtml('&bar'), '&amp;bar')\n      })\n    })\n\n    describe('as last character', function () {\n      it('should replace with \"&amp;\"', function () {\n        assert.strictEqual(escapeHtml('foo&'), 'foo&amp;')\n      })\n    })\n\n    describe('as middle character', function () {\n      it('should replace with \"&amp;\"', function () {\n        assert.strictEqual(escapeHtml('foo&bar'), 'foo&amp;bar')\n      })\n    })\n\n    describe('multiple times', function () {\n      it('should replace all occurrances with \"&amp;\"', function () {\n        assert.strictEqual(escapeHtml('foo&&bar'), 'foo&amp;&amp;bar')\n      })\n    })\n  })\n\n  describe('when string contains \"\\'\"', function () {\n    describe('as only character', function () {\n      it('should replace with \"&#39;\"', function () {\n        assert.strictEqual(escapeHtml(\"'\"), '&#39;')\n      })\n    })\n\n    describe('as first character', function () {\n      it('should replace with \"&#39;\"', function () {\n        assert.strictEqual(escapeHtml(\"'bar\"), '&#39;bar')\n      })\n    })\n\n    describe('as last character', function () {\n      it('should replace with \"&#39;\"', function () {\n        assert.strictEqual(escapeHtml(\"foo'\"), 'foo&#39;')\n      })\n    })\n\n    describe('as middle character', function () {\n      it('should replace with \"&#39;\"', function () {\n        assert.strictEqual(escapeHtml(\"foo'bar\"), 'foo&#39;bar')\n      })\n    })\n\n    describe('multiple times', function () {\n      it('should replace all occurrances with \"&#39;\"', function () {\n        assert.strictEqual(escapeHtml(\"foo''bar\"), 'foo&#39;&#39;bar')\n      })\n    })\n  })\n\n  describe('when string contains \"<\"', function () {\n    describe('as only character', function () {\n      it('should replace with \"&lt;\"', function () {\n        assert.strictEqual(escapeHtml('<'), '&lt;')\n      })\n    })\n\n    describe('as first character', function () {\n      it('should replace with \"&lt;\"', function () {\n        assert.strictEqual(escapeHtml('<bar'), '&lt;bar')\n      })\n    })\n\n    describe('as last character', function () {\n      it('should replace with \"&lt;\"', function () {\n        assert.strictEqual(escapeHtml('foo<'), 'foo&lt;')\n      })\n    })\n\n    describe('as middle character', function () {\n      it('should replace with \"&lt;\"', function () {\n        assert.strictEqual(escapeHtml('foo<bar'), 'foo&lt;bar')\n      })\n    })\n\n    describe('multiple times', function () {\n      it('should replace all occurrances with \"&lt;\"', function () {\n        assert.strictEqual(escapeHtml('foo<<bar'), 'foo&lt;&lt;bar')\n      })\n    })\n  })\n\n  describe('when string contains \">\"', function () {\n    describe('as only character', function () {\n      it('should replace with \"&gt;\"', function () {\n        assert.strictEqual(escapeHtml('>'), '&gt;')\n      })\n    })\n\n    describe('as first character', function () {\n      it('should replace with \"&gt;\"', function () {\n        assert.strictEqual(escapeHtml('>bar'), '&gt;bar')\n      })\n    })\n\n    describe('as last character', function () {\n      it('should replace with \"&gt;\"', function () {\n        assert.strictEqual(escapeHtml('foo>'), 'foo&gt;')\n      })\n    })\n\n    describe('as middle character', function () {\n      it('should replace with \"&gt;\"', function () {\n        assert.strictEqual(escapeHtml('foo>bar'), 'foo&gt;bar')\n      })\n    })\n\n    describe('multiple times', function () {\n      it('should replace all occurrances with \"&gt;\"', function () {\n        assert.strictEqual(escapeHtml('foo>>bar'), 'foo&gt;&gt;bar')\n      })\n    })\n  })\n\n  describe('when escaped character mixed', function () {\n    it('should escape all occurrances', function () {\n      assert.strictEqual(escapeHtml('&foo <> bar \"fizz\" l\\'a'),\n        '&amp;foo &lt;&gt; bar &quot;fizz&quot; l&#39;a')\n    })\n  })\n})\n"
+        }
+      ],
+      "defects": [
+        {
+          "id": "historical-parent",
+          "files": [
+            {
+              "path": "src/html.cjs",
+              "content": "\n/**\n * Escape special characters in the given string of html.\n *\n * @param  {String} html\n * @return {String}\n * @api private\n */\n\nmodule.exports = function(html) {\n  return String(html)\n    .replace(/&/g, '&amp;')\n    .replace(/\"/g, '&quot;')\n    .replace(/</g, '&lt;')\n    .replace(/>/g, '&gt;');\n}"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

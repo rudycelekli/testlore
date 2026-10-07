@@ -1,0 +1,10 @@
+{
+  "mode": "generation-reliability",
+  "repeat": 2,
+  "maxCalls": 12,
+  "timeoutMs": 115000,
+  "maxOutputBytes": 65536,
+  "stabilityRuns": 2,
+  "retries": 0,
+  "learningCompared": false
+}

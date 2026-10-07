@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "kind": "evaluation-dataset-commitment",
+  "datasetId": "public-maintainer-contracts-20261007-v1",
+  "datasetHash": "55cf8e79a1f2b44847aca447ab58e2b50964025f3d0557e4839ee904e88bb8db",
+  "units": [
+    {
+      "specificationId": "maintainer-regexp-unicode-escaping",
+      "requirementsHash": "b180a510db37990667a26f4160e204a51f4fe25064704f2ce4be7a6ad0726994",
+      "sourceHash": "60c37519ab4cf7fae7388deda490953985a9bfa77a44226fcaa078cef8260752",
+      "referenceHash": "897127084fcaea4432a2a0c8b84ba6f3095c676eeb4cc7f206fcd48bbb2dd604",
+      "defectsHash": "6d3016ebbb86867aa5b5cc3d635b0a6f4852ce77bfd0b2d9e3b655849904ddb6"
+    },
+    {
+      "specificationId": "maintainer-html-text-escaping",
+      "requirementsHash": "c18e0d5acef1a331563d624d5ab661d9570be0ff4351dfc08732503218da2615",
+      "sourceHash": "a0e2ef8ad7412421ca05536a0aeeaafa1a09cbb9c491e3a0e33978b0c72013ad",
+      "referenceHash": "8d8d1292c099f474273e241b90f082a13c06422a807cd2441692b87676d9e3d0",
+      "defectsHash": "23f79c7aca1b729539454f1d5c77cc83bcf1cc49fda061d54a63325cae78a7b1"
+    }
+  ],
+  "provenance": {
+    "owner": "Public upstream maintainers; TestLore transport adaptation",
+    "source": "Pinned escape-string-regexp and escape-html README, tests, and genuine historical parent revisions; upstream blob bindings accompany dataset",
+    "independenceNotes": "Maintainer specifications/assertions/history independently maintained. TestLore selects the snapshots and adapts framework imports only; no original assertion bodies change. One authored, distinct history example is retained for advisory memory. A local byte commitment does not prove model-training isolation, semantic independence or trusted publication time. Two specifications cannot establish general learning efficacy.",
+    "independentlyMaintained": true
+  },
+  "createdAt": "2026-10-07T05:03:06.283Z",
+  "scope": "Local content commitment; owner and independence are declarations. No trusted timestamp, external publication, access isolation or semantic independence attestation."
+}

@@ -33,3 +33,17 @@ test('post-pilot controller failures recover completed evidence instead of reset
   let result;try{result=runCorpus(root,manifest,'.tddswarm/pilots/recovery');}finally{fs.writeFileSync=original;}
   assert.equal(failed,true);assert.equal(result.qualified,false);assert.equal(result.completedTrials,2);assert.equal(result.preservedFaultTrials,2);assert.equal(result.uncompletedTrials,0);assert.equal(result.implementationUnchanged,true);assert.match(result.implementationIdentity.sourceRevision,/^[a-f0-9]{40}$/);assert.ok(result.implementationIdentity.implementationHashes['src/pilot-worker.js']);assert.ok(result.implementationIdentity.implementationHashes['scripts/evaluation-commitment.js']);assert.equal(JSON.stringify(result).includes('deliberate private'),false);
 });
+test('prospective baseline skip declarations require runnable defect oracles and exact stable skip identities',t=>{
+ const source=fixture(t,{...twoModules,'test/optional.test.js':'import test from "node:test"; test.skip("optional platform case",()=>{});'});commit(source);
+ const root=fixture(t,{}),manifest=corpus(source);
+ const strict=runCorpus(root,manifest,'.tddswarm/pilots/strict-skips');assert.equal(strict.qualified,false);
+ const oldReport=JSON.parse(fs.readFileSync(path.join(root,'.tddswarm/pilots/strict-skips/pilot/summary.json')));
+ const baseline=JSON.parse(fs.readFileSync(path.join(oldReport.output,'assertions/patch-baseline.json')));
+ const skips=baseline.tests.filter(test=>test.status==='skipped').map(({id,file,name})=>({id,file,name}));assert.equal(skips.length,1);
+ const next=structuredClone(manifest);next.labels[0].baselineDeclaredSkips=skips;
+ const qualified=runCorpus(root,next,'.tddswarm/pilots/prospective-skips');assert.equal(qualified.qualified,true,JSON.stringify(qualified));assert.equal(strict.qualified,false);
+ const report=JSON.parse(fs.readFileSync(path.join(root,'.tddswarm/pilots/prospective-skips/pilot/summary.json')));
+ const extra=structuredClone(next.labels);extra[0].baselineDeclaredSkips[0].id='not-baseline';assert.equal(assessCorpus(report,extra).qualified,false);
+ const hidden=structuredClone(next);hidden.labels[0].baselineDeclaredSkips.push({id:'forged',file:'test/a.test.js',name:'a'});assert.throws(()=>validateCorpus(hidden),/runnable/);
+ const fault=path.join(report.output,'assertions/change-0-trial-0-full.json'),run=JSON.parse(fs.readFileSync(fault));run.tests.find(test=>test.name==='a').status='skipped';fs.writeFileSync(fault,JSON.stringify(run));assert.equal(assessCorpus(report,next.labels).qualified,false);
+});

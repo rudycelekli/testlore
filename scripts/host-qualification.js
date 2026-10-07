@@ -90,7 +90,7 @@ export function assertCanonicalEntrypoint(entrypoint, snapshot) {
     throw new Error('Entrypoint must exactly match the snapshotted package src/cli.js path and SHA-256');
 }
 
-function hostIdentityFor(filename, host) {
+export function hostIdentityFor(filename, host) {
   const identity = executableIdentity(filename);
   if (host === 'codex' && identity.realpath.endsWith('/bin/codex.js')) {
     const target = `${process.arch === 'arm64' ? 'aarch64' : 'x86_64'}-${process.platform === 'darwin' ? 'apple-darwin' : process.platform === 'win32' ? 'pc-windows-msvc' : 'unknown-linux-musl'}`;
@@ -104,7 +104,7 @@ function hostIdentityFor(filename, host) {
   return identity;
 }
 
-export function hostEvents(host, stdout) {
+export function hostEvents(host, stdout, repairFixture = false) {
   const events = [], malformed = [];
   for (const line of stdout.split('\n')) {
     if (!line.trim()) continue;
@@ -117,8 +117,10 @@ export function hostEvents(host, stdout) {
   const result = events.findLast(row => row.type === 'result');
   const allowed = new Set(['mcp__testlore_readonly__testlore_brief', 'mcp__testlore_readonly__testlore_status',
     'mcp__testlore_execution__testlore_plan', 'mcp__testlore_execution__testlore_verify']);
+  if (repairFixture === true) allowed.add('mcp__testlore_fixture__repair_fixture');
   const unauthorized = events.flatMap(row => {
-    if (row.item?.type === 'mcp_tool_call' && !['testlore_readonly', 'testlore_execution'].includes(row.item.server)) return [`unexpected-mcp-server:${row.item.server}`];
+    if (row.item?.type === 'mcp_tool_call' && !['testlore_readonly', 'testlore_execution', ...(repairFixture === true ? ['testlore_fixture'] : [])].includes(row.item.server)) return [`unexpected-mcp-server:${row.item.server}`];
+    if (row.item?.type === 'mcp_tool_call' && row.item.server === 'testlore_fixture' && row.item.tool !== 'repair_fixture') return ['unexpected-fixture-tool'];
     if (['command_execution', 'file_change', 'web_search'].includes(row.item?.type)) return [`unexpected-host-tool:${row.item.type}`];
     return (Array.isArray(row.message?.content) ? row.message.content : []).filter(item => item?.type === 'tool_use' && !allowed.has(item.name)).map(item => `unexpected-host-tool:${item.name}`);
   });
@@ -249,7 +251,7 @@ export async function boundedProcess(command, args, {cwd, env, timeoutMs = 90000
   });
 }
 
-function createFixture(directory) {
+export function createFixture(directory) {
   fs.mkdirSync(directory, {recursive: true});
   const files = {'package.json': JSON.stringify({type: 'module'}), '.gitignore': '.tddswarm/\n',
     'tddswarm.config.json': JSON.stringify({adapter: 'node', executionMode: 'shadow'}),

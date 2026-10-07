@@ -1,0 +1,399 @@
+{
+  "schemaVersion": 1,
+  "kind": "additional-public-preflight-accounting",
+  "recordedDate": "2026-10-07",
+  "selectionCommitmentSha256": "065b79f7f345a971e76b0a2d1bdc4f4ab34c9c3b254837b693dee552b71af65a",
+  "uniqueCandidates": 10,
+  "inputValidationRejections": 10,
+  "prospectiveNativeCandidates": 10,
+  "nativePreflightCompleted": 5,
+  "nativePreflightRejected": 5,
+  "qualifiedAdditionalChanges": 0,
+  "prospectiveComparativeProfilesReady": 5,
+  "installs": 0,
+  "automaticRetries": 0,
+  "passes": [
+    {
+      "phase": "input-validation-before-any-native-execution",
+      "summaryReceiptSha256": "aaee55db506f55a056e30ace5c5d2ad3f6d03837ce2cea7c78eb34c89855803f",
+      "controllerElapsedMs": 9382,
+      "attempts": [
+        {
+          "candidateId": "unjs-ufo-7959de5b49f5",
+          "repository": "https://github.com/unjs/ufo",
+          "fixRevision": "7959de5b49f52e7eb2919a33a9bfe30911e05712",
+          "controllerExitCode": 1,
+          "completedNativePreflight": false,
+          "qualified": false,
+          "fixedBaseline": null,
+          "stableNamedFailuresPerFaultRun": 0,
+          "independentFullFaultRuns": 0,
+          "rejection": "Input scope exceeded200-character limit; no native tests executed",
+          "rawReceiptSha256": "0c778228743b5c98ece12b7d2204df5ca8cbd0a636cb380117fa6ee127cc5799",
+          "nativeReceiptBindings": null
+        },
+        {
+          "candidateId": "unjs-ufo-4d024df0134e",
+          "repository": "https://github.com/unjs/ufo",
+          "fixRevision": "4d024df0134e2484b1e22ba17a08fea31e90de92",
+          "controllerExitCode": 1,
+          "completedNativePreflight": false,
+          "qualified": false,
+          "fixedBaseline": null,
+          "stableNamedFailuresPerFaultRun": 0,
+          "independentFullFaultRuns": 0,
+          "rejection": "Input scope exceeded200-character limit; no native tests executed",
+          "rawReceiptSha256": "7f1f6dff6afe5a360dd61c980266db16b13658e69398b024b793511bb8a9d47a",
+          "nativeReceiptBindings": null
+        },
+        {
+          "candidateId": "unjs-ufo-62199a0cc847",
+          "repository": "https://github.com/unjs/ufo",
+          "fixRevision": "62199a0cc84727b7b4666aaca8ff04cca2f68f3a",
+          "controllerExitCode": 1,
+          "completedNativePreflight": false,
+          "qualified": false,
+          "fixedBaseline": null,
+          "stableNamedFailuresPerFaultRun": 0,
+          "independentFullFaultRuns": 0,
+          "rejection": "Input scope exceeded200-character limit; no native tests executed",
+          "rawReceiptSha256": "7052b0d4e737ccbd5a9368e569c8f96124bf212f00555e08d9dbe4c5ce46e3d5",
+          "nativeReceiptBindings": null
+        },
+        {
+          "candidateId": "unjs-ufo-229e83e6b6c9",
+          "repository": "https://github.com/unjs/ufo",
+          "fixRevision": "229e83e6b6c9c6edec4baa3a699bd6207ab031e1",
+          "controllerExitCode": 1,
+          "completedNativePreflight": false,
+          "qualified": false,
+          "fixedBaseline": null,
+          "stableNamedFailuresPerFaultRun": 0,
+          "independentFullFaultRuns": 0,
+          "rejection": "Input scope exceeded200-character limit; no native tests executed",
+          "rawReceiptSha256": "548fc91bc48a95f32c82296e04023f7d739f105fc8aa44423e01cd883cc29a94",
+          "nativeReceiptBindings": null
+        },
+        {
+          "candidateId": "unjs-ufo-9713f2f1a512",
+          "repository": "https://github.com/unjs/ufo",
+          "fixRevision": "9713f2f1a5125223420182f8124c0a5c55f008ca",
+          "controllerExitCode": 1,
+          "completedNativePreflight": false,
+          "qualified": false,
+          "fixedBaseline": null,
+          "stableNamedFailuresPerFaultRun": 0,
+          "independentFullFaultRuns": 0,
+          "rejection": "Input scope exceeded200-character limit; no native tests executed",
+          "rawReceiptSha256": "cc43ba6beefeb65ab2cbdf4e6a321a3008cf1c5dde8d05c9a4c9407b00501ad2",
+          "nativeReceiptBindings": null
+        },
+        {
+          "candidateId": "unjs-pathe-e78663c58ef1",
+          "repository": "https://github.com/unjs/pathe",
+          "fixRevision": "e78663c58ef172169f9c1c4d4dbc64191eee3885",
+          "controllerExitCode": 1,
+          "completedNativePreflight": false,
+          "qualified": false,
+          "fixedBaseline": null,
+          "stableNamedFailuresPerFaultRun": 0,
+          "independentFullFaultRuns": 0,
+          "rejection": "Input scope exceeded200-character limit; no native tests executed",
+          "rawReceiptSha256": "ee8c2ae39b2e1a43fe9f8770ba162cb84b251b2b040a5037254ddd60f7ed416b",
+          "nativeReceiptBindings": null
+        },
+        {
+          "candidateId": "unjs-pathe-4353c6aa69db",
+          "repository": "https://github.com/unjs/pathe",
+          "fixRevision": "4353c6aa69db3ec90adc4a30fd54bbe1f5f0b675",
+          "controllerExitCode": 1,
+          "completedNativePreflight": false,
+          "qualified": false,
+          "fixedBaseline": null,
+          "stableNamedFailuresPerFaultRun": 0,
+          "independentFullFaultRuns": 0,
+          "rejection": "Input scope exceeded200-character limit; no native tests executed",
+          "rawReceiptSha256": "a3e2c7fd612811ba4235244663809986de86081c33e0b45e9fe905868f157a35",
+          "nativeReceiptBindings": null
+        },
+        {
+          "candidateId": "unjs-pathe-b91e344e39e9",
+          "repository": "https://github.com/unjs/pathe",
+          "fixRevision": "b91e344e39e9b1dfb366d8e8222bc2471a885440",
+          "controllerExitCode": 1,
+          "completedNativePreflight": false,
+          "qualified": false,
+          "fixedBaseline": null,
+          "stableNamedFailuresPerFaultRun": 0,
+          "independentFullFaultRuns": 0,
+          "rejection": "Input scope exceeded200-character limit; no native tests executed",
+          "rawReceiptSha256": "439e6e2729fb4d2c1b4c84f88dc09dc7a27ac6f257ca4befed2199c9c66c24ab",
+          "nativeReceiptBindings": null
+        },
+        {
+          "candidateId": "unjs-defu-1b9fcab2c147",
+          "repository": "https://github.com/unjs/defu",
+          "fixRevision": "1b9fcab2c1479f0295a5f867c6ec36a01fda2dfb",
+          "controllerExitCode": 1,
+          "completedNativePreflight": false,
+          "qualified": false,
+          "fixedBaseline": null,
+          "stableNamedFailuresPerFaultRun": 0,
+          "independentFullFaultRuns": 0,
+          "rejection": "Input scope exceeded200-character limit; no native tests executed",
+          "rawReceiptSha256": "443329ce7ad72046eebaf2b6c0903671947785a2fb6ae651afde1ca2b56a9205",
+          "nativeReceiptBindings": null
+        },
+        {
+          "candidateId": "unjs-defu-4111333b7f83",
+          "repository": "https://github.com/unjs/defu",
+          "fixRevision": "4111333b7f830712947b3d48c127f23061569620",
+          "controllerExitCode": 1,
+          "completedNativePreflight": false,
+          "qualified": false,
+          "fixedBaseline": null,
+          "stableNamedFailuresPerFaultRun": 0,
+          "independentFullFaultRuns": 0,
+          "rejection": "Input scope exceeded200-character limit; no native tests executed",
+          "rawReceiptSha256": "f679586026246f69e178bd9b8ebf55acf6808286a92e8874f6f07b4b41ffd677",
+          "nativeReceiptBindings": null
+        }
+      ]
+    },
+    {
+      "phase": "changed-scope-prerequisite-independent-native-full",
+      "summaryReceiptSha256": "c43fa27fd4ca29710078ae8494fd2d0652939bfe7e4ea363dd72753865c87ede",
+      "controllerElapsedMs": 58608,
+      "attempts": [
+        {
+          "candidateId": "unjs-ufo-7959de5b49f5",
+          "repository": "https://github.com/unjs/ufo",
+          "fixRevision": "7959de5b49f52e7eb2919a33a9bfe30911e05712",
+          "controllerExitCode": 0,
+          "completedNativePreflight": true,
+          "qualified": false,
+          "fixedBaseline": {
+            "cases": 474,
+            "passed": 474,
+            "skipped": 0,
+            "exitCode": 0
+          },
+          "stableNamedFailuresPerFaultRun": 1,
+          "independentFullFaultRuns": 2,
+          "rejection": null,
+          "rawReceiptSha256": "22e65e337c5401e63a24eb72be9569c204b34f41657b2ece4c8d15c23eeef8ac",
+          "nativeReceiptBindings": {
+            "baseline.json": "803dbe186905e0e65503c90eb2c960706bc3acb51b5f9c5e8ab42b2e419592e8",
+            "discovery.json": "5da8cfabce4d49c0fddaab41851ade4e6703225a8eda448d458dddc5fe186398",
+            "fault-0.json": "ffcaa44a5300713ebddecf142bcae0ce935e3711ef6f06b23ade3a25bac7c1a8",
+            "fault-1.json": "a499b98b22681fb06dfbeacb02e0a363b5435d9045deb3638eafe2cbadb56ee3",
+            "input.json": "9aa398c00fb5972fbdf85983f25d5c5acd356e3b0198933059dba9049a81340b"
+          }
+        },
+        {
+          "candidateId": "unjs-ufo-4d024df0134e",
+          "repository": "https://github.com/unjs/ufo",
+          "fixRevision": "4d024df0134e2484b1e22ba17a08fea31e90de92",
+          "controllerExitCode": 0,
+          "completedNativePreflight": true,
+          "qualified": false,
+          "fixedBaseline": {
+            "cases": 473,
+            "passed": 473,
+            "skipped": 0,
+            "exitCode": 0
+          },
+          "stableNamedFailuresPerFaultRun": 1,
+          "independentFullFaultRuns": 2,
+          "rejection": null,
+          "rawReceiptSha256": "99d5850fb47b5d20d7b2bc32291baffa93331d7f422b84f61423ffbec0a0cf06",
+          "nativeReceiptBindings": {
+            "baseline.json": "1160d55b30986e81f04330942ef21cd88bf727c38f2310fc65c37b85f9ee0574",
+            "discovery.json": "5da8cfabce4d49c0fddaab41851ade4e6703225a8eda448d458dddc5fe186398",
+            "fault-0.json": "eea5dc233adaa012f75e2d323adaf3d43bc4efa454f72d15b6dcd11b206c3d1e",
+            "fault-1.json": "b0008ae96eca71eadd56c5647e0009ffed0e8efa2b6eb9a2c74ad19878e16fb5",
+            "input.json": "7e811b76fbb28c591c89a961d88a6002fba59412255e056275b5601e4ec0b4ce"
+          }
+        },
+        {
+          "candidateId": "unjs-ufo-62199a0cc847",
+          "repository": "https://github.com/unjs/ufo",
+          "fixRevision": "62199a0cc84727b7b4666aaca8ff04cca2f68f3a",
+          "controllerExitCode": 0,
+          "completedNativePreflight": true,
+          "qualified": false,
+          "fixedBaseline": {
+            "cases": 471,
+            "passed": 471,
+            "skipped": 0,
+            "exitCode": 0
+          },
+          "stableNamedFailuresPerFaultRun": 1,
+          "independentFullFaultRuns": 2,
+          "rejection": null,
+          "rawReceiptSha256": "6a942b31b4dc5ff3c11c3e4ac74b477d5b010f5b2eaf36a60c0f70740a93e358",
+          "nativeReceiptBindings": {
+            "baseline.json": "d055d32fe75e9a2c61869a6170e7dfe97feddea7c7807a77a64b7e25ade7e63f",
+            "discovery.json": "5da8cfabce4d49c0fddaab41851ade4e6703225a8eda448d458dddc5fe186398",
+            "fault-0.json": "46185874ed683e2d6a1b1dfb8717a43a11253d69191f26680f46cc90c8335978",
+            "fault-1.json": "114010c28b49c75b8f15133a9b64471db6a91d2d51dee0cb1467f1f9867bc26a",
+            "input.json": "5b0e9873a346ba45900c3e4d54b24dc4957575225510e959158a41ae930818c7"
+          }
+        },
+        {
+          "candidateId": "unjs-ufo-229e83e6b6c9",
+          "repository": "https://github.com/unjs/ufo",
+          "fixRevision": "229e83e6b6c9c6edec4baa3a699bd6207ab031e1",
+          "controllerExitCode": 0,
+          "completedNativePreflight": true,
+          "qualified": false,
+          "fixedBaseline": {
+            "cases": 468,
+            "passed": 468,
+            "skipped": 0,
+            "exitCode": 0
+          },
+          "stableNamedFailuresPerFaultRun": 1,
+          "independentFullFaultRuns": 2,
+          "rejection": null,
+          "rawReceiptSha256": "85d113fdab2608187cccbfa5c00f31141f26ee4a9be17a4062385e4bf35cdc58",
+          "nativeReceiptBindings": {
+            "baseline.json": "41c7b76df385ed57fcd371a81afb467fa8d60b41cf2bfeb614038be2b29973bd",
+            "discovery.json": "5da8cfabce4d49c0fddaab41851ade4e6703225a8eda448d458dddc5fe186398",
+            "fault-0.json": "a1b6f2975abf6758b48540634974b5faa7ba65fbc35bb203a765505aaa8dc667",
+            "fault-1.json": "b98b449e21f2456af9a0eb3dee32103818f2cb400fb0d0dab57b3c87da08577d",
+            "input.json": "4b51d0e7fc59551c8921e8d706315caa6cf704ba19e094a4c0c6c64e3a811a12"
+          }
+        },
+        {
+          "candidateId": "unjs-ufo-9713f2f1a512",
+          "repository": "https://github.com/unjs/ufo",
+          "fixRevision": "9713f2f1a5125223420182f8124c0a5c55f008ca",
+          "controllerExitCode": 1,
+          "completedNativePreflight": false,
+          "qualified": false,
+          "fixedBaseline": null,
+          "stableNamedFailuresPerFaultRun": 0,
+          "independentFullFaultRuns": 0,
+          "rejection": "Prior source needs stable independently demonstrated unchanged maintainer failures",
+          "rawReceiptSha256": "c5105117bd467be125b9cd1e11b54d8e5014bdd70504656c8e93876fcbe1a89d",
+          "nativeReceiptBindings": {
+            "baseline.json": "499952036d273e6a05865069fc1c477c1e3da3923c254352ed7d2d6dc23b4b47",
+            "discovery.json": "5da8cfabce4d49c0fddaab41851ade4e6703225a8eda448d458dddc5fe186398",
+            "fault-0.json": "f251bfc10f4229c0085b315a4824424090d79d34a6ee5ff0dcfbd8f5c888ccf2",
+            "fault-1.json": "1a26ba6a221763d1cc84e00ac5ad0fea8b808b413d1cc00c96202e87b64c4d5b",
+            "input.json": "21b9e53f483afc335ba512c3c1637a9582ea5085f8fd1eada951e78e35b0ce8f"
+          }
+        },
+        {
+          "candidateId": "unjs-pathe-e78663c58ef1",
+          "repository": "https://github.com/unjs/pathe",
+          "fixRevision": "e78663c58ef172169f9c1c4d4dbc64191eee3885",
+          "controllerExitCode": 1,
+          "completedNativePreflight": false,
+          "qualified": false,
+          "fixedBaseline": null,
+          "stableNamedFailuresPerFaultRun": 0,
+          "independentFullFaultRuns": 0,
+          "rejection": "Unchanged fixed upstream baseline must pass",
+          "rawReceiptSha256": "40db56c35d55cb06c248289db659ab631949ab7546c7fbdea8fc432c7f1b7140",
+          "nativeReceiptBindings": {
+            "baseline.json": "d7f56a1c2599480c325832a0cb87932758bb61306348ae65302f8ea731c6f0b8",
+            "discovery.json": "cddd784792b226d647ded97c46939a4b11bed6d4a137e780ab7c1dc44c02e3a4",
+            "input.json": "2ac7a9071ea4c6e7e5c502763ced10431b1f10a3ab5ba6e88342114832a1b8db"
+          }
+        },
+        {
+          "candidateId": "unjs-pathe-4353c6aa69db",
+          "repository": "https://github.com/unjs/pathe",
+          "fixRevision": "4353c6aa69db3ec90adc4a30fd54bbe1f5f0b675",
+          "controllerExitCode": 1,
+          "completedNativePreflight": false,
+          "qualified": false,
+          "fixedBaseline": null,
+          "stableNamedFailuresPerFaultRun": 0,
+          "independentFullFaultRuns": 0,
+          "rejection": "Unchanged fixed upstream baseline must pass",
+          "rawReceiptSha256": "39919a33338c224ff7ae93535997773417a2df01a5b050fbaeb4cb52ae27d45e",
+          "nativeReceiptBindings": {
+            "baseline.json": "4b2340cd9f6ad8634a2e5957dd0968c1f6a2aadf74d815869e3c8db508de7159",
+            "discovery.json": "cddd784792b226d647ded97c46939a4b11bed6d4a137e780ab7c1dc44c02e3a4",
+            "input.json": "581ac621f3a154f14fe297f808035abe563093a2018370c5453ce043a5a75026"
+          }
+        },
+        {
+          "candidateId": "unjs-pathe-b91e344e39e9",
+          "repository": "https://github.com/unjs/pathe",
+          "fixRevision": "b91e344e39e9b1dfb366d8e8222bc2471a885440",
+          "controllerExitCode": 1,
+          "completedNativePreflight": false,
+          "qualified": false,
+          "fixedBaseline": null,
+          "stableNamedFailuresPerFaultRun": 0,
+          "independentFullFaultRuns": 0,
+          "rejection": "Unchanged fixed upstream baseline must pass",
+          "rawReceiptSha256": "1d81d921ba8c655066bd10db54aa927cd788334c991e1943d6fad7058f5705e7",
+          "nativeReceiptBindings": {
+            "baseline.json": "cfe5c8e5897c3b7030acdff2ddc64b0a989711a4ab06486665fe5531a479114e",
+            "discovery.json": "cddd784792b226d647ded97c46939a4b11bed6d4a137e780ab7c1dc44c02e3a4",
+            "input.json": "24354698c4fa33ca1605cbb5a049bb8881d3fa2ca0b136fe3d69a2cd36838ce9"
+          }
+        },
+        {
+          "candidateId": "unjs-defu-1b9fcab2c147",
+          "repository": "https://github.com/unjs/defu",
+          "fixRevision": "1b9fcab2c1479f0295a5f867c6ec36a01fda2dfb",
+          "controllerExitCode": 0,
+          "completedNativePreflight": true,
+          "qualified": false,
+          "fixedBaseline": {
+            "cases": 21,
+            "passed": 21,
+            "skipped": 0,
+            "exitCode": 0
+          },
+          "stableNamedFailuresPerFaultRun": 1,
+          "independentFullFaultRuns": 2,
+          "rejection": null,
+          "rawReceiptSha256": "e8578810bb41360e3e01c6943e6a51909e972fd54632c6762dca8b57d3d32ac2",
+          "nativeReceiptBindings": {
+            "baseline.json": "223662708618fa2cbddb6aafe314b0bffab00deb1558cefa4d465fe6da2a63ed",
+            "discovery.json": "5fb0a182029c098f872f9f7d7a15c0a43a70ba8691596892170f70051df2edbd",
+            "fault-0.json": "4311cde128849d95bda8bc8ba3ee3ae327e91b0e0df0dbe574ad5e024e493d18",
+            "fault-1.json": "27dde2817e11f78962dcd76f07dcecda6c4e82350af5ed79d6ff32930abfbdb6",
+            "input.json": "c441ae8ccf3a7232892349b8b0ab55a1e04cbe586e232258ed7ae258620f7b00"
+          }
+        },
+        {
+          "candidateId": "unjs-defu-4111333b7f83",
+          "repository": "https://github.com/unjs/defu",
+          "fixRevision": "4111333b7f830712947b3d48c127f23061569620",
+          "controllerExitCode": 1,
+          "completedNativePreflight": false,
+          "qualified": false,
+          "fixedBaseline": null,
+          "stableNamedFailuresPerFaultRun": 0,
+          "independentFullFaultRuns": 0,
+          "rejection": "Prior source needs stable independently demonstrated unchanged maintainer failures",
+          "rawReceiptSha256": "381a5e7c7101035c0a22d5cbe1b39377e5106422aec84be33e67fd79b19f3be4",
+          "nativeReceiptBindings": {
+            "baseline.json": "c096b6f4a561d3e15ee6aee0d6bc57996ea84510e640a0f0ea0089103d2e4d49",
+            "discovery.json": "079ac3236c1a7566a0df1b44696fce1c57c47db70466fc9dac77d0571b440f72",
+            "fault-0.json": "5b3dfd97cba8138a5a3bdafd15850b1fd8178571df6812a5ec2820bdab1b1bd0",
+            "fault-1.json": "97791123873b14e8e35640168cf9d15c3dcf98ff6d935d30538c62c868af45ce",
+            "input.json": "516fcd1ad9e6e5a598cba089ac96d3653ace3766c2eaab9765a6fb94e1de3d55"
+          }
+        }
+      ]
+    }
+  ],
+  "limitations": [
+    "Readying preflight profiles is not three-arm qualification and does not increase qualified-change counts.",
+    "The first input failures are preserved; corrected scope declarations created a separately frozen prerequisite pass.",
+    "Frozen comparative Vitest4.1.2/Vite8.0.3 runtime projection may differ from upstream declarations; no full upstream-lock install claim.",
+    "Pathe baselines fail module loading on that runtime; source and tests were not edited to pass.",
+    "A ufo and defu inverse passed without an observed maintainer regression and remain rejected under this scope.",
+    "No timings in this preflight pass compare TestLore against native selection.",
+    "Native preflight source revision is context only for these older receipts; complete imported-core identity binding is added prospectively in the updated controller."
+  ]
+}

@@ -1,5 +1,7 @@
 # Roadmap implementation and evidence
 
+Current qualification: [October 7 application/public expansion](qualification-20261007-expansion.md). Ten unique public changes across three repositories qualify; real workspace and browser challenges preserve observed faults; four stable public generation trials detect three of four fault-trials. General native-selector speed leadership, the 100/10 benchmark, repeated learning gains, broader framework/server closure, Claude authentication and npm publication remain open gates. Historical sections below describe their recorded experiments, not current blanket certification.
+
 The [October 6 follow-up](qualification-20261006.md) adds sealed workspace/asset/style mapping proposals, guarded shared Vitest discovery/resolution, prerequisite diagnostics and prospectively frozen regression/learning receipts. Fresh real histories still fall back completely and lose on time; an external maintainer bug is preserved but also slower. Boundary faults establish additional dependency value in their declared scope. Seven of eight live generation trials were rejected, leaving learning inconclusive and advisory. Broader precision, reliable native host execution and npm account/trusted-publisher setup remain open.
 
 The 0.2–0.4 engineering milestones have concrete implementations merged into main. These are experimental capabilities, not published version numbers or certification of arbitrary projects. Each ecosystem retains its own test engine.

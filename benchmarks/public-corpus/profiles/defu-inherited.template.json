@@ -1,0 +1,32 @@
+{
+  "reviewed": true,
+  "candidateId": "unjs-defu-11ba02213d4b",
+  "root": null,
+  "scope": "Unchanged upstream runtime units; Node 22; npm-frozen projection of exact upstream-lock Vitest 4.1.2, Vite 8.0.3 and expect-type 1.3.0. Not a full upstream-lock installation. Lint/types/build omitted.",
+  "config": {
+    "adapter": "vitest",
+    "discovery": "native",
+    "runner": [
+      "node",
+      "node_modules/vitest/vitest.mjs",
+      "run",
+      "--maxWorkers=1",
+      "{files}"
+    ],
+    "analysisCache": {
+      "enabled": true,
+      "maxEntries": 2000,
+      "maxBytes": 33554432
+    }
+  },
+  "allowFrameworkVersionMismatch": true,
+  "expectedFailureNames": [
+    "defu should ignore inherited enumerable properties"
+  ],
+  "executionMode": "legacy",
+  "runtimeProjection": {
+    "lockfilePath": null,
+    "expectedSha256": "b78e273b459a8843e6ab60c6b0f09dea56aa335d8e32957181fdefd6d3b60b13"
+  },
+  "baselineDeclaredSkips": []
+}
