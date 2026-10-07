@@ -1,0 +1,117 @@
+{
+  "schemaVersion": 1,
+  "kind": "public-upstream-installation-negative-evidence",
+  "selectionCommitmentSha256": "065b79f7f345a971e76b0a2d1bdc4f4ab34c9c3b254837b693dee552b71af65a",
+  "candidateId": "unjs-destr-f9c78d402556",
+  "repository": "https://github.com/unjs/destr",
+  "fixRevision": "f9c78d402556aba3e50f94d46176f36a0570acbd",
+  "parentRevision": "4f92188b58ed9c90f12ba6b3d747e44e0406836d",
+  "sourceScope": "Exact upstream package.json, pnpm-lock.yaml, original source and original maintainer test bytes; no runtime dependency projection or test rewriting",
+  "install": {
+    "packageManager": "pnpm@8.9.2",
+    "status": "completed",
+    "observedUpstreamLockInstallation": true,
+    "inputs": [
+      {
+        "logicalPath": "package.json",
+        "sha256": "1ba68d4b7c625eebc92a207485657f728ee47a5faf7d4ab5f84c84500f936090",
+        "bytes": 1234
+      },
+      {
+        "logicalPath": "pnpm-lock.yaml",
+        "sha256": "60d4ad87a813e5d9786cb497f154928346664b599fd6a044b63019e6f17b15c1",
+        "bytes": 145012
+      }
+    ],
+    "installedTree": {
+      "sha256": "f07ac41525ff94f970d05507c09cea204d895104ab677651de833e0c5c80acff",
+      "files": 13888,
+      "bytes": 172168322
+    },
+    "durationMs": 8755,
+    "bootstrapMs": null,
+    "nativeInstallMs": 4654,
+    "lifecyclePolicy": "Package-manager native defaults; no --ignore-scripts, production-only, optional-dependency or package filtering flags",
+    "lifecycleWarnings": false,
+    "platform": {
+      "node": "v22.19.0",
+      "platform": "darwin",
+      "arch": "arm64"
+    },
+    "installerSha256": "4e3cca2a9cd5a1e9cf511772ef8439de2a1cd78a5a4ea8125914b3b9a3cd9f88",
+    "receiptSha256": "ffb63aa6e76fa1a74db4cd1f6025608123b79ee96329b8d568ac2cb6817e3527",
+    "retired": true,
+    "retirement": "Disposable installed dependencies removed after negative native runs because free disk fell below1GiB; source, exact upstream manifest/lock, manager, logs and native receipts retained. The old receipt cannot authorize a new execution."
+  },
+  "nativeDiscovery": {
+    "complete": false,
+    "reason": "Upstream Vitest0.34.6 rejects --filesOnly; current native inventory requires unsupported list flags"
+  },
+  "fixedBaseline": {
+    "complete": true,
+    "exitCode": 1,
+    "cases": 17,
+    "passed": 16,
+    "failed": 1,
+    "durationMs": 1857,
+    "rejection": "Unchanged upstream assertion expects historical JSON-parser error wording that differs under Node22. No skip, assertion or gate relaxation."
+  },
+  "independentFaultRuns": [
+    {
+      "repetition": 1,
+      "complete": true,
+      "exitCode": 1,
+      "cases": 17,
+      "failed": 2,
+      "additionalFailingPreviouslyPassingCases": 1,
+      "durationMs": 1930
+    },
+    {
+      "repetition": 2,
+      "complete": true,
+      "exitCode": 1,
+      "cases": 17,
+      "failed": 2,
+      "additionalFailingPreviouslyPassingCases": 1,
+      "durationMs": 2205
+    }
+  ],
+  "qualified": false,
+  "upstreamLockQualifiedChangesAdded": 0,
+  "upstreamLockQualifiedProjectsAdded": 0,
+  "previousComparativeScope": {
+    "qualifiedChanges": 10,
+    "qualifiedProjects": 3,
+    "upstreamLockInstallationVerified": false
+  },
+  "target": {
+    "changes": 100,
+    "repositories": 10
+  },
+  "targetMet": false,
+  "attemptAccounting": {
+    "installStarts": 3,
+    "blockedBeforeInstallation": 1,
+    "blockedAfterInstallation": 1,
+    "completedObservedInstallations": 1,
+    "automaticRetries": 0,
+    "corrections": "First output inherited unrelated ancestor pnpm workspace; next local clone origin was not rebound to upstream. Both failed receipts retained, with fresh prospective outputs for corrections.",
+    "qualifiedThreeArmStarts": 0,
+    "independentNativeFullStarts": 3
+  },
+  "receiptSha256": {
+    "destr-native-discovery-v1.json": "dbfd0dda003b403ddef30f705855d6dd0d9b2a036cdcaf18d4a22a56ca209d91",
+    "destr-native-full-v1.json": "bc37c8a6d6a259f15e45a859c6f59b19fb1dd0a6b8299410bf6e1f152be620a9",
+    "destr-native-fault-v1-0.json": "7b3a28b0dbef56478e99cc695631a90c43ebb4d24904153f2ab9a90da0676292",
+    "destr-native-fault-v1-1.json": "44a449d15114aa10e319afd339a4a965ed1845dd6bb03e38158686afa84fdf9f"
+  },
+  "limitations": [
+    "The complete public100/10 and intermediate30/5 targets remain unmet; one installation is not one qualified change.",
+    "Only Node22 and24 available; no incompatible-baseline exclusion to manufacture a pass.",
+    "No three-arm timings published because fixed baseline and native discovery reject the candidate. Native full durations are negative diagnostics, not a speed comparison.",
+    "Post-native installed-tree diagnostic overlapped deliberate dependency retirement and is inconclusive; no claim about native cache drift.",
+    "Installation used a reusable pinned-manager package cache/store on darwin-arm64; OS/network caches not cold.",
+    "Installer controller was improved after this observed receipt; its hash names the actual implementation used.",
+    "No learning, generation, browser, monorepo or leaderboard superiority claim."
+  ]
+}
