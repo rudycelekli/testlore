@@ -104,3 +104,18 @@ test('native nonzero process status cannot become a fabricated successful verifi
  const {root}=project(t,{'vitest.config.mjs':`process.exitCode=2;export default {test:{include:['checks/*.check.js'],alias:{'@subject':new URL('./src/a.js',import.meta.url).pathname}}};`});
  const report=await runUnifiedNative(root,{full:true,capture:true});assert.equal(report.complete,false);assert.equal(report.exitCode,2);assert.equal(report.nativeExitCode,2);
 });
+test('stateful project resolver that changes native outcomes is conservatively rejected',async t=>{
+ const {root,config}=project(t,{'src/b.js':'export default 2;',
+ 'checks/b.check.js':`import {test,expect} from 'vitest';import value from '../src/b.js';test('other subject',()=>expect(value).toBe(2));`,
+ 'vitest.config.mjs':`let calls=0;export default {plugins:[{name:'stateful-project-resolver',resolveId(id){if(id==='@subject'){calls++;return new URL(calls>2?'./src/b.js':'./src/a.js',import.meta.url).pathname;}}}],test:{include:['checks/*.check.js']}};`});
+ const native=execute(root,['checks/a.check.js','checks/b.check.js'],config,{capture:true});assert.equal(native.complete,true);assert.equal(native.exitCode,0);
+ const result=await runUnifiedNative(root,{full:true,capture:true});assert.equal(result.complete,false);assert.equal(result.executed,false);assert.match(result.error,/does not support project plugins/);
+});
+test('oversized declared receive frame is rejected before parsing native evidence',async t=>{
+ const {root}=project(t,{'vitest.config.mjs':`import fs from 'node:fs';const bytes=Buffer.alloc(4);bytes.writeUInt32BE(0xffffffff);fs.writeSync(4,bytes);export default {};`});
+ const result=await runUnifiedNative(root,{full:true,capture:true});assert.equal(result.complete,false);assert.match(result.error,/declared byte limit/);
+});
+test('large native error messages are bounded before crossing the protocol',async t=>{
+ const {root}=project(t,{'vitest.config.mjs':`throw new Error('large-error-'+'x'.repeat(1024*1024));`});
+ const result=await runUnifiedNative(root,{full:true,capture:true});assert.equal(result.complete,false);assert.ok(result.error.length<600);assert.match(result.error,/large-error/);
+});
