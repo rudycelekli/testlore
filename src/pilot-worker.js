@@ -91,7 +91,15 @@ try {
             selection=runs.subset.plan;
             if (runs.subset.executed === false && runs.subset.exitCode === 0 && !runs.subset.error && selection?.selected.length === 0) runs.subset = {...runs.subset, complete:true, tests:[], executedFiles:[], durationMs:0};
             planningMs=runs.subset.timings?.planningMs??testLoreMs;
-            if(!selection)throw new Error('TestLore did not return a decision');save(trialName+'-plan',selection);
+            if(!selection){
+              // Admission can reject before a plan exists. Preserve that native
+              // result and its actual cause before ending the comparative trial.
+              const detail=typeof runs.subset.error==='string'?runs.subset.error.slice(0,1000):'No native decision was returned';
+              runs.subset.nextAction=unifiedNative?'Use the legacy runner or native full verification; this configuration is outside the qualified unified profile.':'Inspect the retained native planning error and run full verification before permitting omissions.';
+              save(trialName+'-'+mode,runs.subset);
+              throw new Error(`TestLore planning rejected: ${detail}. ${runs.subset.nextAction}`);
+            }
+            save(trialName+'-plan',selection);
           }else if(mode==='native')runs.native=nativeAvailable?executeNativeRelated(root,changeset.changed,config,{capture:true,timeoutMs}):{...execute(root,currentDiscovery.files,config,{capture:true,timeoutMs}),selector:'native-full-no-related-selector'};
           else runs.full=execute(root,currentDiscovery.files,config,{capture:true,timeoutMs});
           save(trialName+'-'+mode,runs[mode]);

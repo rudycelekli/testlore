@@ -7,6 +7,19 @@ import { pilot, validatePilotManifest, exportPilot, PILOT_EXECUTION_MODES } from
 import { fixture, commit, git, twoModules, write } from './helpers.js';
 
 function manifest(root) { return {schemaVersion:1,repetitions:2,timeoutMs:5000,projects:[{name:'controlled',root,scope:'two native Node cases',config:{adapter:'node',discovery:'native'},changes:[{name:'comment',file:'src/a.js',before:'export const a = 1;',after:'export const a = 1; // edit',expectedFailure:false},{name:'fault',file:'src/a.js',before:'export const a = 1;',after:'export const a = 9;',expectedFailure:true}]}]}; }
+test('pilot preserves actual unified admission rejection and a concrete full-verification action',t=>{
+ const bin=fileURLToPath(new URL('../node_modules/vitest/vitest.mjs',import.meta.url));
+ const root=fixture(t,{'package.json':{type:'module'},'.gitignore':'.tddswarm/\nnode_modules\n','src/value.js':'export const value=1;',
+  'vitest.config.mjs':"export default {plugins:[{name:'unqualified-project-plugin'}],test:{include:['test/*.test.js']}};",
+  'test/value.test.js':"import {test,expect} from 'vitest';import {value} from '../src/value.js';test('independent value',()=>expect(value).toBe(1));"});
+ fs.symlinkSync(path.dirname(path.dirname(bin)),path.join(root,'node_modules'),'dir');commit(root);
+ const report=pilot(fixture(t,{}),{schemaVersion:1,repetitions:1,timeoutMs:20000,projects:[{name:'plugin',root,scope:'Unchanged native oracle with unqualified project plugin',config:{adapter:'vitest',discovery:'native',runner:[process.execPath,bin,'run','{files}']},changes:[{name:'fault',file:'src/value.js',before:'export const value=1;',after:'export const value=2;',expectedFailure:true}]}]},{execute:true,unifiedNative:true});
+ assert.equal(report.valid,false);assert.match(report.projects[0].error,/planning rejected.*plugin/i);
+ const subset=JSON.parse(fs.readFileSync(path.join(report.output,'plugin/change-0-trial-0-subset.json')));
+ assert.equal(subset.complete,false);assert.equal(subset.plan,undefined);assert.match(subset.error,/plugin/i);assert.match(subset.nextAction,/legacy.*native full/i);
+ const full=JSON.parse(fs.readFileSync(path.join(report.output,'plugin/change-0-trial-0-full.json')));assert.equal(full.complete,true);assert.equal(full.tests.filter(t=>t.status==='failed').length,1);
+ assert.equal(fs.readFileSync(path.join(root,'src/value.js'),'utf8'),'export const value=1;');
+});
 test('pilot unified mode relays actual Vitest execution and preserves independent failure identity',t=>{
   const bin=fileURLToPath(new URL('../node_modules/vitest/vitest.mjs',import.meta.url));
   const root=fixture(t,{'package.json':{type:'module'},'.gitignore':'.tddswarm/\nnode_modules\n','src/a.js':'export default 1;','src/b.js':'export default 1;',
