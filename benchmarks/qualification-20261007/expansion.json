@@ -178,5 +178,61 @@
       "Only the sealed disposable constant fixture is in scope. No general repair or production deployment claim.",
       "Claude CLI read-only auth inspection still reports loggedIn:false."
     ]
+  },
+  "agentInstalled": {
+    "sourceRevision": "795530397a8adfe9ac0d4812ba4593d3f2c0946e",
+    "archiveSha256": "814e825aeb7d389a13360aeba25b8dae728295560868b2df926b9c5708acef8b",
+    "hostedSourceCounts": {
+      "tests": 548,
+      "suites": 0,
+      "passed": 548,
+      "failed": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    "hostedBrowserCases": [
+      "real Chromium validates declared route selection, full/subset fault identity and candidate copies",
+      "real Chromium maps isolated HTML/style/bundle/source inputs and preserves three independent named faults",
+      "native Chrome proposal qualification preserves failures and rejects a misrouted mutant"
+    ],
+    "hosts": [
+      {
+        "host": "codex",
+        "status": "qualified-in-fixture-scope",
+        "qualified": true,
+        "reasons": [],
+        "process": {
+          "status": "completed",
+          "reason": null,
+          "exitCode": 0,
+          "signal": null,
+          "durationMs": 35021,
+          "outputBytes": 31237
+        }
+      },
+      {
+        "host": "claude",
+        "status": "not-started",
+        "qualified": false,
+        "reasons": [
+          "explicit-host-executable-not-supplied"
+        ],
+        "process": null
+      }
+    ],
+    "complete": false,
+    "orderedMcpCalls": 7,
+    "independentOracleCases": 2,
+    "independentPassed": 2,
+    "oraclePreserved": true,
+    "deploymentSafety": "not-established",
+    "rawReceiptSha256": "2733fb873ad7df95e5d3ff9d309c77efb5ba28ba45af65a8c3ccda20b91f3711",
+    "limitations": [
+      "Exact hosted archive installed with production dependencies and scripts disabled; existing native Codex subscription, default model unverified, API keys stripped.",
+      "Synthetic constant-source repair only; no general repair quality or deployment safety claim.",
+      "Claude not supplied because native read-only authentication inspection reported no active login. Joint qualification remains incomplete.",
+      "Original rejected final-account receipt remains rejected; this prospective assay used the explicit frozen output schema."
+    ]
   }
 }
