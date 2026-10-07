@@ -1,0 +1,195 @@
+{
+  "schemaVersion": 1,
+  "kind": "public-upstream-lock-qualified-expansion",
+  "recordedDate": "2026-10-07",
+  "candidateId": "unjs-mlly-abef19c940da",
+  "repository": "https://github.com/unjs/mlly",
+  "fixRevision": "abef19c940da8ff31d5cf2c96deefc1035bac1c3",
+  "parentRevision": "1b09363bd6f95859aea329627ae8e19877f426ed",
+  "selectionCommitmentSha256": "065b79f7f345a971e76b0a2d1bdc4f4ab34c9c3b254837b693dee552b71af65a",
+  "sourceRevision": "9d9314674084dc0a893658047b53f08df7d8d4ed",
+  "sourceTreeClean": true,
+  "implementationUnchanged": true,
+  "upstreamByteBindings": [
+    {
+      "kind": "dependency",
+      "path": "package.json",
+      "bytes": 1425,
+      "sha256": "3aa398010a5bf8f7a2da805dc3060e1450d97e136e919d1127539fecda22962d",
+      "gitBlob": "a524079777bb41540621ddabf6a419c5ca3dfd73"
+    },
+    {
+      "kind": "dependency",
+      "path": "pnpm-lock.yaml",
+      "bytes": 140831,
+      "sha256": "120aa89ec48165beb38b0e6452051d401c709a91a8af30666123870d550edd2f",
+      "gitBlob": "8235965c75f57e3a096323774b96e0a63fccf27e"
+    },
+    {
+      "kind": "fixed-source",
+      "path": "src/analyze.ts",
+      "bytes": 24344,
+      "sha256": "8bcd9cae33a0bc4a7e8f319bd00ed6f1e69eab2b33b438ee90a95c5d6735c7a0",
+      "gitBlob": "2ceb50742f50e1c28836b0b593e96ae75196b478"
+    },
+    {
+      "kind": "prior-source",
+      "path": "src/analyze.ts",
+      "bytes": 23477,
+      "sha256": "fdbf05f9f759c4a5ccd946111cf48d9423af6eb388457129bfe0d6b1b7f58b64",
+      "gitBlob": "52caecb22ecff3ad55d82029d4ba255255f23fde"
+    },
+    {
+      "kind": "oracle",
+      "path": "test/exports.test.ts",
+      "bytes": 17365,
+      "sha256": "f4037834d64c0ebf35d7fe9642224c7156c13f5b7e4aba8b9d541c354cb7297c",
+      "gitBlob": "e18d4b065e50793b1de06ceca6797415fa7f468f"
+    }
+  ],
+  "scope": "Original runtime units and full frozen dev dependencies; excludes lint/types/build/coverage. Native result/JITI and TestLore disk caches disabled equally; OS/package caches uncontrolled.",
+  "environment": {
+    "node": "v22.19.0",
+    "platform": "linux",
+    "arch": "x64",
+    "packageManager": "pnpm@10.20.0",
+    "framework": {
+      "package": "vitest",
+      "upstreamDeclared": "^4.1.0",
+      "version": "4.1.0",
+      "manifestSha256": "dfb7e8c1ec00a9ce602253f05ac0ed49702bccf4f50f8c8ae41e62df44cbbec5"
+    },
+    "installation": {
+      "sha256": "4b8c707293b13bd4276f7f60153a2c6068a89e132f41d9543b65983750faa59b",
+      "files": 9900,
+      "bytes": 182087907,
+      "internalHardlinkGroups": [
+        [
+          ".pnpm/@esbuild+linux-x64@0.25.12/node_modules/@esbuild/linux-x64/bin/esbuild",
+          ".pnpm/esbuild@0.25.12/node_modules/esbuild/bin/esbuild"
+        ]
+      ]
+    },
+    "lifecyclePolicy": "Pinned package-manager defaults with lifecycle scripts enabled and personal npm config excluded; upstream project configuration retained; no --ignore-scripts, production-only, optional-dependency or package filtering flags",
+    "lifecycleWarnings": false,
+    "upstreamLockInstallationVerified": true
+  },
+  "independentPreflight": {
+    "fixedPassedCases": 198,
+    "fixedFiles": 6,
+    "fullFaultRuns": 2,
+    "stableNamedFailuresPerRun": 6
+  },
+  "qualification": {
+    "qualified": true,
+    "requestedTrials": 2,
+    "completedTrials": 2,
+    "independentlyDemonstratedFaultTrials": 2,
+    "preservedFaultTrials": 2,
+    "observedNamedFaultCases": 12,
+    "missedFailures": 0,
+    "nativeMissedFailures": 0,
+    "stableScenarios": 1,
+    "fullFallbackTrials": 0,
+    "affectedTrials": 2,
+    "selectedFilesPerTrial": 6,
+    "totalFilesPerTrial": 6,
+    "omittedFilesPerTrial": 0,
+    "caseObservations": {
+      "full": 396,
+      "testLore": 396,
+      "native": 396
+    },
+    "controllerMs": 15938,
+    "trialSpans": [
+      {
+        "repetition": 1,
+        "analysisCachePhase": "first-plan-in-new-workspace",
+        "armOrder": [
+          "full",
+          "subset",
+          "native"
+        ],
+        "fullMs": 1727,
+        "testLoreMs": 2895,
+        "nativeMs": 1701,
+        "planningMs": 1149,
+        "subsetExecutionMs": 1712,
+        "analysisCache": {
+          "enabled": false,
+          "engine": "333e73bdb57e6de6358f3c2925cce2b074b1f07ad18a0d20c5823f7e1626d119",
+          "memoryHits": 1,
+          "diskHits": 0,
+          "parses": 35,
+          "writes": 0,
+          "corruptions": 0,
+          "evictions": 0,
+          "skipped": 0,
+          "unavailable": false
+        },
+        "mode": "affected",
+        "selectedFiles": 6,
+        "totalFiles": 6,
+        "missedFailures": 0,
+        "nativeMissedFailures": 0,
+        "valid": true,
+        "stable": true
+      },
+      {
+        "repetition": 2,
+        "analysisCachePhase": "repeat-analysis-cache-disabled",
+        "armOrder": [
+          "subset",
+          "native",
+          "full"
+        ],
+        "fullMs": 1724,
+        "testLoreMs": 2810,
+        "nativeMs": 1700,
+        "planningMs": 1030,
+        "subsetExecutionMs": 1750,
+        "analysisCache": {
+          "enabled": false,
+          "engine": "333e73bdb57e6de6358f3c2925cce2b074b1f07ad18a0d20c5823f7e1626d119",
+          "memoryHits": 1,
+          "diskHits": 0,
+          "parses": 35,
+          "writes": 0,
+          "corruptions": 0,
+          "evictions": 0,
+          "skipped": 0,
+          "unavailable": false
+        },
+        "mode": "affected",
+        "selectedFiles": 6,
+        "totalFiles": 6,
+        "missedFailures": 0,
+        "nativeMissedFailures": 0,
+        "valid": true,
+        "stable": true
+      }
+    ]
+  },
+  "cachePolicy": {
+    "jitiFilesystem": false,
+    "vitestResults": false,
+    "testLoreDiskAnalysis": false,
+    "OSAndPackageCaches": "uncontrolled",
+    "nativeDefaultComparison": false
+  },
+  "hostedRun": "https://github.com/rudycelekli/testlore/actions/runs/37590088100",
+  "review": {
+    "namedFullSubsetNativeCasesIndependentlyCompared": true,
+    "sourceHashesCompared": true,
+    "installationReceiptAndPreparedTreeCompared": true,
+    "actualPostRunInstalledBytes": "producer checked; unchanged verification passed on hosted runner"
+  },
+  "limitations": [
+    "One genuine historical change; six failing assertions and repeated runs do not add changes.",
+    "The affected plan selected all six test files, so no test omission or speed benefit was demonstrated.",
+    "Legacy API planning/execution/receipt arm spans; corpus orchestration and independent verification discovery excluded, controller elapsed separately recorded. Not the additional whole-CLI profile.",
+    "Original pnpm manifest/lock installed with native lifecycle/optional/platform defaults. Runtime units only; lint/types/build/coverage excluded.",
+    "No general recall, browser/monorepo qualification or learning improvement claim."
+  ],
+  "attemptReceiptSha256": "451b49d22b668e1af78ef06c85e4fb0ae5b6cc3c09f2ec030cb1d9fa1964363c"
+}
