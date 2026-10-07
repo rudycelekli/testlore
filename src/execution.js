@@ -368,7 +368,7 @@ function vitestInterpreterBound(root,config) {
     const index=base.findIndex(arg=>/(?:^|[/\\])vitest(?:\.mjs)?$/.test(arg));
     if(index===0) {
       const selected=canonicalVitestCLI(root,base[0]);if(!selected)return false;
-      const line=fs.readFileSync(selected.cli,'utf8').split('\n',1)[0];
+      const line=readNativeIdentityFile(selected.cli,256).toString('utf8').split('\n',1)[0];
       const node=line==='#!/usr/bin/env node'?'node':/^#!(\/[^\s]+)$/.exec(line)?.[1];
       return Boolean(node)&&effectiveExecutable(root,node,environment(config))===fs.realpathSync(process.execPath);
     }
@@ -380,11 +380,36 @@ function vitestInterpreterBound(root,config) {
 function canonicalVitestCLI(root,requested) {
   if(!path.isAbsolute(requested)&&!requested.includes(path.sep))return null;
   try {
-    const cli=fs.realpathSync(path.resolve(root,requested)),metadata=createRequire(cli).resolve('vitest/package.json'),pkg=JSON.parse(fs.readFileSync(metadata,'utf8'));
-    const target=typeof pkg.bin==='object'&&pkg.bin?.vitest;
-    if(pkg.name!=='vitest'||typeof target!=='string'||!fs.statSync(cli).isFile()||fs.realpathSync(path.resolve(path.dirname(metadata),target))!==cli)return null;
-    return {cli,version:pkg.version};
+    const cli=fs.realpathSync(path.resolve(root,requested));
+    readNativeIdentityFile(cli,256); // Reject FIFOs/devices/oversize before package lookup.
+    // resolve.paths computes search directories without loading package JSON.
+    // Node's self-resolution/export machinery is invoked only in the bounded
+    // child after this conservative metadata/bin agreement succeeds.
+    for(const directory of createRequire(cli).resolve.paths('vitest/package.json')||[]) {
+      const metadata=path.join(directory,'vitest/package.json');
+      try{fs.lstatSync(metadata);}catch(error){if(error.code==='ENOENT')continue;return null;}
+      const pkg=JSON.parse(readNativeIdentityFile(metadata).toString('utf8'));
+      const target=typeof pkg.bin==='object'&&pkg.bin?.vitest;
+      if(pkg.name!=='vitest'||typeof target!=='string'||pkg.exports?.['./package.json']!=='./package.json'||fs.realpathSync(path.resolve(path.dirname(metadata),target))!==cli)return null;
+      return {cli,version:pkg.version};
+    }
+    return null;
   }catch{return null;}
+}
+function readNativeIdentityFile(file,limit=1024*1024) {
+  const fd=fs.openSync(file,fs.constants.O_RDONLY|(fs.constants.O_NOFOLLOW||0)|(fs.constants.O_NONBLOCK||0));
+  try {
+    const before=fs.fstatSync(fd);
+    if(!before.isFile()||before.size>1024*1024)throw new Error('Unbounded or nonregular native identity');
+    const bytes=Buffer.alloc(Math.min(before.size,limit));let offset=0;
+    while(offset<bytes.length) {
+      const count=fs.readSync(fd,bytes,offset,bytes.length-offset,null);
+      if(!count)throw new Error('Native identity truncated during read');offset+=count;
+    }
+    const after=fs.fstatSync(fd);
+    if(after.size!==before.size||after.mtimeMs!==before.mtimeMs||after.ctimeMs!==before.ctimeMs)throw new Error('Native identity changed during read');
+    return bytes;
+  }finally{fs.closeSync(fd);}
 }
 function sharedVitestCommand(root,config) {
   if(adapterFor(config)!=='vitest')return null;
