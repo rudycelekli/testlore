@@ -1,0 +1,137 @@
+{
+  "schemaVersion": 1,
+  "profiles": [
+    {
+      "id": "regexp",
+      "repo": "sindresorhus/escape-string-regexp",
+      "fixed": "732905da074f0220487ad6a27590f89bd0819374",
+      "parent": "5085b257c801507460270b747f645276fbc1d937",
+      "oracle": "732905da074f0220487ad6a27590f89bd0819374",
+      "test": "test.js",
+      "readme": "readme.md",
+      "license": "license",
+      "specificationId": "maintainer-regexp-unicode-escaping",
+      "adaptation": {
+        "content": "import nodeTest from 'node:test';\nimport assert from 'node:assert/strict';\nimport escapeStringRegexp from '../src/regexp.cjs';\nconst test=(name,fn)=>nodeTest(name,()=>fn({is:assert.strictEqual,regex:assert.match}));\n\ntest('main', t => {\n\tt.is(\n\t\tescapeStringRegexp('\\\\ ^ $ * + ? . ( ) | { } [ ]'),\n\t\t'\\\\\\\\ \\\\^ \\\\$ \\\\* \\\\+ \\\\? \\\\. \\\\( \\\\) \\\\| \\\\{ \\\\} \\\\[ \\\\]'\n\t);\n});\n\ntest('escapes `-`', t => {\n\tt.is(\n\t\tescapeStringRegexp('foo - bar'),\n\t\t'foo \\\\u002d bar'\n\t);\n});\n\ntest('escapes `-` in a way compatible with the Unicode flag', t => {\n\tt.regex(\n\t\t'-',\n\t\tnew RegExp(escapeStringRegexp('-'), 'u')\n\t);\n});\n",
+        "adapter": "node-test-import-shim-v1",
+        "originalHash": "968c98233e2b92f32baaa3e96cb1954b34451d7cb70f78d6ba975639f2919262",
+        "bodyHash": "8cae3518298134b70ae5f8aa87878b276d0a42259a1c7234cc04675b42d0e435",
+        "adaptedHash": "7177f232aa03db29a81f276e030589310421e244f550abf68b2c548b81447f19",
+        "scope": "Only imports/framework entry points change. Maintainer assertion bodies remain byte-identical. This is not an upstream AVA/Mocha runner qualification."
+      },
+      "sourceScope": "Exact fixed and parent source bytes; later independent oracle revision is declared separately when applicable. No full upstream dependency installation; only built-in Node assertion runner shims."
+    },
+    {
+      "id": "html",
+      "repo": "component/escape-html",
+      "fixed": "725d6a54cde8254e78d11ab138d6acbeecd973b4",
+      "parent": "137fd500001809ac0848107a0750648a11949ad5",
+      "oracle": "7a0e1a7139d03f5efca21322d58dfdbfb317f1dc",
+      "test": "test/index.js",
+      "readme": "README.md",
+      "license": "LICENSE",
+      "specificationId": "maintainer-html-text-escaping",
+      "adaptation": {
+        "content": "const {describe,it}=require('node:test');\nvar assert = require('assert')\nvar escapeHtml = require('../src/html.cjs')\n\ndescribe('escapeHtml(string)', function () {\n  describe('when string is undefined', function () {\n    it('should return \"undefined\"', function () {\n      assert.strictEqual(escapeHtml(undefined), 'undefined')\n    })\n  })\n\n  describe('when string is null', function () {\n    it('should return \"null\"', function () {\n      assert.strictEqual(escapeHtml(null), 'null')\n    })\n  })\n\n  describe('when string is a number', function () {\n    it('should return stringified number', function () {\n      assert.strictEqual(escapeHtml(42), '42')\n    })\n  })\n\n  describe('when string is an object', function () {\n    it('should return \"[object Object]\"', function () {\n      assert.strictEqual(escapeHtml({}), '[object Object]')\n    })\n  })\n\n  describe('when string contains \\'\"\\'', function () {\n    describe('as only character', function () {\n      it('should replace with \"&quot;\"', function () {\n        assert.strictEqual(escapeHtml('\"'), '&quot;')\n      })\n    })\n\n    describe('as first character', function () {\n      it('should replace with \"&quot;\"', function () {\n        assert.strictEqual(escapeHtml('\"bar'), '&quot;bar')\n      })\n    })\n\n    describe('as last character', function () {\n      it('should replace with \"&quot;\"', function () {\n        assert.strictEqual(escapeHtml('foo\"'), 'foo&quot;')\n      })\n    })\n\n    describe('as middle character', function () {\n      it('should replace with \"&quot;\"', function () {\n        assert.strictEqual(escapeHtml('foo\"bar'), 'foo&quot;bar')\n      })\n    })\n\n    describe('multiple times', function () {\n      it('should replace all occurrances with \"&quot;\"', function () {\n        assert.strictEqual(escapeHtml('foo\"\"bar'), 'foo&quot;&quot;bar')\n      })\n    })\n  })\n\n  describe('when string contains \"&\"', function () {\n    describe('as only character', function () {\n      it('should replace with \"&amp;\"', function () {\n        assert.strictEqual(escapeHtml('&'), '&amp;')\n      })\n    })\n\n    describe('as first character', function () {\n      it('should replace with \"&amp;\"', function () {\n        assert.strictEqual(escapeHtml('&bar'), '&amp;bar')\n      })\n    })\n\n    describe('as last character', function () {\n      it('should replace with \"&amp;\"', function () {\n        assert.strictEqual(escapeHtml('foo&'), 'foo&amp;')\n      })\n    })\n\n    describe('as middle character', function () {\n      it('should replace with \"&amp;\"', function () {\n        assert.strictEqual(escapeHtml('foo&bar'), 'foo&amp;bar')\n      })\n    })\n\n    describe('multiple times', function () {\n      it('should replace all occurrances with \"&amp;\"', function () {\n        assert.strictEqual(escapeHtml('foo&&bar'), 'foo&amp;&amp;bar')\n      })\n    })\n  })\n\n  describe('when string contains \"\\'\"', function () {\n    describe('as only character', function () {\n      it('should replace with \"&#39;\"', function () {\n        assert.strictEqual(escapeHtml(\"'\"), '&#39;')\n      })\n    })\n\n    describe('as first character', function () {\n      it('should replace with \"&#39;\"', function () {\n        assert.strictEqual(escapeHtml(\"'bar\"), '&#39;bar')\n      })\n    })\n\n    describe('as last character', function () {\n      it('should replace with \"&#39;\"', function () {\n        assert.strictEqual(escapeHtml(\"foo'\"), 'foo&#39;')\n      })\n    })\n\n    describe('as middle character', function () {\n      it('should replace with \"&#39;\"', function () {\n        assert.strictEqual(escapeHtml(\"foo'bar\"), 'foo&#39;bar')\n      })\n    })\n\n    describe('multiple times', function () {\n      it('should replace all occurrances with \"&#39;\"', function () {\n        assert.strictEqual(escapeHtml(\"foo''bar\"), 'foo&#39;&#39;bar')\n      })\n    })\n  })\n\n  describe('when string contains \"<\"', function () {\n    describe('as only character', function () {\n      it('should replace with \"&lt;\"', function () {\n        assert.strictEqual(escapeHtml('<'), '&lt;')\n      })\n    })\n\n    describe('as first character', function () {\n      it('should replace with \"&lt;\"', function () {\n        assert.strictEqual(escapeHtml('<bar'), '&lt;bar')\n      })\n    })\n\n    describe('as last character', function () {\n      it('should replace with \"&lt;\"', function () {\n        assert.strictEqual(escapeHtml('foo<'), 'foo&lt;')\n      })\n    })\n\n    describe('as middle character', function () {\n      it('should replace with \"&lt;\"', function () {\n        assert.strictEqual(escapeHtml('foo<bar'), 'foo&lt;bar')\n      })\n    })\n\n    describe('multiple times', function () {\n      it('should replace all occurrances with \"&lt;\"', function () {\n        assert.strictEqual(escapeHtml('foo<<bar'), 'foo&lt;&lt;bar')\n      })\n    })\n  })\n\n  describe('when string contains \">\"', function () {\n    describe('as only character', function () {\n      it('should replace with \"&gt;\"', function () {\n        assert.strictEqual(escapeHtml('>'), '&gt;')\n      })\n    })\n\n    describe('as first character', function () {\n      it('should replace with \"&gt;\"', function () {\n        assert.strictEqual(escapeHtml('>bar'), '&gt;bar')\n      })\n    })\n\n    describe('as last character', function () {\n      it('should replace with \"&gt;\"', function () {\n        assert.strictEqual(escapeHtml('foo>'), 'foo&gt;')\n      })\n    })\n\n    describe('as middle character', function () {\n      it('should replace with \"&gt;\"', function () {\n        assert.strictEqual(escapeHtml('foo>bar'), 'foo&gt;bar')\n      })\n    })\n\n    describe('multiple times', function () {\n      it('should replace all occurrances with \"&gt;\"', function () {\n        assert.strictEqual(escapeHtml('foo>>bar'), 'foo&gt;&gt;bar')\n      })\n    })\n  })\n\n  describe('when escaped character mixed', function () {\n    it('should escape all occurrances', function () {\n      assert.strictEqual(escapeHtml('&foo <> bar \"fizz\" l\\'a'),\n        '&amp;foo &lt;&gt; bar &quot;fizz&quot; l&#39;a')\n    })\n  })\n})\n",
+        "adapter": "node-test-import-shim-v1",
+        "originalHash": "5a75835c8040f91a7b65ab9849195b4223bc8f27484fa6e0a13e29003ad65fc2",
+        "bodyHash": "b5d8d8d689267e9b1f3f2bd2da393633b034f373fbb98c95a9b3da56b9cc09b9",
+        "adaptedHash": "a5f861fda4a4f23fb50d1b17d934db2dbc554647663d75f0bbbe6c74ffbe0c9c",
+        "scope": "Only imports/framework entry points change. Maintainer assertion bodies remain byte-identical. This is not an upstream AVA/Mocha runner qualification."
+      },
+      "sourceScope": "Exact fixed and parent source bytes; later independent oracle revision is declared separately when applicable. No full upstream dependency installation; only built-in Node assertion runner shims."
+    }
+  ],
+  "bindings": [
+    {
+      "repo": "sindresorhus/escape-string-regexp",
+      "revision": "732905da074f0220487ad6a27590f89bd0819374",
+      "path": "index.js",
+      "gitBlob": "e5bb9db7933b7230327c7d99cc8459575f090dd4",
+      "sha256": "44f81777dbee24c245fc220d9e019e031da31a5722743a74272f218b7ffed563",
+      "bytes": 463,
+      "url": "https://github.com/sindresorhus/escape-string-regexp/blob/732905da074f0220487ad6a27590f89bd0819374/index.js"
+    },
+    {
+      "repo": "sindresorhus/escape-string-regexp",
+      "revision": "5085b257c801507460270b747f645276fbc1d937",
+      "path": "index.js",
+      "gitBlob": "58217a4efa3c835c532499a3dad887017dc70a6b",
+      "sha256": "48b8be4119e6f09b8942c490397fc047da012e0cc223d75a76363856af68fce4",
+      "bytes": 236,
+      "url": "https://github.com/sindresorhus/escape-string-regexp/blob/5085b257c801507460270b747f645276fbc1d937/index.js"
+    },
+    {
+      "repo": "sindresorhus/escape-string-regexp",
+      "revision": "732905da074f0220487ad6a27590f89bd0819374",
+      "path": "test.js",
+      "gitBlob": "fe5f5499e8a437fbd1d07ea0b60a4e496ba34cb1",
+      "sha256": "968c98233e2b92f32baaa3e96cb1954b34451d7cb70f78d6ba975639f2919262",
+      "bytes": 447,
+      "url": "https://github.com/sindresorhus/escape-string-regexp/blob/732905da074f0220487ad6a27590f89bd0819374/test.js"
+    },
+    {
+      "repo": "sindresorhus/escape-string-regexp",
+      "revision": "732905da074f0220487ad6a27590f89bd0819374",
+      "path": "readme.md",
+      "gitBlob": "03b1b313a312fe42f72468a524497f76d5d894cd",
+      "sha256": "ce300dc07af064e89a8a585413b029058d0ec29195af18e73098a61b03ab0a68",
+      "bytes": 1062,
+      "url": "https://github.com/sindresorhus/escape-string-regexp/blob/732905da074f0220487ad6a27590f89bd0819374/readme.md"
+    },
+    {
+      "repo": "sindresorhus/escape-string-regexp",
+      "revision": "732905da074f0220487ad6a27590f89bd0819374",
+      "path": "license",
+      "gitBlob": "e7af2f77107d73046421ef56c4684cbfdd3c1e89",
+      "sha256": "48da2f39e100d4085767e94966b43f4fa95ff6a0698fba57ed460914e35f94a0",
+      "bytes": 1109,
+      "url": "https://github.com/sindresorhus/escape-string-regexp/blob/732905da074f0220487ad6a27590f89bd0819374/license"
+    },
+    {
+      "repo": "component/escape-html",
+      "revision": "725d6a54cde8254e78d11ab138d6acbeecd973b4",
+      "path": "index.js",
+      "gitBlob": "276521145c189a1f919542d77c9fcc9493e8b617",
+      "sha256": "64ecf24a3f03c03fc088c47c5838e5a5035b37d7ded69892a0552beb7428785a",
+      "bytes": 329,
+      "url": "https://github.com/component/escape-html/blob/725d6a54cde8254e78d11ab138d6acbeecd973b4/index.js"
+    },
+    {
+      "repo": "component/escape-html",
+      "revision": "137fd500001809ac0848107a0750648a11949ad5",
+      "path": "index.js",
+      "gitBlob": "dd09df00de28b419f31272f33b462c2170417a0d",
+      "sha256": "8fd6f72996c8c675376c012528520f88c4109a87181ab14ba1e64c7b14d9c615",
+      "bytes": 301,
+      "url": "https://github.com/component/escape-html/blob/137fd500001809ac0848107a0750648a11949ad5/index.js"
+    },
+    {
+      "repo": "component/escape-html",
+      "revision": "7a0e1a7139d03f5efca21322d58dfdbfb317f1dc",
+      "path": "test/index.js",
+      "gitBlob": "ef6c36c10462410e4f6205b549cf4218d27f4f5f",
+      "sha256": "5a75835c8040f91a7b65ab9849195b4223bc8f27484fa6e0a13e29003ad65fc2",
+      "bytes": 5913,
+      "url": "https://github.com/component/escape-html/blob/7a0e1a7139d03f5efca21322d58dfdbfb317f1dc/test/index.js"
+    },
+    {
+      "repo": "component/escape-html",
+      "revision": "7a0e1a7139d03f5efca21322d58dfdbfb317f1dc",
+      "path": "README.md",
+      "gitBlob": "dd34bc22e4e87bb965e918b0fcb2da250ca81d69",
+      "sha256": "9c746965a2f0254be01ab46e3817e650b56eca371a4ac037624b6f2792e8036e",
+      "bytes": 2379,
+      "url": "https://github.com/component/escape-html/blob/7a0e1a7139d03f5efca21322d58dfdbfb317f1dc/README.md"
+    },
+    {
+      "repo": "component/escape-html",
+      "revision": "7a0e1a7139d03f5efca21322d58dfdbfb317f1dc",
+      "path": "LICENSE",
+      "gitBlob": "2e70de9717e715b4fc05c7f8bdc4e8d63a33b859",
+      "sha256": "255aa557a1f55224ce522f311629c0bf20854740a67955cefd798fbd1d3d1ded",
+      "bytes": 1157,
+      "url": "https://github.com/component/escape-html/blob/7a0e1a7139d03f5efca21322d58dfdbfb317f1dc/LICENSE"
+    }
+  ]
+}
