@@ -210,7 +210,7 @@ export function evidencePath(graph, start, target) {
 function configurationSeeds(root,config,files = listFiles(root)) {
   const seeds = new Set();
   if(config.tsconfig)seeds.add(normalize(config.tsconfig));
-  for(const file of files) if(/^(?:tsconfig\.json|jsconfig\.json|(?:vitest|vite|jest|playwright)\.config\.[cm]?[jt]s)$/.test(file))seeds.add(file);
+  for(const file of files) if(/^(?:pnpm-workspace\.yaml|tsconfig\.json|jsconfig\.json|(?:vitest|vite|jest|playwright)\.config\.[cm]?[jt]s)$/.test(file))seeds.add(file);
   const argv=config.runner||[];
   for(let i=0;i<argv.length;i++) {
     let file;

@@ -10,7 +10,7 @@ import {adapterFor} from './execution.js';
 import { externalPlan } from './integrations.js';
 import { phaseTimings } from './timing.js';
 
-const GLOBAL = /(?:^|\/)(?:package(?:-lock)?\.json|npm-shrinkwrap\.json|pnpm-lock\.yaml|yarn\.lock|bun\.lockb?|tsconfig[^/]*\.json|jsconfig\.json|tddswarm\.config\.json|[^/]*(?:vitest|vite|jest|babel|webpack|rollup|playwright|cypress)[^/]*\.(?:[cm]?[jt]s|json)|(?:setup|globalSetup|globalTeardown)[^/]*\.[cm]?[jt]s|\.env(?:\..*)?|\.gitignore)$/;
+const GLOBAL = /(?:^|\/)(?:package(?:-lock)?\.json|npm-shrinkwrap\.json|pnpm-(?:lock|workspace)\.yaml|yarn\.lock|bun\.lockb?|tsconfig[^/]*\.json|jsconfig\.json|tddswarm\.config\.json|[^/]*(?:vitest|vite|jest|babel|webpack|rollup|playwright|cypress)[^/]*\.(?:[cm]?[jt]s|json)|(?:setup|globalSetup|globalTeardown)[^/]*\.[cm]?[jt]s|\.env(?:\..*)?|\.gitignore)$/;
 
 export function gitChanges(root, base) {
   const {baseSha, prefix} = gitBaseline(root, base);
