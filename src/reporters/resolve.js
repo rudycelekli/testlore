@@ -6,6 +6,10 @@ import { createRequire } from 'node:module';
 import { pathToFileURL } from 'node:url';
 import { spawnSync } from 'node:child_process';
 import ts from 'typescript';
+function sendBounded(message) {
+  if(Buffer.byteLength(JSON.stringify(message))>32*1024*1024)throw new Error('Unified native IPC evidence exceeded 32 MiB');
+  return new Promise((resolve,reject)=>process.send(message,error=>error?reject(error):resolve()));
+}
 const request = JSON.parse(fs.readFileSync(process.argv[2], 'utf8'));
 const { root, adapter, command, imports } = request;
 const queue = [...imports];
@@ -106,7 +110,7 @@ try {
     process.env.TEST = 'true'; process.env.VITEST = 'true'; process.env.NODE_ENV ??= 'test';
     const unsupported = command.some(arg => /^(?:--(?:workspace|project|browser|root|configLoader|environment|no-isolate|isolate)|-r)(?:=|$)/.test(arg));
     if (unsupported) throw new Error('Unsupported native resolution context; use a full suite');
-    let context;
+    let context, unifiedSpecs;
     if(request.discover) {
       if(!Array.isArray(request.invocation))throw new Error('Missing native invocation binding');
       process.argv=[...request.invocation];
@@ -116,7 +120,7 @@ try {
       const version=JSON.parse(fs.readFileSync(requireCLI.resolve('vitest/package.json'),'utf8')).version;
       const parsed=vitest.parseCLI(['vitest',...command.slice(index+1)]);
       if(parsed.filter.length)throw new Error('Shared native planning does not accept positional scope filters');
-      const options={...parsed.options,root,run:true,watch:false};
+      const options={...parsed.options,root,run:true,watch:false,...(request.unified?{reporters:['json'],outputFile:request.reportFile}: {})};
       if(/^4\.1\./.test(version))context=await vitest.createVitest('test',options,{logLevel:'silent'});
       else if(/^5\./.test(version))context=await vitest.createVitest(options,{logLevel:'silent'});
       else throw new Error('Unsupported shared native planning API version');
@@ -135,6 +139,7 @@ try {
     globals(base.test || {},['setupFiles','globalSetup']);
     if(context) {
       const specs=await context.getRelevantTestSpecifications([]);
+      if(request.unified)unifiedSpecs=specs;
       output.discovery={files:[...new Set(specs.map(spec=>spec.moduleId))],complete:true};
       for(const file of output.discovery.files)expand(file);
     }
@@ -156,6 +161,24 @@ try {
         record(resolution(resolved),queue[index],index);
       }
     } finally { if(!context)await server.close(); }
+    if(request.unified) {
+      if(!process.send)throw new Error('Missing unified native IPC channel');
+      await sendBounded({phase:'planned',value:output});
+      const instruction=await new Promise((resolve,reject)=>{
+        process.once('message',resolve);process.once('disconnect',()=>reject(new Error('Unified controller disconnected')));
+      });
+      if(instruction.phase!=='execute'||!Array.isArray(instruction.files)||instruction.files.length>10000||instruction.files.some(file=>typeof file!=='string'))throw new Error('Invalid unified execution request');
+      const expected=new Set(instruction.files.map(file=>path.resolve(root,file)));
+      const specs=unifiedSpecs;
+      const selected=specs.filter(spec=>expected.has(spec.moduleId));
+      if(expected.size!==selected.length)throw new Error('Unified requested specifications are missing or duplicated');
+      if(typeof context.standalone==='function')await context.standalone();else await context.init();
+      const result=await context.runTestSpecifications(selected,selected.length===specs.length);
+      if(result.unhandledErrors?.length)throw new Error('Unified native execution has unhandled errors');
+      const stat=fs.lstatSync(request.reportFile);if(!stat.isFile()||stat.size>32*1024*1024)throw new Error('Unbounded unified native report');
+      const value=JSON.parse(fs.readFileSync(request.reportFile,'utf8'));
+      await sendBounded({phase:'executed',value});
+    }
     } finally {if(context)await context.close();}
   }
 } catch (error) {
@@ -163,4 +186,4 @@ try {
   output.additionalResolutions = [];
   output.resolutions = imports.map(() => ({ paths: [], unresolved: true }));
 }
-process.stdout.write(JSON.stringify(output));
+if(request.unified){if(!output.complete&&process.connected)process.send({phase:'failed',error:output.error});if(process.connected)process.disconnect();}else process.stdout.write(JSON.stringify(output));

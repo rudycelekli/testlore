@@ -21,7 +21,7 @@ export function gitChanges(root, base) {
   return { baseSha, prefix, changed: [...new Set(changed.map(normalize))].filter(f => !f.startsWith('.tddswarm/')).sort() };
 }
 
-export function plan(root, options = {}) {
+export function plan(root, options = {}, nativeSession) {
   const timing = phaseTimings();
   root = path.resolve(root);
   const config = readConfig(root);
@@ -33,7 +33,7 @@ export function plan(root, options = {}) {
   }
   const provenance = snapshot(root,config);
   timing.mark('provenance');
-  const graph = buildGraph(root);
+  const graph = buildGraph(root,nativeSession);
   timing.mark('graph');
   if(adapterFor(config)==='playwright'){
     const declared=new Set(Object.values(config.browser?.routes||{}).filter(route=>route.inputs?.length).flatMap(route=>route.tests||[]));
@@ -69,7 +69,7 @@ export function plan(root, options = {}) {
       try { oldSources.push([file,git(root, ['show', `${baseSha}:${prefix}${file}`])]); }
       catch { /* New file: current edges already describe it. */ }
     }
-    if(oldSources.length)addSources(graph,oldSources,oldFiles);
+    if(oldSources.length)addSources(graph,oldSources,oldFiles,{resolved:Boolean(nativeSession)});
   }
   timing.mark('baselineAndIgnore');
   if (options.full) reasons.push('explicit-full-run');
