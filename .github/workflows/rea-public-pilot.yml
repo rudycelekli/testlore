@@ -1,0 +1,48 @@
+name: Released TestLore REA evidence collection
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - scripts/rea-public-pilot.js
+      - test/rea-public-pilot.test.js
+      - .github/workflows/rea-public-pilot.yml
+permissions:
+  contents: read
+concurrency:
+  group: rea-public-pilot-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  pilot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7.0.0
+        with:
+          node-version: '22.19.0'
+      - name: Collect an explicit qualification verdict from original upstream specifications
+        # Success means complete evidence collection, never TestLore qualification.
+        # Exit3 retains a complete negative measurement; infrastructure failures fail.
+        run: |
+          set +e
+          node scripts/rea-public-pilot.js --directory "$RUNNER_TEMP/rea-release-pilot" --output .tddswarm/rea-public-pilot
+          RESULT=$?
+          set -e
+          if [ "$RESULT" = 3 ]; then
+            echo "::notice::Complete negative qualification measurement: TestLore is NOT qualified on this profile. Read assessment.json."
+          elif [ "$RESULT" != 0 ]; then
+            exit "$RESULT"
+          fi
+          node --input-type=module -e 'import fs from "node:fs"; const a=JSON.parse(fs.readFileSync(".tddswarm/rea-public-pilot/assessment.json")); if(a.observationCompleted!==true) process.exit(1); console.log(JSON.stringify({observationCompleted:a.observationCompleted,qualified:a.qualified,reasons:a.reasons}));' 
+      - name: Preserve negative outcomes and complete scoped native evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rea-public-pilot-${{ github.run_id }}
+          path: .tddswarm/rea-public-pilot/
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 14

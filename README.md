@@ -61,7 +61,7 @@ Review and commit the setup files. To generate independently reviewed test impro
 npm exec --yes --package=testlore@0.1.0 -- testlore improve
 ```
 
-**Experimental alpha:** [`testlore@0.1.0`](https://www.npmjs.com/package/testlore/v/0.1.0) is available on npm. Registry bytes match the exact source-qualified archive; commands pin that version for reproducibility. [Release evidence →](docs/npm-release-0.1.0.md) [Adoption and pilots →](docs/adoption.md)
+**Experimental alpha:** [`testlore@0.1.0`](https://www.npmjs.com/package/testlore/v/0.1.0) is available on npm. Registry bytes match the exact source-qualified archive; commands pin that version for reproducibility. [Release evidence →](docs/npm-release-0.1.0.md) [Adoption and pilots →](docs/adoption.md) [Real REA results, including failures →](docs/rea-public-qualification.md)
 
 Requires **Node 22.19+ and Git**. It creates your project’s quality-agent identity and local memory immediately. Existing `SPEC.md`, `REQUIREMENTS.md`, or README material can seed a proposed behavior contract on the branch. Commit `tddswarm.requirements.md` for explicit expectations; proposals without meaningful independent behavior must be rejected. Generation uses your configured worker or an installed, authenticated Codex CLI. Automatic PR creation uses your authenticated GitHub CLI. `--local` keeps the result for local review.
 

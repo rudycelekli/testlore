@@ -1,0 +1,88 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-08",
+  "repo": "https://github.com/morluto/rea",
+  "upstreamRevision": "3dcb732da33f6ceef597506b14a4536f1c9aff96",
+  "release": "testlore@0.1.0",
+  "releaseRevision": "1f12728e325f13527b63f4023376debcb9270f8c",
+  "measurementRun": "https://github.com/rudycelekli/testlore/actions/runs/37786413887",
+  "campaignRevision": "fc7114d76cf538f5dad9b043e472382f6af1f611",
+  "verdict": "REJECTED: conservative full fallback, unstable property case identities, no speed advantage",
+  "qualifiedTrials": 0,
+  "requestedTrials": 6,
+  "originalTestsModified": false,
+  "generatedTestsUsed": false,
+  "sourceProjects": [
+    "domain",
+    "services",
+    "adapters"
+  ],
+  "baseline": {
+    "platform": "linux",
+    "files": 261,
+    "passed": 2781,
+    "failed": 0,
+    "skipped": 3
+  },
+  "selectorComparison": {
+    "fullFilesPerTrial": 261,
+    "testLoreFilesPerTrial": 261,
+    "nativeFilesPerTrial": 1,
+    "historicalBlankPathFailuresPerRegressionTrial": 6,
+    "regressionTrials": 3,
+    "missedObservedBlankPathFailures": 0,
+    "nativeMissedObservedBlankPathFailures": 0,
+    "fullFallbackTrials": 6,
+    "testLoreSpanIncludes": "discovery, planning, execution and reporting inside pilot; excludes fresh outer CLI startup",
+    "nativeSpanIncludes": "native Vitest related selection and execution",
+    "coldWarmOSState": "not controlled"
+  },
+  "byChange": [
+    {
+      "change": "path-normalization-comment",
+      "testLoreMedianMs": 26540,
+      "nativeMedianMs": 1931,
+      "fullMedianMs": 24115,
+      "testLoreRangeMs": [
+        26097,
+        27470
+      ],
+      "nativeRangeMs": [
+        1859,
+        1933
+      ]
+    },
+    {
+      "change": "blank-path-historical-source-reversion",
+      "testLoreMedianMs": 27853,
+      "nativeMedianMs": 2082,
+      "fullMedianMs": 25931,
+      "testLoreRangeMs": [
+        27647,
+        28494
+      ],
+      "nativeRangeMs": [
+        2045,
+        2137
+      ]
+    }
+  ],
+  "nodeOracle": {
+    "scope": "one native boundary file, separate from TestLore comparison",
+    "fixedPassed": 23,
+    "reversionFailures": 3,
+    "repetitions": 3,
+    "restoredPassed": 23
+  },
+  "claims": {
+    "worldClassEstablished": false,
+    "generalSpeedAdvantageEstablished": false,
+    "learningImprovementEstablished": false,
+    "originalHistoricalBugTreesReplayed": false
+  },
+  "qualificationDenominatorPolicy": "Do not add rejected REA source reversions to existing qualified historical-change or original-installation corpus counts.",
+  "costs": {
+    "paidModelCalls": 0,
+    "githubActionsBilling": "unknown; not inferred from job duration"
+  }
+}
