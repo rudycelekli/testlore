@@ -63,9 +63,28 @@ function nativeCases(value,project){
   if(new Set(files).size!==files.length||new Set(rows.map(row=>row.file+'\0'+row.name)).size!==rows.length)throw Error('Ambiguous original native inventory');
   return {rows,files:files.sort()};
 }
+// Pinned 3.2.4 flat-file profile: hook errors are file status/message failures,
+// not a numRuntimeErrorTestSuites field. Unsupported suite shapes remain unqualified.
+export function validatePinnedNativeSuites(value){
+  if(Object.hasOwn(value,'numRuntimeErrorTestSuites')&&value.numRuntimeErrorTestSuites!==0)throw Error('Native runtime-error count rejected');
+  if(!Array.isArray(value.testResults))throw Error('Native suite inventory missing');
+  let failedSuites=0;
+  for(const suite of value.testResults){
+    if(!Array.isArray(suite.assertionResults)||!suite.assertionResults.length||typeof suite.message!=='string'||suite.message!=='')throw Error('Native suite message/hook error or missing assertions');
+    const failed=suite.assertionResults.some(row=>row.status==='failed');
+    if(suite.status!==(failed?'failed':'passed'))throw Error('Native suite terminal status mismatch or hook failure');
+    failedSuites+=Number(failed);
+    for(const row of suite.assertionResults){
+      if(!Array.isArray(row.failureMessages)||row.failureMessages.some(message=>typeof message!=='string')||(row.status==='failed'?row.failureMessages.length===0:row.failureMessages.length!==0))throw Error('Native assertion error messages mismatch');
+      if(row.status==='todo')throw Error('Todo assertions unsupported in pinned profile');
+    }
+  }
+  if(value.numTotalTestSuites!==value.testResults.length||value.numFailedTestSuites!==failedSuites||value.numPassedTestSuites!==value.testResults.length-failedSuites||value.numPendingTestSuites!==0||value.numTodoTests!==0)throw Error('Native flat suite/count inventory mismatch');
+}
 export function assessOriginalNative(value,project,mode,manifest=profileManifest()){
   let observed={};
   try{
+    validatePinnedNativeSuites(value);
     const {rows,files}=nativeCases(value,project),passed=rows.filter(row=>row.status==='passed').length,failed=rows.filter(row=>row.status==='failed').length,pending=rows.length-passed-failed;
     observed={files,cases:rows,counts:{passed,failed,pending},pendingCases:rows.filter(row=>row.status!=='passed'&&row.status!=='failed')};
     if(passed===0)throw Error('Original native run executed no passing assertions');

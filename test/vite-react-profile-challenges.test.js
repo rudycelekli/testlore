@@ -1,8 +1,9 @@
-import {headlessShellExecutable} from '../scripts/vite-react-native-profile.js';
+import fs from 'node:fs';
+import {assessOriginalNative,profileManifest,headlessShellExecutable} from '../scripts/vite-react-native-profile.js';
 import test from 'node:test';import assert from 'node:assert/strict';
 import {challengeDefinitions,challengePlan,parseChallengeArguments,mutateChallenge,assessChallengeNative,compareChallengePair,runChallenges} from '../scripts/vite-react-profile-challenges.js';
 const project='/tmp/disposable-pinned-profile',A='playground/react-emotion/__tests__/react.spec.ts',B='playground/compiler/__tests__/compiler.spec.ts';
-function report(rows){const files=[...new Set(rows.map(r=>r.file))];return {success:!rows.some(r=>r.status==='failed'),numTotalTests:rows.length,numPassedTests:rows.filter(r=>r.status==='passed').length,numFailedTests:rows.filter(r=>r.status==='failed').length,numPendingTests:rows.filter(r=>r.status!=='passed'&&r.status!=='failed').length,numRuntimeErrorTestSuites:0,testResults:files.map(file=>({name:project+'/'+file,assertionResults:rows.filter(r=>r.file===file).map(r=>({fullName:r.name,status:r.status}))}))};}
+function report(rows){const files=[...new Set(rows.map(r=>r.file))];return {success:!rows.some(r=>r.status==='failed'),numTotalTests:rows.length,numPassedTests:rows.filter(r=>r.status==='passed').length,numFailedTests:rows.filter(r=>r.status==='failed').length,numPendingTests:rows.filter(r=>r.status!=='passed'&&r.status!=='failed').length,numRuntimeErrorTestSuites:0,numTotalTestSuites:files.length,numPassedTestSuites:files.filter(file=>!rows.some(r=>r.file===file&&r.status==='failed')).length,numFailedTestSuites:files.filter(file=>rows.some(r=>r.file===file&&r.status==='failed')).length,numPendingTestSuites:0,numTodoTests:0,testResults:files.map(file=>({name:project+'/'+file,status:rows.some(r=>r.file===file&&r.status==='failed')?'failed':'passed',message:'',assertionResults:rows.filter(r=>r.file===file).map(r=>({fullName:r.name,status:r.status,failureMessages:r.status==='failed'?['Constructed assertion failure']:[]}))}))};}
 const rows=[{file:A,name:'assert original style',status:'passed'},{file:B,name:'assert original source',status:'passed'}];
 function assessed(list,files=[A,B],baseline=null){return assessChallengeNative(report(list),project,files,baseline);}
 test('default plan is advisory and fixes equal native worker settings without executing a profile',async()=>{const result=await runChallenges({run:false,cases:['style']});assert.equal(result.mode,'plan-only');assert.equal(result.routingAuthority,'none');assert.equal(result.promotionAllowed,false);assert.equal(result.configurationOverrides.maxWorkers,1);assert.equal(result.configurationOverrides.fullAndSubsetIdentical,true);assert.equal(result.configurationOverrides.originalConcurrencyUnchanged,false);assert.deepEqual(challengePlan().cases,challengeDefinitions.map(d=>d.name));});
@@ -15,3 +16,36 @@ test('missing, duplicated, escaped, shifted, runtime-error or newly pending iden
 test('asset pass/pass is only a consistency negative and cannot qualify bug detection',()=>{const baseline=assessed(rows),subset=assessed([rows[0]],[A],rows);assert.equal(compareChallengePair(baseline,subset,baseline,[A],{requiresFailure:false}).qualified,true);assert.equal(compareChallengePair(baseline,subset,baseline,[A],{requiresFailure:false}).failurePreserved,false);assert.equal(compareChallengePair(baseline,subset,baseline,[A]).qualified,false);assert.equal(challengeDefinitions.find(d=>d.name==='asset').requiresFailure,false);});
 
 test('pinned Playwright registry uses chrome-mac/linux headless_shell paths',()=>{assert.equal(headlessShellExecutable('/private/browser','1181','darwin'),'/private/browser/chromium_headless_shell-1181/chrome-mac/headless_shell');assert.equal(headlessShellExecutable('/private/browser','1181','linux'),'/private/browser/chromium_headless_shell-1181/chrome-linux/headless_shell');assert.throws(()=>headlessShellExecutable('/private/browser','1181','win32'),/supported/);});
+
+const nativeSchema=JSON.parse(fs.readFileSync(new URL('./fixtures/vite-react-3.2.4-native-schema.json',import.meta.url)));
+const schemaProject='/pinned/upstream',schemaFiles=nativeSchema.testResults.map(s=>s.name.slice(schemaProject.length+1));
+test('actual pinned native schema without runtime-error count accepts exact original inventory',()=>{
+ assert.equal(Object.hasOwn(nativeSchema,'numRuntimeErrorTestSuites'),false);
+ const result=assessChallengeNative(nativeSchema,schemaProject,schemaFiles);
+ assert.equal(result.complete,true);assert.deepEqual(result.counts,{passed:62,failed:0,pending:2,total:64});
+ assert.equal(assessOriginalNative(nativeSchema,schemaProject,'serve').complete,true);
+ assert.equal(result.rows.length,profileManifest().serveCases.length);
+ const optional=structuredClone(nativeSchema);optional.numRuntimeErrorTestSuites=0;assert.equal(assessChallengeNative(optional,schemaProject,schemaFiles).complete,true);
+ for(const invalid of [1,-1,null,'0']){optional.numRuntimeErrorTestSuites=invalid;assert.equal(assessChallengeNative(optional,schemaProject,schemaFiles).complete,false);}
+});
+test('afterAll suite errors reject even when every assertion passed and no runtime count is emitted',()=>{
+ // Constructed controls use the original reporter fields. No new native hook run is claimed.
+ for(const honestSuccess of [false,true]){const value=structuredClone(nativeSchema);value.testResults[0].status='failed';value.testResults[0].message='afterAll: recorder failed';value.numFailedTestSuites=1;value.numPassedTestSuites--;value.success=honestSuccess;
+  assert.equal(value.numFailedTests,0);assert.equal(value.numPassedTests,62);
+  assert.equal(assessChallengeNative(value,schemaProject,schemaFiles).complete,false);
+  assert.equal(assessOriginalNative(value,schemaProject,'serve').complete,false);
+ }
+});
+test('suite messages, missing status, incorrect counts and hidden assertion errors cannot pass',()=>{
+ for(const alter of [v=>v.testResults[0].message='unhandled hook error',v=>delete v.testResults[0].status,v=>v.numTotalTestSuites++,v=>v.numFailedTestSuites++,v=>v.numPendingTestSuites=1,v=>v.numTodoTests=1,v=>delete v.numPassedTestSuites,v=>v.testResults[0].assertionResults[0].failureMessages=['hidden error']]){
+  const value=structuredClone(nativeSchema);alter(value);assert.equal(assessChallengeNative(value,schemaProject,schemaFiles).complete,false);assert.equal(assessOriginalNative(value,schemaProject,'serve').complete,false);
+ }
+});
+
+test('an exit-one process cannot hide an unrepresented runtime error behind an all-passed JSON report',()=>{
+ assert.equal(assessChallengeNative(nativeSchema,schemaProject,schemaFiles,null,0).complete,true);
+ assert.equal(assessChallengeNative(nativeSchema,schemaProject,schemaFiles,null,1).complete,false);
+ const fault=report([{...rows[0],status:'failed'},rows[1]]);
+ assert.equal(assessChallengeNative(fault,project,[A,B],null,1).complete,true);
+ assert.equal(assessChallengeNative(fault,project,[A,B],null,0).complete,false);
+});
