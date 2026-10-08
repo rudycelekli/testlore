@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "kind": "scoped-owned-partial-dependency-retirement",
+  "recordedDate": "2026-10-08",
+  "candidateId": "unjs-defu-11ba02213d4b",
+  "originalAttempt": "upstream-defu-interrupted-20261008.json",
+  "qualified": false,
+  "installationCompleted": false,
+  "priorReceiptReclassified": false,
+  "retiredScope": "Only the unused extracted partial node_modules from the interrupted installation",
+  "archive": {
+    "bytes": 59303173,
+    "sha256": "ecd96bba398bbc02c710457cc421c418b2b71a3fed8291d3d3f00f27cb282e05",
+    "verifiedEntryCount": 11213,
+    "verifiedContentBytes": 171812347,
+    "privateInventorySha256": "c608190ab42f44becdb54741408b4fa9ca12043a48526a96ef6d06ca18f3e36f"
+  },
+  "verification": [
+    "Source inventory records regular-file bytes and SHA-256, modes, symlink targets, internal hardlink membership and observed outside-tree alias counts.",
+    "Source stat identities and content were compared before and after archive creation, then again immediately before retirement.",
+    "Every archive entry was replayed and matched against source content, modes, symlinks and internal hardlink membership before retirement.",
+    "The archive and private inventory remain retained for recovery; original source, manifests, isolated configurations, failed-install logs, manager cache and shared package store remain retained."
+  ],
+  "resourcePolicy": {
+    "minimumFreeBytesDuringArchival": 536870912,
+    "deadlineMs": 120000,
+    "freeBytesAfterRetirement": 1585680384,
+    "campaignReserveMetAtCompletion": false
+  },
+  "limitations": [
+    "Dependency-byte preservation does not establish a completed installation, baseline, independent fault or comparative qualification.",
+    "Recovery preserves the internal archive hardlink graph; outside-tree aliases were recorded and not removed, rather than recreated by extraction.",
+    "This is a content/mode/link recovery check, not an ACL, extended-attribute or security-containment claim."
+  ],
+  "addedQualifiedChanges": 0,
+  "addedQualifiedRepositories": 0
+}
