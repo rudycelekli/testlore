@@ -32,6 +32,7 @@ test('duplicate encoded keys and additional structured payloads reject instead o
 test('reordered completions, reused IDs and missing or malformed native IDs cannot substitute earlier responses',()=>{
  const controls=[
   rows=>{const response=rows.splice(15,1)[0];rows.splice(14,0,response);},
+  rows=>{const pair=rows.splice(14,2);rows.splice(12,0,...pair);},
   rows=>{rows[14].message.content[0].id='mcp-6';rows.splice(15,1);},
   rows=>{const response=rows.splice(13,1)[0];rows.splice(12,0,response);},
   rows=>{rows[2].message.content[0].id='mcp-0';},
@@ -41,6 +42,8 @@ test('reordered completions, reused IDs and missing or malformed native IDs cann
   rows=>{rows[12].message.content[0].id='x'.repeat(101);rows[13].message.content[0].tool_use_id='x'.repeat(101);},
   rows=>{rows.splice(15,0,structuredClone(rows[15]));},
   rows=>{const response=rows.splice(15,1)[0];rows.push(response);}
+  ,rows=>{rows.splice(-1,0,complete('unbound-response'));}
+  ,rows=>{rows.splice(-1,0,complete(undefined));}
  ];
  for(const alter of controls){const rows=structuredClone(stream());alter(rows);const value=assess(rows);assert.equal(value.complete,false);assert.equal(value.finalMessage,'');}
 });

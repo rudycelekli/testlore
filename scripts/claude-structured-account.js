@@ -49,10 +49,11 @@ export function claudeStructuredAccount(stdout,schema){
     const completions=rows.flatMap(event=>event.type==='user'&&Array.isArray(event.message?.content)?event.message.content.filter(item=>item?.type==='tool_result'&&item.tool_use_id===formatted[0].id):[]);
     if(completions.length!==1||completions[0].is_error===true)throw new Error('Native formatter completion missing or rejected');
     const uses=rows.flatMap((event,index)=>event.type==='assistant'&&Array.isArray(event.message?.content)?event.message.content.filter(item=>item?.type==='tool_use').map(item=>({...item,eventIndex:index})):[]);
-    const mcp=uses.filter(item=>item.name?.startsWith('mcp__'));
     const expected=['mcp__testlore_readonly__testlore_brief','mcp__testlore_readonly__testlore_status','mcp__testlore_execution__testlore_plan','mcp__testlore_execution__testlore_verify','mcp__testlore_fixture__repair_fixture','mcp__testlore_execution__testlore_plan','mcp__testlore_execution__testlore_verify'];
-    if(JSON.stringify(mcp.map(item=>item.name))!==JSON.stringify(expected)||uses.length!==8)throw new Error('Structured formatter must follow exactly seven authorized MCP calls');
+    if(JSON.stringify(uses.map(item=>item.name))!==JSON.stringify([...expected,claudeStructuredContract.formatterTool]))throw new Error('Structured formatter must follow exactly seven authorized MCP calls');
     if(uses.some(item=>typeof item.id!=='string'||!item.id||item.id.length>100)||new Set(uses.map(item=>item.id)).size!==uses.length)throw new Error('Unique bounded native tool-use IDs required');
+    const allResponses=rows.flatMap(event=>event.type==='user'&&Array.isArray(event.message?.content)?event.message.content.filter(item=>item?.type==='tool_result'):[]);
+    if(allResponses.length!==uses.length||allResponses.some(item=>!uses.some(use=>use.id===item.tool_use_id)))throw new Error('Unbound or extra native tool response');
     for(let index=0;index<uses.length;index++){
       const invocation=uses[index],nextIndex=uses[index+1]?.eventIndex??rows.indexOf(result);
       const responses=rows.flatMap((event,eventIndex)=>event.type==='user'&&Array.isArray(event.message?.content)?event.message.content.filter(item=>item?.type==='tool_result'&&item.tool_use_id===invocation.id).map(item=>({...item,eventIndex})):[]);
