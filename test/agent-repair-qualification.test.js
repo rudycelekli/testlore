@@ -131,6 +131,32 @@ test('named maintainer profile binds genuine historical bytes, unchanged asserti
   assert.throws(()=>repairProfile('arbitrary-edit'),/Unknown/);
 });
 
+test('contract-only maintainer task supplies contract and fault without leaking the fixed implementation or repair hint',t=>{
+  const profile=repairProfile('maintainer-is-promise'),prompt=repairQualificationPrompt(profile.name,'contract-only');
+  assert.ok(prompt.includes(JSON.stringify(profile.readme)));
+  assert.ok(prompt.includes(JSON.stringify(profile.fault)));
+  assert.ok(prompt.includes(JSON.stringify(repairSummarySchema(profile.name))));
+  assert.ok(!prompt.includes(JSON.stringify(profile.fixed)));
+  assert.doesNotMatch(prompt,/prefix the first obj|!!obj|boolean guard repair/);
+  assert.match(prompt,/alternative equivalent edits can be rejected/);
+  // Admission remains independent and closed even when the solution is withheld.
+  const root=fixture(t);
+  try{
+    createMaintainerRepairFixture(root);const stat=fs.statSync(root);
+    const bound={root:fs.realpathSync(root),rootIdentity:{dev:stat.dev,ino:stat.ino},expectedFaultSha256:hash(profile.fault),repairProfile:profile.name};
+    assert.throws(()=>repairFixture(bound,profile.fault),/authorized/);
+    assert.throws(()=>repairFixture(bound,profile.fixed+'process.exit(0);'),/authorized/);
+    assert.equal(repairFixture(bound,profile.fixed).complete,true);
+  }finally{fs.rmSync(root,{recursive:true,force:true});}
+  const argv=['--run','--authorize-fixture-tools','--authorize-fixture-repair','--entrypoint','/package/src/cli.js','--output','/tmp/repair.json'];
+  assert.equal(parseRepairArguments([...argv,'--repair-profile',profile.name,'--repair-instructions','contract-only']).repairInstructions,'contract-only');
+  assert.equal(parseRepairArguments([...argv,'--repair-profile',profile.name]).repairInstructions,'supplied');
+  assert.throws(()=>parseRepairArguments([...argv,'--repair-instructions','contract-only']),/maintainer/);
+  assert.throws(()=>parseRepairArguments([...argv,'--repair-instructions','open-edit']),/Unknown/);
+  assert.throws(()=>parseRepairArguments([...argv,'--repair-instructions','supplied','--repair-instructions','contract-only']),/Duplicate/);
+  assert.throws(()=>repairQualificationPrompt('synthetic','contract-only'),/maintainer/);
+});
+
 test('maintainer repair refuses wrong source, extra code, target redirection, root drift and repeated edits',t=>{
   const root=fixture(t),profile=createMaintainerRepairFixture(root),stat=fs.statSync(root);
   const bound={root:fs.realpathSync(root),rootIdentity:{dev:stat.dev,ino:stat.ino},expectedFaultSha256:hash(profile.fault),repairProfile:profile.name,target:'test/promise.test.cjs'};

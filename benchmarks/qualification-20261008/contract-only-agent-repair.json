@@ -1,0 +1,387 @@
+{
+  "schemaVersion": 1,
+  "kind": "native-agent-repair-qualification",
+  "startedAt": "2026-10-08T07:06:13.717Z",
+  "finishedAt": "2026-10-08T07:07:04.378Z",
+  "repairProfile": "maintainer-is-promise",
+  "repairInstructions": "contract-only",
+  "solutionSupplied": false,
+  "promptSha256": "f8d6f042a3a1775dd05ef237f7e1fa6f0a9e6d9e15bc68a754b60003584216bc",
+  "maintainerProvenance": {
+    "repository": "https://github.com/then/is-promise",
+    "fixed": "ed0eaa4dec17597f0dae892a0472a9b7f459320d",
+    "parent": "2dfb684306b6f3b8b374478c86e63f8bab4a7f06",
+    "oracle": "ed0eaa4dec17597f0dae892a0472a9b7f459320d",
+    "datasetHash": "78d7e6127d15873b351f6c5128e951a39bd14a167fc2c9b8d9d1a5d354fedc0f",
+    "bindings": [
+      {
+        "repo": "then/is-promise",
+        "revision": "ed0eaa4dec17597f0dae892a0472a9b7f459320d",
+        "path": "index.js",
+        "gitBlob": "ca2444c6f69540f83504b8f54f4518af0ffc4cd5",
+        "sha256": "748c681ba64081193dc5fbb27f8b3539c09ba08f4e31ec6d588e2ae8c39234a8",
+        "bytes": 165,
+        "url": "https://github.com/then/is-promise/blob/ed0eaa4dec17597f0dae892a0472a9b7f459320d/index.js"
+      },
+      {
+        "repo": "then/is-promise",
+        "revision": "2dfb684306b6f3b8b374478c86e63f8bab4a7f06",
+        "path": "index.js",
+        "gitBlob": "772600b79091369385ce9b5a3adc779548d41970",
+        "sha256": "1bcef4c606ce23b0a7334bb7e01bec64266b7947c0a9c6acd715d94865c3a25d",
+        "bytes": 163,
+        "url": "https://github.com/then/is-promise/blob/2dfb684306b6f3b8b374478c86e63f8bab4a7f06/index.js"
+      },
+      {
+        "repo": "then/is-promise",
+        "revision": "ed0eaa4dec17597f0dae892a0472a9b7f459320d",
+        "path": "test.js",
+        "gitBlob": "d971c2828fab264d68b662c230e61af5dcaa6e0e",
+        "sha256": "0fce78dda44690c59ba7b397dea9683242d5ce7a1cf7c260a1d92cc4a4dd2b34",
+        "bytes": 1483,
+        "url": "https://github.com/then/is-promise/blob/ed0eaa4dec17597f0dae892a0472a9b7f459320d/test.js"
+      },
+      {
+        "repo": "then/is-promise",
+        "revision": "ed0eaa4dec17597f0dae892a0472a9b7f459320d",
+        "path": "readme.md",
+        "gitBlob": "50d5d989111aa5071420d76fb796e9f9215f8625",
+        "sha256": "2831cabb33577b1054b575c0b7cca7b4f446510d59cab316414122e43234410f",
+        "bytes": 872,
+        "url": "https://github.com/then/is-promise/blob/ed0eaa4dec17597f0dae892a0472a9b7f459320d/readme.md"
+      },
+      {
+        "repo": "then/is-promise",
+        "revision": "ed0eaa4dec17597f0dae892a0472a9b7f459320d",
+        "path": "LICENSE",
+        "gitBlob": "27cc9f3771540a450dae91b1e04dd1383ff1a4d1",
+        "sha256": "44191656d296391e0ec97e32f5385f0d02b6f2992694082d22ea04ba0f66f9e4",
+        "bytes": 1058,
+        "url": "https://github.com/then/is-promise/blob/ed0eaa4dec17597f0dae892a0472a9b7f459320d/LICENSE"
+      }
+    ],
+    "adaptation": "Only imports/framework entry points change; original maintainer assertion bodies remain byte-identical. Not a full upstream Mocha/better-assert qualification."
+  },
+  "limitation": "One genuine historical null/undefined boolean predicate defect, with eight unchanged maintainer assertion bodies on a Node import shim. No general application repair, upstream Mocha environment, or deployment safety claim. Repair inferred from README, faulty source and observed failures without an explicit implementation hint. A canonical admission gate still restricts edits; this is not open-ended autonomous repair.",
+  "maximumHostCalls": 1,
+  "retries": 0,
+  "timeoutMs": 115000,
+  "providerApiKeysRemoved": true,
+  "complete": false,
+  "finalAccountSchemaSha256": "d4d08afcd4288c2912fde9c63148c36d5f8cdd68317d48dcb861a5baa2b7cb0e",
+  "sourceRevision": "42b0d45e986bd48f52a2936b6e383baaf83bc2cc",
+  "sourcePackageSHA256": "626591ac38c981748f045d1aacf32da5815f2aebbf123dfc238e69b72a37e672",
+  "rawReceiptSHA256": "54f0848cf6e3c483878c610226dc4783794323daca40bc0b54ba5021b022dbb0",
+  "harness": [
+    {
+      "file": "agent-repair-qualification.js",
+      "sha256": "00559a17deae6d396ba58b21259656472c5bafbdf20bdee8db9fc36e9854dd1b",
+      "bytes": 36791
+    },
+    {
+      "file": "fixture-repair-mcp.js",
+      "sha256": "df1e9ebbeec4444c6035a6319e9c9d1d896f8e455ae252d1c6baf990b00d4393",
+      "bytes": 4702
+    },
+    {
+      "file": "maintainer-repair-profile.js",
+      "sha256": "cff8b730bc99d36dfe5969aa1699346b364e95d6ddcf4763dfb7419615a2d3a2",
+      "bytes": 7024
+    },
+    {
+      "file": "host-qualification.js",
+      "sha256": "2150ea05aecc79fc02eac6a9858a8c533228e50122e13e9e7c5807b97811db56",
+      "bytes": 34975
+    },
+    {
+      "file": "host-mcp-observer.js",
+      "sha256": "0bdb8d331a208080c4d7855aa796e7564dac6c3393ef4de447e9e90c8ead1df2",
+      "bytes": 3472
+    },
+    {
+      "file": "node.js",
+      "sha256": "c5fbf1bf0841fd7e36f716198ac00a5481fa288a9662997257b385f64687b24c",
+      "bytes": 1090
+    }
+  ],
+  "node": {
+    "sha256": "0d005c18e095027ca8f9fe1cc1126f767ee4ad7b004f4d6fb781ec4228a7c5d1",
+    "bytes": 110712624
+  },
+  "hosts": [
+    {
+      "host": "codex",
+      "qualified": true,
+      "status": "qualified-in-maintainer-contract-scope",
+      "reasons": [],
+      "summary": {
+        "verdict": "passed-in-observed-scope",
+        "repairedFile": "src/promise.cjs",
+        "executedFiles": [
+          "test/promise.test.cjs"
+        ],
+        "uncertainty": "All eight cases passed after correcting the null and undefined failures. Evidence covers only this Node-shimmed fixture, not a complete upstream Mocha environment or broad autonomous repair capability.",
+        "nextAction": "Qualify the correction in the complete upstream maintainer environment before making broader compatibility claims.",
+        "deploymentSafety": "not-established"
+      },
+      "process": {
+        "status": "completed",
+        "reason": null,
+        "exitCode": 0,
+        "signal": null,
+        "durationMs": 49580,
+        "outputBytes": 32675
+      },
+      "nativeApiRetriesObserved": 0,
+      "repair": {
+        "schemaVersion": 1,
+        "kind": "bounded-fixture-repair",
+        "calls": [
+          {
+            "requestedAt": 1791443207279,
+            "sourceSha256": "748c681ba64081193dc5fbb27f8b3539c09ba08f4e31ec6d588e2ae8c39234a8",
+            "result": {
+              "complete": true,
+              "changedFile": "src/promise.cjs",
+              "beforeSha256": "1bcef4c606ce23b0a7334bb7e01bec64266b7947c0a9c6acd715d94865c3a25d",
+              "afterSha256": "748c681ba64081193dc5fbb27f8b3539c09ba08f4e31ec6d588e2ae8c39234a8",
+              "authority": "fixture-source-edit-only",
+              "deploymentSafety": "not-established"
+            },
+            "respondedAt": 1791443207295
+          }
+        ],
+        "rejectedAdditionalCalls": 0
+      },
+      "protectedFilesBefore": [
+        {
+          "file": ".gitignore",
+          "sha256": "7fb44527b443495e92c61dccfc6b3adf4400dae72a66af52820f7a7b0827527c"
+        },
+        {
+          "file": "LICENSE.maintainer",
+          "sha256": "44191656d296391e0ec97e32f5385f0d02b6f2992694082d22ea04ba0f66f9e4"
+        },
+        {
+          "file": "maintainer-provenance.json",
+          "sha256": "8ab9f487ecbe4010fe566139f3576b2fbef26d1bf83c0636c1ee29cb6191ac95"
+        },
+        {
+          "file": "package.json",
+          "sha256": "6dc1b06d6b093e9cccb20bee06a93836eee0420ae26803ca2ce4065d82f070d1"
+        },
+        {
+          "file": "provenance/original-test.txt",
+          "sha256": "0fce78dda44690c59ba7b397dea9683242d5ce7a1cf7c260a1d92cc4a4dd2b34"
+        },
+        {
+          "file": "README.maintainer.md",
+          "sha256": "2831cabb33577b1054b575c0b7cca7b4f446510d59cab316414122e43234410f"
+        },
+        {
+          "file": "src/promise.cjs",
+          "sha256": "1bcef4c606ce23b0a7334bb7e01bec64266b7947c0a9c6acd715d94865c3a25d"
+        },
+        {
+          "file": "tddswarm.config.json",
+          "sha256": "264ed92591c4d523a65deed35fe9bd66b1b6e70a3843486e147c9dbf3b4e649a"
+        },
+        {
+          "file": "tddswarm.requirements.md",
+          "sha256": "6ee03bf4c17087f30e96e5880d3dcf5b57c2a75a37b5fbf10d1a2e9040722515"
+        },
+        {
+          "file": "test/promise.test.cjs",
+          "sha256": "16c34847cebbc85ed84ed991a7608da6b0bd2697514f3a5003e58e7973108dbf"
+        }
+      ],
+      "protectedFilesAfter": [
+        {
+          "file": ".gitignore",
+          "sha256": "7fb44527b443495e92c61dccfc6b3adf4400dae72a66af52820f7a7b0827527c"
+        },
+        {
+          "file": "LICENSE.maintainer",
+          "sha256": "44191656d296391e0ec97e32f5385f0d02b6f2992694082d22ea04ba0f66f9e4"
+        },
+        {
+          "file": "maintainer-provenance.json",
+          "sha256": "8ab9f487ecbe4010fe566139f3576b2fbef26d1bf83c0636c1ee29cb6191ac95"
+        },
+        {
+          "file": "package.json",
+          "sha256": "6dc1b06d6b093e9cccb20bee06a93836eee0420ae26803ca2ce4065d82f070d1"
+        },
+        {
+          "file": "provenance/original-test.txt",
+          "sha256": "0fce78dda44690c59ba7b397dea9683242d5ce7a1cf7c260a1d92cc4a4dd2b34"
+        },
+        {
+          "file": "README.maintainer.md",
+          "sha256": "2831cabb33577b1054b575c0b7cca7b4f446510d59cab316414122e43234410f"
+        },
+        {
+          "file": "src/promise.cjs",
+          "sha256": "748c681ba64081193dc5fbb27f8b3539c09ba08f4e31ec6d588e2ae8c39234a8"
+        },
+        {
+          "file": "tddswarm.config.json",
+          "sha256": "264ed92591c4d523a65deed35fe9bd66b1b6e70a3843486e147c9dbf3b4e649a"
+        },
+        {
+          "file": "tddswarm.requirements.md",
+          "sha256": "6ee03bf4c17087f30e96e5880d3dcf5b57c2a75a37b5fbf10d1a2e9040722515"
+        },
+        {
+          "file": "test/promise.test.cjs",
+          "sha256": "16c34847cebbc85ed84ed991a7608da6b0bd2697514f3a5003e58e7973108dbf"
+        }
+      ],
+      "identity": {
+        "sha256": "61b0194f3bb6534439c8d26a3ed57d0805f84b884588b761795323eeb92fcf70",
+        "bytes": 8790
+      },
+      "nativeReference": {
+        "complete": true,
+        "baseline": {
+          "passed": 8,
+          "failed": 0,
+          "skipped": 0
+        },
+        "historicalParent": {
+          "passed": 6,
+          "failed": 2,
+          "skipped": 0
+        },
+        "repaired": {
+          "passed": 8,
+          "failed": 0,
+          "skipped": 0
+        }
+      },
+      "observed": [
+        {
+          "mode": "readonly",
+          "incomplete": false,
+          "calls": [
+            {
+              "name": "testlore_brief",
+              "result": {
+                "kind": "agent-verification-brief"
+              }
+            },
+            {
+              "name": "testlore_status",
+              "result": {
+                "kind": "agent-verification-status"
+              }
+            }
+          ]
+        },
+        {
+          "mode": "execution",
+          "incomplete": false,
+          "calls": [
+            {
+              "name": "testlore_plan",
+              "result": {
+                "kind": "agent-verification-plan",
+                "mode": "affected",
+                "complete": true,
+                "deploymentSafety": "not-established"
+              }
+            },
+            {
+              "name": "testlore_verify",
+              "result": {
+                "kind": "agent-verification-run",
+                "mode": "shadow",
+                "complete": true,
+                "verdict": "failed",
+                "executedFiles": [
+                  "test/promise.test.cjs"
+                ],
+                "outcomes": {
+                  "available": true,
+                  "passed": 6,
+                  "failed": 2,
+                  "skipped": 0
+                },
+                "failedCases": [
+                  {
+                    "id": "6746e9eb49b75e776a726ff572a2b0058675cb095c486b0608c9b2bd78b5a827",
+                    "file": "test/promise.test.cjs",
+                    "name": "calling isPromise > with null > returns false"
+                  },
+                  {
+                    "id": "56524740f7ff06425ccbea76baa7dacb3a32c3cb20d0ea79cb2aa63bd8fd12f8",
+                    "file": "test/promise.test.cjs",
+                    "name": "calling isPromise > with undefined > returns false"
+                  }
+                ],
+                "deploymentSafety": "not-established"
+              }
+            },
+            {
+              "name": "testlore_plan",
+              "result": {
+                "kind": "agent-verification-plan",
+                "mode": "policy",
+                "complete": true,
+                "deploymentSafety": "not-established"
+              }
+            },
+            {
+              "name": "testlore_verify",
+              "result": {
+                "kind": "agent-verification-run",
+                "mode": "full",
+                "complete": true,
+                "verdict": "passed-in-observed-scope",
+                "executedFiles": [
+                  "test/promise.test.cjs"
+                ],
+                "outcomes": {
+                  "available": true,
+                  "passed": 8,
+                  "failed": 0,
+                  "skipped": 0
+                },
+                "failedCases": [],
+                "deploymentSafety": "not-established"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "host": "claude",
+      "qualified": false,
+      "status": "not-started",
+      "reasons": [
+        "explicit-host-executable-not-supplied",
+        "local-native-authentication-not-established"
+      ]
+    }
+  ],
+  "nativeUsage": {
+    "reported": {
+      "input_tokens": 235883,
+      "cached_input_tokens": 204672,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 498,
+      "reasoning_output_tokens": 43
+    },
+    "externallyAttested": false,
+    "providerModel": null,
+    "billingUSD": null,
+    "nativeEventsSHA256": "8b57cd1940fcbd2c8a109e05e830a2119c62cbc5a8eac49d71bfcfeca3adf5d7"
+  },
+  "limitations": [
+    "One genuine historical null/undefined boolean predicate defect, with eight unchanged maintainer assertion bodies on a Node import shim. No general application repair, upstream Mocha environment, or deployment safety claim. Repair inferred from README, faulty source and observed failures without an explicit implementation hint. A canonical admission gate still restricts edits; this is not open-ended autonomous repair.",
+    "Contract and faulty source are supplied; no exact implementation or boolean-guard hint is supplied. Only the canonical independently frozen source is admitted, so equivalent repairs can be rejected. This is one bounded historical task, not broad application repair quality.",
+    "Original eight assertion bodies run with declared Node import shims, not a complete original Mocha installation.",
+    "One invocation with no retries; model, external token attestation and dollar billing unknown. Missing Claude keeps the aggregate incomplete."
+  ]
+}

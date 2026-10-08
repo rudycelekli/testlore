@@ -1,0 +1,488 @@
+{
+  "numTotalTestSuites": 20,
+  "numPassedTestSuites": 20,
+  "numFailedTestSuites": 0,
+  "numPendingTestSuites": 0,
+  "numTotalTests": 64,
+  "numPassedTests": 62,
+  "numFailedTests": 0,
+  "numPendingTests": 2,
+  "numTodoTests": 0,
+  "success": true,
+  "testResults": [
+    {
+      "name": "/pinned/upstream/playground/class-components/__tests__/class-components.spec.ts",
+      "status": "passed",
+      "message": "",
+      "assertionResults": [
+        {
+          "fullName": "should render",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "Class component HMR",
+          "status": "passed",
+          "failureMessages": []
+        }
+      ]
+    },
+    {
+      "name": "/pinned/upstream/playground/compiler/__tests__/compiler.spec.ts",
+      "status": "passed",
+      "message": "",
+      "assertionResults": [
+        {
+          "fullName": "should render",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "should hmr",
+          "status": "passed",
+          "failureMessages": []
+        }
+      ]
+    },
+    {
+      "name": "/pinned/upstream/playground/compiler-react-18/__tests__/compiler-react-18.spec.ts",
+      "status": "passed",
+      "message": "",
+      "assertionResults": [
+        {
+          "fullName": "should render",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "should hmr",
+          "status": "passed",
+          "failureMessages": []
+        }
+      ]
+    },
+    {
+      "name": "/pinned/upstream/playground/hmr-false/__tests__/hmr-false.spec.ts",
+      "status": "passed",
+      "message": "",
+      "assertionResults": [
+        {
+          "fullName": "basic",
+          "status": "passed",
+          "failureMessages": []
+        }
+      ]
+    },
+    {
+      "name": "/pinned/upstream/playground/hook-with-jsx/__tests__/hook-with-jsx.spec.ts",
+      "status": "passed",
+      "message": "",
+      "assertionResults": [
+        {
+          "fullName": "should render",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "Hook with JSX HMR",
+          "status": "passed",
+          "failureMessages": []
+        }
+      ]
+    },
+    {
+      "name": "/pinned/upstream/playground/mdx/__tests__/mdx.spec.ts",
+      "status": "passed",
+      "message": "",
+      "assertionResults": [
+        {
+          "fullName": "should render",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": ".md extension should work",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "should hmr",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "should hmr with .md extension",
+          "status": "passed",
+          "failureMessages": []
+        }
+      ]
+    },
+    {
+      "name": "/pinned/upstream/playground/react/__tests__/react.spec.ts",
+      "status": "passed",
+      "message": "",
+      "assertionResults": [
+        {
+          "fullName": "should render",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "should update",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "should hmr",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "should not invalidate when code is invalid",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "should have annotated jsx with file location metadata",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "import attributes",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "should only hmr files with exported react components",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "should hmr react context",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "should hmr files with \"react/jsx-runtime\"",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "should hmr compound components",
+          "status": "passed",
+          "failureMessages": []
+        }
+      ]
+    },
+    {
+      "name": "/pinned/upstream/playground/react-classic/__tests__/react.spec.ts",
+      "status": "passed",
+      "message": "",
+      "assertionResults": [
+        {
+          "fullName": "should render",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "should update",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "should hmr",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "should have annotated jsx with file location metadata",
+          "status": "passed",
+          "failureMessages": []
+        }
+      ]
+    },
+    {
+      "name": "/pinned/upstream/playground/react-emotion/__tests__/react.spec.ts",
+      "status": "passed",
+      "message": "",
+      "assertionResults": [
+        {
+          "fullName": "should render",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "should update",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "should hmr",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "should update button style",
+          "status": "passed",
+          "failureMessages": []
+        }
+      ]
+    },
+    {
+      "name": "/pinned/upstream/playground/react-env/__tests__/react.spec.ts",
+      "status": "passed",
+      "message": "",
+      "assertionResults": [
+        {
+          "fullName": "should work",
+          "status": "passed",
+          "failureMessages": []
+        }
+      ]
+    },
+    {
+      "name": "/pinned/upstream/playground/react-sourcemap/__tests__/react-sourcemap.spec.ts",
+      "status": "passed",
+      "message": "",
+      "assertionResults": [
+        {
+          "fullName": "should not output sourcemap warning",
+          "status": "skipped",
+          "failureMessages": []
+        }
+      ]
+    },
+    {
+      "name": "/pinned/upstream/playground/ssr-react/__tests__/ssr-react.spec.ts",
+      "status": "passed",
+      "message": "",
+      "assertionResults": [
+        {
+          "fullName": "/env",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "/about",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "/",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "hmr",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "client navigation",
+          "status": "passed",
+          "failureMessages": []
+        }
+      ]
+    },
+    {
+      "name": "/pinned/upstream/playground/class-components/__tests__/oxc/class-components.spec.ts",
+      "status": "passed",
+      "message": "",
+      "assertionResults": [
+        {
+          "fullName": "should render",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "Class component HMR",
+          "status": "passed",
+          "failureMessages": []
+        }
+      ]
+    },
+    {
+      "name": "/pinned/upstream/playground/hmr-false/__tests__/oxc/hmr-false.spec.ts",
+      "status": "passed",
+      "message": "",
+      "assertionResults": [
+        {
+          "fullName": "basic",
+          "status": "passed",
+          "failureMessages": []
+        }
+      ]
+    },
+    {
+      "name": "/pinned/upstream/playground/hook-with-jsx/__tests__/oxc/hook-with-jsx.spec.ts",
+      "status": "passed",
+      "message": "",
+      "assertionResults": [
+        {
+          "fullName": "should render",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "Hook with JSX HMR",
+          "status": "passed",
+          "failureMessages": []
+        }
+      ]
+    },
+    {
+      "name": "/pinned/upstream/playground/mdx/__tests__/oxc/mdx.spec.ts",
+      "status": "passed",
+      "message": "",
+      "assertionResults": [
+        {
+          "fullName": "should render",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": ".md extension should work",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "should hmr",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "should hmr with .md extension",
+          "status": "passed",
+          "failureMessages": []
+        }
+      ]
+    },
+    {
+      "name": "/pinned/upstream/playground/react/__tests__/oxc/react.spec.ts",
+      "status": "passed",
+      "message": "",
+      "assertionResults": [
+        {
+          "fullName": "should render",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "should update",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "should hmr",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "should not invalidate when code is invalid",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "should have annotated jsx with file location metadata",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "import attributes",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "should only hmr files with exported react components",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "should hmr react context",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "should hmr files with \"react/jsx-runtime\"",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "should hmr compound components",
+          "status": "passed",
+          "failureMessages": []
+        }
+      ]
+    },
+    {
+      "name": "/pinned/upstream/playground/react-env/__tests__/oxc/react.spec.ts",
+      "status": "passed",
+      "message": "",
+      "assertionResults": [
+        {
+          "fullName": "should work",
+          "status": "passed",
+          "failureMessages": []
+        }
+      ]
+    },
+    {
+      "name": "/pinned/upstream/playground/react-sourcemap/__tests__/oxc/react-sourcemap.spec.ts",
+      "status": "passed",
+      "message": "",
+      "assertionResults": [
+        {
+          "fullName": "should not output sourcemap warning",
+          "status": "skipped",
+          "failureMessages": []
+        }
+      ]
+    },
+    {
+      "name": "/pinned/upstream/playground/ssr-react/__tests__/oxc/ssr-react.spec.ts",
+      "status": "passed",
+      "message": "",
+      "assertionResults": [
+        {
+          "fullName": "/env",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "/about",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "/",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "hmr",
+          "status": "passed",
+          "failureMessages": []
+        },
+        {
+          "fullName": "client navigation",
+          "status": "passed",
+          "failureMessages": []
+        }
+      ]
+    }
+  ],
+  "fixtureProvenance": {
+    "kind": "selected-original-native-reporter-fields",
+    "vitestVersion": "3.2.4",
+    "upstreamRevision": "80417060f7bc239d5100e1b47c819e8364c7d551",
+    "rawReportSha256": "9b5cc184c52d82a5f6836b65aa9fba160f41422d8e91c7b31458a0e737398d7d",
+    "sourceReceipt": "closed-challenges-f9a9dd0/baseline-serve.native.json",
+    "excludedFields": [
+      "timings",
+      "snapshot",
+      "assertion meta/title/ancestorTitles/duration"
+    ],
+    "pathNormalization": "original project prefix replaced with /pinned/upstream; relative test paths unchanged",
+    "limitations": "Successful native baseline schema only; adversarial mutations of it are constructed report controls, not new native executions."
+  }
+}

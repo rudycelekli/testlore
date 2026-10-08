@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "kind": "evaluation-dataset-commitment",
+  "datasetId": "public-maintainer-frontier-contracts-20261008-v1",
+  "datasetHash": "930d9b4bfe3e4e3a603cd9dc5a71fe80d01d9ed5fa0210f899dc5d3b55bbe550",
+  "units": [
+    {
+      "specificationId": "maintainer-camelcase-options",
+      "requirementsHash": "dd1770af8e3b3f996ab86b57351b9cf4bcbbc389e1eacf50ec95f2aa4b15a1a9",
+      "sourceHash": "ed425ff0623a31e59a03a45f46ed6974a0610192c14eb6f3c101f7311381a9bc",
+      "referenceHash": "7e9b1c0edbef63d2af21f6118f1ec827c807bd6c83b4da2a20cccde204df2b81",
+      "defectsHash": "541e01b821ed6fd626f537c0b976811c1167711537cc98a484061697671789d4"
+    },
+    {
+      "specificationId": "maintainer-url-predicate",
+      "requirementsHash": "05a973c10cebea0d3a599ca8e01c2ee0a02f72aea536ad374bd530f50eafc2ec",
+      "sourceHash": "485f0c4bc6a2bfd0da2567c54553d812d5ee0aeb956ce444ce2bfe90b933e826",
+      "referenceHash": "3f0fb774b240ba4c5954e7a59a834d42fa38cfaecf9b61d5fc41ef3f3c442d99",
+      "defectsHash": "feb4c1738c588295875138d56dbb9e6a788992cc5d50a06ebfd31f2d8ff72d59"
+    }
+  ],
+  "provenance": {
+    "owner": "Public upstream maintainers; TestLore transport adaptation",
+    "source": "Pinned sindresorhus/camelcase, sindresorhus/is-url-superb README, tests, and genuine historical parent revisions; upstream blob bindings accompany dataset",
+    "independenceNotes": "Maintainer specifications, assertion bodies and historical revisions are independently maintained. TestLore selects snapshots and adapts only runner/import entry points. These two specification IDs and source contents do not occur in either previous public maintainer cohort. Hash/ID disjointness does not establish semantic independence, model-training secrecy or a trusted timestamp. A separate authored numeric-clamp example is advisory memory; retrieval can return no relevant lesson. Two units and two repetitions cannot establish general learning efficacy.",
+    "independentlyMaintained": true
+  },
+  "createdAt": "2026-10-08T07:04:54.491Z",
+  "scope": "Local content commitment; owner and independence are declarations. No trusted timestamp, external publication, access isolation or semantic independence attestation."
+}

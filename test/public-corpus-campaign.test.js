@@ -41,6 +41,14 @@ test('ordinary CLI requests remain dry plans; explicit opt-in is a closed exact 
  assert.equal(parseCampaignArguments([...args,'--install-and-execute']).execute,true);
  for(const invalid of [[...args,'--execute'],[...args,'--install-and-execute','--env','TOKEN=secret'],['--worker','install'],[...args.slice(0,4),'--install-and-execute',...args.slice(4)]])assert.throws(()=>parseCampaignArguments(invalid));
 });
+test('reviewed defu histories bind separate original oracles and reject unsupported native versions or altered scope mode',()=>{
+ const profiles=['unjs-defu-11ba02213d4b','unjs-defu-3942bfbbcaa7'].map(id=>JSON.parse(fs.readFileSync(path.join(repository,'benchmarks/public-corpus/profiles/'+id+'-campaign.json'))));
+ const candidates=profiles.map(p=>validatePortableProfile(selection,p));assert.notEqual(candidates[0].fixRevision,candidates[1].fixRevision);assert.equal(candidates[0].parentRevision,candidates[1].fixRevision);
+ assert.deepEqual(profiles[0].dependencySha256,profiles[1].dependencySha256);assert.equal(profiles[0].packageManager,'pnpm@10.33.0');assert.ok(profiles.every(p=>p.installedVitest==='4.1.2'&&p.executionMode==='legacy'));
+ assert.notEqual(candidates[0].byteBindings.find(b=>b.kind==='oracle').sha256,candidates[1].byteBindings.find(b=>b.kind==='oracle').sha256);
+ for(const p of profiles){assert.throws(()=>validatePortableProfile(selection,{...p,installedVitest:'0.34.6'}),/native version/);assert.throws(()=>validatePortableProfile(selection,{...p,installedVitest:'4.1.99'}),/native version/);assert.throws(()=>validatePortableProfile(selection,{...p,executionMode:'unified-native'}),/execution mode/);assert.throws(()=>validatePortableProfile(selection,{...p,expectedFailureNames:['invented passing claim']}),/closed reviewed/);}
+ const workflow=fs.readFileSync(path.join(repository,'.github/workflows/public-upstream-campaign.yml'),'utf8');assert.match(workflow,/max-parallel: 1/);assert.match(workflow,/defu-both.*defu-inherited.*defu-proto/);for(const p of profiles)assert.ok(workflow.includes(p.candidateId+'-campaign.json'));assert.match(workflow,/workflow_dispatch/);assert.doesNotMatch(workflow,/^\s+schedule:/m);
+});
 test('campaign child environment strips credential overrides and forwards only the declared cache policy',()=>{
  const previous={...process.env};try{process.env.GITHUB_TOKEN='never-forward';process.env.AWS_SECRET_ACCESS_KEY='never-forward';process.env.NODE_OPTIONS='--require=untrusted.js';process.env.GIT_CONFIG_GLOBAL='/secret/gitconfig';process.env.JITI_FS_CACHE='true';const env=campaignEnvironment();assert.equal(env.GITHUB_TOKEN,undefined);assert.equal(env.AWS_SECRET_ACCESS_KEY,undefined);assert.equal(env.NODE_OPTIONS,undefined);assert.equal(env.JITI_FS_CACHE,'false');assert.equal(env.GIT_CONFIG_GLOBAL,'/dev/null');assert.equal(env.GIT_CONFIG_NOSYSTEM,'1');assert.equal(env.GIT_TERMINAL_PROMPT,'0');}finally{process.env=previous;}
 });

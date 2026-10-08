@@ -1,0 +1,1876 @@
+{
+  "schemaVersion": 1,
+  "kind": "public-four-arm-whole-cli-proof",
+  "complete": true,
+  "qualified": true,
+  "sourceRevision": "cdfa5b82755456ceff4f9921695ee66457d69108",
+  "implementationHashes": {
+    "scripts/unified-native-proof.js": "b83b3282a434b55951248638fcf2610c6c328650a7fc85c596f5cfc09cc1ec5b",
+    "scripts/worker-identity.js": "10fe0b51f032c71bf475f7d8e788dd3c6d6452ba53c072f08783b0bce1b446a6",
+    "scripts/evaluation-commitment.js": "8e1e6e7c586bf3b2f38f3202f7b2d1c4b2e37d0054fca4315e3434c6b368251a",
+    "scripts/regression-corpus.js": "497797b7ac14c2cd8efcf5663dfa2faf8e3df6a1d7cde86f942e29f2bb40c9ed",
+    "scripts/public-corpus.js": "b80d7b66d6ceeaf20c2b5bec3e0e2fe33ae205c7b2767836b891be91ce60db49",
+    "package-lock.json": "f4099c07e38ac8a9bf7311a7f048e3844ff06c91933fb7325e1ef9a71f2764ba",
+    "src/adoption-readiness.js": "739f6f9cc4c0a91c9ffb96ca352ac6548c67be0317fc09afe1162e4a12839870",
+    "src/agent-contract.js": "f7df563d2f77d3dbacea7607495916a22df8fcbee655ca69ed57ef2960886376",
+    "src/agent-profile.js": "85a636f66ed1f939a3b32e175e470a3adc00549c7c7b243e46079cfe93836814",
+    "src/audit.js": "2ed60951a3aa95e4dd0afed71b3de2e3dc78143f269b78a59943fd2ca160aa35",
+    "src/browser-evidence.js": "b9447ab28d6c6c4837014c8e60f1710d36b857f42886c98df2f1c3e7e5004b2d",
+    "src/browser-fixture.d.ts": "5dbb0d7c1a2a6f05dba93f00ed5e88eea823bb0f08d8b9eead60bcbe808cc80e",
+    "src/browser-fixture.js": "5dce6ad7342cf298af5cf798330b7c3110fc2372aa435543a4e4495b001ce855",
+    "src/candidates.js": "cf376d249374c147f93458750490769bc0b9542029da761f7424fb78220f83e8",
+    "src/cli.js": "73e0c8f60d7c08e533dacd6d2d06cd55ce39398a3d3aa4e487295aa43d6028b1",
+    "src/evidence-loop.js": "283ea660a8bb45e3eb0cce8a3f165b63d695be389aaf03c46c933955e2843c64",
+    "src/evidence.js": "a8a4970738d9e1f55a4dcd27c901b2e3280b1109383e16e932ec29bf72b7b545",
+    "src/execution.js": "1b27414a365abf0152f8f5d8841e253c5922dbdcad4f224802791a919d782fd3",
+    "src/fallback-diagnostics.js": "7468a34fc62c8c87d6607c4537900b554d352de834fe60b60fcf1c59593084a6",
+    "src/files.js": "fc0da0c73986d8178c78aeff3529664fc6afe8ea3cfff58eb003c1f53b314b1f",
+    "src/graph-cache.js": "5a17633fa29a98ae8f09b2e6b988ac0c7b9c9958df33aba53ab3ac39d8a08f5c",
+    "src/graph.js": "6449dc57540787a44ed792f67ddbca5ee087e19700daf9e1f5401e688fd9b9a3",
+    "src/improvement.js": "086ecc931459b05425d28ce47c65faf05a70b7e85ce7935fe1be2f9acc1d1695",
+    "src/index.js": "e74796adfb506a5fdec2b7a5b1512af579696abb0e5775124d1c540cc6e49025",
+    "src/inputs.js": "b60751753fef2e11d65b88ce69e866a273289312ce65c1a1fb8bed7a49fd6da7",
+    "src/integrations.js": "ba103a3f9f975f605f1d2013db1606ed6bb0bb12f24044da90cbcfc506ea8fe8",
+    "src/learning.js": "7824e8caee58abd51f1752e97bff97f495f5b831269537ab8706eac2a6629347",
+    "src/mapping-qualification.js": "e74fc34b398c2272c16e30d5a6d467cf9294a42ca4de1da5e5ad166e4a5a6f96",
+    "src/mcp-worker.js": "0114989a9a3bfd185cd149d73ed2bfa7142e3bf009dd6ecee911089af0dad697",
+    "src/mcp.js": "c5a337d38cfd82d743d3905e8f32b9e0e89b52ba50c5b321b0c7c07f605602e1",
+    "src/native-protocol.js": "71330430c930ddb5c8640f2b9f1482a3a1f16cf81af9aab6aae56c0b147dbf11",
+    "src/native-session.js": "c17a3dac47a92962d7724a63f96b26617354415dbfa49e6b39228456610b84cc",
+    "src/native-source-summaries.js": "bff5cb4425d90fee24685cf11c302c9f55c0998d2da05515cf6aaeefaeb85f37",
+    "src/pilot-history.js": "ac6ec6e866fc696a45115823d82d8d05c8ee8d3e7db7a52d422db7572e89e004",
+    "src/pilot-worker.js": "a0fee2254f3a55079bc92321c0fd559ba083912331065fb6a9fad717d61afaa7",
+    "src/pilot.js": "97c2df0e23dc57f82e9f06950752b88e1f14183cedaebcab2b76414d8e4cd343",
+    "src/plugin-config.js": "43cbdc3450288a49c8ee02b27b4178ea4b3baae43745b9f0de87c5b8d771fcc4",
+    "src/plugin-recommendations.js": "d626dce84e63156d74b32697dc32a61e456afe9ef1e39142d1af9a4c138dc0d4",
+    "src/plugins.js": "1ba8a5d5e4db4bce3c48ec1042cc23e5779803dfaba69b28a7a632ae34479413",
+    "src/provenance.js": "31729e07bb832015805752e26221b43bd25d440c12c4230e4399d812c60793a3",
+    "src/pull-request.js": "40111c2d70fc30f87adac6691860404741c584756b1035975d97f25e80f2f009",
+    "src/quality-layer.js": "2c7f0613df6eac15835201b99a305ca80ac0fd7ace59b8af28dbd1564a6ad62d",
+    "src/quality-measurement.js": "2ce9eaf57ead7366e9ec91dc563d08a67db6ac74081f1e5a59ed261b21ac6e2a",
+    "src/routing-proposals.js": "83f1bf9c89f0804a41576223c0a4944c598917c66cc0105004d993ec857c02ae",
+    "src/run-report.js": "9ceea1c0b7eb83a442b15c571eb0c940c9fb4ac6f8ab5649d2a8fae36feceb7e",
+    "src/runner.js": "f3b82deed6a44b38590d51eb0a4f1aa8b55bdd09815a8bc65192172a475f1f18",
+    "src/runtime-hook.cjs": "0e039982b4187ffdf9547f6c78d97c4d1ac0ca2b71d714201d1020883b47e57c",
+    "src/selector.js": "fcc6790d0ede2e7eb2ed9fd7727b7c436f8383ecd2491e8647e2d335c71fa56c",
+    "src/source-analysis.cjs": "a4d59b5bb080c90e85201d052af3a3dd3f24b9ef74c91dc98746c54e557e6175",
+    "src/swarm.js": "23f09e9a5ce9feb87f9b8527a771d6fa5808c44994516276d901f4ee702c7f68",
+    "src/syntax-engine-identity.cjs": "eb1a72b0fa883130b1206005de33c4772b10a9a96b03a3e93add81ccc27eb35b",
+    "src/syntax-engine.cjs": "9216c1420b620d5c4221ccad18ff702af2c95671ddf97ee8246f8d2038d18507",
+    "src/timing.js": "045a575dbf260914314adedbddf546419c1e6f3b919e88b84d40af82bab221ce",
+    "src/reporters/node.js": "c5fbf1bf0841fd7e36f716198ac00a5481fa288a9662997257b385f64687b24c",
+    "src/reporters/playwright.cjs": "0f919f4972d6487d596a0ca66b738257cdee6364bd2d2c53d288573efb274965",
+    "src/reporters/resolve.js": "9cf19967e64d43604ebfd0c887fd84a76fbb79de1781f8978eeb470268362634",
+    "src/adapters/aqe.js": "8ef5b425622ee6798e4a7c68bb42e95c46922b5c0473b064073254d640f80082",
+    "src/adapters/codex-protocol.js": "bcb5a1a902bd253e90b879e6f89575885afe236ee6b86ec9b2acafaa3bf91dc1",
+    "src/adapters/codex.js": "8ebc36a83ab8c2381ed0d1d40dcc1a82d34ecd47cb8427e523009fe385b8f421",
+    "src/adapters/ruvector-worker.js": "80c8a6dcaf3014adc5e8fc3d01a50493af4679ea2b3713226ae08a97e5d34a07",
+    "src/adapters/ruvector.js": "d306a37df25e47b864c42211dc1b17a191f36f3518e979b1a5442a555569ad71"
+  },
+  "nativeFrameworkHashes": [
+    "943ddc2cfd3676087e243b5adc450ea8c25ad941ba678b48a679b68f67ef297a",
+    "39db22f579acf5639bbb17a261408debbde03f4692c0c439e77e7f13aeba74d6"
+  ],
+  "node": {
+    "version": "v22.19.0",
+    "sha256": "0d005c18e095027ca8f9fe1cc1126f767ee4ad7b004f4d6fb781ec4228a7c5d1",
+    "bytes": 110712624
+  },
+  "vitest": "5.0.2",
+  "requestedScenarios": 3,
+  "repetitions": 3,
+  "requestedAttempts": 36,
+  "startedAttempts": 36,
+  "completedAttempts": 36,
+  "uncompletedAttempts": 0,
+  "qualifiedConstructedScenarios": 2,
+  "qualifiedPublicBugfixes": 1,
+  "controllerElapsedMs": 65190,
+  "observations": [
+    {
+      "origin": "constructed-independent-assertions",
+      "nativeFramework": {
+        "version": "5.0.2",
+        "hashes": [
+          "943ddc2cfd3676087e243b5adc450ea8c25ad941ba678b48a679b68f67ef297a",
+          "39db22f579acf5639bbb17a261408debbde03f4692c0c439e77e7f13aeba74d6"
+        ]
+      },
+      "repetitions": [
+        {
+          "repetition": 0,
+          "armOrder": [
+            "full",
+            "native",
+            "legacy",
+            "unified"
+          ],
+          "demonstrated": true,
+          "referenceFailures": 1,
+          "nativeSpeedComparisonEligible": true,
+          "arms": {
+            "full": {
+              "outerMs": 1619.5653329999996,
+              "complete": true,
+              "casePreservation": true,
+              "qualityEquivalent": true,
+              "missedFailures": 0,
+              "unexpectedFailures": 0,
+              "cases": 12,
+              "files": 12,
+              "mode": null,
+              "unifiedContextUsed": null
+            },
+            "native": {
+              "outerMs": 353.5025829999995,
+              "complete": true,
+              "casePreservation": true,
+              "qualityEquivalent": true,
+              "missedFailures": 0,
+              "unexpectedFailures": 0,
+              "cases": 1,
+              "files": 1,
+              "mode": null,
+              "unifiedContextUsed": null
+            },
+            "legacy": {
+              "outerMs": 1428.175541999999,
+              "complete": true,
+              "casePreservation": true,
+              "qualityEquivalent": true,
+              "missedFailures": 0,
+              "unexpectedFailures": 0,
+              "cases": 1,
+              "files": 1,
+              "mode": "affected",
+              "unifiedContextUsed": null
+            },
+            "unified": {
+              "outerMs": 1437.4135000000006,
+              "complete": true,
+              "casePreservation": true,
+              "qualityEquivalent": true,
+              "missedFailures": 0,
+              "unexpectedFailures": 0,
+              "cases": 1,
+              "files": 1,
+              "mode": "affected",
+              "unifiedContextUsed": true
+            }
+          }
+        },
+        {
+          "repetition": 1,
+          "armOrder": [
+            "native",
+            "legacy",
+            "unified",
+            "full"
+          ],
+          "demonstrated": true,
+          "referenceFailures": 1,
+          "nativeSpeedComparisonEligible": true,
+          "arms": {
+            "full": {
+              "outerMs": 1269.4033339999987,
+              "complete": true,
+              "casePreservation": true,
+              "qualityEquivalent": true,
+              "missedFailures": 0,
+              "unexpectedFailures": 0,
+              "cases": 12,
+              "files": 12,
+              "mode": null,
+              "unifiedContextUsed": null
+            },
+            "native": {
+              "outerMs": 363.82437500000015,
+              "complete": true,
+              "casePreservation": true,
+              "qualityEquivalent": true,
+              "missedFailures": 0,
+              "unexpectedFailures": 0,
+              "cases": 1,
+              "files": 1,
+              "mode": null,
+              "unifiedContextUsed": null
+            },
+            "legacy": {
+              "outerMs": 1524.7601670000004,
+              "complete": true,
+              "casePreservation": true,
+              "qualityEquivalent": true,
+              "missedFailures": 0,
+              "unexpectedFailures": 0,
+              "cases": 1,
+              "files": 1,
+              "mode": "affected",
+              "unifiedContextUsed": null
+            },
+            "unified": {
+              "outerMs": 1139.7210419999992,
+              "complete": true,
+              "casePreservation": true,
+              "qualityEquivalent": true,
+              "missedFailures": 0,
+              "unexpectedFailures": 0,
+              "cases": 1,
+              "files": 1,
+              "mode": "affected",
+              "unifiedContextUsed": true
+            }
+          }
+        },
+        {
+          "repetition": 2,
+          "armOrder": [
+            "legacy",
+            "unified",
+            "full",
+            "native"
+          ],
+          "demonstrated": true,
+          "referenceFailures": 1,
+          "nativeSpeedComparisonEligible": true,
+          "arms": {
+            "full": {
+              "outerMs": 1373.8966249999976,
+              "complete": true,
+              "casePreservation": true,
+              "qualityEquivalent": true,
+              "missedFailures": 0,
+              "unexpectedFailures": 0,
+              "cases": 12,
+              "files": 12,
+              "mode": null,
+              "unifiedContextUsed": null
+            },
+            "native": {
+              "outerMs": 354.9612500000003,
+              "complete": true,
+              "casePreservation": true,
+              "qualityEquivalent": true,
+              "missedFailures": 0,
+              "unexpectedFailures": 0,
+              "cases": 1,
+              "files": 1,
+              "mode": null,
+              "unifiedContextUsed": null
+            },
+            "legacy": {
+              "outerMs": 1273.5202499999996,
+              "complete": true,
+              "casePreservation": true,
+              "qualityEquivalent": true,
+              "missedFailures": 0,
+              "unexpectedFailures": 0,
+              "cases": 1,
+              "files": 1,
+              "mode": "affected",
+              "unifiedContextUsed": null
+            },
+            "unified": {
+              "outerMs": 1030.0534579999985,
+              "complete": true,
+              "casePreservation": true,
+              "qualityEquivalent": true,
+              "missedFailures": 0,
+              "unexpectedFailures": 0,
+              "cases": 1,
+              "files": 1,
+              "mode": "affected",
+              "unifiedContextUsed": true
+            }
+          }
+        }
+      ]
+    },
+    {
+      "origin": "constructed-independent-assertions",
+      "nativeFramework": {
+        "version": "5.0.2",
+        "hashes": [
+          "943ddc2cfd3676087e243b5adc450ea8c25ad941ba678b48a679b68f67ef297a",
+          "39db22f579acf5639bbb17a261408debbde03f4692c0c439e77e7f13aeba74d6"
+        ]
+      },
+      "repetitions": [
+        {
+          "repetition": 0,
+          "armOrder": [
+            "full",
+            "native",
+            "legacy",
+            "unified"
+          ],
+          "demonstrated": true,
+          "referenceFailures": 1,
+          "nativeSpeedComparisonEligible": false,
+          "arms": {
+            "full": {
+              "outerMs": 470.79412500000035,
+              "complete": true,
+              "casePreservation": true,
+              "qualityEquivalent": true,
+              "missedFailures": 0,
+              "unexpectedFailures": 0,
+              "cases": 2,
+              "files": 2,
+              "mode": null,
+              "unifiedContextUsed": null
+            },
+            "native": {
+              "outerMs": 260.3339589999996,
+              "complete": true,
+              "casePreservation": true,
+              "qualityEquivalent": false,
+              "missedFailures": 1,
+              "unexpectedFailures": 0,
+              "cases": 0,
+              "files": 0,
+              "mode": null,
+              "unifiedContextUsed": null
+            },
+            "legacy": {
+              "outerMs": 1129.679750000003,
+              "complete": true,
+              "casePreservation": true,
+              "qualityEquivalent": true,
+              "missedFailures": 0,
+              "unexpectedFailures": 0,
+              "cases": 1,
+              "files": 1,
+              "mode": "affected",
+              "unifiedContextUsed": null
+            },
+            "unified": {
+              "outerMs": 933.9743329999983,
+              "complete": true,
+              "casePreservation": true,
+              "qualityEquivalent": true,
+              "missedFailures": 0,
+              "unexpectedFailures": 0,
+              "cases": 1,
+              "files": 1,
+              "mode": "affected",
+              "unifiedContextUsed": true
+            }
+          }
+        },
+        {
+          "repetition": 1,
+          "armOrder": [
+            "native",
+            "legacy",
+            "unified",
+            "full"
+          ],
+          "demonstrated": true,
+          "referenceFailures": 1,
+          "nativeSpeedComparisonEligible": false,
+          "arms": {
+            "full": {
+              "outerMs": 670.5193749999999,
+              "complete": true,
+              "casePreservation": true,
+              "qualityEquivalent": true,
+              "missedFailures": 0,
+              "unexpectedFailures": 0,
+              "cases": 2,
+              "files": 2,
+              "mode": null,
+              "unifiedContextUsed": null
+            },
+            "native": {
+              "outerMs": 256.192583,
+              "complete": true,
+              "casePreservation": true,
+              "qualityEquivalent": false,
+              "missedFailures": 1,
+              "unexpectedFailures": 0,
+              "cases": 0,
+              "files": 0,
+              "mode": null,
+              "unifiedContextUsed": null
+            },
+            "legacy": {
+              "outerMs": 1121.4417920000014,
+              "complete": true,
+              "casePreservation": true,
+              "qualityEquivalent": true,
+              "missedFailures": 0,
+              "unexpectedFailures": 0,
+              "cases": 1,
+              "files": 1,
+              "mode": "affected",
+              "unifiedContextUsed": null
+            },
+            "unified": {
+              "outerMs": 1655.8950829999994,
+              "complete": true,
+              "casePreservation": true,
+              "qualityEquivalent": true,
+              "missedFailures": 0,
+              "unexpectedFailures": 0,
+              "cases": 1,
+              "files": 1,
+              "mode": "affected",
+              "unifiedContextUsed": true
+            }
+          }
+        },
+        {
+          "repetition": 2,
+          "armOrder": [
+            "legacy",
+            "unified",
+            "full",
+            "native"
+          ],
+          "demonstrated": true,
+          "referenceFailures": 1,
+          "nativeSpeedComparisonEligible": false,
+          "arms": {
+            "full": {
+              "outerMs": 590.8827910000036,
+              "complete": true,
+              "casePreservation": true,
+              "qualityEquivalent": true,
+              "missedFailures": 0,
+              "unexpectedFailures": 0,
+              "cases": 2,
+              "files": 2,
+              "mode": null,
+              "unifiedContextUsed": null
+            },
+            "native": {
+              "outerMs": 342.93533300000126,
+              "complete": true,
+              "casePreservation": true,
+              "qualityEquivalent": false,
+              "missedFailures": 1,
+              "unexpectedFailures": 0,
+              "cases": 0,
+              "files": 0,
+              "mode": null,
+              "unifiedContextUsed": null
+            },
+            "legacy": {
+              "outerMs": 1784.6700410000012,
+              "complete": true,
+              "casePreservation": true,
+              "qualityEquivalent": true,
+              "missedFailures": 0,
+              "unexpectedFailures": 0,
+              "cases": 1,
+              "files": 1,
+              "mode": "affected",
+              "unifiedContextUsed": null
+            },
+            "unified": {
+              "outerMs": 1507.0275409999995,
+              "complete": true,
+              "casePreservation": true,
+              "qualityEquivalent": true,
+              "missedFailures": 0,
+              "unexpectedFailures": 0,
+              "cases": 1,
+              "files": 1,
+              "mode": "affected",
+              "unifiedContextUsed": true
+            }
+          }
+        }
+      ]
+    },
+    {
+      "origin": "public-bugfix-inversion",
+      "nativeFramework": {
+        "version": "5.0.2",
+        "hashes": [
+          "943ddc2cfd3676087e243b5adc450ea8c25ad941ba678b48a679b68f67ef297a",
+          "39db22f579acf5639bbb17a261408debbde03f4692c0c439e77e7f13aeba74d6"
+        ]
+      },
+      "repetitions": [
+        {
+          "repetition": 0,
+          "armOrder": [
+            "full",
+            "native",
+            "legacy",
+            "unified"
+          ],
+          "demonstrated": true,
+          "referenceFailures": 4,
+          "nativeSpeedComparisonEligible": true,
+          "arms": {
+            "full": {
+              "outerMs": 1664.5625409999993,
+              "complete": true,
+              "casePreservation": true,
+              "qualityEquivalent": true,
+              "missedFailures": 0,
+              "unexpectedFailures": 0,
+              "cases": 489,
+              "files": 13,
+              "mode": null,
+              "unifiedContextUsed": null
+            },
+            "native": {
+              "outerMs": 1470.8226250000007,
+              "complete": true,
+              "casePreservation": true,
+              "qualityEquivalent": true,
+              "missedFailures": 0,
+              "unexpectedFailures": 0,
+              "cases": 465,
+              "files": 12,
+              "mode": null,
+              "unifiedContextUsed": null
+            },
+            "legacy": {
+              "outerMs": 2746.6800000000003,
+              "complete": true,
+              "casePreservation": true,
+              "qualityEquivalent": true,
+              "missedFailures": 0,
+              "unexpectedFailures": 0,
+              "cases": 465,
+              "files": 12,
+              "mode": "affected",
+              "unifiedContextUsed": null
+            },
+            "unified": {
+              "outerMs": 2265.477166000004,
+              "complete": true,
+              "casePreservation": true,
+              "qualityEquivalent": true,
+              "missedFailures": 0,
+              "unexpectedFailures": 0,
+              "cases": 465,
+              "files": 12,
+              "mode": "affected",
+              "unifiedContextUsed": true
+            }
+          }
+        },
+        {
+          "repetition": 1,
+          "armOrder": [
+            "native",
+            "legacy",
+            "unified",
+            "full"
+          ],
+          "demonstrated": true,
+          "referenceFailures": 4,
+          "nativeSpeedComparisonEligible": true,
+          "arms": {
+            "full": {
+              "outerMs": 1662.4887919999965,
+              "complete": true,
+              "casePreservation": true,
+              "qualityEquivalent": true,
+              "missedFailures": 0,
+              "unexpectedFailures": 0,
+              "cases": 489,
+              "files": 13,
+              "mode": null,
+              "unifiedContextUsed": null
+            },
+            "native": {
+              "outerMs": 1441.5711660000015,
+              "complete": true,
+              "casePreservation": true,
+              "qualityEquivalent": true,
+              "missedFailures": 0,
+              "unexpectedFailures": 0,
+              "cases": 465,
+              "files": 12,
+              "mode": null,
+              "unifiedContextUsed": null
+            },
+            "legacy": {
+              "outerMs": 2692.9504579999993,
+              "complete": true,
+              "casePreservation": true,
+              "qualityEquivalent": true,
+              "missedFailures": 0,
+              "unexpectedFailures": 0,
+              "cases": 465,
+              "files": 12,
+              "mode": "affected",
+              "unifiedContextUsed": null
+            },
+            "unified": {
+              "outerMs": 2233.096083999997,
+              "complete": true,
+              "casePreservation": true,
+              "qualityEquivalent": true,
+              "missedFailures": 0,
+              "unexpectedFailures": 0,
+              "cases": 465,
+              "files": 12,
+              "mode": "affected",
+              "unifiedContextUsed": true
+            }
+          }
+        },
+        {
+          "repetition": 2,
+          "armOrder": [
+            "legacy",
+            "unified",
+            "full",
+            "native"
+          ],
+          "demonstrated": true,
+          "referenceFailures": 4,
+          "nativeSpeedComparisonEligible": true,
+          "arms": {
+            "full": {
+              "outerMs": 1614.8436250000013,
+              "complete": true,
+              "casePreservation": true,
+              "qualityEquivalent": true,
+              "missedFailures": 0,
+              "unexpectedFailures": 0,
+              "cases": 489,
+              "files": 13,
+              "mode": null,
+              "unifiedContextUsed": null
+            },
+            "native": {
+              "outerMs": 1796.7280419999952,
+              "complete": true,
+              "casePreservation": true,
+              "qualityEquivalent": true,
+              "missedFailures": 0,
+              "unexpectedFailures": 0,
+              "cases": 465,
+              "files": 12,
+              "mode": null,
+              "unifiedContextUsed": null
+            },
+            "legacy": {
+              "outerMs": 2609.4306670000005,
+              "complete": true,
+              "casePreservation": true,
+              "qualityEquivalent": true,
+              "missedFailures": 0,
+              "unexpectedFailures": 0,
+              "cases": 465,
+              "files": 12,
+              "mode": "affected",
+              "unifiedContextUsed": null
+            },
+            "unified": {
+              "outerMs": 2271.248875000005,
+              "complete": true,
+              "casePreservation": true,
+              "qualityEquivalent": true,
+              "missedFailures": 0,
+              "unexpectedFailures": 0,
+              "cases": 465,
+              "files": 12,
+              "mode": "affected",
+              "unifiedContextUsed": true
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "privateOriginalSha256": "21b5db88bd0dbb161e947c12d5c2210b64106809875d2491563f0b2b12e1aa6d",
+  "limitations": [
+    "Two constructed workloads plus optional one real upstream fix; not the 100-change/10-project target.",
+    "Outer spans include CLI/Node startup, native execution and child-side report/history/source sealing; parent normalization and fixture creation excluded and controller elapsed separately retained.",
+    "First plan starts with empty pure analysis cache; repeat retains only that cache and resets history. Shared OS/dependency/native framework caches are uncontrolled; no fully cold-machine claim.",
+    "Framework metadata/CLI and core source/Node bytes are bound; imported native dependencies and arbitrary test subprocesses are not fully attested.",
+    "Native zero-case selectors can be complete within their chosen scope yet miss a demonstrated fault; such timing is never credited as quality-equivalent speed."
+  ],
+  "campaignScope": {
+    "coreRevision": "cdfa5b82755456ceff4f9921695ee66457d69108",
+    "repetitions": 3,
+    "quietWindow": "Root/framework/benchmark native processes paused; unrelated machine activity not instrumented.",
+    "runtimeProjection": {
+      "vitest": "5.0.2",
+      "vite": "8.3.1",
+      "upstreamDeclaredVitest": "^4.1.5",
+      "genuineUpstreamLockInstallation": false,
+      "additionalUniqueQualifiedUpstreamChanges": 0
+    },
+    "firstAnalysisCacheEmpty": true,
+    "repeatAnalysisCacheRetained": true,
+    "fullyColdMachine": false
+  },
+  "phaseDiagnostics": [
+    {
+      "scenario": "static",
+      "arm": "legacy",
+      "repetition": 0,
+      "outerMs": 1428.175541999999,
+      "reported": {
+        "planningMs": 686,
+        "executionMs": 387,
+        "totalMs": 1245,
+        "finalReportSealingExcluded": true,
+        "otherMs": 172
+      },
+      "outerMinusReportedTotalMs": 183.17554199999904,
+      "planning": {
+        "totalMs": 685.793916,
+        "phases": {
+          "configuration": 0.08487500000001091,
+          "provenance": 71.51024999999998,
+          "graph": 419.902125,
+          "changeDetection": 145.47000000000003,
+          "runtimeAndServices": 0.24699999999995725,
+          "baselineAndIgnore": 48.17066599999998,
+          "uncertaintyAndMapping": 0.13245900000003985,
+          "history": 0.03766599999994469,
+          "decisionsAndFingerprint": 0.22670900000002803
+        },
+        "graph": {
+          "totalMs": 419.604458,
+          "phases": {
+            "inventory": 0.30458300000000804,
+            "discovery": 384.73650000000004,
+            "configuration": 0.46558299999992414,
+            "sourceReads": 4.107375000000047,
+            "sourceAnalysisAndResolution": 29.654750000000035,
+            "declaredInputsAndConfigurationClosure": 0.10054199999990487,
+            "warningClassification": 0.22020800000007057
+          }
+        }
+      },
+      "native": null,
+      "syntaxObservations": null
+    },
+    {
+      "scenario": "static",
+      "arm": "unified",
+      "repetition": 0,
+      "outerMs": 1437.4135000000006,
+      "reported": {
+        "planningMs": 885,
+        "executionMs": 176,
+        "totalMs": 1261,
+        "finalReportSealingExcluded": true,
+        "otherMs": 200
+      },
+      "outerMinusReportedTotalMs": 176.41350000000057,
+      "planning": {
+        "totalMs": 232.19504199999994,
+        "phases": {
+          "configuration": 0.2921670000000631,
+          "provenance": 0.003624999999942702,
+          "graph": 24.788250000000062,
+          "changeDetection": 152.41504199999997,
+          "runtimeAndServices": 0.2251659999999447,
+          "baselineAndIgnore": 54.06204200000013,
+          "uncertaintyAndMapping": 0.14570800000001327,
+          "history": 0.03641699999980119,
+          "decisionsAndFingerprint": 0.21295800000007148
+        },
+        "graph": {
+          "totalMs": 24.55574999999999,
+          "phases": {
+            "inventory": 0.34679099999993923,
+            "discovery": 0.2568340000000262,
+            "configuration": 0.7963330000000042,
+            "sourceReads": 1.3462919999999485,
+            "sourceAnalysisAndResolution": 21.510041,
+            "declaredInputsAndConfigurationClosure": 0.0865840000000162,
+            "warningClassification": 0.19783300000005966
+          }
+        }
+      },
+      "native": {
+        "requestPreparationMs": 153.27808399999998,
+        "workerStartupAndPlanningMs": 241.097916,
+        "executionRequestAndResultMs": 131.799125,
+        "resultToChildExitMs": 43.794165999999905,
+        "worker": {
+          "planned": {
+            "totalMs": 181.90800000000002,
+            "phases": {
+              "requestAndAdmission": 8.203832999999996,
+              "frameworkImport": 125.361042,
+              "frameworkInitializationAndConfiguration": 28.21275,
+              "contextAndGlobalInputs": 0.18208300000000577,
+              "nativeDiscoveryAndDiscoveredSourceExpansion": 12.481583999999998,
+              "sourceExpansionAndConfigurationAdmission": 1.299207999999993,
+              "nativeImportResolution": 6.146583000000021
+            }
+          },
+          "executed": {
+            "totalMs": 751.882667,
+            "phases": {
+              "requestAndAdmission": 8.203832999999996,
+              "frameworkImport": 125.361042,
+              "frameworkInitializationAndConfiguration": 28.21275,
+              "contextAndGlobalInputs": 0.18208300000000577,
+              "nativeDiscoveryAndDiscoveredSourceExpansion": 12.481583999999998,
+              "sourceExpansionAndConfigurationAdmission": 1.299207999999993,
+              "nativeImportResolution": 6.146583000000021,
+              "parentPlanningAndProtocolWait": 439.223084,
+              "runnerInitialization": 0.5461660000000848,
+              "nativeTestsAndReporter": 130.04554199999995,
+              "nativeReportRead": 0.17404199999998582
+            }
+          }
+        },
+        "scope": "Diagnostic spans; worker starts after static module imports, parent startup includes imports and native planning. Spans overlap and never confer authority."
+      },
+      "syntaxObservations": {
+        "supplied": true,
+        "identityMatched": true,
+        "validatedHits": 24,
+        "freshParses": 0,
+        "mismatches": 0,
+        "unboundLegacyParses": 0
+      }
+    },
+    {
+      "scenario": "static",
+      "arm": "legacy",
+      "repetition": 1,
+      "outerMs": 1524.7601670000004,
+      "reported": {
+        "planningMs": 680,
+        "executionMs": 376,
+        "totalMs": 1322,
+        "finalReportSealingExcluded": true,
+        "otherMs": 266
+      },
+      "outerMinusReportedTotalMs": 202.76016700000037,
+      "planning": {
+        "totalMs": 679.8369170000001,
+        "phases": {
+          "configuration": 0.09362500000000296,
+          "provenance": 97.949209,
+          "graph": 385.922375,
+          "changeDetection": 143.31708300000003,
+          "runtimeAndServices": 0.2167499999999336,
+          "baselineAndIgnore": 51.900833000000034,
+          "uncertaintyAndMapping": 0.13983399999995072,
+          "history": 0.048499999999989996,
+          "decisionsAndFingerprint": 0.23583300000007057
+        },
+        "graph": {
+          "totalMs": 385.70075,
+          "phases": {
+            "inventory": 0.24362500000000864,
+            "discovery": 367.50083299999994,
+            "configuration": 0.43916700000011133,
+            "sourceReads": 4.136332999999922,
+            "sourceAnalysisAndResolution": 13.078209000000015,
+            "declaredInputsAndConfigurationClosure": 0.07520799999997507,
+            "warningClassification": 0.2145420000000513
+          }
+        }
+      },
+      "native": null,
+      "syntaxObservations": null
+    },
+    {
+      "scenario": "static",
+      "arm": "unified",
+      "repetition": 1,
+      "outerMs": 1139.7210419999992,
+      "reported": {
+        "planningMs": 635,
+        "executionMs": 192,
+        "totalMs": 941,
+        "finalReportSealingExcluded": true,
+        "otherMs": 114
+      },
+      "outerMinusReportedTotalMs": 198.72104199999922,
+      "planning": {
+        "totalMs": 136.26237500000002,
+        "phases": {
+          "configuration": 0.25508400000001075,
+          "provenance": 0.003165999999964697,
+          "graph": 15.969791999999984,
+          "changeDetection": 90.52641700000004,
+          "runtimeAndServices": 0.22537499999998545,
+          "baselineAndIgnore": 28.812666000000036,
+          "uncertaintyAndMapping": 0.1779589999999871,
+          "history": 0.04462499999999636,
+          "decisionsAndFingerprint": 0.23220800000001418
+        },
+        "graph": {
+          "totalMs": 15.775416999999948,
+          "phases": {
+            "inventory": 0.24049999999999727,
+            "discovery": 0.09979199999997945,
+            "configuration": 0.5499579999999469,
+            "sourceReads": 0.9841250000000628,
+            "sourceAnalysisAndResolution": 13.566791999999964,
+            "declaredInputsAndConfigurationClosure": 0.08241699999996399,
+            "warningClassification": 0.23775000000000546
+          }
+        }
+      },
+      "native": {
+        "requestPreparationMs": 120.11795899999998,
+        "workerStartupAndPlanningMs": 205.70500000000004,
+        "executionRequestAndResultMs": 150.77370900000005,
+        "resultToChildExitMs": 41.05241599999988,
+        "worker": {
+          "planned": {
+            "totalMs": 163.7645,
+            "phases": {
+              "requestAndAdmission": 6.9609999999999985,
+              "frameworkImport": 115.184875,
+              "frameworkInitializationAndConfiguration": 25.48524999999998,
+              "contextAndGlobalInputs": 0.17295900000002007,
+              "nativeDiscoveryAndDiscoveredSourceExpansion": 9.589832999999999,
+              "sourceExpansionAndConfigurationAdmission": 1.2379169999999817,
+              "nativeImportResolution": 5.119291000000004
+            }
+          },
+          "executed": {
+            "totalMs": 574.9146669999999,
+            "phases": {
+              "requestAndAdmission": 6.9609999999999985,
+              "frameworkImport": 115.184875,
+              "frameworkInitializationAndConfiguration": 25.48524999999998,
+              "contextAndGlobalInputs": 0.17295900000002007,
+              "nativeDiscoveryAndDiscoveredSourceExpansion": 9.589832999999999,
+              "sourceExpansionAndConfigurationAdmission": 1.2379169999999817,
+              "nativeImportResolution": 5.119291000000004,
+              "parentPlanningAndProtocolWait": 261.578417,
+              "runnerInitialization": 0.4379999999999882,
+              "nativeTestsAndReporter": 148.84175000000005,
+              "nativeReportRead": 0.28462500000000546
+            }
+          }
+        },
+        "scope": "Diagnostic spans; worker starts after static module imports, parent startup includes imports and native planning. Spans overlap and never confer authority."
+      },
+      "syntaxObservations": {
+        "supplied": true,
+        "identityMatched": true,
+        "validatedHits": 24,
+        "freshParses": 0,
+        "mismatches": 0,
+        "unboundLegacyParses": 0
+      }
+    },
+    {
+      "scenario": "static",
+      "arm": "legacy",
+      "repetition": 2,
+      "outerMs": 1273.5202499999996,
+      "reported": {
+        "planningMs": 628,
+        "executionMs": 345,
+        "totalMs": 1107,
+        "finalReportSealingExcluded": true,
+        "otherMs": 134
+      },
+      "outerMinusReportedTotalMs": 166.52024999999958,
+      "planning": {
+        "totalMs": 628.102042,
+        "phases": {
+          "configuration": 0.07549999999997681,
+          "provenance": 148.0265,
+          "graph": 370.10325,
+          "changeDetection": 75.95029199999999,
+          "runtimeAndServices": 0.22037499999999,
+          "baselineAndIgnore": 33.34325000000001,
+          "uncertaintyAndMapping": 0.12545799999998053,
+          "history": 0.03766700000005585,
+          "decisionsAndFingerprint": 0.2070410000000038
+        },
+        "graph": {
+          "totalMs": 369.87491700000004,
+          "phases": {
+            "inventory": 0.24799999999999045,
+            "discovery": 352.67108300000007,
+            "configuration": 0.4049999999999727,
+            "sourceReads": 4.111041999999998,
+            "sourceAnalysisAndResolution": 12.099458000000027,
+            "declaredInputsAndConfigurationClosure": 0.08391699999992852,
+            "warningClassification": 0.23954200000002857
+          }
+        }
+      },
+      "native": null,
+      "syntaxObservations": null
+    },
+    {
+      "scenario": "static",
+      "arm": "unified",
+      "repetition": 2,
+      "outerMs": 1030.0534579999985,
+      "reported": {
+        "planningMs": 599,
+        "executionMs": 152,
+        "totalMs": 867,
+        "finalReportSealingExcluded": true,
+        "otherMs": 116
+      },
+      "outerMinusReportedTotalMs": 163.0534579999985,
+      "planning": {
+        "totalMs": 142.49266699999998,
+        "phases": {
+          "configuration": 0.31891700000005585,
+          "provenance": 0.004415999999991982,
+          "graph": 15.076541999999904,
+          "changeDetection": 90.91000000000008,
+          "runtimeAndServices": 0.2274169999999458,
+          "baselineAndIgnore": 35.51216599999998,
+          "uncertaintyAndMapping": 0.17437500000005457,
+          "history": 0.046749999999974534,
+          "decisionsAndFingerprint": 0.20962500000007367
+        },
+        "graph": {
+          "totalMs": 14.856667000000016,
+          "phases": {
+            "inventory": 0.24537499999996726,
+            "discovery": 0.12687500000004093,
+            "configuration": 0.6002919999999676,
+            "sourceReads": 1.1020409999999856,
+            "sourceAnalysisAndResolution": 12.48458400000004,
+            "declaredInputsAndConfigurationClosure": 0.07466599999997925,
+            "warningClassification": 0.21162500000002638
+          }
+        }
+      },
+      "native": {
+        "requestPreparationMs": 121.86899999999997,
+        "workerStartupAndPlanningMs": 207.67283299999997,
+        "executionRequestAndResultMs": 107.78858300000002,
+        "resultToChildExitMs": 43.737708999999995,
+        "worker": {
+          "planned": {
+            "totalMs": 162.492125,
+            "phases": {
+              "requestAndAdmission": 6.7614160000000005,
+              "frameworkImport": 111.61429199999999,
+              "frameworkInitializationAndConfiguration": 26.528875,
+              "contextAndGlobalInputs": 0.15679200000002425,
+              "nativeDiscoveryAndDiscoveredSourceExpansion": 10.276457999999991,
+              "sourceExpansionAndConfigurationAdmission": 1.5508749999999907,
+              "nativeImportResolution": 5.5722920000000045
+            }
+          },
+          "executed": {
+            "totalMs": 534.9008329999999,
+            "phases": {
+              "requestAndAdmission": 6.7614160000000005,
+              "frameworkImport": 111.61429199999999,
+              "frameworkInitializationAndConfiguration": 26.528875,
+              "contextAndGlobalInputs": 0.15679200000002425,
+              "nativeDiscoveryAndDiscoveredSourceExpansion": 10.276457999999991,
+              "sourceExpansionAndConfigurationAdmission": 1.5508749999999907,
+              "nativeImportResolution": 5.5722920000000045,
+              "parentPlanningAndProtocolWait": 265.625458,
+              "runnerInitialization": 0.4405830000000037,
+              "nativeTestsAndReporter": 106.17116699999997,
+              "nativeReportRead": 0.1951250000000755
+            }
+          }
+        },
+        "scope": "Diagnostic spans; worker starts after static module imports, parent startup includes imports and native planning. Spans overlap and never confer authority."
+      },
+      "syntaxObservations": {
+        "supplied": true,
+        "identityMatched": true,
+        "validatedHits": 24,
+        "freshParses": 0,
+        "mismatches": 0,
+        "unboundLegacyParses": 0
+      }
+    },
+    {
+      "scenario": "asset",
+      "arm": "legacy",
+      "repetition": 0,
+      "outerMs": 1129.679750000003,
+      "reported": {
+        "planningMs": 502,
+        "executionMs": 340,
+        "totalMs": 964,
+        "finalReportSealingExcluded": true,
+        "otherMs": 122
+      },
+      "outerMinusReportedTotalMs": 165.67975000000297,
+      "planning": {
+        "totalMs": 501.781542,
+        "phases": {
+          "configuration": 0.07487499999999159,
+          "provenance": 74.086667,
+          "graph": 341.10970799999996,
+          "changeDetection": 85.47829200000001,
+          "runtimeAndServices": 0.19887500000004366,
+          "baselineAndIgnore": 0.5741669999999885,
+          "uncertaintyAndMapping": 0.11000000000001364,
+          "history": 0.03458299999999781,
+          "decisionsAndFingerprint": 0.09766700000000128
+        },
+        "graph": {
+          "totalMs": 340.90749999999997,
+          "phases": {
+            "inventory": 0.2442920000000015,
+            "discovery": 327.159458,
+            "configuration": 0.44258400000001075,
+            "sourceReads": 0.263541000000032,
+            "sourceAnalysisAndResolution": 12.64149999999995,
+            "declaredInputsAndConfigurationClosure": 0.07270900000003166,
+            "warningClassification": 0.07362499999999272
+          }
+        }
+      },
+      "native": null,
+      "syntaxObservations": null
+    },
+    {
+      "scenario": "asset",
+      "arm": "unified",
+      "repetition": 0,
+      "outerMs": 933.9743329999983,
+      "reported": {
+        "planningMs": 497,
+        "executionMs": 148,
+        "totalMs": 766,
+        "finalReportSealingExcluded": true,
+        "otherMs": 121
+      },
+      "outerMinusReportedTotalMs": 167.9743329999983,
+      "planning": {
+        "totalMs": 108.71308299999998,
+        "phases": {
+          "configuration": 0.09000000000003183,
+          "provenance": 0.0037499999999681677,
+          "graph": 10.316915999999992,
+          "changeDetection": 96.69916699999999,
+          "runtimeAndServices": 0.8734170000000177,
+          "baselineAndIgnore": 0.46220800000003237,
+          "uncertaintyAndMapping": 0.1220419999999649,
+          "history": 0.034457999999972344,
+          "decisionsAndFingerprint": 0.09933300000000145
+        },
+        "graph": {
+          "totalMs": 10.038915999999972,
+          "phases": {
+            "inventory": 0.23970799999995052,
+            "discovery": 0.08550000000002456,
+            "configuration": 0.4646669999999631,
+            "sourceReads": 0.2018750000000864,
+            "sourceAnalysisAndResolution": 8.847957999999949,
+            "declaredInputsAndConfigurationClosure": 0.1027920000000222,
+            "warningClassification": 0.08533299999999144
+          }
+        }
+      },
+      "native": {
+        "requestPreparationMs": 68.065125,
+        "workerStartupAndPlanningMs": 195.570917,
+        "executionRequestAndResultMs": 104.92491700000005,
+        "resultToChildExitMs": 43.447791999999936,
+        "worker": {
+          "planned": {
+            "totalMs": 153.74125,
+            "phases": {
+              "requestAndAdmission": 7.759958000000001,
+              "frameworkImport": 109.43937500000001,
+              "frameworkInitializationAndConfiguration": 27.613292,
+              "contextAndGlobalInputs": 0.09375,
+              "nativeDiscoveryAndDiscoveredSourceExpansion": 6.5811669999999935,
+              "sourceExpansionAndConfigurationAdmission": 0.3785829999999919,
+              "nativeImportResolution": 1.8632920000000013
+            }
+          },
+          "executed": {
+            "totalMs": 487.661792,
+            "phases": {
+              "requestAndAdmission": 7.759958000000001,
+              "frameworkImport": 109.43937500000001,
+              "frameworkInitializationAndConfiguration": 27.613292,
+              "contextAndGlobalInputs": 0.09375,
+              "nativeDiscoveryAndDiscoveredSourceExpansion": 6.5811669999999935,
+              "sourceExpansionAndConfigurationAdmission": 0.3785829999999919,
+              "nativeImportResolution": 1.8632920000000013,
+              "parentPlanningAndProtocolWait": 229.97541600000002,
+              "runnerInitialization": 0.4961249999999495,
+              "nativeTestsAndReporter": 103.29875000000004,
+              "nativeReportRead": 0.15516700000000583
+            }
+          }
+        },
+        "scope": "Diagnostic spans; worker starts after static module imports, parent startup includes imports and native planning. Spans overlap and never confer authority."
+      },
+      "syntaxObservations": {
+        "supplied": true,
+        "identityMatched": true,
+        "validatedHits": 4,
+        "freshParses": 0,
+        "mismatches": 0,
+        "unboundLegacyParses": 0
+      }
+    },
+    {
+      "scenario": "asset",
+      "arm": "legacy",
+      "repetition": 1,
+      "outerMs": 1121.4417920000014,
+      "reported": {
+        "planningMs": 498,
+        "executionMs": 331,
+        "totalMs": 950,
+        "finalReportSealingExcluded": true,
+        "otherMs": 121
+      },
+      "outerMinusReportedTotalMs": 171.44179200000144,
+      "planning": {
+        "totalMs": 497.91724999999997,
+        "phases": {
+          "configuration": 0.08208299999998303,
+          "provenance": 60.393292,
+          "graph": 347.6251669999999,
+          "changeDetection": 88.72012500000005,
+          "runtimeAndServices": 0.23308299999996507,
+          "baselineAndIgnore": 0.5947080000000824,
+          "uncertaintyAndMapping": 0.11775000000000091,
+          "history": 0.03404199999999946,
+          "decisionsAndFingerprint": 0.10337499999991451
+        },
+        "graph": {
+          "totalMs": 347.42166699999996,
+          "phases": {
+            "inventory": 0.24679199999999923,
+            "discovery": 340.477167,
+            "configuration": 0.46308299999998326,
+            "sourceReads": 0.2728749999999991,
+            "sourceAnalysisAndResolution": 5.806249999999977,
+            "declaredInputsAndConfigurationClosure": 0.07150000000001455,
+            "warningClassification": 0.07433300000002419
+          }
+        }
+      },
+      "native": null,
+      "syntaxObservations": null
+    },
+    {
+      "scenario": "asset",
+      "arm": "unified",
+      "repetition": 1,
+      "outerMs": 1655.8950829999994,
+      "reported": {
+        "planningMs": 992,
+        "executionMs": 227,
+        "totalMs": 1425,
+        "finalReportSealingExcluded": true,
+        "otherMs": 206
+      },
+      "outerMinusReportedTotalMs": 230.89508299999943,
+      "planning": {
+        "totalMs": 212.3382089999999,
+        "phases": {
+          "configuration": 0.12633400000004258,
+          "provenance": 0.0049579999999878055,
+          "graph": 17.124500000000012,
+          "changeDetection": 193.571958,
+          "runtimeAndServices": 0.5940419999999449,
+          "baselineAndIgnore": 0.5559579999999187,
+          "uncertaintyAndMapping": 0.1534590000001117,
+          "history": 0.0576659999999265,
+          "decisionsAndFingerprint": 0.127666999999974
+        },
+        "graph": {
+          "totalMs": 16.779792000000043,
+          "phases": {
+            "inventory": 0.2967919999999822,
+            "discovery": 0.17975000000001273,
+            "configuration": 0.7185829999999669,
+            "sourceReads": 0.8805000000000973,
+            "sourceAnalysisAndResolution": 14.484416999999894,
+            "declaredInputsAndConfigurationClosure": 0.10191700000007131,
+            "warningClassification": 0.10366599999997561
+          }
+        }
+      },
+      "native": {
+        "requestPreparationMs": 127.68124999999998,
+        "workerStartupAndPlanningMs": 348.84758400000004,
+        "executionRequestAndResultMs": 197.07295799999997,
+        "resultToChildExitMs": 30.335083000000168,
+        "worker": {
+          "planned": {
+            "totalMs": 286.786042,
+            "phases": {
+              "requestAndAdmission": 10.221542,
+              "frameworkImport": 203.65075000000002,
+              "frameworkInitializationAndConfiguration": 47.82237500000002,
+              "contextAndGlobalInputs": 0.1445829999999546,
+              "nativeDiscoveryAndDiscoveredSourceExpansion": 14.035416999999995,
+              "sourceExpansionAndConfigurationAdmission": 1.422958000000051,
+              "nativeImportResolution": 9.425291999999956
+            }
+          },
+          "executed": {
+            "totalMs": 969.495542,
+            "phases": {
+              "requestAndAdmission": 10.221542,
+              "frameworkImport": 203.65075000000002,
+              "frameworkInitializationAndConfiguration": 47.82237500000002,
+              "contextAndGlobalInputs": 0.1445829999999546,
+              "nativeDiscoveryAndDiscoveredSourceExpansion": 14.035416999999995,
+              "sourceExpansionAndConfigurationAdmission": 1.422958000000051,
+              "nativeImportResolution": 9.425291999999956,
+              "parentPlanningAndProtocolWait": 488.004875,
+              "runnerInitialization": 1.196957999999995,
+              "nativeTestsAndReporter": 193.319209,
+              "nativeReportRead": 0.2403749999999718
+            }
+          }
+        },
+        "scope": "Diagnostic spans; worker starts after static module imports, parent startup includes imports and native planning. Spans overlap and never confer authority."
+      },
+      "syntaxObservations": {
+        "supplied": true,
+        "identityMatched": true,
+        "validatedHits": 4,
+        "freshParses": 0,
+        "mismatches": 0,
+        "unboundLegacyParses": 0
+      }
+    },
+    {
+      "scenario": "asset",
+      "arm": "legacy",
+      "repetition": 2,
+      "outerMs": 1784.6700410000012,
+      "reported": {
+        "planningMs": 833,
+        "executionMs": 478,
+        "totalMs": 1536,
+        "finalReportSealingExcluded": true,
+        "otherMs": 225
+      },
+      "outerMinusReportedTotalMs": 248.67004100000122,
+      "planning": {
+        "totalMs": 833.017417,
+        "phases": {
+          "configuration": 0.6173750000000098,
+          "provenance": 123.257792,
+          "graph": 527.148458,
+          "changeDetection": 180.8298339999999,
+          "runtimeAndServices": 0.24937500000010004,
+          "baselineAndIgnore": 0.6299579999999878,
+          "uncertaintyAndMapping": 0.12466700000004494,
+          "history": 0.03600000000005821,
+          "decisionsAndFingerprint": 0.10999999999989996
+        },
+        "graph": {
+          "totalMs": 526.914792,
+          "phases": {
+            "inventory": 0.2700839999999971,
+            "discovery": 512.372416,
+            "configuration": 0.71287499999994,
+            "sourceReads": 0.7712500000000091,
+            "sourceAnalysisAndResolution": 12.594500000000039,
+            "declaredInputsAndConfigurationClosure": 0.09120899999993526,
+            "warningClassification": 0.09045800000001236
+          }
+        }
+      },
+      "native": null,
+      "syntaxObservations": null
+    },
+    {
+      "scenario": "asset",
+      "arm": "unified",
+      "repetition": 2,
+      "outerMs": 1507.0275409999995,
+      "reported": {
+        "planningMs": 866,
+        "executionMs": 201,
+        "totalMs": 1298,
+        "finalReportSealingExcluded": true,
+        "otherMs": 231
+      },
+      "outerMinusReportedTotalMs": 209.02754099999947,
+      "planning": {
+        "totalMs": 195.22687499999995,
+        "phases": {
+          "configuration": 0.5656669999999622,
+          "provenance": 0.004416999999989457,
+          "graph": 20.559416000000056,
+          "changeDetection": 173.11391700000001,
+          "runtimeAndServices": 0.20637499999998,
+          "baselineAndIgnore": 0.4592920000000049,
+          "uncertaintyAndMapping": 0.1301659999999174,
+          "history": 0.05829200000016499,
+          "decisionsAndFingerprint": 0.10954199999991943
+        },
+        "graph": {
+          "totalMs": 20.242666999999983,
+          "phases": {
+            "inventory": 0.24529200000006313,
+            "discovery": 0.2709579999999505,
+            "configuration": 0.6302500000000464,
+            "sourceReads": 0.6754169999999249,
+            "sourceAnalysisAndResolution": 18.233166000000097,
+            "declaredInputsAndConfigurationClosure": 0.08908399999995709,
+            "warningClassification": 0.08658300000001873
+          }
+        }
+      },
+      "native": {
+        "requestPreparationMs": 130.52754199999998,
+        "workerStartupAndPlanningMs": 296.797833,
+        "executionRequestAndResultMs": 164.11024999999995,
+        "resultToChildExitMs": 36.73237500000005,
+        "worker": {
+          "planned": {
+            "totalMs": 238.494667,
+            "phases": {
+              "requestAndAdmission": 10.171416999999998,
+              "frameworkImport": 174.00704199999998,
+              "frameworkInitializationAndConfiguration": 37.39945800000001,
+              "contextAndGlobalInputs": 0.106708000000026,
+              "nativeDiscoveryAndDiscoveredSourceExpansion": 10.829208999999992,
+              "sourceExpansionAndConfigurationAdmission": 0.9899159999999938,
+              "nativeImportResolution": 4.964334000000008
+            }
+          },
+          "executed": {
+            "totalMs": 831.2447500000001,
+            "phases": {
+              "requestAndAdmission": 10.171416999999998,
+              "frameworkImport": 174.00704199999998,
+              "frameworkInitializationAndConfiguration": 37.39945800000001,
+              "contextAndGlobalInputs": 0.106708000000026,
+              "nativeDiscoveryAndDiscoveredSourceExpansion": 10.829208999999992,
+              "sourceExpansionAndConfigurationAdmission": 0.9899159999999938,
+              "nativeImportResolution": 4.964334000000008,
+              "parentPlanningAndProtocolWait": 430.000958,
+              "runnerInitialization": 0.4467499999999518,
+              "nativeTestsAndReporter": 162.08379200000002,
+              "nativeReportRead": 0.23608300000000781
+            }
+          }
+        },
+        "scope": "Diagnostic spans; worker starts after static module imports, parent startup includes imports and native planning. Spans overlap and never confer authority."
+      },
+      "syntaxObservations": {
+        "supplied": true,
+        "identityMatched": true,
+        "validatedHits": 4,
+        "freshParses": 0,
+        "mismatches": 0,
+        "unboundLegacyParses": 0
+      }
+    },
+    {
+      "scenario": "projected-public-bugfix",
+      "arm": "legacy",
+      "repetition": 0,
+      "outerMs": 2746.6800000000003,
+      "reported": {
+        "planningMs": 900,
+        "executionMs": 1534,
+        "totalMs": 2567,
+        "finalReportSealingExcluded": true,
+        "otherMs": 133
+      },
+      "outerMinusReportedTotalMs": 179.6800000000003,
+      "planning": {
+        "totalMs": 900.0857080000001,
+        "phases": {
+          "configuration": 0.09141700000000696,
+          "provenance": 76.193208,
+          "graph": 471.571917,
+          "changeDetection": 99.09191599999997,
+          "runtimeAndServices": 0.2454170000000886,
+          "baselineAndIgnore": 251.95912499999997,
+          "uncertaintyAndMapping": 0.27079200000002857,
+          "history": 0.04529099999990649,
+          "decisionsAndFingerprint": 0.5935839999999644
+        },
+        "graph": {
+          "totalMs": 471.34849999999994,
+          "phases": {
+            "inventory": 0.2611249999999927,
+            "discovery": 399.3165419999999,
+            "configuration": 7.017333000000008,
+            "sourceReads": 1.6019170000000713,
+            "sourceAnalysisAndResolution": 62.773874999999975,
+            "declaredInputsAndConfigurationClosure": 0.12866699999995035,
+            "warningClassification": 0.22775000000001455
+          }
+        }
+      },
+      "native": null,
+      "syntaxObservations": null
+    },
+    {
+      "scenario": "projected-public-bugfix",
+      "arm": "unified",
+      "repetition": 0,
+      "outerMs": 2265.477166000004,
+      "reported": {
+        "planningMs": 662,
+        "executionMs": 1319,
+        "totalMs": 2096,
+        "finalReportSealingExcluded": true,
+        "otherMs": 115
+      },
+      "outerMinusReportedTotalMs": 169.47716600000422,
+      "planning": {
+        "totalMs": 172.46395799999993,
+        "phases": {
+          "configuration": 0.13004100000000562,
+          "provenance": 0.0050420000000030996,
+          "graph": 39.893749999999955,
+          "changeDetection": 93.82399999999996,
+          "runtimeAndServices": 0.263417000000004,
+          "baselineAndIgnore": 37.415707999999995,
+          "uncertaintyAndMapping": 0.21000000000003638,
+          "history": 0.04100000000005366,
+          "decisionsAndFingerprint": 0.6666669999999613
+        },
+        "graph": {
+          "totalMs": 39.695583000000056,
+          "phases": {
+            "inventory": 0.24462500000004184,
+            "discovery": 0.12312499999995907,
+            "configuration": 4.61266599999999,
+            "sourceReads": 1.1928750000000719,
+            "sourceAnalysisAndResolution": 33.201333999999974,
+            "declaredInputsAndConfigurationClosure": 0.10754099999996924,
+            "warningClassification": 0.20037500000000819
+          }
+        }
+      },
+      "native": {
+        "requestPreparationMs": 148.021667,
+        "workerStartupAndPlanningMs": 213.72087499999998,
+        "executionRequestAndResultMs": 1287.862416,
+        "resultToChildExitMs": 30.93845900000042,
+        "worker": {
+          "planned": {
+            "totalMs": 172.591958,
+            "phases": {
+              "requestAndAdmission": 7.393291999999999,
+              "frameworkImport": 116.66912500000001,
+              "frameworkInitializationAndConfiguration": 26.198999999999984,
+              "contextAndGlobalInputs": 0.17850000000001387,
+              "nativeDiscoveryAndDiscoveredSourceExpansion": 10.127165999999988,
+              "sourceExpansionAndConfigurationAdmission": 1.176209,
+              "nativeImportResolution": 10.817625000000021
+            }
+          },
+          "executed": {
+            "totalMs": 1755.048458,
+            "phases": {
+              "requestAndAdmission": 7.393291999999999,
+              "frameworkImport": 116.66912500000001,
+              "frameworkInitializationAndConfiguration": 26.198999999999984,
+              "contextAndGlobalInputs": 0.17850000000001387,
+              "nativeDiscoveryAndDiscoveredSourceExpansion": 10.127165999999988,
+              "sourceExpansionAndConfigurationAdmission": 1.176209,
+              "nativeImportResolution": 10.817625000000021,
+              "parentPlanningAndProtocolWait": 296.549041,
+              "runnerInitialization": 0.4716250000000173,
+              "nativeTestsAndReporter": 1284.826167,
+              "nativeReportRead": 0.6310829999999896
+            }
+          }
+        },
+        "scope": "Diagnostic spans; worker starts after static module imports, parent startup includes imports and native planning. Spans overlap and never confer authority."
+      },
+      "syntaxObservations": {
+        "supplied": true,
+        "identityMatched": true,
+        "validatedHits": 22,
+        "freshParses": 0,
+        "mismatches": 0,
+        "unboundLegacyParses": 0
+      }
+    },
+    {
+      "scenario": "projected-public-bugfix",
+      "arm": "legacy",
+      "repetition": 1,
+      "outerMs": 2692.9504579999993,
+      "reported": {
+        "planningMs": 820,
+        "executionMs": 1531,
+        "totalMs": 2526,
+        "finalReportSealingExcluded": true,
+        "otherMs": 175
+      },
+      "outerMinusReportedTotalMs": 166.95045799999934,
+      "planning": {
+        "totalMs": 820.182458,
+        "phases": {
+          "configuration": 0.0796670000000006,
+          "provenance": 60.26983299999998,
+          "graph": 425.03375000000005,
+          "changeDetection": 99.66416700000002,
+          "runtimeAndServices": 0.28387499999996635,
+          "baselineAndIgnore": 234.00791600000002,
+          "uncertaintyAndMapping": 0.17504199999996217,
+          "history": 0.03808300000002873,
+          "decisionsAndFingerprint": 0.6138339999999971
+        },
+        "graph": {
+          "totalMs": 424.811333,
+          "phases": {
+            "inventory": 0.2695420000000013,
+            "discovery": 402.974291,
+            "configuration": 7.068791999999917,
+            "sourceReads": 1.2254580000000033,
+            "sourceAnalysisAndResolution": 12.954334000000017,
+            "declaredInputsAndConfigurationClosure": 0.09679100000005292,
+            "warningClassification": 0.21095900000000256
+          }
+        }
+      },
+      "native": null,
+      "syntaxObservations": null
+    },
+    {
+      "scenario": "projected-public-bugfix",
+      "arm": "unified",
+      "repetition": 1,
+      "outerMs": 2233.096083999997,
+      "reported": {
+        "planningMs": 635,
+        "executionMs": 1304,
+        "totalMs": 2064,
+        "finalReportSealingExcluded": true,
+        "otherMs": 125
+      },
+      "outerMinusReportedTotalMs": 169.09608399999706,
+      "planning": {
+        "totalMs": 154.564792,
+        "phases": {
+          "configuration": 0.11016700000004676,
+          "provenance": 0.003499999999917236,
+          "graph": 19.383542000000034,
+          "changeDetection": 100.15883299999996,
+          "runtimeAndServices": 0.22191700000007586,
+          "baselineAndIgnore": 33.77220799999998,
+          "uncertaintyAndMapping": 0.2513330000000451,
+          "history": 0.041958999999906155,
+          "decisionsAndFingerprint": 0.6042500000000928
+        },
+        "graph": {
+          "totalMs": 19.188290999999936,
+          "phases": {
+            "inventory": 0.2449579999999969,
+            "discovery": 0.1159579999999778,
+            "configuration": 4.475000000000023,
+            "sourceReads": 1.014291999999955,
+            "sourceAnalysisAndResolution": 13.018083000000047,
+            "declaredInputsAndConfigurationClosure": 0.09395899999992707,
+            "warningClassification": 0.214458000000036
+          }
+        }
+      },
+      "native": {
+        "requestPreparationMs": 137.39166600000001,
+        "workerStartupAndPlanningMs": 213.83308399999999,
+        "executionRequestAndResultMs": 1273.7692080000002,
+        "resultToChildExitMs": 29.80804199999966,
+        "worker": {
+          "planned": {
+            "totalMs": 168.963542,
+            "phases": {
+              "requestAndAdmission": 6.849,
+              "frameworkImport": 114.70795799999999,
+              "frameworkInitializationAndConfiguration": 25.93983400000002,
+              "contextAndGlobalInputs": 0.19079099999999016,
+              "nativeDiscoveryAndDiscoveredSourceExpansion": 9.971624999999989,
+              "sourceExpansionAndConfigurationAdmission": 1.1560840000000212,
+              "nativeImportResolution": 10.118249999999989
+            }
+          },
+          "executed": {
+            "totalMs": 1728.979958,
+            "phases": {
+              "requestAndAdmission": 6.849,
+              "frameworkImport": 114.70795799999999,
+              "frameworkInitializationAndConfiguration": 25.93983400000002,
+              "contextAndGlobalInputs": 0.19079099999999016,
+              "nativeDiscoveryAndDiscoveredSourceExpansion": 9.971624999999989,
+              "sourceExpansionAndConfigurationAdmission": 1.1560840000000212,
+              "nativeImportResolution": 10.118249999999989,
+              "parentPlanningAndProtocolWait": 288.982416,
+              "runnerInitialization": 0.646000000000015,
+              "nativeTestsAndReporter": 1269.742584,
+              "nativeReportRead": 0.6661659999999756
+            }
+          }
+        },
+        "scope": "Diagnostic spans; worker starts after static module imports, parent startup includes imports and native planning. Spans overlap and never confer authority."
+      },
+      "syntaxObservations": {
+        "supplied": true,
+        "identityMatched": true,
+        "validatedHits": 22,
+        "freshParses": 0,
+        "mismatches": 0,
+        "unboundLegacyParses": 0
+      }
+    },
+    {
+      "scenario": "projected-public-bugfix",
+      "arm": "legacy",
+      "repetition": 2,
+      "outerMs": 2609.4306670000005,
+      "reported": {
+        "planningMs": 808,
+        "executionMs": 1501,
+        "totalMs": 2431,
+        "finalReportSealingExcluded": true,
+        "otherMs": 122
+      },
+      "outerMinusReportedTotalMs": 178.43066700000054,
+      "planning": {
+        "totalMs": 807.932416,
+        "phases": {
+          "configuration": 0.2275410000000022,
+          "provenance": 64.53299999999999,
+          "graph": 422.2967090000001,
+          "changeDetection": 90.6758749999999,
+          "runtimeAndServices": 0.22325000000000728,
+          "baselineAndIgnore": 229.10733300000004,
+          "uncertaintyAndMapping": 0.1974169999999731,
+          "history": 0.03970800000001873,
+          "decisionsAndFingerprint": 0.6183750000000146
+        },
+        "graph": {
+          "totalMs": 422.087083,
+          "phases": {
+            "inventory": 0.2581250000000068,
+            "discovery": 400.18025,
+            "configuration": 6.770667000000003,
+            "sourceReads": 1.407666000000063,
+            "sourceAnalysisAndResolution": 13.166041999999948,
+            "declaredInputsAndConfigurationClosure": 0.09299999999996089,
+            "warningClassification": 0.19995800000003783
+          }
+        }
+      },
+      "native": null,
+      "syntaxObservations": null
+    },
+    {
+      "scenario": "projected-public-bugfix",
+      "arm": "unified",
+      "repetition": 2,
+      "outerMs": 2271.248875000005,
+      "reported": {
+        "planningMs": 654,
+        "executionMs": 1313,
+        "totalMs": 2092,
+        "finalReportSealingExcluded": true,
+        "otherMs": 125
+      },
+      "outerMinusReportedTotalMs": 179.24887500000477,
+      "planning": {
+        "totalMs": 152.29337499999997,
+        "phases": {
+          "configuration": 0.11329200000000128,
+          "provenance": 0.003207999999972344,
+          "graph": 20.581249999999955,
+          "changeDetection": 96.043542,
+          "runtimeAndServices": 0.2259999999999991,
+          "baselineAndIgnore": 34.36758299999997,
+          "uncertaintyAndMapping": 0.27899999999999636,
+          "history": 0.04462500000011005,
+          "decisionsAndFingerprint": 0.6204579999999851
+        },
+        "graph": {
+          "totalMs": 20.38854200000003,
+          "phases": {
+            "inventory": 0.24679200000002766,
+            "discovery": 0.1186249999999518,
+            "configuration": 4.7361250000000155,
+            "sourceReads": 1.1410829999999805,
+            "sourceAnalysisAndResolution": 13.814250000000015,
+            "declaredInputsAndConfigurationClosure": 0.09916699999996581,
+            "warningClassification": 0.22062500000004093
+          }
+        }
+      },
+      "native": {
+        "requestPreparationMs": 143.25262499999997,
+        "workerStartupAndPlanningMs": 216.70037500000007,
+        "executionRequestAndResultMs": 1280.9699580000001,
+        "resultToChildExitMs": 32.50595799999974,
+        "worker": {
+          "planned": {
+            "totalMs": 173.055583,
+            "phases": {
+              "requestAndAdmission": 7.015082999999997,
+              "frameworkImport": 117.73075,
+              "frameworkInitializationAndConfiguration": 25.411749999999984,
+              "contextAndGlobalInputs": 0.23795800000002032,
+              "nativeDiscoveryAndDiscoveredSourceExpansion": 10.538250000000005,
+              "sourceExpansionAndConfigurationAdmission": 1.078125,
+              "nativeImportResolution": 11.00241699999998
+            }
+          },
+          "executed": {
+            "totalMs": 1730.758791,
+            "phases": {
+              "requestAndAdmission": 7.015082999999997,
+              "frameworkImport": 117.73075,
+              "frameworkInitializationAndConfiguration": 25.411749999999984,
+              "contextAndGlobalInputs": 0.23795800000002032,
+              "nativeDiscoveryAndDiscoveredSourceExpansion": 10.538250000000005,
+              "sourceExpansionAndConfigurationAdmission": 1.078125,
+              "nativeImportResolution": 11.00241699999998,
+              "parentPlanningAndProtocolWait": 278.707,
+              "runnerInitialization": 0.49879199999998036,
+              "nativeTestsAndReporter": 1277.900416,
+              "nativeReportRead": 0.6292919999998503
+            }
+          }
+        },
+        "scope": "Diagnostic spans; worker starts after static module imports, parent startup includes imports and native planning. Spans overlap and never confer authority."
+      },
+      "syntaxObservations": {
+        "supplied": true,
+        "identityMatched": true,
+        "validatedHits": 22,
+        "freshParses": 0,
+        "mismatches": 0,
+        "unboundLegacyParses": 0
+      }
+    }
+  ],
+  "originalRuntimeInvestigation": {
+    "vitest": "4.1.5",
+    "vite": "8.0.10",
+    "rolldown": "1.0.0-rc.17",
+    "sourceTarballs": [
+      {
+        "package": "vite",
+        "version": "8.0.10",
+        "sha256": "05354bd16ba91b67740fe493d75cf0713653f9f6e6b36417b9bdb580c4b31b56",
+        "url": "https://registry.npmjs.org/vite/-/vite-8.0.10.tgz"
+      },
+      {
+        "package": "rolldown",
+        "version": "1.0.0-rc.17",
+        "sha256": "0ba8ef36eb84f3fa20843331aaf947771fa569bcb3538404d95ff380356c96b4",
+        "url": "https://registry.npmjs.org/rolldown/-/rolldown-1.0.0-rc.17.tgz"
+      }
+    ],
+    "finding": "Vite defaults call the imported viteWasmFallbackPlugin factory; Rolldown constructs a BuiltinPlugin with callable native-backed hooks. Name and source inspection do not attest the origin of a live context object or configuration/execution parity.",
+    "unifiedAdmissionChanged": false,
+    "rejectionPreserved": true,
+    "liveOriginalRuntimeQualified": false
+  }
+}
