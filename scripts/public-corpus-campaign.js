@@ -9,7 +9,7 @@ import {pilotEnvironment} from '../src/pilot.js';
 import {fileIdentity} from './worker-identity.js';
 import {readBoundedJson} from './evaluation-commitment.js';
 import {validateCandidates,preparePublicCandidate,executePreparedPublic,publicAttemptSummary} from './public-corpus.js';
-import {installUpstreamCandidate,boundedInstallProcess,verifyUpstreamInstallation,publicVerificationDiagnostic} from './public-corpus-upstream.js';
+import {installUpstreamCandidate,boundedInstallProcess,verifyUpstreamInstallation,publicVerificationDiagnostic,upstreamInstallGrowthBudget} from './public-corpus-upstream.js';
 import {preflightPublicCandidate} from './public-corpus-preflight.js';
 import {captureCorpusIdentity} from './regression-corpus.js';
 import {runUnifiedCLIProof,exportUnifiedCLIProof} from './unified-native-proof.js';
@@ -22,8 +22,8 @@ const reviewedNativeProfiles=new Map([
  ['unjs-unctx-1bb220dccf40',{executionMode:'legacy',installedVitest:'4.0.16'}],
  ['unjs-mlly-abef19c940da',{executionMode:'legacy',installedVitest:'4.1.0'}],
  ['unjs-ufo-5cd9e676711a',{executionMode:'unified-native',installedVitest:'4.1.5'}],
- ['unjs-defu-11ba02213d4b',{executionMode:'legacy',installedVitest:'4.1.2'}],
- ['unjs-defu-3942bfbbcaa7',{executionMode:'legacy',installedVitest:'4.1.2'}]
+ ['unjs-defu-11ba02213d4b',{executionMode:'legacy',installedVitest:'4.1.2',installGrowthPolicy:'defu-original-lock-768mib'}],
+ ['unjs-defu-3942bfbbcaa7',{executionMode:'legacy',installedVitest:'4.1.2',installGrowthPolicy:'defu-original-lock-768mib'}]
 ]);
 const save=(file,value)=>fs.writeFileSync(file,JSON.stringify(value,null,2)+'\n',{flag:'wx',mode:0o600});
 const git=(root,...args)=>execFileSync('git',['-C',root,...args],{encoding:'utf8',timeout:15000,maxBuffer:2*1024**2}).trim();
@@ -37,13 +37,22 @@ export function campaignCorpusRelative(relative){
 
 export function validatePortableProfile(selection,profile){
  validateCandidates(selection);
- if(selection.commitmentSha256!==campaignSelection||!keys(profile,['schemaVersion','kind','reviewed','candidateId','selectionCommitmentSha256','fixRevision','parentRevision','packageManager','dependencySha256','installedVitest','executionMode','scope'])||profile.schemaVersion!==1||profile.kind!=='reviewed-original-upstream-campaign-profile'||profile.reviewed!==true||!reviewedNativeProfiles.has(profile.candidateId)||profile.selectionCommitmentSha256!==campaignSelection||typeof profile.scope!=='string'||!profile.scope.trim()||profile.scope.length>200)throw Error('Require a closed reviewed portable profile and original frozen selection');
+ if(selection.commitmentSha256!==campaignSelection||!keys(profile,['schemaVersion','kind','reviewed','candidateId','selectionCommitmentSha256','fixRevision','parentRevision','packageManager','dependencySha256','installedVitest','executionMode','scope',...(reviewedNativeProfiles.get(profile?.candidateId)?.installGrowthPolicy?['installGrowthPolicy']:[])])||profile.schemaVersion!==1||profile.kind!=='reviewed-original-upstream-campaign-profile'||profile.reviewed!==true||!reviewedNativeProfiles.has(profile.candidateId)||profile.selectionCommitmentSha256!==campaignSelection||typeof profile.scope!=='string'||!profile.scope.trim()||profile.scope.length>200)throw Error('Require a closed reviewed portable profile and original frozen selection');
  if(profile.executionMode!==reviewedNativeProfiles.get(profile.candidateId).executionMode)throw Error('Portable execution mode differs from reviewed candidate');
  if(profile.installedVitest!==reviewedNativeProfiles.get(profile.candidateId).installedVitest)throw Error('Portable native version differs from reviewed original lock');
+ if(profile.installGrowthPolicy!==reviewedNativeProfiles.get(profile.candidateId).installGrowthPolicy)throw Error('Portable installation growth policy differs from reviewed candidate');
  const candidate=selection.candidates.find(c=>c.id===profile.candidateId);
  if(!candidate||candidate.fixRevision!==profile.fixRevision||candidate.parentRevision!==profile.parentRevision||candidate.runtimeIdentity?.packageManager!==profile.packageManager||candidate.sourcePaths.length!==1||!candidate.maintainerOraclePaths.length||!keys(profile.dependencySha256,['package.json','pnpm-lock.yaml'])||!/^\d+\.\d+\.\d+$/.test(profile.installedVitest))throw Error('Portable candidate commit, manager or native profile mismatch');
  for(const file of ['package.json','pnpm-lock.yaml'])if(candidate.byteBindings.find(b=>b.kind==='dependency'&&b.path===file)?.sha256!==profile.dependencySha256[file])throw Error('Portable original manifest/lock mismatch');
  return candidate;
+}
+export function campaignLimitsForProfile(selection,profile){
+ validatePortableProfile(selection,profile);const limits=structuredClone(campaignLimits);
+ limits.phases.install.maxGrowthBytes=upstreamInstallGrowthBudget(profile.installGrowthPolicy).maxGrowthBytes;return frozen(limits);
+}
+export function campaignInstallOptions(plan){
+ if(JSON.stringify(plan.limits)!==JSON.stringify(campaignLimitsForProfile(readBoundedJson(plan.selectionPath,16*1024**2),plan.profile)))throw Error('Require unchanged reviewed campaign resource limits');
+ return {reserveBytes:plan.limits.minFreeBytes,timeoutMs:plan.limits.phases.install.timeoutMs,maxGrowthBytes:plan.limits.phases.install.maxGrowthBytes,growthPolicy:plan.profile.installGrowthPolicy||'default'};
 }
 export function campaignEnvironment(){
  // No ambient credentials, NODE_OPTIONS, arbitrary project env or personal Git configuration.
@@ -79,7 +88,7 @@ export function campaignPlan({selectionPath,profilePath,directory,relative}){
  if(!/^\.tddswarm\/public-campaigns\/[A-Za-z0-9_-]{1,64}$/.test(relative)||directory===repository||directory.startsWith(repository+path.sep)||fs.existsSync(directory))throw Error('Use a new private installation directory outside TestLore and .tddswarm/public-campaigns/ALIAS');
  if(!fs.statSync(path.dirname(directory)).isDirectory())throw Error('Private installation parent must already exist');
  if(fs.existsSync(path.join(repository,campaignCorpusRelative(relative))))throw Error('Comparative corpus output must be new');
- return {schemaVersion:1,kind:'original-upstream-campaign-plan',execute:false,candidateId:profile.candidateId,selectionPath,profilePath,profile,selectionCommitmentSha256:campaignSelection,directory,relative,limits:campaignLimits,binding:sourceBinding(selectionPath,profilePath),cachePolicy:{jitiFilesystem:false},automaticRetries:0};
+ return {schemaVersion:1,kind:'original-upstream-campaign-plan',execute:false,candidateId:profile.candidateId,selectionPath,profilePath,profile,selectionCommitmentSha256:campaignSelection,directory,relative,limits:campaignLimitsForProfile(selection,profile),binding:sourceBinding(selectionPath,profilePath),cachePolicy:{jitiFilesystem:false},automaticRetries:0};
 }
 function runtimeProfile(plan,installation){
  const project=path.join(plan.directory,'installation/project');
@@ -89,7 +98,7 @@ function runtimeProfile(plan,installation){
 }
 
 async function worker(phase,input){
- const plan=readBoundedJson(input,16*1024**2);if(plan.execute!==true||plan.kind!=='original-upstream-campaign-plan'||JSON.stringify(plan.limits)!==JSON.stringify(campaignLimits))throw Error('Worker needs an explicit bound execution plan');
+ const plan=readBoundedJson(input,16*1024**2);if(plan.execute!==true||plan.kind!=='original-upstream-campaign-plan'||JSON.stringify(plan.limits)!==JSON.stringify(campaignLimitsForProfile(readBoundedJson(plan.selectionPath,16*1024**2),plan.profile)))throw Error('Worker needs an explicit bound execution plan');
  assertBinding(plan.binding);const selection=readBoundedJson(plan.selectionPath,16*1024**2),candidate=validatePortableProfile(selection,plan.profile),privateRoot=plan.directory,out=path.join(repository,plan.relative),checkout=path.join(privateRoot,'checkout');let result;
  if(phase==='clone'){
   // Fetch only the supplied immutable revision and its first parent, without authentication.
@@ -102,7 +111,7 @@ async function worker(phase,input){
   // Original installer materializes the bounded fixed/oracle/parent blobs before local cloning.
   result={completed:true,fixRevision:candidate.fixRevision,parentRevision:candidate.parentRevision};
  }else if(phase==='install'){
-  result=await installUpstreamCandidate({selection,id:plan.candidateId,checkout,directory:path.join(privateRoot,'installation'),reserveBytes:campaignLimits.minFreeBytes,timeoutMs:campaignLimits.phases.install.timeoutMs,maxGrowthBytes:campaignLimits.phases.install.maxGrowthBytes});
+  result=await installUpstreamCandidate({selection,id:plan.candidateId,checkout,directory:path.join(privateRoot,'installation'),...campaignInstallOptions(plan)});
   if(result.status!=='completed')throw Error('Original upstream installation rejected; retain original receipt');
   save(path.join(out,'native-profile.json'),runtimeProfile(plan,result));
  }else if(phase==='preflight'){
@@ -134,7 +143,7 @@ async function worker(phase,input){
 
 /** Injectable phase executor supports source-only guard/accounting tests; the CLI always uses native execution. */
 export async function runCampaign(plan,{executePhase=boundedInstallProcess,availableBytes=freeBytes,now=()=>performance.now()}={}){
- if(plan.execute!==false||JSON.stringify(plan.limits)!==JSON.stringify(campaignLimits))throw Error('Require an unchanged dry-run campaign plan before explicit execution');
+ if(plan.execute!==false||JSON.stringify(plan.limits)!==JSON.stringify(campaignLimitsForProfile(readBoundedJson(plan.selectionPath,16*1024**2),plan.profile)))throw Error('Require an unchanged dry-run campaign plan before explicit execution');
  assertBinding(plan.binding);const output=path.join(repository,plan.relative);
  if(fs.existsSync(output)||fs.existsSync(plan.directory)||fs.existsSync(path.join(repository,campaignCorpusRelative(plan.relative))))throw Error('Campaign output/private directory must be new; interrupted phases cannot be retried');
  fs.mkdirSync(path.dirname(output),{recursive:true});fs.mkdirSync(output,{mode:0o700});fs.mkdirSync(path.join(output,'phases'));
@@ -142,7 +151,7 @@ export async function runCampaign(plan,{executePhase=boundedInstallProcess,avail
  try{
   if(availableBytes(path.dirname(plan.directory))<campaignLimits.minFreeBytes)throw Error('disk-reserve');
   fs.mkdirSync(plan.directory,{mode:0o700});
-  for(const [phase,limits]of Object.entries(campaignLimits.phases)){
+  for(const [phase,limits]of Object.entries(plan.limits.phases)){
    const elapsed=now()-start;if(elapsed>=campaignLimits.maxCampaignMs){failedPhase=phase;throw Error('campaign-deadline');}
    if(availableBytes(plan.directory)<campaignLimits.minFreeBytes){failedPhase=phase;throw Error('disk-reserve');}
    assertBinding(plan.binding);const phaseRoot=path.join(output,'phases',phase);fs.mkdirSync(phaseRoot);
