@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "sourceRevision": "1f12728e325f13527b63f4023376debcb9270f8c",
+  "archiveRecipe": "tracked-source-with-exact-gitHead",
+  "sourceManifestSha256": "85a172d2216b93ae1676656be7f583769be3b5519e87020c9a66d94d39afc625",
+  "packedManifestSha256": "43368d24804c5fc6cfdf59a9e04079d5f81121d7018bd5d41d94f4e504db99f2",
+  "archive": "testlore-0.1.0.tgz",
+  "archiveSha256": "4fa6b36c17aeae3bf1e56f6100ce1ad73d69d6e498f9deb82f8001c32569806a",
+  "npmIntegrity": "sha512-7FvbjMbWRZa0tgBwQCr5eOvKGDSsraxMB2+leVCuiMirbP4BKTMnRFGSyeM+OfT6JTp9rM8kzeChg7VIEfBUxw==",
+  "version": "0.1.0",
+  "node": "v24.21.0",
+  "qualified": true,
+  "proofSha256": "5a7f1e7b95d7ea00b7b9a255e86a145755d4292e800f04760b6403cb02b0a8f4",
+  "date": "2026-10-08T10:16:34.697Z",
+  "publisherVerified": false,
+  "limitations": [
+    "Exact local packed-artifact qualification; no registry credentials, OIDC publisher mapping, GitHub protected environment, or hosted CI run certified.",
+    "Source tests and hosted gates must also pass at this exact revision before publication."
+  ]
+}

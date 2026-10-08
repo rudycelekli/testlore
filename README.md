@@ -44,13 +44,13 @@ TestLore brings **test creation, intelligent routing and reviewed learning** int
 Give your repository its own quality engineer. One command sets up **shadow verification** and CI:
 
 ```sh
-npm exec --yes --package=github:rudycelekli/testlore -- testlore setup
+npm exec --yes --package=testlore@0.1.0 -- testlore setup
 ```
 
 Add `--verify` to configure the project and immediately record a **full shadow run** in the same command:
 
 ```sh
-npm exec --yes --package=github:rudycelekli/testlore -- testlore setup --verify --json
+npm exec --yes --package=testlore@0.1.0 -- testlore setup --verify --json
 ```
 
 This executes your configured native tests, preserves their failure exit, and saves an inspectable report. Ordinary setup only writes configuration. Run `testlore report` to inspect outcomes, proposed omissions and uncertainty.
@@ -58,10 +58,10 @@ This executes your configured native tests, preserves their failure exit, and sa
 Review and commit the setup files. To generate independently reviewed test improvements on a new isolated branch and open a validated PR, run from a clean, committed checkout:
 
 ```sh
-npm exec --yes --package=github:rudycelekli/testlore -- testlore improve
+npm exec --yes --package=testlore@0.1.0 -- testlore improve
 ```
 
-**Experimental alpha:** the implementation is merged into `main`. Pin a reviewed commit for reproducibility. Install from GitHub; an npm alpha release requires separate publisher setup and exact-artifact qualification. [Adoption and pilots →](docs/adoption.md)
+**Experimental alpha:** [`testlore@0.1.0`](https://www.npmjs.com/package/testlore/v/0.1.0) is available on npm. Registry bytes match the exact source-qualified archive; commands pin that version for reproducibility. [Release evidence →](docs/npm-release-0.1.0.md) [Adoption and pilots →](docs/adoption.md)
 
 Requires **Node 22.19+ and Git**. It creates your project’s quality-agent identity and local memory immediately. Existing `SPEC.md`, `REQUIREMENTS.md`, or README material can seed a proposed behavior contract on the branch. Commit `tddswarm.requirements.md` for explicit expectations; proposals without meaningful independent behavior must be rejected. Generation uses your configured worker or an installed, authenticated Codex CLI. Automatic PR creation uses your authenticated GitHub CLI. `--local` keeps the result for local review.
 
@@ -86,18 +86,18 @@ Failed validation retains the proposal and its evidence for inspection. Missing 
 Personalize your project agent:
 
 ```sh
-npm exec --yes --package=github:rudycelekli/testlore -- testlore agent --name "My project quality engineer" --json
+npm exec --yes --package=testlore@0.1.0 -- testlore agent --name "My project quality engineer" --json
 ```
 
 The agent runs when you invoke it or CI; its identity and history persist between runs. Customize `qualityAgent.name` and `qualityAgent.focus` in project configuration.
 
-`npm exec` uses a temporary package for that invocation. Before running any `npx --no-install testlore` commands below, including learning commands, install it locally with `npm install --save-dev github:rudycelekli/testlore`.
+`npm exec` uses a temporary package for that invocation. Before running any `npx --no-install testlore` commands below, including learning commands, install it locally with `npm install --save-dev testlore@0.1.0`.
 
 Want a useful report before configuring agents?
 
 ```sh
-npm exec --yes --package=github:rudycelekli/testlore -- testlore init
-npm install --save-dev github:rudycelekli/testlore
+npm exec --yes --package=testlore@0.1.0 -- testlore init
+npm install --save-dev testlore@0.1.0
 npx --no-install testlore doctor --json
 npx --no-install testlore audit --json
 npx --no-install testlore run --shadow --base HEAD
@@ -193,7 +193,7 @@ TestLore is a complementary coordination layer. Bring your specialist tools into
 Choose a setup in one command without first installing TestLore locally:
 
 ```sh
-npm exec --yes --package=github:rudycelekli/testlore -- testlore plugins --auto
+npm exec --yes --package=testlore@0.1.0 -- testlore plugins --auto
 ```
 
 Or inspect the choices and manage tools after a local install:
@@ -265,7 +265,7 @@ On **12 controlled changes across four Node fixtures**, TestLore caught all 63 o
 | **Actual workspace and browser challenges** | Workspace contract: 24 → 6 files, named failure preserved twice. Real static frontend: reviewed CSS hypothesis selects 1/2; shared server uncertainty retains 2/2. | [Expansion and limitations](docs/qualification-20261007-expansion.md) |
 | **Independent public regressions** | **12 unique changes / 5 repositories combined**, including **4 original upstream-lock changes / 3 repositories**. Fresh defu environments retain their historical faults twice and select 1/2 files, while remaining slower than native selection and full runs. Earlier negatives stay unqualified. The 30/5 and 100/10 targets remain open. | [Defu original-lock receipt](benchmarks/public-corpus/upstream-defu-hosted-qualified-20261008.json) · [Denominators and negatives](docs/public-regression-corpus.md) |
 | **Fresh paired learning** | Four fresh maintainer specifications, 48 native role calls: no-memory completed 8/8 and detected 6/8 faults; memory completed 7/8 and detected 6/8. No demonstrated learning gain. | [Aggregate, costs and retained rejection](benchmarks/learning/fresh-maintainer-20261007/README.md) |
-| **Real agent repair loops** | Separate native Codex and Claude contract-only trials completed seven ordered MCP calls and a canonical historical source repair against eight preserved maintainer assertions. Earlier Claude rejections remain recorded. This is narrow CommonJS/Node evidence; broader repairs and npm publication remain open. | [Maintainer repair scope](docs/agent-repair-qualification.md) · [Earlier installed-host evidence](docs/qualification-20261007-expansion.md) |
+| **Real agent repair loops** | Separate native Codex and Claude contract-only trials completed seven ordered MCP calls and a canonical historical source repair against eight preserved maintainer assertions. Earlier Claude rejections remain recorded. This is narrow CommonJS/Node evidence; broader repairs remain open; npm distribution is recorded separately. | [Maintainer repair scope](docs/agent-repair-qualification.md) · [Earlier installed-host evidence](docs/qualification-20261007-expansion.md) |
 | **Earlier host inspection** | Actual Codex readonly calls; execution blocked by inspection policy. Claude authentication failed before tool calls. This earlier receipt establishes no repair qualification. | [Original aggregate](benchmarks/host-native-aggregate.json) · [Procedure](docs/mcp.md) |
 | **Packed installation** | Production-only install, native shadow fault detection, runtime capture, and a fully tested improvement branch. | `node scripts/packed-proof.js` |
 
