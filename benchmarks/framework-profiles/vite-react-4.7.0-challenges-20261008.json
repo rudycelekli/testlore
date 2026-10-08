@@ -1,0 +1,1822 @@
+{
+  "schemaVersion": 1,
+  "kind": "constructed-fault-original-maintainer-assertions",
+  "testloreSourceRevision": "3a62dd6e6dd7e9a83bf6395d902c1cb4892155a3",
+  "upstreamRevision": "80417060f7bc239d5100e1b47c819e8364c7d551",
+  "status": "scoped-constructed-challenges-assessed",
+  "seedKind": "published-legacy-baselines-not-a-fresh-portable-replay",
+  "seedLimitations": [
+    "Published original macOS arm64 receipts reused; fresh equal-concurrency baselines still rerun.",
+    "No new installation, whole dependency-tree digest or portable baseline replay completion is claimed."
+  ],
+  "completeApplicationProfile": false,
+  "automaticOmissionAuthority": false,
+  "genuineHistoricalFaults": false,
+  "nativeCalls": 17,
+  "configurationOverrides": {
+    "maxWorkers": 1,
+    "fullAndSubsetIdentical": true,
+    "originalConcurrencyUnchanged": false
+  },
+  "resourceLimits": {
+    "maximumNativeCalls": 18,
+    "maximumCampaignMs": 600000,
+    "maximumAllocationGrowthBytes": 419430400,
+    "minimumFreeBytes": 2415919104
+  },
+  "toolIdentities": [
+    {
+      "file": "vite-react-profile-challenges.js",
+      "sha256": "0e31f39d98a78977b4c9f6f2774d1cd68c963f912389b6786f8ed699a61a30c7"
+    },
+    {
+      "file": "vite-react-native-profile.js",
+      "sha256": "eaa63e84733f7b132a009471dfbacc4613ce582d04ffcedef585a1b64361ffb8"
+    },
+    {
+      "file": "vite-react-fixture-proposals.js",
+      "sha256": "f8681adf35ce739f528fd25a47e82b9043dfc24bf1bcb9382e3fb62da8424c3c"
+    },
+    {
+      "file": "vite-react-derived-artifacts.js",
+      "sha256": "c642c08d537ff9925439a97afc6bfa340a1e8bcfdd0e9cf1a6ed78c36e60dd0a"
+    }
+  ],
+  "baselines": {
+    "serve": {
+      "label": "baseline-serve",
+      "files": [
+        "playground/class-components/__tests__/class-components.spec.ts",
+        "playground/class-components/__tests__/oxc/class-components.spec.ts",
+        "playground/compiler-react-18/__tests__/compiler-react-18.spec.ts",
+        "playground/compiler/__tests__/compiler.spec.ts",
+        "playground/hmr-false/__tests__/hmr-false.spec.ts",
+        "playground/hmr-false/__tests__/oxc/hmr-false.spec.ts",
+        "playground/hook-with-jsx/__tests__/hook-with-jsx.spec.ts",
+        "playground/hook-with-jsx/__tests__/oxc/hook-with-jsx.spec.ts",
+        "playground/mdx/__tests__/mdx.spec.ts",
+        "playground/mdx/__tests__/oxc/mdx.spec.ts",
+        "playground/react-classic/__tests__/react.spec.ts",
+        "playground/react-emotion/__tests__/react.spec.ts",
+        "playground/react-env/__tests__/oxc/react.spec.ts",
+        "playground/react-env/__tests__/react.spec.ts",
+        "playground/react-sourcemap/__tests__/oxc/react-sourcemap.spec.ts",
+        "playground/react-sourcemap/__tests__/react-sourcemap.spec.ts",
+        "playground/react/__tests__/oxc/react.spec.ts",
+        "playground/react/__tests__/react.spec.ts",
+        "playground/ssr-react/__tests__/oxc/ssr-react.spec.ts",
+        "playground/ssr-react/__tests__/ssr-react.spec.ts"
+      ],
+      "counts": {
+        "passed": 62,
+        "failed": 0,
+        "pending": 2,
+        "total": 64
+      },
+      "failed": [],
+      "caseInventorySha256": "81deb1cae283006f11a25098838677a995664761317744d3f09417c4fb2e3097",
+      "nativeReportSha256": "bbbb4aa3e651daa67d69077be97dcf10d586ddd68c31079f23e94ce5e86c3f7b",
+      "phaseElapsedMs": 50081.540583999995,
+      "exitCode": 0
+    },
+    "unit": {
+      "label": "baseline-unit",
+      "files": [
+        "packages/plugin-react/tests/rolldown.test.ts"
+      ],
+      "counts": {
+        "passed": 2,
+        "failed": 0,
+        "pending": 0,
+        "total": 2
+      },
+      "failed": [],
+      "caseInventorySha256": "13c14f3754d253db723fb948075896c11e0cd9029c2a4f2361601c30c3c39b6c",
+      "nativeReportSha256": "9a762fe0c3e23b4ad551ef1eb15576f2833b51aea89766b204100f8d426cd0d5",
+      "phaseElapsedMs": 4155.242749999998,
+      "exitCode": 0
+    }
+  },
+  "challenges": [
+    {
+      "name": "source",
+      "kind": "constructed-fault",
+      "qualification": "single-constructed-fault-only",
+      "file": "playground/compiler/src/App.tsx",
+      "selectedFiles": [
+        "playground/compiler/__tests__/compiler.spec.ts"
+      ],
+      "full": {
+        "label": "source-full",
+        "files": [
+          "playground/class-components/__tests__/class-components.spec.ts",
+          "playground/class-components/__tests__/oxc/class-components.spec.ts",
+          "playground/compiler-react-18/__tests__/compiler-react-18.spec.ts",
+          "playground/compiler/__tests__/compiler.spec.ts",
+          "playground/hmr-false/__tests__/hmr-false.spec.ts",
+          "playground/hmr-false/__tests__/oxc/hmr-false.spec.ts",
+          "playground/hook-with-jsx/__tests__/hook-with-jsx.spec.ts",
+          "playground/hook-with-jsx/__tests__/oxc/hook-with-jsx.spec.ts",
+          "playground/mdx/__tests__/mdx.spec.ts",
+          "playground/mdx/__tests__/oxc/mdx.spec.ts",
+          "playground/react-classic/__tests__/react.spec.ts",
+          "playground/react-emotion/__tests__/react.spec.ts",
+          "playground/react-env/__tests__/oxc/react.spec.ts",
+          "playground/react-env/__tests__/react.spec.ts",
+          "playground/react-sourcemap/__tests__/oxc/react-sourcemap.spec.ts",
+          "playground/react-sourcemap/__tests__/react-sourcemap.spec.ts",
+          "playground/react/__tests__/oxc/react.spec.ts",
+          "playground/react/__tests__/react.spec.ts",
+          "playground/ssr-react/__tests__/oxc/ssr-react.spec.ts",
+          "playground/ssr-react/__tests__/ssr-react.spec.ts"
+        ],
+        "counts": {
+          "passed": 60,
+          "failed": 2,
+          "pending": 2,
+          "total": 64
+        },
+        "failed": [
+          {
+            "file": "playground/compiler/__tests__/compiler.spec.ts",
+            "name": "should render",
+            "status": "failed"
+          },
+          {
+            "file": "playground/compiler/__tests__/compiler.spec.ts",
+            "name": "should hmr",
+            "status": "failed"
+          }
+        ],
+        "caseInventorySha256": "3e7acc303f740143cf9ff7eeb30a4fa8dffd93e04dae09d115559f3656b77329",
+        "nativeReportSha256": "fdf973d4a8da4042db7bf61d0eef69ff11d7be18041dfa14b7a1b506effc7e5b",
+        "phaseElapsedMs": 55496.825292,
+        "exitCode": 1
+      },
+      "subset": {
+        "label": "source-subset",
+        "files": [
+          "playground/compiler/__tests__/compiler.spec.ts"
+        ],
+        "counts": {
+          "passed": 0,
+          "failed": 2,
+          "pending": 0,
+          "total": 2
+        },
+        "failed": [
+          {
+            "file": "playground/compiler/__tests__/compiler.spec.ts",
+            "name": "should render",
+            "status": "failed"
+          },
+          {
+            "file": "playground/compiler/__tests__/compiler.spec.ts",
+            "name": "should hmr",
+            "status": "failed"
+          }
+        ],
+        "caseInventorySha256": "03209859e6471f0cb573105cd78092ca0ff36dbaab60759eb91b0e1f5bbebd19",
+        "nativeReportSha256": "fda9dbd32c7b8c9e1669550f4444c7bf3eac9628476652ff7d00302532c04cb7",
+        "phaseElapsedMs": 21561.71979100001,
+        "exitCode": 1
+      },
+      "pair": {
+        "qualified": true,
+        "reasons": [],
+        "failurePreserved": true,
+        "detectedFailures": [
+          {
+            "file": "playground/compiler/__tests__/compiler.spec.ts",
+            "name": "should render"
+          },
+          {
+            "file": "playground/compiler/__tests__/compiler.spec.ts",
+            "name": "should hmr"
+          }
+        ],
+        "automaticOmissionAuthority": false
+      },
+      "omittedFiles": [
+        {
+          "file": "playground/class-components/__tests__/class-components.spec.ts",
+          "reason": "Pinned harness places this test in a different fixture/workspace relation; only this exact fixed fault is challenged. Unknown dependencies remain full fallback."
+        },
+        {
+          "file": "playground/class-components/__tests__/oxc/class-components.spec.ts",
+          "reason": "Pinned harness places this test in a different fixture/workspace relation; only this exact fixed fault is challenged. Unknown dependencies remain full fallback."
+        },
+        {
+          "file": "playground/compiler-react-18/__tests__/compiler-react-18.spec.ts",
+          "reason": "Pinned harness places this test in a different fixture/workspace relation; only this exact fixed fault is challenged. Unknown dependencies remain full fallback."
+        },
+        {
+          "file": "playground/hmr-false/__tests__/hmr-false.spec.ts",
+          "reason": "Pinned harness places this test in a different fixture/workspace relation; only this exact fixed fault is challenged. Unknown dependencies remain full fallback."
+        },
+        {
+          "file": "playground/hmr-false/__tests__/oxc/hmr-false.spec.ts",
+          "reason": "Pinned harness places this test in a different fixture/workspace relation; only this exact fixed fault is challenged. Unknown dependencies remain full fallback."
+        },
+        {
+          "file": "playground/hook-with-jsx/__tests__/hook-with-jsx.spec.ts",
+          "reason": "Pinned harness places this test in a different fixture/workspace relation; only this exact fixed fault is challenged. Unknown dependencies remain full fallback."
+        },
+        {
+          "file": "playground/hook-with-jsx/__tests__/oxc/hook-with-jsx.spec.ts",
+          "reason": "Pinned harness places this test in a different fixture/workspace relation; only this exact fixed fault is challenged. Unknown dependencies remain full fallback."
+        },
+        {
+          "file": "playground/mdx/__tests__/mdx.spec.ts",
+          "reason": "Pinned harness places this test in a different fixture/workspace relation; only this exact fixed fault is challenged. Unknown dependencies remain full fallback."
+        },
+        {
+          "file": "playground/mdx/__tests__/oxc/mdx.spec.ts",
+          "reason": "Pinned harness places this test in a different fixture/workspace relation; only this exact fixed fault is challenged. Unknown dependencies remain full fallback."
+        },
+        {
+          "file": "playground/react-classic/__tests__/react.spec.ts",
+          "reason": "Pinned harness places this test in a different fixture/workspace relation; only this exact fixed fault is challenged. Unknown dependencies remain full fallback."
+        },
+        {
+          "file": "playground/react-emotion/__tests__/react.spec.ts",
+          "reason": "Pinned harness places this test in a different fixture/workspace relation; only this exact fixed fault is challenged. Unknown dependencies remain full fallback."
+        },
+        {
+          "file": "playground/react-env/__tests__/oxc/react.spec.ts",
+          "reason": "Pinned harness places this test in a different fixture/workspace relation; only this exact fixed fault is challenged. Unknown dependencies remain full fallback."
+        },
+        {
+          "file": "playground/react-env/__tests__/react.spec.ts",
+          "reason": "Pinned harness places this test in a different fixture/workspace relation; only this exact fixed fault is challenged. Unknown dependencies remain full fallback."
+        },
+        {
+          "file": "playground/react-sourcemap/__tests__/oxc/react-sourcemap.spec.ts",
+          "reason": "Pinned harness places this test in a different fixture/workspace relation; only this exact fixed fault is challenged. Unknown dependencies remain full fallback."
+        },
+        {
+          "file": "playground/react-sourcemap/__tests__/react-sourcemap.spec.ts",
+          "reason": "Pinned harness places this test in a different fixture/workspace relation; only this exact fixed fault is challenged. Unknown dependencies remain full fallback."
+        },
+        {
+          "file": "playground/react/__tests__/oxc/react.spec.ts",
+          "reason": "Pinned harness places this test in a different fixture/workspace relation; only this exact fixed fault is challenged. Unknown dependencies remain full fallback."
+        },
+        {
+          "file": "playground/react/__tests__/react.spec.ts",
+          "reason": "Pinned harness places this test in a different fixture/workspace relation; only this exact fixed fault is challenged. Unknown dependencies remain full fallback."
+        },
+        {
+          "file": "playground/ssr-react/__tests__/oxc/ssr-react.spec.ts",
+          "reason": "Pinned harness places this test in a different fixture/workspace relation; only this exact fixed fault is challenged. Unknown dependencies remain full fallback."
+        },
+        {
+          "file": "playground/ssr-react/__tests__/ssr-react.spec.ts",
+          "reason": "Pinned harness places this test in a different fixture/workspace relation; only this exact fixed fault is challenged. Unknown dependencies remain full fallback."
+        }
+      ],
+      "assetDetectionQualified": false
+    },
+    {
+      "name": "style",
+      "kind": "constructed-fault",
+      "qualification": "single-constructed-fault-only",
+      "file": "playground/react-emotion/Counter.jsx",
+      "selectedFiles": [
+        "playground/react-emotion/__tests__/react.spec.ts"
+      ],
+      "full": {
+        "label": "style-full",
+        "files": [
+          "playground/class-components/__tests__/class-components.spec.ts",
+          "playground/class-components/__tests__/oxc/class-components.spec.ts",
+          "playground/compiler-react-18/__tests__/compiler-react-18.spec.ts",
+          "playground/compiler/__tests__/compiler.spec.ts",
+          "playground/hmr-false/__tests__/hmr-false.spec.ts",
+          "playground/hmr-false/__tests__/oxc/hmr-false.spec.ts",
+          "playground/hook-with-jsx/__tests__/hook-with-jsx.spec.ts",
+          "playground/hook-with-jsx/__tests__/oxc/hook-with-jsx.spec.ts",
+          "playground/mdx/__tests__/mdx.spec.ts",
+          "playground/mdx/__tests__/oxc/mdx.spec.ts",
+          "playground/react-classic/__tests__/react.spec.ts",
+          "playground/react-emotion/__tests__/react.spec.ts",
+          "playground/react-env/__tests__/oxc/react.spec.ts",
+          "playground/react-env/__tests__/react.spec.ts",
+          "playground/react-sourcemap/__tests__/oxc/react-sourcemap.spec.ts",
+          "playground/react-sourcemap/__tests__/react-sourcemap.spec.ts",
+          "playground/react/__tests__/oxc/react.spec.ts",
+          "playground/react/__tests__/react.spec.ts",
+          "playground/ssr-react/__tests__/oxc/ssr-react.spec.ts",
+          "playground/ssr-react/__tests__/ssr-react.spec.ts"
+        ],
+        "counts": {
+          "passed": 61,
+          "failed": 1,
+          "pending": 2,
+          "total": 64
+        },
+        "failed": [
+          {
+            "file": "playground/react-emotion/__tests__/react.spec.ts",
+            "name": "should update button style",
+            "status": "failed"
+          }
+        ],
+        "caseInventorySha256": "04ce5690467fc3d116472aeb64e90539f6f6dc2408ebb17a37788765297ed9bc",
+        "nativeReportSha256": "4dfb8eacdfaed99db058b97a5306f787f46c40f6d4deb70478cfcd89e297ab27",
+        "phaseElapsedMs": 32269.190459000005,
+        "exitCode": 1
+      },
+      "subset": {
+        "label": "style-subset",
+        "files": [
+          "playground/react-emotion/__tests__/react.spec.ts"
+        ],
+        "counts": {
+          "passed": 3,
+          "failed": 1,
+          "pending": 0,
+          "total": 4
+        },
+        "failed": [
+          {
+            "file": "playground/react-emotion/__tests__/react.spec.ts",
+            "name": "should update button style",
+            "status": "failed"
+          }
+        ],
+        "caseInventorySha256": "5d5d9818edde370f842e82fb9754849021b84be1f63ce4583b03ec40f5d237be",
+        "nativeReportSha256": "c3208a9ee9e8583c66cd350a4d2ef4bca8a28bfeb9740224135b90fe39c4416e",
+        "phaseElapsedMs": 3616.546708000009,
+        "exitCode": 1
+      },
+      "pair": {
+        "qualified": true,
+        "reasons": [],
+        "failurePreserved": true,
+        "detectedFailures": [
+          {
+            "file": "playground/react-emotion/__tests__/react.spec.ts",
+            "name": "should update button style"
+          }
+        ],
+        "automaticOmissionAuthority": false
+      },
+      "omittedFiles": [
+        {
+          "file": "playground/class-components/__tests__/class-components.spec.ts",
+          "reason": "Pinned harness places this test in a different fixture/workspace relation; only this exact fixed fault is challenged. Unknown dependencies remain full fallback."
+        },
+        {
+          "file": "playground/class-components/__tests__/oxc/class-components.spec.ts",
+          "reason": "Pinned harness places this test in a different fixture/workspace relation; only this exact fixed fault is challenged. Unknown dependencies remain full fallback."
+        },
+        {
+          "file": "playground/compiler-react-18/__tests__/compiler-react-18.spec.ts",
+          "reason": "Pinned harness places this test in a different fixture/workspace relation; only this exact fixed fault is challenged. Unknown dependencies remain full fallback."
+        },
+        {
+          "file": "playground/compiler/__tests__/compiler.spec.ts",
+          "reason": "Pinned harness places this test in a different fixture/workspace relation; only this exact fixed fault is challenged. Unknown dependencies remain full fallback."
+        },
+        {
+          "file": "playground/hmr-false/__tests__/hmr-false.spec.ts",
+          "reason": "Pinned harness places this test in a different fixture/workspace relation; only this exact fixed fault is challenged. Unknown dependencies remain full fallback."
+        },
+        {
+          "file": "playground/hmr-false/__tests__/oxc/hmr-false.spec.ts",
+          "reason": "Pinned harness places this test in a different fixture/workspace relation; only this exact fixed fault is challenged. Unknown dependencies remain full fallback."
+        },
+        {
+          "file": "playground/hook-with-jsx/__tests__/hook-with-jsx.spec.ts",
+          "reason": "Pinned harness places this test in a different fixture/workspace relation; only this exact fixed fault is challenged. Unknown dependencies remain full fallback."
+        },
+        {
+          "file": "playground/hook-with-jsx/__tests__/oxc/hook-with-jsx.spec.ts",
+          "reason": "Pinned harness places this test in a different fixture/workspace relation; only this exact fixed fault is challenged. Unknown dependencies remain full fallback."
+        },
+        {
+          "file": "playground/mdx/__tests__/mdx.spec.ts",
+          "reason": "Pinned harness places this test in a different fixture/workspace relation; only this exact fixed fault is challenged. Unknown dependencies remain full fallback."
+        },
+        {
+          "file": "playground/mdx/__tests__/oxc/mdx.spec.ts",
+          "reason": "Pinned harness places this test in a different fixture/workspace relation; only this exact fixed fault is challenged. Unknown dependencies remain full fallback."
+        },
+        {
+          "file": "playground/react-classic/__tests__/react.spec.ts",
+          "reason": "Pinned harness places this test in a different fixture/workspace relation; only this exact fixed fault is challenged. Unknown dependencies remain full fallback."
+        },
+        {
+          "file": "playground/react-env/__tests__/oxc/react.spec.ts",
+          "reason": "Pinned harness places this test in a different fixture/workspace relation; only this exact fixed fault is challenged. Unknown dependencies remain full fallback."
+        },
+        {
+          "file": "playground/react-env/__tests__/react.spec.ts",
+          "reason": "Pinned harness places this test in a different fixture/workspace relation; only this exact fixed fault is challenged. Unknown dependencies remain full fallback."
+        },
+        {
+          "file": "playground/react-sourcemap/__tests__/oxc/react-sourcemap.spec.ts",
+          "reason": "Pinned harness places this test in a different fixture/workspace relation; only this exact fixed fault is challenged. Unknown dependencies remain full fallback."
+        },
+        {
+          "file": "playground/react-sourcemap/__tests__/react-sourcemap.spec.ts",
+          "reason": "Pinned harness places this test in a different fixture/workspace relation; only this exact fixed fault is challenged. Unknown dependencies remain full fallback."
+        },
+        {
+          "file": "playground/react/__tests__/oxc/react.spec.ts",
+          "reason": "Pinned harness places this test in a different fixture/workspace relation; only this exact fixed fault is challenged. Unknown dependencies remain full fallback."
+        },
+        {
+          "file": "playground/react/__tests__/react.spec.ts",
+          "reason": "Pinned harness places this test in a different fixture/workspace relation; only this exact fixed fault is challenged. Unknown dependencies remain full fallback."
+        },
+        {
+          "file": "playground/ssr-react/__tests__/oxc/ssr-react.spec.ts",
+          "reason": "Pinned harness places this test in a different fixture/workspace relation; only this exact fixed fault is challenged. Unknown dependencies remain full fallback."
+        },
+        {
+          "file": "playground/ssr-react/__tests__/ssr-react.spec.ts",
+          "reason": "Pinned harness places this test in a different fixture/workspace relation; only this exact fixed fault is challenged. Unknown dependencies remain full fallback."
+        }
+      ],
+      "assetDetectionQualified": false
+    },
+    {
+      "name": "route",
+      "kind": "constructed-fault",
+      "qualification": "single-constructed-fault-only",
+      "file": "playground/ssr-react/src/pages/About.jsx",
+      "selectedFiles": [
+        "playground/ssr-react/__tests__/oxc/ssr-react.spec.ts",
+        "playground/ssr-react/__tests__/ssr-react.spec.ts"
+      ],
+      "full": {
+        "label": "route-full",
+        "files": [
+          "playground/class-components/__tests__/class-components.spec.ts",
+          "playground/class-components/__tests__/oxc/class-components.spec.ts",
+          "playground/compiler-react-18/__tests__/compiler-react-18.spec.ts",
+          "playground/compiler/__tests__/compiler.spec.ts",
+          "playground/hmr-false/__tests__/hmr-false.spec.ts",
+          "playground/hmr-false/__tests__/oxc/hmr-false.spec.ts",
+          "playground/hook-with-jsx/__tests__/hook-with-jsx.spec.ts",
+          "playground/hook-with-jsx/__tests__/oxc/hook-with-jsx.spec.ts",
+          "playground/mdx/__tests__/mdx.spec.ts",
+          "playground/mdx/__tests__/oxc/mdx.spec.ts",
+          "playground/react-classic/__tests__/react.spec.ts",
+          "playground/react-emotion/__tests__/react.spec.ts",
+          "playground/react-env/__tests__/oxc/react.spec.ts",
+          "playground/react-env/__tests__/react.spec.ts",
+          "playground/react-sourcemap/__tests__/oxc/react-sourcemap.spec.ts",
+          "playground/react-sourcemap/__tests__/react-sourcemap.spec.ts",
+          "playground/react/__tests__/oxc/react.spec.ts",
+          "playground/react/__tests__/react.spec.ts",
+          "playground/ssr-react/__tests__/oxc/ssr-react.spec.ts",
+          "playground/ssr-react/__tests__/ssr-react.spec.ts"
+        ],
+        "counts": {
+          "passed": 58,
+          "failed": 4,
+          "pending": 2,
+          "total": 64
+        },
+        "failed": [
+          {
+            "file": "playground/ssr-react/__tests__/ssr-react.spec.ts",
+            "name": "/about",
+            "status": "failed"
+          },
+          {
+            "file": "playground/ssr-react/__tests__/ssr-react.spec.ts",
+            "name": "client navigation",
+            "status": "failed"
+          },
+          {
+            "file": "playground/ssr-react/__tests__/oxc/ssr-react.spec.ts",
+            "name": "/about",
+            "status": "failed"
+          },
+          {
+            "file": "playground/ssr-react/__tests__/oxc/ssr-react.spec.ts",
+            "name": "client navigation",
+            "status": "failed"
+          }
+        ],
+        "caseInventorySha256": "930b6f9b1c4b92181074fd837e3949c0e321ebc604c544f531296878539e20b6",
+        "nativeReportSha256": "6132659c9235434733748b8c059081b94da3450d6b9d697af5dc4701342b771d",
+        "phaseElapsedMs": 49745.90029199998,
+        "exitCode": 1
+      },
+      "subset": {
+        "label": "route-subset",
+        "files": [
+          "playground/ssr-react/__tests__/oxc/ssr-react.spec.ts",
+          "playground/ssr-react/__tests__/ssr-react.spec.ts"
+        ],
+        "counts": {
+          "passed": 6,
+          "failed": 4,
+          "pending": 0,
+          "total": 10
+        },
+        "failed": [
+          {
+            "file": "playground/ssr-react/__tests__/ssr-react.spec.ts",
+            "name": "/about",
+            "status": "failed"
+          },
+          {
+            "file": "playground/ssr-react/__tests__/ssr-react.spec.ts",
+            "name": "client navigation",
+            "status": "failed"
+          },
+          {
+            "file": "playground/ssr-react/__tests__/oxc/ssr-react.spec.ts",
+            "name": "/about",
+            "status": "failed"
+          },
+          {
+            "file": "playground/ssr-react/__tests__/oxc/ssr-react.spec.ts",
+            "name": "client navigation",
+            "status": "failed"
+          }
+        ],
+        "caseInventorySha256": "6376bb7d9a4d359f8fbfaede22f026110c076e2fd025782076d690f7a05b1ca3",
+        "nativeReportSha256": "b06338684f918b196671d02f7cf2fb1d2efb8233aa95abfcd077d3c0705cc663",
+        "phaseElapsedMs": 24548.055834,
+        "exitCode": 1
+      },
+      "pair": {
+        "qualified": true,
+        "reasons": [],
+        "failurePreserved": true,
+        "detectedFailures": [
+          {
+            "file": "playground/ssr-react/__tests__/ssr-react.spec.ts",
+            "name": "/about"
+          },
+          {
+            "file": "playground/ssr-react/__tests__/ssr-react.spec.ts",
+            "name": "client navigation"
+          },
+          {
+            "file": "playground/ssr-react/__tests__/oxc/ssr-react.spec.ts",
+            "name": "/about"
+          },
+          {
+            "file": "playground/ssr-react/__tests__/oxc/ssr-react.spec.ts",
+            "name": "client navigation"
+          }
+        ],
+        "automaticOmissionAuthority": false
+      },
+      "omittedFiles": [
+        {
+          "file": "playground/class-components/__tests__/class-components.spec.ts",
+          "reason": "Pinned harness places this test in a different fixture/workspace relation; only this exact fixed fault is challenged. Unknown dependencies remain full fallback."
+        },
+        {
+          "file": "playground/class-components/__tests__/oxc/class-components.spec.ts",
+          "reason": "Pinned harness places this test in a different fixture/workspace relation; only this exact fixed fault is challenged. Unknown dependencies remain full fallback."
+        },
+        {
+          "file": "playground/compiler-react-18/__tests__/compiler-react-18.spec.ts",
+          "reason": "Pinned harness places this test in a different fixture/workspace relation; only this exact fixed fault is challenged. Unknown dependencies remain full fallback."
+        },
+        {
+          "file": "playground/compiler/__tests__/compiler.spec.ts",
+          "reason": "Pinned harness places this test in a different fixture/workspace relation; only this exact fixed fault is challenged. Unknown dependencies remain full fallback."
+        },
+        {
+          "file": "playground/hmr-false/__tests__/hmr-false.spec.ts",
+          "reason": "Pinned harness places this test in a different fixture/workspace relation; only this exact fixed fault is challenged. Unknown dependencies remain full fallback."
+        },
+        {
+          "file": "playground/hmr-false/__tests__/oxc/hmr-false.spec.ts",
+          "reason": "Pinned harness places this test in a different fixture/workspace relation; only this exact fixed fault is challenged. Unknown dependencies remain full fallback."
+        },
+        {
+          "file": "playground/hook-with-jsx/__tests__/hook-with-jsx.spec.ts",
+          "reason": "Pinned harness places this test in a different fixture/workspace relation; only this exact fixed fault is challenged. Unknown dependencies remain full fallback."
+        },
+        {
+          "file": "playground/hook-with-jsx/__tests__/oxc/hook-with-jsx.spec.ts",
+          "reason": "Pinned harness places this test in a different fixture/workspace relation; only this exact fixed fault is challenged. Unknown dependencies remain full fallback."
+        },
+        {
+          "file": "playground/mdx/__tests__/mdx.spec.ts",
+          "reason": "Pinned harness places this test in a different fixture/workspace relation; only this exact fixed fault is challenged. Unknown dependencies remain full fallback."
+        },
+        {
+          "file": "playground/mdx/__tests__/oxc/mdx.spec.ts",
+          "reason": "Pinned harness places this test in a different fixture/workspace relation; only this exact fixed fault is challenged. Unknown dependencies remain full fallback."
+        },
+        {
+          "file": "playground/react-classic/__tests__/react.spec.ts",
+          "reason": "Pinned harness places this test in a different fixture/workspace relation; only this exact fixed fault is challenged. Unknown dependencies remain full fallback."
+        },
+        {
+          "file": "playground/react-emotion/__tests__/react.spec.ts",
+          "reason": "Pinned harness places this test in a different fixture/workspace relation; only this exact fixed fault is challenged. Unknown dependencies remain full fallback."
+        },
+        {
+          "file": "playground/react-env/__tests__/oxc/react.spec.ts",
+          "reason": "Pinned harness places this test in a different fixture/workspace relation; only this exact fixed fault is challenged. Unknown dependencies remain full fallback."
+        },
+        {
+          "file": "playground/react-env/__tests__/react.spec.ts",
+          "reason": "Pinned harness places this test in a different fixture/workspace relation; only this exact fixed fault is challenged. Unknown dependencies remain full fallback."
+        },
+        {
+          "file": "playground/react-sourcemap/__tests__/oxc/react-sourcemap.spec.ts",
+          "reason": "Pinned harness places this test in a different fixture/workspace relation; only this exact fixed fault is challenged. Unknown dependencies remain full fallback."
+        },
+        {
+          "file": "playground/react-sourcemap/__tests__/react-sourcemap.spec.ts",
+          "reason": "Pinned harness places this test in a different fixture/workspace relation; only this exact fixed fault is challenged. Unknown dependencies remain full fallback."
+        },
+        {
+          "file": "playground/react/__tests__/oxc/react.spec.ts",
+          "reason": "Pinned harness places this test in a different fixture/workspace relation; only this exact fixed fault is challenged. Unknown dependencies remain full fallback."
+        },
+        {
+          "file": "playground/react/__tests__/react.spec.ts",
+          "reason": "Pinned harness places this test in a different fixture/workspace relation; only this exact fixed fault is challenged. Unknown dependencies remain full fallback."
+        }
+      ],
+      "assetDetectionQualified": false
+    },
+    {
+      "name": "server",
+      "kind": "constructed-fault",
+      "qualification": "single-constructed-fault-only",
+      "file": "playground/ssr-react/vite.config.js",
+      "selectedFiles": [
+        "playground/ssr-react/__tests__/oxc/ssr-react.spec.ts",
+        "playground/ssr-react/__tests__/ssr-react.spec.ts"
+      ],
+      "full": {
+        "label": "server-full",
+        "files": [
+          "playground/class-components/__tests__/class-components.spec.ts",
+          "playground/class-components/__tests__/oxc/class-components.spec.ts",
+          "playground/compiler-react-18/__tests__/compiler-react-18.spec.ts",
+          "playground/compiler/__tests__/compiler.spec.ts",
+          "playground/hmr-false/__tests__/hmr-false.spec.ts",
+          "playground/hmr-false/__tests__/oxc/hmr-false.spec.ts",
+          "playground/hook-with-jsx/__tests__/hook-with-jsx.spec.ts",
+          "playground/hook-with-jsx/__tests__/oxc/hook-with-jsx.spec.ts",
+          "playground/mdx/__tests__/mdx.spec.ts",
+          "playground/mdx/__tests__/oxc/mdx.spec.ts",
+          "playground/react-classic/__tests__/react.spec.ts",
+          "playground/react-emotion/__tests__/react.spec.ts",
+          "playground/react-env/__tests__/oxc/react.spec.ts",
+          "playground/react-env/__tests__/react.spec.ts",
+          "playground/react-sourcemap/__tests__/oxc/react-sourcemap.spec.ts",
+          "playground/react-sourcemap/__tests__/react-sourcemap.spec.ts",
+          "playground/react/__tests__/oxc/react.spec.ts",
+          "playground/react/__tests__/react.spec.ts",
+          "playground/ssr-react/__tests__/oxc/ssr-react.spec.ts",
+          "playground/ssr-react/__tests__/ssr-react.spec.ts"
+        ],
+        "counts": {
+          "passed": 60,
+          "failed": 2,
+          "pending": 2,
+          "total": 64
+        },
+        "failed": [
+          {
+            "file": "playground/ssr-react/__tests__/ssr-react.spec.ts",
+            "name": "/env",
+            "status": "failed"
+          },
+          {
+            "file": "playground/ssr-react/__tests__/oxc/ssr-react.spec.ts",
+            "name": "/env",
+            "status": "failed"
+          }
+        ],
+        "caseInventorySha256": "2057ff3ce3bdeda2193ef57a2091cc009f79ae297cd7b7476caef78780b01cb2",
+        "nativeReportSha256": "0232463551751dbc3857d9741b1dd09c98340ac787665e56c40bfc7dacb5dec4",
+        "phaseElapsedMs": 26038.205499999982,
+        "exitCode": 1
+      },
+      "subset": {
+        "label": "server-subset",
+        "files": [
+          "playground/ssr-react/__tests__/oxc/ssr-react.spec.ts",
+          "playground/ssr-react/__tests__/ssr-react.spec.ts"
+        ],
+        "counts": {
+          "passed": 8,
+          "failed": 2,
+          "pending": 0,
+          "total": 10
+        },
+        "failed": [
+          {
+            "file": "playground/ssr-react/__tests__/ssr-react.spec.ts",
+            "name": "/env",
+            "status": "failed"
+          },
+          {
+            "file": "playground/ssr-react/__tests__/oxc/ssr-react.spec.ts",
+            "name": "/env",
+            "status": "failed"
+          }
+        ],
+        "caseInventorySha256": "f77ce3dccab0991c870eaefd3b7b1c23cc65cbb2d0eb7365e2e0bddba92a6664",
+        "nativeReportSha256": "0f010b4ddc481892dc93f678e238e2065c54fc96f0b8379293228e42a62b13f6",
+        "phaseElapsedMs": 4851.231583999994,
+        "exitCode": 1
+      },
+      "pair": {
+        "qualified": true,
+        "reasons": [],
+        "failurePreserved": true,
+        "detectedFailures": [
+          {
+            "file": "playground/ssr-react/__tests__/ssr-react.spec.ts",
+            "name": "/env"
+          },
+          {
+            "file": "playground/ssr-react/__tests__/oxc/ssr-react.spec.ts",
+            "name": "/env"
+          }
+        ],
+        "automaticOmissionAuthority": false
+      },
+      "omittedFiles": [
+        {
+          "file": "playground/class-components/__tests__/class-components.spec.ts",
+          "reason": "Pinned harness places this test in a different fixture/workspace relation; only this exact fixed fault is challenged. Unknown dependencies remain full fallback."
+        },
+        {
+          "file": "playground/class-components/__tests__/oxc/class-components.spec.ts",
+          "reason": "Pinned harness places this test in a different fixture/workspace relation; only this exact fixed fault is challenged. Unknown dependencies remain full fallback."
+        },
+        {
+          "file": "playground/compiler-react-18/__tests__/compiler-react-18.spec.ts",
+          "reason": "Pinned harness places this test in a different fixture/workspace relation; only this exact fixed fault is challenged. Unknown dependencies remain full fallback."
+        },
+        {
+          "file": "playground/compiler/__tests__/compiler.spec.ts",
+          "reason": "Pinned harness places this test in a different fixture/workspace relation; only this exact fixed fault is challenged. Unknown dependencies remain full fallback."
+        },
+        {
+          "file": "playground/hmr-false/__tests__/hmr-false.spec.ts",
+          "reason": "Pinned harness places this test in a different fixture/workspace relation; only this exact fixed fault is challenged. Unknown dependencies remain full fallback."
+        },
+        {
+          "file": "playground/hmr-false/__tests__/oxc/hmr-false.spec.ts",
+          "reason": "Pinned harness places this test in a different fixture/workspace relation; only this exact fixed fault is challenged. Unknown dependencies remain full fallback."
+        },
+        {
+          "file": "playground/hook-with-jsx/__tests__/hook-with-jsx.spec.ts",
+          "reason": "Pinned harness places this test in a different fixture/workspace relation; only this exact fixed fault is challenged. Unknown dependencies remain full fallback."
+        },
+        {
+          "file": "playground/hook-with-jsx/__tests__/oxc/hook-with-jsx.spec.ts",
+          "reason": "Pinned harness places this test in a different fixture/workspace relation; only this exact fixed fault is challenged. Unknown dependencies remain full fallback."
+        },
+        {
+          "file": "playground/mdx/__tests__/mdx.spec.ts",
+          "reason": "Pinned harness places this test in a different fixture/workspace relation; only this exact fixed fault is challenged. Unknown dependencies remain full fallback."
+        },
+        {
+          "file": "playground/mdx/__tests__/oxc/mdx.spec.ts",
+          "reason": "Pinned harness places this test in a different fixture/workspace relation; only this exact fixed fault is challenged. Unknown dependencies remain full fallback."
+        },
+        {
+          "file": "playground/react-classic/__tests__/react.spec.ts",
+          "reason": "Pinned harness places this test in a different fixture/workspace relation; only this exact fixed fault is challenged. Unknown dependencies remain full fallback."
+        },
+        {
+          "file": "playground/react-emotion/__tests__/react.spec.ts",
+          "reason": "Pinned harness places this test in a different fixture/workspace relation; only this exact fixed fault is challenged. Unknown dependencies remain full fallback."
+        },
+        {
+          "file": "playground/react-env/__tests__/oxc/react.spec.ts",
+          "reason": "Pinned harness places this test in a different fixture/workspace relation; only this exact fixed fault is challenged. Unknown dependencies remain full fallback."
+        },
+        {
+          "file": "playground/react-env/__tests__/react.spec.ts",
+          "reason": "Pinned harness places this test in a different fixture/workspace relation; only this exact fixed fault is challenged. Unknown dependencies remain full fallback."
+        },
+        {
+          "file": "playground/react-sourcemap/__tests__/oxc/react-sourcemap.spec.ts",
+          "reason": "Pinned harness places this test in a different fixture/workspace relation; only this exact fixed fault is challenged. Unknown dependencies remain full fallback."
+        },
+        {
+          "file": "playground/react-sourcemap/__tests__/react-sourcemap.spec.ts",
+          "reason": "Pinned harness places this test in a different fixture/workspace relation; only this exact fixed fault is challenged. Unknown dependencies remain full fallback."
+        },
+        {
+          "file": "playground/react/__tests__/oxc/react.spec.ts",
+          "reason": "Pinned harness places this test in a different fixture/workspace relation; only this exact fixed fault is challenged. Unknown dependencies remain full fallback."
+        },
+        {
+          "file": "playground/react/__tests__/react.spec.ts",
+          "reason": "Pinned harness places this test in a different fixture/workspace relation; only this exact fixed fault is challenged. Unknown dependencies remain full fallback."
+        }
+      ],
+      "assetDetectionQualified": false
+    },
+    {
+      "name": "workspace",
+      "kind": "constructed-fault",
+      "qualification": "single-constructed-fault-only",
+      "file": "packages/plugin-react/src/index.ts",
+      "selectedFiles": [
+        "playground/class-components/__tests__/class-components.spec.ts",
+        "playground/class-components/__tests__/oxc/class-components.spec.ts",
+        "playground/compiler-react-18/__tests__/compiler-react-18.spec.ts",
+        "playground/compiler/__tests__/compiler.spec.ts",
+        "playground/hmr-false/__tests__/hmr-false.spec.ts",
+        "playground/hmr-false/__tests__/oxc/hmr-false.spec.ts",
+        "playground/hook-with-jsx/__tests__/hook-with-jsx.spec.ts",
+        "playground/hook-with-jsx/__tests__/oxc/hook-with-jsx.spec.ts",
+        "playground/mdx/__tests__/mdx.spec.ts",
+        "playground/mdx/__tests__/oxc/mdx.spec.ts",
+        "playground/react-classic/__tests__/react.spec.ts",
+        "playground/react-emotion/__tests__/react.spec.ts",
+        "playground/react-env/__tests__/oxc/react.spec.ts",
+        "playground/react-env/__tests__/react.spec.ts",
+        "playground/react-sourcemap/__tests__/oxc/react-sourcemap.spec.ts",
+        "playground/react-sourcemap/__tests__/react-sourcemap.spec.ts",
+        "playground/react/__tests__/oxc/react.spec.ts",
+        "playground/react/__tests__/react.spec.ts",
+        "playground/ssr-react/__tests__/oxc/ssr-react.spec.ts",
+        "playground/ssr-react/__tests__/ssr-react.spec.ts"
+      ],
+      "full": {
+        "label": "workspace-full",
+        "files": [
+          "playground/class-components/__tests__/class-components.spec.ts",
+          "playground/class-components/__tests__/oxc/class-components.spec.ts",
+          "playground/compiler-react-18/__tests__/compiler-react-18.spec.ts",
+          "playground/compiler/__tests__/compiler.spec.ts",
+          "playground/hmr-false/__tests__/hmr-false.spec.ts",
+          "playground/hmr-false/__tests__/oxc/hmr-false.spec.ts",
+          "playground/hook-with-jsx/__tests__/hook-with-jsx.spec.ts",
+          "playground/hook-with-jsx/__tests__/oxc/hook-with-jsx.spec.ts",
+          "playground/mdx/__tests__/mdx.spec.ts",
+          "playground/mdx/__tests__/oxc/mdx.spec.ts",
+          "playground/react-classic/__tests__/react.spec.ts",
+          "playground/react-emotion/__tests__/react.spec.ts",
+          "playground/react-env/__tests__/oxc/react.spec.ts",
+          "playground/react-env/__tests__/react.spec.ts",
+          "playground/react-sourcemap/__tests__/oxc/react-sourcemap.spec.ts",
+          "playground/react-sourcemap/__tests__/react-sourcemap.spec.ts",
+          "playground/react/__tests__/oxc/react.spec.ts",
+          "playground/react/__tests__/react.spec.ts",
+          "playground/ssr-react/__tests__/oxc/ssr-react.spec.ts",
+          "playground/ssr-react/__tests__/ssr-react.spec.ts"
+        ],
+        "counts": {
+          "passed": 62,
+          "failed": 0,
+          "pending": 2,
+          "total": 64
+        },
+        "failed": [],
+        "caseInventorySha256": "81deb1cae283006f11a25098838677a995664761317744d3f09417c4fb2e3097",
+        "nativeReportSha256": "bf25787e9d5b74d5ffc7fd182c7e760f28d75120ee6e68fb19a2bacfd1ae8b23",
+        "phaseElapsedMs": 35009.02983300004,
+        "exitCode": 0
+      },
+      "subset": {
+        "label": "workspace-subset",
+        "files": [
+          "playground/class-components/__tests__/class-components.spec.ts",
+          "playground/class-components/__tests__/oxc/class-components.spec.ts",
+          "playground/compiler-react-18/__tests__/compiler-react-18.spec.ts",
+          "playground/compiler/__tests__/compiler.spec.ts",
+          "playground/hmr-false/__tests__/hmr-false.spec.ts",
+          "playground/hmr-false/__tests__/oxc/hmr-false.spec.ts",
+          "playground/hook-with-jsx/__tests__/hook-with-jsx.spec.ts",
+          "playground/hook-with-jsx/__tests__/oxc/hook-with-jsx.spec.ts",
+          "playground/mdx/__tests__/mdx.spec.ts",
+          "playground/mdx/__tests__/oxc/mdx.spec.ts",
+          "playground/react-classic/__tests__/react.spec.ts",
+          "playground/react-emotion/__tests__/react.spec.ts",
+          "playground/react-env/__tests__/oxc/react.spec.ts",
+          "playground/react-env/__tests__/react.spec.ts",
+          "playground/react-sourcemap/__tests__/oxc/react-sourcemap.spec.ts",
+          "playground/react-sourcemap/__tests__/react-sourcemap.spec.ts",
+          "playground/react/__tests__/oxc/react.spec.ts",
+          "playground/react/__tests__/react.spec.ts",
+          "playground/ssr-react/__tests__/oxc/ssr-react.spec.ts",
+          "playground/ssr-react/__tests__/ssr-react.spec.ts"
+        ],
+        "counts": {
+          "passed": 62,
+          "failed": 0,
+          "pending": 2,
+          "total": 64
+        },
+        "failed": [],
+        "caseInventorySha256": "81deb1cae283006f11a25098838677a995664761317744d3f09417c4fb2e3097",
+        "nativeReportSha256": "8c32ce1a30f24de6e5b5a5c990a54a18e98038b363d5476f9ad2c329b4288af5",
+        "phaseElapsedMs": 30799.125457999995,
+        "exitCode": 0
+      },
+      "pair": {
+        "qualified": true,
+        "reasons": [],
+        "failurePreserved": true,
+        "automaticOmissionAuthority": false
+      },
+      "workspace": {
+        "full": {
+          "label": "workspace-unit-full",
+          "files": [
+            "packages/plugin-react/tests/rolldown.test.ts"
+          ],
+          "counts": {
+            "passed": 0,
+            "failed": 2,
+            "pending": 0,
+            "total": 2
+          },
+          "failed": [
+            {
+              "file": "packages/plugin-react/tests/rolldown.test.ts",
+              "name": "HMR related code should not be included when using rolldown",
+              "status": "failed"
+            },
+            {
+              "file": "packages/plugin-react/tests/rolldown.test.ts",
+              "name": "HMR related code should not be included when using rolldown with babel plugin",
+              "status": "failed"
+            }
+          ],
+          "caseInventorySha256": "818060fed55a18fa7f2930f2024720297df8c7bb48fdfac339e5044014be706b",
+          "nativeReportSha256": "9ef5f0afc9c2394ce75a878b23f905f247d350fa53f9b49fa97829046f381ad9",
+          "phaseElapsedMs": 2310.827667000005,
+          "exitCode": 1
+        },
+        "subset": {
+          "label": "workspace-unit-subset",
+          "files": [
+            "packages/plugin-react/tests/rolldown.test.ts"
+          ],
+          "counts": {
+            "passed": 0,
+            "failed": 2,
+            "pending": 0,
+            "total": 2
+          },
+          "failed": [
+            {
+              "file": "packages/plugin-react/tests/rolldown.test.ts",
+              "name": "HMR related code should not be included when using rolldown",
+              "status": "failed"
+            },
+            {
+              "file": "packages/plugin-react/tests/rolldown.test.ts",
+              "name": "HMR related code should not be included when using rolldown with babel plugin",
+              "status": "failed"
+            }
+          ],
+          "caseInventorySha256": "818060fed55a18fa7f2930f2024720297df8c7bb48fdfac339e5044014be706b",
+          "nativeReportSha256": "14b255e285c0a6568fd834528ce8ac9b442120b76402eed97938352a3d94a0dc",
+          "phaseElapsedMs": 2335.8640000000014,
+          "exitCode": 1
+        },
+        "pair": {
+          "qualified": true,
+          "reasons": [],
+          "failurePreserved": true,
+          "detectedFailures": [
+            {
+              "file": "packages/plugin-react/tests/rolldown.test.ts",
+              "name": "HMR related code should not be included when using rolldown"
+            },
+            {
+              "file": "packages/plugin-react/tests/rolldown.test.ts",
+              "name": "HMR related code should not be included when using rolldown with babel plugin"
+            }
+          ],
+          "automaticOmissionAuthority": false
+        },
+        "limitation": "This one plugin initialization fault is expected to be caught by source-importing unit assertions; passing browser outcomes do not establish shared-common/workspace completeness."
+      },
+      "omittedFiles": [],
+      "assetDetectionQualified": false
+    },
+    {
+      "name": "asset",
+      "kind": "constructed-fault",
+      "qualification": "asset-detection-gap-control",
+      "file": "playground/ssr-react/public/favicon.ico",
+      "selectedFiles": [
+        "playground/ssr-react/__tests__/oxc/ssr-react.spec.ts",
+        "playground/ssr-react/__tests__/ssr-react.spec.ts"
+      ],
+      "full": {
+        "label": "asset-full",
+        "files": [
+          "playground/class-components/__tests__/class-components.spec.ts",
+          "playground/class-components/__tests__/oxc/class-components.spec.ts",
+          "playground/compiler-react-18/__tests__/compiler-react-18.spec.ts",
+          "playground/compiler/__tests__/compiler.spec.ts",
+          "playground/hmr-false/__tests__/hmr-false.spec.ts",
+          "playground/hmr-false/__tests__/oxc/hmr-false.spec.ts",
+          "playground/hook-with-jsx/__tests__/hook-with-jsx.spec.ts",
+          "playground/hook-with-jsx/__tests__/oxc/hook-with-jsx.spec.ts",
+          "playground/mdx/__tests__/mdx.spec.ts",
+          "playground/mdx/__tests__/oxc/mdx.spec.ts",
+          "playground/react-classic/__tests__/react.spec.ts",
+          "playground/react-emotion/__tests__/react.spec.ts",
+          "playground/react-env/__tests__/oxc/react.spec.ts",
+          "playground/react-env/__tests__/react.spec.ts",
+          "playground/react-sourcemap/__tests__/oxc/react-sourcemap.spec.ts",
+          "playground/react-sourcemap/__tests__/react-sourcemap.spec.ts",
+          "playground/react/__tests__/oxc/react.spec.ts",
+          "playground/react/__tests__/react.spec.ts",
+          "playground/ssr-react/__tests__/oxc/ssr-react.spec.ts",
+          "playground/ssr-react/__tests__/ssr-react.spec.ts"
+        ],
+        "counts": {
+          "passed": 62,
+          "failed": 0,
+          "pending": 2,
+          "total": 64
+        },
+        "failed": [],
+        "caseInventorySha256": "81deb1cae283006f11a25098838677a995664761317744d3f09417c4fb2e3097",
+        "nativeReportSha256": "2606a589cd27c2e2e9ac1defb9f0be05ad8cff6861bbaa256dcf78337896577a",
+        "phaseElapsedMs": 44728.30225000001,
+        "exitCode": 0
+      },
+      "subset": {
+        "label": "asset-subset",
+        "files": [
+          "playground/ssr-react/__tests__/oxc/ssr-react.spec.ts",
+          "playground/ssr-react/__tests__/ssr-react.spec.ts"
+        ],
+        "counts": {
+          "passed": 10,
+          "failed": 0,
+          "pending": 0,
+          "total": 10
+        },
+        "failed": [],
+        "caseInventorySha256": "92394c5be808e58b03904836e9c9fc0e7c8495c56b97568bca0bad7f9024cdf0",
+        "nativeReportSha256": "774c59b489d2d2b252b5536226b0895cba4948382741550fba32cb0be149d026",
+        "phaseElapsedMs": 5554.813332999998,
+        "exitCode": 0
+      },
+      "pair": {
+        "qualified": true,
+        "reasons": [],
+        "failurePreserved": false,
+        "detectedFailures": [],
+        "automaticOmissionAuthority": false
+      },
+      "omittedFiles": [
+        {
+          "file": "playground/class-components/__tests__/class-components.spec.ts",
+          "reason": "Pinned harness places this test in a different fixture/workspace relation; only this exact fixed fault is challenged. Unknown dependencies remain full fallback."
+        },
+        {
+          "file": "playground/class-components/__tests__/oxc/class-components.spec.ts",
+          "reason": "Pinned harness places this test in a different fixture/workspace relation; only this exact fixed fault is challenged. Unknown dependencies remain full fallback."
+        },
+        {
+          "file": "playground/compiler-react-18/__tests__/compiler-react-18.spec.ts",
+          "reason": "Pinned harness places this test in a different fixture/workspace relation; only this exact fixed fault is challenged. Unknown dependencies remain full fallback."
+        },
+        {
+          "file": "playground/compiler/__tests__/compiler.spec.ts",
+          "reason": "Pinned harness places this test in a different fixture/workspace relation; only this exact fixed fault is challenged. Unknown dependencies remain full fallback."
+        },
+        {
+          "file": "playground/hmr-false/__tests__/hmr-false.spec.ts",
+          "reason": "Pinned harness places this test in a different fixture/workspace relation; only this exact fixed fault is challenged. Unknown dependencies remain full fallback."
+        },
+        {
+          "file": "playground/hmr-false/__tests__/oxc/hmr-false.spec.ts",
+          "reason": "Pinned harness places this test in a different fixture/workspace relation; only this exact fixed fault is challenged. Unknown dependencies remain full fallback."
+        },
+        {
+          "file": "playground/hook-with-jsx/__tests__/hook-with-jsx.spec.ts",
+          "reason": "Pinned harness places this test in a different fixture/workspace relation; only this exact fixed fault is challenged. Unknown dependencies remain full fallback."
+        },
+        {
+          "file": "playground/hook-with-jsx/__tests__/oxc/hook-with-jsx.spec.ts",
+          "reason": "Pinned harness places this test in a different fixture/workspace relation; only this exact fixed fault is challenged. Unknown dependencies remain full fallback."
+        },
+        {
+          "file": "playground/mdx/__tests__/mdx.spec.ts",
+          "reason": "Pinned harness places this test in a different fixture/workspace relation; only this exact fixed fault is challenged. Unknown dependencies remain full fallback."
+        },
+        {
+          "file": "playground/mdx/__tests__/oxc/mdx.spec.ts",
+          "reason": "Pinned harness places this test in a different fixture/workspace relation; only this exact fixed fault is challenged. Unknown dependencies remain full fallback."
+        },
+        {
+          "file": "playground/react-classic/__tests__/react.spec.ts",
+          "reason": "Pinned harness places this test in a different fixture/workspace relation; only this exact fixed fault is challenged. Unknown dependencies remain full fallback."
+        },
+        {
+          "file": "playground/react-emotion/__tests__/react.spec.ts",
+          "reason": "Pinned harness places this test in a different fixture/workspace relation; only this exact fixed fault is challenged. Unknown dependencies remain full fallback."
+        },
+        {
+          "file": "playground/react-env/__tests__/oxc/react.spec.ts",
+          "reason": "Pinned harness places this test in a different fixture/workspace relation; only this exact fixed fault is challenged. Unknown dependencies remain full fallback."
+        },
+        {
+          "file": "playground/react-env/__tests__/react.spec.ts",
+          "reason": "Pinned harness places this test in a different fixture/workspace relation; only this exact fixed fault is challenged. Unknown dependencies remain full fallback."
+        },
+        {
+          "file": "playground/react-sourcemap/__tests__/oxc/react-sourcemap.spec.ts",
+          "reason": "Pinned harness places this test in a different fixture/workspace relation; only this exact fixed fault is challenged. Unknown dependencies remain full fallback."
+        },
+        {
+          "file": "playground/react-sourcemap/__tests__/react-sourcemap.spec.ts",
+          "reason": "Pinned harness places this test in a different fixture/workspace relation; only this exact fixed fault is challenged. Unknown dependencies remain full fallback."
+        },
+        {
+          "file": "playground/react/__tests__/oxc/react.spec.ts",
+          "reason": "Pinned harness places this test in a different fixture/workspace relation; only this exact fixed fault is challenged. Unknown dependencies remain full fallback."
+        },
+        {
+          "file": "playground/react/__tests__/react.spec.ts",
+          "reason": "Pinned harness places this test in a different fixture/workspace relation; only this exact fixed fault is challenged. Unknown dependencies remain full fallback."
+        }
+      ],
+      "assetDetectionQualified": false,
+      "assetOutcome": "no-assertion-detection-for-this-constructed-asset-fault"
+    }
+  ],
+  "negativeControls": [
+    {
+      "name": "incorrect-source-reference",
+      "reviewRejected": true
+    },
+    {
+      "name": "all-pending",
+      "reviewRejected": true,
+      "reasons": [
+        "Native report executed zero assertions"
+      ]
+    },
+    {
+      "name": "zero",
+      "reviewRejected": true,
+      "reasons": [
+        "Native report executed zero assertions"
+      ]
+    },
+    {
+      "name": "wrong-fixture",
+      "reviewRejected": true,
+      "reasons": [
+        "Full-run failure omitted or missed"
+      ],
+      "selectedFiles": [
+        "playground/compiler/__tests__/compiler.spec.ts"
+      ],
+      "native": {
+        "label": "negative-wrong-fixture",
+        "files": [
+          "playground/compiler/__tests__/compiler.spec.ts"
+        ],
+        "counts": {
+          "passed": 2,
+          "failed": 0,
+          "pending": 0,
+          "total": 2
+        },
+        "failed": [],
+        "caseInventorySha256": "a37c9c6dee438640befb9faec9a074949549d50b1df373e4935b84a760bf757c",
+        "nativeReportSha256": "9f0bd50f715c3d98b67e1e665233a4c6fe8b670646c826f41aac052fc54d9ff3",
+        "phaseElapsedMs": 3593.080249999999,
+        "exitCode": 0
+      }
+    }
+  ],
+  "originalTrackedBytesRestored": true,
+  "workspaceArtifactsRestored": true,
+  "workspaceRestoration": {
+    "restored": true,
+    "entries": 5,
+    "bytes": 52678,
+    "commandExecuted": false
+  },
+  "remaining": [
+    "Genuine historical application defects",
+    "Repeated independent qualification",
+    "Shared-common/SWC/RSC/workspace/service completeness",
+    "Unasserted asset detection",
+    "Automatic safe omissions",
+    "Complete cold/warm wall timings and native comparison"
+  ],
+  "completeWallMs": 413340.20945799997,
+  "timingScope": "Includes entry preflight, verification, native phases, restoration and primary receipt serialization/write. Excludes completion checkpoint and CLI transport; use external process wall time for total CLI latency.",
+  "externalProcessWallSeconds": 413.4,
+  "independentReassessment": {
+    "trackedSourceHashes": true,
+    "derivedBytesAndModes": true,
+    "nativeReportsReparsed": true,
+    "nativeExitCodes": true,
+    "fullSubsetPairsReassessed": true
+  },
+  "phases": [
+    {
+      "name": "baseline-serve",
+      "exitCode": 0,
+      "reason": null,
+      "elapsedMs": 50081.540583999995,
+      "descendantCleanup": {
+        "scope": "Observed PID/start process tree best effort; unobserved/reparented children are not contained",
+        "observed": 55,
+        "survivingAtClose": 0,
+        "observationFailed": false,
+        "requested": false
+      }
+    },
+    {
+      "name": "baseline-unit",
+      "exitCode": 0,
+      "reason": null,
+      "elapsedMs": 4155.242749999998,
+      "descendantCleanup": {
+        "scope": "Observed PID/start process tree best effort; unobserved/reparented children are not contained",
+        "observed": 4,
+        "survivingAtClose": 0,
+        "observationFailed": false,
+        "requested": false
+      }
+    },
+    {
+      "name": "source-full",
+      "exitCode": 1,
+      "reason": null,
+      "elapsedMs": 55496.825292,
+      "descendantCleanup": {
+        "scope": "Observed PID/start process tree best effort; unobserved/reparented children are not contained",
+        "observed": 53,
+        "survivingAtClose": 0,
+        "observationFailed": false,
+        "requested": false
+      }
+    },
+    {
+      "name": "source-subset",
+      "exitCode": 1,
+      "reason": null,
+      "elapsedMs": 21561.71979100001,
+      "descendantCleanup": {
+        "scope": "Observed PID/start process tree best effort; unobserved/reparented children are not contained",
+        "observed": 9,
+        "survivingAtClose": 0,
+        "observationFailed": false,
+        "requested": false
+      }
+    },
+    {
+      "name": "style-full",
+      "exitCode": 1,
+      "reason": null,
+      "elapsedMs": 32269.190459000005,
+      "descendantCleanup": {
+        "scope": "Observed PID/start process tree best effort; unobserved/reparented children are not contained",
+        "observed": 54,
+        "survivingAtClose": 0,
+        "observationFailed": false,
+        "requested": false
+      }
+    },
+    {
+      "name": "style-subset",
+      "exitCode": 1,
+      "reason": null,
+      "elapsedMs": 3616.546708000009,
+      "descendantCleanup": {
+        "scope": "Observed PID/start process tree best effort; unobserved/reparented children are not contained",
+        "observed": 9,
+        "survivingAtClose": 0,
+        "observationFailed": false,
+        "requested": false
+      }
+    },
+    {
+      "name": "negative-wrong-fixture",
+      "exitCode": 0,
+      "reason": null,
+      "elapsedMs": 3593.080249999999,
+      "descendantCleanup": {
+        "scope": "Observed PID/start process tree best effort; unobserved/reparented children are not contained",
+        "observed": 8,
+        "survivingAtClose": 0,
+        "observationFailed": false,
+        "requested": false
+      }
+    },
+    {
+      "name": "route-full",
+      "exitCode": 1,
+      "reason": null,
+      "elapsedMs": 49745.90029199998,
+      "descendantCleanup": {
+        "scope": "Observed PID/start process tree best effort; unobserved/reparented children are not contained",
+        "observed": 52,
+        "survivingAtClose": 0,
+        "observationFailed": false,
+        "requested": false
+      }
+    },
+    {
+      "name": "route-subset",
+      "exitCode": 1,
+      "reason": null,
+      "elapsedMs": 24548.055834,
+      "descendantCleanup": {
+        "scope": "Observed PID/start process tree best effort; unobserved/reparented children are not contained",
+        "observed": 10,
+        "survivingAtClose": 0,
+        "observationFailed": false,
+        "requested": false
+      }
+    },
+    {
+      "name": "server-full",
+      "exitCode": 1,
+      "reason": null,
+      "elapsedMs": 26038.205499999982,
+      "descendantCleanup": {
+        "scope": "Observed PID/start process tree best effort; unobserved/reparented children are not contained",
+        "observed": 55,
+        "survivingAtClose": 0,
+        "observationFailed": false,
+        "requested": false
+      }
+    },
+    {
+      "name": "server-subset",
+      "exitCode": 1,
+      "reason": null,
+      "elapsedMs": 4851.231583999994,
+      "descendantCleanup": {
+        "scope": "Observed PID/start process tree best effort; unobserved/reparented children are not contained",
+        "observed": 10,
+        "survivingAtClose": 0,
+        "observationFailed": false,
+        "requested": false
+      }
+    },
+    {
+      "name": "workspace-fault-build",
+      "exitCode": 0,
+      "reason": null,
+      "elapsedMs": 2773.8380420000176,
+      "descendantCleanup": {
+        "scope": "Observed PID/start process tree best effort; unobserved/reparented children are not contained",
+        "observed": 1,
+        "survivingAtClose": 0,
+        "observationFailed": false,
+        "requested": false
+      }
+    },
+    {
+      "name": "workspace-full",
+      "exitCode": 0,
+      "reason": null,
+      "elapsedMs": 35009.02983300004,
+      "descendantCleanup": {
+        "scope": "Observed PID/start process tree best effort; unobserved/reparented children are not contained",
+        "observed": 53,
+        "survivingAtClose": 0,
+        "observationFailed": false,
+        "requested": false
+      }
+    },
+    {
+      "name": "workspace-subset",
+      "exitCode": 0,
+      "reason": null,
+      "elapsedMs": 30799.125457999995,
+      "descendantCleanup": {
+        "scope": "Observed PID/start process tree best effort; unobserved/reparented children are not contained",
+        "observed": 54,
+        "survivingAtClose": 0,
+        "observationFailed": false,
+        "requested": false
+      }
+    },
+    {
+      "name": "workspace-unit-full",
+      "exitCode": 1,
+      "reason": null,
+      "elapsedMs": 2310.827667000005,
+      "descendantCleanup": {
+        "scope": "Observed PID/start process tree best effort; unobserved/reparented children are not contained",
+        "observed": 5,
+        "survivingAtClose": 0,
+        "observationFailed": false,
+        "requested": false
+      }
+    },
+    {
+      "name": "workspace-unit-subset",
+      "exitCode": 1,
+      "reason": null,
+      "elapsedMs": 2335.8640000000014,
+      "descendantCleanup": {
+        "scope": "Observed PID/start process tree best effort; unobserved/reparented children are not contained",
+        "observed": 5,
+        "survivingAtClose": 0,
+        "observationFailed": false,
+        "requested": false
+      }
+    },
+    {
+      "name": "asset-full",
+      "exitCode": 0,
+      "reason": null,
+      "elapsedMs": 44728.30225000001,
+      "descendantCleanup": {
+        "scope": "Observed PID/start process tree best effort; unobserved/reparented children are not contained",
+        "observed": 54,
+        "survivingAtClose": 0,
+        "observationFailed": false,
+        "requested": false
+      }
+    },
+    {
+      "name": "asset-subset",
+      "exitCode": 0,
+      "reason": null,
+      "elapsedMs": 5554.813332999998,
+      "descendantCleanup": {
+        "scope": "Observed PID/start process tree best effort; unobserved/reparented children are not contained",
+        "observed": 11,
+        "survivingAtClose": 0,
+        "observationFailed": false,
+        "requested": false
+      }
+    }
+  ],
+  "rawReceipts": {
+    "asset-full.native.json": {
+      "bytes": 16709,
+      "sha256": "2606a589cd27c2e2e9ac1defb9f0be05ad8cff6861bbaa256dcf78337896577a"
+    },
+    "asset-full.phase.json": {
+      "bytes": 12704,
+      "sha256": "8e8332c908d4a98615bf26b306f2f3e17d71d8ebf4a5fdb8cb5e193042108051"
+    },
+    "asset-full.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "asset-full.stdout": {
+      "bytes": 606,
+      "sha256": "7216c42d6ad0235b11062394e31f88494befc177d052ec60b577e97999c7719c"
+    },
+    "asset-subset.native.json": {
+      "bytes": 2424,
+      "sha256": "774c59b489d2d2b252b5536226b0895cba4948382741550fba32cb0be149d026"
+    },
+    "asset-subset.phase.json": {
+      "bytes": 3993,
+      "sha256": "50e090bf097884327b7087dfe9e8b3158526bcbcd2af6be70d19e3c8f40b241f"
+    },
+    "asset-subset.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "asset-subset.stdout": {
+      "bytes": 952,
+      "sha256": "b37b63602ca9be8045b768f9c83ecce2a747301c49ec43a60d7055e6bcf6e1cb"
+    },
+    "asset.fault.json": {
+      "bytes": 322,
+      "sha256": "2cdc2799b27ed23cc65dbb04fc19b03d778507168d37fb5212c98e725cf1e615"
+    },
+    "asset.preimage": {
+      "bytes": 4286,
+      "sha256": "ef233e4cea300d74c3c255684a937ee531538f6b8fd19fa8032085a2254969e0"
+    },
+    "baseline-serve.native.json": {
+      "bytes": 16676,
+      "sha256": "bbbb4aa3e651daa67d69077be97dcf10d586ddd68c31079f23e94ce5e86c3f7b"
+    },
+    "baseline-serve.phase.json": {
+      "bytes": 13247,
+      "sha256": "b3a535104fa368dcf5b9265c8cadd1ab60d526669e34c63fe876f06de2f5917e"
+    },
+    "baseline-serve.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "baseline-serve.stdout": {
+      "bytes": 614,
+      "sha256": "30d825f8dd06792458874b8163d1f3b0cb53433020b47190b3fee1a533a41a7f"
+    },
+    "baseline-unit.native.json": {
+      "bytes": 1286,
+      "sha256": "9a762fe0c3e23b4ad551ef1eb15576f2833b51aea89766b204100f8d426cd0d5"
+    },
+    "baseline-unit.phase.json": {
+      "bytes": 2302,
+      "sha256": "4249420acd30a8351101f8a4b70b6f6b712091e1a1fb68eea0a1460ca834f160"
+    },
+    "baseline-unit.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "baseline-unit.stdout": {
+      "bytes": 967,
+      "sha256": "8dce1852aa380107add55cb0ee543f27e3e12f43cb1a25753534c399fad41532"
+    },
+    "campaign-report.json": {
+      "bytes": 352933,
+      "sha256": "4e379ffd3505a3ef0aa6c96f2ba497c156059dd71ddb7a6ad1a4cc1082f14aa1"
+    },
+    "completion.json": {
+      "bytes": 329,
+      "sha256": "d043ebf6724cfbb6355897da8099656d4341781ed108ac341a2a94982749367e"
+    },
+    "negative-wrong-fixture.native.json": {
+      "bytes": 1054,
+      "sha256": "9f0bd50f715c3d98b67e1e665233a4c6fe8b670646c826f41aac052fc54d9ff3"
+    },
+    "negative-wrong-fixture.phase.json": {
+      "bytes": 3289,
+      "sha256": "dc7cf20465519f75fe080c2a14dbb0072e4a669b73ef95ca9666befea3caa3e8"
+    },
+    "negative-wrong-fixture.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "negative-wrong-fixture.stdout": {
+      "bytes": 797,
+      "sha256": "57e7f29f5c94ebc30c227d0b5a41ea575bc995a2403e25d84624b0dc1fa5a671"
+    },
+    "original-source.json": {
+      "bytes": 65166,
+      "sha256": "829fc0cb82ff60c1de5e8ed8d66e52d46596b725810e4f1b669a3aaaa67c3cd1"
+    },
+    "proposal.json": {
+      "bytes": 124473,
+      "sha256": "60e7029630284c8ead115951ee2a16f8de6455d5a186b95a72d251846c682afd"
+    },
+    "report.json": {
+      "bytes": 331538,
+      "sha256": "29dfae3b96c1e630b547d0b4e6b5837cfbf1635b68dcdbd69b2fe0c73dbf9c77"
+    },
+    "route-full.native.json": {
+      "bytes": 19213,
+      "sha256": "6132659c9235434733748b8c059081b94da3450d6b9d697af5dc4701342b771d"
+    },
+    "route-full.phase.json": {
+      "bytes": 23391,
+      "sha256": "4c6a56fa8a78d46a6cd546a7c351c6e34f56a317cf77540b7ec9108a70e26c82"
+    },
+    "route-full.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "route-full.stdout": {
+      "bytes": 656,
+      "sha256": "191f3103912c7cb6169c53c58e3b7b1f146cdf2d12cfb084b7a8836de234c276"
+    },
+    "route-subset.native.json": {
+      "bytes": 4936,
+      "sha256": "b06338684f918b196671d02f7cf2fb1d2efb8233aa95abfcd077d3c0705cc663"
+    },
+    "route-subset.phase.json": {
+      "bytes": 16538,
+      "sha256": "4853bd7220837ced182ae426d7362b3a68e88eac53c4c5aa18bdae972afd0eec"
+    },
+    "route-subset.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "route-subset.stdout": {
+      "bytes": 1002,
+      "sha256": "b482ca73a61a454fc15f4f8a0e03f6ccbeee68aa5831679a02af2d244893f274"
+    },
+    "route.fault.json": {
+      "bytes": 322,
+      "sha256": "0128215c48da23ef114702e1dd8575b00502e8ed82f05f8a03fe5db90dacc520"
+    },
+    "route.preimage": {
+      "bytes": 259,
+      "sha256": "1af1ecabc9ac30a24f4bb6f25a750e8e749d64e068f0dd0fe09aba956bc75630"
+    },
+    "server-full.native.json": {
+      "bytes": 17882,
+      "sha256": "0232463551751dbc3857d9741b1dd09c98340ac787665e56c40bfc7dacb5dec4"
+    },
+    "server-full.phase.json": {
+      "bytes": 13248,
+      "sha256": "184c10503cbcd4bd5036238dad1f7e4d0047d4926b025a59e55f839dd7eb04bd"
+    },
+    "server-full.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "server-full.stdout": {
+      "bytes": 658,
+      "sha256": "08b475d83f126f29503b6a56f639debc99093fdab6cda422e0ba672db9d77357"
+    },
+    "server-subset.native.json": {
+      "bytes": 3616,
+      "sha256": "0f010b4ddc481892dc93f678e238e2065c54fc96f0b8379293228e42a62b13f6"
+    },
+    "server-subset.phase.json": {
+      "bytes": 4256,
+      "sha256": "0071320937c04a2fc3730a71e85730e378827a0c631df13c48fca46bcbc996ec"
+    },
+    "server-subset.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "server-subset.stdout": {
+      "bytes": 1004,
+      "sha256": "159d241b50239f8736b2f7a687f0270d449b49ec681d77f5feff8b9ce8f2cd92"
+    },
+    "server.fault.json": {
+      "bytes": 318,
+      "sha256": "cea2fbe8d352c3cc6a6a2b3bab7002ae8eb7416ac608bfdf6689cf366d754bc5"
+    },
+    "server.preimage": {
+      "bytes": 2291,
+      "sha256": "b7d2033a0e0378cf79ccb7d14014670fc7d6d58740bbbfaf7c0746d547cd0d25"
+    },
+    "source-full.native.json": {
+      "bytes": 21844,
+      "sha256": "fdf973d4a8da4042db7bf61d0eef69ff11d7be18041dfa14b7a1b506effc7e5b"
+    },
+    "source-full.phase.json": {
+      "bytes": 17616,
+      "sha256": "324920263bf7463270d090f6b2ea88cfafb67ed2e8ff7d2786e73e11d92bb437"
+    },
+    "source-full.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "source-full.stdout": {
+      "bytes": 658,
+      "sha256": "610cbf25a975b44726c28262cfbcf65a1c25168ca2641a10f7c338140e10956d"
+    },
+    "source-subset.native.json": {
+      "bytes": 6223,
+      "sha256": "fda9dbd32c7b8c9e1669550f4444c7bf3eac9628476652ff7d00302532c04cb7"
+    },
+    "source-subset.phase.json": {
+      "bytes": 5941,
+      "sha256": "b20f75e44f479f38a3aafc9b493afa893ffc59b16aab97322f8e1e21bba7c141"
+    },
+    "source-subset.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "source-subset.stdout": {
+      "bytes": 829,
+      "sha256": "3a5f1c7d4be2dace688fceba1e9c0614091259ac987ca6ce0c1f098530eece17"
+    },
+    "source.fault.json": {
+      "bytes": 313,
+      "sha256": "d0805f4b211bee1c7c9a336e41ccab97d01f88a23bb8449ef1e094f1f1930c72"
+    },
+    "source.preimage": {
+      "bytes": 527,
+      "sha256": "04e8dae24f5b9172b0598d961888da1b9c4d0fd75675d16bae68abd5887c983d"
+    },
+    "style-full.native.json": {
+      "bytes": 17217,
+      "sha256": "4dfb8eacdfaed99db058b97a5306f787f46c40f6d4deb70478cfcd89e297ab27"
+    },
+    "style-full.phase.json": {
+      "bytes": 11644,
+      "sha256": "0bd461b34ec21ff4bd73073c9695e4235c16d4ba36d9ee1e6fd8b26bc68a32d3"
+    },
+    "style-full.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "style-full.stdout": {
+      "bytes": 656,
+      "sha256": "8710d118c2c8b1101ecdf23608fed5f2f0d6ff09e96e2db7ba1a72d9997e0375"
+    },
+    "style-subset.native.json": {
+      "bytes": 1882,
+      "sha256": "c3208a9ee9e8583c66cd350a4d2ef4bca8a28bfeb9740224135b90fe39c4416e"
+    },
+    "style-subset.phase.json": {
+      "bytes": 3271,
+      "sha256": "4e168d8a60b062888746492d2ce6767c0a5e63e466b9e4ce922d3e6cc1b3996d"
+    },
+    "style-subset.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "style-subset.stdout": {
+      "bytes": 829,
+      "sha256": "89edf293d064b2b8d5679a21a50966fc00ab6067447480ac1a0202a9e9acf580"
+    },
+    "style.fault.json": {
+      "bytes": 318,
+      "sha256": "5f64e39362e9bf09a01b8bc09316792ecf88b02d9646bf83ccc2955c51983f84"
+    },
+    "style.preimage": {
+      "bytes": 481,
+      "sha256": "221ce1352192285c32511eed0c9aa423198092e6378bc8ef401694738da5df83"
+    },
+    "workspace-fault-build.phase.json": {
+      "bytes": 2651,
+      "sha256": "2ca4a93d429e972f6a8106f8c9cc48925f4f5843b65af64cc098c19c66ecda90"
+    },
+    "workspace-fault-build.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "workspace-fault-build.stdout": {
+      "bytes": 1338,
+      "sha256": "f3d87841b8f912930b0bf9bf51ff9ce79ab24015be0bd11000e64fcaed4295b0"
+    },
+    "workspace-full.native.json": {
+      "bytes": 16717,
+      "sha256": "bf25787e9d5b74d5ffc7fd182c7e760f28d75120ee6e68fb19a2bacfd1ae8b23"
+    },
+    "workspace-full.phase.json": {
+      "bytes": 13261,
+      "sha256": "b45e43371ddf6b3d0f38fe2e62b1f92ec1a4707296d59f5bcd13207d4246676a"
+    },
+    "workspace-full.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "workspace-full.stdout": {
+      "bytes": 614,
+      "sha256": "b1831e1d0e8430f0d44a404e721189a9237577a55e96d63a1a8007f6ca77be3c"
+    },
+    "workspace-subset.native.json": {
+      "bytes": 16707,
+      "sha256": "8c32ce1a30f24de6e5b5a5c990a54a18e98038b363d5476f9ad2c329b4288af5"
+    },
+    "workspace-subset.phase.json": {
+      "bytes": 17639,
+      "sha256": "8781661a7d48085ebb1da26ab19174ff7bf1d68c843849dc2c56a0c651059723"
+    },
+    "workspace-subset.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "workspace-subset.stdout": {
+      "bytes": 4064,
+      "sha256": "6db632835c8225ce6a7d9a8ce441eea2d944c0f05fcdd22b4c45d5a7b57f1e38"
+    },
+    "workspace-unit-full.native.json": {
+      "bytes": 6608,
+      "sha256": "9ef5f0afc9c2394ce75a878b23f905f247d350fa53f9b49fa97829046f381ad9"
+    },
+    "workspace-unit-full.phase.json": {
+      "bytes": 2582,
+      "sha256": "4d4ebd91159759d4ccaad73d5ece360aedcddfd9449b00dc1037eb62fe72b9be"
+    },
+    "workspace-unit-full.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "workspace-unit-full.stdout": {
+      "bytes": 1498,
+      "sha256": "7de9ee04a4aeebcb59ae9a0c325786c8ac5efdd3173211e6cf0b43b4c29ef697"
+    },
+    "workspace-unit-subset.native.json": {
+      "bytes": 6608,
+      "sha256": "14b255e285c0a6568fd834528ce8ac9b442120b76402eed97938352a3d94a0dc"
+    },
+    "workspace-unit-subset.phase.json": {
+      "bytes": 2759,
+      "sha256": "963cff6aea281a3f1f2a424475a8479b92d15c64eb4312932374d36616d9881a"
+    },
+    "workspace-unit-subset.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "workspace-unit-subset.stdout": {
+      "bytes": 2001,
+      "sha256": "bab431a099630094902ae9251cf4215c7bab209d1891bcdbaaf6c2085ed9fc53"
+    },
+    "workspace.fault.json": {
+      "bytes": 318,
+      "sha256": "c8891a9d4e5696a68f3bef8bef4bca8975481f5879de276c927567a5ad188266"
+    },
+    "workspace.preimage": {
+      "bytes": 14105,
+      "sha256": "29c9cdcefc3e48548aa19896129fc7a3048f7a29558bf5e8531ec330f36197aa"
+    }
+  },
+  "limits": "Five explicitly constructed faults and one unasserted asset control, one pass per fault. Fixture associations and these outcomes do not establish every possible runtime dependency. No original fresh installation, general speed win, historical application regression count or production omission authority."
+}

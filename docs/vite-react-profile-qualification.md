@@ -35,6 +35,25 @@ The next qualification must independently execute original full and proposed sub
 
 Keep dynamic imports, generated bundles, unseen routes/assets and service uncertainty in full fallback until the corresponding evidence is independently challenged. The current source tests passed 8/8; complete portable installation and independent fault challenges still require a fresh adequately resourced runner.
 
+## Completed fixed-fault campaign
+
+The [October 8 campaign](../benchmarks/framework-profiles/vite-react-4.7.0-challenges-20261008.json) completed 17 independent native test calls and one targeted workspace build at TestLore `3a62dd6`, using the byte-bound original macOS installation. Fresh equal-concurrency baselines passed 62 serve assertions with two original skips and two unit assertions. All tracked source and saved workspace artifact bytes/modes/inventory restored. An independent local reassessment reparsed raw native reports, verified process exit codes and failure pairs, and checked restored bytes.
+
+| Constructed fault | Proposed browser files / 20 | Full / subset failed assertions | Full / subset native phase seconds |
+| --- | ---: | ---: | ---: |
+| Compiler source | 1 | 2 / 2 | 55.50 / 21.56 |
+| Emotion style | 1 | 1 / 1 | 32.27 / 3.62 |
+| SSR route | 2 | 4 / 4 | 49.75 / 24.55 |
+| Server input | 2 | 2 / 2 | 26.04 / 4.85 |
+| Plugin workspace initialization | 20 | 0 / 0 browser; 2 / 2 unit | 35.01 / 30.80 browser |
+| Corrupted favicon control | 2 | 0 / 0 | 44.73 / 5.56 |
+
+The workspace fault is caught by two source-importing unit assertions, while browser scope remains full. Favicon corruption is not caught by either scope; it is an asset detection gap, not qualified asset protection. A separately executed wrong-fixture subset failed failure-preservation review. Unknown-reference, all-pending and zero-execution report controls also rejected, with their synthetic scope retained.
+
+These are explicitly constructed faults against unchanged real maintainer assertions, once per fault. They add no historical public-corpus changes, repeated fault samples or automatic omission authority. Full/subset command phases have identical worker settings; they include native execution and the observer but exclude shared preparation and final campaign transport. Outer campaign time was **413.40 seconds**, including preflight, proposals, all baselines/challenges, restoration and reporting. No complete TestLore CLI, native-related, general speed advantage or OS-cold comparison is established here.
+
+The [first rejected replay](../benchmarks/framework-profiles/vite-react-4.7.0-challenge-rejection-20261008.json) remains unchanged: its baseline passed, then the evaluator rejected Vitest 3's omitted runtime-error field before introducing any fault. Later schema compatibility uses actual native suite/message/count checks and rejects teardown errors even when assertions pass. Resource/output/deadline guards remain enabled. Genuine historical application bugs, bundles/source maps, shared-common/SWC/RSC boundaries, production services and unasserted assets still require qualification and conservative fallback.
+
 ## Opt-in independent challenges
 
 ```sh
