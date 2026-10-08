@@ -1,0 +1,413 @@
+{
+  "schemaVersion": 1,
+  "kind": "pinned-original-build-browser-baseline-and-review-status",
+  "recordedDate": "2026-10-08",
+  "repository": "https://github.com/vitejs/vite-plugin-react",
+  "revision": "80417060f7bc239d5100e1b47c819e8364c7d551",
+  "completeApplicationProfile": false,
+  "automaticOmissionAuthority": false,
+  "baseline": {
+    "scope": "Original root playground build-browser configuration and unchanged original maintainer assertions. SWC/RSC native suites, lint and type checks are excluded.",
+    "status": "original-build-browser-passed",
+    "counts": {
+      "passed": 35,
+      "failed": 0,
+      "pending": 13
+    },
+    "nativeLeafCases": [
+      {
+        "file": "playground/class-components/__tests__/class-components.spec.ts",
+        "name": "should render",
+        "status": "passed"
+      },
+      {
+        "file": "playground/compiler/__tests__/compiler.spec.ts",
+        "name": "should render",
+        "status": "passed"
+      },
+      {
+        "file": "playground/compiler/__tests__/compiler.spec.ts",
+        "name": "should hmr",
+        "status": "skipped"
+      },
+      {
+        "file": "playground/compiler-react-18/__tests__/compiler-react-18.spec.ts",
+        "name": "should render",
+        "status": "passed"
+      },
+      {
+        "file": "playground/compiler-react-18/__tests__/compiler-react-18.spec.ts",
+        "name": "should hmr",
+        "status": "skipped"
+      },
+      {
+        "file": "playground/hmr-false/__tests__/hmr-false.spec.ts",
+        "name": "basic",
+        "status": "passed"
+      },
+      {
+        "file": "playground/hook-with-jsx/__tests__/hook-with-jsx.spec.ts",
+        "name": "should render",
+        "status": "passed"
+      },
+      {
+        "file": "playground/mdx/__tests__/mdx.spec.ts",
+        "name": "should render",
+        "status": "passed"
+      },
+      {
+        "file": "playground/mdx/__tests__/mdx.spec.ts",
+        "name": ".md extension should work",
+        "status": "passed"
+      },
+      {
+        "file": "playground/react/__tests__/react.spec.ts",
+        "name": "should render",
+        "status": "passed"
+      },
+      {
+        "file": "playground/react/__tests__/react.spec.ts",
+        "name": "should update",
+        "status": "passed"
+      },
+      {
+        "file": "playground/react/__tests__/react.spec.ts",
+        "name": "should hmr",
+        "status": "skipped"
+      },
+      {
+        "file": "playground/react/__tests__/react.spec.ts",
+        "name": "should not invalidate when code is invalid",
+        "status": "skipped"
+      },
+      {
+        "file": "playground/react/__tests__/react.spec.ts",
+        "name": "should have annotated jsx with file location metadata",
+        "status": "skipped"
+      },
+      {
+        "file": "playground/react/__tests__/react.spec.ts",
+        "name": "import attributes",
+        "status": "passed"
+      },
+      {
+        "file": "playground/react-classic/__tests__/react.spec.ts",
+        "name": "should render",
+        "status": "passed"
+      },
+      {
+        "file": "playground/react-classic/__tests__/react.spec.ts",
+        "name": "should update",
+        "status": "passed"
+      },
+      {
+        "file": "playground/react-classic/__tests__/react.spec.ts",
+        "name": "should hmr",
+        "status": "skipped"
+      },
+      {
+        "file": "playground/react-classic/__tests__/react.spec.ts",
+        "name": "should have annotated jsx with file location metadata",
+        "status": "skipped"
+      },
+      {
+        "file": "playground/react-emotion/__tests__/react.spec.ts",
+        "name": "should render",
+        "status": "passed"
+      },
+      {
+        "file": "playground/react-emotion/__tests__/react.spec.ts",
+        "name": "should update",
+        "status": "passed"
+      },
+      {
+        "file": "playground/react-emotion/__tests__/react.spec.ts",
+        "name": "should hmr",
+        "status": "skipped"
+      },
+      {
+        "file": "playground/react-emotion/__tests__/react.spec.ts",
+        "name": "should update button style",
+        "status": "passed"
+      },
+      {
+        "file": "playground/react-sourcemap/__tests__/react-sourcemap.spec.ts",
+        "name": "should not output sourcemap warning",
+        "status": "passed"
+      },
+      {
+        "file": "playground/react-env/__tests__/react.spec.ts",
+        "name": "should work",
+        "status": "passed"
+      },
+      {
+        "file": "playground/ssr-react/__tests__/ssr-react.spec.ts",
+        "name": "/env",
+        "status": "passed"
+      },
+      {
+        "file": "playground/ssr-react/__tests__/ssr-react.spec.ts",
+        "name": "/about",
+        "status": "passed"
+      },
+      {
+        "file": "playground/ssr-react/__tests__/ssr-react.spec.ts",
+        "name": "/",
+        "status": "passed"
+      },
+      {
+        "file": "playground/ssr-react/__tests__/ssr-react.spec.ts",
+        "name": "hmr",
+        "status": "skipped"
+      },
+      {
+        "file": "playground/ssr-react/__tests__/ssr-react.spec.ts",
+        "name": "client navigation",
+        "status": "passed"
+      },
+      {
+        "file": "playground/class-components/__tests__/oxc/class-components.spec.ts",
+        "name": "should render",
+        "status": "passed"
+      },
+      {
+        "file": "playground/hmr-false/__tests__/oxc/hmr-false.spec.ts",
+        "name": "basic",
+        "status": "passed"
+      },
+      {
+        "file": "playground/hook-with-jsx/__tests__/oxc/hook-with-jsx.spec.ts",
+        "name": "should render",
+        "status": "passed"
+      },
+      {
+        "file": "playground/mdx/__tests__/oxc/mdx.spec.ts",
+        "name": "should render",
+        "status": "passed"
+      },
+      {
+        "file": "playground/mdx/__tests__/oxc/mdx.spec.ts",
+        "name": ".md extension should work",
+        "status": "passed"
+      },
+      {
+        "file": "playground/react/__tests__/oxc/react.spec.ts",
+        "name": "should render",
+        "status": "passed"
+      },
+      {
+        "file": "playground/react/__tests__/oxc/react.spec.ts",
+        "name": "should update",
+        "status": "passed"
+      },
+      {
+        "file": "playground/react/__tests__/oxc/react.spec.ts",
+        "name": "should hmr",
+        "status": "skipped"
+      },
+      {
+        "file": "playground/react/__tests__/oxc/react.spec.ts",
+        "name": "should not invalidate when code is invalid",
+        "status": "skipped"
+      },
+      {
+        "file": "playground/react/__tests__/oxc/react.spec.ts",
+        "name": "should have annotated jsx with file location metadata",
+        "status": "skipped"
+      },
+      {
+        "file": "playground/react/__tests__/oxc/react.spec.ts",
+        "name": "import attributes",
+        "status": "passed"
+      },
+      {
+        "file": "playground/react-sourcemap/__tests__/oxc/react-sourcemap.spec.ts",
+        "name": "should not output sourcemap warning",
+        "status": "passed"
+      },
+      {
+        "file": "playground/react-env/__tests__/oxc/react.spec.ts",
+        "name": "should work",
+        "status": "passed"
+      },
+      {
+        "file": "playground/ssr-react/__tests__/oxc/ssr-react.spec.ts",
+        "name": "/env",
+        "status": "passed"
+      },
+      {
+        "file": "playground/ssr-react/__tests__/oxc/ssr-react.spec.ts",
+        "name": "/about",
+        "status": "passed"
+      },
+      {
+        "file": "playground/ssr-react/__tests__/oxc/ssr-react.spec.ts",
+        "name": "/",
+        "status": "passed"
+      },
+      {
+        "file": "playground/ssr-react/__tests__/oxc/ssr-react.spec.ts",
+        "name": "hmr",
+        "status": "skipped"
+      },
+      {
+        "file": "playground/ssr-react/__tests__/oxc/ssr-react.spec.ts",
+        "name": "client navigation",
+        "status": "passed"
+      }
+    ],
+    "files": [
+      "playground/class-components/__tests__/class-components.spec.ts",
+      "playground/class-components/__tests__/oxc/class-components.spec.ts",
+      "playground/compiler-react-18/__tests__/compiler-react-18.spec.ts",
+      "playground/compiler/__tests__/compiler.spec.ts",
+      "playground/hmr-false/__tests__/hmr-false.spec.ts",
+      "playground/hmr-false/__tests__/oxc/hmr-false.spec.ts",
+      "playground/hook-with-jsx/__tests__/hook-with-jsx.spec.ts",
+      "playground/hook-with-jsx/__tests__/oxc/hook-with-jsx.spec.ts",
+      "playground/mdx/__tests__/mdx.spec.ts",
+      "playground/mdx/__tests__/oxc/mdx.spec.ts",
+      "playground/react-classic/__tests__/react.spec.ts",
+      "playground/react-emotion/__tests__/react.spec.ts",
+      "playground/react-env/__tests__/oxc/react.spec.ts",
+      "playground/react-env/__tests__/react.spec.ts",
+      "playground/react-sourcemap/__tests__/oxc/react-sourcemap.spec.ts",
+      "playground/react-sourcemap/__tests__/react-sourcemap.spec.ts",
+      "playground/react/__tests__/oxc/react.spec.ts",
+      "playground/react/__tests__/react.spec.ts",
+      "playground/ssr-react/__tests__/oxc/ssr-react.spec.ts",
+      "playground/ssr-react/__tests__/ssr-react.spec.ts"
+    ],
+    "elapsedMs": 10993.051208,
+    "trackedBytesUnchanged": true,
+    "minimumObservedFreeBytes": 3213447168,
+    "allocationBeforeBytes": 1574166528,
+    "allocationAfterBytes": 1574187008,
+    "descendantCleanup": {
+      "scope": "Observed PID/start process tree best effort; unobserved/reparented children are not contained",
+      "observed": 65,
+      "survivingAtClose": 0,
+      "observationFailed": false,
+      "requested": false
+    },
+    "allocationObservationWarnings": [
+      {
+        "status": 1,
+        "error": null,
+        "stderr": "du: /Users/rudycelekli/.codex/worktrees/testlore-fallback-contracts/tddswarm/.tddswarm/vite-react-profile-20261007/upstream/playground-temp: No such file or directory\n"
+      }
+    ],
+    "elapsedMsScope": "Spawn to parent-close plus observed descendant check; excludes phase preflight, final provenance/resource checks and report writes. Complete wall timing was not captured."
+  },
+  "negativeAttempt": {
+    "status": "incomplete",
+    "reason": "Native phase rejected: build-browser: resource-measurement-incomplete",
+    "nativeOutcomeNotAccepted": true,
+    "explanation": "A native report was produced but allocation observation raced removal of generated playground files. This run remains rejected. The fresh v2 uses at most three ENOENT-only allocation remeasurements; any other or persistent failure still rejects."
+  },
+  "review": {
+    "relationCount": 20,
+    "status": "review-required",
+    "routingAuthority": "none",
+    "closedWorld": false,
+    "omissionAuthority": false,
+    "unknownDependencies": "full-suite",
+    "invalidatedBy": [
+      {
+        "control": "new-input",
+        "reviewRejected": true,
+        "status": "review-invalid"
+      },
+      {
+        "control": "hook",
+        "reviewRejected": true,
+        "status": "review-invalid"
+      },
+      {
+        "control": "harness",
+        "reviewRejected": true,
+        "status": "review-invalid"
+      }
+    ]
+  },
+  "challengeCampaign": {
+    "status": "incomplete",
+    "reason": "Native phase rejected: fresh-serve-baseline: free-space-reserve-stop",
+    "nativeCalls": 1,
+    "elapsedMs": 10246.6655,
+    "faultsIntroduced": 0,
+    "independentFullSubsetFaultsQualified": 0,
+    "minimumObservedFreeBytes": 1821143040,
+    "profileGrowthBytes": 44208128,
+    "originalTrackedBytesUnchanged": true
+  },
+  "focusedControllerVerification": {
+    "passed": 8,
+    "failed": 0,
+    "scope": "Focused source guards and actual bounded subprocess negatives; no end-to-end portable installation execution claim.",
+    "checks": [
+      "Exact original serve identity and two pending outcomes",
+      "Case identity drift rejected",
+      "All-pending build rejected",
+      "Distinct private npm configuration paths and credential stripping",
+      "Fast zero-exit output overflow rejected",
+      "Fast zero-exit expired deadline rejected",
+      "Observed surviving detached child rejects parent success",
+      "Review-invalid missing inputs and integrity/authority forgery rejected"
+    ]
+  },
+  "runtimeIdentityReference": "vite-react-4.7.0-baseline-20261007.json",
+  "rawPrivatePrefix": ".tddswarm/vite-react-profile-20261007/",
+  "rawReceipts": {
+    "resume-20261008-v2/build-browser.phase.json": {
+      "bytes": 3590,
+      "sha256": "2db73faa6b1b606989aaa96c7645e0afb49f590ec7da5e6321deee251b820334"
+    },
+    "resume-20261008-v2/build-browser.stdout": {
+      "bytes": 585,
+      "sha256": "6f738c4c3017296aa91e4158f34d861cd041c38428bf8a19babe07e96db0ec85"
+    },
+    "resume-20261008-v2/build-browser.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "resume-20261008-v2/build.native.json": {
+      "bytes": 13510,
+      "sha256": "3d04d37764f13c5584b2507989e48094a4d913139a03f7932347b52826f1dcdb"
+    },
+    "resume-20261008-v2/baseline-report.json": {
+      "bytes": 15198,
+      "sha256": "70e6272c658dd573ae673feadb39ba87f943272e9f2cba03695641edfdefc55c"
+    },
+    "resume-20261008-v2/proposals.json": {
+      "bytes": 124473,
+      "sha256": "60e7029630284c8ead115951ee2a16f8de6455d5a186b95a72d251846c682afd"
+    },
+    "resume-20261008/build-browser.phase.json": {
+      "bytes": 2577,
+      "sha256": "475e6ff9358e3dd7d2d9a4c3d639a167dec42a04ee3b18d26c698ec98a16a423"
+    },
+    "resume-20261008/build.native.json": {
+      "bytes": 13513,
+      "sha256": "c3a2a79707657b61ef135c09397bc5b30c69adefcbd6592885f15f479a4974eb"
+    },
+    "challenges-20261008/campaign-report.json": {
+      "bytes": 4976,
+      "sha256": "583a032bb4aca8274d78d8d09ea07189483801d69ed7825c021cbbbc674d8f24"
+    },
+    "challenges-20261008/fresh-serve-baseline.phase.json": {
+      "bytes": 3272,
+      "sha256": "a1523b98d758c856eb8a2f939efdf0ceca20fbb1a39c57195d7ee2a73993eb8e"
+    }
+  },
+  "notQualified": [
+    "Automatic safe omissions",
+    "Independent full/subset source, route, style, server or workspace fault preservation",
+    "Asset defect detection; original favicon has no asserted outcome",
+    "Genuine historical application defects",
+    "Complete SWC/RSC/upstream framework scope",
+    "General speed advantage",
+    "Production service dependencies"
+  ],
+  "resourceLimitation": "The original parallel browser suite may contribute to shared system swap. Profile allocation receipts alone cannot attribute the remaining shared free-space decline. Native campaigns remain paused below the 2 GiB reserve."
+}
