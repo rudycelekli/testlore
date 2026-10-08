@@ -5,6 +5,7 @@ import { fileURLToPath } from 'node:url';
 import {digest} from './provenance.js';
 import { git, safePath, validateConfig } from './files.js';
 import { inspectHistoricalChange } from './pilot-history.js';
+import {validatePropertyReplay} from './pilot-property-replay.js';
 
 const worker = fileURLToPath(new URL('./pilot-worker.js', import.meta.url));
 const frameworks = ['node', 'jest', 'vitest', 'playwright'];
@@ -28,6 +29,8 @@ export function validatePilotManifest(value) {
     if (typeof project.scope !== 'string' || !project.scope.trim() || project.scope.length > 200) throw new Error('Describe the native test scope explicitly');
     if (project.config.integration || project.config.agent || project.config.plugins || project.config.env) throw new Error('Pilot config must use a core adapter without agents, plugins, or credential environment');
     const config = validateConfig(project.config);
+    const propertyReplay=validatePropertyReplay(project.propertyReplay);
+    if(propertyReplay&&config.adapter!=='vitest')throw new Error('Property replay requires the Vitest adapter');
     if (!Array.isArray(project.changes) || !project.changes.length || project.changes.length > 12) throw new Error('Each pilot needs 1–12 exact source changes');
     const changeNames = new Set();
     for (const change of project.changes) {
@@ -42,7 +45,7 @@ export function validatePilotManifest(value) {
       if (!/\.(?:[cm]?[jt]sx?|html|css|json|md)$/.test(change.file) || /(?:^|\/)(?:package(?:-lock)?\.json|tddswarm\.config\.json)$/.test(change.file)) throw new Error('Pilot changes must target source, not dependencies or analysis configuration');
       if (typeof change.before !== 'string' || !change.before || typeof change.after !== 'string' || change.before === change.after || change.before.length + change.after.length > 65536 || typeof change.expectedFailure !== 'boolean') throw new Error('Each change needs bounded distinct before/after text and expectedFailure:boolean');
     }
-    return { name: project.name, root: fs.realpathSync(project.root), scope: project.scope, config, changes: project.changes };
+    return { name: project.name, root: fs.realpathSync(project.root), scope: project.scope, config, changes: project.changes,...(propertyReplay?{propertyReplay}:{}) };
   });
   return { schemaVersion: 1, projects, repetitions, timeoutMs,...(cachePolicy?{cachePolicy}:{}) };
 }
@@ -95,7 +98,7 @@ export function pilot(root, manifest, options = {}) {
     projects.push(receipt);
   }
   const report = { schemaVersion: 1, executed: true, executionMode:options.unifiedNative===true?'unified-native':'legacy', output, environment: { node: process.version, platform: process.platform, arch: process.arch,...(validated.cachePolicy?{cachePolicy:validated.cachePolicy}:{}) }, repetitions: validated.repetitions, projects,
-    valid: projects.every(p => p.valid), implementationHashes:Object.fromEntries(['pilot.js','pilot-worker.js','pilot-history.js','runner.js','execution.js','selector.js','graph.js','provenance.js'].map(file=>[file,digest(fs.readFileSync(new URL(file,import.meta.url)))])),limitations: ['Local declared scopes, planted changes and bounded historical Git pairs only; no production or whole-project certification.', 'Installed dependencies are shared read-only by convention, not an OS sandbox. Native test code may access network or local files.', 'Provider credentials are removed from inherited environment; no dependency installation or agent invocation occurs.', 'Three execution arms rotate order; TestLore discovery, planning, execution, provenance and receipt retention are included. Native related selection runs through the native CLI where available. Timing results are environment-specific.'] };
+    valid: projects.every(p => p.valid), implementationHashes:Object.fromEntries(['pilot.js','pilot-worker.js','pilot-history.js','pilot-property-replay.js','runner.js','execution.js','selector.js','graph.js','provenance.js'].map(file=>[file,digest(fs.readFileSync(new URL(file,import.meta.url)))])),limitations: ['Local declared scopes, planted changes and bounded historical Git pairs only; no production or whole-project certification.', 'Installed dependencies are shared read-only by convention, not an OS sandbox. Native test code may access network or local files.', 'Provider credentials are removed from inherited environment; no dependency installation or agent invocation occurs.', 'Three execution arms rotate order; TestLore discovery, planning, execution, provenance and receipt retention are included. Native related selection runs through the native CLI where available. Timing results are environment-specific.','Property replay, when declared, uses an explicit configuration overlay in disposable copies. It changes the measurement profile and does not certify external entropy or exact generated inputs.'] };
   fs.writeFileSync(path.join(output, 'summary.json'), JSON.stringify(report, null, 2));
   return report;
 }

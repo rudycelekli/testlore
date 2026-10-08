@@ -190,7 +190,7 @@ export async function main(args = process.argv.slice(2)) {
     await startMcpServer({root, allowExecution: options['allow-execution'] === true});
     return 0;
   }
-  if (options['unified-native'] && command !== 'run') throw new Error('--unified-native applies only to run');
+  if (options['unified-native'] && !['run','pilot'].includes(command)) throw new Error('--unified-native applies only to run or pilot');
   if(options.verify&&command!=='setup')throw new Error('--verify applies only to setup');
   if(options.verify&&options.selective)throw new Error('setup --verify always uses full shadow verification');
   if (options['allow-execution']) throw new Error('--allow-execution applies only to mcp');
@@ -254,7 +254,7 @@ export async function main(args = process.argv.slice(2)) {
     case 'browser-instrument': result=await proposeBrowserInstrumentation(root);break;
     case 'browser-capture': result=await captureBrowserEvidence(root,options);break;
     case 'browser-mappings': {if(!options.report||!options.settings)throw new Error('--report and --settings are required');result=proposeBrowserMappings(root,JSON.parse(fs.readFileSync(safePath(root,options.report),'utf8')),JSON.parse(fs.readFileSync(safePath(root,options.settings),'utf8')));break;}
-    case 'pilot': if(!options.manifest)throw new Error('--manifest is required');result=pilot(root,JSON.parse(fs.readFileSync(path.resolve(root,options.manifest),'utf8')),options);break;
+    case 'pilot': if(!options.manifest)throw new Error('--manifest is required');result=pilot(root,JSON.parse(fs.readFileSync(path.resolve(root,options.manifest),'utf8')),{...options,unifiedNative:options['unified-native']===true});break;
     case 'pilot-export': if(!options.report)throw new Error('--report is required');result=exportPilot(JSON.parse(fs.readFileSync(path.resolve(root,options.report),'utf8')));break;
     case 'plugins': {
       const mutations = [options.enable, options.disable, options.select].filter(Boolean);

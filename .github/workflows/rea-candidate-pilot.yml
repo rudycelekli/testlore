@@ -1,0 +1,63 @@
+name: Candidate REA seeded evidence
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - src/**
+      - scripts/rea-public-pilot.js
+      - test/native-projects.test.js
+      - test/pilot-property-replay.test.js
+      - .github/workflows/rea-candidate-pilot.yml
+permissions:
+  contents: read
+concurrency:
+  group: rea-candidate-pilot-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  seeded-candidate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        seed: [104729, 130363, 155921]
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7.0.0
+        with:
+          node-version: '22.19.0'
+      - name: Seal committed candidate and collect a separate controlled profile
+        env:
+          REPLAY_SEED: ${{ matrix.seed }}
+        run: |
+          node --input-type=module <<'JS'
+          import fs from 'node:fs';
+          import path from 'node:path';
+          import {createHash} from 'node:crypto';
+          import {spawnSync} from 'node:child_process';
+          import {sealSourceArchive} from './scripts/archive-source.js';
+          const revision=spawnSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).stdout.trim();
+          const directory=path.join(process.env.RUNNER_TEMP,'candidate-archive');
+          fs.mkdirSync(directory);
+          const pack=sealSourceArchive(process.cwd(),revision,directory);
+          const archive=path.join(directory,pack.filename),sha=createHash('sha256').update(fs.readFileSync(archive)).digest('hex');
+          const args=['scripts/rea-public-pilot.js','--directory',path.join(process.env.RUNNER_TEMP,'rea-candidate'), '--output','.tddswarm/rea-candidate','--candidate-archive',archive,'--candidate-sha256',sha,'--candidate-revision',revision,'--candidate-version','0.1.0','--property-seed',process.env.REPLAY_SEED,'--unified-native'];
+          const result=spawnSync(process.execPath,args,{stdio:'inherit',timeout:26*60*1000,killSignal:'SIGKILL'});
+          if(result.error||![0,3].includes(result.status))process.exit(1);
+          const assessment=JSON.parse(fs.readFileSync('.tddswarm/rea-candidate/assessment.json'));
+          if(assessment.observationCompleted!==true)process.exit(1);
+          if(!assessment.qualified)console.log('::notice::Complete negative candidate measurement; this seed/profile remains unqualified.');
+          console.log(JSON.stringify({revision,archiveSha256:sha,seed:Number(process.env.REPLAY_SEED),qualified:assessment.qualified,reasons:assessment.reasons}));
+          JS
+      - name: Preserve raw outcomes including rejected comparisons
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rea-candidate-${{ matrix.seed }}-${{ github.run_id }}
+          path: .tddswarm/rea-candidate/
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 14

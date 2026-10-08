@@ -119,12 +119,17 @@ function planPhase(root, options = {}, nativeSession, phase) {
     const selected = mode === 'full' || paths.length > 0 || policy.length > 0;
     return { test, selected, reasons: selected ? [...(mode === 'full' ? reasons : []), ...(paths.length ? ['dependency-path'] : []), ...policy] : ['no-known-dependency-on-change'], paths };
   });
+  const decisionByTest=new Map(decisions.map(decision=>[decision.test,decision]));
+  for(const project of graph.nativeProjects||[])if(!project.isolate) {
+    const retainedWith=project.files.find(file=>decisionByTest.get(file)?.selected);
+    if(retainedWith)for(const file of project.files){const decision=decisionByTest.get(file);if(!decision.selected){decision.selected=true;decision.reasons=['shared-project-isolation'];decision.project=project.name;decision.retainedWith=retainedWith;}}
+  }
   const selected = decisions.filter(d => d.selected).map(d => d.test);
-  const fingerprint = createHash('sha256').update(JSON.stringify({ config, sources: graph.sources, edges: graph.edges, changed, baseSha })).digest('hex');
+  const fingerprint = createHash('sha256').update(JSON.stringify({ config, sources: graph.sources, edges: graph.edges, nativeProjects:graph.nativeProjects, changed, baseSha })).digest('hex');
   timing.mark('decisionsAndFingerprint');
   return {
     schemaVersion: 1, timings: { ...timing.finish(), graph: graph.timings }, analysisCache:graph.analysisCache, provenance, serviceTokens: services.values, configurationFiles: [...graph.configFiles].sort(), mode: mode === 'none' && selected.length ? 'policy' : mode, base: baseSha, changed, ignored, selected,
-    total: graph.tests.length, omitted: graph.tests.length - selected.length,
+    total: graph.tests.length, omitted: graph.tests.length - selected.length, ...(graph.nativeProjects?{nativeProjects:graph.nativeProjects}:{}),
     uncertainty: { global: globalWarnings.length, retainedTests: [...uncertainTests].sort(), unreachableSources: [...new Set(unresolvedWarnings.filter(w=>w.scope==='unreachable-source').map(w=>w.file))].sort() },
     selectionReduction: graph.tests.length ? 1 - selected.length / graph.tests.length : 0,
     reasons: [...new Set(reasons)], warnings: graph.warnings, decisions, fingerprint, discovery: graph.discovery,

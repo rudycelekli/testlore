@@ -1,0 +1,2004 @@
+{
+  "schemaVersion": 1,
+  "sourceRevision": "b02a09e210e2b72c8ad7517d35f4eafb696a9425",
+  "upstreamRevision": "3dcb732da33f6ceef597506b14a4536f1c9aff96",
+  "rows": [
+    {
+      "seed": 104729,
+      "qualified": false,
+      "completed": true,
+      "trials": 6,
+      "fullFallbackTrials": 6,
+      "missedFailures": 0,
+      "propertyReplay": {
+        "schemaVersion": 1,
+        "profile": "explicit-fast-check-global-seed-overlay",
+        "requestedSeed": 104729,
+        "preregisteredSeeds": [
+          104729,
+          130363,
+          155921
+        ],
+        "complete": true,
+        "baseline": {
+          "schemaVersion": 1,
+          "requestedSeed": 104729,
+          "complete": true,
+          "cases": [
+            {
+              "file": "src/domain/canonicalDigest.test.ts",
+              "name": "incremental canonical digest preserves canonicalize digests for JSON values (with seed=104729)",
+              "seed": 104729,
+              "status": "passed"
+            },
+            {
+              "file": "src/domain/evidence.test.ts",
+              "name": "analysis evidence identity canonicalizes parameter key order (with seed=104729)",
+              "seed": 104729,
+              "status": "passed"
+            },
+            {
+              "file": "src/domain/evidence.test.ts",
+              "name": "analysis evidence identity keeps identity path-independent and provider-sensitive (with seed=104729)",
+              "seed": 104729,
+              "status": "passed"
+            },
+            {
+              "file": "src/domain/javascript/javascriptSemanticAnalysis.rejection.test.ts",
+              "name": "JavaScript semantic analysis: rejection 1 fails closed for arbitrary source text (with seed=104729)",
+              "seed": 104729,
+              "status": "passed"
+            },
+            {
+              "file": "src/dotnet/ManagedMemberInspectorCore.test.ts",
+              "name": "managed declaring type ownership agrees with observed first-match ownership for arbitrary metadata ranges (with seed=104729)",
+              "seed": 104729,
+              "status": "passed"
+            }
+          ],
+          "kind": "observed-fast-check-vitest-title-seeds",
+          "inputReplayCertified": false
+        },
+        "arms": [
+          {
+            "change": 0,
+            "repetition": 0,
+            "arm": "full",
+            "aligned": true,
+            "schemaVersion": 1,
+            "requestedSeed": 104729,
+            "complete": true,
+            "cases": [
+              {
+                "file": "src/domain/canonicalDigest.test.ts",
+                "name": "incremental canonical digest preserves canonicalize digests for JSON values (with seed=104729)",
+                "seed": 104729,
+                "status": "passed"
+              },
+              {
+                "file": "src/domain/evidence.test.ts",
+                "name": "analysis evidence identity canonicalizes parameter key order (with seed=104729)",
+                "seed": 104729,
+                "status": "passed"
+              },
+              {
+                "file": "src/domain/evidence.test.ts",
+                "name": "analysis evidence identity keeps identity path-independent and provider-sensitive (with seed=104729)",
+                "seed": 104729,
+                "status": "passed"
+              },
+              {
+                "file": "src/domain/javascript/javascriptSemanticAnalysis.rejection.test.ts",
+                "name": "JavaScript semantic analysis: rejection 1 fails closed for arbitrary source text (with seed=104729)",
+                "seed": 104729,
+                "status": "passed"
+              },
+              {
+                "file": "src/dotnet/ManagedMemberInspectorCore.test.ts",
+                "name": "managed declaring type ownership agrees with observed first-match ownership for arbitrary metadata ranges (with seed=104729)",
+                "seed": 104729,
+                "status": "passed"
+              }
+            ],
+            "kind": "observed-fast-check-vitest-title-seeds",
+            "inputReplayCertified": false
+          },
+          {
+            "change": 0,
+            "repetition": 0,
+            "arm": "subset",
+            "aligned": true,
+            "schemaVersion": 1,
+            "requestedSeed": 104729,
+            "complete": true,
+            "cases": [
+              {
+                "file": "src/domain/canonicalDigest.test.ts",
+                "name": "incremental canonical digest preserves canonicalize digests for JSON values (with seed=104729)",
+                "seed": 104729,
+                "status": "passed"
+              },
+              {
+                "file": "src/domain/evidence.test.ts",
+                "name": "analysis evidence identity canonicalizes parameter key order (with seed=104729)",
+                "seed": 104729,
+                "status": "passed"
+              },
+              {
+                "file": "src/domain/evidence.test.ts",
+                "name": "analysis evidence identity keeps identity path-independent and provider-sensitive (with seed=104729)",
+                "seed": 104729,
+                "status": "passed"
+              },
+              {
+                "file": "src/domain/javascript/javascriptSemanticAnalysis.rejection.test.ts",
+                "name": "JavaScript semantic analysis: rejection 1 fails closed for arbitrary source text (with seed=104729)",
+                "seed": 104729,
+                "status": "passed"
+              },
+              {
+                "file": "src/dotnet/ManagedMemberInspectorCore.test.ts",
+                "name": "managed declaring type ownership agrees with observed first-match ownership for arbitrary metadata ranges (with seed=104729)",
+                "seed": 104729,
+                "status": "passed"
+              }
+            ],
+            "kind": "observed-fast-check-vitest-title-seeds",
+            "inputReplayCertified": false
+          },
+          {
+            "change": 0,
+            "repetition": 0,
+            "arm": "native",
+            "aligned": true,
+            "schemaVersion": 1,
+            "requestedSeed": 104729,
+            "complete": false,
+            "cases": [],
+            "kind": "observed-fast-check-vitest-title-seeds",
+            "inputReplayCertified": false
+          },
+          {
+            "change": 0,
+            "repetition": 1,
+            "arm": "full",
+            "aligned": true,
+            "schemaVersion": 1,
+            "requestedSeed": 104729,
+            "complete": true,
+            "cases": [
+              {
+                "file": "src/domain/canonicalDigest.test.ts",
+                "name": "incremental canonical digest preserves canonicalize digests for JSON values (with seed=104729)",
+                "seed": 104729,
+                "status": "passed"
+              },
+              {
+                "file": "src/domain/evidence.test.ts",
+                "name": "analysis evidence identity canonicalizes parameter key order (with seed=104729)",
+                "seed": 104729,
+                "status": "passed"
+              },
+              {
+                "file": "src/domain/evidence.test.ts",
+                "name": "analysis evidence identity keeps identity path-independent and provider-sensitive (with seed=104729)",
+                "seed": 104729,
+                "status": "passed"
+              },
+              {
+                "file": "src/domain/javascript/javascriptSemanticAnalysis.rejection.test.ts",
+                "name": "JavaScript semantic analysis: rejection 1 fails closed for arbitrary source text (with seed=104729)",
+                "seed": 104729,
+                "status": "passed"
+              },
+              {
+                "file": "src/dotnet/ManagedMemberInspectorCore.test.ts",
+                "name": "managed declaring type ownership agrees with observed first-match ownership for arbitrary metadata ranges (with seed=104729)",
+                "seed": 104729,
+                "status": "passed"
+              }
+            ],
+            "kind": "observed-fast-check-vitest-title-seeds",
+            "inputReplayCertified": false
+          },
+          {
+            "change": 0,
+            "repetition": 1,
+            "arm": "subset",
+            "aligned": true,
+            "schemaVersion": 1,
+            "requestedSeed": 104729,
+            "complete": true,
+            "cases": [
+              {
+                "file": "src/domain/canonicalDigest.test.ts",
+                "name": "incremental canonical digest preserves canonicalize digests for JSON values (with seed=104729)",
+                "seed": 104729,
+                "status": "passed"
+              },
+              {
+                "file": "src/domain/evidence.test.ts",
+                "name": "analysis evidence identity canonicalizes parameter key order (with seed=104729)",
+                "seed": 104729,
+                "status": "passed"
+              },
+              {
+                "file": "src/domain/evidence.test.ts",
+                "name": "analysis evidence identity keeps identity path-independent and provider-sensitive (with seed=104729)",
+                "seed": 104729,
+                "status": "passed"
+              },
+              {
+                "file": "src/domain/javascript/javascriptSemanticAnalysis.rejection.test.ts",
+                "name": "JavaScript semantic analysis: rejection 1 fails closed for arbitrary source text (with seed=104729)",
+                "seed": 104729,
+                "status": "passed"
+              },
+              {
+                "file": "src/dotnet/ManagedMemberInspectorCore.test.ts",
+                "name": "managed declaring type ownership agrees with observed first-match ownership for arbitrary metadata ranges (with seed=104729)",
+                "seed": 104729,
+                "status": "passed"
+              }
+            ],
+            "kind": "observed-fast-check-vitest-title-seeds",
+            "inputReplayCertified": false
+          },
+          {
+            "change": 0,
+            "repetition": 1,
+            "arm": "native",
+            "aligned": true,
+            "schemaVersion": 1,
+            "requestedSeed": 104729,
+            "complete": false,
+            "cases": [],
+            "kind": "observed-fast-check-vitest-title-seeds",
+            "inputReplayCertified": false
+          },
+          {
+            "change": 0,
+            "repetition": 2,
+            "arm": "full",
+            "aligned": true,
+            "schemaVersion": 1,
+            "requestedSeed": 104729,
+            "complete": true,
+            "cases": [
+              {
+                "file": "src/domain/canonicalDigest.test.ts",
+                "name": "incremental canonical digest preserves canonicalize digests for JSON values (with seed=104729)",
+                "seed": 104729,
+                "status": "passed"
+              },
+              {
+                "file": "src/domain/evidence.test.ts",
+                "name": "analysis evidence identity canonicalizes parameter key order (with seed=104729)",
+                "seed": 104729,
+                "status": "passed"
+              },
+              {
+                "file": "src/domain/evidence.test.ts",
+                "name": "analysis evidence identity keeps identity path-independent and provider-sensitive (with seed=104729)",
+                "seed": 104729,
+                "status": "passed"
+              },
+              {
+                "file": "src/domain/javascript/javascriptSemanticAnalysis.rejection.test.ts",
+                "name": "JavaScript semantic analysis: rejection 1 fails closed for arbitrary source text (with seed=104729)",
+                "seed": 104729,
+                "status": "passed"
+              },
+              {
+                "file": "src/dotnet/ManagedMemberInspectorCore.test.ts",
+                "name": "managed declaring type ownership agrees with observed first-match ownership for arbitrary metadata ranges (with seed=104729)",
+                "seed": 104729,
+                "status": "passed"
+              }
+            ],
+            "kind": "observed-fast-check-vitest-title-seeds",
+            "inputReplayCertified": false
+          },
+          {
+            "change": 0,
+            "repetition": 2,
+            "arm": "subset",
+            "aligned": true,
+            "schemaVersion": 1,
+            "requestedSeed": 104729,
+            "complete": true,
+            "cases": [
+              {
+                "file": "src/domain/canonicalDigest.test.ts",
+                "name": "incremental canonical digest preserves canonicalize digests for JSON values (with seed=104729)",
+                "seed": 104729,
+                "status": "passed"
+              },
+              {
+                "file": "src/domain/evidence.test.ts",
+                "name": "analysis evidence identity canonicalizes parameter key order (with seed=104729)",
+                "seed": 104729,
+                "status": "passed"
+              },
+              {
+                "file": "src/domain/evidence.test.ts",
+                "name": "analysis evidence identity keeps identity path-independent and provider-sensitive (with seed=104729)",
+                "seed": 104729,
+                "status": "passed"
+              },
+              {
+                "file": "src/domain/javascript/javascriptSemanticAnalysis.rejection.test.ts",
+                "name": "JavaScript semantic analysis: rejection 1 fails closed for arbitrary source text (with seed=104729)",
+                "seed": 104729,
+                "status": "passed"
+              },
+              {
+                "file": "src/dotnet/ManagedMemberInspectorCore.test.ts",
+                "name": "managed declaring type ownership agrees with observed first-match ownership for arbitrary metadata ranges (with seed=104729)",
+                "seed": 104729,
+                "status": "passed"
+              }
+            ],
+            "kind": "observed-fast-check-vitest-title-seeds",
+            "inputReplayCertified": false
+          },
+          {
+            "change": 0,
+            "repetition": 2,
+            "arm": "native",
+            "aligned": true,
+            "schemaVersion": 1,
+            "requestedSeed": 104729,
+            "complete": false,
+            "cases": [],
+            "kind": "observed-fast-check-vitest-title-seeds",
+            "inputReplayCertified": false
+          },
+          {
+            "change": 1,
+            "repetition": 0,
+            "arm": "full",
+            "aligned": true,
+            "schemaVersion": 1,
+            "requestedSeed": 104729,
+            "complete": true,
+            "cases": [
+              {
+                "file": "src/domain/canonicalDigest.test.ts",
+                "name": "incremental canonical digest preserves canonicalize digests for JSON values (with seed=104729)",
+                "seed": 104729,
+                "status": "passed"
+              },
+              {
+                "file": "src/domain/evidence.test.ts",
+                "name": "analysis evidence identity canonicalizes parameter key order (with seed=104729)",
+                "seed": 104729,
+                "status": "passed"
+              },
+              {
+                "file": "src/domain/evidence.test.ts",
+                "name": "analysis evidence identity keeps identity path-independent and provider-sensitive (with seed=104729)",
+                "seed": 104729,
+                "status": "passed"
+              },
+              {
+                "file": "src/domain/javascript/javascriptSemanticAnalysis.rejection.test.ts",
+                "name": "JavaScript semantic analysis: rejection 1 fails closed for arbitrary source text (with seed=104729)",
+                "seed": 104729,
+                "status": "passed"
+              },
+              {
+                "file": "src/dotnet/ManagedMemberInspectorCore.test.ts",
+                "name": "managed declaring type ownership agrees with observed first-match ownership for arbitrary metadata ranges (with seed=104729)",
+                "seed": 104729,
+                "status": "passed"
+              }
+            ],
+            "kind": "observed-fast-check-vitest-title-seeds",
+            "inputReplayCertified": false
+          },
+          {
+            "change": 1,
+            "repetition": 0,
+            "arm": "subset",
+            "aligned": true,
+            "schemaVersion": 1,
+            "requestedSeed": 104729,
+            "complete": true,
+            "cases": [
+              {
+                "file": "src/domain/canonicalDigest.test.ts",
+                "name": "incremental canonical digest preserves canonicalize digests for JSON values (with seed=104729)",
+                "seed": 104729,
+                "status": "passed"
+              },
+              {
+                "file": "src/domain/evidence.test.ts",
+                "name": "analysis evidence identity canonicalizes parameter key order (with seed=104729)",
+                "seed": 104729,
+                "status": "passed"
+              },
+              {
+                "file": "src/domain/evidence.test.ts",
+                "name": "analysis evidence identity keeps identity path-independent and provider-sensitive (with seed=104729)",
+                "seed": 104729,
+                "status": "passed"
+              },
+              {
+                "file": "src/domain/javascript/javascriptSemanticAnalysis.rejection.test.ts",
+                "name": "JavaScript semantic analysis: rejection 1 fails closed for arbitrary source text (with seed=104729)",
+                "seed": 104729,
+                "status": "passed"
+              },
+              {
+                "file": "src/dotnet/ManagedMemberInspectorCore.test.ts",
+                "name": "managed declaring type ownership agrees with observed first-match ownership for arbitrary metadata ranges (with seed=104729)",
+                "seed": 104729,
+                "status": "passed"
+              }
+            ],
+            "kind": "observed-fast-check-vitest-title-seeds",
+            "inputReplayCertified": false
+          },
+          {
+            "change": 1,
+            "repetition": 0,
+            "arm": "native",
+            "aligned": true,
+            "schemaVersion": 1,
+            "requestedSeed": 104729,
+            "complete": false,
+            "cases": [],
+            "kind": "observed-fast-check-vitest-title-seeds",
+            "inputReplayCertified": false
+          },
+          {
+            "change": 1,
+            "repetition": 1,
+            "arm": "full",
+            "aligned": true,
+            "schemaVersion": 1,
+            "requestedSeed": 104729,
+            "complete": true,
+            "cases": [
+              {
+                "file": "src/domain/canonicalDigest.test.ts",
+                "name": "incremental canonical digest preserves canonicalize digests for JSON values (with seed=104729)",
+                "seed": 104729,
+                "status": "passed"
+              },
+              {
+                "file": "src/domain/evidence.test.ts",
+                "name": "analysis evidence identity canonicalizes parameter key order (with seed=104729)",
+                "seed": 104729,
+                "status": "passed"
+              },
+              {
+                "file": "src/domain/evidence.test.ts",
+                "name": "analysis evidence identity keeps identity path-independent and provider-sensitive (with seed=104729)",
+                "seed": 104729,
+                "status": "passed"
+              },
+              {
+                "file": "src/domain/javascript/javascriptSemanticAnalysis.rejection.test.ts",
+                "name": "JavaScript semantic analysis: rejection 1 fails closed for arbitrary source text (with seed=104729)",
+                "seed": 104729,
+                "status": "passed"
+              },
+              {
+                "file": "src/dotnet/ManagedMemberInspectorCore.test.ts",
+                "name": "managed declaring type ownership agrees with observed first-match ownership for arbitrary metadata ranges (with seed=104729)",
+                "seed": 104729,
+                "status": "passed"
+              }
+            ],
+            "kind": "observed-fast-check-vitest-title-seeds",
+            "inputReplayCertified": false
+          },
+          {
+            "change": 1,
+            "repetition": 1,
+            "arm": "subset",
+            "aligned": true,
+            "schemaVersion": 1,
+            "requestedSeed": 104729,
+            "complete": true,
+            "cases": [
+              {
+                "file": "src/domain/canonicalDigest.test.ts",
+                "name": "incremental canonical digest preserves canonicalize digests for JSON values (with seed=104729)",
+                "seed": 104729,
+                "status": "passed"
+              },
+              {
+                "file": "src/domain/evidence.test.ts",
+                "name": "analysis evidence identity canonicalizes parameter key order (with seed=104729)",
+                "seed": 104729,
+                "status": "passed"
+              },
+              {
+                "file": "src/domain/evidence.test.ts",
+                "name": "analysis evidence identity keeps identity path-independent and provider-sensitive (with seed=104729)",
+                "seed": 104729,
+                "status": "passed"
+              },
+              {
+                "file": "src/domain/javascript/javascriptSemanticAnalysis.rejection.test.ts",
+                "name": "JavaScript semantic analysis: rejection 1 fails closed for arbitrary source text (with seed=104729)",
+                "seed": 104729,
+                "status": "passed"
+              },
+              {
+                "file": "src/dotnet/ManagedMemberInspectorCore.test.ts",
+                "name": "managed declaring type ownership agrees with observed first-match ownership for arbitrary metadata ranges (with seed=104729)",
+                "seed": 104729,
+                "status": "passed"
+              }
+            ],
+            "kind": "observed-fast-check-vitest-title-seeds",
+            "inputReplayCertified": false
+          },
+          {
+            "change": 1,
+            "repetition": 1,
+            "arm": "native",
+            "aligned": true,
+            "schemaVersion": 1,
+            "requestedSeed": 104729,
+            "complete": false,
+            "cases": [],
+            "kind": "observed-fast-check-vitest-title-seeds",
+            "inputReplayCertified": false
+          },
+          {
+            "change": 1,
+            "repetition": 2,
+            "arm": "full",
+            "aligned": true,
+            "schemaVersion": 1,
+            "requestedSeed": 104729,
+            "complete": true,
+            "cases": [
+              {
+                "file": "src/domain/canonicalDigest.test.ts",
+                "name": "incremental canonical digest preserves canonicalize digests for JSON values (with seed=104729)",
+                "seed": 104729,
+                "status": "passed"
+              },
+              {
+                "file": "src/domain/evidence.test.ts",
+                "name": "analysis evidence identity canonicalizes parameter key order (with seed=104729)",
+                "seed": 104729,
+                "status": "passed"
+              },
+              {
+                "file": "src/domain/evidence.test.ts",
+                "name": "analysis evidence identity keeps identity path-independent and provider-sensitive (with seed=104729)",
+                "seed": 104729,
+                "status": "passed"
+              },
+              {
+                "file": "src/domain/javascript/javascriptSemanticAnalysis.rejection.test.ts",
+                "name": "JavaScript semantic analysis: rejection 1 fails closed for arbitrary source text (with seed=104729)",
+                "seed": 104729,
+                "status": "passed"
+              },
+              {
+                "file": "src/dotnet/ManagedMemberInspectorCore.test.ts",
+                "name": "managed declaring type ownership agrees with observed first-match ownership for arbitrary metadata ranges (with seed=104729)",
+                "seed": 104729,
+                "status": "passed"
+              }
+            ],
+            "kind": "observed-fast-check-vitest-title-seeds",
+            "inputReplayCertified": false
+          },
+          {
+            "change": 1,
+            "repetition": 2,
+            "arm": "subset",
+            "aligned": true,
+            "schemaVersion": 1,
+            "requestedSeed": 104729,
+            "complete": true,
+            "cases": [
+              {
+                "file": "src/domain/canonicalDigest.test.ts",
+                "name": "incremental canonical digest preserves canonicalize digests for JSON values (with seed=104729)",
+                "seed": 104729,
+                "status": "passed"
+              },
+              {
+                "file": "src/domain/evidence.test.ts",
+                "name": "analysis evidence identity canonicalizes parameter key order (with seed=104729)",
+                "seed": 104729,
+                "status": "passed"
+              },
+              {
+                "file": "src/domain/evidence.test.ts",
+                "name": "analysis evidence identity keeps identity path-independent and provider-sensitive (with seed=104729)",
+                "seed": 104729,
+                "status": "passed"
+              },
+              {
+                "file": "src/domain/javascript/javascriptSemanticAnalysis.rejection.test.ts",
+                "name": "JavaScript semantic analysis: rejection 1 fails closed for arbitrary source text (with seed=104729)",
+                "seed": 104729,
+                "status": "passed"
+              },
+              {
+                "file": "src/dotnet/ManagedMemberInspectorCore.test.ts",
+                "name": "managed declaring type ownership agrees with observed first-match ownership for arbitrary metadata ranges (with seed=104729)",
+                "seed": 104729,
+                "status": "passed"
+              }
+            ],
+            "kind": "observed-fast-check-vitest-title-seeds",
+            "inputReplayCertified": false
+          },
+          {
+            "change": 1,
+            "repetition": 2,
+            "arm": "native",
+            "aligned": true,
+            "schemaVersion": 1,
+            "requestedSeed": 104729,
+            "complete": false,
+            "cases": [],
+            "kind": "observed-fast-check-vitest-title-seeds",
+            "inputReplayCertified": false
+          }
+        ],
+        "inputReplayCertified": false,
+        "allPreregisteredSeedsQualified": false
+      },
+      "medianMs": {
+        "testLoreMs": 45149.0,
+        "nativeMs": 2845.5,
+        "fullMs": 33662.5
+      },
+      "reasons": [
+        "pilot-incomplete-or-invalid",
+        "raw-case-preservation-mismatch:0:0:Baseline named inventory drift",
+        "raw-case-preservation-mismatch:0:1:Baseline named inventory drift",
+        "raw-case-preservation-mismatch:0:2:Baseline named inventory drift",
+        "pilot-trial-rejected:1:0",
+        "raw-case-preservation-mismatch:1:0:subset named case/status preservation",
+        "raw-case-preservation-mismatch:1:1:Baseline named inventory drift",
+        "raw-case-preservation-mismatch:1:2:Baseline named inventory drift",
+        "pilot-process-incomplete"
+      ]
+    },
+    {
+      "seed": 130363,
+      "qualified": false,
+      "completed": true,
+      "trials": 6,
+      "fullFallbackTrials": 6,
+      "missedFailures": 0,
+      "propertyReplay": {
+        "schemaVersion": 1,
+        "profile": "explicit-fast-check-global-seed-overlay",
+        "requestedSeed": 130363,
+        "preregisteredSeeds": [
+          104729,
+          130363,
+          155921
+        ],
+        "complete": true,
+        "baseline": {
+          "schemaVersion": 1,
+          "requestedSeed": 130363,
+          "complete": true,
+          "cases": [
+            {
+              "file": "src/domain/canonicalDigest.test.ts",
+              "name": "incremental canonical digest preserves canonicalize digests for JSON values (with seed=130363)",
+              "seed": 130363,
+              "status": "passed"
+            },
+            {
+              "file": "src/domain/evidence.test.ts",
+              "name": "analysis evidence identity canonicalizes parameter key order (with seed=130363)",
+              "seed": 130363,
+              "status": "passed"
+            },
+            {
+              "file": "src/domain/evidence.test.ts",
+              "name": "analysis evidence identity keeps identity path-independent and provider-sensitive (with seed=130363)",
+              "seed": 130363,
+              "status": "passed"
+            },
+            {
+              "file": "src/domain/javascript/javascriptSemanticAnalysis.rejection.test.ts",
+              "name": "JavaScript semantic analysis: rejection 1 fails closed for arbitrary source text (with seed=130363)",
+              "seed": 130363,
+              "status": "passed"
+            },
+            {
+              "file": "src/dotnet/ManagedMemberInspectorCore.test.ts",
+              "name": "managed declaring type ownership agrees with observed first-match ownership for arbitrary metadata ranges (with seed=130363)",
+              "seed": 130363,
+              "status": "passed"
+            }
+          ],
+          "kind": "observed-fast-check-vitest-title-seeds",
+          "inputReplayCertified": false
+        },
+        "arms": [
+          {
+            "change": 0,
+            "repetition": 0,
+            "arm": "full",
+            "aligned": true,
+            "schemaVersion": 1,
+            "requestedSeed": 130363,
+            "complete": true,
+            "cases": [
+              {
+                "file": "src/domain/canonicalDigest.test.ts",
+                "name": "incremental canonical digest preserves canonicalize digests for JSON values (with seed=130363)",
+                "seed": 130363,
+                "status": "passed"
+              },
+              {
+                "file": "src/domain/evidence.test.ts",
+                "name": "analysis evidence identity canonicalizes parameter key order (with seed=130363)",
+                "seed": 130363,
+                "status": "passed"
+              },
+              {
+                "file": "src/domain/evidence.test.ts",
+                "name": "analysis evidence identity keeps identity path-independent and provider-sensitive (with seed=130363)",
+                "seed": 130363,
+                "status": "passed"
+              },
+              {
+                "file": "src/domain/javascript/javascriptSemanticAnalysis.rejection.test.ts",
+                "name": "JavaScript semantic analysis: rejection 1 fails closed for arbitrary source text (with seed=130363)",
+                "seed": 130363,
+                "status": "passed"
+              },
+              {
+                "file": "src/dotnet/ManagedMemberInspectorCore.test.ts",
+                "name": "managed declaring type ownership agrees with observed first-match ownership for arbitrary metadata ranges (with seed=130363)",
+                "seed": 130363,
+                "status": "passed"
+              }
+            ],
+            "kind": "observed-fast-check-vitest-title-seeds",
+            "inputReplayCertified": false
+          },
+          {
+            "change": 0,
+            "repetition": 0,
+            "arm": "subset",
+            "aligned": true,
+            "schemaVersion": 1,
+            "requestedSeed": 130363,
+            "complete": true,
+            "cases": [
+              {
+                "file": "src/domain/canonicalDigest.test.ts",
+                "name": "incremental canonical digest preserves canonicalize digests for JSON values (with seed=130363)",
+                "seed": 130363,
+                "status": "passed"
+              },
+              {
+                "file": "src/domain/evidence.test.ts",
+                "name": "analysis evidence identity canonicalizes parameter key order (with seed=130363)",
+                "seed": 130363,
+                "status": "passed"
+              },
+              {
+                "file": "src/domain/evidence.test.ts",
+                "name": "analysis evidence identity keeps identity path-independent and provider-sensitive (with seed=130363)",
+                "seed": 130363,
+                "status": "passed"
+              },
+              {
+                "file": "src/domain/javascript/javascriptSemanticAnalysis.rejection.test.ts",
+                "name": "JavaScript semantic analysis: rejection 1 fails closed for arbitrary source text (with seed=130363)",
+                "seed": 130363,
+                "status": "passed"
+              },
+              {
+                "file": "src/dotnet/ManagedMemberInspectorCore.test.ts",
+                "name": "managed declaring type ownership agrees with observed first-match ownership for arbitrary metadata ranges (with seed=130363)",
+                "seed": 130363,
+                "status": "passed"
+              }
+            ],
+            "kind": "observed-fast-check-vitest-title-seeds",
+            "inputReplayCertified": false
+          },
+          {
+            "change": 0,
+            "repetition": 0,
+            "arm": "native",
+            "aligned": true,
+            "schemaVersion": 1,
+            "requestedSeed": 130363,
+            "complete": false,
+            "cases": [],
+            "kind": "observed-fast-check-vitest-title-seeds",
+            "inputReplayCertified": false
+          },
+          {
+            "change": 0,
+            "repetition": 1,
+            "arm": "full",
+            "aligned": true,
+            "schemaVersion": 1,
+            "requestedSeed": 130363,
+            "complete": true,
+            "cases": [
+              {
+                "file": "src/domain/canonicalDigest.test.ts",
+                "name": "incremental canonical digest preserves canonicalize digests for JSON values (with seed=130363)",
+                "seed": 130363,
+                "status": "passed"
+              },
+              {
+                "file": "src/domain/evidence.test.ts",
+                "name": "analysis evidence identity canonicalizes parameter key order (with seed=130363)",
+                "seed": 130363,
+                "status": "passed"
+              },
+              {
+                "file": "src/domain/evidence.test.ts",
+                "name": "analysis evidence identity keeps identity path-independent and provider-sensitive (with seed=130363)",
+                "seed": 130363,
+                "status": "passed"
+              },
+              {
+                "file": "src/domain/javascript/javascriptSemanticAnalysis.rejection.test.ts",
+                "name": "JavaScript semantic analysis: rejection 1 fails closed for arbitrary source text (with seed=130363)",
+                "seed": 130363,
+                "status": "passed"
+              },
+              {
+                "file": "src/dotnet/ManagedMemberInspectorCore.test.ts",
+                "name": "managed declaring type ownership agrees with observed first-match ownership for arbitrary metadata ranges (with seed=130363)",
+                "seed": 130363,
+                "status": "passed"
+              }
+            ],
+            "kind": "observed-fast-check-vitest-title-seeds",
+            "inputReplayCertified": false
+          },
+          {
+            "change": 0,
+            "repetition": 1,
+            "arm": "subset",
+            "aligned": true,
+            "schemaVersion": 1,
+            "requestedSeed": 130363,
+            "complete": true,
+            "cases": [
+              {
+                "file": "src/domain/canonicalDigest.test.ts",
+                "name": "incremental canonical digest preserves canonicalize digests for JSON values (with seed=130363)",
+                "seed": 130363,
+                "status": "passed"
+              },
+              {
+                "file": "src/domain/evidence.test.ts",
+                "name": "analysis evidence identity canonicalizes parameter key order (with seed=130363)",
+                "seed": 130363,
+                "status": "passed"
+              },
+              {
+                "file": "src/domain/evidence.test.ts",
+                "name": "analysis evidence identity keeps identity path-independent and provider-sensitive (with seed=130363)",
+                "seed": 130363,
+                "status": "passed"
+              },
+              {
+                "file": "src/domain/javascript/javascriptSemanticAnalysis.rejection.test.ts",
+                "name": "JavaScript semantic analysis: rejection 1 fails closed for arbitrary source text (with seed=130363)",
+                "seed": 130363,
+                "status": "passed"
+              },
+              {
+                "file": "src/dotnet/ManagedMemberInspectorCore.test.ts",
+                "name": "managed declaring type ownership agrees with observed first-match ownership for arbitrary metadata ranges (with seed=130363)",
+                "seed": 130363,
+                "status": "passed"
+              }
+            ],
+            "kind": "observed-fast-check-vitest-title-seeds",
+            "inputReplayCertified": false
+          },
+          {
+            "change": 0,
+            "repetition": 1,
+            "arm": "native",
+            "aligned": true,
+            "schemaVersion": 1,
+            "requestedSeed": 130363,
+            "complete": false,
+            "cases": [],
+            "kind": "observed-fast-check-vitest-title-seeds",
+            "inputReplayCertified": false
+          },
+          {
+            "change": 0,
+            "repetition": 2,
+            "arm": "full",
+            "aligned": true,
+            "schemaVersion": 1,
+            "requestedSeed": 130363,
+            "complete": true,
+            "cases": [
+              {
+                "file": "src/domain/canonicalDigest.test.ts",
+                "name": "incremental canonical digest preserves canonicalize digests for JSON values (with seed=130363)",
+                "seed": 130363,
+                "status": "passed"
+              },
+              {
+                "file": "src/domain/evidence.test.ts",
+                "name": "analysis evidence identity canonicalizes parameter key order (with seed=130363)",
+                "seed": 130363,
+                "status": "passed"
+              },
+              {
+                "file": "src/domain/evidence.test.ts",
+                "name": "analysis evidence identity keeps identity path-independent and provider-sensitive (with seed=130363)",
+                "seed": 130363,
+                "status": "passed"
+              },
+              {
+                "file": "src/domain/javascript/javascriptSemanticAnalysis.rejection.test.ts",
+                "name": "JavaScript semantic analysis: rejection 1 fails closed for arbitrary source text (with seed=130363)",
+                "seed": 130363,
+                "status": "passed"
+              },
+              {
+                "file": "src/dotnet/ManagedMemberInspectorCore.test.ts",
+                "name": "managed declaring type ownership agrees with observed first-match ownership for arbitrary metadata ranges (with seed=130363)",
+                "seed": 130363,
+                "status": "passed"
+              }
+            ],
+            "kind": "observed-fast-check-vitest-title-seeds",
+            "inputReplayCertified": false
+          },
+          {
+            "change": 0,
+            "repetition": 2,
+            "arm": "subset",
+            "aligned": true,
+            "schemaVersion": 1,
+            "requestedSeed": 130363,
+            "complete": true,
+            "cases": [
+              {
+                "file": "src/domain/canonicalDigest.test.ts",
+                "name": "incremental canonical digest preserves canonicalize digests for JSON values (with seed=130363)",
+                "seed": 130363,
+                "status": "passed"
+              },
+              {
+                "file": "src/domain/evidence.test.ts",
+                "name": "analysis evidence identity canonicalizes parameter key order (with seed=130363)",
+                "seed": 130363,
+                "status": "passed"
+              },
+              {
+                "file": "src/domain/evidence.test.ts",
+                "name": "analysis evidence identity keeps identity path-independent and provider-sensitive (with seed=130363)",
+                "seed": 130363,
+                "status": "passed"
+              },
+              {
+                "file": "src/domain/javascript/javascriptSemanticAnalysis.rejection.test.ts",
+                "name": "JavaScript semantic analysis: rejection 1 fails closed for arbitrary source text (with seed=130363)",
+                "seed": 130363,
+                "status": "passed"
+              },
+              {
+                "file": "src/dotnet/ManagedMemberInspectorCore.test.ts",
+                "name": "managed declaring type ownership agrees with observed first-match ownership for arbitrary metadata ranges (with seed=130363)",
+                "seed": 130363,
+                "status": "passed"
+              }
+            ],
+            "kind": "observed-fast-check-vitest-title-seeds",
+            "inputReplayCertified": false
+          },
+          {
+            "change": 0,
+            "repetition": 2,
+            "arm": "native",
+            "aligned": true,
+            "schemaVersion": 1,
+            "requestedSeed": 130363,
+            "complete": false,
+            "cases": [],
+            "kind": "observed-fast-check-vitest-title-seeds",
+            "inputReplayCertified": false
+          },
+          {
+            "change": 1,
+            "repetition": 0,
+            "arm": "full",
+            "aligned": true,
+            "schemaVersion": 1,
+            "requestedSeed": 130363,
+            "complete": true,
+            "cases": [
+              {
+                "file": "src/domain/canonicalDigest.test.ts",
+                "name": "incremental canonical digest preserves canonicalize digests for JSON values (with seed=130363)",
+                "seed": 130363,
+                "status": "passed"
+              },
+              {
+                "file": "src/domain/evidence.test.ts",
+                "name": "analysis evidence identity canonicalizes parameter key order (with seed=130363)",
+                "seed": 130363,
+                "status": "passed"
+              },
+              {
+                "file": "src/domain/evidence.test.ts",
+                "name": "analysis evidence identity keeps identity path-independent and provider-sensitive (with seed=130363)",
+                "seed": 130363,
+                "status": "passed"
+              },
+              {
+                "file": "src/domain/javascript/javascriptSemanticAnalysis.rejection.test.ts",
+                "name": "JavaScript semantic analysis: rejection 1 fails closed for arbitrary source text (with seed=130363)",
+                "seed": 130363,
+                "status": "passed"
+              },
+              {
+                "file": "src/dotnet/ManagedMemberInspectorCore.test.ts",
+                "name": "managed declaring type ownership agrees with observed first-match ownership for arbitrary metadata ranges (with seed=130363)",
+                "seed": 130363,
+                "status": "passed"
+              }
+            ],
+            "kind": "observed-fast-check-vitest-title-seeds",
+            "inputReplayCertified": false
+          },
+          {
+            "change": 1,
+            "repetition": 0,
+            "arm": "subset",
+            "aligned": true,
+            "schemaVersion": 1,
+            "requestedSeed": 130363,
+            "complete": true,
+            "cases": [
+              {
+                "file": "src/domain/canonicalDigest.test.ts",
+                "name": "incremental canonical digest preserves canonicalize digests for JSON values (with seed=130363)",
+                "seed": 130363,
+                "status": "passed"
+              },
+              {
+                "file": "src/domain/evidence.test.ts",
+                "name": "analysis evidence identity canonicalizes parameter key order (with seed=130363)",
+                "seed": 130363,
+                "status": "passed"
+              },
+              {
+                "file": "src/domain/evidence.test.ts",
+                "name": "analysis evidence identity keeps identity path-independent and provider-sensitive (with seed=130363)",
+                "seed": 130363,
+                "status": "passed"
+              },
+              {
+                "file": "src/domain/javascript/javascriptSemanticAnalysis.rejection.test.ts",
+                "name": "JavaScript semantic analysis: rejection 1 fails closed for arbitrary source text (with seed=130363)",
+                "seed": 130363,
+                "status": "passed"
+              },
+              {
+                "file": "src/dotnet/ManagedMemberInspectorCore.test.ts",
+                "name": "managed declaring type ownership agrees with observed first-match ownership for arbitrary metadata ranges (with seed=130363)",
+                "seed": 130363,
+                "status": "passed"
+              }
+            ],
+            "kind": "observed-fast-check-vitest-title-seeds",
+            "inputReplayCertified": false
+          },
+          {
+            "change": 1,
+            "repetition": 0,
+            "arm": "native",
+            "aligned": true,
+            "schemaVersion": 1,
+            "requestedSeed": 130363,
+            "complete": false,
+            "cases": [],
+            "kind": "observed-fast-check-vitest-title-seeds",
+            "inputReplayCertified": false
+          },
+          {
+            "change": 1,
+            "repetition": 1,
+            "arm": "full",
+            "aligned": true,
+            "schemaVersion": 1,
+            "requestedSeed": 130363,
+            "complete": true,
+            "cases": [
+              {
+                "file": "src/domain/canonicalDigest.test.ts",
+                "name": "incremental canonical digest preserves canonicalize digests for JSON values (with seed=130363)",
+                "seed": 130363,
+                "status": "passed"
+              },
+              {
+                "file": "src/domain/evidence.test.ts",
+                "name": "analysis evidence identity canonicalizes parameter key order (with seed=130363)",
+                "seed": 130363,
+                "status": "passed"
+              },
+              {
+                "file": "src/domain/evidence.test.ts",
+                "name": "analysis evidence identity keeps identity path-independent and provider-sensitive (with seed=130363)",
+                "seed": 130363,
+                "status": "passed"
+              },
+              {
+                "file": "src/domain/javascript/javascriptSemanticAnalysis.rejection.test.ts",
+                "name": "JavaScript semantic analysis: rejection 1 fails closed for arbitrary source text (with seed=130363)",
+                "seed": 130363,
+                "status": "passed"
+              },
+              {
+                "file": "src/dotnet/ManagedMemberInspectorCore.test.ts",
+                "name": "managed declaring type ownership agrees with observed first-match ownership for arbitrary metadata ranges (with seed=130363)",
+                "seed": 130363,
+                "status": "passed"
+              }
+            ],
+            "kind": "observed-fast-check-vitest-title-seeds",
+            "inputReplayCertified": false
+          },
+          {
+            "change": 1,
+            "repetition": 1,
+            "arm": "subset",
+            "aligned": true,
+            "schemaVersion": 1,
+            "requestedSeed": 130363,
+            "complete": true,
+            "cases": [
+              {
+                "file": "src/domain/canonicalDigest.test.ts",
+                "name": "incremental canonical digest preserves canonicalize digests for JSON values (with seed=130363)",
+                "seed": 130363,
+                "status": "passed"
+              },
+              {
+                "file": "src/domain/evidence.test.ts",
+                "name": "analysis evidence identity canonicalizes parameter key order (with seed=130363)",
+                "seed": 130363,
+                "status": "passed"
+              },
+              {
+                "file": "src/domain/evidence.test.ts",
+                "name": "analysis evidence identity keeps identity path-independent and provider-sensitive (with seed=130363)",
+                "seed": 130363,
+                "status": "passed"
+              },
+              {
+                "file": "src/domain/javascript/javascriptSemanticAnalysis.rejection.test.ts",
+                "name": "JavaScript semantic analysis: rejection 1 fails closed for arbitrary source text (with seed=130363)",
+                "seed": 130363,
+                "status": "passed"
+              },
+              {
+                "file": "src/dotnet/ManagedMemberInspectorCore.test.ts",
+                "name": "managed declaring type ownership agrees with observed first-match ownership for arbitrary metadata ranges (with seed=130363)",
+                "seed": 130363,
+                "status": "passed"
+              }
+            ],
+            "kind": "observed-fast-check-vitest-title-seeds",
+            "inputReplayCertified": false
+          },
+          {
+            "change": 1,
+            "repetition": 1,
+            "arm": "native",
+            "aligned": true,
+            "schemaVersion": 1,
+            "requestedSeed": 130363,
+            "complete": false,
+            "cases": [],
+            "kind": "observed-fast-check-vitest-title-seeds",
+            "inputReplayCertified": false
+          },
+          {
+            "change": 1,
+            "repetition": 2,
+            "arm": "full",
+            "aligned": true,
+            "schemaVersion": 1,
+            "requestedSeed": 130363,
+            "complete": true,
+            "cases": [
+              {
+                "file": "src/domain/canonicalDigest.test.ts",
+                "name": "incremental canonical digest preserves canonicalize digests for JSON values (with seed=130363)",
+                "seed": 130363,
+                "status": "passed"
+              },
+              {
+                "file": "src/domain/evidence.test.ts",
+                "name": "analysis evidence identity canonicalizes parameter key order (with seed=130363)",
+                "seed": 130363,
+                "status": "passed"
+              },
+              {
+                "file": "src/domain/evidence.test.ts",
+                "name": "analysis evidence identity keeps identity path-independent and provider-sensitive (with seed=130363)",
+                "seed": 130363,
+                "status": "passed"
+              },
+              {
+                "file": "src/domain/javascript/javascriptSemanticAnalysis.rejection.test.ts",
+                "name": "JavaScript semantic analysis: rejection 1 fails closed for arbitrary source text (with seed=130363)",
+                "seed": 130363,
+                "status": "passed"
+              },
+              {
+                "file": "src/dotnet/ManagedMemberInspectorCore.test.ts",
+                "name": "managed declaring type ownership agrees with observed first-match ownership for arbitrary metadata ranges (with seed=130363)",
+                "seed": 130363,
+                "status": "passed"
+              }
+            ],
+            "kind": "observed-fast-check-vitest-title-seeds",
+            "inputReplayCertified": false
+          },
+          {
+            "change": 1,
+            "repetition": 2,
+            "arm": "subset",
+            "aligned": true,
+            "schemaVersion": 1,
+            "requestedSeed": 130363,
+            "complete": true,
+            "cases": [
+              {
+                "file": "src/domain/canonicalDigest.test.ts",
+                "name": "incremental canonical digest preserves canonicalize digests for JSON values (with seed=130363)",
+                "seed": 130363,
+                "status": "passed"
+              },
+              {
+                "file": "src/domain/evidence.test.ts",
+                "name": "analysis evidence identity canonicalizes parameter key order (with seed=130363)",
+                "seed": 130363,
+                "status": "passed"
+              },
+              {
+                "file": "src/domain/evidence.test.ts",
+                "name": "analysis evidence identity keeps identity path-independent and provider-sensitive (with seed=130363)",
+                "seed": 130363,
+                "status": "passed"
+              },
+              {
+                "file": "src/domain/javascript/javascriptSemanticAnalysis.rejection.test.ts",
+                "name": "JavaScript semantic analysis: rejection 1 fails closed for arbitrary source text (with seed=130363)",
+                "seed": 130363,
+                "status": "passed"
+              },
+              {
+                "file": "src/dotnet/ManagedMemberInspectorCore.test.ts",
+                "name": "managed declaring type ownership agrees with observed first-match ownership for arbitrary metadata ranges (with seed=130363)",
+                "seed": 130363,
+                "status": "passed"
+              }
+            ],
+            "kind": "observed-fast-check-vitest-title-seeds",
+            "inputReplayCertified": false
+          },
+          {
+            "change": 1,
+            "repetition": 2,
+            "arm": "native",
+            "aligned": true,
+            "schemaVersion": 1,
+            "requestedSeed": 130363,
+            "complete": false,
+            "cases": [],
+            "kind": "observed-fast-check-vitest-title-seeds",
+            "inputReplayCertified": false
+          }
+        ],
+        "inputReplayCertified": false,
+        "allPreregisteredSeedsQualified": false
+      },
+      "medianMs": {
+        "testLoreMs": 34003.0,
+        "nativeMs": 2017.5,
+        "fullMs": 25073.0
+      },
+      "reasons": [
+        "pilot-incomplete-or-invalid",
+        "raw-case-preservation-mismatch:0:0:Baseline named inventory drift",
+        "raw-case-preservation-mismatch:0:1:Baseline named inventory drift",
+        "raw-case-preservation-mismatch:0:2:Baseline named inventory drift",
+        "pilot-trial-rejected:1:0",
+        "raw-case-preservation-mismatch:1:0:subset named case/status preservation",
+        "raw-case-preservation-mismatch:1:1:Baseline named inventory drift",
+        "pilot-process-incomplete"
+      ]
+    },
+    {
+      "seed": 155921,
+      "qualified": false,
+      "completed": true,
+      "trials": 6,
+      "fullFallbackTrials": 6,
+      "missedFailures": 0,
+      "propertyReplay": {
+        "schemaVersion": 1,
+        "profile": "explicit-fast-check-global-seed-overlay",
+        "requestedSeed": 155921,
+        "preregisteredSeeds": [
+          104729,
+          130363,
+          155921
+        ],
+        "complete": true,
+        "baseline": {
+          "schemaVersion": 1,
+          "requestedSeed": 155921,
+          "complete": true,
+          "cases": [
+            {
+              "file": "src/domain/canonicalDigest.test.ts",
+              "name": "incremental canonical digest preserves canonicalize digests for JSON values (with seed=155921)",
+              "seed": 155921,
+              "status": "passed"
+            },
+            {
+              "file": "src/domain/evidence.test.ts",
+              "name": "analysis evidence identity canonicalizes parameter key order (with seed=155921)",
+              "seed": 155921,
+              "status": "passed"
+            },
+            {
+              "file": "src/domain/evidence.test.ts",
+              "name": "analysis evidence identity keeps identity path-independent and provider-sensitive (with seed=155921)",
+              "seed": 155921,
+              "status": "passed"
+            },
+            {
+              "file": "src/domain/javascript/javascriptSemanticAnalysis.rejection.test.ts",
+              "name": "JavaScript semantic analysis: rejection 1 fails closed for arbitrary source text (with seed=155921)",
+              "seed": 155921,
+              "status": "passed"
+            },
+            {
+              "file": "src/dotnet/ManagedMemberInspectorCore.test.ts",
+              "name": "managed declaring type ownership agrees with observed first-match ownership for arbitrary metadata ranges (with seed=155921)",
+              "seed": 155921,
+              "status": "passed"
+            }
+          ],
+          "kind": "observed-fast-check-vitest-title-seeds",
+          "inputReplayCertified": false
+        },
+        "arms": [
+          {
+            "change": 0,
+            "repetition": 0,
+            "arm": "full",
+            "aligned": true,
+            "schemaVersion": 1,
+            "requestedSeed": 155921,
+            "complete": true,
+            "cases": [
+              {
+                "file": "src/domain/canonicalDigest.test.ts",
+                "name": "incremental canonical digest preserves canonicalize digests for JSON values (with seed=155921)",
+                "seed": 155921,
+                "status": "passed"
+              },
+              {
+                "file": "src/domain/evidence.test.ts",
+                "name": "analysis evidence identity canonicalizes parameter key order (with seed=155921)",
+                "seed": 155921,
+                "status": "passed"
+              },
+              {
+                "file": "src/domain/evidence.test.ts",
+                "name": "analysis evidence identity keeps identity path-independent and provider-sensitive (with seed=155921)",
+                "seed": 155921,
+                "status": "passed"
+              },
+              {
+                "file": "src/domain/javascript/javascriptSemanticAnalysis.rejection.test.ts",
+                "name": "JavaScript semantic analysis: rejection 1 fails closed for arbitrary source text (with seed=155921)",
+                "seed": 155921,
+                "status": "passed"
+              },
+              {
+                "file": "src/dotnet/ManagedMemberInspectorCore.test.ts",
+                "name": "managed declaring type ownership agrees with observed first-match ownership for arbitrary metadata ranges (with seed=155921)",
+                "seed": 155921,
+                "status": "passed"
+              }
+            ],
+            "kind": "observed-fast-check-vitest-title-seeds",
+            "inputReplayCertified": false
+          },
+          {
+            "change": 0,
+            "repetition": 0,
+            "arm": "subset",
+            "aligned": true,
+            "schemaVersion": 1,
+            "requestedSeed": 155921,
+            "complete": true,
+            "cases": [
+              {
+                "file": "src/domain/canonicalDigest.test.ts",
+                "name": "incremental canonical digest preserves canonicalize digests for JSON values (with seed=155921)",
+                "seed": 155921,
+                "status": "passed"
+              },
+              {
+                "file": "src/domain/evidence.test.ts",
+                "name": "analysis evidence identity canonicalizes parameter key order (with seed=155921)",
+                "seed": 155921,
+                "status": "passed"
+              },
+              {
+                "file": "src/domain/evidence.test.ts",
+                "name": "analysis evidence identity keeps identity path-independent and provider-sensitive (with seed=155921)",
+                "seed": 155921,
+                "status": "passed"
+              },
+              {
+                "file": "src/domain/javascript/javascriptSemanticAnalysis.rejection.test.ts",
+                "name": "JavaScript semantic analysis: rejection 1 fails closed for arbitrary source text (with seed=155921)",
+                "seed": 155921,
+                "status": "passed"
+              },
+              {
+                "file": "src/dotnet/ManagedMemberInspectorCore.test.ts",
+                "name": "managed declaring type ownership agrees with observed first-match ownership for arbitrary metadata ranges (with seed=155921)",
+                "seed": 155921,
+                "status": "passed"
+              }
+            ],
+            "kind": "observed-fast-check-vitest-title-seeds",
+            "inputReplayCertified": false
+          },
+          {
+            "change": 0,
+            "repetition": 0,
+            "arm": "native",
+            "aligned": true,
+            "schemaVersion": 1,
+            "requestedSeed": 155921,
+            "complete": false,
+            "cases": [],
+            "kind": "observed-fast-check-vitest-title-seeds",
+            "inputReplayCertified": false
+          },
+          {
+            "change": 0,
+            "repetition": 1,
+            "arm": "full",
+            "aligned": true,
+            "schemaVersion": 1,
+            "requestedSeed": 155921,
+            "complete": true,
+            "cases": [
+              {
+                "file": "src/domain/canonicalDigest.test.ts",
+                "name": "incremental canonical digest preserves canonicalize digests for JSON values (with seed=155921)",
+                "seed": 155921,
+                "status": "passed"
+              },
+              {
+                "file": "src/domain/evidence.test.ts",
+                "name": "analysis evidence identity canonicalizes parameter key order (with seed=155921)",
+                "seed": 155921,
+                "status": "passed"
+              },
+              {
+                "file": "src/domain/evidence.test.ts",
+                "name": "analysis evidence identity keeps identity path-independent and provider-sensitive (with seed=155921)",
+                "seed": 155921,
+                "status": "passed"
+              },
+              {
+                "file": "src/domain/javascript/javascriptSemanticAnalysis.rejection.test.ts",
+                "name": "JavaScript semantic analysis: rejection 1 fails closed for arbitrary source text (with seed=155921)",
+                "seed": 155921,
+                "status": "passed"
+              },
+              {
+                "file": "src/dotnet/ManagedMemberInspectorCore.test.ts",
+                "name": "managed declaring type ownership agrees with observed first-match ownership for arbitrary metadata ranges (with seed=155921)",
+                "seed": 155921,
+                "status": "passed"
+              }
+            ],
+            "kind": "observed-fast-check-vitest-title-seeds",
+            "inputReplayCertified": false
+          },
+          {
+            "change": 0,
+            "repetition": 1,
+            "arm": "subset",
+            "aligned": true,
+            "schemaVersion": 1,
+            "requestedSeed": 155921,
+            "complete": true,
+            "cases": [
+              {
+                "file": "src/domain/canonicalDigest.test.ts",
+                "name": "incremental canonical digest preserves canonicalize digests for JSON values (with seed=155921)",
+                "seed": 155921,
+                "status": "passed"
+              },
+              {
+                "file": "src/domain/evidence.test.ts",
+                "name": "analysis evidence identity canonicalizes parameter key order (with seed=155921)",
+                "seed": 155921,
+                "status": "passed"
+              },
+              {
+                "file": "src/domain/evidence.test.ts",
+                "name": "analysis evidence identity keeps identity path-independent and provider-sensitive (with seed=155921)",
+                "seed": 155921,
+                "status": "passed"
+              },
+              {
+                "file": "src/domain/javascript/javascriptSemanticAnalysis.rejection.test.ts",
+                "name": "JavaScript semantic analysis: rejection 1 fails closed for arbitrary source text (with seed=155921)",
+                "seed": 155921,
+                "status": "passed"
+              },
+              {
+                "file": "src/dotnet/ManagedMemberInspectorCore.test.ts",
+                "name": "managed declaring type ownership agrees with observed first-match ownership for arbitrary metadata ranges (with seed=155921)",
+                "seed": 155921,
+                "status": "passed"
+              }
+            ],
+            "kind": "observed-fast-check-vitest-title-seeds",
+            "inputReplayCertified": false
+          },
+          {
+            "change": 0,
+            "repetition": 1,
+            "arm": "native",
+            "aligned": true,
+            "schemaVersion": 1,
+            "requestedSeed": 155921,
+            "complete": false,
+            "cases": [],
+            "kind": "observed-fast-check-vitest-title-seeds",
+            "inputReplayCertified": false
+          },
+          {
+            "change": 0,
+            "repetition": 2,
+            "arm": "full",
+            "aligned": true,
+            "schemaVersion": 1,
+            "requestedSeed": 155921,
+            "complete": true,
+            "cases": [
+              {
+                "file": "src/domain/canonicalDigest.test.ts",
+                "name": "incremental canonical digest preserves canonicalize digests for JSON values (with seed=155921)",
+                "seed": 155921,
+                "status": "passed"
+              },
+              {
+                "file": "src/domain/evidence.test.ts",
+                "name": "analysis evidence identity canonicalizes parameter key order (with seed=155921)",
+                "seed": 155921,
+                "status": "passed"
+              },
+              {
+                "file": "src/domain/evidence.test.ts",
+                "name": "analysis evidence identity keeps identity path-independent and provider-sensitive (with seed=155921)",
+                "seed": 155921,
+                "status": "passed"
+              },
+              {
+                "file": "src/domain/javascript/javascriptSemanticAnalysis.rejection.test.ts",
+                "name": "JavaScript semantic analysis: rejection 1 fails closed for arbitrary source text (with seed=155921)",
+                "seed": 155921,
+                "status": "passed"
+              },
+              {
+                "file": "src/dotnet/ManagedMemberInspectorCore.test.ts",
+                "name": "managed declaring type ownership agrees with observed first-match ownership for arbitrary metadata ranges (with seed=155921)",
+                "seed": 155921,
+                "status": "passed"
+              }
+            ],
+            "kind": "observed-fast-check-vitest-title-seeds",
+            "inputReplayCertified": false
+          },
+          {
+            "change": 0,
+            "repetition": 2,
+            "arm": "subset",
+            "aligned": true,
+            "schemaVersion": 1,
+            "requestedSeed": 155921,
+            "complete": true,
+            "cases": [
+              {
+                "file": "src/domain/canonicalDigest.test.ts",
+                "name": "incremental canonical digest preserves canonicalize digests for JSON values (with seed=155921)",
+                "seed": 155921,
+                "status": "passed"
+              },
+              {
+                "file": "src/domain/evidence.test.ts",
+                "name": "analysis evidence identity canonicalizes parameter key order (with seed=155921)",
+                "seed": 155921,
+                "status": "passed"
+              },
+              {
+                "file": "src/domain/evidence.test.ts",
+                "name": "analysis evidence identity keeps identity path-independent and provider-sensitive (with seed=155921)",
+                "seed": 155921,
+                "status": "passed"
+              },
+              {
+                "file": "src/domain/javascript/javascriptSemanticAnalysis.rejection.test.ts",
+                "name": "JavaScript semantic analysis: rejection 1 fails closed for arbitrary source text (with seed=155921)",
+                "seed": 155921,
+                "status": "passed"
+              },
+              {
+                "file": "src/dotnet/ManagedMemberInspectorCore.test.ts",
+                "name": "managed declaring type ownership agrees with observed first-match ownership for arbitrary metadata ranges (with seed=155921)",
+                "seed": 155921,
+                "status": "passed"
+              }
+            ],
+            "kind": "observed-fast-check-vitest-title-seeds",
+            "inputReplayCertified": false
+          },
+          {
+            "change": 0,
+            "repetition": 2,
+            "arm": "native",
+            "aligned": true,
+            "schemaVersion": 1,
+            "requestedSeed": 155921,
+            "complete": false,
+            "cases": [],
+            "kind": "observed-fast-check-vitest-title-seeds",
+            "inputReplayCertified": false
+          },
+          {
+            "change": 1,
+            "repetition": 0,
+            "arm": "full",
+            "aligned": true,
+            "schemaVersion": 1,
+            "requestedSeed": 155921,
+            "complete": true,
+            "cases": [
+              {
+                "file": "src/domain/canonicalDigest.test.ts",
+                "name": "incremental canonical digest preserves canonicalize digests for JSON values (with seed=155921)",
+                "seed": 155921,
+                "status": "passed"
+              },
+              {
+                "file": "src/domain/evidence.test.ts",
+                "name": "analysis evidence identity canonicalizes parameter key order (with seed=155921)",
+                "seed": 155921,
+                "status": "passed"
+              },
+              {
+                "file": "src/domain/evidence.test.ts",
+                "name": "analysis evidence identity keeps identity path-independent and provider-sensitive (with seed=155921)",
+                "seed": 155921,
+                "status": "passed"
+              },
+              {
+                "file": "src/domain/javascript/javascriptSemanticAnalysis.rejection.test.ts",
+                "name": "JavaScript semantic analysis: rejection 1 fails closed for arbitrary source text (with seed=155921)",
+                "seed": 155921,
+                "status": "passed"
+              },
+              {
+                "file": "src/dotnet/ManagedMemberInspectorCore.test.ts",
+                "name": "managed declaring type ownership agrees with observed first-match ownership for arbitrary metadata ranges (with seed=155921)",
+                "seed": 155921,
+                "status": "passed"
+              }
+            ],
+            "kind": "observed-fast-check-vitest-title-seeds",
+            "inputReplayCertified": false
+          },
+          {
+            "change": 1,
+            "repetition": 0,
+            "arm": "subset",
+            "aligned": true,
+            "schemaVersion": 1,
+            "requestedSeed": 155921,
+            "complete": true,
+            "cases": [
+              {
+                "file": "src/domain/canonicalDigest.test.ts",
+                "name": "incremental canonical digest preserves canonicalize digests for JSON values (with seed=155921)",
+                "seed": 155921,
+                "status": "passed"
+              },
+              {
+                "file": "src/domain/evidence.test.ts",
+                "name": "analysis evidence identity canonicalizes parameter key order (with seed=155921)",
+                "seed": 155921,
+                "status": "passed"
+              },
+              {
+                "file": "src/domain/evidence.test.ts",
+                "name": "analysis evidence identity keeps identity path-independent and provider-sensitive (with seed=155921)",
+                "seed": 155921,
+                "status": "passed"
+              },
+              {
+                "file": "src/domain/javascript/javascriptSemanticAnalysis.rejection.test.ts",
+                "name": "JavaScript semantic analysis: rejection 1 fails closed for arbitrary source text (with seed=155921)",
+                "seed": 155921,
+                "status": "passed"
+              },
+              {
+                "file": "src/dotnet/ManagedMemberInspectorCore.test.ts",
+                "name": "managed declaring type ownership agrees with observed first-match ownership for arbitrary metadata ranges (with seed=155921)",
+                "seed": 155921,
+                "status": "passed"
+              }
+            ],
+            "kind": "observed-fast-check-vitest-title-seeds",
+            "inputReplayCertified": false
+          },
+          {
+            "change": 1,
+            "repetition": 0,
+            "arm": "native",
+            "aligned": true,
+            "schemaVersion": 1,
+            "requestedSeed": 155921,
+            "complete": false,
+            "cases": [],
+            "kind": "observed-fast-check-vitest-title-seeds",
+            "inputReplayCertified": false
+          },
+          {
+            "change": 1,
+            "repetition": 1,
+            "arm": "full",
+            "aligned": true,
+            "schemaVersion": 1,
+            "requestedSeed": 155921,
+            "complete": true,
+            "cases": [
+              {
+                "file": "src/domain/canonicalDigest.test.ts",
+                "name": "incremental canonical digest preserves canonicalize digests for JSON values (with seed=155921)",
+                "seed": 155921,
+                "status": "passed"
+              },
+              {
+                "file": "src/domain/evidence.test.ts",
+                "name": "analysis evidence identity canonicalizes parameter key order (with seed=155921)",
+                "seed": 155921,
+                "status": "passed"
+              },
+              {
+                "file": "src/domain/evidence.test.ts",
+                "name": "analysis evidence identity keeps identity path-independent and provider-sensitive (with seed=155921)",
+                "seed": 155921,
+                "status": "passed"
+              },
+              {
+                "file": "src/domain/javascript/javascriptSemanticAnalysis.rejection.test.ts",
+                "name": "JavaScript semantic analysis: rejection 1 fails closed for arbitrary source text (with seed=155921)",
+                "seed": 155921,
+                "status": "passed"
+              },
+              {
+                "file": "src/dotnet/ManagedMemberInspectorCore.test.ts",
+                "name": "managed declaring type ownership agrees with observed first-match ownership for arbitrary metadata ranges (with seed=155921)",
+                "seed": 155921,
+                "status": "passed"
+              }
+            ],
+            "kind": "observed-fast-check-vitest-title-seeds",
+            "inputReplayCertified": false
+          },
+          {
+            "change": 1,
+            "repetition": 1,
+            "arm": "subset",
+            "aligned": true,
+            "schemaVersion": 1,
+            "requestedSeed": 155921,
+            "complete": true,
+            "cases": [
+              {
+                "file": "src/domain/canonicalDigest.test.ts",
+                "name": "incremental canonical digest preserves canonicalize digests for JSON values (with seed=155921)",
+                "seed": 155921,
+                "status": "passed"
+              },
+              {
+                "file": "src/domain/evidence.test.ts",
+                "name": "analysis evidence identity canonicalizes parameter key order (with seed=155921)",
+                "seed": 155921,
+                "status": "passed"
+              },
+              {
+                "file": "src/domain/evidence.test.ts",
+                "name": "analysis evidence identity keeps identity path-independent and provider-sensitive (with seed=155921)",
+                "seed": 155921,
+                "status": "passed"
+              },
+              {
+                "file": "src/domain/javascript/javascriptSemanticAnalysis.rejection.test.ts",
+                "name": "JavaScript semantic analysis: rejection 1 fails closed for arbitrary source text (with seed=155921)",
+                "seed": 155921,
+                "status": "passed"
+              },
+              {
+                "file": "src/dotnet/ManagedMemberInspectorCore.test.ts",
+                "name": "managed declaring type ownership agrees with observed first-match ownership for arbitrary metadata ranges (with seed=155921)",
+                "seed": 155921,
+                "status": "passed"
+              }
+            ],
+            "kind": "observed-fast-check-vitest-title-seeds",
+            "inputReplayCertified": false
+          },
+          {
+            "change": 1,
+            "repetition": 1,
+            "arm": "native",
+            "aligned": true,
+            "schemaVersion": 1,
+            "requestedSeed": 155921,
+            "complete": false,
+            "cases": [],
+            "kind": "observed-fast-check-vitest-title-seeds",
+            "inputReplayCertified": false
+          },
+          {
+            "change": 1,
+            "repetition": 2,
+            "arm": "full",
+            "aligned": true,
+            "schemaVersion": 1,
+            "requestedSeed": 155921,
+            "complete": true,
+            "cases": [
+              {
+                "file": "src/domain/canonicalDigest.test.ts",
+                "name": "incremental canonical digest preserves canonicalize digests for JSON values (with seed=155921)",
+                "seed": 155921,
+                "status": "passed"
+              },
+              {
+                "file": "src/domain/evidence.test.ts",
+                "name": "analysis evidence identity canonicalizes parameter key order (with seed=155921)",
+                "seed": 155921,
+                "status": "passed"
+              },
+              {
+                "file": "src/domain/evidence.test.ts",
+                "name": "analysis evidence identity keeps identity path-independent and provider-sensitive (with seed=155921)",
+                "seed": 155921,
+                "status": "passed"
+              },
+              {
+                "file": "src/domain/javascript/javascriptSemanticAnalysis.rejection.test.ts",
+                "name": "JavaScript semantic analysis: rejection 1 fails closed for arbitrary source text (with seed=155921)",
+                "seed": 155921,
+                "status": "passed"
+              },
+              {
+                "file": "src/dotnet/ManagedMemberInspectorCore.test.ts",
+                "name": "managed declaring type ownership agrees with observed first-match ownership for arbitrary metadata ranges (with seed=155921)",
+                "seed": 155921,
+                "status": "passed"
+              }
+            ],
+            "kind": "observed-fast-check-vitest-title-seeds",
+            "inputReplayCertified": false
+          },
+          {
+            "change": 1,
+            "repetition": 2,
+            "arm": "subset",
+            "aligned": true,
+            "schemaVersion": 1,
+            "requestedSeed": 155921,
+            "complete": true,
+            "cases": [
+              {
+                "file": "src/domain/canonicalDigest.test.ts",
+                "name": "incremental canonical digest preserves canonicalize digests for JSON values (with seed=155921)",
+                "seed": 155921,
+                "status": "passed"
+              },
+              {
+                "file": "src/domain/evidence.test.ts",
+                "name": "analysis evidence identity canonicalizes parameter key order (with seed=155921)",
+                "seed": 155921,
+                "status": "passed"
+              },
+              {
+                "file": "src/domain/evidence.test.ts",
+                "name": "analysis evidence identity keeps identity path-independent and provider-sensitive (with seed=155921)",
+                "seed": 155921,
+                "status": "passed"
+              },
+              {
+                "file": "src/domain/javascript/javascriptSemanticAnalysis.rejection.test.ts",
+                "name": "JavaScript semantic analysis: rejection 1 fails closed for arbitrary source text (with seed=155921)",
+                "seed": 155921,
+                "status": "passed"
+              },
+              {
+                "file": "src/dotnet/ManagedMemberInspectorCore.test.ts",
+                "name": "managed declaring type ownership agrees with observed first-match ownership for arbitrary metadata ranges (with seed=155921)",
+                "seed": 155921,
+                "status": "passed"
+              }
+            ],
+            "kind": "observed-fast-check-vitest-title-seeds",
+            "inputReplayCertified": false
+          },
+          {
+            "change": 1,
+            "repetition": 2,
+            "arm": "native",
+            "aligned": true,
+            "schemaVersion": 1,
+            "requestedSeed": 155921,
+            "complete": false,
+            "cases": [],
+            "kind": "observed-fast-check-vitest-title-seeds",
+            "inputReplayCertified": false
+          }
+        ],
+        "inputReplayCertified": false,
+        "allPreregisteredSeedsQualified": false
+      },
+      "medianMs": {
+        "testLoreMs": 58357.0,
+        "nativeMs": 3380.0,
+        "fullMs": 41704.5
+      },
+      "reasons": [
+        "pilot-incomplete-or-invalid",
+        "raw-case-preservation-mismatch:0:0:Baseline named inventory drift",
+        "raw-case-preservation-mismatch:0:1:Baseline named inventory drift",
+        "raw-case-preservation-mismatch:0:2:Baseline named inventory drift",
+        "pilot-trial-rejected:1:0",
+        "raw-case-preservation-mismatch:1:0:subset named case/status preservation",
+        "raw-case-preservation-mismatch:1:1:Baseline named inventory drift",
+        "raw-case-preservation-mismatch:1:2:Baseline named inventory drift",
+        "pilot-process-incomplete"
+      ]
+    }
+  ]
+}

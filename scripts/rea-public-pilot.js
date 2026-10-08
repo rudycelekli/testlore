@@ -6,6 +6,7 @@ import {createHash} from 'node:crypto';
 import {spawn, spawnSync} from 'node:child_process';
 import {fileURLToPath} from 'node:url';
 import {gunzipSync} from 'node:zlib';
+import {preparePropertyReplay,observePropertyReplay} from '../src/pilot-property-replay.js';
 
 export const REA_REVISION='3dcb732da33f6ceef597506b14a4536f1c9aff96';
 export const RELEASE_REVISION='1f12728e325f13527b63f4023376debcb9270f8c';
@@ -16,6 +17,34 @@ const projects=['--project','domain','--project','services','--project','adapter
 const failures=run=>(run?.tests||[]).filter(t=>t.status==='failed').map(t=>t.id).sort();
 const same=(a,b)=>JSON.stringify(a)===JSON.stringify(b);
 const reportFault=run=>['reportErrors','missingFiles','unknownFiles'].some(key=>run[key]!==undefined&&(!Array.isArray(run[key])||run[key].length));
+export const REPLAY_SEEDS=Object.freeze([104729,130363,155921]);
+export const REA_PROPERTY_CASES=Object.freeze([
+ ['src/domain/canonicalDigest.test.ts','preserves canonicalize digests for JSON values'],
+ ['src/domain/evidence.test.ts','canonicalizes parameter key order'],
+ ['src/domain/evidence.test.ts','keeps identity path-independent and provider-sensitive'],
+ ['src/domain/javascript/javascriptSemanticAnalysis.rejection.test.ts','fails closed for arbitrary source text'],
+ ['src/dotnet/ManagedMemberInspectorCore.test.ts','agrees with observed first-match ownership for arbitrary metadata ranges'],
+]);
+export function parseCampaignOptions(args){
+ const values={};let unifiedNative=false;
+ for(let i=0;i<args.length;i++){
+  const key=args[i];if(key==='--unified-native'){if(unifiedNative)throw Error('Duplicate campaign flag');unifiedNative=true;continue;}
+  if(!['--directory','--output','--property-seed','--candidate-archive','--candidate-sha256','--candidate-revision','--candidate-version'].includes(key)||values[key]!==undefined||args[i+1]===undefined||args[i+1].startsWith('--'))throw Error('Invalid campaign option');
+  values[key]=args[++i];
+ }
+ if(!values['--directory']||!values['--output'])throw Error('Use --directory NEW_WORKSPACE --output NEW_OUTPUT');
+ const seed=values['--property-seed']===undefined?undefined:Number(values['--property-seed']);
+ if(seed!==undefined&&(!REPLAY_SEEDS.includes(seed)||String(seed)!==values['--property-seed']))throw Error('Property replay seed must be one of the three preregistered seeds');
+ const candidateKeys=['--candidate-archive','--candidate-sha256','--candidate-revision','--candidate-version'],present=candidateKeys.filter(key=>values[key]!==undefined);
+ if(present.length&&present.length!==candidateKeys.length)throw Error('Candidate requires archive, SHA256, source revision and version');
+ let candidate;
+ if(present.length){
+  if(!/^[a-f0-9]{64}$/.test(values['--candidate-sha256'])||!/^[a-f0-9]{40}$/.test(values['--candidate-revision'])||!/^\d+\.\d+\.\d+(?:-[a-z0-9.-]+)?$/.test(values['--candidate-version']))throw Error('Invalid candidate provenance');
+  candidate={archive:path.resolve(values['--candidate-archive']),sha256:values['--candidate-sha256'],sourceRevision:values['--candidate-revision'],version:values['--candidate-version'],kind:'explicit-source-candidate-not-registry-release'};
+ }
+ if(unifiedNative&&!candidate)throw Error('Unified native mode requires an explicit candidate');
+ return {directory:path.resolve(values['--directory']),output:path.resolve(values['--output']),seed,candidate,unifiedNative};
+}
 
 // Native case identities are recomputed independently from file/name/ordinal.
 function inventory(tests, files, status=true) {
@@ -72,7 +101,7 @@ export function preservePilotReceipts(source, destination){
  return copied;
 }
 /** Recheck raw executions and exact baseline scope, not aggregate booleans. */
-export function assessReaPilot(report, baseline, rawTrials, upstreamRoot='/') {
+export function assessReaPilot(report, baseline, rawTrials, upstreamRoot='/',options={}) {
  const reasons=[];let independent,observationCompleted=true;
  try{independent=nativeBaseline(baseline,upstreamRoot);inventory(independent.tests,independent.files);if(baseline.numPassedTests!==independent.tests.filter(t=>t.status==='passed').length||baseline.numFailedTests!==independent.tests.filter(t=>t.status==='failed').length)throw new Error('Baseline count mismatch');}catch{reasons.push('independent-baseline-scope-invalid');}
  if(report?.valid!==true||report.projects?.length!==1)reasons.push('pilot-incomplete-or-invalid');
@@ -127,7 +156,21 @@ export function assessReaPilot(report, baseline, rawTrials, upstreamRoot='/') {
    rows.push({change:change.name,repetition:r,valid:trial.valid,fullFiles:fullFiles.length,selectedFiles:selected.length,nativeFiles:(native?.executedFiles||[]).length,omittedFiles:actualOmitted.length,fullFailures:fullFailures.length,missedFailures:missedIds.length,nativeMissedFailures:nativeMissedIds.length,upstreamSkippedCases:(full.tests||[]).filter(t=>t.status==='skipped').length,testLoreOuterMs:trial.testLoreMs,nativeSelectionMs:trial.nativeMs,fullExecutionMs:trial.fullMs,independentDiscoveryMs:trial.verificationDiscoveryMs,mode:plan?.mode,decisionReasons:[...new Set((plan?.decisions||[]).flatMap(d=>d.reasons||[]))]});
   }
  }
- return {schemaVersion:1,qualified:reasons.length===0,observationCompleted,reasons,repo:'morluto/rea',upstreamRevision:REA_REVISION,testLoreVersion:'0.1.0',releasedSourceRevision:RELEASE_REVISION,scope,trialCount:rows.length,missedFailures:missed,nativeMissedFailures:nativeMissed,omittedFileObservations:omitted,fullFallbackTrials:fallbacks,rows,claims:{worldClassEstablished:false,generalSpeedAdvantageEstablished:false,learningImprovementEstablished:false,originalHistoricalBugTreesReplayed:false},limitations:['One historical source file is reverted while untouched later upstream maintainer tests are retained; this is a historical source-reversion experiment, not an original historical environment.','Original lockfile installation on supported Node 22.19; upstream .nvmrc recommends Node 24.18.','Full means the three declared original Vitest projects, not every REA project or real provider. Upstream skips remain visible.','TestLore timing includes discovery, planning, execution and evidence/report retention inside the pilot; it excludes a fresh outer CLI startup. Native/full timings exclude independent oracle discovery.','Framework/OS caches are not reset; JITI filesystem cache is disabled; analysis cache can warm across repetitions.','Dependencies are shared by isolated source copies; this is not an OS sandbox or frozen dependency-byte guarantee.']};
+ let propertyReplay;
+ if(options.seed!==undefined){
+  const observed=independent?observePropertyReplay(independent.tests,options.seed):{complete:false,cases:[]};
+  const arms=[];
+  for(const raw of rawTrials||[])for(const arm of ['full','subset','native']){
+   const run=raw[arm],current=observePropertyReplay(run?.tests,options.seed),expected=observed.cases.filter(row=>(run?.executedFiles||[]).includes(row.file));
+   const seedRows=rows=>rows.map(row=>[row.file,row.name,row.seed]).sort((a,b)=>JSON.stringify(a).localeCompare(JSON.stringify(b)));
+   const aligned=current.cases.every(row=>row.seed===options.seed)&&same(seedRows(current.cases),seedRows(expected));
+   arms.push({change:raw.change,repetition:raw.repetition,arm,aligned,...current});
+  }
+  const expectedProperties=REA_PROPERTY_CASES.every(([file,label])=>observed.cases.filter(row=>row.file===file&&row.name.endsWith(label+` (with seed=${options.seed})`)).length===1);
+  propertyReplay={schemaVersion:1,profile:'explicit-fast-check-global-seed-overlay',requestedSeed:options.seed,preregisteredSeeds:REPLAY_SEEDS,complete:observed.complete&&observed.cases.length===5&&expectedProperties&&arms.length===18&&arms.every(arm=>arm.aligned),baseline:observed,arms,inputReplayCertified:false,allPreregisteredSeedsQualified:false};
+  if(!propertyReplay.complete){reasons.push('property-replay-observation-missing-or-misaligned');observationCompleted=false;}
+ }
+ return {schemaVersion:1,qualified:reasons.length===0,observationCompleted,reasons,repo:'morluto/rea',upstreamRevision:REA_REVISION,testLoreVersion:options.candidate?.version||'0.1.0',releasedSourceRevision:options.candidate?null:RELEASE_REVISION,...(options.candidate?{candidateProvenance:options.candidate}:{}),...(propertyReplay?{propertyReplay}:{}),scope,trialCount:rows.length,missedFailures:missed,nativeMissedFailures:nativeMissed,omittedFileObservations:omitted,fullFallbackTrials:fallbacks,rows,claims:{worldClassEstablished:false,generalSpeedAdvantageEstablished:false,learningImprovementEstablished:false,originalHistoricalBugTreesReplayed:false},limitations:['One historical source file is reverted while untouched later upstream maintainer tests are retained; this is a historical source-reversion experiment, not an original historical environment.','Original lockfile installation on supported Node 22.19; upstream .nvmrc recommends Node 24.18.','Full means the three declared original Vitest projects, not every REA project or real provider. Upstream skips remain visible.','TestLore timing includes discovery, planning, execution and evidence/report retention inside the pilot; it excludes a fresh outer CLI startup. Native/full timings exclude independent oracle discovery.','Framework/OS caches are not reset; JITI filesystem cache is disabled; analysis cache can warm across repetitions.','Dependencies are shared by isolated source copies; this is not an OS sandbox or frozen dependency-byte guarantee.',...(propertyReplay?['Configuration uses an explicit seeded setup overlay; original tests/configuration/lock remain unchanged, but the execution profile is controlled rather than original configuration. One fixed seed repeated three times does not qualify the three-seed matrix. Seed-bearing names certify observed seeds, not exact generated inputs or external nondeterminism.']:[])]};
 }
 
 /** Replay assessments only: archived upstream tests are never executed here. */
@@ -153,8 +196,7 @@ export function verifyFrozenEvidence(directory){
 
 export async function main(args=process.argv.slice(2)) {
  if(args.length===2&&args[0]==='--verify-frozen'){const result=verifyFrozenEvidence(path.resolve(args[1]));console.log(JSON.stringify(result,null,2));return result.assessment.observationCompleted&&result.nodeOracle.qualified?0:1;}
- if(args.length!==4||args[0]!=='--directory'||args[2]!=='--output')throw new Error('Use --directory NEW_WORKSPACE --output NEW_OUTPUT');
- const directory=path.resolve(args[1]),output=path.resolve(args[3]);
+ const options=parseCampaignOptions(args),{directory,output}=options;
  if(fs.existsSync(directory)||fs.existsSync(output))throw new Error('Preserve evidence: workspace/output must be new');
  fs.mkdirSync(directory,{recursive:true});fs.mkdirSync(output,{recursive:true});
  const repository=fileURLToPath(new URL('../',import.meta.url)),upstream=path.join(directory,'upstream'),tools=path.join(directory,'tools');
@@ -192,20 +234,36 @@ export async function main(args=process.argv.slice(2)) {
   fs.writeFileSync(path.join(output,'source-binding.json'),JSON.stringify({repo:'https://github.com/morluto/rea',revision:REA_REVISION,protectedHashes,declarations:Object.fromEntries(declarationFiles.map(file=>[file,protectedHashes[file]]))},null,2));
   await required('upstream-install',upstream,['npm','ci','--ignore-scripts','--no-audit','--no-fund']);
   fs.copyFileSync(path.join(upstream,'node_modules/.package-lock.json'),path.join(output,'upstream-installed-lock.json'));
-  await required('independent-baseline',upstream,[process.execPath,'node_modules/vitest/vitest.mjs','run','--config','vitest.config.ts',...projects,'--reporter','json','--outputFile',path.join(output,'independent-baseline.json')]);
+  const originalRunner=[process.execPath,'node_modules/vitest/vitest.mjs','run','--config','vitest.config.ts',...projects,'{files}'];
+  const propertyReplay=options.seed===undefined?undefined:{schemaVersion:1,seed:options.seed,originalConfig:'vitest.config.ts'};
+  let baselineRoot=upstream,baselineRunner=originalRunner;
+  if(propertyReplay){
+   baselineRoot=path.join(directory,'independent-replay-baseline');
+   await required('independent-replay-clone',directory,['git','-c','core.hooksPath=/dev/null','clone','--local','--no-hardlinks',upstream,baselineRoot]);
+   fs.symlinkSync(path.join(upstream,'node_modules'),path.join(baselineRoot,'node_modules'),'dir');
+   const prepared=preparePropertyReplay(baselineRoot,propertyReplay,originalRunner);baselineRunner=prepared.runner;
+   fs.writeFileSync(path.join(output,'property-replay-profile.json'),JSON.stringify(prepared.metadata,null,2)+'\n');
+  }
+  await required('independent-baseline',baselineRoot,[...baselineRunner.filter(arg=>arg!=='{files}'),'--reporter','json','--outputFile',path.join(output,'independent-baseline.json')]);
+  if(propertyReplay){const stdout=fs.readFileSync(path.join(output,'independent-baseline.stdout'),'utf8');const observations=stdout.split('\n').filter(line=>line.includes('TESTLORE_PROPERTY_REPLAY '));fs.writeFileSync(path.join(output,'independent-property-replay.log'),observations.join('\n')+(observations.length?'\n':''));}
   const baseline=JSON.parse(fs.readFileSync(path.join(output,'independent-baseline.json')));
   if(!baseline.success||!baseline.numPassedTests||baseline.numFailedTests)throw new Error('Independent original baseline did not pass');
-  const url='https://registry.npmjs.org/testlore/-/testlore-0.1.0.tgz';const response=await fetch(url,{redirect:'error',signal:AbortSignal.timeout(30000)});if(!response.ok)throw new Error('Release download failed');const chunks=[];let size=0;for await(const chunk of response.body){size+=chunk.length;if(size>16*1024*1024)throw new Error('Release archive size bound');chunks.push(chunk);}const bytes=Buffer.concat(chunks);if(hash(bytes)!==RELEASE_ARCHIVE_SHA)throw new Error('Released archive drift');
-  const archive=path.join(directory,'testlore-0.1.0.tgz');fs.writeFileSync(archive,bytes);fs.writeFileSync(path.join(output,'release-download.json'),JSON.stringify({url,sha256:hash(bytes),bytes:size,sourceRevision:RELEASE_REVISION}));fs.mkdirSync(tools);fs.writeFileSync(path.join(tools,'package.json'),JSON.stringify({name:'rea-public-pilot-tools',version:'1.0.0',private:true}));await required('release-install',tools,['npm','install','--ignore-scripts','--no-audit','--no-fund',archive]);
-  const installed=JSON.parse(fs.readFileSync(path.join(tools,'node_modules/testlore/package.json')));if(installed.version!=='0.1.0'||installed.gitHead!==RELEASE_REVISION)throw new Error('Installed release identity mismatch');
+  const url='https://registry.npmjs.org/testlore/-/testlore-0.1.0.tgz';let bytes,source;
+  if(options.candidate){
+   const stat=fs.statSync(options.candidate.archive);if(!stat.isFile()||stat.size>16*1024*1024)throw Error('Candidate archive size bound');bytes=fs.readFileSync(options.candidate.archive);if(hash(bytes)!==options.candidate.sha256)throw Error('Candidate archive digest mismatch');source=options.candidate;
+  }else{
+   const response=await fetch(url,{redirect:'error',signal:AbortSignal.timeout(30000)});if(!response.ok)throw new Error('Release download failed');const chunks=[];let size=0;for await(const chunk of response.body){size+=chunk.length;if(size>16*1024*1024)throw new Error('Release archive size bound');chunks.push(chunk);}bytes=Buffer.concat(chunks);if(hash(bytes)!==RELEASE_ARCHIVE_SHA)throw new Error('Released archive drift');source={url,sha256:hash(bytes),sourceRevision:RELEASE_REVISION,version:'0.1.0',kind:'immutable-registry-release'};
+  }
+  const archive=path.join(directory,'testlore-'+source.version+'.tgz');fs.writeFileSync(archive,bytes);fs.writeFileSync(path.join(output,options.candidate?'candidate-install-binding.json':'release-download.json'),JSON.stringify({...source,bytes:bytes.length}));fs.mkdirSync(tools);fs.writeFileSync(path.join(tools,'package.json'),JSON.stringify({name:'rea-public-pilot-tools',version:'1.0.0',private:true}));await required('release-install',tools,['npm','install','--ignore-scripts','--no-audit','--no-fund',archive]);
+  const installed=JSON.parse(fs.readFileSync(path.join(tools,'node_modules/testlore/package.json')));if(installed.version!==source.version||installed.gitHead!==source.sourceRevision)throw new Error('Installed archive identity mismatch');
   const blank='src/cliJsonInput.ts';
   const changes=[{name:'path-normalization-comment',file:blank,before:'export const resolveCliJsonPaths = (',after:'// Qualification: unchanged path normalization.\nexport const resolveCliJsonPaths = (',expectedFailure:false},{name:'blank-path-historical-source-reversion',file:blank,before:fs.readFileSync(path.join(upstream,blank),'utf8'),after:git('show','6a7650e93cba9169baad95d2c52b11351ae39d0e:'+blank),expectedFailure:true}];
-  const manifest={schemaVersion:1,repetitions:3,timeoutMs:180000,cachePolicy:{jitiFilesystem:false},projects:[{name:'rea-source-projects',root:upstream,scope,config:{adapter:'vitest',discovery:'native',runner:[process.execPath,'node_modules/vitest/vitest.mjs','run','--config','vitest.config.ts',...projects,'{files}'],analysisCache:{enabled:true}},changes}]};
+  const manifest={schemaVersion:1,repetitions:3,timeoutMs:180000,cachePolicy:{jitiFilesystem:false},projects:[{name:'rea-source-projects',root:upstream,scope,...(propertyReplay?{propertyReplay}:{}),config:{adapter:'vitest',discovery:'native',runner:originalRunner,analysisCache:{enabled:true}},changes}]};
   fs.writeFileSync(path.join(output,'preregistered-manifest.json'),JSON.stringify(manifest,null,2));
   fs.copyFileSync(path.join(tools,'package-lock.json'),path.join(output,'tools-installed-lock.json'));
   const cli=path.join(tools,'node_modules/testlore/src/cli.js');
   await required('pilot-inspection',repository,[process.execPath,cli,'pilot','--manifest',path.join(output,'preregistered-manifest.json'),'--json']);
-  const pilotEvent=await invoke('pilot-execution',repository,[process.execPath,cli,'pilot','--manifest',path.join(output,'preregistered-manifest.json'),'--execute','--output',pilotOutput,'--json']);
+  const pilotEvent=await invoke('pilot-execution',repository,[process.execPath,cli,'pilot','--manifest',path.join(output,'preregistered-manifest.json'),'--execute',...(options.unifiedNative?['--unified-native']:[]),'--output',pilotOutput,'--json']);
   const summary=path.join(repository,pilotOutput,'summary.json');if(!fs.existsSync(summary))throw new Error('Pilot did not retain a complete summary');
   const report=JSON.parse(fs.readFileSync(summary));fs.copyFileSync(summary,path.join(output,'pilot-summary.json'));const rawDirectory=path.join(repository,pilotOutput,'rea-source-projects');
   const rawTrials=[];fs.mkdirSync(path.join(output,'raw-pilot'));
@@ -234,9 +292,9 @@ export async function main(args=process.argv.slice(2)) {
   await nodeRun('node-oracle-fixed-restored');
   const nodeAssessment={schemaVersion:1,scope:'Only the original Node package-precedence boundary file; independent native execution, no TestLore selection comparison.',upstreamRevision:REA_REVISION,sourceBeforeRevision:'68b9fa489b0c07f580633785ec61c17fa20b5083',testFile,testSha256:testHash,...assessNodeOracle(nodeRuns,oracle,hash(fs.readFileSync(path.join(oracle,testFile)))===testHash)};
   fs.writeFileSync(path.join(output,'node-oracle-assessment.json'),JSON.stringify(nodeAssessment,null,2)+'\n');
-  const assessment=assessReaPilot(report,baseline,rawTrials,upstream);assessment.pilotExitCode=pilotEvent.exitCode;assessment.nodeOracleQualified=nodeAssessment.qualified;
+  const assessment=assessReaPilot(report,baseline,rawTrials,baselineRoot,options);assessment.pilotExitCode=pilotEvent.exitCode;assessment.nodeOracleQualified=nodeAssessment.qualified;
   if(!nodeAssessment.qualified){assessment.observationCompleted=false;assessment.qualified=false;assessment.reasons.push('separate-node-oracle-incomplete');}
-  if(pilotEvent.exitCode!==0||pilotEvent.signal||pilotEvent.stoppedReason){assessment.qualified=false;assessment.reasons.push('pilot-process-incomplete');}
+  if(pilotEvent.exitCode!==0||pilotEvent.signal||pilotEvent.stoppedReason){assessment.qualified=false;assessment.reasons.push(pilotEvent.exitCode===1&&!pilotEvent.signal&&!pilotEvent.stoppedReason?'pilot-comparison-rejected':'pilot-process-incomplete');}
   if(![0,1].includes(pilotEvent.exitCode)||pilotEvent.signal||pilotEvent.stoppedReason)assessment.observationCompleted=false;
   assessment.protectedSourceUnchanged=entries.every(entry=>hash(trackedBytes(entry))===protectedHashes[entry.file])&&!git('status','--porcelain').trim();
   if(!assessment.protectedSourceUnchanged){assessment.observationCompleted=false;assessment.qualified=false;assessment.reasons.push('protected-upstream-source-changed');}

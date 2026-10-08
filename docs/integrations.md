@@ -40,7 +40,7 @@ Bazel is **live-verified on a small native `sh_test` fixture** with Bazel 6.5.0 
 
 AQE does not expose TestLore's architect/author/reviewer JSON protocol; requesting those roles fails explicitly. This is a direct optional CLI integration. No MCP capabilities are fabricated.
 
-Verified with Agentic QE 3.14.6: a credential-free source `add(a,b)` generated actual candidate code. Its deterministic template used TODO inputs and `toBeDefined()` while upstream `qualityGateResult` reported a passing score of 100. The [retained raw output](../benchmarks/aqe-observation/raw-generation.json) demonstrates why upstream estimates are recorded as **upstream**, candidates remain **unreviewed**, and independent oracle review, execution and held-out defect checks are still required. See [AQE CLI source](https://github.com/proffesor-for-testing/agentic-qe/blob/main/src/cli/commands/test.ts).
+Historical observation with Agentic QE 3.14.6: a credential-free source `add(a,b)` generated actual candidate code. Its deterministic template used TODO inputs and `toBeDefined()` while upstream `qualityGateResult` reported a passing score of 100. The [retained raw output](../benchmarks/aqe-observation/raw-generation.json) demonstrates why upstream estimates are recorded as **upstream**, candidates remain **unreviewed**, and independent oracle review, execution and held-out defect checks are still required. This observation does not describe every newer AQE release: [the October 8 source comparison](agentic-qe-comparison.md) records newer scaffold/fallback labeling and assertion checks without claiming runtime qualification. See [AQE CLI source](https://github.com/proffesor-for-testing/agentic-qe/blob/main/src/cli/commands/test.ts).
 
 ## GitHub composite action
 

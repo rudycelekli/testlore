@@ -4,7 +4,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { spawnSync } from 'node:child_process';
-import { fixture, twoModules } from './helpers.js';
+import { fixture, twoModules, commit } from './helpers.js';
 const cli = fileURLToPath(new URL('../src/cli.js', import.meta.url));
 const exec = (root,args) => spawnSync('node',[cli,...args],{cwd:root,encoding:'utf8'});
 test('initialization is useful without tests, ignores local artifacts, and preserves config', t => {
@@ -42,6 +42,16 @@ test('npm-style symlinked bin entrypoints actually execute the CLI', t => {
   fs.symlinkSync(cli,bin);
   const result = spawnSync('node',[bin,'--version'],{cwd:root,encoding:'utf8'});
   assert.equal(result.status,0); assert.equal(result.stdout.trim(),'0.1.0');
+});
+test('pilot CLI forwards unified execution instead of rejecting or silently ignoring it',t=>{
+  const root=fixture(t,twoModules);commit(root);
+  const output=fixture(t,{}),manifest={schemaVersion:1,repetitions:1,timeoutMs:20000,projects:[{name:'cli-pilot',root,scope:'Two native node files with one named source regression',config:{adapter:'node',discovery:'native',runner:[process.execPath,'--test','{files}']},changes:[{name:'named-regression',file:'src/a.js',before:'export const a = 1;',after:'export const a = 9;',expectedFailure:true}]}]};
+  fs.writeFileSync(path.join(output,'pilot.json'),JSON.stringify(manifest));
+  const result=exec(output,['pilot','--manifest','pilot.json','--execute','--unified-native','--json']);
+  assert.equal(result.status,0,result.stderr||result.stdout);
+  const report=JSON.parse(result.stdout);assert.equal(report.executionMode,'unified-native');assert.equal(report.valid,true);
+  const subset=JSON.parse(fs.readFileSync(path.join(report.output,'cli-pilot/change-0-trial-0-subset.json')));
+  assert.equal(subset.unifiedNative.used,false);assert.ok(subset.unifiedNative.fallbackReason);assert.equal(subset.exitCode,1);
 });
 test('agent entrypoints keep project inspection and execution permissions separate', t => {
   const root = fixture(t, {...twoModules, 'tddswarm.config.json': {runner: ['node', 'missing-runner.js']}});
