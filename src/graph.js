@@ -66,7 +66,13 @@ function build(root, nativeSession, planningInputs) {
         graph.nativePlanning={method:'fresh-shared-native-context',complete:true};
         graph.nativeResolutions=new Map((combined.additionalResolutions||[]).map(item=>[JSON.stringify([item.file,item.specifier]),item.resolution]));
         for(const file of combined.configFiles)graph.configFiles.add(file);
-      } else combined=null;
+      } else {
+        combined=null;
+        // A later legacy resolver can execute different configuration/plugin
+        // state. It cannot recover omission authority rejected by this fresh
+        // context, even when native file collection itself succeeds.
+        graph.warnings.push({file:'configuration',reason:'incomplete-native-resolution'});
+      }
     }
     const discovered = combined?.discovery || nativeDiscovery(root,config);
     graph.tests = discovered.files;

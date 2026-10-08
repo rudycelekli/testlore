@@ -256,4 +256,4 @@ try {
   output.additionalResolutions = [];
   output.resolutions = imports.map(() => ({ paths: [], unresolved: true }));
 }
-if(request.unified){if(!output.complete)await sendBounded({phase:'failed',error:String(output.error||'Native session failed').slice(0,500)});protocolOutput.end();}else process.stdout.write(JSON.stringify(output));
+if(request.unified){if(!output.complete)await sendBounded({phase:'failed',error:String(output.error||'Native session failed').slice(0,500)});protocolOutput.end();}else if(request.resolutionReportFile)fs.writeFileSync(request.resolutionReportFile,JSON.stringify(output));else process.stdout.write(JSON.stringify(output));

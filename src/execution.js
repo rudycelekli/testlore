@@ -7,6 +7,7 @@ import { createHash } from 'node:crypto';
 import { spawnSync } from 'node:child_process';
 import { listFiles, TEST, normalize, safePath } from './files.js';
 import {normalizeNativeProjects} from './native-project-contracts.js';
+import {readNativeJson} from './native-protocol.js';
 
 const reporter = fileURLToPath(new URL('./reporters/node.js', import.meta.url));
 const playwrightReporter = fileURLToPath(new URL('./reporters/playwright.cjs', import.meta.url));
@@ -327,15 +328,21 @@ export function resolveNativeBatch(root, imports, config = {}, options = {}) {
   if(options.discover&&!sharedCommand)return {resolutions:imports.map(()=>({paths:[],unresolved:true})),configFiles:[],adapter,supported:true,complete:false,error:'Unsupported or unbound shared native command'};
   const temporary = fs.mkdtempSync(path.join(os.tmpdir(), 'tddswarm-resolution-'));
   const requestFile = path.join(temporary, 'request.json');
+  const resolutionReportFile=path.join(temporary,'resolver-results.json');
+  let diagnostics;
   try {
     const originalCommand=frameworkBase(commandBase(config,adapter),adapter);
     const cliIndex=originalCommand.findIndex(arg=>/(?:^|[/\\])vitest(?:\.mjs)?$/.test(arg));
     const invocation=sharedCommand?[process.execPath,path.resolve(root,originalCommand[cliIndex]),...originalCommand.slice(cliIndex+1),'list','--filesOnly',`--json=${path.join(temporary,'native-files.json')}`]:undefined;
-    fs.writeFileSync(requestFile, JSON.stringify({ root: fs.realpathSync(root), adapter, imports, invocation, discover: options.discover === true, transitive: options.transitive === true, roots: options.roots || [], command: sharedCommand||originalCommand }));
+    fs.writeFileSync(requestFile, JSON.stringify({ root: fs.realpathSync(root), adapter, imports, invocation, resolutionReportFile, discover: options.discover === true, transitive: options.transitive === true, roots: options.roots || [], command: sharedCommand||originalCommand }));
     const script = fileURLToPath(new URL('./reporters/resolve.js', import.meta.url));
     const result = spawn(root, [process.execPath, script, requestFile], config);
+    const trim=value=>{const bytes=Buffer.from(value||'');return {text:bytes.subarray(0,32768).toString('utf8'),truncated:bytes.length>32768};};
+    diagnostics={stdout:trim(result.stdout),stderr:trim(result.stderr)};
     if (result.status !== 0 || result.error) throw new Error(result.error?.message || 'Native resolver failed');
-    const value = JSON.parse(result.stdout);
+    // Executable configuration may write to stdout, including once per native
+    // inline project. It cannot share the authoritative JSON transport.
+    const value = readNativeJson(resolutionReportFile);
     if (!Array.isArray(value.resolutions) || value.resolutions.length !== imports.length || typeof value.complete !== 'boolean') throw new Error('Invalid native resolver report');
     const resolutions = value.resolutions.map(resolution => ({ ...resolution, paths: (resolution.paths || []).map(file => localFile(root, file)) }));
     const additionalResolutions = (value.additionalResolutions || []).map(item=>{
@@ -354,9 +361,9 @@ export function resolveNativeBatch(root, imports, config = {}, options = {}) {
       discovery={files,complete:value.discovery.complete,adapter,method:'fresh-shared-native-context',warnings:[]};
     }
     const projectContracts=value.projectContracts===undefined?undefined:normalizeNativeProjects(root,value.projectContracts,discovery?.files||[],localFile);
-    return { ...value, ...(discovery?{discovery}:{}), ...(projectContracts?{projectContracts}:{}), resolutions, additionalResolutions, configFiles, adapter, supported: true };
+    return { ...value, ...(discovery?{discovery}:{}), ...(projectContracts?{projectContracts}:{}), resolutions, additionalResolutions, configFiles, diagnostics, adapter, supported: true };
   } catch (error) {
-    return { resolutions: imports.map(() => ({paths: [], unresolved: true})), configFiles: [], adapter, supported: true, complete: false, error: error.message };
+    return { resolutions: imports.map(() => ({paths: [], unresolved: true})), configFiles: [], adapter, supported: true, complete: false, error: error.message, ...(diagnostics?{diagnostics}:{}) };
   } finally { fs.rmSync(temporary, { recursive: true, force: true }); }
 }
 

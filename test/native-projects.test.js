@@ -38,7 +38,7 @@ test('canonical project scopes admit repeated exact, glob and exclusion argument
 });
 test('fresh selected projects preserve aliases, setup closures and isolation groups',t=>{
  const {root,config}=projects(t,{}, {shared:true});
- const graph=buildGraph(root);assert.equal(graph.nativePlanning.complete,true);
+ const graph=buildGraph(root);assert.equal(graph.nativePlanning?.complete,true,JSON.stringify(graph.discovery.sharedContextAttempt));
  // The same alias resolves differently in two projects; retain both paths.
  assert.ok(graph.edges['alpha/a.test.js'].includes('src/a.js'));assert.ok(graph.edges['alpha/a.test.js'].includes('src/b.js'));
  assert.ok(!graph.edges['alpha/a.test.js'].includes('alpha/peer.test.js'));
@@ -57,8 +57,9 @@ test('one fresh context preserves native failures and omits an unaffected projec
  const {root,config}=projects(t,{}, {shared:true});write(root,'src/beta-input.js','export default 7;');
  const subset=await runUnifiedNative(root,{selective:true,capture:true});assert.equal(subset.complete,true,subset.error);
  assert.deepEqual(subset.plan.selected,['beta/b.test.js']);assert.equal(subset.exitCode,1);assert.equal(subset.unifiedNative.contexts,1);
- assert.equal(subset.stdout.split('ONE_PROJECT_CONTEXT').length-1,1);
  const full=execute(root,['alpha/a.test.js','alpha/peer.test.js','beta/b.test.js'],config,{capture:true});assert.equal(full.complete,true);
+ const nativeEvaluations=full.stdout.split('ONE_PROJECT_CONTEXT').length-1;assert.ok(nativeEvaluations>0);
+ assert.equal(subset.stdout.split('ONE_PROJECT_CONTEXT').length-1,nativeEvaluations,'A single fresh context preserves native per-project config evaluation parity');
  assert.equal(compareSubsetCases(full,subset,subset.executedTests).complete,true);
  assert.deepEqual(subset.tests.filter(row=>row.status==='failed').map(row=>row.id),full.tests.filter(row=>row.status==='failed').map(row=>row.id));
 });
@@ -96,7 +97,8 @@ test('REA coverage and shard Boolean prefixes remain false under native and unif
  write(root,'src/a.js','export default 9;');
  const subset=await runUnifiedNative(root,{selective:true,capture:true});assert.equal(subset.complete,true,subset.error);assert.deepEqual(subset.plan.selected,['alpha/a.test.js']);assert.equal(subset.exitCode,1);
  const full=execute(root,['alpha/a.test.js','alpha/peer.test.js'],config,{capture:true});assert.equal(full.complete,true);assert.equal(compareSubsetCases(full,subset,subset.executedTests).complete,true);
- assert.equal(subset.stdout.split('ONE_PROJECT_CONTEXT').length-1,1);
+ const nativeEvaluations=full.stdout.split('ONE_PROJECT_CONTEXT').length-1;assert.ok(nativeEvaluations>0);
+ assert.equal(subset.stdout.split('ONE_PROJECT_CONTEXT').length-1,nativeEvaluations);
 });
 for(const mutation of [
  `const original=Array.prototype.some;Array.prototype.some=function(){return true};const coverage=process.argv.some(arg=>arg.startsWith('--coverage'));Array.prototype.some=original;`,
