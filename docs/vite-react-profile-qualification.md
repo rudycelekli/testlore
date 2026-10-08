@@ -34,3 +34,20 @@ A fresh serve/fault campaign stopped on its disk reserve before any fault was in
 The next qualification must independently execute original full and proposed subset runs for source changes, Emotion styles, SSR route pages, server inputs, and workspace source/built-artifact boundaries. Deliberately swapped fixture selections must fail failure-preservation review. The unasserted favicon needs an explicit detection-gap control; passing suites cannot prove asset defect detection. Constructed faults must remain separately labeled from genuine historical maintainer bugs.
 
 Keep dynamic imports, generated bundles, unseen routes/assets and service uncertainty in full fallback until the corresponding evidence is independently challenged. The current source tests passed 8/8; complete portable installation and independent fault challenges still require a fresh adequately resourced runner.
+
+## Opt-in independent challenges
+
+```sh
+node scripts/vite-react-profile-challenges.js
+node scripts/vite-react-profile-challenges.js --run --profile /absolute/completed/native-profile
+```
+
+A fresh portable native replay is the default seed. The already published macOS arm64 installation/baselines can also be reused explicitly with `--legacy-baselines`. This verifies the published raw native/runtime/source byte bindings and reruns fresh unit/serve baselines; it does not relabel the old installation as a new portable replay. `--output` must name a fresh direct child of the profile. `--cases source,style,route,server,workspace,asset` selects only the six fixed named faults; arbitrary patches and selectors are unsupported.
+
+Every full and subset native command uses the same explicit `--maxWorkers=1` override. Original assertion, setup and configuration bytes stay fixed, while concurrency differs from the earlier original run. Full and subset processes execute independently and must retain all leaf identities, declared pending outcomes and failed assertions. Runtime-error or empty/all-pending reports cannot qualify. A deliberately wrong fixture subset and a forged unknown reference must be rejected. Injected all-pending/zero report controls are labeled as constructed report negatives, rather than native application failures.
+
+The workspace challenge rebuilds one plugin, compares independent source-unit and browser outcomes, and restores its source and generated artifacts. It does not qualify the shared-common package or every workspace boundary. A corrupted favicon is an asset detection-gap control: pass/pass establishes no defect-detection or omission authority. Every omission explanation is limited to its fixed challenged fault, and learning/production routing promotion remains disabled.
+
+Budgets are 18 native test invocations, two targeted workspace builds, 600 seconds including entry preflight, 400 MiB allocation growth and a 2.25 GiB stop reserve. Raw native JSON, process/resource receipts, preimages, per-fault hashes and restoration results remain separate. Expected retained receipts are under 10 MiB in typical runs; hard phase/native output caps permit roughly 110 MiB before workspace/cache growth, within the 400 MiB allocation bound. `completion.json` records wall time through primary receipt writing; external process timing includes completion transport as well.
+
+The nine pure source checks and two rejected guard-removal mutants establish controller behavior. They do not establish any actual application fault outcome until the opt-in campaign completes.

@@ -38,6 +38,10 @@ export function profileEnvironment(output,input=process.env){
     GIT_CONFIG_GLOBAL:'/dev/null',GIT_CONFIG_SYSTEM:'/dev/null',GIT_TERMINAL_PROMPT:'0',CI:'1'});
   return env;
 }
+export function headlessShellExecutable(browserRoot,build,platform=process.platform){
+  if(!['linux','darwin'].includes(platform)||!/^\d+$/.test(String(build)))throw Error('Pinned supported headless shell platform/build required');
+  return path.join(browserRoot,'chromium_headless_shell-'+build,platform==='darwin'?'chrome-mac':'chrome-linux','headless_shell');
+}
 export function resourceDecision(manifest,availableBytes,allocatedBytes){
   if(!Number.isFinite(availableBytes)||!Number.isFinite(allocatedBytes)||availableBytes<0||allocatedBytes<0)return 'resource-measurement-incomplete';
   if(availableBytes<manifest.resources.stopFreeBytes)return 'free-space-reserve-stop';
@@ -177,9 +181,7 @@ export async function runProfile(options){
     if(JSON.parse(fs.readFileSync(path.join(core,'package.json'),'utf8')).version!==manifest.runtimeVersions.playwrightCore||!registry.browsers.some(row=>row.name==='chromium-headless-shell'&&row.revision===manifest.runtimeVersions.playwrightBuild&&row.browserVersion===manifest.runtimeVersions.chromium))throw Error('Original Chromium registry mismatch');
     report.runtime={versions,identities:runtime,registry:bytesIdentity(path.join(core,'browsers.json'))};atomicJson(path.join(output,'report.json'),report);
     await phase(context,'original-browser-install',[node,playwright,'install',...(options.authorizeSystemDeps?['--with-deps']:[]),'chromium']);
-    const shellRoot=path.join(context.env.PLAYWRIGHT_BROWSERS_PATH,'chromium_headless_shell-'+manifest.runtimeVersions.playwrightBuild);
-    const shellDirectory=fs.readdirSync(shellRoot).filter(name=>name.startsWith('chrome-headless-shell-'));if(shellDirectory.length!==1)throw Error('Pinned headless shell inventory incomplete');
-    report.runtime.installedHeadlessShell=bytesIdentity(path.join(shellRoot,shellDirectory[0],'chrome-headless-shell'));atomicJson(path.join(output,'report.json'),report);
+    report.runtime.installedHeadlessShell=bytesIdentity(headlessShellExecutable(context.env.PLAYWRIGHT_BROWSERS_PATH,manifest.runtimeVersions.playwrightBuild));atomicJson(path.join(output,'report.json'),report);
     await phase(context,'original-build',[node,pnpm,'run','build']);
     for(const [mode,script]of [['unit','test-unit'],['serve','test-serve'],['build','test-build']]){
       const nativeFile=path.join(output,mode+'.native.json');await phase(context,'original-'+mode,[node,pnpm,'run',script,'--reporter=json','--outputFile='+nativeFile]);
