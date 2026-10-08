@@ -97,6 +97,9 @@ test('mutating execution input fails a nominal child and preserves the distinct 
 });
 test('a nominal parent exit with an observed live detached child is rejected and the child is terminated',async t=>{
  const directory=fs.mkdtempSync(path.join(os.tmpdir(),'testlore-descendant-source-test-'));t.after(()=>fs.rmSync(directory,{recursive:true,force:true}));
+ // This test targets parent/descendant lifetime, not unrelated concurrent filesystem growth.
+ // Reserve/growth rejection is exercised independently with controlled observations.
+ const available=fs.statfsSync(directory);t.mock.method(fs,'statfsSync',()=>available);
  const script="const {spawn}=require('node:child_process');const child=spawn(process.execPath,['-e','setInterval(()=>{},1000)'],{detached:true,stdio:'ignore'});child.unref();console.log(child.pid);setTimeout(()=>process.exit(0),500);";
  let pid=null;try{const result=await boundedInstallProcess(process.execPath,['-e',script],{cwd:directory,directory,reserveBytes:0,maxGrowthBytes:8*1024**2,timeoutMs:3000,terminateDescendants:true,env:campaignEnvironment()});pid=Number(fs.readFileSync(path.join(directory,'stdout.log'),'utf8').trim());assert.ok(Number.isInteger(pid)&&pid>0);assert.equal(result.exitCode,0);assert.equal(result.reason,'surviving-descendants');assert.ok(result.descendantCleanup.observed>=1);assert.ok(result.descendantCleanup.survivingAtClose>=1);assert.equal(result.descendantCleanup.requested,true);assert.equal(phaseCompletionReason(result,campaignLimits.phases.clone,10,3*1024**3),'surviving-descendants');
   let live=true;for(let repeat=0;repeat<20&&live;repeat++){try{const state=execFileSync('ps',['-p',String(pid),'-o','stat='],{encoding:'utf8',stdio:['ignore','pipe','ignore']}).trim();live=!!state&&!state.includes('Z');}catch{live=false;}if(live)await new Promise(resolve=>setTimeout(resolve,25));}assert.equal(live,false,'observed detached child still alive after cleanup');
