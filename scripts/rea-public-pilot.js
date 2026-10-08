@@ -5,6 +5,7 @@ import path from 'node:path';
 import {createHash} from 'node:crypto';
 import {spawn, spawnSync} from 'node:child_process';
 import {fileURLToPath} from 'node:url';
+import {gunzipSync} from 'node:zlib';
 
 export const REA_REVISION='3dcb732da33f6ceef597506b14a4536f1c9aff96';
 export const RELEASE_REVISION='1f12728e325f13527b63f4023376debcb9270f8c';
@@ -91,7 +92,8 @@ export function assessReaPilot(report, baseline, rawTrials, upstreamRoot='/') {
    const fullFailures=failures(full),subsetFailures=failures(subset),nativeFailures=failures(native);
    const missedIds=fullFailures.filter(id=>!subsetFailures.includes(id)),nativeMissedIds=fullFailures.filter(id=>!nativeFailures.includes(id));
    missed+=missedIds.length;nativeMissed+=nativeMissedIds.length;
-   if(!trial.valid||!trial.stable||!full?.complete||!subset?.complete||!native?.complete)reasons.push('raw-execution-incomplete:'+c+':'+r);
+   if(!trial.valid)reasons.push('pilot-trial-rejected:'+c+':'+r);
+   if(!trial.stable||!full?.complete||!subset?.complete||!native?.complete)reasons.push('raw-execution-incomplete:'+c+':'+r);
    const fullFiles=[...(full?.executedFiles||[])].sort(),selected=[...(plan?.selected||[])].sort();
    if(new Set(fullFiles).size!==fullFiles.length||new Set(selected).size!==selected.length||!same(fullFiles,independent?.files)||plan?.total!==fullFiles.length||!same(selected,[...(subset?.executedFiles||[])].sort())||!selected.every(f=>fullFiles.includes(f)))reasons.push('file-execution-binding-mismatch:'+c+':'+r);
    try{
@@ -127,7 +129,29 @@ export function assessReaPilot(report, baseline, rawTrials, upstreamRoot='/') {
  return {schemaVersion:1,qualified:reasons.length===0,observationCompleted,reasons,repo:'morluto/rea',upstreamRevision:REA_REVISION,testLoreVersion:'0.1.0',releasedSourceRevision:RELEASE_REVISION,scope,trialCount:rows.length,missedFailures:missed,nativeMissedFailures:nativeMissed,omittedFileObservations:omitted,fullFallbackTrials:fallbacks,rows,claims:{worldClassEstablished:false,generalSpeedAdvantageEstablished:false,learningImprovementEstablished:false,originalHistoricalBugTreesReplayed:false},limitations:['One historical source file is reverted while untouched later upstream maintainer tests are retained; this is a historical source-reversion experiment, not an original historical environment.','Original lockfile installation on supported Node 22.19; upstream .nvmrc recommends Node 24.18.','Full means the three declared original Vitest projects, not every REA project or real provider. Upstream skips remain visible.','TestLore timing includes discovery, planning, execution and evidence/report retention inside the pilot; it excludes a fresh outer CLI startup. Native/full timings exclude independent oracle discovery.','Framework/OS caches are not reset; JITI filesystem cache is disabled; analysis cache can warm across repetitions.','Dependencies are shared by isolated source copies; this is not an OS sandbox or frozen dependency-byte guarantee.']};
 }
 
+/** Replay assessments only: archived upstream tests are never executed here. */
+export function verifyFrozenEvidence(directory){
+ const integrity=JSON.parse(fs.readFileSync(path.join(directory,'integrity.json'))),bytes=fs.readFileSync(path.join(directory,'native-evidence.json.gz'));
+ if(hash(bytes)!==integrity.archiveSha256||bytes.length!==integrity.archiveBytes)throw new Error('Frozen archive digest mismatch');
+ const archive=JSON.parse(gunzipSync(bytes,{maxOutputLength:64*1024**2})),files=archive.files;
+ if(archive.schemaVersion!==1||!same(Object.keys(files).sort(),Object.keys(integrity.members).sort()))throw new Error('Frozen member inventory mismatch');
+ for(const [name,digest]of Object.entries(integrity.members))if(hash(files[name])!==digest)throw new Error('Frozen member digest mismatch: '+name);
+ const load=name=>JSON.parse(files[name]),manifest=load('preregistered-manifest.json'),root=manifest.projects[0].root,raw=[];
+ for(let c=0;c<2;c++)for(let r=0;r<3;r++){const row={change:c,repetition:r};for(const name of ['full','subset','native','plan'])row[name]=load(`raw-pilot/change-${c}-trial-${r}-${name}.json`);raw.push(row);}
+ const assessment=assessReaPilot(load('pilot-summary.json'),load('independent-baseline.json'),raw,root);
+ const events=load('execution.json').events,nodeRoot=path.join(path.dirname(root),'node-oracle'),nodeRuns=[];
+ for(const label of ['node-oracle-fixed-baseline','node-oracle-source-reversion-0','node-oracle-source-reversion-1','node-oracle-source-reversion-2','node-oracle-fixed-restored']){
+  const matches=events.filter(event=>event.label===label);if(matches.length!==1)throw new Error('Frozen event missing/duplicate');nodeRuns.push({label,event:matches[0],result:load(label+'.json')});
+ }
+ const original=load('assessment.json'),node=assessNodeOracle(nodeRuns,nodeRoot,load('node-oracle-assessment.json').testsUnchanged);
+ const processEvent=events.find(event=>event.label==='pilot-execution');
+ if(!node.qualified||original.protectedSourceUnchanged!==true||![0,1].includes(processEvent?.exitCode)||processEvent.signal||processEvent.stoppedReason)assessment.observationCompleted=false;
+ if(load('source-binding.json').revision!==REA_REVISION||load('release-download.json').sha256!==RELEASE_ARCHIVE_SHA)throw new Error('Frozen source/release binding mismatch');
+ return {schemaVersion:1,kind:'assessment-replay-no-native-execution',originalCampaignSourceRevision:integrity.campaignSourceRevision,originalRunId:integrity.runId,archiveSha256:integrity.archiveSha256,nodeOracle:node,assessment};
+}
+
 export async function main(args=process.argv.slice(2)) {
+ if(args.length===2&&args[0]==='--verify-frozen'){const result=verifyFrozenEvidence(path.resolve(args[1]));console.log(JSON.stringify(result,null,2));return result.assessment.observationCompleted&&result.nodeOracle.qualified?0:1;}
  if(args.length!==4||args[0]!=='--directory'||args[2]!=='--output')throw new Error('Use --directory NEW_WORKSPACE --output NEW_OUTPUT');
  const directory=path.resolve(args[1]),output=path.resolve(args[3]);
  if(fs.existsSync(directory)||fs.existsSync(output))throw new Error('Preserve evidence: workspace/output must be new');
@@ -142,7 +166,7 @@ export async function main(args=process.argv.slice(2)) {
  async function invoke(label,cwd,command){
   const stdout=fs.openSync(path.join(output,label+'.stdout'),'wx'),stderr=fs.openSync(path.join(output,label+'.stderr'),'wx');
   const begin=performance.now();let stoppedReason=null;
-  const sample=()=>{const stat=fs.statfsSync(directory);const other=fs.statfsSync(repository),free=Math.min(Number(stat.bavail)*Number(stat.bsize),Number(other.bavail)*Number(other.bsize));minimumFreeBytes=Math.min(minimumFreeBytes,free);return free;};
+  const sample=()=>{const stat=fs.statfsSync(directory);const other=fs.statfsSync(repository),evidence=fs.statfsSync(output),free=Math.min(Number(stat.bavail)*Number(stat.bsize),Number(other.bavail)*Number(other.bsize),Number(evidence.bavail)*Number(evidence.bsize));minimumFreeBytes=Math.min(minimumFreeBytes,free);return free;};
   if(sample()<2*1024**3)throw new Error('2 GiB disk reserve unavailable');
   try{
    const result=await new Promise((resolve,reject)=>{

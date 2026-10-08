@@ -1,0 +1,164 @@
+{
+  "schemaVersion": 1,
+  "scope": "Only the original Node package-precedence boundary file; independent native execution, no TestLore selection comparison.",
+  "upstreamRevision": "3dcb732da33f6ceef597506b14a4536f1c9aff96",
+  "sourceBeforeRevision": "68b9fa489b0c07f580633785ec61c17fa20b5083",
+  "testFile": "tests/boundary/filesystem/javascriptPackagePrecedence.test.ts",
+  "testSha256": "4ca3fb6319b45f7325a759129f39c3e6b160a889034876abaaedc618d6b6bc25",
+  "qualified": true,
+  "testsUnchanged": true,
+  "runs": [
+    {
+      "label": "node-oracle-fixed-baseline",
+      "event": {
+        "label": "node-oracle-fixed-baseline",
+        "command": [
+          "/opt/hostedtoolcache/node/22.19.0/x64/bin/node",
+          "node_modules/vitest/vitest.mjs",
+          "run",
+          "--config",
+          "vitest.config.ts",
+          "--project",
+          "boundary",
+          "tests/boundary/filesystem/javascriptPackagePrecedence.test.ts",
+          "--reporter",
+          "json",
+          "--outputFile",
+          "/home/runner/work/testlore/testlore/.tddswarm/rea-public-pilot/node-oracle-fixed-baseline.json"
+        ],
+        "exitCode": 0,
+        "signal": null,
+        "stoppedReason": null,
+        "durationMs": 1551
+      },
+      "complete": true,
+      "passed": 23,
+      "skipped": 0,
+      "failed": []
+    },
+    {
+      "label": "node-oracle-source-reversion-0",
+      "event": {
+        "label": "node-oracle-source-reversion-0",
+        "command": [
+          "/opt/hostedtoolcache/node/22.19.0/x64/bin/node",
+          "node_modules/vitest/vitest.mjs",
+          "run",
+          "--config",
+          "vitest.config.ts",
+          "--project",
+          "boundary",
+          "tests/boundary/filesystem/javascriptPackagePrecedence.test.ts",
+          "--reporter",
+          "json",
+          "--outputFile",
+          "/home/runner/work/testlore/testlore/.tddswarm/rea-public-pilot/node-oracle-source-reversion-0.json"
+        ],
+        "exitCode": 1,
+        "signal": null,
+        "stoppedReason": null,
+        "durationMs": 1503
+      },
+      "complete": true,
+      "passed": 20,
+      "skipped": 0,
+      "failed": [
+        "matches the native Node loader when import ignores a module-only entry",
+        "matches the native Node loader when import uses main before bundler module",
+        "matches the native Node loader when require ignores a module-only entry"
+      ]
+    },
+    {
+      "label": "node-oracle-source-reversion-1",
+      "event": {
+        "label": "node-oracle-source-reversion-1",
+        "command": [
+          "/opt/hostedtoolcache/node/22.19.0/x64/bin/node",
+          "node_modules/vitest/vitest.mjs",
+          "run",
+          "--config",
+          "vitest.config.ts",
+          "--project",
+          "boundary",
+          "tests/boundary/filesystem/javascriptPackagePrecedence.test.ts",
+          "--reporter",
+          "json",
+          "--outputFile",
+          "/home/runner/work/testlore/testlore/.tddswarm/rea-public-pilot/node-oracle-source-reversion-1.json"
+        ],
+        "exitCode": 1,
+        "signal": null,
+        "stoppedReason": null,
+        "durationMs": 1477
+      },
+      "complete": true,
+      "passed": 20,
+      "skipped": 0,
+      "failed": [
+        "matches the native Node loader when import ignores a module-only entry",
+        "matches the native Node loader when import uses main before bundler module",
+        "matches the native Node loader when require ignores a module-only entry"
+      ]
+    },
+    {
+      "label": "node-oracle-source-reversion-2",
+      "event": {
+        "label": "node-oracle-source-reversion-2",
+        "command": [
+          "/opt/hostedtoolcache/node/22.19.0/x64/bin/node",
+          "node_modules/vitest/vitest.mjs",
+          "run",
+          "--config",
+          "vitest.config.ts",
+          "--project",
+          "boundary",
+          "tests/boundary/filesystem/javascriptPackagePrecedence.test.ts",
+          "--reporter",
+          "json",
+          "--outputFile",
+          "/home/runner/work/testlore/testlore/.tddswarm/rea-public-pilot/node-oracle-source-reversion-2.json"
+        ],
+        "exitCode": 1,
+        "signal": null,
+        "stoppedReason": null,
+        "durationMs": 1540
+      },
+      "complete": true,
+      "passed": 20,
+      "skipped": 0,
+      "failed": [
+        "matches the native Node loader when import ignores a module-only entry",
+        "matches the native Node loader when import uses main before bundler module",
+        "matches the native Node loader when require ignores a module-only entry"
+      ]
+    },
+    {
+      "label": "node-oracle-fixed-restored",
+      "event": {
+        "label": "node-oracle-fixed-restored",
+        "command": [
+          "/opt/hostedtoolcache/node/22.19.0/x64/bin/node",
+          "node_modules/vitest/vitest.mjs",
+          "run",
+          "--config",
+          "vitest.config.ts",
+          "--project",
+          "boundary",
+          "tests/boundary/filesystem/javascriptPackagePrecedence.test.ts",
+          "--reporter",
+          "json",
+          "--outputFile",
+          "/home/runner/work/testlore/testlore/.tddswarm/rea-public-pilot/node-oracle-fixed-restored.json"
+        ],
+        "exitCode": 0,
+        "signal": null,
+        "stoppedReason": null,
+        "durationMs": 1495
+      },
+      "complete": true,
+      "passed": 23,
+      "skipped": 0,
+      "failed": []
+    }
+  ]
+}

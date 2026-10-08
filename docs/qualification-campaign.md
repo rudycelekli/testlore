@@ -1,6 +1,6 @@
 # Qualification campaign: September 30, 2026
 
-The [October 7 follow-up](qualification-20261007.md) adds complete four-arm CLI measurements, a reviewed real asset challenge, bounded native generation completion, public-corpus accounting and successful real Codex fixture execution. The [October 6 follow-up](qualification-20261006.md) retains the preceding real-history and learning attempt. Earlier frozen results below remain unchanged.
+The [October 7 follow-up](qualification-20261007.md) adds complete four-arm CLI measurements, a reviewed real asset challenge, bounded native generation completion, public-corpus accounting and successful real Codex fixture execution. The [October 6 follow-up](qualification-20261006.md) retains the preceding real-history and learning attempt. Earlier frozen results below remain unchanged. The [October 8 REA qualification](rea-public-qualification.md) records a real public-repository negative result using the published npm release: full fallback, slower native comparison, unstable property-case identities and separately reproduced Node regressions. [npm publication is now verified](npm-release-0.1.0.md); the earlier frozen distribution section below remains historical.
 
 TestLore has stronger evidence contracts. These results do not establish a general speed advantage, improved learning, complete native agent compatibility or npm publication.
 

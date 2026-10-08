@@ -4,7 +4,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import {createHash} from 'node:crypto';
-import {assessReaPilot,assessNodeOracle,preservePilotReceipts,REA_REVISION} from '../scripts/rea-public-pilot.js';
+import {assessReaPilot,assessNodeOracle,verifyFrozenEvidence,preservePilotReceipts,REA_REVISION} from '../scripts/rea-public-pilot.js';
 
 // Synthetic assessor controls only; public qualification comes from native runs.
 function fixture(){
@@ -89,4 +89,9 @@ test('incomplete observations cannot be published as completed negatives',()=>{
  for(const mutate of [x=>x.raw.pop(),x=>x.raw[0].full.complete=false,x=>x.raw[0].full.tests.pop(),x=>x.raw[0].subset.exitCode=2,x=>x.report.projects[0].changes[0].trials[0].stable=false]){
   const x=fixture();mutate(x);assert.equal(assess(x).observationCompleted,false);
  }
+});
+
+test('frozen real REA executions remain complete negative evidence, never qualification',()=>{
+ const result=verifyFrozenEvidence(new URL('../benchmarks/rea-20261008/',import.meta.url).pathname);
+ assert.equal(result.kind,'assessment-replay-no-native-execution');assert.equal(result.assessment.observationCompleted,true);assert.equal(result.assessment.qualified,false);assert.equal(result.nodeOracle.qualified,true);assert.equal(result.assessment.trialCount,6);assert.equal(result.assessment.fullFallbackTrials,6);assert.equal(result.assessment.missedFailures,0);
 });
