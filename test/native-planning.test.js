@@ -44,17 +44,16 @@ test('native imported config and setup inputs remain global after shared startup
 });
 test('unsupported CLI contexts retain the existing conservative resolver path',t=>{
   const {root,config}=project(t);
-  for(const args of [['--project=other'],['--root=elsewhere'],['--environment=custom'],['checks/subject.check.js'],['--maxWorkers']]) {
+  for(const args of [['--root=elsewhere'],['--environment=custom'],['checks/subject.check.js'],['--maxWorkers']]) {
     assert.equal(combinedNativePlanningSupported(root,{...config,runner:[process.execPath,vitest,'run',...args,'{files}']}),false);
   }
   assert.equal(combinedNativePlanningSupported(root,{...config,discovery:[process.execPath,'custom.js']}),false);
 });
-test('failed shared context contributes no resolution authority and remains visible',t=>{
+test('nonisolated root project preserves every project member',t=>{
   const {root}=project(t,{'vitest.config.mjs':`export default {test:{include:['checks/*.check.js'],isolate:false}};`});
-  const selection=plan(root,{changed:['src/b.js']});assert.equal(selection.mode,'full');
-  assert.equal(selection.discovery.sharedContextAttempt.complete,false);
-  assert.match(selection.discovery.sharedContextAttempt.error,/isolation/);
-  assert.ok(selection.warnings.some(row=>row.reason==='incomplete-native-resolution'));
+  const selection=plan(root,{changed:['src/b.js']});assert.equal(selection.mode,'affected');
+  assert.equal(selection.discovery.sharedContextAttempt.complete,true);
+  assert.deepEqual(selection.selected,['checks/other.check.js','checks/subject.check.js']);
 });
 test('combined empty root request still loads config and expands native-discovered roots',t=>{
   const {root,config}=project(t);const batch=resolveNativeBatch(root,[],config,{discover:true,transitive:true,roots:[]});

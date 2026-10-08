@@ -4,7 +4,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import {createHash} from 'node:crypto';
-import {assessReaPilot,assessNodeOracle,verifyFrozenEvidence,preservePilotReceipts,REA_REVISION} from '../scripts/rea-public-pilot.js';
+import {assessReaPilot,assessNodeOracle,verifyFrozenEvidence,preservePilotReceipts,REA_REVISION,REA_PROPERTY_CASES,parseCampaignOptions} from '../scripts/rea-public-pilot.js';
 
 // Synthetic assessor controls only; public qualification comes from native runs.
 function fixture(){
@@ -100,4 +100,38 @@ test('contradictory native error metadata cannot certify execution or collection
  for(const key of ['reportErrors','missingFiles','unknownFiles']){
   const x=fixture();x.raw[0].full[key]=['retained-error'];const result=assess(x);assert.equal(result.qualified,false);assert.equal(result.observationCompleted,false);
  }
+});
+
+function replayFixture(){
+ const x=fixture(),seed=104729;
+ for(const [file,label]of REA_PROPERTY_CASES){
+  const name=label+` (with seed=${seed})`;let suite=x.baseline.testResults.find(row=>row.name===file);
+  if(!suite){suite={name:file,assertionResults:[]};x.baseline.testResults.push(suite);}
+  suite.assertionResults.push({fullName:name,status:'passed'});x.baseline.numPassedTests++;
+  for(const raw of x.raw){
+   for(const arm of ['full','subset','native']){
+    const run=raw[arm];if(!run.executedFiles.includes(file)){run.executedFiles.push(file);run.collectionFiles.push(file);}
+    run.tests.push({file,name,status:'passed',id:createHash('sha256').update([file,name,'','','0'].join('\0')).digest('hex')});
+   }
+   raw.plan.total=raw.full.executedFiles.length;raw.plan.selected=[...raw.full.executedFiles];
+  }
+ }
+ return x;
+}
+test('controlled replay preserves all raw seed names and limits one-seed qualification',()=>{
+ const x=replayFixture(),result=assessReaPilot(x.report,x.baseline,x.raw,'/',{seed:104729});
+ assert.equal(result.qualified,true);assert.equal(result.propertyReplay.complete,true);assert.equal(result.propertyReplay.baseline.cases.length,5);assert.equal(result.propertyReplay.allPreregisteredSeedsQualified,false);assert.equal(result.propertyReplay.inputReplayCertified,false);
+ assert.equal(result.propertyReplay.baseline.cases[0].name.endsWith('(with seed=104729)'),true);
+});
+test('controlled replay rejects missing or explicit override seed evidence',()=>{
+ for(const mutate of [x=>x.baseline.testResults[1].assertionResults[0].fullName='missing metadata',x=>x.raw[0].full.tests[2].name='property (with seed=42)',x=>x.raw[0].subset.tests.pop(),x=>x.raw[0].subset.tests[2].name='different property (with seed=104729)',x=>x.raw[0].subset.tests[2].file='src/domain/evidence.test.ts']){
+  const x=replayFixture();mutate(x);const result=assessReaPilot(x.report,x.baseline,x.raw,'/',{seed:104729});assert.equal(result.qualified,false);assert.equal(result.observationCompleted,false);assert.equal(result.propertyReplay.complete,false);
+ }
+});
+test('candidate options require bounded explicit provenance and preregistered seeds',()=>{
+ const basic=['--directory','/tmp/new-work','--output','/tmp/new-evidence'];assert.equal(parseCampaignOptions(basic).candidate,undefined);
+ const args=[...basic,'--candidate-archive','/tmp/a.tgz','--candidate-sha256','a'.repeat(64),'--candidate-revision','b'.repeat(40),'--candidate-version','0.1.0','--property-seed','104729','--unified-native'];
+ const options=parseCampaignOptions(args);assert.equal(options.seed,104729);assert.equal(options.unifiedNative,true);assert.equal(options.candidate.kind,'explicit-source-candidate-not-registry-release');
+ for(const extra of [['--property-seed','42'],['--property-seed','0104729'],['--candidate-archive','/tmp/a.tgz'],['--unified-native'],['--output','/tmp/duplicate']])assert.throws(()=>parseCampaignOptions([...basic,...extra]));
+ const x=fixture(),result=assessReaPilot(x.report,x.baseline,x.raw,'/',{candidate:options.candidate});assert.equal(result.releasedSourceRevision,null);assert.deepEqual(result.candidateProvenance,options.candidate);assert.equal(result.claims.worldClassEstablished,false);
 });

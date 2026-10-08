@@ -6,6 +6,7 @@ import { createRequire } from 'node:module';
 import { createHash } from 'node:crypto';
 import { spawnSync } from 'node:child_process';
 import { listFiles, TEST, normalize, safePath } from './files.js';
+import {normalizeNativeProjects} from './native-project-contracts.js';
 
 const reporter = fileURLToPath(new URL('./reporters/node.js', import.meta.url));
 const playwrightReporter = fileURLToPath(new URL('./reporters/playwright.cjs', import.meta.url));
@@ -352,7 +353,8 @@ export function resolveNativeBatch(root, imports, config = {}, options = {}) {
       for(const file of files)if(!fs.statSync(safePath(root,file)).isFile())throw new Error('Combined native discovery reported a missing file');
       discovery={files,complete:value.discovery.complete,adapter,method:'fresh-shared-native-context',warnings:[]};
     }
-    return { ...value, ...(discovery?{discovery}:{}), resolutions, additionalResolutions, configFiles, adapter, supported: true };
+    const projectContracts=value.projectContracts===undefined?undefined:normalizeNativeProjects(root,value.projectContracts,discovery?.files||[],localFile);
+    return { ...value, ...(discovery?{discovery}:{}), ...(projectContracts?{projectContracts}:{}), resolutions, additionalResolutions, configFiles, adapter, supported: true };
   } catch (error) {
     return { resolutions: imports.map(() => ({paths: [], unresolved: true})), configFiles: [], adapter, supported: true, complete: false, error: error.message };
   } finally { fs.rmSync(temporary, { recursive: true, force: true }); }
@@ -433,7 +435,7 @@ export function sharedVitestCommand(root,config) {
   if(!path.isAbsolute(base[index])&&!base[index].includes(path.sep))return null;
   const selected=canonicalVitestCLI(root,base[index]);if(!selected)return null;
   base=[...base];base[0]=process.execPath;base[index]=selected.cli;
-  const valued=new Set(['--config','-c','--mode','--maxWorkers','--minWorkers','--pool']);
+  const valued=new Set(['--config','-c','--mode','--maxWorkers','--minWorkers','--pool','--project']);
   const switches=new Set(['--no-file-parallelism','--passWithNoTests','--cache=false']);
   for(let i=index+1;i<base.length;i++) {
     const option=base[i].split('=')[0];

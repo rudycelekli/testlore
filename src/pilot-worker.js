@@ -7,6 +7,7 @@ import { plan, gitChanges } from './selector.js';
 import { run, runUnifiedNative, compareSubsetCases } from './runner.js';
 import { snapshot, freshness } from './provenance.js';
 import { inspectHistoricalChange, linkInstalledDependencies } from './pilot-history.js';
+import {preparePropertyReplay,observePropertyReplay} from './pilot-property-replay.js';
 
 const { project, revision, repetitions, timeoutMs, directory, unifiedNative=false } = JSON.parse(fs.readFileSync(process.argv[2], 'utf8'));
 if(typeof unifiedNative!=='boolean')throw new Error('Invalid pilot native execution mode');
@@ -24,10 +25,14 @@ try {
   command(root, ['git', '-c', 'core.hooksPath=/dev/null', 'checkout', '--detach', revision]);
   receipt.dependencies = linkInstalledDependencies(project.root,root);
   const config = { ...project.config, runnerTimeoutMs: timeoutMs };
+  const originalRunner=project.config.runner;
   function overlay() {
+    const replay=preparePropertyReplay(root,project.propertyReplay,originalRunner);
+    if(replay.metadata){config.runner=replay.runner;receipt.propertyReplay=replay.metadata;}
     fs.writeFileSync(path.join(root, 'tddswarm.config.json'), JSON.stringify(config));
     fs.appendFileSync(path.join(root, '.gitignore'), '\n.tddswarm/\nnode_modules\n');
     command(root, ['git', '-c', 'core.hooksPath=/dev/null', 'add', '-f', '--', 'tddswarm.config.json', '.gitignore']);
+    if(replay.files.length)command(root,['git','-c','core.hooksPath=/dev/null','add','-f','--',...replay.files]);
   }
   function checkout(sha) {
     command(root, ['git', '-c', 'core.hooksPath=/dev/null', 'reset', '--hard', sha]);
@@ -103,6 +108,13 @@ try {
           }else if(mode==='native')runs.native=nativeAvailable?executeNativeRelated(root,changeset.changed,config,{capture:true,timeoutMs}):{...execute(root,currentDiscovery.files,config,{capture:true,timeoutMs}),selector:'native-full-no-related-selector'};
           else runs.full=execute(root,currentDiscovery.files,config,{capture:true,timeoutMs});
           save(trialName+'-'+mode,runs[mode]);
+          if(project.propertyReplay){
+            const observation=observePropertyReplay(runs[mode].tests,project.propertyReplay.seed);
+            save(trialName+'-'+mode+'-property-replay',observation);
+            // A native selector can omit every property file; other arms must
+            // expose matching seed-bearing names to qualify this replay lane.
+            if(observation.cases.length&&!observation.complete)throw new Error('Observed property seed differs from declared replay');
+          }
         }
         const after=snapshot(root,config),fullIds=failureIds(runs.full),subsetIds=failureIds(runs.subset),nativeIds=failureIds(runs.native);
         const missed=fullIds.filter(id=>!subsetIds.includes(id)),unexpected=subsetIds.filter(id=>!fullIds.includes(id));

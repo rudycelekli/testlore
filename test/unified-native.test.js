@@ -66,9 +66,10 @@ test('initial inventory reuse rejects tests created by executable configuration 
  assert.equal(result.stdout.split('TESTLORE_CONFIG_LOADED').length-1,1);
  assert.equal(fs.existsSync(path.join(root,'.tddswarm/last-run.json')),false);
 });
-test('unsupported loaded isolation rejects rather than reloading executable config',async t=>{
+test('nonisolated root retains every member without reloading executable config',async t=>{
  const {root}=project(t,{'vitest.config.mjs':`console.log('TESTLORE_CONFIG_LOADED');export default {test:{include:['checks/*.check.js'],isolate:false}};`});
- const report=await runUnifiedNative(root,{capture:true});assert.equal(report.complete,false);assert.match(report.error,/isolation/);
+ write(root,'src/a.js','export default 2;');
+ const report=await runUnifiedNative(root,{selective:true,capture:true});assert.equal(report.complete,true,report.error);assert.deepEqual(report.plan.selected,['checks/a.check.js','checks/b.check.js']);
  assert.equal(report.stdout.split('TESTLORE_CONFIG_LOADED').length-1,1);
 });
 test('public options cannot inject fabricated native discovery',async t=>{

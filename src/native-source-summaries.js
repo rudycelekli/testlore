@@ -39,8 +39,8 @@ export function nativeSourceSummaryReader(root,provided,{requireBoundEngine=true
  function read(file,bytes){
   assertEngineUnchanged(binding);
   const record=stats.identityMatched&&provided.records&&Object.hasOwn(provided.records,file)?provided.records[file]:undefined;
-  if(record && /^[a-f0-9]{64}$/.test(record.sourceSha256) && Array.isArray(record.imports) && record.imports.length<=50000 && record.imports.every(value=>typeof value==='string') && typeof record.argvDependent==='boolean' && typeof record.projectPlugins==='boolean'){
-   if(record.sourceSha256===hash(bytes)){assertEngineUnchanged(binding);stats.validatedHits++;return {...record,imports:[...record.imports]};}
+  if(record && /^[a-f0-9]{64}$/.test(record.sourceSha256) && Array.isArray(record.imports) && record.imports.length<=50000 && record.imports.every(value=>typeof value==='string') && typeof record.argvDependent==='boolean' && typeof record.projectPlugins==='boolean' && typeof record.argvIntrinsicMutation==='boolean' && Array.isArray(record.argvPrefixChecks) && record.argvPrefixChecks.length<=50000 && record.argvPrefixChecks.every(value=>typeof value==='string'&&/^--[A-Za-z][A-Za-z0-9-]*(?:=)?$/.test(value))){
+   if(record.sourceSha256===hash(bytes)){assertEngineUnchanged(binding);stats.validatedHits++;return {...record,imports:[...record.imports],argvPrefixChecks:[...record.argvPrefixChecks]};}
    stats.mismatches++;
   }
   const {analyze,configurationFlags,assertCurrentEngine,optimizationAvailable}=require(parser);

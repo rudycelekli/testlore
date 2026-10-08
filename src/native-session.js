@@ -9,6 +9,7 @@ import {analyze} from './graph.js';
 import {encodeNativeFrame,nativeFrameReader} from './native-protocol.js';
 import {digest} from './provenance.js';
 import {prepareNativeSourceSummaries} from './native-source-summaries.js';
+import {normalizeNativeProjects} from './native-project-contracts.js';
 
 // Authority is minted only from a live, canonical worker, never public options.
 const sessions=new WeakMap();
@@ -19,15 +20,16 @@ export function sessionPlanning(token,root) {
 }
 function local(root,file){const result=path.relative(root,path.resolve(root,file)).split(path.sep).join('/');safePath(root,result);return result;}
 function normalize(root,value){
- if(value?.complete!==true||value.discovery?.complete!==true||!Array.isArray(value.discovery.files)||!Array.isArray(value.additionalResolutions)||!Array.isArray(value.configFiles))throw new Error(value?.error||'Incomplete unified planning');
+ if(value?.complete!==true||value.discovery?.complete!==true||!Array.isArray(value.discovery.files)||!Array.isArray(value.additionalResolutions)||!Array.isArray(value.configFiles)||!Array.isArray(value.projectContracts))throw new Error(value?.error||'Incomplete unified planning');
  if(value.additionalResolutions.length>50000||value.discovery.files.length>10000)throw new Error('Unbounded unified planning');
- return {...value,discovery:{files:[...new Set(value.discovery.files.map(file=>local(root,file)))].sort(),complete:true,adapter:'vitest',method:'fresh-unified-native-context',warnings:[]},
+ const files=[...new Set(value.discovery.files.map(file=>local(root,file)))].sort();
+ return {...value,projectContracts:normalizeNativeProjects(root,value.projectContracts,files,local),discovery:{files,complete:true,adapter:'vitest',method:'fresh-unified-native-context',warnings:[]},
  configFiles:value.configFiles.filter(file=>!file.split(path.sep).includes('node_modules')).map(file=>local(root,file)),
  additionalResolutions:value.additionalResolutions.map(item=>{if(typeof item.specifier!=='string'||!Array.isArray(item.resolution?.paths))throw new Error('Invalid unified resolution');return {...item,file:local(root,item.file),resolution:{...item.resolution,paths:item.resolution.paths.map(file=>local(root,file))}};})};
 }
 export function unifiedNativeEligibility(root,config) {
  if(process.platform==='win32')return 'Unified process-group cleanup requires a POSIX host';
- if(config.integration||!sharedVitestCommand(root,config)||config.discovery!=='native')return 'Canonical single-project Vitest 4.1/5 command required';
+ if(config.integration||!sharedVitestCommand(root,config)||config.discovery!=='native')return 'Canonical Vitest 4.1/5 command required';
  if((config.env?.NODE_OPTIONS??process.env.NODE_OPTIONS??'').trim())return 'NODE_OPTIONS cannot be bound by the unified prototype';
  return null;
 }
@@ -92,7 +94,7 @@ export async function openNativeSession(root,config,options={},startupInventory)
    const value=await execution,executedReceived=performance.now();if(Date.now()>=deadline)throw new Error('Unified native-session deadline exceeded');
    if(child.exitCode===null&&child.signalCode===null)await new Promise(resolve=>child.once('close',resolve));
    if(failure)throw failure;if(Date.now()>=deadline)throw new Error('Unified native-session deadline exceeded');terminate();
-   return normalizeUnifiedExecution(root,files,value,{durationMs:Math.round(performance.now()-started),command:[],nativeInvocation:invocation,nativeExitCode:child.exitCode,signal:child.signalCode,stdout,stderr,unifiedNative:{prototype:true,used:true,programmatic:true,contexts:1,fresh:true,scope:'single root project',sourceSummaryReuse:batch.sourceSummaryReuse,deadlineScope:'native-session; synchronous parent work is not preemptible',timings:{requestPreparationMs:workerSpawned-opened,workerStartupAndPlanningMs:plannedReceived-workerSpawned,executionRequestAndResultMs:executedReceived-started,resultToChildExitMs:performance.now()-executedReceived,worker:workerTimings,scope:'Diagnostic spans; worker starts after static module imports, parent startup includes imports and native planning. Spans overlap and never confer authority.'}}});
+   return normalizeUnifiedExecution(root,files,value,{durationMs:Math.round(performance.now()-started),command:[],nativeInvocation:invocation,nativeExitCode:child.exitCode,signal:child.signalCode,stdout,stderr,unifiedNative:{prototype:true,used:true,programmatic:true,contexts:1,fresh:true,scope:'fresh CLI-selected projects; file memberships are disjoint',projects:batch.projectContracts,sourceSummaryReuse:batch.sourceSummaryReuse,deadlineScope:'native-session; synchronous parent work is not preemptible',timings:{requestPreparationMs:workerSpawned-opened,workerStartupAndPlanningMs:plannedReceived-workerSpawned,executionRequestAndResultMs:executedReceived-started,resultToChildExitMs:performance.now()-executedReceived,worker:workerTimings,scope:'Diagnostic spans; worker starts after static module imports, parent startup includes imports and native planning. Spans overlap and never confer authority.'}}});
   }};
  }catch(error){error.nativeFailureEvidence={stdout,stderr};await close();throw error;}
 }

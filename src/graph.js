@@ -52,6 +52,7 @@ function build(root, nativeSession, planningInputs) {
     let combined, sharedAttempt;
     if(nativeSession) {
       combined=sessionPlanning(nativeSession,root);
+      graph.nativeProjects=combined.projectContracts;
       graph.nativePlanning={method:'fresh-unified-native-context',complete:true};
       graph.nativeResolutions=new Map(combined.additionalResolutions.map(item=>[JSON.stringify([item.file,item.specifier]),item.resolution]));
       for(const file of combined.configFiles)graph.configFiles.add(file);
@@ -61,6 +62,7 @@ function build(root, nativeSession, planningInputs) {
       // A failed shared context contributes no authority. Preserve fresh native
       // collection and the conservative legacy resolver path on failure.
       if(combined.complete&&combined.discovery?.complete) {
+        graph.nativeProjects=combined.projectContracts;
         graph.nativePlanning={method:'fresh-shared-native-context',complete:true};
         graph.nativeResolutions=new Map((combined.additionalResolutions||[]).map(item=>[JSON.stringify([item.file,item.specifier]),item.resolution]));
         for(const file of combined.configFiles)graph.configFiles.add(file);
@@ -95,6 +97,13 @@ function build(root, nativeSession, planningInputs) {
   for (const file of files.filter(f => SOURCE.test(f))) graph.sources[file] = fs.readFileSync(safePath(root,file),'utf8');
   timing.mark('sourceReads');
   addSources(graph,Object.entries(graph.sources),set,{ roots: [...graph.tests,...graph.configFiles], resolved:graph.nativePlanning?.complete===true });
+  // These are observed in the same fresh native discovery/resolver context.
+  // Setup inputs retain only their project's consumers. The selector preserves
+  // shared-isolation membership in a linear contract pass, not an O(n²) graph.
+  for(const project of graph.nativeProjects||[])for(const test of project.files) {
+    graph.edges[test]=[...new Set([...(graph.edges[test]||[]),...project.setupFiles])].sort();
+    for(const setup of project.setupFiles)if(!set.has(setup))graph.warnings.push({file:setup,reason:'resolution-config-outside-graph'});
+  }
   timing.mark('sourceAnalysisAndResolution');
   const declared = declaredInputs(config);
   for (const [test,deps] of Object.entries(config.dependencies || {})) declared[test] = [...(declared[test]||[]),...deps];
