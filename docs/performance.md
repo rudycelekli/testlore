@@ -20,6 +20,26 @@ The cache lives under `.tddswarm/analysis-cache/v1/`, which normal project scans
 
 Native collection, native import resolution, TypeScript aliases and declarations, configuration seeds, file inventory, package exports, declared inputs, runtime evidence, policy, and Git baseline edges remain fresh. A cache hit cannot turn an unresolved dependency into resolved evidence or omit a cached warning. Playwright configuration files and their imported helpers join the same global configuration dependency handling used for Jest and Vite.
 
+Historical imports can reuse an exact `(importer, specifier)` resolution already
+collected by the same fresh planning graph's complete native context. This is
+graph-local reuse, with no persisted resolution cache. Missing historical imports
+and imports from a different file still require native resolution. Incomplete
+native contexts cannot authorize this reuse, and an explicit root pass always
+loads native configuration. New plans reload configuration and retain the
+independent selection and execution drift checks.
+
+The bounded Node 22.19.0 / Vitest 5.0.2 fixture in
+`test/planning-timings.test.js` observes one configuration load for unchanged
+baseline imports, versus two when reuse is disabled. Missing historical imports,
+different importers and incomplete contexts still produce two loads. The load
+counter itself uses filesystem operations and retains global uncertainty and full
+fallback. A separate pure-configuration fixture selects one of two test files and
+preserves the same failing native case as an independently executed full suite.
+Four deliberate guard mutations are rejected: disabled reuse, specifier-only
+reuse, missing-import suppression and incomplete-context reuse. These checks
+establish a narrower startup path, not an end-to-end speed advantage or new
+framework qualification; whole-CLI cold/warm comparisons remain necessary.
+
 Malformed, mismatched, oversized, symlinked, or inaccessible entries trigger fresh parsing. Routing warnings and selection do not change merely because the cache fails. `buildGraph(root).analysisCache` reports deterministic counts for parses, memory and disk hits, writes, corruption, eviction, skipped entries, and unavailable persistence. These diagnostics do not certify execution or deployment.
 
 Memory summaries, queued writes, and persisted entries are bounded. Writers acquire a local exclusive lock, write complete entries to temporary files, and rename atomically. Old entries are evicted within the configured byte and count bounds. Concurrent writers that cannot acquire the lock keep their fresh analysis and skip persistence. Unknown directory entries or excessive inventories also disable writes safely. An interrupted writer can leave a lock; remove the derived cache directory when no writer is active to rebuild it. There are no remote cache imports or sharing. Checksums detect corruption and mismatched inputs; a fully writable local cache is not cryptographic proof against a party that can forge all its contents.
