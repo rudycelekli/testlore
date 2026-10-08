@@ -16,9 +16,10 @@ const invoke = (root, args, preload) => {
 function blocker(root, allowed = []) {
   const preload = path.join(root, 'block-command-graph.mjs');
   fs.writeFileSync(preload, `import {registerHooks} from 'node:module';
-registerHooks({load(url,context,nextLoad){
+registerHooks({resolve(specifier,context,nextResolve){
+ const result=nextResolve(specifier,context),url=result.url;
  if(url.includes('/src/') && url!==${JSON.stringify(new URL('../src/cli.js', import.meta.url).href)} && !${JSON.stringify(allowed)}.some(name=>url.endsWith('/src/'+name+'.js')))throw new Error('UNEXPECTED_COMMAND_IMPORT:'+url);
- return nextLoad(url,context);
+ return result;
 }});`);
   return preload;
 }
@@ -46,24 +47,39 @@ test('help/version and rejected options load no command implementation, includin
 test('run imports its graph without loading unrelated orchestration or the public index', t => {
   const root = fixture(t, {...twoModules, 'src/a.js': 'export const a=9;'});
   const preload = path.join(root, 'reject-unrelated.mjs');
-  fs.writeFileSync(preload, `import {registerHooks} from 'node:module';registerHooks({load(url,context,nextLoad){
+  fs.writeFileSync(preload, `import {registerHooks} from 'node:module';registerHooks({resolve(specifier,context,nextResolve){
+ const result=nextResolve(specifier,context),url=result.url;
  if(/\\/src\\/(?:index|improvement|swarm|pilot|browser-evidence|plugins|agent-profile)\\.js$/.test(url))throw new Error('UNRELATED_COMMAND_IMPORT');
- return nextLoad(url,context);}});`);
-  const result = invoke(root, ['run', '--full', '--json'], preload), report = JSON.parse(result.stdout);
-  assert.equal(result.status, 1, result.stderr); assert.equal(report.exitCode, 1); assert.equal(report.complete, true);
+ return result;}});`);
+  const forbidden = spawnSync(process.execPath, ['--import', preload, '--input-type=module', '--eval', `await import(${JSON.stringify(new URL('../src/index.js', import.meta.url).href)})`], {cwd: root, encoding: 'utf8', timeout: 30000});
+  assert.equal(forbidden.status, 1, forbidden.stderr); assert.match(forbidden.stderr, /UNRELATED_COMMAND_IMPORT/);
+  const result = invoke(root, ['run', '--full', '--json'], preload);
+  assert.equal(result.status, 1, result.stderr);
+  const report = JSON.parse(result.stdout); assert.equal(report.exitCode, 1); assert.equal(report.complete, true, JSON.stringify(report));
   assert.equal(report.tests.filter(row => row.status === 'failed').length, 1);
 });
 test('CLI failure oracle detects a mutant that swallows the native runner exit', t => {
   const root = fixture(t, {...twoModules, 'src/a.js': 'export const a=9;'});
   const native = invoke(root, ['run', '--full', '--json']);
-  assert.equal(native.status, 1); assert.equal(JSON.parse(native.stdout).exitCode, 1);
+  assert.equal(native.status, 1, native.stderr);
+  const nativeReport = JSON.parse(native.stdout);
+  assert.equal(nativeReport.exitCode, 1); assert.equal(nativeReport.complete, true);
+  assert.equal(nativeReport.tests.filter(row => row.status === 'failed').length, 1);
   const preload = path.join(root, 'swallow-exit.mjs');
-  fs.writeFileSync(preload, `import {registerHooks} from 'node:module';registerHooks({load(url,context,nextLoad){
- const result=nextLoad(url,context);if(url===${JSON.stringify(new URL('../src/cli.js', import.meta.url).href)}){
+  // Node 22.19 synchronous load hooks give CommonJS a require without cache.
+  // Async hooks opt CommonJS out of ESM loading and mutate only the ESM CLI.
+  const hook = `export async function load(url,context,nextLoad){
+ const result=await nextLoad(url,context);
+ if(result.format==='commonjs')return {...result,source:null};
+ if(url===${JSON.stringify(new URL('../src/cli.js', import.meta.url).href)}){
  const text=Buffer.from(result.source).toString();const before="if(['plan','run','external-run','external-plan','aqe'].includes(command))return result.exitCode||0;";
- if(!text.includes(before))throw new Error('Mutant target absent');return {...result,source:text.replace(before,"if(command==='run')return 0;" )};}return result;}});`);
+ if(!text.includes(before))throw new Error('Mutant target absent');return {...result,source:text.replace(before,"if(command==='run')return 0;" )};}return result;}`;
+  fs.writeFileSync(preload, `import {register} from 'node:module';register(${JSON.stringify('data:text/javascript,' + encodeURIComponent(hook))},import.meta.url);`);
   const mutant = invoke(root, ['run', '--full', '--json'], preload);
-  assert.equal(mutant.status, 0, mutant.stderr); assert.equal(JSON.parse(mutant.stdout).exitCode, 1);
+  assert.equal(mutant.status, 0, mutant.stderr);
+  const mutantReport = JSON.parse(mutant.stdout);
+  assert.equal(mutantReport.exitCode, 1); assert.equal(mutantReport.complete, true);
+  assert.deepEqual(mutantReport.tests.map(({id, status}) => ({id, status})), nativeReport.tests.map(({id, status}) => ({id, status})));
   assert.notEqual(mutant.status, native.status, 'A process-status assertion must expose a swallowed runner failure');
 });
 test('lazy native CLI preserves independent full failures and reloads changed configuration each invocation', t => {
