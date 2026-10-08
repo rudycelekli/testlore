@@ -1,0 +1,109 @@
+{
+  "schemaVersion": 1,
+  "kind": "retained-interrupted-original-upstream-installation",
+  "recordedDate": "2026-10-08",
+  "sourceRevision": "cdfa5b82755456ceff4f9921695ee66457d69108",
+  "candidateId": "unjs-defu-11ba02213d4b",
+  "repository": "https://github.com/unjs/defu",
+  "fixRevision": "11ba02213d4b1c6b02dd686041f75edc479c98e9",
+  "parentRevision": "3942bfbbcaa72084bd4284846c83bd61ed7c8b29",
+  "selectionCommitmentSha256": "065b79f7f345a971e76b0a2d1bdc4f4ab34c9c3b254837b693dee552b71af65a",
+  "upstreamByteBindings": [
+    {
+      "kind": "dependency",
+      "path": "package.json",
+      "bytes": 1258,
+      "sha256": "0ee5010fb716a695cb591b6b33d0a7287117f47344fcd8ae1b9dfe7f623054d2",
+      "gitBlob": "ff32b2723a73d9cd70172d05804c1963b75cf834"
+    },
+    {
+      "kind": "dependency",
+      "path": "pnpm-lock.yaml",
+      "bytes": 159185,
+      "sha256": "8e25a8381354e1002b339db2196f23c243aebe2c91afc11219528fba6df07a36",
+      "gitBlob": "8593f438f9a15a185defbbb8b59e730d2e25716c"
+    },
+    {
+      "kind": "fixed-source",
+      "path": "src/defu.ts",
+      "bytes": 2085,
+      "sha256": "5318d12aae6955d6e42c9dfc694b267838c56ba1a899a6b068930cd033a035cf",
+      "gitBlob": "3b438bbf04cf2c27f1840f020e10cb54a6953386"
+    },
+    {
+      "kind": "prior-source",
+      "path": "src/defu.ts",
+      "bytes": 2024,
+      "sha256": "db851ec4fe2850ad460c23e8321bfa6b635ae38d21b170f02373ad78de3ac652",
+      "gitBlob": "5eb3cc8cb2c3834be587b5d09aed35faf6e2a20d"
+    },
+    {
+      "kind": "oracle",
+      "path": "test/defu.test.ts",
+      "bytes": 7729,
+      "sha256": "abfe579ac2a0f10280bc11efc3ece9c2012f5fa7dde0259ee604b85a5118b145",
+      "gitBlob": "9e247910741b2f2fe7137d1002335fd69e145095"
+    }
+  ],
+  "packageManager": "pnpm@10.33.0",
+  "prospectivelyInspectedNativeVersion": "4.1.2",
+  "originalLockfileVersion": "9.0",
+  "status": "interrupted",
+  "qualified": false,
+  "upstreamLockInstallationVerified": false,
+  "installationReceiptProduced": false,
+  "nativeBaselineRuns": 0,
+  "independentFaultRuns": 0,
+  "threeArmTrials": 0,
+  "guard": {
+    "reason": "disk-growth",
+    "exitCode": null,
+    "signal": "SIGTERM",
+    "durationMs": 6044,
+    "maxGrowthBytes": 314572800,
+    "minFreeBytes": 2147483648,
+    "filesystemGrowthBytesObserved": 350183424,
+    "freeBytesAtClose": 3226263552,
+    "growthAttribution": "Whole shared filesystem observation overlapped another TestLore SDK dependency restoration. This proves a resource stop, not isolated defu size or a defect failure.",
+    "descendantCleanup": {
+      "scope": "Observed process-tree/start identity best effort; unobserved/reparented children and arbitrary subprocesses are not contained",
+      "observed": 10,
+      "survivingAtClose": 0,
+      "observationFailed": false,
+      "requested": true
+    }
+  },
+  "retainedScope": {
+    "freshOriginalSource": true,
+    "originalManifestLockUnchanged": true,
+    "partialDependencyCopyAndOriginalManagerCachePreserved": true,
+    "sharedOwnedPnpmStoreReusedAndDeclared": true,
+    "originalInputBootstrapInstallLogsPreserved": true,
+    "automaticRetries": 0,
+    "bootstrapCompleted": true,
+    "installNativeCompletionNotObserved": true
+  },
+  "receiptSha256": {
+    "outerProcess": "81254fbbdc92f987c34014ec3b8a9a6c6388f9d402c480da48ba0fb226e77ca7",
+    "input": "7d6a082027d624b74fffbeb2ffa7b848b08bb224d6c3a79208923785155158ff",
+    "bootstrap": "22b231abd403fda1d0bf5e23a000429a434a80b68eeaa87b7bf2fdda4f699030",
+    "installStdout": "983d1e634e45da4ed9170e3bde209545ef4dc7845a2719fe222398df603e22c9",
+    "installStderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "accounting": {
+    "addedQualifiedChanges": 0,
+    "addedQualifiedRepositories": 0,
+    "independentFaultDetections": 0,
+    "earlierReceiptsReclassified": false,
+    "target30Changes5RepositoriesMet": false,
+    "target100Changes10RepositoriesMet": false
+  },
+  "nextAction": "Execute separately reviewed original-lock profiles on fresh hosted runners. Preserve this interrupted attempt; each candidate needs its own unchanged fixed baseline, stable independent faults and complete three-arm trials.",
+  "limitations": [
+    "Package and lock inspection is not installation or execution qualification.",
+    "No speed, fallback-reduction or native failure-preservation comparison was executed.",
+    "Local original dependency installation was interrupted by a conservative shared-filesystem growth guard, with another installation running concurrently.",
+    "The two prospective defu histories have identical dependency inputs but distinct source/oracle bytes; repeated environments or trials cannot increase unique-change counts.",
+    "No resumed install or prior receipt was relabeled as fresh qualification."
+  ]
+}

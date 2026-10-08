@@ -18,7 +18,13 @@ const controller=fileURLToPath(import.meta.url),repository=fileURLToPath(new URL
 export const campaignSelection='065b79f7f345a971e76b0a2d1bdc4f4ab34c9c3b254837b693dee552b71af65a';
 const frozen=value=>{for(const child of Object.values(value))if(child&&typeof child==='object')frozen(child);return Object.freeze(value);};
 export const campaignLimits=frozen({maxCampaignMs:480000,minFreeBytes:2*1024**3,maxLogBytes:2*1024**2,phases:{clone:{timeoutMs:60000,maxGrowthBytes:128*1024**2},install:{timeoutMs:180000,maxGrowthBytes:450*1024**2},preflight:{timeoutMs:90000,maxGrowthBytes:64*1024**2},prepare:{timeoutMs:30000,maxGrowthBytes:16*1024**2},run:{timeoutMs:120000,maxGrowthBytes:128*1024**2},'whole-cli':{timeoutMs:180000,maxGrowthBytes:128*1024**2}}});
-const ids=new Set(['unjs-unctx-1bb220dccf40','unjs-mlly-abef19c940da','unjs-ufo-5cd9e676711a']);
+const reviewedNativeProfiles=new Map([
+ ['unjs-unctx-1bb220dccf40',{executionMode:'legacy',installedVitest:'4.0.16'}],
+ ['unjs-mlly-abef19c940da',{executionMode:'legacy',installedVitest:'4.1.0'}],
+ ['unjs-ufo-5cd9e676711a',{executionMode:'unified-native',installedVitest:'4.1.5'}],
+ ['unjs-defu-11ba02213d4b',{executionMode:'legacy',installedVitest:'4.1.2'}],
+ ['unjs-defu-3942bfbbcaa7',{executionMode:'legacy',installedVitest:'4.1.2'}]
+]);
 const save=(file,value)=>fs.writeFileSync(file,JSON.stringify(value,null,2)+'\n',{flag:'wx',mode:0o600});
 const git=(root,...args)=>execFileSync('git',['-C',root,...args],{encoding:'utf8',timeout:15000,maxBuffer:2*1024**2}).trim();
 const freeBytes=root=>{const s=fs.statfsSync(root);return s.bavail*s.bsize;};
@@ -31,8 +37,9 @@ export function campaignCorpusRelative(relative){
 
 export function validatePortableProfile(selection,profile){
  validateCandidates(selection);
- if(selection.commitmentSha256!==campaignSelection||!keys(profile,['schemaVersion','kind','reviewed','candidateId','selectionCommitmentSha256','fixRevision','parentRevision','packageManager','dependencySha256','installedVitest','executionMode','scope'])||profile.schemaVersion!==1||profile.kind!=='reviewed-original-upstream-campaign-profile'||profile.reviewed!==true||!ids.has(profile.candidateId)||profile.selectionCommitmentSha256!==campaignSelection||typeof profile.scope!=='string'||!profile.scope.trim()||profile.scope.length>200)throw Error('Require a closed reviewed portable profile and original frozen selection');
- if(profile.executionMode!==(profile.candidateId==='unjs-ufo-5cd9e676711a'?'unified-native':'legacy'))throw Error('Portable execution mode differs from reviewed candidate');
+ if(selection.commitmentSha256!==campaignSelection||!keys(profile,['schemaVersion','kind','reviewed','candidateId','selectionCommitmentSha256','fixRevision','parentRevision','packageManager','dependencySha256','installedVitest','executionMode','scope'])||profile.schemaVersion!==1||profile.kind!=='reviewed-original-upstream-campaign-profile'||profile.reviewed!==true||!reviewedNativeProfiles.has(profile.candidateId)||profile.selectionCommitmentSha256!==campaignSelection||typeof profile.scope!=='string'||!profile.scope.trim()||profile.scope.length>200)throw Error('Require a closed reviewed portable profile and original frozen selection');
+ if(profile.executionMode!==reviewedNativeProfiles.get(profile.candidateId).executionMode)throw Error('Portable execution mode differs from reviewed candidate');
+ if(profile.installedVitest!==reviewedNativeProfiles.get(profile.candidateId).installedVitest)throw Error('Portable native version differs from reviewed original lock');
  const candidate=selection.candidates.find(c=>c.id===profile.candidateId);
  if(!candidate||candidate.fixRevision!==profile.fixRevision||candidate.parentRevision!==profile.parentRevision||candidate.runtimeIdentity?.packageManager!==profile.packageManager||candidate.sourcePaths.length!==1||!candidate.maintainerOraclePaths.length||!keys(profile.dependencySha256,['package.json','pnpm-lock.yaml'])||!/^\d+\.\d+\.\d+$/.test(profile.installedVitest))throw Error('Portable candidate commit, manager or native profile mismatch');
  for(const file of ['package.json','pnpm-lock.yaml'])if(candidate.byteBindings.find(b=>b.kind==='dependency'&&b.path===file)?.sha256!==profile.dependencySha256[file])throw Error('Portable original manifest/lock mismatch');
