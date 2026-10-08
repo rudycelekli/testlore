@@ -102,10 +102,11 @@ function originalSnapshot(project,env){
 function checkBindings(project,manifest){
   for(const [file,expected]of Object.entries({...manifest.sourceBindings,...manifest.assertionBindings}))if(sha(fs.readFileSync(path.join(project,file)))!==expected)throw Error('Pinned original source binding changed: '+file);
 }
-export async function phase(context,name,command,timeoutMs=context.manifest.resources.phaseTimeoutMs,extraEnv={}){
+export async function phase(context,name,command,timeoutMs=context.manifest.resources.phaseTimeoutMs,extraEnv={},nativeReports=[]){
   const {output,manifest}=context,record={name,command,requestedAt:Date.now(),status:'not-started',samples:[]};
+  const monitored=[...new Set([...['unit','serve','build'].map(mode=>path.join(output,mode+'.native.json')),...nativeReports])];if(monitored.some(file=>path.dirname(file)!==output||!/^[-a-z0-9]+\.native\.json$/.test(path.basename(file))))throw Error('Native report monitor must stay in the output directory');
   const persist=()=>{atomicJson(path.join(output,name+'.phase.json'),record);context.report.phases.push(record);atomicJson(path.join(output,'report.json'),context.report);};
-  const sample=()=>{const value=measure(context.resourceRoot||output,manifest);record.samples.push({...value,at:Date.now()});for(const mode of ['unit','serve','build']){const file=path.join(output,mode+'.native.json');if(fs.existsSync(file)&&fs.statSync(file).size>manifest.resources.maximumNativeReportBytes)value.reason ||= 'native-report-output-limit';}return value.reason;};
+  const sample=()=>{const value=measure(context.resourceRoot||output,manifest);record.samples.push({...value,at:Date.now()});for(const file of monitored){if(fs.existsSync(file)){const stat=fs.lstatSync(file);if(!stat.isFile())value.reason ||= 'native-report-not-regular';else if(stat.size>manifest.resources.maximumNativeReportBytes)value.reason ||= 'native-report-output-limit';}}return value.reason;};
   const startReason=sample();if(startReason){record.reason=startReason;persist();throw Error(startReason);}
   const stdoutFile=path.join(output,name+'.stdout'),stderrFile=path.join(output,name+'.stderr');
   const out=fs.openSync(stdoutFile,'wx',0o600),err=fs.openSync(stderrFile,'wx',0o600),start=performance.now();
