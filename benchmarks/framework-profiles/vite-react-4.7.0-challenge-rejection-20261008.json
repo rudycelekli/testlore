@@ -1,0 +1,77 @@
+{
+  "schemaVersion": 1,
+  "kind": "retained-native-campaign-rejection",
+  "testloreSourceRevision": "97462bda3c19a337f8eb76bf53b08258c6f13dcc",
+  "upstreamRevision": "80417060f7bc239d5100e1b47c819e8364c7d551",
+  "status": "incomplete",
+  "reason": "Native terminal assessment rejected: Native counts/terminal outcome mismatch",
+  "qualified": false,
+  "genuineHistoricalDefects": false,
+  "nativeCalls": 1,
+  "faultsIntroduced": 0,
+  "automaticOmissionAuthority": false,
+  "originalTrackedBytesRestored": true,
+  "configurationOverrides": {
+    "maxWorkers": 1,
+    "fullAndSubsetIdentical": true,
+    "originalConcurrencyUnchanged": false
+  },
+  "nativeBaseline": {
+    "exitCode": 0,
+    "fileCount": 20,
+    "cases": 64,
+    "passed": 62,
+    "pending": 2,
+    "failed": 0,
+    "phaseElapsedMs": 24355.043541,
+    "observedDescendants": {
+      "scope": "Observed PID/start process tree best effort; unobserved/reparented children are not contained",
+      "observed": 55,
+      "survivingAtClose": 0,
+      "observationFailed": false,
+      "requested": false
+    },
+    "omittedOptionalRuntimeCount": true
+  },
+  "completeWallMs": 26359.747792,
+  "externalProcessWallSeconds": 26.4,
+  "rawReceipts": {
+    "baseline-serve.native.json": {
+      "bytes": 16660,
+      "sha256": "9b5cc184c52d82a5f6836b65aa9fba160f41422d8e91c7b31458a0e737398d7d"
+    },
+    "baseline-serve.phase.json": {
+      "bytes": 13515,
+      "sha256": "4d43c5b3d1a2ad4e014a3c5d93aefc44e9226a870341bfe96933537df24e5e86"
+    },
+    "baseline-serve.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "baseline-serve.stdout": {
+      "bytes": 614,
+      "sha256": "8f79483264410f8d173c901b1ed66ff2bb4b1c7c3c6ce51a209af2dd1fccb16f"
+    },
+    "campaign-report.json": {
+      "bytes": 17836,
+      "sha256": "c715d366cf5a4ddc82c98202db6474112c7cc38a3b9c28c57d05dc507e317789"
+    },
+    "completion.json": {
+      "bytes": 295,
+      "sha256": "294f2a2a94168d65a2e6cb2db13e1271a212fa684f718b395dd6d502c23631c8"
+    },
+    "original-source.json": {
+      "bytes": 65166,
+      "sha256": "829fc0cb82ff60c1de5e8ed8d66e52d46596b725810e4f1b669a3aaaa67c3cd1"
+    },
+    "proposal.json": {
+      "bytes": 124473,
+      "sha256": "60e7029630284c8ead115951ee2a16f8de6455d5a186b95a72d251846c682afd"
+    },
+    "report.json": {
+      "bytes": 17612,
+      "sha256": "cf3056c57eccf00879e38246c9275a764a8ef1c10c229bb2b907398896109bb9"
+    }
+  },
+  "scope": "Pinned macOS original installation reused with bound legacy receipts; fresh equal-concurrency baseline passed, then campaign evaluator rejected native schema before any fault. No comparison or qualification added."
+}
