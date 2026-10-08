@@ -1,0 +1,36 @@
+name: Released TestLore REA pilot
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - scripts/rea-public-pilot.js
+      - test/rea-public-pilot.test.js
+      - .github/workflows/rea-public-pilot.yml
+permissions:
+  contents: read
+concurrency:
+  group: rea-public-pilot-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  pilot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7.0.0
+        with:
+          node-version: '22.19.0'
+      - name: Test the immutable npm release with original upstream specifications
+        run: node scripts/rea-public-pilot.js --directory "$RUNNER_TEMP/rea-release-pilot" --output .tddswarm/rea-public-pilot
+      - name: Preserve negative outcomes and complete scoped native evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rea-public-pilot-${{ github.run_id }}
+          path: .tddswarm/rea-public-pilot/
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 14
