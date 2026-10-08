@@ -77,3 +77,15 @@ test('rejects new skips across every arm and preserves independent baseline skip
  const x=fixture();for(const arm of ['full','subset','native'])x.raw[0][arm].tests[0].status='skipped';assert.equal(assess(x).qualified,false);
  const y=fixture();for(const arm of ['full','subset','native'])y.raw[3][arm].tests[1].status='passed';assert.equal(assess(y).qualified,false);
 });
+
+test('complete negative measurements remain rejected qualifications',()=>{
+ const x=fixture();for(const arm of ['full','subset']){
+  x.raw[0][arm].tests[0].name='different parameter';x.raw[0][arm].tests[0].id=createHash('sha256').update(['case.test.ts','different parameter','','','0'].join('\0')).digest('hex');
+ }
+ const result=assess(x);assert.equal(result.qualified,false);assert.equal(result.observationCompleted,true);assert.equal(result.claims.worldClassEstablished,false);
+});
+test('incomplete observations cannot be published as completed negatives',()=>{
+ for(const mutate of [x=>x.raw.pop(),x=>x.raw[0].full.complete=false,x=>x.raw[0].full.tests.pop(),x=>x.raw[0].subset.exitCode=2,x=>x.report.projects[0].changes[0].trials[0].stable=false]){
+  const x=fixture();mutate(x);assert.equal(assess(x).observationCompleted,false);
+ }
+});

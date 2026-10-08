@@ -71,21 +71,22 @@ export function preservePilotReceipts(source, destination){
 }
 /** Recheck raw executions and exact baseline scope, not aggregate booleans. */
 export function assessReaPilot(report, baseline, rawTrials, upstreamRoot='/') {
- const reasons=[];let independent;
+ const reasons=[];let independent,observationCompleted=true;
  try{independent=nativeBaseline(baseline,upstreamRoot);inventory(independent.tests,independent.files);if(baseline.numPassedTests!==independent.tests.filter(t=>t.status==='passed').length||baseline.numFailedTests!==independent.tests.filter(t=>t.status==='failed').length)throw new Error('Baseline count mismatch');}catch{reasons.push('independent-baseline-scope-invalid');}
  if(report?.valid!==true||report.projects?.length!==1)reasons.push('pilot-incomplete-or-invalid');
  if(baseline?.success!==true||!(baseline.numPassedTests>0)||baseline.numFailedTests!==0)reasons.push('independent-baseline-not-green');
  const project=report?.projects?.[0],changes=project?.changes||[];
  if(project?.revision!==REA_REVISION||project?.sourceCheckoutUnchanged!==true)reasons.push('upstream-source-binding-unverified');
  if(changes.length!==2||report.repetitions!==3||rawTrials?.length!==6)reasons.push('requested-trials-incomplete');
+ observationCompleted=!reasons.length;
  let missed=0,nativeMissed=0,omitted=0,fallbacks=0;
  const rows=[];
  for(let c=0;c<changes.length;c++){
   const change=changes[c];
-  if(change.error||change.trials?.length!==3)reasons.push('change-incomplete:'+c);
+  if(change.error||change.trials?.length!==3){reasons.push('change-incomplete:'+c);observationCompleted=false;}
   for(let r=0;r<(change.trials||[]).length;r++){
    const trial=change.trials[r],matches=rawTrials?.filter(x=>x.change===c&&x.repetition===r)||[],raw=matches[0];
-   if(matches.length!==1){reasons.push('raw-trial-missing-or-duplicate:'+c+':'+r);continue;}
+   if(matches.length!==1){reasons.push('raw-trial-missing-or-duplicate:'+c+':'+r);observationCompleted=false;continue;}
    const {full,subset,native,plan}=raw;
    const fullFailures=failures(full),subsetFailures=failures(subset),nativeFailures=failures(native);
    const missedIds=fullFailures.filter(id=>!subsetFailures.includes(id)),nativeMissedIds=fullFailures.filter(id=>!nativeFailures.includes(id));
@@ -108,13 +109,22 @@ export function assessReaPilot(report, baseline, rawTrials, upstreamRoot='/') {
    }catch(error){reasons.push('raw-case-preservation-mismatch:'+c+':'+r+':'+error.message);}
    if(!same(fullFailures,subsetFailures)||trial.missedFailures!==missedIds.length||trial.fullFailures!==fullFailures.length)reasons.push('failure-preservation-mismatch:'+c+':'+r);
    if(change.expectedFailure!==Boolean(fullFailures.length))reasons.push('independent-defect-not-demonstrated:'+c+':'+r);
+   // Completion certifies collection, not cross-arm identity or product quality.
+   try{
+    if(!trial.stable||!same(fullFiles,independent.files)||plan.total!==fullFiles.length||!same(selected,[...(subset.executedFiles||[])].sort())||!selected.every(f=>fullFiles.includes(f)))throw new Error('Observation scope/freshness');
+    const expectedCounts=new Map(fullFiles.map(file=>[file,independent.tests.filter(t=>t.file===file).length]));
+    for(const run of [full,subset,native]){
+     const files=run.executedFiles||[];inventory(run.tests,files);
+     if(!run.complete||run.signal||run.error||new Set(files).size!==files.length||!files.every(f=>fullFiles.includes(f))||!same([...files].sort(),[...(run.collectionFiles||[])].sort())||run.exitCode!==(failures(run).length?1:0)||files.some(f=>run.tests.filter(t=>t.file===f).length!==expectedCounts.get(f)))throw new Error('Observation report incomplete');
+    }
+   }catch{observationCompleted=false;}
    const actualOmitted=fullFiles.filter(file=>!selected.includes(file));omitted+=actualOmitted.length;
    if(plan?.mode==='full')fallbacks++;
-   if(![trial.testLoreMs,trial.nativeMs,trial.fullMs,trial.verificationDiscoveryMs].every(n=>Number.isFinite(n)&&n>=0))reasons.push('timing-incomplete:'+c+':'+r);
+   if(![trial.testLoreMs,trial.nativeMs,trial.fullMs,trial.verificationDiscoveryMs].every(n=>Number.isFinite(n)&&n>=0)){reasons.push('timing-incomplete:'+c+':'+r);observationCompleted=false;}
    rows.push({change:change.name,repetition:r,valid:trial.valid,fullFiles:fullFiles.length,selectedFiles:selected.length,nativeFiles:(native?.executedFiles||[]).length,omittedFiles:actualOmitted.length,fullFailures:fullFailures.length,missedFailures:missedIds.length,nativeMissedFailures:nativeMissedIds.length,upstreamSkippedCases:(full.tests||[]).filter(t=>t.status==='skipped').length,testLoreOuterMs:trial.testLoreMs,nativeSelectionMs:trial.nativeMs,fullExecutionMs:trial.fullMs,independentDiscoveryMs:trial.verificationDiscoveryMs,mode:plan?.mode,decisionReasons:[...new Set((plan?.decisions||[]).flatMap(d=>d.reasons||[]))]});
   }
  }
- return {schemaVersion:1,qualified:reasons.length===0,reasons,repo:'morluto/rea',upstreamRevision:REA_REVISION,testLoreVersion:'0.1.0',releasedSourceRevision:RELEASE_REVISION,scope,trialCount:rows.length,missedFailures:missed,nativeMissedFailures:nativeMissed,omittedFileObservations:omitted,fullFallbackTrials:fallbacks,rows,claims:{worldClassEstablished:false,generalSpeedAdvantageEstablished:false,learningImprovementEstablished:false,originalHistoricalBugTreesReplayed:false},limitations:['One historical source file is reverted while untouched later upstream maintainer tests are retained; this is a historical source-reversion experiment, not an original historical environment.','Original lockfile installation on supported Node 22.19; upstream .nvmrc recommends Node 24.18.','Full means the three declared original Vitest projects, not every REA project or real provider. Upstream skips remain visible.','TestLore timing includes discovery, planning, execution and evidence/report retention inside the pilot; it excludes a fresh outer CLI startup. Native/full timings exclude independent oracle discovery.','Framework/OS caches are not reset; JITI filesystem cache is disabled; analysis cache can warm across repetitions.','Dependencies are shared by isolated source copies; this is not an OS sandbox or frozen dependency-byte guarantee.']};
+ return {schemaVersion:1,qualified:reasons.length===0,observationCompleted,reasons,repo:'morluto/rea',upstreamRevision:REA_REVISION,testLoreVersion:'0.1.0',releasedSourceRevision:RELEASE_REVISION,scope,trialCount:rows.length,missedFailures:missed,nativeMissedFailures:nativeMissed,omittedFileObservations:omitted,fullFallbackTrials:fallbacks,rows,claims:{worldClassEstablished:false,generalSpeedAdvantageEstablished:false,learningImprovementEstablished:false,originalHistoricalBugTreesReplayed:false},limitations:['One historical source file is reverted while untouched later upstream maintainer tests are retained; this is a historical source-reversion experiment, not an original historical environment.','Original lockfile installation on supported Node 22.19; upstream .nvmrc recommends Node 24.18.','Full means the three declared original Vitest projects, not every REA project or real provider. Upstream skips remain visible.','TestLore timing includes discovery, planning, execution and evidence/report retention inside the pilot; it excludes a fresh outer CLI startup. Native/full timings exclude independent oracle discovery.','Framework/OS caches are not reset; JITI filesystem cache is disabled; analysis cache can warm across repetitions.','Dependencies are shared by isolated source copies; this is not an OS sandbox or frozen dependency-byte guarantee.']};
 }
 
 export async function main(args=process.argv.slice(2)) {
@@ -200,11 +210,12 @@ export async function main(args=process.argv.slice(2)) {
   const nodeAssessment={schemaVersion:1,scope:'Only the original Node package-precedence boundary file; independent native execution, no TestLore selection comparison.',upstreamRevision:REA_REVISION,sourceBeforeRevision:'68b9fa489b0c07f580633785ec61c17fa20b5083',testFile,testSha256:testHash,...assessNodeOracle(nodeRuns,oracle,hash(fs.readFileSync(path.join(oracle,testFile)))===testHash)};
   fs.writeFileSync(path.join(output,'node-oracle-assessment.json'),JSON.stringify(nodeAssessment,null,2)+'\n');
   const assessment=assessReaPilot(report,baseline,rawTrials,upstream);assessment.pilotExitCode=pilotEvent.exitCode;assessment.nodeOracleQualified=nodeAssessment.qualified;
-  if(!nodeAssessment.qualified){assessment.qualified=false;assessment.reasons.push('separate-node-oracle-incomplete');}
+  if(!nodeAssessment.qualified){assessment.observationCompleted=false;assessment.qualified=false;assessment.reasons.push('separate-node-oracle-incomplete');}
   if(pilotEvent.exitCode!==0||pilotEvent.signal||pilotEvent.stoppedReason){assessment.qualified=false;assessment.reasons.push('pilot-process-incomplete');}
+  if(![0,1].includes(pilotEvent.exitCode)||pilotEvent.signal||pilotEvent.stoppedReason)assessment.observationCompleted=false;
   assessment.protectedSourceUnchanged=entries.every(entry=>hash(trackedBytes(entry))===protectedHashes[entry.file])&&!git('status','--porcelain').trim();
-  if(!assessment.protectedSourceUnchanged){assessment.qualified=false;assessment.reasons.push('protected-upstream-source-changed');}
-  fs.writeFileSync(path.join(output,'assessment.json'),JSON.stringify(assessment,null,2)+'\n');console.log(JSON.stringify(assessment,null,2));return assessment.qualified?0:1;
+  if(!assessment.protectedSourceUnchanged){assessment.observationCompleted=false;assessment.qualified=false;assessment.reasons.push('protected-upstream-source-changed');}
+  fs.writeFileSync(path.join(output,'assessment.json'),JSON.stringify(assessment,null,2)+'\n');console.log(JSON.stringify(assessment,null,2));return assessment.qualified?0:assessment.observationCompleted?3:1;
  }catch(error){fs.writeFileSync(path.join(output,'rejection.json'),JSON.stringify({qualified:false,reason:error.message,events,minimumFreeBytes,upstreamRevision:REA_REVISION,releaseRevision:RELEASE_REVISION},null,2)+'\n');throw error;}finally{preservePilotReceipts(path.join(repository,pilotOutput),path.join(output,'pilot-receipts'));}
 }
 if(process.argv[1]&&path.resolve(process.argv[1])===fileURLToPath(import.meta.url)){try{process.exitCode=await main();}catch(error){console.error(error.message);process.exitCode=1;}}
