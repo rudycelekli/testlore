@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "exactInputArchive": true,
+  "proofScriptSha256": "611d89da2e5f4485a88117873a7d93c438e836be213cbc771e4b7c489a3387d0",
+  "date": "2026-10-08T12:51:54.540Z",
+  "archive": "testlore-0.1.0.tgz",
+  "sha256": "4fa6b36c17aeae3bf1e56f6100ce1ad73d69d6e498f9deb82f8001c32569806a",
+  "version": "0.1.0",
+  "node": "v22.19.0",
+  "productionInstall": true,
+  "mcpStdioVerified": true,
+  "mcpShadowVerified": true,
+  "briefInspectionVerified": true,
+  "evidenceLoopVerified": true,
+  "mappingQualificationVerified": true,
+  "packedManifestSha256": "43368d24804c5fc6cfdf59a9e04079d5f81121d7018bd5d41d94f4e504db99f2",
+  "actionReference": "1f12728e325f13527b63f4023376debcb9270f8c",
+  "workflowActionReference": "1f12728e325f13527b63f4023376debcb9270f8c",
+  "actionIdentityVerified": true,
+  "shadowSetupVerified": true,
+  "adoptionInspectionVerified": true,
+  "plugins": {
+    "catalogCount": 7,
+    "missingSdkExit": 2,
+    "lexicalFallbackVerified": true
+  },
+  "nativeShadow": {
+    "complete": true,
+    "selected": [
+      "test/a.test.js"
+    ],
+    "executed": 2,
+    "detected": true
+  },
+  "runtimeCaptureComplete": true,
+  "improvement": {
+    "status": "ready-for-review",
+    "cases": 3,
+    "originalBranch": "main"
+  },
+  "limitations": [
+    "Local packed-artifact installation; no registry publication or live GitHub PR created.",
+    "Controlled two-module fixture; broad project compatibility remains unqualified."
+  ]
+}

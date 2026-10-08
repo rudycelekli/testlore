@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "version": "0.1.0",
+  "sourceRevision": "1f12728e325f13527b63f4023376debcb9270f8c",
+  "command": "npm exec --yes --package=testlore@0.1.0 -- testlore setup --verify --json",
+  "complete": true,
+  "shadow": true,
+  "passedCases": 2,
+  "workflowSourcePinned": true,
+  "scope": "Controlled Node project; no general application compatibility claim."
+}

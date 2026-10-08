@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 1,
+  "observedAt": "2026-10-08T12:53:21.851954+00:00",
+  "package": "testlore",
+  "version": "0.1.0",
+  "owner": "rudycelekli",
+  "sourceRevision": "1f12728e325f13527b63f4023376debcb9270f8c",
+  "archiveSha256": "4fa6b36c17aeae3bf1e56f6100ce1ad73d69d6e498f9deb82f8001c32569806a",
+  "registryIntegrity": "sha512-7FvbjMbWRZa0tgBwQCr5eOvKGDSsraxMB2+leVCuiMirbP4BKTMnRFGSyeM+OfT6JTp9rM8kzeChg7VIEfBUxw==",
+  "registryTags": {
+    "latest": "0.1.0",
+    "alpha": "0.1.0"
+  },
+  "sourceQualification": {
+    "run": 37761758668,
+    "passed": 663,
+    "failed": 0,
+    "skipped": 0,
+    "nativeChromiumCases": 3
+  },
+  "registryQualification": {
+    "run": 37779877055,
+    "workflowRevision": "9613240eea7a187d05073ef9b6d3a4c93b82949e",
+    "releasedSourceRevision": "1f12728e325f13527b63f4023376debcb9270f8c",
+    "status": "success",
+    "freshProductionInstallation": true,
+    "oneCommandShadowSetup": true,
+    "rootReceiptReview": true
+  },
+  "bootstrap": {
+    "publishAttempts": 1,
+    "requestedTag": "alpha",
+    "lifecycleScripts": false,
+    "trustedOidcClaimed": false,
+    "provenanceAttestationClaimed": false,
+    "stageApprovalPerformed": false
+  },
+  "localVerificationNegatives": [
+    "First wrapper attempt rejected duplicate npm configuration paths before installation; corrected on a distinct retained attempt.",
+    "Second local installation stopped at 2 GiB disk reserve; no local fresh-install success claimed."
+  ],
+  "limitations": [
+    "Controlled Node fixtures; broad application compatibility and performance superiority unproven.",
+    "Learning remains advisory without demonstrated improvement.",
+    "Trusted publisher configuration and first OIDC publication remain pending."
+  ]
+}
