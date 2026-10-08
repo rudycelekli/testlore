@@ -1,0 +1,20 @@
+# Two prospective maintainer contracts: retained misses
+
+This completed native Codex 0.155.1 assay ran **24 role calls**, two repetitions and both arms at frozen TestLore revision `5697160869448ee6981ff381c1192ece457ccabd`. Authentication used the ChatGPT subscription; provider model and dollar billing are unknown. The [aggregate](aggregate.json) retains all eight trials, reference executions, rejection, timing, token counters and raw-receipt hashes.
+
+The [prospectively committed cohort](../../public-generation/frontier-maintainer-contracts-v1/README.md) contains camelcase's historical number/separator regression and is-url-superb's unescaped-space regression. Original maintainer assertion bodies independently passed against fixed source and failed against historical source twice. AVA runner/import adaptations are declared; these are not original upstream dependency installations. Local disjointness from earlier cohorts does not establish semantic independence or exclusion from model training.
+
+| Arm | Accepted, stable trials | Historical defects caught | Mean total trial time | Role calls |
+| --- | ---: | ---: | ---: | ---: |
+| Without memory | 3/4 | 0/4 | 66.24 s | 12 |
+| With memory | 4/4 | 0/4 | 62.29 s | 12 |
+
+Neither arm caught either historical regression in either repetition. The first no-memory camelcase trial was rejected by independent review for inadequate coverage of the documented default uppercase option. Its rejection contributes zero detection and remains in the denominator. Seven accepted suites passed repeated fixed-source checks but also passed against faulty historical source. Passing generated tests therefore did not establish regression protection.
+
+Generation received the unchanged maintainer README as its authoritative contract and fixed source for import context. Hidden maintainer assertions and historical faults were not sent to workers. Sparse README coverage is a material limitation: URL's README contains only two usage examples, while its independent oracle checks additional malformed inputs. This result does not establish that every historical bug is specified explicitly in the supplied prose. No retrospective hint, retry or changed specification was introduced to improve these scores.
+
+The corrected retrieval returned one lexical history match for each memory camelcase trial and no match for either URL trial. A match is not verified semantic relevance. Memory's additional accepted trial and lower mean time in this small, incomplete paired comparison do not establish learning benefit. Both arms have zero defect detection; two specification units and two repetitions are below the six-unit, three-repetition inference gate. **Learning remains advisory, with promotion disabled.**
+
+Each trial had identical native worker argv, three roles, no retries, a 115-second per-call deadline, 65,536-byte response bound and two stability runs. Native completion events reported 509,218 input tokens, including 11,648 cached input tokens, and 11,129 output tokens across all 24 calls. These are locally audited event counters, not an invoice or enforced token/dollar cap. Controller time through cleanup was 517.057 seconds. Trial totals include setup, retrieval, generation, candidate validation and repeated defect execution; they exclude shared ground-truth preparation and receipt writing. This is not a performance experiment; one small controller test ran concurrently and unrelated machine activity was not instrumented.
+
+Reproduce from the frozen source with the committed dataset and commitment, `--repeat 2 --seed 20261008 --max-calls 24 --timeout-ms 115000 --max-output-bytes 65536 --stability-runs 2 --mode paired-learning`, using a fresh private output directory and an authenticated native worker. The CLI returns a nonzero status for the incomplete paired comparison even though the controller completed. Raw role responses remain private; published hashes bind the original receipts without presenting edited exports as original files.

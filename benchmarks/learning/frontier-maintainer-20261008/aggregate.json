@@ -1,0 +1,581 @@
+{
+  "schemaVersion": 1,
+  "mode": "paired-learning",
+  "accountingVersion": 2,
+  "byteAccounting": {
+    "encoding": "UTF-8",
+    "inputBytes": "JSON.stringify(role payload) before transportBudget is appended",
+    "outputBytes": "JSON.stringify(parsed JSON response), including optional native audit presentation",
+    "transportBudgetBytes": "excluded",
+    "rawStdoutBytes": "not measured; whitespace and other raw transport bytes are excluded",
+    "providerTokens": "Optional worker-reported native event usage is summarized separately; billing and usage for failed calls can remain unknown"
+  },
+  "timingAccounting": {
+    "totalMs": "project/source setup, frozen memory copy, retrieval, generation, candidate validation, repeated baseline and defect execution",
+    "setupMs": "project/source setup and frozen memory copy",
+    "retrievalMs": "recallLessons only",
+    "excluded": [
+      "run-level historical validation and ground truth",
+      "final trial receipt write"
+    ]
+  },
+  "dataset": "public-maintainer-frontier-contracts-20261008-v1",
+  "datasetHash": "930d9b4bfe3e4e3a603cd9dc5a71fe80d01d9ed5fa0210f899dc5d3b55bbe550",
+  "sourceRevision": "5697160869448ee6981ff381c1192ece457ccabd",
+  "evidenceKind": "live-worker",
+  "repeat": 2,
+  "seed": 20261008,
+  "calls": 24,
+  "attemptedCalls": 24,
+  "spawnedCalls": 24,
+  "budget": {
+    "maxCalls": 24,
+    "timeoutMs": 115000,
+    "maxOutputBytes": 65536,
+    "stabilityRuns": 2
+  },
+  "arms": [
+    {
+      "arm": "without_memory",
+      "trials": 4,
+      "failedTrials": 1,
+      "detected": 0,
+      "totalDefects": 4,
+      "meanCases": 8,
+      "meanGenerationMs": 65072,
+      "meanOutputBytes": 8287.5,
+      "meanInputBytes": 20337,
+      "meanTotalMs": 66238.5,
+      "meanSetupMs": 1,
+      "meanRetrievalMs": 0,
+      "calls": 12,
+      "attemptedCalls": 12,
+      "spawnedCalls": 12,
+      "stableTrials": 3,
+      "billingUSD": null
+    },
+    {
+      "arm": "with_memory",
+      "trials": 4,
+      "failedTrials": 0,
+      "detected": 0,
+      "totalDefects": 4,
+      "meanCases": 10.5,
+      "meanGenerationMs": 60788.5,
+      "meanOutputBytes": 7806.5,
+      "meanInputBytes": 21264.5,
+      "meanTotalMs": 62285.25,
+      "meanSetupMs": 1,
+      "meanRetrievalMs": 57.25,
+      "calls": 12,
+      "attemptedCalls": 12,
+      "spawnedCalls": 12,
+      "stableTrials": 4,
+      "billingUSD": null
+    }
+  ],
+  "comparison": {
+    "pairs": [
+      {
+        "fixture": "camelcase",
+        "repetition": 0,
+        "recallDelta": 0,
+        "caseDelta": 13,
+        "generationMsDelta": -14129,
+        "outputBytesDelta": -764,
+        "inputBytesDelta": 1892,
+        "totalMsDelta": -12734,
+        "complete": false
+      },
+      {
+        "fixture": "camelcase",
+        "repetition": 1,
+        "recallDelta": 0,
+        "caseDelta": -3,
+        "generationMsDelta": -3556,
+        "outputBytesDelta": -1014,
+        "inputBytesDelta": 1339,
+        "totalMsDelta": -3627,
+        "complete": true
+      },
+      {
+        "fixture": "url",
+        "repetition": 0,
+        "recallDelta": 0,
+        "caseDelta": 0,
+        "generationMsDelta": 2339,
+        "outputBytesDelta": 278,
+        "inputBytesDelta": 570,
+        "totalMsDelta": 2395,
+        "complete": true
+      },
+      {
+        "fixture": "url",
+        "repetition": 1,
+        "recallDelta": 0,
+        "caseDelta": 0,
+        "generationMsDelta": -1788,
+        "outputBytesDelta": -424,
+        "inputBytesDelta": -91,
+        "totalMsDelta": -1847,
+        "complete": true
+      }
+    ],
+    "retrievalMatchedMemoryInAllTrials": false,
+    "semanticMemoryApplicability": "unverified",
+    "independentSpecificationUnits": [
+      {
+        "fixture": "camelcase",
+        "recallDelta": 0
+      },
+      {
+        "fixture": "url",
+        "recallDelta": 0
+      }
+    ],
+    "complete": false,
+    "inference": "inconclusive",
+    "exactTwoSidedSignTest": {
+      "unit": "independent specification mean across repetitions; ties excluded",
+      "positive": 0,
+      "negative": 0,
+      "ties": 2,
+      "p": 1
+    },
+    "pairedMeans": {
+      "recallDelta": 0,
+      "caseDelta": 2.5,
+      "generationMsDelta": -4283.5,
+      "outputBytesDelta": -481,
+      "inputBytesDelta": 927.5,
+      "totalMsDelta": -3953.25
+    }
+  },
+  "nativeUsage": {
+    "attemptedCalls": 24,
+    "auditedCompletedCalls": 24,
+    "callsWithoutUsage": 0,
+    "usageCoverageComplete": true,
+    "reportedTokenTotals": {
+      "input_tokens": 509218,
+      "cached_input_tokens": 11648,
+      "output_tokens": 11129
+    },
+    "billingUSD": null,
+    "verifiedProviderModel": null,
+    "limitation": "Worker-reported counters from audited native completion events, with locally checked worker identities. Provider counters are not externally attested. Failed, timed-out or rejected calls can consume unreported tokens; totals cover only the reported calls. Cached input is a subset of input. No token pricing or dollar estimate is inferred."
+  },
+  "learningPromotion": {
+    "enabled": false,
+    "reason": "Evaluation remains advisory; local commitments do not prove semantic independence or establish repeatable deployment benefit."
+  },
+  "controller": {
+    "elapsedMs": 517057,
+    "setupMs": 561,
+    "sharedPreparationMs": 578,
+    "groundTruthMs": 1797,
+    "completed": true,
+    "error": null,
+    "scope": "evaluateLearning entry through disposable workspace cleanup; process startup and final summary/controller receipt writes excluded"
+  },
+  "implementationHashes": {
+    "scripts/learning-evaluation.js": "3ac20103f69040971dd489129c1d1e1b32d67130b25b8b74d55d8b0a5e4cd356",
+    "scripts/evaluation-commitment.js": "8e1e6e7c586bf3b2f38f3202f7b2d1c4b2e37d0054fca4315e3434c6b368251a",
+    "scripts/evaluation-usage.js": "c4a0a0de89d1aaf30b384d68da5b45b50cd89995bce5e6376d2de46b1cbf7e42",
+    "scripts/worker-identity.js": "10fe0b51f032c71bf475f7d8e788dd3c6d6452ba53c072f08783b0bce1b446a6",
+    "src/learning.js": "7824e8caee58abd51f1752e97bff97f495f5b831269537ab8706eac2a6629347",
+    "src/swarm.js": "23f09e9a5ce9feb87f9b8527a771d6fa5808c44994516276d901f4ee702c7f68",
+    "src/candidates.js": "cf376d249374c147f93458750490769bc0b9542029da761f7424fb78220f83e8",
+    "src/execution.js": "1b27414a365abf0152f8f5d8841e253c5922dbdcad4f224802791a919d782fd3",
+    "src/adapters/aqe.js": "8ef5b425622ee6798e4a7c68bb42e95c46922b5c0473b064073254d640f80082",
+    "src/adapters/codex-protocol.js": "bcb5a1a902bd253e90b879e6f89575885afe236ee6b86ec9b2acafaa3bf91dc1",
+    "src/adapters/codex.js": "8ebc36a83ab8c2381ed0d1d40dcc1a82d34ecd47cb8427e523009fe385b8f421",
+    "src/adapters/ruvector-worker.js": "80c8a6dcaf3014adc5e8fc3d01a50493af4679ea2b3713226ae08a97e5d34a07",
+    "src/adapters/ruvector.js": "d306a37df25e47b864c42211dc1b17a191f36f3518e979b1a5442a555569ad71"
+  },
+  "limitations": [
+    "Dataset contracts, labels and any runner adaptations require the supplied provenance review; different IDs/hashes prevent exact overlap but do not establish semantic independence or model-training isolation. No general production-corpus or competitor claim.",
+    "Repeated outputs are clustered by specification, not treated as independent samples.",
+    "Retrieved lexical or vector matches do not establish semantic applicability; generic overlap can retrieve irrelevant history. Memory remains advisory.",
+    "Worker launcher and explicit file operands are bound by local SHA-256 and resolved-path checks before/after each role. Imported dependencies and spawned provider/runtime children are not fully attested; fullRuntimeAttestation is false. Operator declarations and requested model flags do not verify the provider model; verified model, provider seed and billing remain unknown.",
+    "Fixed three calls per successful arm; identical argv, time and response-byte limits. Input size increases with memory.",
+    "Transport rejects responses exceeding the identical declared byte budget in both arms; this is not a provider token or dollar cap. Requested deadlines propagate to adapters; host suspension can delay timers and late successes are rejected.",
+    "Hold-out reference tests and defect payloads are absent from agent stdin and trial roots; trusted custom workers are not a security sandbox.",
+    "Each reference baseline, generated baseline and held-out defect executes independently at least twice; changed case identities/statuses, skips and incomplete runs invalidate the trial.",
+    "Input/output counters measure normalized JSON payload bytes, excluding appended transportBudget and raw stdout bytes; they are not complete transport sizes or provider token counts. billingUSD is unknown, never zero or an invented estimate.",
+    "Generation time covers architect/author/reviewer; total time starts before project/source setup and frozen memory copy, includes retrieval, candidate validation, repeated stability and defect execution, and excludes run-level historical/ground-truth execution and final receipt writing.",
+    "Failures and incomplete trials remain visible and contribute zero recall; raw receipts stay local until explicitly reviewed for publication."
+  ],
+  "recordedAt": "2026-10-08T07:27:34.731Z",
+  "rawSummarySHA256": "df9a52d418ea1bd03fe43423fdc17e288f79ff22be5f13ca00c4baac56f97296",
+  "datasetDirectory": "benchmarks/public-generation/frontier-maintainer-contracts-v1",
+  "nativeHost": {
+    "cli": "Codex 0.155.1",
+    "authentication": "ChatGPT subscription",
+    "node": "22.19.0",
+    "verifiedProviderModel": null,
+    "billingUSD": null
+  },
+  "trials": [
+    {
+      "fixture": "camelcase",
+      "specificationId": "maintainer-camelcase-options",
+      "repetition": 0,
+      "arm": "without_memory",
+      "order": 0,
+      "recalledRecords": 0,
+      "recall": 0,
+      "cases": 0,
+      "generationMs": 101212,
+      "totalMs": 101330,
+      "setupMs": 1,
+      "retrievalMs": 0,
+      "inputBytes": 33436,
+      "outputBytes": 11310,
+      "attemptedCalls": 3,
+      "spawnedCalls": 3,
+      "error": "Generated candidate failed independent review or execution validation",
+      "rawReceiptSHA256": "dce2658835c852fb812f67f94f676386e8ea7ae4f06ebb0a0183e3c5d8c8b7b9",
+      "validationReasons": [
+        "independent-review-rejected"
+      ],
+      "auditedCompletedCalls": 3,
+      "reportedTokenTotals": {
+        "input_tokens": 68563,
+        "cached_input_tokens": 0,
+        "output_tokens": 2334
+      },
+      "defects": []
+    },
+    {
+      "fixture": "camelcase",
+      "specificationId": "maintainer-camelcase-options",
+      "repetition": 0,
+      "arm": "with_memory",
+      "order": 1,
+      "recalledRecords": 1,
+      "recall": 0,
+      "cases": 13,
+      "generationMs": 87083,
+      "totalMs": 88596,
+      "setupMs": 1,
+      "retrievalMs": 54,
+      "inputBytes": 35328,
+      "outputBytes": 10546,
+      "attemptedCalls": 3,
+      "spawnedCalls": 3,
+      "error": null,
+      "rawReceiptSHA256": "d76b316647d0384a19b335327cc38d133c473323276560b994386e1d03ed7932",
+      "validationReasons": [],
+      "auditedCompletedCalls": 3,
+      "reportedTokenTotals": {
+        "input_tokens": 72526,
+        "cached_input_tokens": 0,
+        "output_tokens": 2173
+      },
+      "defects": [
+        {
+          "id": "historical-parent",
+          "detected": false,
+          "stable": true
+        }
+      ]
+    },
+    {
+      "fixture": "url",
+      "specificationId": "maintainer-url-predicate",
+      "repetition": 0,
+      "arm": "with_memory",
+      "order": 2,
+      "recalledRecords": 0,
+      "recall": 0,
+      "cases": 3,
+      "generationMs": 39832,
+      "totalMs": 41293,
+      "setupMs": 1,
+      "retrievalMs": 55,
+      "inputBytes": 7821,
+      "outputBytes": 5731,
+      "attemptedCalls": 3,
+      "spawnedCalls": 3,
+      "error": null,
+      "rawReceiptSHA256": "e0b488803c3105af2f248c340b144938b0e3bc85f109ece65993351932b309ae",
+      "validationReasons": [],
+      "auditedCompletedCalls": 3,
+      "reportedTokenTotals": {
+        "input_tokens": 57725,
+        "cached_input_tokens": 0,
+        "output_tokens": 692
+      },
+      "defects": [
+        {
+          "id": "historical-parent",
+          "detected": false,
+          "stable": true
+        }
+      ]
+    },
+    {
+      "fixture": "url",
+      "specificationId": "maintainer-url-predicate",
+      "repetition": 0,
+      "arm": "without_memory",
+      "order": 3,
+      "recalledRecords": 0,
+      "recall": 0,
+      "cases": 3,
+      "generationMs": 37493,
+      "totalMs": 38898,
+      "setupMs": 1,
+      "retrievalMs": 0,
+      "inputBytes": 7251,
+      "outputBytes": 5453,
+      "attemptedCalls": 3,
+      "spawnedCalls": 3,
+      "error": null,
+      "rawReceiptSHA256": "d9cd2bdd121ad9094df2a1538ddac88b633fdc0206d6733006f65e33adfa15b5",
+      "validationReasons": [],
+      "auditedCompletedCalls": 3,
+      "reportedTokenTotals": {
+        "input_tokens": 60873,
+        "cached_input_tokens": 0,
+        "output_tokens": 608
+      },
+      "defects": [
+        {
+          "id": "historical-parent",
+          "detected": false,
+          "stable": true
+        }
+      ]
+    },
+    {
+      "fixture": "camelcase",
+      "specificationId": "maintainer-camelcase-options",
+      "repetition": 1,
+      "arm": "with_memory",
+      "order": 4,
+      "recalledRecords": 1,
+      "recall": 0,
+      "cases": 23,
+      "generationMs": 79970,
+      "totalMs": 81509,
+      "setupMs": 1,
+      "retrievalMs": 53,
+      "inputBytes": 34452,
+      "outputBytes": 9620,
+      "attemptedCalls": 3,
+      "spawnedCalls": 3,
+      "error": null,
+      "rawReceiptSHA256": "2705e4df96f243acf5df73e86ca7e4aba35848f06d7653a96fd5b38cd3151e5d",
+      "validationReasons": [],
+      "auditedCompletedCalls": 3,
+      "reportedTokenTotals": {
+        "input_tokens": 65710,
+        "cached_input_tokens": 11648,
+        "output_tokens": 1930
+      },
+      "defects": [
+        {
+          "id": "historical-parent",
+          "detected": false,
+          "stable": true
+        }
+      ]
+    },
+    {
+      "fixture": "camelcase",
+      "specificationId": "maintainer-camelcase-options",
+      "repetition": 1,
+      "arm": "without_memory",
+      "order": 5,
+      "recalledRecords": 0,
+      "recall": 0,
+      "cases": 26,
+      "generationMs": 83526,
+      "totalMs": 85136,
+      "setupMs": 1,
+      "retrievalMs": 0,
+      "inputBytes": 33113,
+      "outputBytes": 10634,
+      "attemptedCalls": 3,
+      "spawnedCalls": 3,
+      "error": null,
+      "rawReceiptSHA256": "62aa0844684da8f53cbe40f1cf0749124b1b572589464fdaddc00694fb79020f",
+      "validationReasons": [],
+      "auditedCompletedCalls": 3,
+      "reportedTokenTotals": {
+        "input_tokens": 68555,
+        "cached_input_tokens": 0,
+        "output_tokens": 2172
+      },
+      "defects": [
+        {
+          "id": "historical-parent",
+          "detected": false,
+          "stable": true
+        }
+      ]
+    },
+    {
+      "fixture": "url",
+      "specificationId": "maintainer-url-predicate",
+      "repetition": 1,
+      "arm": "without_memory",
+      "order": 6,
+      "recalledRecords": 0,
+      "recall": 0,
+      "cases": 3,
+      "generationMs": 38057,
+      "totalMs": 39590,
+      "setupMs": 1,
+      "retrievalMs": 0,
+      "inputBytes": 7548,
+      "outputBytes": 5753,
+      "attemptedCalls": 3,
+      "spawnedCalls": 3,
+      "error": null,
+      "rawReceiptSHA256": "83c71cf1e41ac912acd0260e6735971db170ad7313b938cfd5d698c772b332c3",
+      "validationReasons": [],
+      "auditedCompletedCalls": 3,
+      "reportedTokenTotals": {
+        "input_tokens": 60927,
+        "cached_input_tokens": 0,
+        "output_tokens": 650
+      },
+      "defects": [
+        {
+          "id": "historical-parent",
+          "detected": false,
+          "stable": true
+        }
+      ]
+    },
+    {
+      "fixture": "url",
+      "specificationId": "maintainer-url-predicate",
+      "repetition": 1,
+      "arm": "with_memory",
+      "order": 7,
+      "recalledRecords": 0,
+      "recall": 0,
+      "cases": 3,
+      "generationMs": 36269,
+      "totalMs": 37743,
+      "setupMs": 1,
+      "retrievalMs": 67,
+      "inputBytes": 7457,
+      "outputBytes": 5329,
+      "attemptedCalls": 3,
+      "spawnedCalls": 3,
+      "error": null,
+      "rawReceiptSHA256": "a1cd8b3f0acecff8a18217f1dd603a302ca2e5e62f331790737b072e1a77505d",
+      "validationReasons": [],
+      "auditedCompletedCalls": 3,
+      "reportedTokenTotals": {
+        "input_tokens": 54339,
+        "cached_input_tokens": 0,
+        "output_tokens": 570
+      },
+      "defects": [
+        {
+          "id": "historical-parent",
+          "detected": false,
+          "stable": true
+        }
+      ]
+    }
+  ],
+  "referenceRuns": [
+    {
+      "receipt": "labels-camelcase-baseline-0.json",
+      "rawSHA256": "87363cb6f8f2511fdac51fd450225b3c2cbfe504c87a0afd988b90d7a41ffa48",
+      "complete": true,
+      "exitCode": 0,
+      "cases": 7,
+      "statusCounts": {
+        "passed": 7
+      }
+    },
+    {
+      "receipt": "labels-camelcase-baseline-1.json",
+      "rawSHA256": "948ba20b9915444f44cd56f5622c0d2d4d469b4f606c580e5ad28ffbe33ddae6",
+      "complete": true,
+      "exitCode": 0,
+      "cases": 7,
+      "statusCounts": {
+        "passed": 7
+      }
+    },
+    {
+      "receipt": "labels-camelcase-defect-historical-parent-0.json",
+      "rawSHA256": "1fd9bef96a9423eb155f612d5b28ed1d2beac6715e0ec4fe7c44c3899b662622",
+      "complete": true,
+      "exitCode": 1,
+      "cases": 7,
+      "statusCounts": {
+        "failed": 2,
+        "passed": 5
+      }
+    },
+    {
+      "receipt": "labels-camelcase-defect-historical-parent-1.json",
+      "rawSHA256": "0cc2b7626720b7785bfd323158e69ef5f081c62e338cb306caf11309d9d17f52",
+      "complete": true,
+      "exitCode": 1,
+      "cases": 7,
+      "statusCounts": {
+        "failed": 2,
+        "passed": 5
+      }
+    },
+    {
+      "receipt": "labels-url-baseline-0.json",
+      "rawSHA256": "56593758133a66ca3dbc0326efb2e2bcdb62f35d046f697fb172d261ee11b0b4",
+      "complete": true,
+      "exitCode": 0,
+      "cases": 1,
+      "statusCounts": {
+        "passed": 1
+      }
+    },
+    {
+      "receipt": "labels-url-baseline-1.json",
+      "rawSHA256": "01053b7911a9a270cb49fd7d6a3d3da00fd5224d29ce9d6251e19dc6c3e6c9e6",
+      "complete": true,
+      "exitCode": 0,
+      "cases": 1,
+      "statusCounts": {
+        "passed": 1
+      }
+    },
+    {
+      "receipt": "labels-url-defect-historical-parent-0.json",
+      "rawSHA256": "5baea48a0c3484fc7411b0b2b35b7c0a5c543de75643fb988ba8820e4f47b0ba",
+      "complete": true,
+      "exitCode": 1,
+      "cases": 1,
+      "statusCounts": {
+        "failed": 1
+      }
+    },
+    {
+      "receipt": "labels-url-defect-historical-parent-1.json",
+      "rawSHA256": "ba8f1acf9dc164bdf1f632c107d356d9562c8bc9c4e432dd3c0bedc3f3baf95d",
+      "complete": true,
+      "exitCode": 1,
+      "cases": 1,
+      "statusCounts": {
+        "failed": 1
+      }
+    }
+  ],
+  "assayScope": {
+    "specificationUnits": 2,
+    "locallyProspective": true,
+    "fullUpstreamInstallation": false,
+    "authorRetries": 0,
+    "performanceExperiment": false,
+    "concurrentActivity": "No other native generation or browser qualification workers; one small 17-test controller check ran during the assay. Unrelated machine activity uninstrumented."
+  }
+}
