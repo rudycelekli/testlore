@@ -207,13 +207,27 @@ export function assessRepairLoop({processResult, observed, repair, before, after
     limitation: profile.limitation};
 }
 
+export function repairHostSelection(options,profileName='synthetic') {
+  if(!options||typeof options!=='object'||Array.isArray(options))throw new Error('Repair host options must be an object');
+  if(!['synthetic','maintainer-is-promise'].includes(profileName))throw new Error('Unknown named repair qualification profile');
+  const selected=[];
+  for(const host of ['codex','claude']){
+    if(!Object.hasOwn(options,host)||options[host]===undefined)continue;
+    const executable=options[host];
+    if(typeof executable!=='string'||!executable.length||executable.includes('\0')||!path.isAbsolute(executable))throw new Error('Explicit absolute repair host executable required');
+    selected.push(host);
+  }
+  if(profileName==='maintainer-is-promise'&&selected.length>1)throw new Error('The prospective maintainer profile permits at most one explicitly supplied native host: Codex OR Claude');
+  return selected;
+}
+
 export async function qualifyRepairHosts(options) {
   if (options.authorizeFixtureRepair !== true || options.authorizeFixtureTools !== true) throw new Error('Explicit fixture repair and execution tool opt-ins are required');
   if (!Number.isInteger(options.timeoutMs) || options.timeoutMs < 1000 || options.timeoutMs > 120000) throw new Error('Host deadline must be 1000..120000ms');
   const profileName=options.repairProfile??'synthetic',profile=repairProfile(profileName);
   const instructions=options.repairInstructions??'supplied';
   const qualificationPrompt=repairQualificationPrompt(profileName,instructions);
-  if(profileName==='maintainer-is-promise'&&options.claude)throw new Error('The prospective maintainer profile permits at most one explicitly supplied Codex host call');
+  const selectedHosts=repairHostSelection(options,profileName);
   const entrypoint = executableIdentity(options.entrypoint), node = executableIdentity(process.execPath), snapshot = packageSnapshot(options.entrypoint);
   assertCanonicalEntrypoint(entrypoint, snapshot);
   const metadata = JSON.parse(readBoundedText(path.join(snapshot.root, 'package.json'), 128 * 1024));
@@ -228,7 +242,7 @@ export async function qualifyRepairHosts(options) {
     finalAccountSchema: repairSummarySchema(profileName), finalAccountSchemaSha256: hash(JSON.stringify(repairSummarySchema(profileName))),
     maximumHostCalls: profileName==='synthetic'?2:1, retries: 0, timeoutMs: options.timeoutMs, providerApiKeysRemoved: true, hosts: []};
   for (const host of ['codex', 'claude']) {
-    if (!options[host]) {report.hosts.push({host, qualified: false, status: 'not-started', reasons: ['explicit-host-executable-not-supplied']}); continue;}
+    if (!selectedHosts.includes(host)) {report.hosts.push({host, qualified: false, status: 'not-started', reasons: ['explicit-host-executable-not-supplied']}); continue;}
     let identity;
     try {identity = hostIdentityFor(options[host], host);} catch (error) {report.hosts.push({host, qualified: false, status: 'not-started', reasons: [error.code || error.message]}); continue;}
     const directory = path.join(workspace, host);
@@ -310,6 +324,7 @@ export function parseRepairArguments(argv) {
   const options = parseHostArguments(stripped);
   if (!options.authorizeFixtureTools) throw new Error('--authorize-fixture-tools required');
   if(instructions==='contract-only'&&profileName!=='maintainer-is-promise')throw new Error('Contract-only instructions require the maintainer profile');
+  repairHostSelection(options,profileName);
   return {...options,repairProfile:profileName,repairInstructions:instructions, authorizeFixtureRepair: true};
 }
 export async function main(argv = process.argv.slice(2)) {
