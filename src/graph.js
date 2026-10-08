@@ -118,10 +118,12 @@ function build(root, nativeSession, planningInputs) {
 export function addSources(graph, entries, files = new Set(graph.files), options = {}) {
   if(!options.resolved && graph.root && (graph.config?.discovery === 'native' || Array.isArray(graph.config?.discovery))) {
     const relevant = options.roots ? entries.filter(([file])=>options.roots.includes(file)) : entries;
-    const imports = relevant.flatMap(([file,text]) => sourceSummary(graph,file,text).imports.filter(specifier=>!isBuiltin(specifier)).map(specifier=>({file,specifier})));
-    // A root pass must load native configuration even without imports. Baseline
-    // additions with no imports have no edges to resolve; starting another
-    // framework server cannot contribute baseline dependency evidence.
+    const imports = relevant.flatMap(([file,text]) => sourceSummary(graph,file,text).imports.filter(specifier=>!isBuiltin(specifier)).map(specifier=>({file,specifier})))
+      .filter(({file,specifier}) => options.roots || graph.nativePlanning?.complete !== true || !graph.nativeResolutions?.has(JSON.stringify([file,specifier])));
+    // Reuse only exact importer/specifier observations from this fresh planning
+    // graph's complete native context. Historical imports absent from that
+    // context still need native resolution; another importer is a different key.
+    // A root pass must load native configuration even without missing imports.
     const batch = imports.length || options.roots
       ? resolveNativeBatch(graph.root,imports,graph.config,{ transitive: Boolean(options.roots), roots: options.roots })
       : { supported: false };
