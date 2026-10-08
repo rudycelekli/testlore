@@ -6,7 +6,8 @@ import {createHash} from 'node:crypto';
 import {fixture} from './helpers.js';
 import {createFixture, boundedProcess, safeHostEnvironment, hostEvents} from '../scripts/host-qualification.js';
 import {repairFixture} from '../scripts/fixture-repair-mcp.js';
-import {fixtureSnapshot, assessRepairDiff, parseIndependentRun, assessRepairLoop, parseRepairArguments, qualifyRepairHosts, repairSummarySchema, repairQualificationPrompt,repairHostSelection} from '../scripts/agent-repair-qualification.js';
+import {fixtureSnapshot, assessRepairDiff, parseIndependentRun, assessRepairLoop, parseRepairArguments, qualifyRepairHosts, repairSummarySchema, repairQualificationPrompt,repairHostSelection,maintainerBriefArguments,maintainerEvaluationContract} from '../scripts/agent-repair-qualification.js';
+import {briefInputSchema,statusInputSchema} from '../src/mcp-inputs.js';
 import {execute} from '../src/execution.js';
 import {Client} from '@modelcontextprotocol/client';
 import {StdioClientTransport} from '@modelcontextprotocol/client/stdio';
@@ -181,6 +182,11 @@ test('genuine maintainer defect preserves all eight independent cases and reject
     repair:{schemaVersion:1,kind:'bounded-fixture-repair',rejectedAdditionalCalls:0,calls:[{requestedAt:9,respondedAt:10,sourceSha256:hash(profile.fixed),result}]},
     finalMessage:JSON.stringify({verdict:'passed-in-observed-scope',repairedFile:profile.target,executedFiles:profile.files,uncertainty:'One adapted maintainer contract cannot establish full application or deployment safety.',nextAction:'Qualify additional independent historical repairs under unchanged maintainer assertions.',deploymentSafety:'not-established'})};
   assert.equal(assessRepairLoop(input).qualified,true,JSON.stringify(assessRepairLoop(input).reasons));
+  // General advertised optional inputs, not a special case for a recorded task.
+  for(const args of [{},{task:''},{task:'Check the independent contract'},{changed:[]},{changed:[profile.files[0],'README.maintainer.md']},{task:'x'.repeat(2000),changed:Array(1000).fill(profile.target)}]){
+    const optional=structuredClone(input);optional.observed[0].calls[0].arguments=args;
+    assert.equal(assessRepairLoop(optional).qualified,true,JSON.stringify(assessRepairLoop(optional).reasons));
+  }
   for(const mutate of [
     value=>{value.before.find(row=>row.file===profile.files[0]).sha256='0'.repeat(64);},
     value=>{value.before.find(row=>row.file==='tddswarm.requirements.md').sha256='0'.repeat(64);},
@@ -202,6 +208,12 @@ test('genuine maintainer defect preserves all eight independent cases and reject
     value=>{value.observed[0].calls[0].respondedAt=99;},
     value=>{value.observed[0].tools.push('edit_tests');},
     value=>{value.observed[0].calls[0].arguments={unexpected:true};},
+    value=>{value.observed[0].calls[0].arguments={task:'x'.repeat(2001)};},
+    value=>{value.observed[0].calls[0].arguments={changed:['../src/promise.cjs']};},
+    value=>{value.observed[0].calls[0].arguments={changed:['src/not-sealed.cjs']};},
+    value=>{value.observed[0].calls[1].arguments={task:'Status still requires empty arguments'};},
+    value=>{value.observed[0].calls[0].isError=true;},
+    value=>{value.observed[0].calls[0].result.authority='execution';},
     value=>{value.observed[1].calls[0].isError=true;},
     value=>{value.repair.calls[0].requestedAt=1;},
     value=>{value.repair.calls[0].result.changedFile=profile.files[0];},
@@ -210,6 +222,32 @@ test('genuine maintainer defect preserves all eight independent cases and reject
     value=>{const summary=JSON.parse(value.finalMessage);summary.repairedFile='src/value.js';value.finalMessage=JSON.stringify(summary);}
   ]){const mutated=structuredClone(input);mutate(mutated);assert.equal(assessRepairLoop(mutated).qualified,false);}
   const wrongNames=structuredClone(post.process);wrongNames.stdout=wrongNames.stdout.replaceAll('with null','with another input');assert.equal(parseIndependentRun(wrongNames,root,profile.name).complete,false);
+});
+
+test('shared maintainer brief schema admits bounded optional inputs only inside the sealed fixture',()=>{
+  const files=['src/example.cjs','README.maintainer.md','test/example.test.cjs'];
+  for(const args of [{},{task:''},{task:'x'.repeat(2000)},{changed:[]},{changed:files},{task:'Inspect a different sealed contract',changed:['test/example.test.cjs']},{changed:Array(1000).fill(files[0])}]){
+    assert.equal(briefInputSchema.safeParse(args).success,true);
+    assert.equal(maintainerBriefArguments(args,files),true);
+  }
+  for(const args of [null,[],false,'',1,{root:'/tmp'},{task:null},{task:1},{task:'x'.repeat(2001)},{changed:null},{changed:'src/example.cjs'},{changed:[1]},{changed:['']},{changed:['x'.repeat(1001)]},{changed:Array(1001).fill(files[0])},{changed:['outside.cjs']},{changed:['../src/example.cjs']},{changed:['/src/example.cjs']},{changed:['./src/example.cjs']},{changed:['src\\example.cjs']},{changed:['src/example.cjs\0']}])assert.equal(maintainerBriefArguments(args,files),false,JSON.stringify(args));
+  assert.equal(briefInputSchema.safeParse({changed:['outside.cjs']}).success,true);
+  assert.equal(maintainerBriefArguments({},null),false);
+  assert.equal(maintainerBriefArguments({},[null]),false);
+  assert.equal(statusInputSchema.safeParse({}).success,true);
+  for(const args of [null,[],{task:'Inspect'},{changed:[]},{root:'/tmp'}])assert.equal(statusInputSchema.safeParse(args).success,false);
+  assert.deepEqual(maintainerEvaluationContract,{version:2,briefArguments:'shared-mcp-schema-and-sealed-fixture-files',statusArguments:'empty-object',historicalReclassification:false});
+});
+
+test('new maintainer reports bind the versioned input contract and shared schema without starting a host',async t=>{
+  const report=await qualifyRepairHosts({authorizeFixtureRepair:true,authorizeFixtureTools:true,repairProfile:'maintainer-is-promise',repairInstructions:'contract-only',timeoutMs:1000,entrypoint:path.resolve('src/cli.js')});
+  t.after(()=>fs.rmSync(report.workspace,{recursive:true,force:true}));
+  assert.deepEqual(report.evaluatorContract,maintainerEvaluationContract);
+  const schemaPath=fs.realpathSync(path.resolve('src/mcp-inputs.js'));
+  assert.equal(report.harness.find(item=>item.realpath===schemaPath)?.sha256,hash(fs.readFileSync(schemaPath)));
+  assert.equal(report.source.files.find(item=>item.file==='src/mcp-inputs.js')?.sha256,hash(fs.readFileSync(schemaPath)));
+  assert.ok(report.hosts.every(host=>host.status==='not-started'));
+  assert.equal(report.complete,false);
 });
 
 test('real maintainer MCP accepts one canonical source edit while assertions and provenance remain sealed',async t=>{
