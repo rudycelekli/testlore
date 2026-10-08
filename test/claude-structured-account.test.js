@@ -1,0 +1,49 @@
+import test from 'node:test';import assert from 'node:assert/strict';
+import {claudeStructuredAccount,observedStructuredRetry,claudeStructuredContract}from '../scripts/claude-structured-account.js';
+import {repairSummarySchema,parseRepairArguments,repairFinalAccountFormat,qualifyRepairHosts}from '../scripts/agent-repair-qualification.js';
+import {hostEvents,boundedProcess}from '../scripts/host-qualification.js';
+const schema=repairSummarySchema('maintainer-is-promise'),payload={verdict:'passed-in-observed-scope',repairedFile:'src/promise.cjs',executedFiles:['test/promise.test.cjs'],uncertainty:'One adapted contract does not establish deployment safety.',nextAction:'Qualify more independent historical maintainer contracts.',deploymentSafety:'not-established'};
+const mcp=['mcp__testlore_readonly__testlore_brief','mcp__testlore_readonly__testlore_status','mcp__testlore_execution__testlore_plan','mcp__testlore_execution__testlore_verify','mcp__testlore_fixture__repair_fixture','mcp__testlore_execution__testlore_plan','mcp__testlore_execution__testlore_verify'];
+const invoke=(name,id,input={})=>({type:'assistant',message:{content:[{type:'tool_use',name,id,input}]}}),complete=id=>({type:'user',message:{content:[{type:'tool_result',tool_use_id:id,content:'completed'}]}});
+function stream(){return [...mcp.flatMap((name,i)=>[invoke(name,'mcp-'+i),complete('mcp-'+i)]),invoke('StructuredOutput','formatter',payload),complete('formatter'),{type:'result',subtype:'success',is_error:false,result:'Optional prose is not the structured account.',structured_output:payload}];}
+const encoded=rows=>rows.map(row=>JSON.stringify(row)).join('\n')+'\n',assess=rows=>claudeStructuredAccount(encoded(rows),schema);
+test('constructed pinned stream shape admits one distinct native formatter and never parses result prose',()=>{const value=assess(stream());assert.equal(value.complete,true);assert.deepEqual(JSON.parse(value.finalMessage),payload);assert.equal(value.proseFallback,false);assert.equal(value.formatterInvocations,1);assert.equal(value.terminalResults,1);assert.equal(claudeStructuredContract.version,'2.1.88');assert.equal(hostEvents('claude',encoded(stream()),true,true).errors.length,0);assert.ok(hostEvents('claude',encoded(stream()),true).errors.some(e=>e==='unexpected-host-tool:StructuredOutput'));assert.ok(hostEvents('codex',encoded(stream()),true,true).errors.some(e=>e==='unexpected-host-tool:StructuredOutput'));});
+test('missing, malformed, extra, repeated or mismatched structured results reject without prose fallback',()=>{
+ const controls=[r=>delete r.at(-1).structured_output,r=>r.at(-1).structured_output=null,r=>r.at(-1).structured_output=[],r=>r.at(-1).structured_output='{}',r=>r.at(-1).structured_output={...payload,extra:true},r=>r.at(-1).structured_output={...payload,uncertainty:{}},r=>r.at(-1).structured_output={...payload,repairedFile:'test/promise.test.cjs'},r=>r.at(-1).structured_output={...payload,executedFiles:['elsewhere']},r=>r.at(-1).is_error=true,r=>r.at(-1).subtype='error_max_structured_output_retries',r=>r.push(structuredClone(r.at(-1))),r=>r.push({type:'assistant',message:{content:[]}}),r=>r.at(-3).message.content[0].input={...payload,nextAction:'different valid next action text'},r=>r.splice(-3,1),r=>r.splice(-2,1),r=>r.splice(-1,0,invoke('StructuredOutput','second',payload)),r=>r.at(-2).message.content[0].is_error=true,r=>r[12].message.content[0].name='mcp__testlore_execution__testlore_plan',r=>r.splice(12,2),r=>r.splice(12,0,invoke('StructuredOutput','early',payload))];
+ for(const alter of controls){const rows=structuredClone(stream());alter(rows);const result=assess(rows);assert.equal(result.complete,false);assert.equal(result.finalMessage,'');assert.equal(result.proseFallback,false);}
+ const text=encoded(stream());assert.equal(claudeStructuredAccount(text+'bad-json\n',schema).complete,false);assert.equal(claudeStructuredAccount('x'.repeat(1024*1024+1),schema).complete,false);
+});
+test('internal formatter must occur after final verify response and cannot expand ordinary tools',()=>{const rows=stream();const response=rows.splice(13,1)[0];rows.splice(15,0,response);assert.equal(assess(rows).complete,false);const shell=stream();shell.splice(14,0,invoke('Bash','not-permitted'));assert.ok(hostEvents('claude',encoded(shell),true,true).errors.some(e=>e==='unexpected-host-tool:Bash'));assert.equal(assess(shell).complete,false);});
+test('structured mode remains explicit, Claude-only, maintainer-only and rejects before invocation',async()=>{
+ const argv=['--run','--authorize-fixture-tools','--authorize-fixture-repair','--repair-profile','maintainer-is-promise','--repair-instructions','contract-only','--entrypoint','/package/src/cli.js','--output','/tmp/repair.json','--claude','/host/claude'];assert.equal(parseRepairArguments(argv).finalAccountFormat,'message');assert.equal(parseRepairArguments([...argv,'--final-account-format','native-structured']).finalAccountFormat,'native-structured');assert.throws(()=>parseRepairArguments([...argv,'--final-account-format','native-structured','--final-account-format','message']),/Duplicate/);assert.throws(()=>parseRepairArguments([...argv,'--final-account-format','prose-fallback']),/Unknown/);assert.throws(()=>parseRepairArguments([...argv,'--final-account-format']),/Unknown/);assert.throws(()=>repairFinalAccountFormat({finalAccountFormat:'native-structured'},'synthetic',['claude']),/maintainer/);assert.throws(()=>repairFinalAccountFormat({finalAccountFormat:'native-structured'},'maintainer-is-promise',[]),/explicit Claude/);assert.throws(()=>repairFinalAccountFormat({finalAccountFormat:'native-structured'},'maintainer-is-promise',['codex']),/explicit Claude/);
+ let accessed=false;await assert.rejects(qualifyRepairHosts({authorizeFixtureRepair:true,authorizeFixtureTools:true,repairProfile:'maintainer-is-promise',timeoutMs:1000,codex:'/host/codex',finalAccountFormat:'native-structured',get entrypoint(){accessed=true;throw Error('Must not inspect source');}}),/explicit Claude/);assert.equal(accessed,false);
+});
+test('observer refuses formatter errors/repeats and preserves native API retry refusal',async()=>{
+ assert.equal(observedStructuredRetry(encoded(stream())),null);const repeat=stream();repeat.splice(-1,0,invoke('StructuredOutput','second',payload));assert.match(observedStructuredRetry(encoded(repeat)),/repeat-refused/);const failed=stream();failed.at(-2).message.content[0].is_error=true;assert.match(observedStructuredRetry(encoded(failed)),/error-refused/);
+ const snippet=rows=>'console.log('+JSON.stringify(encoded(rows))+');setTimeout(()=>{},10000)';const result=await boundedProcess(process.execPath,['-e',snippet(failed)],{timeoutMs:1000,stopOnNativeRetry:true,stopOnStructuredRetry:true});assert.match(result.reason,/formatter-error-refused/);const retried=await boundedProcess(process.execPath,['-e',snippet([{type:'system',subtype:'api_retry',error_status:429,error:'rate-limit'}])],{timeoutMs:1000,stopOnNativeRetry:true,stopOnStructuredRetry:true});assert.match(retried.reason,/native-host-retry-refused/);
+});
+
+test('duplicate encoded keys and additional structured payloads reject instead of last-key-wins parsing',()=>{
+ const text=encoded(stream());const duplicate=text.replace('"structured_output":', '"structured_output":null,"structured_output":');assert.equal(claudeStructuredAccount(duplicate,schema).complete,false);
+ const escaped=text.replace('"structured_output":','"\\u0073tructured_output":null,"structured_output":');assert.equal(claudeStructuredAccount(escaped,schema).complete,false);
+ const additional=stream();additional.unshift({type:'system',structured_output:payload});assert.equal(assess(additional).complete,false);
+});
+
+test('reordered completions, reused IDs and missing or malformed native IDs cannot substitute earlier responses',()=>{
+ const controls=[
+  rows=>{const response=rows.splice(15,1)[0];rows.splice(14,0,response);},
+  rows=>{const pair=rows.splice(14,2);rows.splice(12,0,...pair);},
+  rows=>{rows[14].message.content[0].id='mcp-6';rows.splice(15,1);},
+  rows=>{const response=rows.splice(13,1)[0];rows.splice(12,0,response);},
+  rows=>{rows[2].message.content[0].id='mcp-0';},
+  rows=>{delete rows[12].message.content[0].id;delete rows[13].message.content[0].tool_use_id;},
+  rows=>{rows[12].message.content[0].id='';rows[13].message.content[0].tool_use_id='';},
+  rows=>{rows[12].message.content[0].id=7;rows[13].message.content[0].tool_use_id=7;},
+  rows=>{rows[12].message.content[0].id='x'.repeat(101);rows[13].message.content[0].tool_use_id='x'.repeat(101);},
+  rows=>{rows.splice(15,0,structuredClone(rows[15]));},
+  rows=>{const response=rows.splice(15,1)[0];rows.push(response);}
+  ,rows=>{rows.splice(-1,0,complete('unbound-response'));}
+  ,rows=>{rows.splice(-1,0,complete(undefined));}
+ ];
+ for(const alter of controls){const rows=structuredClone(stream());alter(rows);const value=assess(rows);assert.equal(value.complete,false);assert.equal(value.finalMessage,'');}
+});

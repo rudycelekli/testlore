@@ -7,6 +7,7 @@ import {createHash} from 'node:crypto';
 import {spawn, spawnSync} from 'node:child_process';
 import {fileURLToPath} from 'node:url';
 import {createRequire} from 'node:module';
+import {observedStructuredRetry} from './claude-structured-account.js';
 
 export function executableIdentity(filename) {
   const realpath = fs.realpathSync(filename), stat = fs.statSync(realpath);
@@ -104,7 +105,7 @@ export function hostIdentityFor(filename, host) {
   return identity;
 }
 
-export function hostEvents(host, stdout, repairFixture = false) {
+export function hostEvents(host, stdout, repairFixture = false,nativeStructuredAccount=false) {
   const events = [], malformed = [];
   for (const line of stdout.split('\n')) {
     if (!line.trim()) continue;
@@ -118,6 +119,7 @@ export function hostEvents(host, stdout, repairFixture = false) {
   const allowed = new Set(['mcp__testlore_readonly__testlore_brief', 'mcp__testlore_readonly__testlore_status',
     'mcp__testlore_execution__testlore_plan', 'mcp__testlore_execution__testlore_verify']);
   if (repairFixture === true) allowed.add('mcp__testlore_fixture__repair_fixture');
+  if(host==='claude'&&nativeStructuredAccount===true)allowed.add('StructuredOutput');
   const unauthorized = events.flatMap(row => {
     if (row.item?.type === 'mcp_tool_call' && !['testlore_readonly', 'testlore_execution', ...(repairFixture === true ? ['testlore_fixture'] : [])].includes(row.item.server)) return [`unexpected-mcp-server:${row.item.server}`];
     if (row.item?.type === 'mcp_tool_call' && row.item.server === 'testlore_fixture' && row.item.tool !== 'repair_fixture') return ['unexpected-fixture-tool'];
@@ -216,7 +218,7 @@ export function assessHost({processResult, observed, finalMessage, entrypoint, n
     limitation: 'One synthetic fixture and one invocation; does not establish other host versions, repositories or deployment safety.'};
 }
 
-export async function boundedProcess(command, args, {cwd, env, timeoutMs = 90000, maximumBytes = 1024 * 1024, stopOnNativeRetry = false} = {}) {
+export async function boundedProcess(command, args, {cwd, env, timeoutMs = 90000, maximumBytes = 1024 * 1024, stopOnNativeRetry = false,stopOnStructuredRetry=false} = {}) {
   return await new Promise(resolve => {
     const started = Date.now(); let stdout = '', stderr = '', bytes = 0, reason = null;
     const child = spawn(command, args, {cwd, env, shell: false, detached: process.platform !== 'win32', stdio: ['ignore', 'pipe', 'pipe']});
@@ -233,6 +235,7 @@ export async function boundedProcess(command, args, {cwd, env, timeoutMs = 90000
       bytes += chunk.length;
       if (bytes > maximumBytes) return stop('output-limit-exceeded');
       if (stream === 'stdout') stdout += chunk.toString('utf8'); else stderr += chunk.toString('utf8');
+      if(stopOnStructuredRetry&&stream==='stdout'){try{const reason=observedStructuredRetry(stdout);if(reason)stop(reason);}catch{stop('native-structured-observation-rejected');}}
       if (stopOnNativeRetry && stream === 'stdout') for (const line of stdout.split('\n')) {
         let event; try {event = JSON.parse(line);} catch {continue;}
         if (event.type === 'system' && event.subtype === 'api_retry')
