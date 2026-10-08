@@ -27,13 +27,32 @@ This read-only producer binds original global/setup/configuration bytes, source 
 
 New source inputs, custom serve hooks and changed setup independently invalidated the review during the local campaign. Missing source and forged integrity/authority payloads are also covered by focused tests. These controls protect the proposal contract; they do not establish complete runtime dependencies.
 
-## Remaining challenges
+## Earlier incomplete attempts and remaining scope
 
 A fresh serve/fault campaign stopped on its disk reserve before any fault was introduced. Its incomplete receipt remains public. Original tracked bytes were restored/unchanged and no observed descendants survived cleanup. The suite's shared memory/swap demand may contribute to free-space decline; profile allocation measurements cannot attribute every byte to another process.
 
-The next qualification must independently execute original full and proposed subset runs for source changes, Emotion styles, SSR route pages, server inputs, and workspace source/built-artifact boundaries. Deliberately swapped fixture selections must fail failure-preservation review. The unasserted favicon needs an explicit detection-gap control; passing suites cannot prove asset defect detection. Constructed faults must remain separately labeled from genuine historical maintainer bugs.
+The completed fixed-fault campaign below independently executes original full and proposed subset runs for source changes, Emotion styles, SSR route pages, server inputs, and workspace source/built-artifact boundaries. Deliberately swapped fixture selections must fail failure-preservation review. The unasserted favicon needs an explicit detection-gap control; passing suites cannot prove asset defect detection. Constructed faults must remain separately labeled from genuine historical maintainer bugs.
 
-Keep dynamic imports, generated bundles, unseen routes/assets and service uncertainty in full fallback until the corresponding evidence is independently challenged. The current source tests passed 8/8; complete portable installation and independent fault challenges still require a fresh adequately resourced runner.
+Keep dynamic imports, generated bundles, unseen routes/assets and service uncertainty in full fallback until the corresponding evidence is independently challenged. The earlier source tests passed 8/8. A new complete portable installation still requires a fresh adequately resourced runner; the completed campaign below explicitly reuses the original published installation.
+
+## Completed fixed-fault campaign
+
+The [October 8 campaign](../benchmarks/framework-profiles/vite-react-4.7.0-challenges-20261008.json) completed 17 independent native test calls and one targeted workspace build at TestLore `3a62dd6`, using the byte-bound original macOS installation. Fresh equal-concurrency baselines passed 62 serve assertions with two original skips and two unit assertions. All tracked source and saved workspace artifact bytes/modes/inventory restored. An independent local reassessment reparsed raw native reports, verified process exit codes and failure pairs, and checked restored bytes.
+
+| Constructed fault | Proposed browser files / 20 | Full / subset failed assertions | Full / subset native phase seconds |
+| --- | ---: | ---: | ---: |
+| Compiler source | 1 | 2 / 2 | 55.50 / 21.56 |
+| Emotion style | 1 | 1 / 1 | 32.27 / 3.62 |
+| SSR route | 2 | 4 / 4 | 49.75 / 24.55 |
+| Server input | 2 | 2 / 2 | 26.04 / 4.85 |
+| Plugin workspace initialization | 20 | 0 / 0 browser; 2 / 2 unit | 35.01 / 30.80 browser |
+| Corrupted favicon control | 2 | 0 / 0 | 44.73 / 5.56 |
+
+The workspace fault is caught by two source-importing unit assertions, while browser scope remains full. Favicon corruption is not caught by either scope; it is an asset detection gap, not qualified asset protection. A separately executed wrong-fixture subset failed failure-preservation review. Unknown-reference, all-pending and zero-execution report controls also rejected, with their synthetic scope retained.
+
+These are explicitly constructed faults against unchanged real maintainer assertions, once per fault. They add no historical public-corpus changes, repeated fault samples or automatic omission authority. Full/subset command phases have identical worker settings; they include native execution and the observer but exclude shared preparation and final campaign transport. Outer campaign time was **413.40 seconds**, including preflight, proposals, all baselines/challenges, restoration and reporting. No complete TestLore CLI, native-related, general speed advantage or OS-cold comparison is established here.
+
+The [first rejected replay](../benchmarks/framework-profiles/vite-react-4.7.0-challenge-rejection-20261008.json) remains unchanged: its baseline passed, then the evaluator rejected Vitest 3's omitted runtime-error field before introducing any fault. Later schema compatibility uses actual native suite/message/count checks and rejects teardown errors even when assertions pass. Resource/output/deadline guards remain enabled. Genuine historical application bugs, bundles/source maps, shared-common/SWC/RSC boundaries, production services and unasserted assets still require qualification and conservative fallback.
 
 ## Opt-in independent challenges
 
@@ -50,6 +69,6 @@ The workspace challenge rebuilds one plugin and compares independent source-unit
 
 Budgets are 18 native test invocations, one targeted workspace fault build, 600 seconds including entry preflight, 400 MiB allocation growth and a 2.25 GiB stop reserve. Raw native JSON, process/resource receipts, preimages, per-fault hashes and restoration results remain separate. Expected retained receipts are under 10 MiB in typical runs; hard phase/native output caps permit roughly 110 MiB before workspace/cache growth, within the 400 MiB allocation bound. `completion.json` records wall time through primary receipt writing; external process timing includes completion transport as well.
 
-The controller source checks, killed-builder restoration controls and two rejected guard-removal mutants establish controller behavior. Every actual native report filename is monitored live and bounded before descriptor reads; runtime binary caps are separate from the native-report cap. They do not establish any actual application fault outcome until the opt-in campaign completes.
+The controller source checks, killed-builder restoration controls and two rejected guard-removal mutants establish controller behavior. Every actual native report filename is monitored live and bounded before descriptor reads; runtime binary caps are separate from the native-report cap. They validate controller behavior separately from the actual application outcomes reported above.
 
-The first independently executed challenge baseline (62 passed, 2 pending across 20 files; no surviving observed descendants) was rejected before faults because the pinned Vitest 3.2.4 reporter omits `numRuntimeErrorTestSuites`. That rejected run remains unchanged. Compatibility checks now use the actual flat suite status/message/count inventory, reject hook errors after passed assertions, require assertion error-message consistency, and reject process/report exit mismatches. A separate explicit runtime-error count, when present, must be exactly zero. The sanitized source-schema fixture retains the original native report SHA; mutated hook/count reports are constructed controls, not new native executions. Dirty derived-artifact markers reject before runtime/version/disk preflight on every host; the exact runtime pin still applies to execution. No application fault result has been established by these corrections.
+The first independently executed challenge baseline (62 passed, 2 pending across 20 files; no surviving observed descendants) was rejected before faults because the pinned Vitest 3.2.4 reporter omits `numRuntimeErrorTestSuites`. That rejected run remains unchanged. Compatibility checks now use the actual flat suite status/message/count inventory, reject hook errors after passed assertions, require assertion error-message consistency, and reject process/report exit mismatches. A separate explicit runtime-error count, when present, must be exactly zero. The sanitized source-schema fixture retains the original native report SHA; mutated hook/count reports are constructed controls, not new native executions. Dirty derived-artifact markers reject before runtime/version/disk preflight on every host; the exact runtime pin still applies to execution. The schema corrections alone establish no application fault result; the subsequent native challenge outcomes are reported separately above.

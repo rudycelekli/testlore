@@ -7,7 +7,7 @@ import {execFileSync} from 'node:child_process';
 import {fileURLToPath} from 'node:url';
 import {digest} from '../src/provenance.js';
 import {fileIdentity} from '../scripts/worker-identity.js';
-import {campaignLimits,validatePortableProfile,parseCampaignArguments,campaignEnvironment,phaseCompletionReason,runCampaign} from '../scripts/public-corpus-campaign.js';
+import {campaignLimits,campaignLimitsForProfile,campaignInstallOptions,validatePortableProfile,parseCampaignArguments,campaignEnvironment,phaseCompletionReason,runCampaign} from '../scripts/public-corpus-campaign.js';
 import {boundedInstallProcess} from '../scripts/public-corpus-upstream.js';
 
 const repository=fileURLToPath(new URL('../',import.meta.url));
@@ -52,6 +52,23 @@ test('reviewed defu histories bind separate original oracles and reject unsuppor
 test('campaign child environment strips credential overrides and forwards only the declared cache policy',()=>{
  const previous={...process.env};try{process.env.GITHUB_TOKEN='never-forward';process.env.AWS_SECRET_ACCESS_KEY='never-forward';process.env.NODE_OPTIONS='--require=untrusted.js';process.env.GIT_CONFIG_GLOBAL='/secret/gitconfig';process.env.JITI_FS_CACHE='true';const env=campaignEnvironment();assert.equal(env.GITHUB_TOKEN,undefined);assert.equal(env.AWS_SECRET_ACCESS_KEY,undefined);assert.equal(env.NODE_OPTIONS,undefined);assert.equal(env.JITI_FS_CACHE,'false');assert.equal(env.GIT_CONFIG_GLOBAL,'/dev/null');assert.equal(env.GIT_CONFIG_NOSYSTEM,'1');assert.equal(env.GIT_TERMINAL_PROMPT,'0');}finally{process.env=previous;}
 });
+test('only the two bound defu profiles receive a finite installation ceiling; every other guard stays unchanged',()=>{
+ for(const id of ['unjs-defu-11ba02213d4b','unjs-defu-3942bfbbcaa7']){
+  const p=JSON.parse(fs.readFileSync(path.join(repository,'benchmarks/public-corpus/profiles/'+id+'-campaign.json'))),limits=campaignLimitsForProfile(selection,p);
+  assert.equal(limits.phases.install.maxGrowthBytes,768*1024**2);const restored=structuredClone(limits);restored.phases.install.maxGrowthBytes=campaignLimits.phases.install.maxGrowthBytes;assert.deepEqual(restored,campaignLimits);
+  assert.throws(()=>{limits.phases.install.maxGrowthBytes=1024**3;},TypeError);assert.throws(()=>validatePortableProfile(selection,{...p,installGrowthPolicy:'default'}),/growth policy/);const missing={...p};delete missing.installGrowthPolicy;assert.throws(()=>validatePortableProfile(selection,missing),/closed reviewed/);
+ }
+ assert.deepEqual(campaignLimitsForProfile(selection,profile),campaignLimits);assert.throws(()=>validatePortableProfile(selection,{...profile,installGrowthPolicy:'defu-original-lock-768mib'}),/closed reviewed/);
+});
+test('defu inner and outer installation guards use the reviewed ceiling and retain over-budget rejection',async t=>{
+ for(const overflow of [false,true]){
+  const input=plan(t);input.profilePath=path.join(repository,'benchmarks/public-corpus/profiles/unjs-defu-11ba02213d4b-campaign.json');input.profile=JSON.parse(fs.readFileSync(input.profilePath));input.candidateId=input.profile.candidateId;input.limits=campaignLimitsForProfile(selection,input.profile);
+  assert.deepEqual(campaignInstallOptions(input),{reserveBytes:2*1024**3,timeoutMs:180000,maxGrowthBytes:768*1024**2,growthPolicy:'defu-original-lock-768mib'});
+  const tampered={...input,limits:structuredClone(input.limits)};tampered.limits.phases.install.maxGrowthBytes=1024**3;assert.throws(()=>campaignInstallOptions(tampered),/resource limits/);await assert.rejects(()=>runCampaign(tampered),/unchanged dry-run/);
+  let phases=[];const result=await runCampaign(input,{availableBytes:()=>3*1024**3,executePhase:async(_command,args,options)=>{const phase=args[2];phases.push(phase);const r=receipt();if(phase==='preflight'){r.exitCode=1;return r;}if(phase==='install'){assert.equal(options.maxGrowthBytes,campaignInstallOptions(input).maxGrowthBytes);assert.equal(options.reserveBytes,2*1024**3);assert.equal(options.timeoutMs,180000);assert.equal(options.maxLogBytes,2*1024**2);r.finalResources.growthBytes=(overflow?769:500)*1024**2;}fs.writeFileSync(path.join(options.directory,'result.json'),'{}');return r;}});
+  assert.deepEqual(phases,overflow?['clone','install']:['clone','install','preflight']);assert.equal(result.failedPhase,overflow?'install':'preflight');assert.equal(result.stopReason,overflow?'disk-growth':'phase-rejected');assert.equal(result.qualified,false);assert.equal(result.accounting.qualified,0);assert.equal(result.automaticRetries,0);
+ }
+});
 test('fast nominal zero exits still fail final timeout, reserve, growth and log-budget evidence',()=>{
  const limits=campaignLimits.phases.clone,available=3*1024**3;
  assert.equal(phaseCompletionReason(receipt(),limits,10,available),null);
@@ -80,6 +97,9 @@ test('mutating execution input fails a nominal child and preserves the distinct 
 });
 test('a nominal parent exit with an observed live detached child is rejected and the child is terminated',async t=>{
  const directory=fs.mkdtempSync(path.join(os.tmpdir(),'testlore-descendant-source-test-'));t.after(()=>fs.rmSync(directory,{recursive:true,force:true}));
+ // This test targets parent/descendant lifetime, not unrelated concurrent filesystem growth.
+ // Reserve/growth rejection is exercised independently with controlled observations.
+ const available=fs.statfsSync(directory);t.mock.method(fs,'statfsSync',()=>available);
  const script="const {spawn}=require('node:child_process');const child=spawn(process.execPath,['-e','setInterval(()=>{},1000)'],{detached:true,stdio:'ignore'});child.unref();console.log(child.pid);setTimeout(()=>process.exit(0),500);";
  let pid=null;try{const result=await boundedInstallProcess(process.execPath,['-e',script],{cwd:directory,directory,reserveBytes:0,maxGrowthBytes:8*1024**2,timeoutMs:3000,terminateDescendants:true,env:campaignEnvironment()});pid=Number(fs.readFileSync(path.join(directory,'stdout.log'),'utf8').trim());assert.ok(Number.isInteger(pid)&&pid>0);assert.equal(result.exitCode,0);assert.equal(result.reason,'surviving-descendants');assert.ok(result.descendantCleanup.observed>=1);assert.ok(result.descendantCleanup.survivingAtClose>=1);assert.equal(result.descendantCleanup.requested,true);assert.equal(phaseCompletionReason(result,campaignLimits.phases.clone,10,3*1024**3),'surviving-descendants');
   let live=true;for(let repeat=0;repeat<20&&live;repeat++){try{const state=execFileSync('ps',['-p',String(pid),'-o','stat='],{encoding:'utf8',stdio:['ignore','pipe','ignore']}).trim();live=!!state&&!state.includes('Z');}catch{live=false;}if(live)await new Promise(resolve=>setTimeout(resolve,25));}assert.equal(live,false,'observed detached child still alive after cleanup');

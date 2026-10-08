@@ -1,0 +1,141 @@
+{
+  "schemaVersion": 1,
+  "kind": "retained-original-upstream-installation-resource-negatives",
+  "recordedDate": "2026-10-08",
+  "sourceRevision": "b9f5236972017c89536107e1b8ae313fd12b900d",
+  "hostedRun": "https://github.com/rudycelekli/testlore/actions/runs/37748119197",
+  "selectionCommitmentSha256": "065b79f7f345a971e76b0a2d1bdc4f4ab34c9c3b254837b693dee552b71af65a",
+  "attempts": [
+    {
+      "candidateId": "unjs-defu-11ba02213d4b",
+      "fixRevision": "11ba02213d4b1c6b02dd686041f75edc479c98e9",
+      "parentRevision": "3942bfbbcaa72084bd4284846c83bd61ed7c8b29",
+      "dependencySha256": {
+        "package.json": "0ee5010fb716a695cb591b6b33d0a7287117f47344fcd8ae1b9dfe7f623054d2",
+        "pnpm-lock.yaml": "8e25a8381354e1002b339db2196f23c243aebe2c91afc11219528fba6df07a36"
+      },
+      "qualified": false,
+      "failedPhase": "install",
+      "reason": "disk-growth",
+      "maxGrowthBytes": 471859200,
+      "process": {
+        "exitCode": null,
+        "signal": "SIGTERM",
+        "reason": "disk-growth",
+        "durationMs": 5763,
+        "finalResources": {
+          "availableBytes": 90929614848,
+          "growthBytes": 472719360,
+          "stdoutBytes": 0,
+          "stderrBytes": 818
+        },
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrSha256": "da477d0c42e09adb36755c1b9609d3adaad039a67c2a5d03f6a746b6b427b3fe",
+        "descendantCleanup": {
+          "scope": "Observed process-tree/start identity best effort; unobserved/reparented children and arbitrary subprocesses are not contained",
+          "observed": 4,
+          "survivingAtClose": 0,
+          "observationFailed": false,
+          "requested": true
+        }
+      },
+      "bootstrapGrowthBytes": 36859904,
+      "nativePackagesReported": 378,
+      "nativeDownloadAndCopyProgressReachedDone": true,
+      "nativeZeroExitAttested": false,
+      "installedTreeAttested": false,
+      "nativeBaselineRuns": 0,
+      "independentFaultRuns": 0,
+      "threeArmTrials": 0,
+      "receiptSha256": {
+        "initialPlan": "75712fa0c3d14f9715a98750fe3d51f41bc71612be826bd57df39eb192e88ca0",
+        "outerInstallProcess": "629eba3d90eb9b431d2f95dd010be5e273d1d3925e143c01a86671ffefc60d0c",
+        "bootstrap": "75ff5a5f1d250804cfc25ca4f7ff92dcb6b9fcb5b40edc9bdb8726f3a8790d5d",
+        "nativeInstallStdout": "9e2a93b87caf4db78ee671b91025b1a8818a50d2b0c70f7312daf8f64bd18917",
+        "nativeInstallStderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "summary": "99420b600a37b37bbed96692c17e846d9940d3e4324565dd142ccd63cd262a03"
+      }
+    },
+    {
+      "candidateId": "unjs-defu-3942bfbbcaa7",
+      "fixRevision": "3942bfbbcaa72084bd4284846c83bd61ed7c8b29",
+      "parentRevision": "d3ef16dabe861713192ba8679c5db8e0ac143f9b",
+      "dependencySha256": {
+        "package.json": "0ee5010fb716a695cb591b6b33d0a7287117f47344fcd8ae1b9dfe7f623054d2",
+        "pnpm-lock.yaml": "8e25a8381354e1002b339db2196f23c243aebe2c91afc11219528fba6df07a36"
+      },
+      "qualified": false,
+      "failedPhase": "install",
+      "reason": "disk-growth",
+      "maxGrowthBytes": 471859200,
+      "process": {
+        "exitCode": null,
+        "signal": "SIGTERM",
+        "reason": "disk-growth",
+        "durationMs": 5358,
+        "finalResources": {
+          "availableBytes": 90929664000,
+          "growthBytes": 472739840,
+          "stdoutBytes": 0,
+          "stderrBytes": 838
+        },
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrSha256": "e190aa13c289a64f0f5a77bc827ce75026f926f7dd89b20df19f1e0683dd3ede",
+        "descendantCleanup": {
+          "scope": "Observed process-tree/start identity best effort; unobserved/reparented children and arbitrary subprocesses are not contained",
+          "observed": 9,
+          "survivingAtClose": 0,
+          "observationFailed": false,
+          "requested": true
+        }
+      },
+      "bootstrapGrowthBytes": 36859904,
+      "nativePackagesReported": 378,
+      "nativeDownloadAndCopyProgressReachedDone": true,
+      "nativeZeroExitAttested": false,
+      "installedTreeAttested": false,
+      "nativeBaselineRuns": 0,
+      "independentFaultRuns": 0,
+      "threeArmTrials": 0,
+      "receiptSha256": {
+        "initialPlan": "05eb697339d2cb062d040edc879b54c02345b44556d60fb122f71048e2e66e25",
+        "outerInstallProcess": "8f0a44358de39d57b50d45e47e3d6047cec3d9721fe0313114d651843caca5dc",
+        "bootstrap": "be8bba522ad7fd16202088778095ddf8f5d7ab6de8f47ed038d26e2125e30d81",
+        "nativeInstallStdout": "2504305ffdb9e6a695aa1829fcbbe39537458575eb2c9f66bac1521ec31347bd",
+        "nativeInstallStderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "summary": "bba00d38f7e82e87d2a78105ac4f7252ac07489d6d0066a01d75b31cbee0c9cd"
+      }
+    }
+  ],
+  "diagnosis": {
+    "actualPriorCeilingMiB": 450,
+    "filesystemGrowthAtCloseDifferenceBytes": 20480,
+    "scope": "Whole-filesystem statfs observation, not measured isolated project/store allocation",
+    "inference": "The two serial fresh jobs have identical original dependencies, identical 36,859,904-byte bootstrap growth, no package reuse and near-identical stops after copying all 378 packages. A private store plus package-import-method=copy and manager cache plausibly exceed the 450 MiB total-phase ceiling. Exclusive allocation attribution and final full dependency size are not proved.",
+    "nativeProgressIsNotCompletionAttestation": true
+  },
+  "prospectivePolicy": {
+    "name": "defu-original-lock-768mib",
+    "maxGrowthBytes": 805306368,
+    "minFreeBytes": 2147483648,
+    "boundCandidateIds": [
+      "unjs-defu-11ba02213d4b",
+      "unjs-defu-3942bfbbcaa7"
+    ],
+    "automaticRetries": 0,
+    "otherDeadlinesLogTreeAndFailureGuardsUnchanged": true,
+    "completedExecutionEstablished": false
+  },
+  "accounting": {
+    "addedQualifiedChanges": 0,
+    "addedQualifiedRepositories": 0,
+    "priorReceiptsReclassified": false,
+    "target30Changes5RepositoriesMet": false,
+    "target100Changes10RepositoriesMet": false
+  },
+  "limitations": [
+    "Both prior failures remain unqualified; larger prospective ceilings cannot retroactively complete either installation.",
+    "No baseline, independently demonstrated fault, selection or speed comparison was executed.",
+    "Fresh invocations require independently reviewed immutable source and distinct outputs; no automatic retry."
+  ]
+}

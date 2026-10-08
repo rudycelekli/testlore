@@ -200,6 +200,7 @@ test('modified validation outcomes cannot authorize application', t => {
   const root=project(t);
   const staged=stagePatch(root,{files:[{path:'test/increment.test.js',content:first}],review,requirements:'Increment returns the mathematical successor.'});
   const result=validateCandidates(root,staged.id);assert.equal(result.accepted,true);
-  const file=path.join(staged.directory,'validation.json');const saved=JSON.parse(fs.readFileSync(file));saved.candidate.durationMs=123;fs.writeFileSync(file,JSON.stringify(saved));
+  const file=path.join(staged.directory,'validation.json');const saved=JSON.parse(fs.readFileSync(file));
+  const originalDuration=saved.candidate.durationMs;assert.ok(Number.isSafeInteger(originalDuration));saved.candidate.durationMs=originalDuration+1;assert.notEqual(saved.candidate.durationMs,originalDuration);fs.writeFileSync(file,JSON.stringify(saved));
   assert.throws(()=>applyPatch(root,staged.id,{execute:true}),/integrity mismatch/);
 });
