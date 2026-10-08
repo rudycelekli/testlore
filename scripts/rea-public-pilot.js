@@ -15,6 +15,7 @@ const scope='Original REA domain/services/adapters projects only; compiled CLI/M
 const projects=['--project','domain','--project','services','--project','adapters'];
 const failures=run=>(run?.tests||[]).filter(t=>t.status==='failed').map(t=>t.id).sort();
 const same=(a,b)=>JSON.stringify(a)===JSON.stringify(b);
+const reportFault=run=>['reportErrors','missingFiles','unknownFiles'].some(key=>run[key]!==undefined&&(!Array.isArray(run[key])||run[key].length));
 
 // Native case identities are recomputed independently from file/name/ordinal.
 function inventory(tests, files, status=true) {
@@ -106,7 +107,7 @@ export function assessReaPilot(report, baseline, rawTrials, upstreamRoot='/') {
      if(new Set(files).size!==files.length||!files.every(f=>fullFiles.includes(f))||!same([...files].sort(),[...(run.collectionFiles||[])].sort()))throw new Error(arm+' file scope');
      if(!same(inventory(run.tests,files),fullRows.filter(row=>files.includes(row[1]))))throw new Error(arm+' named case/status preservation');
      const n=failures(run).length;
-     if(run.signal||run.error||!Number.isInteger(run.exitCode)||(n?run.exitCode!==1:run.exitCode!==0))throw new Error(arm+' exit status');
+     if(reportFault(run)||run.signal||run.error||!Number.isInteger(run.exitCode)||(n?run.exitCode!==1:run.exitCode!==0))throw new Error(arm+' exit status');
     }
    }catch(error){reasons.push('raw-case-preservation-mismatch:'+c+':'+r+':'+error.message);}
    if(!same(fullFailures,subsetFailures)||trial.missedFailures!==missedIds.length||trial.fullFailures!==fullFailures.length)reasons.push('failure-preservation-mismatch:'+c+':'+r);
@@ -117,7 +118,7 @@ export function assessReaPilot(report, baseline, rawTrials, upstreamRoot='/') {
     const expectedCounts=new Map(fullFiles.map(file=>[file,independent.tests.filter(t=>t.file===file).length]));
     for(const run of [full,subset,native]){
      const files=run.executedFiles||[];inventory(run.tests,files);
-     if(!run.complete||run.signal||run.error||new Set(files).size!==files.length||!files.every(f=>fullFiles.includes(f))||!same([...files].sort(),[...(run.collectionFiles||[])].sort())||run.exitCode!==(failures(run).length?1:0)||files.some(f=>run.tests.filter(t=>t.file===f).length!==expectedCounts.get(f)))throw new Error('Observation report incomplete');
+     if(!run.complete||reportFault(run)||run.signal||run.error||new Set(files).size!==files.length||!files.every(f=>fullFiles.includes(f))||!same([...files].sort(),[...(run.collectionFiles||[])].sort())||run.exitCode!==(failures(run).length?1:0)||files.some(f=>run.tests.filter(t=>t.file===f).length!==expectedCounts.get(f)))throw new Error('Observation report incomplete');
     }
    }catch{observationCompleted=false;}
    const actualOmitted=fullFiles.filter(file=>!selected.includes(file));omitted+=actualOmitted.length;

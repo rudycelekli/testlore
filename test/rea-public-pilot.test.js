@@ -95,3 +95,9 @@ test('frozen real REA executions remain complete negative evidence, never qualif
  const result=verifyFrozenEvidence(new URL('../benchmarks/rea-20261008/',import.meta.url).pathname);
  assert.equal(result.kind,'assessment-replay-no-native-execution');assert.equal(result.assessment.observationCompleted,true);assert.equal(result.assessment.qualified,false);assert.equal(result.nodeOracle.qualified,true);assert.equal(result.assessment.trialCount,6);assert.equal(result.assessment.fullFallbackTrials,6);assert.equal(result.assessment.missedFailures,0);
 });
+
+test('contradictory native error metadata cannot certify execution or collection',()=>{
+ for(const key of ['reportErrors','missingFiles','unknownFiles']){
+  const x=fixture();x.raw[0].full[key]=['retained-error'];const result=assess(x);assert.equal(result.qualified,false);assert.equal(result.observationCompleted,false);
+ }
+});
