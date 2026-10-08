@@ -12,6 +12,8 @@ Executable configuration is evaluated fresh. The controller does not cache a run
 
 Native adversarial tests challenge independent setup regressions, alias changes, isolated and shared project groups, exact and glob project scopes, overlapping memberships, configuration changes, plugins and argv behavior. Their executable results must pass alongside the full source and browser scope before merge.
 
+Native traversal starts from discovered tests, setup files, executable configuration and declared source dependencies. It avoids resolving unrelated repository sources through every selected project. Every source still receives syntax and uncertainty analysis. Runtime evidence enables broad source resolution because its extra dependency edges attach after graph construction. Declared sources remain separate from global configuration: adding a local contract does not make every test depend on it. No executable configuration or live resolver is cached between invocations.
+
 ## Separate property replay profile
 
 `pilot` accepts an optional project-level declaration:
@@ -35,3 +37,5 @@ The candidate REA workflow preregisters **104729, 130363 and 155921**, with thre
 ## Evidence and promotion
 
 The [original REA evidence](rea-public-qualification.md) remains frozen and rejected. New controlled results must be assessed independently; changing the measurement profile cannot retroactively qualify old trials. Improvements to routing need complete full/subset outcomes, retained skips and failures, fresh inputs and useful complete timings. A one-seed pass does not certify the three-seed campaign. See the [Agentic QE comparison and equal-scope experiment](agentic-qe-comparison.md) before making comparative claims.
+
+The [first complete three-seed candidate measurement](../benchmarks/rea-projects-20261008/README.md) remains negative: all eighteen executions fell back to all 261 files, and TestLore was slower than native selection. Runtime filesystem access in configuration remains unresolved evidence. Matching property seeds did not eliminate schema-title drift. The follow-up traversal optimization must be evaluated separately; this archive records the pre-optimization candidate and never claims its timings for newer source.

@@ -57,7 +57,7 @@ function build(root, nativeSession, planningInputs) {
       graph.nativeResolutions=new Map(combined.additionalResolutions.map(item=>[JSON.stringify([item.file,item.specifier]),item.resolution]));
       for(const file of combined.configFiles)graph.configFiles.add(file);
     } else if(combinedNativePlanningSupported(root,config)) {
-      combined=resolveNativeBatch(root,[],config,{discover:true,transitive:true,roots:[...configurationSeeds(root,config,files)]});
+      combined=resolveNativeBatch(root,[],config,{discover:true,transitive:true,roots:[...nativePlanningRoots(root,config,files)]});
       sharedAttempt={complete:combined.complete,error:combined.error};
       // A failed shared context contributes no authority. Preserve fresh native
       // collection and the conservative legacy resolver path on failure.
@@ -102,7 +102,7 @@ function build(root, nativeSession, planningInputs) {
   timing.mark('configuration');
   for (const file of files.filter(f => SOURCE.test(f))) graph.sources[file] = fs.readFileSync(safePath(root,file),'utf8');
   timing.mark('sourceReads');
-  addSources(graph,Object.entries(graph.sources),set,{ roots: [...graph.tests,...graph.configFiles], resolved:graph.nativePlanning?.complete===true });
+  addSources(graph,Object.entries(graph.sources),set,{ roots: [...graph.tests,...graph.configFiles,...nativePlanningRoots(root,config,files)], resolved:graph.nativePlanning?.complete===true });
   // These are observed in the same fresh native discovery/resolver context.
   // Setup inputs retain only their project's consumers. The selector preserves
   // shared-isolation membership in a linear contract pass, not an O(n²) graph.
@@ -192,7 +192,7 @@ export function evidencePath(graph, start, target) {
   return null;
 }
 
-function configurationSeeds(root,config,files = listFiles(root)) {
+export function configurationSeeds(root,config,files = listFiles(root)) {
   const seeds = new Set();
   if(config.tsconfig)seeds.add(normalize(config.tsconfig));
   for(const file of files) if(/^(?:pnpm-workspace\.yaml|tsconfig\.json|jsconfig\.json|(?:vitest|vite|jest|playwright)\.config\.[cm]?[jt]s)$/.test(file))seeds.add(file);
@@ -203,6 +203,16 @@ function configurationSeeds(root,config,files = listFiles(root)) {
     else if(/^(?:--config|-c|--tsconfig|--import|--require|-r|--loader|--experimental-loader)=/.test(argv[i]))file=argv[i].slice(argv[i].indexOf('=')+1);
     if(file){const relative=normalize(path.relative(root,path.resolve(root,file)));if(relative.startsWith('../'))seeds.add('__external_runner_config__');else seeds.add(relative);}
   }
+  return seeds;
+}
+// Declared sources can have native alias edges without a static test import.
+// Runtime observations attach later, so preserve broad native resolution there.
+export function nativePlanningRoots(root,config,files = listFiles(root)) {
+  const seeds = configurationSeeds(root,config,files);
+  if(config.runtime?.enabled)for(const file of files)if(SOURCE.test(file))seeds.add(file);
+  const declared = declaredInputs(config);
+  for(const deps of [...Object.values(declared),...Object.values(config.dependencies || {})])
+    for(const file of deps)if(!file.startsWith('service:') && SOURCE.test(file))seeds.add(file);
   return seeds;
 }
 function compilerOptions(root,config,warnings,configFiles) {

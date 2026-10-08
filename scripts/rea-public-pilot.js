@@ -294,7 +294,7 @@ export async function main(args=process.argv.slice(2)) {
   fs.writeFileSync(path.join(output,'node-oracle-assessment.json'),JSON.stringify(nodeAssessment,null,2)+'\n');
   const assessment=assessReaPilot(report,baseline,rawTrials,baselineRoot,options);assessment.pilotExitCode=pilotEvent.exitCode;assessment.nodeOracleQualified=nodeAssessment.qualified;
   if(!nodeAssessment.qualified){assessment.observationCompleted=false;assessment.qualified=false;assessment.reasons.push('separate-node-oracle-incomplete');}
-  if(pilotEvent.exitCode!==0||pilotEvent.signal||pilotEvent.stoppedReason){assessment.qualified=false;assessment.reasons.push('pilot-process-incomplete');}
+  if(pilotEvent.exitCode!==0||pilotEvent.signal||pilotEvent.stoppedReason){assessment.qualified=false;assessment.reasons.push(pilotEvent.exitCode===1&&!pilotEvent.signal&&!pilotEvent.stoppedReason?'pilot-comparison-rejected':'pilot-process-incomplete');}
   if(![0,1].includes(pilotEvent.exitCode)||pilotEvent.signal||pilotEvent.stoppedReason)assessment.observationCompleted=false;
   assessment.protectedSourceUnchanged=entries.every(entry=>hash(trackedBytes(entry))===protectedHashes[entry.file])&&!git('status','--porcelain').trim();
   if(!assessment.protectedSourceUnchanged){assessment.observationCompleted=false;assessment.qualified=false;assessment.reasons.push('protected-upstream-source-changed');}

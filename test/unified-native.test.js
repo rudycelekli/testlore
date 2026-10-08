@@ -52,6 +52,19 @@ test('removed baseline imports resolve in the same session and retain the affect
  assert.ok(report.plan.selected.includes('checks/a.check.js'));
  assert.equal(report.stdout.split('TESTLORE_CONFIG_LOADED').length-1,1);
 });
+test('declared source roots retain native alias closure beyond discovered static imports',async t=>{
+ const {root,config}=project(t,{'src/detached.js':`import value from '@subject';export default value;`});
+ config.dependencies={'checks/b.check.js':['src/detached.js']};
+ write(root,'tddswarm.config.json',config);commit(root);
+ write(root,'src/a.js','export default 2;');
+ const report=await runUnifiedNative(root,{selective:true,capture:true});
+ assert.equal(report.complete,true,report.error);
+ assert.deepEqual(report.plan.selected,['checks/a.check.js','checks/b.check.js']);
+ const declared=report.plan.decisions.find(decision=>decision.test==='checks/b.check.js');
+ assert.ok(declared.paths.some(chain=>chain.includes('src/detached.js')&&chain.includes('src/a.js')));
+ const full=execute(root,['checks/a.check.js','checks/b.check.js'],config,{capture:true});
+ assert.equal(full.complete,true);assert.equal(compareSubsetCases(full,report,report.executedTests).complete,true);
+});
 test('configuration source mutation during startup rejects without a second native load',async t=>{
  const {root}=project(t,{'vitest.config.mjs':`import fs from 'node:fs';fs.mkdirSync('.tddswarm',{recursive:true});fs.appendFileSync('.tddswarm/config-count','1\\n');fs.writeFileSync('src/b.js','export default 7;');export default {test:{include:['checks/*.check.js']}};`});
  const report=await runUnifiedNative(root,{selective:true,capture:true});assert.equal(report.complete,false);assert.equal(report.exitCode,2);assert.match(report.error,/changed during native context startup/);

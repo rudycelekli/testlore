@@ -5,7 +5,7 @@ import {spawn} from 'node:child_process';
 import {fileURLToPath} from 'node:url';
 import {sharedVitestCommand,nativeEnvironment,normalizeUnifiedExecution} from './execution.js';
 import {safePath,listFiles,SOURCE,git,gitBaseline,gitSources} from './files.js';
-import {analyze} from './graph.js';
+import {analyze,nativePlanningRoots} from './graph.js';
 import {encodeNativeFrame,nativeFrameReader} from './native-protocol.js';
 import {digest} from './provenance.js';
 import {prepareNativeSourceSummaries} from './native-source-summaries.js';
@@ -63,7 +63,10 @@ export async function openNativeSession(root,config,options={},startupInventory)
   const invocation=[...command,'run','--reporter=json',`--outputFile=${reportFile}`];
   const files=startupInventory?startupInventory.files:listFiles(root);
   const sourceSummaries=prepareNativeSourceSummaries(root,files);
-  fs.writeFileSync(requestFile,JSON.stringify({root,adapter:'vitest',command,imports,invocation,discover:true,transitive:true,roots:files.filter(file=>SOURCE.test(file)),sourceSummaries,unified:true,reportFile}));
+  // The fresh worker expands native-discovered tests, project setup and config
+  // transitively. Unreachable repository files still receive parent syntax and
+  // uncertainty analysis, but do not require every project's native resolver.
+  fs.writeFileSync(requestFile,JSON.stringify({root,adapter:'vitest',command,imports,invocation,discover:true,transitive:true,roots:[...nativePlanningRoots(root,config,files)],sourceSummaries,unified:true,reportFile}));
   workerSpawned=performance.now();
   child=spawn(process.execPath,[fileURLToPath(new URL('./reporters/resolve.js',import.meta.url)),requestFile],{cwd:root,env:nativeEnvironment(config),detached:process.platform!=='win32',stdio:['ignore','pipe','pipe','pipe','pipe']});
   const wait=phase=>new Promise((resolve,reject)=>{if(failure)return reject(failure);pending.set(phase,{resolve,reject});});
