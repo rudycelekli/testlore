@@ -40,6 +40,25 @@ function nativeBaseline(baseline, root){
  }
  return {files:files.sort(),tests};
 }
+export function assessNodeOracle(runs,root,testsUnchanged){
+ const expected=[
+  'matches the native Node loader when import uses main before bundler module',
+  'matches the native Node loader when import ignores a module-only entry',
+  'matches the native Node loader when require ignores a module-only entry',
+ ].sort(),assessment={qualified:false,testsUnchanged,runs:[]};
+ try{
+  const reference=nativeBaseline(runs[0].result,root),baselineRows=inventory(reference.tests,reference.files);
+  if(reference.tests.length===0||reference.tests.some(t=>t.status!=='passed'))throw new Error('Non-green Node baseline');
+  assessment.runs=runs.map(({label,event,result},i)=>{
+   const current=nativeBaseline(result,root),failed=current.tests.filter(t=>t.status==='failed').map(t=>t.name).sort(),green=i===0||i===4;
+   const complete=same(reference.files,current.files)&&same(inventory(reference.tests,reference.files,false),inventory(current.tests,current.files,false))&&!result.numRuntimeErrorTestSuites&&!event.signal&&!event.stoppedReason;
+   const statuses=green?same(baselineRows,inventory(current.tests,current.files)):current.tests.every(t=>t.status===(expected.includes(t.name)?'failed':'passed'));
+   return {label,event,complete:complete&&statuses,passed:result.numPassedTests,skipped:result.numPendingTests,failed};
+  });
+  assessment.qualified=testsUnchanged&&assessment.runs.length===5&&assessment.runs.every((run,i)=>run.complete&&(i===0||i===4?run.event.exitCode===0&&!run.failed.length:run.event.exitCode===1&&same(run.failed,expected)));
+ }catch(error){assessment.error=error.message;}
+ return assessment;
+}
 export function preservePilotReceipts(source, destination){
  if(!fs.existsSync(source))return [];
  fs.mkdirSync(destination,{recursive:true});const copied=[];
@@ -53,7 +72,7 @@ export function preservePilotReceipts(source, destination){
 /** Recheck raw executions and exact baseline scope, not aggregate booleans. */
 export function assessReaPilot(report, baseline, rawTrials, upstreamRoot='/') {
  const reasons=[];let independent;
- try{independent=nativeBaseline(baseline,upstreamRoot);inventory(independent.tests,independent.files);}catch{reasons.push('independent-baseline-scope-invalid');}
+ try{independent=nativeBaseline(baseline,upstreamRoot);inventory(independent.tests,independent.files);if(baseline.numPassedTests!==independent.tests.filter(t=>t.status==='passed').length||baseline.numFailedTests!==independent.tests.filter(t=>t.status==='failed').length)throw new Error('Baseline count mismatch');}catch{reasons.push('independent-baseline-scope-invalid');}
  if(report?.valid!==true||report.projects?.length!==1)reasons.push('pilot-incomplete-or-invalid');
  if(baseline?.success!==true||!(baseline.numPassedTests>0)||baseline.numFailedTests!==0)reasons.push('independent-baseline-not-green');
  const project=report?.projects?.[0],changes=project?.changes||[];
@@ -77,12 +96,14 @@ export function assessReaPilot(report, baseline, rawTrials, upstreamRoot='/') {
    try{
     const fullRows=inventory(full.tests,fullFiles);
     if(!same(inventory(full.tests,fullFiles,false),inventory(independent.tests,independent.files,false)))throw new Error('Baseline named inventory drift');
+    const baselineRows=inventory(independent.tests,independent.files),byId=new Map(fullRows.map(row=>[row[0],row]));
+    if(baselineRows.some(row=>{const status=byId.get(row[0])?.[3];return change.expectedFailure?(row[3]==='skipped'?status!=='skipped':!['passed','failed'].includes(status)):status!==row[3];}))throw new Error('Baseline skipped/status inventory drift');
     for(const [arm,run]of [['full',full],['subset',subset],['native',native]]){
      const files=run.executedFiles||[];
      if(new Set(files).size!==files.length||!files.every(f=>fullFiles.includes(f))||!same([...files].sort(),[...(run.collectionFiles||[])].sort()))throw new Error(arm+' file scope');
      if(!same(inventory(run.tests,files),fullRows.filter(row=>files.includes(row[1]))))throw new Error(arm+' named case/status preservation');
      const n=failures(run).length;
-     if(run.signal||run.error||!Number.isInteger(run.exitCode)||(n?run.exitCode===0:run.exitCode!==0))throw new Error(arm+' exit status');
+     if(run.signal||run.error||!Number.isInteger(run.exitCode)||(n?run.exitCode!==1:run.exitCode!==0))throw new Error(arm+' exit status');
     }
    }catch(error){reasons.push('raw-case-preservation-mismatch:'+c+':'+r+':'+error.message);}
    if(!same(fullFailures,subsetFailures)||trial.missedFailures!==missedIds.length||trial.fullFailures!==fullFailures.length)reasons.push('failure-preservation-mismatch:'+c+':'+r);
@@ -176,15 +197,7 @@ export async function main(args=process.argv.slice(2)) {
    }
   }finally{fs.writeFileSync(path.join(oracle,nodeFile),fixed);}
   await nodeRun('node-oracle-fixed-restored');
-  const baselineOracle=nodeRuns[0].result,reference=baselineOracle?nativeBaseline(baselineOracle,oracle):null;
-  const nodeAssessment={schemaVersion:1,scope:'Only the original Node package-precedence boundary file; independent native execution, no TestLore selection comparison.',qualified:false,upstreamRevision:REA_REVISION,sourceBeforeRevision:'68b9fa489b0c07f580633785ec61c17fa20b5083',testFile,testSha256:testHash,testsUnchanged:hash(fs.readFileSync(path.join(oracle,testFile)))===testHash,runs:[]};
-  try{
-   nodeAssessment.runs=nodeRuns.map(({label,event,result})=>{
-    const current=nativeBaseline(result,oracle),cases=inventory(current.tests,current.files,false),failed=current.tests.filter(t=>t.status==='failed').map(t=>t.name).sort();
-    return {label,event,complete:same(reference.files,current.files)&&same(inventory(reference.tests,reference.files,false),cases)&&!result.numRuntimeErrorTestSuites&&!event.signal&&!event.stoppedReason,passed:result.numPassedTests,skipped:result.numPendingTests,failed};
-   });
-   nodeAssessment.qualified=nodeAssessment.testsUnchanged&&nodeAssessment.runs.length===5&&nodeAssessment.runs.every((run,i)=>run.complete&&(i===0||i===4?run.event.exitCode===0&&!run.failed.length:run.event.exitCode===1&&run.failed.length>0))&&nodeAssessment.runs.slice(1,4).every(run=>same(run.failed,nodeAssessment.runs[1].failed));
-  }catch(error){nodeAssessment.error=error.message;}
+  const nodeAssessment={schemaVersion:1,scope:'Only the original Node package-precedence boundary file; independent native execution, no TestLore selection comparison.',upstreamRevision:REA_REVISION,sourceBeforeRevision:'68b9fa489b0c07f580633785ec61c17fa20b5083',testFile,testSha256:testHash,...assessNodeOracle(nodeRuns,oracle,hash(fs.readFileSync(path.join(oracle,testFile)))===testHash)};
   fs.writeFileSync(path.join(output,'node-oracle-assessment.json'),JSON.stringify(nodeAssessment,null,2)+'\n');
   const assessment=assessReaPilot(report,baseline,rawTrials,upstream);assessment.pilotExitCode=pilotEvent.exitCode;assessment.nodeOracleQualified=nodeAssessment.qualified;
   if(!nodeAssessment.qualified){assessment.qualified=false;assessment.reasons.push('separate-node-oracle-incomplete');}

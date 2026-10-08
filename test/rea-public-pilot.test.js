@@ -4,12 +4,12 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import {createHash} from 'node:crypto';
-import {assessReaPilot,preservePilotReceipts,REA_REVISION} from '../scripts/rea-public-pilot.js';
+import {assessReaPilot,assessNodeOracle,preservePilotReceipts,REA_REVISION} from '../scripts/rea-public-pilot.js';
 
 // Synthetic assessor controls only; public qualification comes from native runs.
 function fixture(){
  const report={valid:true,repetitions:3,projects:[{revision:REA_REVISION,sourceCheckoutUnchanged:true,changes:[]}]};
- const raw=[],baseline={success:true,numPassedTests:2,numFailedTests:0,testResults:[{name:'case.test.ts',assertionResults:[{fullName:'retained-case',status:'passed'},{fullName:'skip-case',status:'pending'}]}]};
+ const raw=[],baseline={success:true,numPassedTests:1,numFailedTests:0,testResults:[{name:'case.test.ts',assertionResults:[{fullName:'retained-case',status:'passed'},{fullName:'skip-case',status:'pending'}]}]};
  for(let c=0;c<2;c++){
   const change={name:'change-'+c,expectedFailure:c>0,trials:[]};report.projects[0].changes.push(change);
   for(let r=0;r<3;r++){
@@ -56,4 +56,24 @@ test('retains interrupted nested receipts without copying upstream workspace',()
   fs.writeFileSync(path.join(source,'project','request.json'),'{}');fs.writeFileSync(path.join(source,'project','worker.log'),'partial');fs.writeFileSync(path.join(source,'project','workspace','private.json'),'exclude');
   assert.deepEqual(preservePilotReceipts(source,out),['project/request.json','project/worker.log']);assert.equal(fs.existsSync(path.join(out,'project','workspace')),false);
  }finally{fs.rmSync(root,{recursive:true,force:true});}
+});
+
+function nodeFixture(){
+ const names=['import uses main before bundler module','import ignores a module-only entry','require ignores a module-only entry','import preserves a main-only entry'].map(x=>'matches the native Node loader when '+x);
+ return Array.from({length:5},(_,i)=>({label:'run-'+i,event:{exitCode:i===0||i===4?0:1},result:{numPassedTests:i===0||i===4?4:1,numPendingTests:0,testResults:[{name:'oracle.test.ts',assertionResults:names.map((fullName,n)=>({fullName,status:i>0&&i<4&&n<3?'failed':'passed'}))}]}}));
+}
+test('separate native oracle requires the exact independent Node failures and restored statuses',()=>{
+ const runs=nodeFixture();assert.equal(assessNodeOracle(runs,'/',true).qualified,true);
+ runs[4].result.testResults[0].assertionResults[0].status='pending';assert.equal(assessNodeOracle(runs,'/',true).qualified,false);
+});
+test('rejects unrelated Node failure, interrupted outcome and modified upstream tests',()=>{
+ const runs=nodeFixture();runs[1].result.testResults[0].assertionResults[3].status='failed';assert.equal(assessNodeOracle(runs,'/',true).qualified,false);
+ assert.equal(assessNodeOracle(nodeFixture(),'/',false).qualified,false);
+ const killed=nodeFixture();killed[2].event.stoppedReason='deadline';assert.equal(assessNodeOracle(killed,'/',true).qualified,false);
+});
+test('named assertion failure requires exit1 rather than arbitrary native errors',()=>{const x=fixture();x.raw[3].subset.exitCode=2;assert.equal(assess(x).qualified,false);});
+
+test('rejects new skips across every arm and preserves independent baseline skips',()=>{
+ const x=fixture();for(const arm of ['full','subset','native'])x.raw[0][arm].tests[0].status='skipped';assert.equal(assess(x).qualified,false);
+ const y=fixture();for(const arm of ['full','subset','native'])y.raw[3][arm].tests[1].status='passed';assert.equal(assess(y).qualified,false);
 });
