@@ -52,9 +52,12 @@ export function claudeStructuredAccount(stdout,schema){
     const mcp=uses.filter(item=>item.name?.startsWith('mcp__'));
     const expected=['mcp__testlore_readonly__testlore_brief','mcp__testlore_readonly__testlore_status','mcp__testlore_execution__testlore_plan','mcp__testlore_execution__testlore_verify','mcp__testlore_fixture__repair_fixture','mcp__testlore_execution__testlore_plan','mcp__testlore_execution__testlore_verify'];
     if(JSON.stringify(mcp.map(item=>item.name))!==JSON.stringify(expected)||uses.length!==8)throw new Error('Structured formatter must follow exactly seven authorized MCP calls');
-    const finalVerify=mcp.at(-1),formatter=uses.find(item=>item.name===claudeStructuredContract.formatterTool);
-    const finalResponses=rows.flatMap((event,index)=>event.type==='user'&&Array.isArray(event.message?.content)?event.message.content.filter(item=>item?.type==='tool_result'&&item.tool_use_id===finalVerify.id).map(item=>({...item,eventIndex:index})):[]);
-    if(finalResponses.length!==1||finalResponses[0].is_error===true||finalResponses[0].eventIndex>=formatter.eventIndex)throw new Error('Native formatter preceded final MCP response');
+    if(uses.some(item=>typeof item.id!=='string'||!item.id||item.id.length>100)||new Set(uses.map(item=>item.id)).size!==uses.length)throw new Error('Unique bounded native tool-use IDs required');
+    for(let index=0;index<uses.length;index++){
+      const invocation=uses[index],nextIndex=uses[index+1]?.eventIndex??rows.indexOf(result);
+      const responses=rows.flatMap((event,eventIndex)=>event.type==='user'&&Array.isArray(event.message?.content)?event.message.content.filter(item=>item?.type==='tool_result'&&item.tool_use_id===invocation.id).map(item=>({...item,eventIndex})):[]);
+      if(responses.length!==1||responses[0].is_error===true||responses[0].eventIndex<=invocation.eventIndex||responses[0].eventIndex>=nextIndex)throw new Error('Native invocation/response/next-stage ordering mismatch');
+    }
     validatePayload(result.structured_output,schema);validatePayload(formatted[0].input,schema);
     if(canonical(result.structured_output)!==canonical(formatted[0].input))throw new Error('Native formatter/terminal payload mismatch');
     const reason=observedStructuredRetry(stdout);if(reason)throw new Error(reason);

@@ -28,3 +28,19 @@ test('duplicate encoded keys and additional structured payloads reject instead o
  const escaped=text.replace('"structured_output":','"\\u0073tructured_output":null,"structured_output":');assert.equal(claudeStructuredAccount(escaped,schema).complete,false);
  const additional=stream();additional.unshift({type:'system',structured_output:payload});assert.equal(assess(additional).complete,false);
 });
+
+test('reordered completions, reused IDs and missing or malformed native IDs cannot substitute earlier responses',()=>{
+ const controls=[
+  rows=>{const response=rows.splice(15,1)[0];rows.splice(14,0,response);},
+  rows=>{rows[14].message.content[0].id='mcp-6';rows.splice(15,1);},
+  rows=>{const response=rows.splice(13,1)[0];rows.splice(12,0,response);},
+  rows=>{rows[2].message.content[0].id='mcp-0';},
+  rows=>{delete rows[12].message.content[0].id;delete rows[13].message.content[0].tool_use_id;},
+  rows=>{rows[12].message.content[0].id='';rows[13].message.content[0].tool_use_id='';},
+  rows=>{rows[12].message.content[0].id=7;rows[13].message.content[0].tool_use_id=7;},
+  rows=>{rows[12].message.content[0].id='x'.repeat(101);rows[13].message.content[0].tool_use_id='x'.repeat(101);},
+  rows=>{rows.splice(15,0,structuredClone(rows[15]));},
+  rows=>{const response=rows.splice(15,1)[0];rows.push(response);}
+ ];
+ for(const alter of controls){const rows=structuredClone(stream());alter(rows);const value=assess(rows);assert.equal(value.complete,false);assert.equal(value.finalMessage,'');}
+});
