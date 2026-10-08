@@ -1,0 +1,432 @@
+{
+  "schemaVersion": 1,
+  "kind": "retained-original-upstream-post-execution-drift-negatives",
+  "recordedDate": "2026-10-08",
+  "sourceRevision": "828aba85a8c8adc78716fbb356e258ec5cde1611",
+  "hostedRun": "https://github.com/rudycelekli/testlore/actions/runs/37750831987",
+  "selectionCommitmentSha256": "065b79f7f345a971e76b0a2d1bdc4f4ab34c9c3b254837b693dee552b71af65a",
+  "cachePolicy": {
+    "jitiFilesystem": false,
+    "vitestResults": false,
+    "testLoreDiskAnalysis": false
+  },
+  "automaticRetries": 0,
+  "attempts": [
+    {
+      "candidateId": "unjs-defu-11ba02213d4b",
+      "repository": "https://github.com/unjs/defu",
+      "fixRevision": "11ba02213d4b1c6b02dd686041f75edc479c98e9",
+      "parentRevision": "3942bfbbcaa72084bd4284846c83bd61ed7c8b29",
+      "qualified": false,
+      "status": "partial",
+      "failedPhase": "run",
+      "reason": "installed-tree-digest-mismatch",
+      "scope": "Original defu runtime-unit histories with exact fixed maintainer assertions and inverse parent source; no lint/types/build or whole-CLI qualification",
+      "installation": {
+        "status": "completed",
+        "originalInputBindings": [
+          {
+            "logicalPath": "package.json",
+            "sha256": "0ee5010fb716a695cb591b6b33d0a7287117f47344fcd8ae1b9dfe7f623054d2",
+            "bytes": 1258
+          },
+          {
+            "logicalPath": "pnpm-lock.yaml",
+            "sha256": "8e25a8381354e1002b339db2196f23c243aebe2c91afc11219528fba6df07a36",
+            "bytes": 159185
+          }
+        ],
+        "packageManager": "pnpm@10.33.0",
+        "framework": {
+          "vitest": "4.1.2",
+          "vite": "8.0.3"
+        },
+        "platform": {
+          "node": "v22.19.0",
+          "platform": "linux",
+          "arch": "x64"
+        },
+        "lifecycleWarnings": true,
+        "resourcePolicy": {
+          "growthPolicy": "defu-original-lock-768mib",
+          "maxGrowthBytes": 805306368,
+          "reserveBytes": 2147483648,
+          "timeoutMs": 180000
+        },
+        "nativeDurationMs": 3345,
+        "nativeFilesystemGrowthBytes": 435757056,
+        "controllerDurationMs": 6074,
+        "installedTree": {
+          "sha256": "55fb4f3dceac10f7d60fdf43c5e2e41c5906dfb2e7b1a1ca920036b5ff21f7a3",
+          "files": 10120,
+          "bytes": 188896201
+        }
+      },
+      "sourceBindings": {
+        "fixedSourceSha256": "5318d12aae6955d6e42c9dfc694b267838c56ba1a899a6b068930cd033a035cf",
+        "inverseSourceSha256": "db851ec4fe2850ad460c23e8321bfa6b635ae38d21b170f02373ad78de3ac652",
+        "oracleSha256": "abfe579ac2a0f10280bc11efc3ece9c2012f5fa7dde0259ee604b85a5118b145"
+      },
+      "preflight": {
+        "fixedBaseline": {
+          "cases": 23,
+          "passed": 23,
+          "skipped": 0,
+          "exitCode": 0
+        },
+        "independentFullFaultRuns": 2,
+        "stableNamedFailuresPerFaultRun": 1,
+        "baselineDurationMs": 753,
+        "faultDurationMs": [
+          761,
+          767
+        ]
+      },
+      "partialComparativeObservations": {
+        "requestedTrials": 2,
+        "completedTrials": 2,
+        "preservedFaultTrials": 2,
+        "missedFailures": 0,
+        "nativeMissedFailures": 0,
+        "invalidTrials": 0,
+        "selectiveTrials": 2,
+        "fullFallbackTrials": 0,
+        "controllerElapsedMs": 7902,
+        "timing": {
+          "fullMs": 1460,
+          "testLoreMs": 3001,
+          "nativeMs": 1124,
+          "netVsFullMs": -1541,
+          "netVsNativeMs": -1877
+        },
+        "trialSpans": [
+          {
+            "repetition": 1,
+            "fullMs": 722,
+            "testLoreMs": 1504,
+            "nativeMs": 565,
+            "planningMs": 927,
+            "subsetExecutionMs": 554,
+            "selectedFiles": 1,
+            "totalFiles": 2,
+            "missedFailures": 0,
+            "nativeMissedFailures": 0,
+            "valid": true,
+            "stable": true,
+            "mode": "affected"
+          },
+          {
+            "repetition": 2,
+            "fullMs": 738,
+            "testLoreMs": 1497,
+            "nativeMs": 559,
+            "planningMs": 910,
+            "subsetExecutionMs": 565,
+            "selectedFiles": 1,
+            "totalFiles": 2,
+            "missedFailures": 0,
+            "nativeMissedFailures": 0,
+            "valid": true,
+            "stable": true,
+            "mode": "affected"
+          }
+        ]
+      },
+      "independentRawCaseChecks": {
+        "fixedBaselinePassed": true,
+        "fullFaultIdentityMatchesIndependentPreflight": true,
+        "selectedAndNativeRetainExactFullFailureIds": true,
+        "allArmCaseStatusesStableAcrossRepetitions": true,
+        "caseReceipts": [
+          {
+            "repetition": 1,
+            "arm": "full",
+            "caseCount": 23,
+            "failedCaseCount": 1,
+            "receiptSha256": "1d04935665e4508ff4b57557a377fcf53819e5dc6ecfdffb2a73522ebb6f57e3"
+          },
+          {
+            "repetition": 1,
+            "arm": "subset",
+            "caseCount": 21,
+            "failedCaseCount": 1,
+            "receiptSha256": "7aff126559517c33d0463c68da946f34a0513b7f25792780da4ee4ae407481aa"
+          },
+          {
+            "repetition": 1,
+            "arm": "native",
+            "caseCount": 21,
+            "failedCaseCount": 1,
+            "receiptSha256": "317b4307fa679cc1c326f40dacff895610681133c6650c7c4c44510fdb84776c"
+          },
+          {
+            "repetition": 2,
+            "arm": "full",
+            "caseCount": 23,
+            "failedCaseCount": 1,
+            "receiptSha256": "92f208344ce5ba1e808747f7730d3a6d348e308feee2c81a1c427f761e7c9683"
+          },
+          {
+            "repetition": 2,
+            "arm": "subset",
+            "caseCount": 21,
+            "failedCaseCount": 1,
+            "receiptSha256": "7c286a9221ea246724869ab333133ed229ce30e5125603d42e3f7ac87bc3552b"
+          },
+          {
+            "repetition": 2,
+            "arm": "native",
+            "caseCount": 21,
+            "failedCaseCount": 1,
+            "receiptSha256": "f495bf0d94fe019c51d97dcefec1cad844c0c349bb97101e050823e71a58b8ae"
+          }
+        ]
+      },
+      "installedTreeVerification": {
+        "schemaVersion": 1,
+        "kind": "upstream-installation-verification",
+        "status": "rejected",
+        "stage": "digest-mismatch",
+        "expected": {
+          "sha256": "55fb4f3dceac10f7d60fdf43c5e2e41c5906dfb2e7b1a1ca920036b5ff21f7a3",
+          "files": 10120,
+          "bytes": 188896201
+        },
+        "observed": {
+          "sha256": "f0caf01de19f91f6b2d2dc7042299946366aba0016e01f3c398b8c9d5422a60d",
+          "files": 10122,
+          "bytes": 188896247
+        },
+        "fileCountDelta": 2,
+        "byteDelta": 46,
+        "preciseChangedPathsAvailable": false,
+        "cause": "unknown; original producer retained aggregate identities only"
+      },
+      "campaignControllerMs": 24185,
+      "wholeCliExecuted": false,
+      "receiptSha256": {
+        "summary": "546d649e364f5a1c03479fe8ecfd2d3ecd3663c0ab7520e00cb073561db8bd58",
+        "installation": "725174428cf34bb8bbaeee92814afffa0d3bf6aac724581ac453b8302cdee044",
+        "preflight": "0d10adda7d9d2066014472731e2f00aef266695166c7d40099203463d0d44bfb",
+        "prepared": "c5e1a5d452011efe07a1648b227690a77ff7dcda6fce8b274ed6fa3b20ac33d9",
+        "attempt": "7b205434adffbb9bde88cf8197f9bbd7b7fd424468e63674eaec440c61ef10c7"
+      }
+    },
+    {
+      "candidateId": "unjs-defu-3942bfbbcaa7",
+      "repository": "https://github.com/unjs/defu",
+      "fixRevision": "3942bfbbcaa72084bd4284846c83bd61ed7c8b29",
+      "parentRevision": "d3ef16dabe861713192ba8679c5db8e0ac143f9b",
+      "qualified": false,
+      "status": "partial",
+      "failedPhase": "run",
+      "reason": "installed-tree-digest-mismatch",
+      "scope": "Original defu runtime-unit histories with exact fixed maintainer assertions and inverse parent source; no lint/types/build or whole-CLI qualification",
+      "installation": {
+        "status": "completed",
+        "originalInputBindings": [
+          {
+            "logicalPath": "package.json",
+            "sha256": "0ee5010fb716a695cb591b6b33d0a7287117f47344fcd8ae1b9dfe7f623054d2",
+            "bytes": 1258
+          },
+          {
+            "logicalPath": "pnpm-lock.yaml",
+            "sha256": "8e25a8381354e1002b339db2196f23c243aebe2c91afc11219528fba6df07a36",
+            "bytes": 159185
+          }
+        ],
+        "packageManager": "pnpm@10.33.0",
+        "framework": {
+          "vitest": "4.1.2",
+          "vite": "8.0.3"
+        },
+        "platform": {
+          "node": "v22.19.0",
+          "platform": "linux",
+          "arch": "x64"
+        },
+        "lifecycleWarnings": true,
+        "resourcePolicy": {
+          "growthPolicy": "defu-original-lock-768mib",
+          "maxGrowthBytes": 805306368,
+          "reserveBytes": 2147483648,
+          "timeoutMs": 180000
+        },
+        "nativeDurationMs": 3558,
+        "nativeFilesystemGrowthBytes": 435757056,
+        "controllerDurationMs": 6315,
+        "installedTree": {
+          "sha256": "300d47679c04ecf58b49f9f297005d313d4564676807b66dc9a3f3b6511d5aaf",
+          "files": 10120,
+          "bytes": 188893005
+        }
+      },
+      "sourceBindings": {
+        "fixedSourceSha256": "db851ec4fe2850ad460c23e8321bfa6b635ae38d21b170f02373ad78de3ac652",
+        "inverseSourceSha256": "525e22eda05171e3cf7587391c56c3b339dfaabee883e9733c65f3614d343688",
+        "oracleSha256": "8e6728e25371f501d0b3bf65c17d583ab2be658c69e11f174b9f72aa77d27540"
+      },
+      "preflight": {
+        "fixedBaseline": {
+          "cases": 22,
+          "passed": 22,
+          "skipped": 0,
+          "exitCode": 0
+        },
+        "independentFullFaultRuns": 2,
+        "stableNamedFailuresPerFaultRun": 1,
+        "baselineDurationMs": 698,
+        "faultDurationMs": [
+          703,
+          703
+        ]
+      },
+      "partialComparativeObservations": {
+        "requestedTrials": 2,
+        "completedTrials": 2,
+        "preservedFaultTrials": 2,
+        "missedFailures": 0,
+        "nativeMissedFailures": 0,
+        "invalidTrials": 0,
+        "selectiveTrials": 2,
+        "fullFallbackTrials": 0,
+        "controllerElapsedMs": 7709,
+        "timing": {
+          "fullMs": 1415,
+          "testLoreMs": 2950,
+          "nativeMs": 1077,
+          "netVsFullMs": -1535,
+          "netVsNativeMs": -1873
+        },
+        "trialSpans": [
+          {
+            "repetition": 1,
+            "fullMs": 707,
+            "testLoreMs": 1491,
+            "nativeMs": 537,
+            "planningMs": 911,
+            "subsetExecutionMs": 558,
+            "selectedFiles": 1,
+            "totalFiles": 2,
+            "missedFailures": 0,
+            "nativeMissedFailures": 0,
+            "valid": true,
+            "stable": true,
+            "mode": "affected"
+          },
+          {
+            "repetition": 2,
+            "fullMs": 708,
+            "testLoreMs": 1459,
+            "nativeMs": 540,
+            "planningMs": 858,
+            "subsetExecutionMs": 580,
+            "selectedFiles": 1,
+            "totalFiles": 2,
+            "missedFailures": 0,
+            "nativeMissedFailures": 0,
+            "valid": true,
+            "stable": true,
+            "mode": "affected"
+          }
+        ]
+      },
+      "independentRawCaseChecks": {
+        "fixedBaselinePassed": true,
+        "fullFaultIdentityMatchesIndependentPreflight": true,
+        "selectedAndNativeRetainExactFullFailureIds": true,
+        "allArmCaseStatusesStableAcrossRepetitions": true,
+        "caseReceipts": [
+          {
+            "repetition": 1,
+            "arm": "full",
+            "caseCount": 22,
+            "failedCaseCount": 1,
+            "receiptSha256": "5d7155a4f539c27de17c4f4b2e81b4f9f31178a997bd409ea4124b26758ab9db"
+          },
+          {
+            "repetition": 1,
+            "arm": "subset",
+            "caseCount": 20,
+            "failedCaseCount": 1,
+            "receiptSha256": "c55c2227136ad860fe8deda6e53ddfa6f0ca6310e294356af631cefeb8a36cfd"
+          },
+          {
+            "repetition": 1,
+            "arm": "native",
+            "caseCount": 20,
+            "failedCaseCount": 1,
+            "receiptSha256": "9d4ec71151cb5e909a7b789736a354f5797bef51d702daa290714c0d1f2467de"
+          },
+          {
+            "repetition": 2,
+            "arm": "full",
+            "caseCount": 22,
+            "failedCaseCount": 1,
+            "receiptSha256": "36f9d630efe4a8f3d23709bb18484317d525752d9736e18af09aa7735fad7be0"
+          },
+          {
+            "repetition": 2,
+            "arm": "subset",
+            "caseCount": 20,
+            "failedCaseCount": 1,
+            "receiptSha256": "82e04b2222f0ec394bfa6f1aca31025a0158a6d3f76419d9c0d48b61c59c51d9"
+          },
+          {
+            "repetition": 2,
+            "arm": "native",
+            "caseCount": 20,
+            "failedCaseCount": 1,
+            "receiptSha256": "3abc562a565af0c294f1fe91c258d71dc7a3a8bc3ac07dfc89d197a0e8433369"
+          }
+        ]
+      },
+      "installedTreeVerification": {
+        "schemaVersion": 1,
+        "kind": "upstream-installation-verification",
+        "status": "rejected",
+        "stage": "digest-mismatch",
+        "expected": {
+          "sha256": "300d47679c04ecf58b49f9f297005d313d4564676807b66dc9a3f3b6511d5aaf",
+          "files": 10120,
+          "bytes": 188893005
+        },
+        "observed": {
+          "sha256": "0be0f7fadf9e67949abed301c31540ed7e7cf28e27c4ef6b3ac224108632ecac",
+          "files": 10122,
+          "bytes": 188893051
+        },
+        "fileCountDelta": 2,
+        "byteDelta": 46,
+        "preciseChangedPathsAvailable": false,
+        "cause": "unknown; original producer retained aggregate identities only"
+      },
+      "campaignControllerMs": 23937,
+      "wholeCliExecuted": false,
+      "receiptSha256": {
+        "summary": "75fcf4d380ddbf2ea7b899b79306cb9bf23a1d9fe2688f618e3e94966c0316af",
+        "installation": "860f1790d2de8f8b39782b3f9f0b7c81a94c17b7b9e93a3bb0b9808c8433235f",
+        "preflight": "e1360ebdba4f1fb573d028010f51fc11eba680aaf0648eb8670dbc6c5f1f4cf2",
+        "prepared": "217ccdaf1a37bf8bf67905e81b4f45bedada374f05b12cd56ffed508145e9d94",
+        "attempt": "4b10a3404c93952491ba31ee141a35c87e4e8521dac293b06371fe87be95fb31"
+      }
+    }
+  ],
+  "accounting": {
+    "addedQualifiedChanges": 0,
+    "addedQualifiedRepositories": 0,
+    "priorReceiptsReclassified": false,
+    "target30Changes5RepositoriesMet": false,
+    "target100Changes10RepositoriesMet": false
+  },
+  "limitations": [
+    "Both campaigns remain rejected by authoritative post-run installed-tree verification despite completed comparative trials.",
+    "These observed timings retain losses; they establish neither a qualified speed advantage nor general failure recall.",
+    "Per-arm timings include discovery/planning/execution/reporting; independent preflight and corpus orchestration are separate. These legacy runs do not establish complete whole-CLI timings.",
+    "Native result/JITI/TestLore analysis disk caches disabled equally; OS/package caches uncontrolled, no native-default or OS-cold claim.",
+    "Downloaded artifacts do not include installed dependency contents. Original producer whole-tree checks are bound, but reviewer cannot rehash the retired hosted tree.",
+    "Exact added/removed/changed paths and cache attribution are unavailable in these historical receipts. Future bounded inventory diagnostics cannot retroactively qualify them.",
+    "GitHub provenance does not establish semantic maintainer independence, representative ecosystem coverage, generation quality or learning gain."
+  ]
+}
