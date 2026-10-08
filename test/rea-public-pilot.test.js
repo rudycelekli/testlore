@@ -82,6 +82,7 @@ test('complete negative measurements remain rejected qualifications',()=>{
  const x=fixture();for(const arm of ['full','subset']){
   x.raw[0][arm].tests[0].name='different parameter';x.raw[0][arm].tests[0].id=createHash('sha256').update(['case.test.ts','different parameter','','','0'].join('\0')).digest('hex');
  }
+ x.report.valid=false;x.report.projects[0].changes[0].trials[0].valid=false;
  const result=assess(x);assert.equal(result.qualified,false);assert.equal(result.observationCompleted,true);assert.equal(result.claims.worldClassEstablished,false);
 });
 test('incomplete observations cannot be published as completed negatives',()=>{

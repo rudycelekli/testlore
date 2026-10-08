@@ -78,7 +78,7 @@ export function assessReaPilot(report, baseline, rawTrials, upstreamRoot='/') {
  const project=report?.projects?.[0],changes=project?.changes||[];
  if(project?.revision!==REA_REVISION||project?.sourceCheckoutUnchanged!==true)reasons.push('upstream-source-binding-unverified');
  if(changes.length!==2||report.repetitions!==3||rawTrials?.length!==6)reasons.push('requested-trials-incomplete');
- observationCompleted=!reasons.length;
+ observationCompleted=reasons.every(reason=>reason==='pilot-incomplete-or-invalid')&&report?.projects?.length===1;
  let missed=0,nativeMissed=0,omitted=0,fallbacks=0;
  const rows=[];
  for(let c=0;c<changes.length;c++){
