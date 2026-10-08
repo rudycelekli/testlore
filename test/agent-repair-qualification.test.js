@@ -6,7 +6,7 @@ import {createHash} from 'node:crypto';
 import {fixture} from './helpers.js';
 import {createFixture, boundedProcess, safeHostEnvironment, hostEvents} from '../scripts/host-qualification.js';
 import {repairFixture} from '../scripts/fixture-repair-mcp.js';
-import {fixtureSnapshot, assessRepairDiff, parseIndependentRun, assessRepairLoop, parseRepairArguments, qualifyRepairHosts, repairSummarySchema, repairQualificationPrompt} from '../scripts/agent-repair-qualification.js';
+import {fixtureSnapshot, assessRepairDiff, parseIndependentRun, assessRepairLoop, parseRepairArguments, qualifyRepairHosts, repairSummarySchema, repairQualificationPrompt,repairHostSelection} from '../scripts/agent-repair-qualification.js';
 import {execute} from '../src/execution.js';
 import {Client} from '@modelcontextprotocol/client';
 import {StdioClientTransport} from '@modelcontextprotocol/client/stdio';
@@ -226,5 +226,34 @@ test('named profile is explicit, preserves synthetic default and prohibits a sec
   const argv=['--run','--authorize-fixture-tools','--authorize-fixture-repair','--entrypoint','/package/src/cli.js','--output','/tmp/repair.json'];
   assert.equal(parseRepairArguments(argv).repairProfile,'synthetic');assert.equal(parseRepairArguments([...argv,'--repair-profile','maintainer-is-promise']).repairProfile,'maintainer-is-promise');
   assert.throws(()=>parseRepairArguments([...argv,'--repair-profile','all-files']),/Unknown/);assert.throws(()=>parseRepairArguments([...argv,'--repair-profile','synthetic','--repair-profile','synthetic']),/Duplicate/);
-  await assert.rejects(qualifyRepairHosts({authorizeFixtureRepair:true,authorizeFixtureTools:true,repairProfile:'maintainer-is-promise',timeoutMs:1000,claude:'/host/claude'}),/at most one/);
+  await assert.rejects(qualifyRepairHosts({authorizeFixtureRepair:true,authorizeFixtureTools:true,repairProfile:'maintainer-is-promise',timeoutMs:1000,codex:'/host/codex',claude:'/host/claude'}),/at most one/);
+});
+
+test('maintainer eligibility admits one explicit native host and keeps synthetic two-host eligibility',()=>{
+  for(const host of ['codex','claude']){
+    assert.deepEqual(repairHostSelection({[host]:'/host/'+host},'maintainer-is-promise'),[host]);
+    const argv=['--run','--authorize-fixture-tools','--authorize-fixture-repair','--repair-profile','maintainer-is-promise','--repair-instructions','contract-only','--entrypoint','/package/src/cli.js','--output','/tmp/repair.json','--'+host,'/host/'+host,'--timeout-ms','115000'];
+    const parsed=parseRepairArguments(argv);assert.equal(parsed[host],'/host/'+host);assert.equal(parsed.timeoutMs,115000);assert.equal(parsed.repairInstructions,'contract-only');
+    assert.throws(()=>parseRepairArguments([...argv,'--'+(host==='claude'?'codex':'claude'),'/host/other']),/at most one/);
+  }
+  assert.deepEqual(repairHostSelection({},'maintainer-is-promise'),[]);
+  assert.deepEqual(repairHostSelection({codex:'/host/codex',claude:'/host/claude'},'synthetic'),['codex','claude']);
+});
+
+test('dual-host and malformed maintainer requests reject before source lookup or host invocation',async()=>{
+  let entrypointReads=0;
+  const base={authorizeFixtureRepair:true,authorizeFixtureTools:true,repairProfile:'maintainer-is-promise',repairInstructions:'contract-only',timeoutMs:115000,get entrypoint(){entrypointReads++;throw Error('Source lookup must not run');}};
+  const dual=Object.defineProperties({},Object.getOwnPropertyDescriptors(base));dual.codex='/host/codex';dual.claude='/host/claude';
+  await assert.rejects(qualifyRepairHosts(dual),/at most one/);
+  for(const invalid of ['',null,false,[],{},'relative','/host/claude\0extra']){
+    assert.throws(()=>repairHostSelection({claude:invalid},'maintainer-is-promise'),/absolute/);
+    const options=Object.create(null);Object.defineProperties(options,Object.getOwnPropertyDescriptors(base));options.claude=invalid;
+    await assert.rejects(qualifyRepairHosts(options),/absolute/);
+  }
+  assert.equal(entrypointReads,0);
+  assert.throws(()=>repairHostSelection(null,'maintainer-is-promise'),/object/);
+  const argv=['--run','--authorize-fixture-tools','--authorize-fixture-repair','--repair-profile','maintainer-is-promise','--entrypoint','/package/src/cli.js','--output','/tmp/repair.json'];
+  assert.throws(()=>parseRepairArguments([...argv,'--claude']),/Missing/);
+  assert.throws(()=>parseRepairArguments([...argv,'--claude','relative']),/absolute/);
+  assert.throws(()=>parseRepairArguments([...argv,'--claude','/host/claude','--claude','/host/claude']),/Duplicate/);
 });

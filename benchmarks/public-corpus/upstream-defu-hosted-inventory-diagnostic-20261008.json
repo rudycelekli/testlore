@@ -1,0 +1,233 @@
+{
+  "schemaVersion": 1,
+  "kind": "retained-original-upstream-inventory-diagnostic-negative",
+  "recordedDate": "2026-10-08",
+  "sourceRevision": "64ed67c85ba7e61c34b7dcd80a08508934fae045",
+  "hostedRun": "https://github.com/rudycelekli/testlore/actions/runs/37753993462",
+  "candidateId": "unjs-defu-11ba02213d4b",
+  "repository": "https://github.com/unjs/defu",
+  "fixRevision": "11ba02213d4b1c6b02dd686041f75edc479c98e9",
+  "parentRevision": "3942bfbbcaa72084bd4284846c83bd61ed7c8b29",
+  "selectionCommitmentSha256": "065b79f7f345a971e76b0a2d1bdc4f4ab34c9c3b254837b693dee552b71af65a",
+  "qualified": false,
+  "status": "partial",
+  "failedPhase": "run",
+  "reason": "installed-tree-digest-mismatch",
+  "installation": {
+    "status": "completed",
+    "originalInputBindings": [
+      {
+        "logicalPath": "package.json",
+        "sha256": "0ee5010fb716a695cb591b6b33d0a7287117f47344fcd8ae1b9dfe7f623054d2",
+        "bytes": 1258
+      },
+      {
+        "logicalPath": "pnpm-lock.yaml",
+        "sha256": "8e25a8381354e1002b339db2196f23c243aebe2c91afc11219528fba6df07a36",
+        "bytes": 159185
+      }
+    ],
+    "packageManager": "pnpm@10.33.0",
+    "framework": {
+      "vitest": "4.1.2"
+    },
+    "platform": {
+      "node": "v22.19.0",
+      "platform": "linux",
+      "arch": "x64"
+    },
+    "managerSha256": "b276da51dc8ca5b0d3ee3371695b50fc8b3244b281b091c63a3f082a88dadeb9",
+    "managerMetadataSha256": "93c546f5767c5b13bca1a73100fdcd1a7eccd783cee3fb60f71d6c8430a246ca",
+    "lifecycleWarnings": true,
+    "resourcePolicy": {
+      "growthPolicy": "defu-original-lock-768mib",
+      "maxGrowthBytes": 805306368,
+      "reserveBytes": 2147483648,
+      "timeoutMs": 180000
+    },
+    "installedTree": {
+      "sha256": "5f1f22df77b78bae6f83c14763275e13e44b3bbde8143a4864cbafc92816a936",
+      "files": 10120,
+      "bytes": 188896201
+    },
+    "installedInventory": {
+      "sha256": "188e45cdc9590fd532ddd533d5db0fef29f4758ee3ed2a2827c8eb514cf959e0",
+      "bytes": 2204839,
+      "files": 10120,
+      "contentBytes": 188896201,
+      "expectedDigestReconstructed": true
+    }
+  },
+  "independentPreflight": {
+    "fixedBaseline": {
+      "cases": 23,
+      "passed": 23,
+      "skipped": 0,
+      "exitCode": 0
+    },
+    "independentFullFaultRuns": 2,
+    "stableNamedFailuresPerFaultRun": 1
+  },
+  "partialComparativeObservations": {
+    "requestedTrials": 2,
+    "completedTrials": 2,
+    "preservedFaultTrials": 2,
+    "missedFailures": 0,
+    "nativeMissedFailures": 0,
+    "invalidTrials": 0,
+    "selectiveTrials": 2,
+    "fullFallbackTrials": 0,
+    "controllerElapsedMs": 7656,
+    "timing": {
+      "fullMs": 1427,
+      "testLoreMs": 2899,
+      "nativeMs": 1071,
+      "netVsFullMs": -1472,
+      "netVsNativeMs": -1828
+    },
+    "trialSpans": [
+      {
+        "repetition": 1,
+        "fullMs": 731,
+        "testLoreMs": 1487,
+        "nativeMs": 543,
+        "planningMs": 914,
+        "subsetExecutionMs": 552,
+        "selectedFiles": 1,
+        "totalFiles": 2,
+        "missedFailures": 0,
+        "nativeMissedFailures": 0,
+        "valid": true,
+        "stable": true,
+        "mode": "affected"
+      },
+      {
+        "repetition": 2,
+        "fullMs": 696,
+        "testLoreMs": 1412,
+        "nativeMs": 528,
+        "planningMs": 859,
+        "subsetExecutionMs": 534,
+        "selectedFiles": 1,
+        "totalFiles": 2,
+        "missedFailures": 0,
+        "nativeMissedFailures": 0,
+        "valid": true,
+        "stable": true,
+        "mode": "affected"
+      }
+    ]
+  },
+  "wholeCliExecuted": false,
+  "campaignControllerMs": 23627,
+  "cachePolicy": {
+    "jitiFilesystem": false,
+    "vitestResults": false,
+    "testLoreDiskAnalysis": false
+  },
+  "automaticRetries": 0,
+  "installedTreeVerification": {
+    "schemaVersion": 1,
+    "kind": "upstream-installation-verification",
+    "status": "rejected",
+    "stage": "digest-mismatch",
+    "expected": {
+      "sha256": "5f1f22df77b78bae6f83c14763275e13e44b3bbde8143a4864cbafc92816a936",
+      "files": 10120,
+      "bytes": 188896201
+    },
+    "observed": {
+      "sha256": "0e1dd40c8be6b856448999cdd85b6cff122a52454759db209a56be7cd9c8233e",
+      "files": 10121,
+      "bytes": 188896224
+    },
+    "changes": {
+      "status": "complete",
+      "addedCount": 1,
+      "removedCount": 0,
+      "changedCount": 0,
+      "detailCount": 1,
+      "linkMembershipChanged": false,
+      "added": [
+        {
+          "path": ".vite/deps_temp_d25d6eb9/package.json",
+          "observed": {
+            "kind": "file",
+            "mode": 420,
+            "bytes": 23,
+            "sha256": "3ca9d4afd21425087cf31893b8f9f63c81b0b8408db5e343ca76e5f8aa26ab9a"
+          }
+        }
+      ],
+      "removed": [],
+      "changed": []
+    }
+  },
+  "privateDriftReceiptBinding": {
+    "sha256": "56a7f2aa6323cbaf953f621ed8eee3d2dda0e8094c8359e638699f15c8f90c88",
+    "bytes": 913,
+    "observedDigestReconstructed": true
+  },
+  "offlineReview": {
+    "sourceAndOriginalInputBindingsChecked": true,
+    "managerLogsAndTreeAttestationBindingsChecked": true,
+    "frozenOracleAndInverseSourceBindingsChecked": true,
+    "independentBaselineAndFaultCaseIdsDerivedAndChecked": true,
+    "fullSubsetNativeCasesAndFailurePreservationChecked": true,
+    "rawTrialAndSummaryTimingsChecked": true,
+    "expectedDigestReconstructedFromInventory": true,
+    "observedDigestReconstructedByReplayingOnlyRecordedAddition": true,
+    "tamperControls": [
+      {
+        "name": "bound-inventory-file-content-substitution",
+        "rejected": true
+      },
+      {
+        "name": "drift-file-hash-substitution",
+        "rejected": true
+      },
+      {
+        "name": "forged-drift-entry-with-rebound-byte-hash",
+        "rejected": true
+      }
+    ],
+    "restoredOriginalPassed": true,
+    "reviewerSha256": "5f987a9cfdf545f3e4cf77c112ba19baea56e6dcf939cf47353533362f62d286",
+    "inventoryReviewerSha256": "34f0a34609f83dd1a8755be871294c99e8805c1aa1bb9aeaf47f0bb62ff840c4",
+    "controlRunnerSha256": "773206314ce9a301a1a2f63e3b05fc33dbbb25919a0a78ebb0e9c035f43a85e7"
+  },
+  "diagnosis": {
+    "observedPathClass": "Vite dependency-optimizer temporary cache directory",
+    "identifiedChange": "One added regular package.json file, mode 0644, 23 bytes; complete relative path and content hash are retained above",
+    "writerProcessIdentified": false,
+    "creatingArmIdentified": false,
+    "causeStatus": "path class established; causal process attribution remains unknown",
+    "cacheAttributionScope": "The .vite/deps_temp_* path is observed. No file-content inspection, instrumented writer trace, or per-arm installed-tree inventory was retained. The path alone cannot establish which process wrote it.",
+    "previousNegativeReclassified": false
+  },
+  "receiptSha256": {
+    "summary": "818bbff67c542860a902b17bd3c9b1b7375b79f40efeb62a04817b5c5d13d2a3",
+    "installation": "1067d7c9c373acbfb0afd6fccc7eaf2ff8c24bcfb3189d62c1dad872a9c9e063",
+    "inventory": "188e45cdc9590fd532ddd533d5db0fef29f4758ee3ed2a2827c8eb514cf959e0",
+    "drift": "56a7f2aa6323cbaf953f621ed8eee3d2dda0e8094c8359e638699f15c8f90c88",
+    "preflight": "7a8c3fcb4a9189691763d542536f58fcb8085b77e97e75fc521832c7701f4b02",
+    "prepared": "2b5bc85780739b27a6397e6301af8102ff1db41c52cbd1f4b9777a57331b53b8",
+    "attempt": "8eace0d6705feaa01d859fff9144148402b81672f11b00dfa6c0377fa93e450a"
+  },
+  "accounting": {
+    "addedQualifiedChanges": 0,
+    "addedQualifiedRepositories": 0,
+    "repeatedCandidateAddsUniqueChange": false,
+    "target30Changes5RepositoriesMet": false,
+    "target100Changes10RepositoriesMet": false
+  },
+  "limitations": [
+    "This is one prospective diagnostic attempt at the already retained inherited-property candidate, not a new unique change.",
+    "Post-run dependency digest rejection remains authoritative despite both observed fault-preserving repetitions; no cache exclusions or guard relaxation.",
+    "Downloaded artifacts include inventory identities but exclude installed package contents. Replay verifies hash commitments, not independent rehashing of actual hosted bytes.",
+    "Exact recorded metadata identifies one added path and digest effect. Writer process and creating arm are not established; no causal attribution claim.",
+    "Native result/JITI/TestLore analysis disk caches disabled equally; this does not imply every Vite cache writer is disabled. OS/package caches uncontrolled.",
+    "Legacy per-arm timing includes planning/execution/reporting. Independent preflight and corpus orchestration are separate; no complete whole-CLI or speed-advantage claim.",
+    "No general ecosystem coverage, semantic maintainer independence, generation or learning improvement is established."
+  ]
+}

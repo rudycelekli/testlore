@@ -8,6 +8,7 @@ import {createFixture, executableIdentity, hostIdentityFor, executableDrift, pac
   boundedProcess, safeHostEnvironment, hostEvents, readBoundedText, readObserverReceipt, fixtureToolApprovalArguments,
   parseHostArguments, assessHost} from './host-qualification.js';
 import {repairProfile,authorizedRepairSource,createMaintainerRepairFixture,maintainerFixtureContents} from './maintainer-repair-profile.js';
+import {claudeStructuredContract,claudeStructuredAccount}from './claude-structured-account.js';
 
 const hash = text => createHash('sha256').update(text).digest('hex');
 const relativeScript = name => fileURLToPath(new URL(name, import.meta.url));
@@ -207,13 +208,36 @@ export function assessRepairLoop({processResult, observed, repair, before, after
     limitation: profile.limitation};
 }
 
+export function repairHostSelection(options,profileName='synthetic') {
+  if(!options||typeof options!=='object'||Array.isArray(options))throw new Error('Repair host options must be an object');
+  if(!['synthetic','maintainer-is-promise'].includes(profileName))throw new Error('Unknown named repair qualification profile');
+  const selected=[];
+  for(const host of ['codex','claude']){
+    if(!Object.hasOwn(options,host)||options[host]===undefined)continue;
+    const executable=options[host];
+    if(typeof executable!=='string'||!executable.length||executable.includes('\0')||!path.isAbsolute(executable))throw new Error('Explicit absolute repair host executable required');
+    selected.push(host);
+  }
+  if(profileName==='maintainer-is-promise'&&selected.length>1)throw new Error('The prospective maintainer profile permits at most one explicitly supplied native host: Codex OR Claude');
+  return selected;
+}
+
+export function repairFinalAccountFormat(options,profileName,selectedHosts){
+  const format=options.finalAccountFormat??'message';
+  if(!['message','native-structured'].includes(format))throw new Error('Unknown repair final-account format');
+  if(format==='native-structured'&&(profileName!=='maintainer-is-promise'||selectedHosts.length!==1||selectedHosts[0]!=='claude'))throw new Error('Native structured account requires one explicit Claude maintainer host');
+  return format;
+}
+
 export async function qualifyRepairHosts(options) {
   if (options.authorizeFixtureRepair !== true || options.authorizeFixtureTools !== true) throw new Error('Explicit fixture repair and execution tool opt-ins are required');
   if (!Number.isInteger(options.timeoutMs) || options.timeoutMs < 1000 || options.timeoutMs > 120000) throw new Error('Host deadline must be 1000..120000ms');
   const profileName=options.repairProfile??'synthetic',profile=repairProfile(profileName);
   const instructions=options.repairInstructions??'supplied';
-  const qualificationPrompt=repairQualificationPrompt(profileName,instructions);
-  if(profileName==='maintainer-is-promise'&&options.claude)throw new Error('The prospective maintainer profile permits at most one explicitly supplied Codex host call');
+  let qualificationPrompt=repairQualificationPrompt(profileName,instructions);
+  const selectedHosts=repairHostSelection(options,profileName);
+  const finalAccountFormat=repairFinalAccountFormat(options,profileName,selectedHosts),nativeStructuredAccount=finalAccountFormat==='native-structured';
+  if(nativeStructuredAccount)qualificationPrompt=qualificationPrompt.replace('Use ONLY configured TestLore MCP tools.','Use ONLY configured TestLore MCP tools for repository operations. The native StructuredOutput formatter is additionally permitted exactly once, after all seven sequential MCP calls, solely to submit the final account matching the supplied schema. No other native tool is permitted.');
   const entrypoint = executableIdentity(options.entrypoint), node = executableIdentity(process.execPath), snapshot = packageSnapshot(options.entrypoint);
   assertCanonicalEntrypoint(entrypoint, snapshot);
   const metadata = JSON.parse(readBoundedText(path.join(snapshot.root, 'package.json'), 128 * 1024));
@@ -221,16 +245,17 @@ export async function qualifyRepairHosts(options) {
   if (options.expectedSha256 && entrypoint.sha256 !== options.expectedSha256) throw new Error('Entrypoint identity mismatch');
   if (options.archive || options.expectedSourceSha || options.expectedArchiveSha256) throw new Error('Repair controller binds source identities; archive certification belongs to the existing host controller');
   const workspace = fs.mkdtempSync(path.join(os.tmpdir(), 'testlore-agent-repair-'));
-  const harness = ['agent-repair-qualification.js', 'fixture-repair-mcp.js','maintainer-repair-profile.js', 'host-qualification.js', 'host-mcp-observer.js', '../src/reporters/node.js'].map(name => executableIdentity(relativeScript(name)));
+  const harness = ['agent-repair-qualification.js', 'fixture-repair-mcp.js','maintainer-repair-profile.js', 'host-qualification.js','claude-structured-account.js', 'host-mcp-observer.js', '../src/reporters/node.js'].map(name => executableIdentity(relativeScript(name)));
   const report = {schemaVersion: 1, kind: 'native-agent-repair-qualification', startedAt: new Date().toISOString(), workspace, entrypoint, node, source: snapshot, harness,
-    repairProfile:profileName,repairInstructions:instructions,solutionSupplied:instructions==='supplied',promptSha256:hash(qualificationPrompt),maintainerProvenance:profile.provenance||null,
+    repairProfile:profileName,repairInstructions:instructions,finalAccountFormat,nativeStructuredAccountContract:nativeStructuredAccount?claudeStructuredContract:null,solutionSupplied:instructions==='supplied',promptSha256:hash(qualificationPrompt),maintainerProvenance:profile.provenance||null,
     limitation:profile.limitation+(instructions==='contract-only'?' Repair inferred from README, faulty source and observed failures without an explicit implementation hint. A canonical admission gate still restricts edits; this is not open-ended autonomous repair.':''),
     finalAccountSchema: repairSummarySchema(profileName), finalAccountSchemaSha256: hash(JSON.stringify(repairSummarySchema(profileName))),
     maximumHostCalls: profileName==='synthetic'?2:1, retries: 0, timeoutMs: options.timeoutMs, providerApiKeysRemoved: true, hosts: []};
   for (const host of ['codex', 'claude']) {
-    if (!options[host]) {report.hosts.push({host, qualified: false, status: 'not-started', reasons: ['explicit-host-executable-not-supplied']}); continue;}
+    if (!selectedHosts.includes(host)) {report.hosts.push({host, qualified: false, status: 'not-started', reasons: ['explicit-host-executable-not-supplied']}); continue;}
     let identity;
     try {identity = hostIdentityFor(options[host], host);} catch (error) {report.hosts.push({host, qualified: false, status: 'not-started', reasons: [error.code || error.message]}); continue;}
+    if(nativeStructuredAccount&&identity.sha256!==claudeStructuredContract.executableSha256){report.hosts.push({host,qualified:false,status:'not-started',reasons:['native-structured-host-version-binding-mismatch']});continue;}
     const directory = path.join(workspace, host);
     let root = path.join(directory, 'fixture');
     if(profileName==='synthetic')createFixture(root);else createMaintainerRepairFixture(root);
@@ -242,6 +267,7 @@ export async function qualifyRepairHosts(options) {
     const help = await boundedProcess(options[host], host === 'codex' ? ['exec', '--help'] : ['--help'], {cwd: root, env: safeHostEnvironment(process.env), timeoutMs: 10000});
     const requiredFlags = host === 'codex' ? ['--ignore-user-config', '--ignore-rules', '--ephemeral', '--output-last-message', '--output-schema', '--json']
       : ['--setting-sources', '--strict-mcp-config', '--tools', '--allowedTools', '--disable-slash-commands', '--no-session-persistence', '--output-format', '--verbose'];
+    if(nativeStructuredAccount)requiredFlags.push('--json-schema');
     if (help.status !== 'completed' || help.exitCode !== 0 || requiredFlags.some(flag => !help.stdout.includes(flag))) {
       report.hosts.push({host, qualified: false, status: 'not-started', reasons: ['installed-host-help-does-not-support-isolated-invocation'], help}); continue;
     }
@@ -268,12 +294,13 @@ export async function qualifyRepairHosts(options) {
       fs.writeFileSync(mcpPath, JSON.stringify({mcpServers: servers}), {mode: 0o600}); fs.writeFileSync(settingsPath, JSON.stringify({disableAllHooks: true}), {mode: 0o600});
       args = ['--print', '--setting-sources', '', '--settings', settingsPath, '--strict-mcp-config', '--mcp-config', mcpPath, '--tools', '', '--allowedTools',
         'mcp__testlore_readonly__testlore_brief,mcp__testlore_readonly__testlore_status,mcp__testlore_execution__testlore_plan,mcp__testlore_execution__testlore_verify,mcp__testlore_fixture__repair_fixture',
-        '--disable-slash-commands', '--no-session-persistence', '--verbose', '--output-format', 'stream-json', prompt];
+        '--disable-slash-commands', '--no-session-persistence', '--verbose', '--output-format', 'stream-json',...(nativeStructuredAccount?['--json-schema',JSON.stringify(repairSummarySchema(profileName))]:[]), prompt];
     }
-    const processResult = await boundedProcess(options[host], args, {cwd: root, env: safeHostEnvironment(process.env), timeoutMs: options.timeoutMs, stopOnNativeRetry: true});
+    const processResult = await boundedProcess(options[host], args, {cwd: root, env: safeHostEnvironment(process.env), timeoutMs: options.timeoutMs, stopOnNativeRetry: true,stopOnStructuredRetry:nativeStructuredAccount});
     // Preserve complete bounded raw events before parsing or qualification.
     fs.writeFileSync(path.join(directory, 'host.stdout.jsonl'), processResult.stdout, {mode: 0o600}); fs.writeFileSync(path.join(directory, 'host.stderr'), processResult.stderr, {mode: 0o600});
-    const events = hostEvents(host, processResult.stdout, true), observed = [], errors = [...events.errors]; let repair = null, finalMessage = events.finalMessage;
+    const events = hostEvents(host, processResult.stdout, true,nativeStructuredAccount), observed = [], errors = [...events.errors]; let repair = null, finalMessage = events.finalMessage;
+    let structuredAccount=null;if(nativeStructuredAccount){structuredAccount=claudeStructuredAccount(processResult.stdout,repairSummarySchema(profileName));finalMessage=structuredAccount.finalMessage;if(!structuredAccount.complete)errors.push(...structuredAccount.reasons.map(reason=>'native-structured-account-rejected:'+reason));}
     for (const config of configurations) try {observed.push(readObserverReceipt(config.receipt, config.mode));} catch (error) {errors.push(`observer-rejected:${config.mode}:${error.code || error.message}`);}
     try {repair = JSON.parse(readBoundedText(repairConfig.receipt, 16384));} catch (error) {errors.push(`repair-receipt-rejected:${error.code || error.message}`);}
     if (host === 'codex') try {finalMessage = readBoundedText(finalPath, 16384);} catch (error) {errors.push(`final-message-rejected:${error.code || error.message}`);}
@@ -290,7 +317,7 @@ export async function qualifyRepairHosts(options) {
       if (JSON.stringify(fixtureSnapshot(root)) !== JSON.stringify(after)) errors.push('fixture-changed-during-independent-run');
     } catch (error) {errors.push(`post-run-identity-rejected:${error.message}`);}
     const assessment = assessRepairLoop({processResult, observed, repair, before, after, baseline, planted, independent, finalMessage, entrypoint, node, hostErrors: errors,profileName});
-    report.hosts.push({host, identity, finalAccountSchemaIdentity: schemaIdentity, invocation: {args, cwd: root}, ...assessment, baseline, planted, independent, before, after, observed, repair,
+    report.hosts.push({host, identity, finalAccountSchemaIdentity: schemaIdentity,structuredAccount, invocation: {args, cwd: root}, ...assessment, baseline, planted, independent, before, after, observed, repair,
       process: {...processResult, stdout: undefined, stderr: undefined}, nativeApiRetriesObserved: events.nativeApiRetriesObserved});
     fs.writeFileSync(path.join(directory, 'independent-after.json'), JSON.stringify(independent), {mode: 0o600});
   }
@@ -299,18 +326,21 @@ export async function qualifyRepairHosts(options) {
 
 export function parseRepairArguments(argv) {
   if (argv.filter(flag => flag === '--authorize-fixture-repair').length !== 1) throw new Error('Explicit one-time --authorize-fixture-repair required');
-  const stripped=[],profileFlags=argv.filter(flag=>flag==='--repair-profile');let profileName='synthetic',instructions='supplied';
+  const stripped=[],profileFlags=argv.filter(flag=>flag==='--repair-profile');let profileName='synthetic',instructions='supplied',finalAccountFormat='message';
   if(profileFlags.length>1)throw new Error('Duplicate repair profile option');
   if(argv.filter(flag=>flag==='--repair-instructions').length>1)throw new Error('Duplicate repair instructions option');
+  if(argv.filter(flag=>flag==='--final-account-format').length>1)throw new Error('Duplicate final-account format option');
   for(let index=0;index<argv.length;index++){
     if(argv[index]==='--repair-profile'){profileName=argv[++index];if(typeof profileName!=='string'||!['synthetic','maintainer-is-promise'].includes(profileName))throw new Error('Unknown named repair qualification profile');}
     else if(argv[index]==='--repair-instructions'){instructions=argv[++index];if(!['supplied','contract-only'].includes(instructions))throw new Error('Unknown repair instructions mode');}
+    else if(argv[index]==='--final-account-format'){finalAccountFormat=argv[++index];if(!['message','native-structured'].includes(finalAccountFormat))throw new Error('Unknown repair final-account format');}
     else if(argv[index]!=='--authorize-fixture-repair')stripped.push(argv[index]);
   }
   const options = parseHostArguments(stripped);
   if (!options.authorizeFixtureTools) throw new Error('--authorize-fixture-tools required');
   if(instructions==='contract-only'&&profileName!=='maintainer-is-promise')throw new Error('Contract-only instructions require the maintainer profile');
-  return {...options,repairProfile:profileName,repairInstructions:instructions, authorizeFixtureRepair: true};
+  repairFinalAccountFormat({...options,finalAccountFormat},profileName,repairHostSelection(options,profileName));
+  return {...options,repairProfile:profileName,repairInstructions:instructions,finalAccountFormat, authorizeFixtureRepair: true};
 }
 export async function main(argv = process.argv.slice(2)) {
   const options = parseRepairArguments(argv);

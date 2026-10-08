@@ -1,0 +1,205 @@
+{
+  "schemaVersion": 1,
+  "kind": "native-agent-repair-qualification-negative",
+  "startedAt": "2026-10-08T09:14:58.720Z",
+  "finishedAt": "2026-10-08T09:15:37.530Z",
+  "sourceCommit": "f979e9cf7ca261c04d408a7317d7fe0e0b3c9c1c",
+  "sourcePackageSha256": "626591ac38c981748f045d1aacf32da5815f2aebbf123dfc238e69b72a37e672",
+  "repairProfile": "maintainer-is-promise",
+  "repairInstructions": "contract-only",
+  "solutionSupplied": false,
+  "promptSha256": "f8d6f042a3a1775dd05ef237f7e1fa6f0a9e6d9e15bc68a754b60003584216bc",
+  "maintainerProvenance": {
+    "repository": "https://github.com/then/is-promise",
+    "fixed": "ed0eaa4dec17597f0dae892a0472a9b7f459320d",
+    "parent": "2dfb684306b6f3b8b374478c86e63f8bab4a7f06",
+    "oracle": "ed0eaa4dec17597f0dae892a0472a9b7f459320d",
+    "datasetHash": "78d7e6127d15873b351f6c5128e951a39bd14a167fc2c9b8d9d1a5d354fedc0f",
+    "bindings": [
+      {
+        "repo": "then/is-promise",
+        "revision": "ed0eaa4dec17597f0dae892a0472a9b7f459320d",
+        "path": "index.js",
+        "gitBlob": "ca2444c6f69540f83504b8f54f4518af0ffc4cd5",
+        "sha256": "748c681ba64081193dc5fbb27f8b3539c09ba08f4e31ec6d588e2ae8c39234a8",
+        "bytes": 165,
+        "url": "https://github.com/then/is-promise/blob/ed0eaa4dec17597f0dae892a0472a9b7f459320d/index.js"
+      },
+      {
+        "repo": "then/is-promise",
+        "revision": "2dfb684306b6f3b8b374478c86e63f8bab4a7f06",
+        "path": "index.js",
+        "gitBlob": "772600b79091369385ce9b5a3adc779548d41970",
+        "sha256": "1bcef4c606ce23b0a7334bb7e01bec64266b7947c0a9c6acd715d94865c3a25d",
+        "bytes": 163,
+        "url": "https://github.com/then/is-promise/blob/2dfb684306b6f3b8b374478c86e63f8bab4a7f06/index.js"
+      },
+      {
+        "repo": "then/is-promise",
+        "revision": "ed0eaa4dec17597f0dae892a0472a9b7f459320d",
+        "path": "test.js",
+        "gitBlob": "d971c2828fab264d68b662c230e61af5dcaa6e0e",
+        "sha256": "0fce78dda44690c59ba7b397dea9683242d5ce7a1cf7c260a1d92cc4a4dd2b34",
+        "bytes": 1483,
+        "url": "https://github.com/then/is-promise/blob/ed0eaa4dec17597f0dae892a0472a9b7f459320d/test.js"
+      },
+      {
+        "repo": "then/is-promise",
+        "revision": "ed0eaa4dec17597f0dae892a0472a9b7f459320d",
+        "path": "readme.md",
+        "gitBlob": "50d5d989111aa5071420d76fb796e9f9215f8625",
+        "sha256": "2831cabb33577b1054b575c0b7cca7b4f446510d59cab316414122e43234410f",
+        "bytes": 872,
+        "url": "https://github.com/then/is-promise/blob/ed0eaa4dec17597f0dae892a0472a9b7f459320d/readme.md"
+      },
+      {
+        "repo": "then/is-promise",
+        "revision": "ed0eaa4dec17597f0dae892a0472a9b7f459320d",
+        "path": "LICENSE",
+        "gitBlob": "27cc9f3771540a450dae91b1e04dd1383ff1a4d1",
+        "sha256": "44191656d296391e0ec97e32f5385f0d02b6f2992694082d22ea04ba0f66f9e4",
+        "bytes": 1058,
+        "url": "https://github.com/then/is-promise/blob/ed0eaa4dec17597f0dae892a0472a9b7f459320d/LICENSE"
+      }
+    ],
+    "adaptation": "Only imports/framework entry points change; original maintainer assertion bodies remain byte-identical. Not a full upstream Mocha/better-assert qualification."
+  },
+  "limitation": "One genuine historical null/undefined boolean predicate defect, with eight unchanged maintainer assertion bodies on a Node import shim. No general application repair, upstream Mocha environment, or deployment safety claim. Repair inferred from README, faulty source and observed failures without an explicit implementation hint. A canonical admission gate still restricts edits; this is not open-ended autonomous repair.",
+  "nativeHostInvocations": 1,
+  "maximumHostCalls": 1,
+  "retries": 0,
+  "nativeApiRetriesObserved": 0,
+  "providerRequestCount": null,
+  "timeoutMs": 115000,
+  "providerApiKeysRemoved": true,
+  "node": {
+    "version": "22.19.0",
+    "bytes": 110712624,
+    "sha256": "0d005c18e095027ca8f9fe1cc1126f767ee4ad7b004f4d6fb781ec4228a7c5d1"
+  },
+  "host": {
+    "name": "claude",
+    "cliVersion": "2.1.88",
+    "executable": {
+      "bytes": 13047043,
+      "sha256": "75c9611929d9a770fe2e3a393219d8b98f5de17fde539b2a7355c6db3fd2795f"
+    },
+    "nativeReportedModel": "claude-opus-4-6[1m]",
+    "modelOverrideRequested": false
+  },
+  "configuration": {
+    "fixtureOnlyMcpTools": true,
+    "ordinaryToolsDisabled": true,
+    "strictMcpConfig": true,
+    "settingsSourcesDisabled": true,
+    "hooksDisabled": true,
+    "sessionPersistence": false
+  },
+  "qualification": {
+    "qualified": false,
+    "status": "not-qualified",
+    "reasons": [
+      "host-final-repair-account-invalid"
+    ],
+    "twoHostAggregateComplete": false,
+    "codexStatus": "not-started",
+    "finalAccountJsonOnly": false,
+    "finalAccountSha256": "5b6fcaf16d6b195798f18284566e7c989aa221b3471f0055e0ada2a5e4e1d1c7",
+    "formatFailure": "Final text prefixed a fenced JSON object with prose; the exact final-account parser rejected it. Original negative is unchanged."
+  },
+  "observedStages": {
+    "orderedTools": [
+      "testlore_brief",
+      "testlore_status",
+      "testlore_plan",
+      "testlore_verify",
+      "repair_fixture",
+      "testlore_plan",
+      "testlore_verify"
+    ],
+    "fixtureFilesSealed": 10,
+    "onlyCanonicalSourceChanged": true,
+    "independentCaseIdentityPreserved": true,
+    "baseline": {
+      "passed": 8,
+      "failed": 0
+    },
+    "historical": {
+      "passed": 6,
+      "failed": 2,
+      "failedCases": [
+        {
+          "file": "test/promise.test.cjs",
+          "name": "calling isPromise > with null > returns false",
+          "id": "6746e9eb49b75e776a726ff572a2b0058675cb095c486b0608c9b2bd78b5a827"
+        },
+        {
+          "file": "test/promise.test.cjs",
+          "name": "calling isPromise > with undefined > returns false",
+          "id": "56524740f7ff06425ccbea76baa7dacb3a32c3cb20d0ea79cb2aa63bd8fd12f8"
+        }
+      ]
+    },
+    "afterRepair": {
+      "passed": 8,
+      "failed": 0
+    },
+    "additionalIndependentPostrun": {
+      "complete": true,
+      "passed": 8,
+      "failed": 0,
+      "reportSha256": "1dd83a95684aeaa1cad1ccae8ba4e226a334436f90edcd84c7605bcb4ee04aa7"
+    },
+    "protectedFixtureFiles": [
+      ".gitignore",
+      "LICENSE.maintainer",
+      "maintainer-provenance.json",
+      "package.json",
+      "provenance/original-test.txt",
+      "README.maintainer.md",
+      "tddswarm.config.json",
+      "tddswarm.requirements.md",
+      "test/promise.test.cjs"
+    ]
+  },
+  "timings": {
+    "nativeHostProcessMs": 37713,
+    "completeOuterMs": 39583.467375
+  },
+  "resources": {
+    "freeBytesBefore": 2849517568,
+    "freeBytesAfter": 2383679488
+  },
+  "nativeReportedUsage": {
+    "input_tokens": 10,
+    "cache_creation_input_tokens": 13038,
+    "cache_read_input_tokens": 75709,
+    "output_tokens": 1007,
+    "server_tool_use": {
+      "web_search_requests": 0,
+      "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+      "ephemeral_1h_input_tokens": 13038,
+      "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "",
+    "iterations": [],
+    "speed": "standard"
+  },
+  "clientEstimatedCostUsd": 0.144567,
+  "actualBilledCostUsd": null,
+  "costLimitation": "Usage/model/cost are local native CLI event reports. Estimated client cost is not a subscription invoice, billed charge or external request audit.",
+  "rawReceiptBindings": {
+    "native-claude-f979e9c.json": "87ad10689f59ccffbfd9b5bd03fb840fed7dfa897b108d160fe63595f99024a2",
+    "native-claude-f979e9c-checkpoint.json": "2ead33e0d67653fce462b30cb147c27888936eeca0cff9e4ae8e76daa937b65c",
+    "native-claude-f979e9c-completion.json": "6e7b7369fdad13aca263ede099710256356d6fbb4a1081f9f4153b3ec9be7150",
+    "independent-audit.json": "f5d6b1f662c11459b3c483d7dada52a126b5f8c8751e672535d80bc1b5c38174",
+    "independent-extra-postrun.json": "1dd83a95684aeaa1cad1ccae8ba4e226a334436f90edcd84c7605bcb4ee04aa7",
+    "retained-native-claude/host.stdout.jsonl": "df5aabcc0a17296d6cad6ea2c96b59f0f5cbe5baeb90300034aff681a314fa21",
+    "retained-native-claude/readonly-mcp.json": "d3757afbf4b2520ccd28d49699de1d513a0c5e284956ddac18944ef4dd92c2cc",
+    "retained-native-claude/execution-mcp.json": "2ff75e9b43dffa3b3032cfa4b650d7b087d1d66b9b01459d1103b88ca544e2fc",
+    "retained-native-claude/repair.json": "43cd71b3e13d5f78eb0c5f7f4b734740cbebd1e74c396f0da5b8e62ba9e06ffd"
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "schemaVersion": 1,
+  "kind": "prospective-native-structured-account-protocol-source-evidence",
+  "nativeQualified": false,
+  "claudeCliVersion": "2.1.88",
+  "executable": {
+    "bytes": 13047043,
+    "sha256": "75c9611929d9a770fe2e3a393219d8b98f5de17fde539b2a7355c6db3fd2795f"
+  },
+  "primaryDocumentation": [
+    {
+      "url": "https://code.claude.com/docs/en/cli-reference",
+      "claim": "--json-schema requests schema-validated output after the agent workflow."
+    },
+    {
+      "url": "https://code.claude.com/docs/en/headless",
+      "claim": "Structured output is separate from result text; documentation examples alone do not establish this pinned stream event behavior."
+    }
+  ],
+  "pinnedImplementation": {
+    "terminalResult": "success result includes structured_output assigned from native StructuredOutput attachment",
+    "streamEmission": "verbose stream-json writes generator events directly",
+    "formatterTool": "StructuredOutput",
+    "offsets": [
+      12871530,
+      12874027,
+      12875554
+    ],
+    "nativeCounter": "Counts assistant messages containing a StructuredOutput tool_use; threshold defaults to5 and checks when a user event is processed.",
+    "environmentCapNotChanged": "Threshold1 might reject the first completed formatter call, including a successful one; success behavior was not verified through a new native trial."
+  },
+  "prospectiveController": {
+    "explicitOption": "--final-account-format native-structured",
+    "requires": "One Claude host on maintainer-is-promise, exact pinned executable SHA, supported --json-schema help, fixed required final schema",
+    "preservedMcpCallCount": 7,
+    "separateFormatterInvocationCount": 1,
+    "proseFallback": false,
+    "nativeFormattingRetriesBound": "Stops on observed formatter error/repetition; pipe observation does not attest or prevent all hidden/prebuffered requests.",
+    "nativeApiRetryGuardPreserved": true,
+    "requiredProspectiveLaunchPolicy": {
+      "minimumFreeAtLaunchBytes": 2684354560,
+      "retainedFreeReserveBytes": 2147483648,
+      "samplingIntervalMs": 1000,
+      "onBreach": "Cancel the entire bounded controller/host process tree best-effort; retain rejected output. This external campaign watchdog is required before a separately authorized trial; no new native trial was executed."
+    }
+  },
+  "rawEvidenceSha256": {
+    "claude-2.1.88-help.json": "e6859755801258f0d32c2a0ea6b8427e00ec671179f3b8abea1ce4b4e2d30635",
+    "claude-2.1.88-structured-implementation.json": "3edacfbd65dd0b3f45acbc8f9f86ee0ee3bcedf11551d38275a5d6929a56fae3",
+    "claude-2.1.88-stream-result-evidence.json": "21adfe3f823c0526d7bcd29cdd785a6e04ae8f637c9b2fbb0759dcee6f4ad57e"
+  },
+  "limitation": "Pinned help and source plus constructed stream/controller tests only. No native structured-account result or general host qualification is established."
+}
