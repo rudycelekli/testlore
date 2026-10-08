@@ -1,10 +1,10 @@
 # Experimental alpha adoption
 
-TestLore is available from the merged public GitHub main branch. It is experimental: native Node/Jest/Vitest validation is the best qualified improvement path; Nx, Bazel and pytest-testmon retain their own native execution scope. Pin a reviewed commit when evaluating a reproducible setup.
+TestLore 0.1.0 is available from npm and the merged public GitHub main branch. It is experimental: native Node/Jest/Vitest validation is the best qualified improvement path; Nx, Bazel and pytest-testmon retain their own native execution scope. Pin a reviewed commit when evaluating a reproducible setup.
 
 ```sh
-npm exec --yes --package=github:rudycelekli/testlore -- testlore init
-npm install --save-dev github:rudycelekli/testlore
+npm exec --yes --package=testlore@0.1.0 -- testlore init
+npm install --save-dev testlore@0.1.0
 npx --no-install testlore audit --json
 npx --no-install testlore plugins --recommend --json
 ```
@@ -34,7 +34,7 @@ Adoption progress is evidence-driven: retain misses and overhead, establish a st
 ## One-command local setup
 
 ```sh
-npm exec --yes --package=github:rudycelekli/testlore -- testlore setup
+npm exec --yes --package=testlore@0.1.0 -- testlore setup
 ```
 
 This creates a named project quality-agent profile, native runner configuration with local analysis caching and shadow execution, and a shadow/full GitHub workflow. It preserves existing configuration/workflows and makes no agent calls or optional SDK downloads. Inspect and commit those files before running `improve`. A local TestLore dev dependency is required for the optional `testlore/playwright` fixture; temporary npm execution cannot supply a persistent project import.
@@ -49,4 +49,4 @@ npx --no-install testlore doctor --json
 
 `doctor` parses bounded configuration and installed native SDK metadata without importing SDK code, running discovery, probing services, downloading dependencies or changing files. Exit 1 means prerequisites are blocked; exit 0 means a shadow attempt can begin, not that tests passed or omissions are qualified. Each check gives a concrete next action. Existing selective policies are preserved and flagged for review. `setup` returns this diagnostic, and the default agent brief includes the same facts.
 
-The registry shorthand `npm exec --yes --package=testlore@alpha -- testlore setup` becomes valid only after a verified npm publication. Until then use the GitHub package and pin a reviewed commit for repeatability. The exact-artifact publisher workflow exists; npm ownership/bootstrap and trusted-publisher access remain maintainer operations.
+The commands pin the verified npm version. `testlore@alpha` follows the moving alpha channel; registry metadata currently points both `alpha` and `latest` to 0.1.0. [Release evidence](npm-release-0.1.0.md) distinguishes registry availability from broader application qualification. GitHub installation remains available with `--package=github:rudycelekli/testlore#YOUR_REVIEWED_COMMIT`. Trusted OIDC publishing still requires maintainer setup.
