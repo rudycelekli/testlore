@@ -9,6 +9,7 @@ import {createFixture, executableIdentity, hostIdentityFor, executableDrift, pac
   parseHostArguments, assessHost} from './host-qualification.js';
 import {repairProfile,authorizedRepairSource,createMaintainerRepairFixture,maintainerFixtureContents} from './maintainer-repair-profile.js';
 import {claudeStructuredContract,claudeStructuredAccount}from './claude-structured-account.js';
+import {briefInputSchema,statusInputSchema} from '../src/mcp-inputs.js';
 
 const hash = text => createHash('sha256').update(text).digest('hex');
 const relativeScript = name => fileURLToPath(new URL(name, import.meta.url));
@@ -115,7 +116,16 @@ export async function independentRun(root, node,profileName='synthetic') {
 
 // Same bounded initial lifecycle as the synthetic gate, but bound to the actual
 // unchanged maintainer inventory and independently observed historical failures.
-function assessMaintainerInitial({processResult,observed,entrypoint,nodeIdentity},planted,profile){
+export const maintainerEvaluationContract = Object.freeze({version:2,briefArguments:'shared-mcp-schema-and-sealed-fixture-files',statusArguments:'empty-object',historicalReclassification:false});
+
+export function maintainerBriefArguments(argumentsValue,sealedFiles){
+  const parsed=briefInputSchema.safeParse(argumentsValue);
+  if(!parsed.success||!Array.isArray(sealedFiles)||sealedFiles.some(file=>typeof file!=='string'))return false;
+  const files=new Set(sealedFiles);
+  return (parsed.data.changed||[]).every(file=>files.has(file));
+}
+
+function assessMaintainerInitial({processResult,observed,entrypoint,nodeIdentity},planted,profile,sealedFiles){
   const reasons=[];
   if(processResult.status!=='completed'||processResult.exitCode!==0)reasons.push(`host-${processResult.status}:${processResult.reason||processResult.exitCode}`);
   const readonly=observed.find(row=>row.mode==='readonly'),execution=observed.find(row=>row.mode==='execution');
@@ -136,7 +146,7 @@ function assessMaintainerInitial({processResult,observed,entrypoint,nodeIdentity
   if(JSON.stringify((execution?.calls||[]).map(row=>row.name))!==JSON.stringify(['testlore_plan','testlore_verify']))reasons.push('execution-tool-call-sequence-mismatch');
   const brief=readonly?.calls?.[0],status=readonly?.calls?.[1],plan=execution?.calls?.[0],verify=execution?.calls?.[1];
   const exact=(value,expected)=>value&&typeof value==='object'&&!Array.isArray(value)&&JSON.stringify(Object.keys(value).sort())===JSON.stringify(Object.keys(expected).sort())&&Object.keys(expected).every(key=>value[key]===expected[key]);
-  if(!exact(brief?.arguments,{})||!exact(status?.arguments,{}))reasons.push('readonly-arguments-mismatch');
+  if(!maintainerBriefArguments(brief?.arguments,sealedFiles)||!statusInputSchema.safeParse(status?.arguments).success)reasons.push('readonly-arguments-mismatch');
   if(!exact(plan?.arguments,{base:'HEAD'}))reasons.push('plan-arguments-mismatch');
   if(!exact(verify?.arguments,{base:'HEAD',mode:'shadow'}))reasons.push('verify-arguments-mismatch');
   if(readonly?.calls?.some(call=>call.respondedAt>plan?.requestedAt))reasons.push('execution-preceded-default-responses');
@@ -170,7 +180,7 @@ export function assessRepairLoop({processResult, observed, repair, before, after
   const firstMessage = JSON.stringify({verdict: 'failed', failedCases: firstFailure?.failedCases, executedFiles: firstFailure?.executedFiles,
     uncertainty: 'Fixture observations cannot establish deployment safety.', nextAction: 'Repair the independent value contract and perform a fresh full verification.', deploymentSafety: 'not-established'});
   const initialInput={processResult, observed: [readonly, execution && {...execution, calls: calls.slice(0, 2)}].filter(Boolean),finalMessage: firstMessage,entrypoint,nodeIdentity:node};
-  const initial = profileName==='synthetic'?assessHost(initialInput):assessMaintainerInitial(initialInput,planted,profile);
+  const initial = profileName==='synthetic'?assessHost(initialInput):assessMaintainerInitial(initialInput,planted,profile,before.map(row=>row.file));
   reasons.push(...initial.reasons.map(reason => `initial:${reason}`));
   const repairCall = repair?.calls?.[0], final = calls[3];
   if (repair?.schemaVersion !== 1 || repair.kind !== 'bounded-fixture-repair' || repair.rejectedAdditionalCalls !== 0 || repair.calls?.length !== 1 || repairCall?.result?.complete !== true
@@ -245,9 +255,9 @@ export async function qualifyRepairHosts(options) {
   if (options.expectedSha256 && entrypoint.sha256 !== options.expectedSha256) throw new Error('Entrypoint identity mismatch');
   if (options.archive || options.expectedSourceSha || options.expectedArchiveSha256) throw new Error('Repair controller binds source identities; archive certification belongs to the existing host controller');
   const workspace = fs.mkdtempSync(path.join(os.tmpdir(), 'testlore-agent-repair-'));
-  const harness = ['agent-repair-qualification.js', 'fixture-repair-mcp.js','maintainer-repair-profile.js', 'host-qualification.js','claude-structured-account.js', 'host-mcp-observer.js', '../src/reporters/node.js'].map(name => executableIdentity(relativeScript(name)));
+  const harness = ['agent-repair-qualification.js', 'fixture-repair-mcp.js','maintainer-repair-profile.js', 'host-qualification.js','claude-structured-account.js', 'host-mcp-observer.js', '../src/reporters/node.js','../src/mcp-inputs.js'].map(name => executableIdentity(relativeScript(name)));
   const report = {schemaVersion: 1, kind: 'native-agent-repair-qualification', startedAt: new Date().toISOString(), workspace, entrypoint, node, source: snapshot, harness,
-    repairProfile:profileName,repairInstructions:instructions,finalAccountFormat,nativeStructuredAccountContract:nativeStructuredAccount?claudeStructuredContract:null,solutionSupplied:instructions==='supplied',promptSha256:hash(qualificationPrompt),maintainerProvenance:profile.provenance||null,
+    repairProfile:profileName,evaluatorContract:profileName==='maintainer-is-promise'?maintainerEvaluationContract:null,repairInstructions:instructions,finalAccountFormat,nativeStructuredAccountContract:nativeStructuredAccount?claudeStructuredContract:null,solutionSupplied:instructions==='supplied',promptSha256:hash(qualificationPrompt),maintainerProvenance:profile.provenance||null,
     limitation:profile.limitation+(instructions==='contract-only'?' Repair inferred from README, faulty source and observed failures without an explicit implementation hint. A canonical admission gate still restricts edits; this is not open-ended autonomous repair.':''),
     finalAccountSchema: repairSummarySchema(profileName), finalAccountSchemaSha256: hash(JSON.stringify(repairSummarySchema(profileName))),
     maximumHostCalls: profileName==='synthetic'?2:1, retries: 0, timeoutMs: options.timeoutMs, providerApiKeysRemoved: true, hosts: []};

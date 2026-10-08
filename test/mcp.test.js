@@ -7,6 +7,8 @@ import { Client } from '@modelcontextprotocol/client';
 import { StdioClientTransport } from '@modelcontextprotocol/client/stdio';
 import { fixture, write, commit, twoModules } from './helpers.js';
 import { boundedSummary, summarizePlan } from '../src/mcp-worker.js';
+import {z} from 'zod';
+import {briefInputSchema,statusInputSchema} from '../src/mcp-inputs.js';
 
 const serverUrl = pathToFileURL(path.resolve('src/mcp.js')).href;
 async function connect(t, root, options = {}, workerEnv = {}) {
@@ -30,13 +32,16 @@ test('real MCP SDK handshake defaults to strict read-only tools and never runs p
   assert.equal(client.getServerVersion().name, 'testlore');
   const tools = (await client.listTools()).tools;
   assert.deepEqual(tools.map(tool => tool.name).sort(), ['testlore_brief', 'testlore_status']);
+  const withoutDialect=value=>{const result=structuredClone(value);delete result.$schema;return result;};
+  assert.deepEqual(withoutDialect(tools.find(tool=>tool.name==='testlore_brief').inputSchema),withoutDialect(z.toJSONSchema(briefInputSchema)));
+  assert.deepEqual(withoutDialect(tools.find(tool=>tool.name==='testlore_status').inputSchema),withoutDialect(z.toJSONSchema(statusInputSchema)));
   assert.ok(tools.every(tool => tool.annotations.readOnlyHint === true));
   const brief = await call(client, 'testlore_brief', { task: 'Preserve the independent contract', changed: ['src/a.js'] });
   assert.equal(brief.isError, undefined); assert.equal(brief.structuredContent.authority, 'advisory');
   assert.equal((await call(client, 'testlore_status')).isError, undefined);
   assert.equal(fs.existsSync(path.join(root, 'executed-marker')), false);
   assert.equal(fs.existsSync(path.join(root, '.tddswarm')), false);
-  for (const [name, args] of [['testlore_brief', { root: '/tmp' }], ['testlore_brief', { task: 'a'.repeat(2001) }],
+  for (const [name, args] of [['testlore_brief', { root: '/tmp' }], ['testlore_brief', { task: 'a'.repeat(2001) }],['testlore_brief',{task:'NUL\0task'}],
     ['testlore_status', { allowExecution: true }]])
     assert.equal((await call(client, name, args)).isError, true);
   await assert.rejects(call(client, 'testlore_verify'), /not found/);

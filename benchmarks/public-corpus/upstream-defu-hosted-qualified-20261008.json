@@ -1,0 +1,510 @@
+{
+  "schemaVersion": 1,
+  "kind": "qualified-original-upstream-environment-campaign",
+  "sourceRevision": "cb9b6fe87017865ac5c74420547757aed9d88b19",
+  "hostedRun": "https://github.com/rudycelekli/testlore/actions/runs/37758820425",
+  "selectionCommitmentSha256": "065b79f7f345a971e76b0a2d1bdc4f4ab34c9c3b254837b693dee552b71af65a",
+  "metadataSha256": "590e94bfff63c7a3c1c48737ac0871aab99818bf60c01825619aeb14b52469b8",
+  "qualifiedLedgerSha256": "e8e7be6c9045bac3bc2d5b54d3fe85b7bc6b067d14c1b34f9f426b4996dd9d23",
+  "attempts": [
+    {
+      "candidateId": "unjs-defu-11ba02213d4b",
+      "repository": "https://github.com/unjs/defu",
+      "fixRevision": "11ba02213d4b1c6b02dd686041f75edc479c98e9",
+      "parentRevision": "3942bfbbcaa72084bd4284846c83bd61ed7c8b29",
+      "verifiedQualified": true,
+      "producerQualified": true,
+      "verifiedPartialObservations": false,
+      "status": "verified-scoped-qualification",
+      "installedEvidence": {
+        "inventorySha256": "fce36503318326802bcc40382f97e27189648fca7ed3ae7e5514f812fa3f92aa",
+        "inventoryBytes": 2204839,
+        "baselineDigestReconstructed": true,
+        "packageContentsIndependentlyRehashed": false,
+        "postTreeStatus": "producer-verified-unchanged",
+        "scope": "Immutable producer performs before/after whole-installed-tree verification; downloaded artifacts exclude package contents"
+      },
+      "frameworkVersion": "4.1.2",
+      "installedTree": {
+        "sha256": "7ce15532c3613bbab7d346fc772725a913b7261f5a40e149af27c45538f210db",
+        "files": 10120,
+        "bytes": 188896201
+      },
+      "fixedPassedCases": 23,
+      "independentFaultCasesPerRun": 1,
+      "trialSpans": [
+        {
+          "repetition": 1,
+          "fullMs": 647,
+          "testLoreMs": 1120,
+          "nativeMs": 490,
+          "planningMs": 598,
+          "subsetExecutionMs": 503,
+          "selectedFiles": 1,
+          "totalFiles": 2,
+          "omittedFiles": 1,
+          "mode": "affected",
+          "missedFailures": 0,
+          "nativeMissedFailures": 0
+        },
+        {
+          "repetition": 2,
+          "fullMs": 654,
+          "testLoreMs": 1103,
+          "nativeMs": 502,
+          "planningMs": 571,
+          "subsetExecutionMs": 516,
+          "selectedFiles": 1,
+          "totalFiles": 2,
+          "omittedFiles": 1,
+          "mode": "affected",
+          "missedFailures": 0,
+          "nativeMissedFailures": 0
+        }
+      ],
+      "caseObservations": {
+        "full": 46,
+        "testLore": 42,
+        "native": 42
+      },
+      "controllerMs": 23347,
+      "receiptSha256": {
+        "summary": "c17fa3599868ee1cf6898e5d27bde5b0d6e78d50724c7a36648a02038ed851e8",
+        "installation": "1f57dd96f3307810e6654187de2cec3b4a0736ead7b80f6294989bcd073e152e",
+        "prepared": "3aebfbe05b2881b79657797b3756907b90dee31e56b9d4dc20dba81ef98d5c4b",
+        "preflight": "66852217b0137662b3e58a0ae36a2547da4215a12e4be5ad5aae81b6e144d162",
+        "attempt": "199c8cbb4cabe9dac21bc9d61bdbcc5ad0eecbafaf023d8480bd83acc85f59a5"
+      },
+      "rawNativeReceiptSha256": {
+        "independentBaseline": "28acccc8a152d70dbc17f1b5397042ee19edf03727b294255377f2cebe835cb9",
+        "independentFaults": [
+          "5203ac1f0482427172e98a1165e0306f5519f74827655213fc0e32ac9542b65d",
+          "df6f5fcc10d6d3df481297a95129950447a88b422d268ef0c72abced9fdff4ff"
+        ],
+        "comparativeTrials": [
+          {
+            "repetition": 1,
+            "full": "85dc16bd203d03148d78a58f26cae5b4d9f2916174e7ef9c67816c89ae29d66e",
+            "subset": "d407f449d54afdb61b8962f8ef3891e7c0a63b0b49dc3d228dcb29020dbcaf53",
+            "native": "417506662274a32df76162659b70d6de6193e3bf93d4ba036c170ed7a5617cd9"
+          },
+          {
+            "repetition": 2,
+            "full": "ff31622f3bdeaf34bf1954e70bbfaf51e0d68e58bb6e1db5172bf06b374bf023",
+            "subset": "e7a38132a8c659578ecc43deb9a4ac62fd2b4817297d031b987d8efdd70ddc79",
+            "native": "448b038e86e5550e701243ffda3407d99c81223d135c428c5d70e2708bbf5321"
+          }
+        ]
+      },
+      "originalBindings": [
+        {
+          "kind": "dependency",
+          "path": "package.json",
+          "sha256": "0ee5010fb716a695cb591b6b33d0a7287117f47344fcd8ae1b9dfe7f623054d2",
+          "bytes": 1258
+        },
+        {
+          "kind": "dependency",
+          "path": "pnpm-lock.yaml",
+          "sha256": "8e25a8381354e1002b339db2196f23c243aebe2c91afc11219528fba6df07a36",
+          "bytes": 159185
+        },
+        {
+          "kind": "prior-source",
+          "path": "src/defu.ts",
+          "sha256": "db851ec4fe2850ad460c23e8321bfa6b635ae38d21b170f02373ad78de3ac652",
+          "bytes": 2024
+        },
+        {
+          "kind": "oracle",
+          "path": "test/defu.test.ts",
+          "sha256": "abfe579ac2a0f10280bc11efc3ece9c2012f5fa7dde0259ee604b85a5118b145",
+          "bytes": 7729
+        }
+      ],
+      "sourceBindings": [
+        {
+          "kind": "fixed-source",
+          "path": "src/defu.ts",
+          "sha256": "5318d12aae6955d6e42c9dfc694b267838c56ba1a899a6b068930cd033a035cf",
+          "bytes": 2085
+        },
+        {
+          "kind": "prior-source",
+          "path": "src/defu.ts",
+          "sha256": "db851ec4fe2850ad460c23e8321bfa6b635ae38d21b170f02373ad78de3ac652",
+          "bytes": 2024
+        }
+      ],
+      "installation": {
+        "packageManager": "pnpm@10.33.0",
+        "platform": {
+          "node": "v22.19.0",
+          "platform": "linux",
+          "arch": "x64"
+        },
+        "originalInputBindings": [
+          {
+            "logicalPath": "package.json",
+            "sha256": "0ee5010fb716a695cb591b6b33d0a7287117f47344fcd8ae1b9dfe7f623054d2",
+            "bytes": 1258
+          },
+          {
+            "logicalPath": "pnpm-lock.yaml",
+            "sha256": "8e25a8381354e1002b339db2196f23c243aebe2c91afc11219528fba6df07a36",
+            "bytes": 159185
+          }
+        ],
+        "managerIdentity": {
+          "sha256": "b276da51dc8ca5b0d3ee3371695b50fc8b3244b281b091c63a3f082a88dadeb9",
+          "bytes": 1102,
+          "mode": 33261
+        },
+        "managerMetadataIdentity": {
+          "sha256": "93c546f5767c5b13bca1a73100fdcd1a7eccd783cee3fb60f71d6c8430a246ca",
+          "bytes": 6125,
+          "mode": 33188
+        },
+        "lifecycleWarnings": true,
+        "resourcePolicy": {
+          "growthPolicy": "defu-original-lock-768mib",
+          "maxGrowthBytes": 805306368,
+          "reserveBytes": 2147483648,
+          "timeoutMs": 180000
+        }
+      },
+      "timing": {
+        "fullMs": 1301,
+        "testLoreMs": 2223,
+        "nativeMs": 992,
+        "netVsFullMs": -922,
+        "netVsNativeMs": -1231
+      },
+      "corpusControllerMs": 6631,
+      "wholeCliExecuted": false,
+      "cachePolicy": {
+        "jitiFilesystem": false,
+        "vitestResults": false,
+        "testLoreDiskAnalysis": false
+      },
+      "tamperControls": [
+        {
+          "name": "inventory-content-substitution",
+          "rejected": true,
+          "stage": "review-exception"
+        },
+        {
+          "name": "original-manifest-input-substitution",
+          "rejected": true,
+          "stage": "original-installation-input"
+        },
+        {
+          "name": "native-failure-changed-to-passed",
+          "rejected": true,
+          "stage": "all-failures-preserved"
+        },
+        {
+          "name": "raw-duration-plus-one",
+          "rejected": true,
+          "stage": "raw-arm-timing"
+        },
+        {
+          "name": "forged-native-case-id",
+          "rejected": true,
+          "stage": "native-id-content"
+        },
+        {
+          "name": "summary-timing-plus-one",
+          "rejected": true,
+          "stage": "summary-trial-spans"
+        },
+        {
+          "name": "source-revision-substitution",
+          "rejected": true,
+          "stage": "campaign-source"
+        }
+      ]
+    },
+    {
+      "candidateId": "unjs-defu-3942bfbbcaa7",
+      "repository": "https://github.com/unjs/defu",
+      "fixRevision": "3942bfbbcaa72084bd4284846c83bd61ed7c8b29",
+      "parentRevision": "d3ef16dabe861713192ba8679c5db8e0ac143f9b",
+      "verifiedQualified": true,
+      "producerQualified": true,
+      "verifiedPartialObservations": false,
+      "status": "verified-scoped-qualification",
+      "installedEvidence": {
+        "inventorySha256": "c6dfb49b7cb66d36ce3d15fbf630002744a7eb111a90e74fdc1c1f839366e80f",
+        "inventoryBytes": 2204839,
+        "baselineDigestReconstructed": true,
+        "packageContentsIndependentlyRehashed": false,
+        "postTreeStatus": "producer-verified-unchanged",
+        "scope": "Immutable producer performs before/after whole-installed-tree verification; downloaded artifacts exclude package contents"
+      },
+      "frameworkVersion": "4.1.2",
+      "installedTree": {
+        "sha256": "7b906ecb35bc44fcbc4730bfe04f0e12ab2911542f48afcc3ec7cde417f33d55",
+        "files": 10120,
+        "bytes": 188893005
+      },
+      "fixedPassedCases": 22,
+      "independentFaultCasesPerRun": 1,
+      "trialSpans": [
+        {
+          "repetition": 1,
+          "fullMs": 721,
+          "testLoreMs": 1264,
+          "nativeMs": 548,
+          "planningMs": 673,
+          "subsetExecutionMs": 566,
+          "selectedFiles": 1,
+          "totalFiles": 2,
+          "omittedFiles": 1,
+          "mode": "affected",
+          "missedFailures": 0,
+          "nativeMissedFailures": 0
+        },
+        {
+          "repetition": 2,
+          "fullMs": 727,
+          "testLoreMs": 1217,
+          "nativeMs": 558,
+          "planningMs": 625,
+          "subsetExecutionMs": 570,
+          "selectedFiles": 1,
+          "totalFiles": 2,
+          "omittedFiles": 1,
+          "mode": "affected",
+          "missedFailures": 0,
+          "nativeMissedFailures": 0
+        }
+      ],
+      "caseObservations": {
+        "full": 44,
+        "testLore": 40,
+        "native": 40
+      },
+      "controllerMs": 24748,
+      "receiptSha256": {
+        "summary": "bcfeb8d099e943f6a9153e3ea87b061cbf94528816a18dbb01e9fa558ce92a88",
+        "installation": "2f6ac81ab0011f77bbae5477215ba3eda40a493c8f45bab2ad960a5011928669",
+        "prepared": "1256331203f1b92d445f29e333f6848a4cfe225c55ddc126235c2b7bdf7a2b7f",
+        "preflight": "3836040d447efff3d5908c2aafea9ec9626c82c99877caa04c734926e64dda25",
+        "attempt": "5d4e6eeb5fe5483229de549461837888e7ef0eedd98ffc892cfb37d311e33385"
+      },
+      "rawNativeReceiptSha256": {
+        "independentBaseline": "15c8163b113b8e1bcf4ce56a458c28f1a976fb8ba686de92438293aaec85477e",
+        "independentFaults": [
+          "931b70c81311ef1ba0c46e0433f3b508ef018d31c21c2bd70a24b9277c23fef7",
+          "e7e2cac12f3d693e7f037df7893fe47f7a48c7e307954ce29420300364428af2"
+        ],
+        "comparativeTrials": [
+          {
+            "repetition": 1,
+            "full": "c274978d0ba3bc456084dc3277d2556854723ef1f0cce02971524a497b15b17b",
+            "subset": "a7e2cc403662c834a55bcfd9764f13ed28a91729d7b8cbc679d1fbdd799e354b",
+            "native": "e41ef676f307980674bc0d760020c7af78033dc2bb22d75d485b27cfa3a41003"
+          },
+          {
+            "repetition": 2,
+            "full": "1d67bd19a6496fc6df869d66914fc7e4c65b8ccc09b4769b19c9e412a59dbeae",
+            "subset": "2e097664072a718da3ea5ee49ad31cd237442e4444c24e3c3ea4acbb4b194c2c",
+            "native": "a96508ce0b5b03b107c445088915d95feaef8bbd9d56c088072c58685e9216d2"
+          }
+        ]
+      },
+      "originalBindings": [
+        {
+          "kind": "dependency",
+          "path": "package.json",
+          "sha256": "0ee5010fb716a695cb591b6b33d0a7287117f47344fcd8ae1b9dfe7f623054d2",
+          "bytes": 1258
+        },
+        {
+          "kind": "dependency",
+          "path": "pnpm-lock.yaml",
+          "sha256": "8e25a8381354e1002b339db2196f23c243aebe2c91afc11219528fba6df07a36",
+          "bytes": 159185
+        },
+        {
+          "kind": "prior-source",
+          "path": "src/defu.ts",
+          "sha256": "525e22eda05171e3cf7587391c56c3b339dfaabee883e9733c65f3614d343688",
+          "bytes": 2036
+        },
+        {
+          "kind": "oracle",
+          "path": "test/defu.test.ts",
+          "sha256": "8e6728e25371f501d0b3bf65c17d583ab2be658c69e11f174b9f72aa77d27540",
+          "bytes": 7176
+        }
+      ],
+      "sourceBindings": [
+        {
+          "kind": "fixed-source",
+          "path": "src/defu.ts",
+          "sha256": "db851ec4fe2850ad460c23e8321bfa6b635ae38d21b170f02373ad78de3ac652",
+          "bytes": 2024
+        },
+        {
+          "kind": "prior-source",
+          "path": "src/defu.ts",
+          "sha256": "525e22eda05171e3cf7587391c56c3b339dfaabee883e9733c65f3614d343688",
+          "bytes": 2036
+        }
+      ],
+      "installation": {
+        "packageManager": "pnpm@10.33.0",
+        "platform": {
+          "node": "v22.19.0",
+          "platform": "linux",
+          "arch": "x64"
+        },
+        "originalInputBindings": [
+          {
+            "logicalPath": "package.json",
+            "sha256": "0ee5010fb716a695cb591b6b33d0a7287117f47344fcd8ae1b9dfe7f623054d2",
+            "bytes": 1258
+          },
+          {
+            "logicalPath": "pnpm-lock.yaml",
+            "sha256": "8e25a8381354e1002b339db2196f23c243aebe2c91afc11219528fba6df07a36",
+            "bytes": 159185
+          }
+        ],
+        "managerIdentity": {
+          "sha256": "b276da51dc8ca5b0d3ee3371695b50fc8b3244b281b091c63a3f082a88dadeb9",
+          "bytes": 1102,
+          "mode": 33261
+        },
+        "managerMetadataIdentity": {
+          "sha256": "93c546f5767c5b13bca1a73100fdcd1a7eccd783cee3fb60f71d6c8430a246ca",
+          "bytes": 6125,
+          "mode": 33188
+        },
+        "lifecycleWarnings": true,
+        "resourcePolicy": {
+          "growthPolicy": "defu-original-lock-768mib",
+          "maxGrowthBytes": 805306368,
+          "reserveBytes": 2147483648,
+          "timeoutMs": 180000
+        }
+      },
+      "timing": {
+        "fullMs": 1448,
+        "testLoreMs": 2481,
+        "nativeMs": 1106,
+        "netVsFullMs": -1033,
+        "netVsNativeMs": -1375
+      },
+      "corpusControllerMs": 7344,
+      "wholeCliExecuted": false,
+      "cachePolicy": {
+        "jitiFilesystem": false,
+        "vitestResults": false,
+        "testLoreDiskAnalysis": false
+      },
+      "tamperControls": [
+        {
+          "name": "inventory-content-substitution",
+          "rejected": true,
+          "stage": "review-exception"
+        },
+        {
+          "name": "original-manifest-input-substitution",
+          "rejected": true,
+          "stage": "original-installation-input"
+        },
+        {
+          "name": "native-failure-changed-to-passed",
+          "rejected": true,
+          "stage": "all-failures-preserved"
+        },
+        {
+          "name": "raw-duration-plus-one",
+          "rejected": true,
+          "stage": "raw-arm-timing"
+        },
+        {
+          "name": "forged-native-case-id",
+          "rejected": true,
+          "stage": "native-id-content"
+        },
+        {
+          "name": "summary-timing-plus-one",
+          "rejected": true,
+          "stage": "summary-trial-spans"
+        },
+        {
+          "name": "source-revision-substitution",
+          "rejected": true,
+          "stage": "campaign-source"
+        }
+      ]
+    }
+  ],
+  "accounting": {
+    "scope": "Supplied original-upstream-lock qualified ledger; distinct candidate IDs only",
+    "priorQualifiedChanges": 2,
+    "verifiedQualifiedCandidates": 2,
+    "addedQualifiedChanges": 0,
+    "addedQualifiedRepositories": 0,
+    "additionalOriginalLockEnvironmentQualifications": 2,
+    "target30Changes5RepositoriesEstablished": false,
+    "target100Changes10RepositoriesEstablished": false,
+    "combinedQualifiedUniqueChanges": 12,
+    "combinedQualifiedRepositories": 5,
+    "priorOriginalLockQualifiedChanges": 2,
+    "priorOriginalLockQualifiedRepositories": 2,
+    "originalLockQualifiedChanges": 4,
+    "originalLockQualifiedRepositories": 3,
+    "distinctOriginalLockCandidateIds": [
+      "unjs-unctx-1bb220dccf40",
+      "unjs-mlly-abef19c940da",
+      "unjs-defu-11ba02213d4b",
+      "unjs-defu-3942bfbbcaa7"
+    ],
+    "environmentUpgradeDoesNotAddUniqueChanges": true
+  },
+  "limitations": [
+    "Offline verification of retained hosted receipts and immutable tracked source; no test, installation, provider or network execution.",
+    "Installed dependency content was hashed before/after by the hosted producer. Downloaded artifacts exclude dependency trees; this reviewer cannot independently rehash them.",
+    "Native manager/framework identities and source/oracle bindings are checked against receipts; no external semantic-independence or security-containment attestation.",
+    "Independent-versus-comparative complete identities may replace only their exact recorded workspace prefix in parameterized names. Failing identities and every within-arm comparison remain verbatim.",
+    "Legacy three-arm spans include planning and execution, with controller elapsed separately reported; no whole-CLI, OS-cold, native-default-cache or general speed claim.",
+    "Repeated assertions, trials, environments and previously qualified candidate IDs do not increase unique-change counts.",
+    "Both fresh histories select 1 of 2 files and preserve their one independently demonstrated fault twice, but TestLore loses to both native selection and full execution in each repetition.",
+    "These two candidate IDs were already qualified in comparative projected environments; only original-lock environment qualifications increase. Combined 12/5 remains unchanged.",
+    "Original runtime-unit scope excludes lint, types, coverage and build stages. Upstream package-manager defaults retain ignored-build warnings.",
+    "Retained workspace source is the exact inverse-parent fault during comparative execution; original fixed bytes are bound in prepared manifests and independently executed fixed baseline receipts."
+  ],
+  "recordedDate": "2026-10-08",
+  "offlineReview": {
+    "reviewerSha256": "6d5a0904ab29243ae666451ce4058f37a83b9f5738de2a0c06d82ffa64ef3479",
+    "inventoryReviewerSha256": "3c9911642ada5749b923711c608661ededbad814ec6af4e009fe04dd0abd938a",
+    "controlRunnerSha256": "c890b786c3d13c1aa1a614da9a81c7117567d03611fecfab3c75a6b3ab5f4a42",
+    "controlsReceiptSha256": "267d93b3a77258bf2701ff4e06ed270f8c22da57d5d4a4bbbd64805c84757587",
+    "controlsPerCandidate": 7,
+    "totalRejectedControls": 14,
+    "restoredOriginalPassed": true,
+    "sourceAndOriginalInputBindingsChecked": true,
+    "caseIdsDerivedAndRawCasesChecked": true,
+    "timingsAndCountsBoundToRawReports": true,
+    "actualHostedJobSuccessRequired": true,
+    "receiptBindingsAreNotIndependentRehashOfInstalledContents": true
+  },
+  "retainedNegativeReceipts": [
+    "upstream-defu-interrupted-20261008.json",
+    "upstream-defu-retirement-20261008.json",
+    "upstream-defu-hosted-resource-20261008.json",
+    "upstream-defu-hosted-drift-20261008.json",
+    "upstream-defu-hosted-inventory-diagnostic-20261008.json"
+  ],
+  "diagnosis": {
+    "previousNegativeReclassified": false,
+    "writerProcessIdentified": false,
+    "creatingArmIdentified": false,
+    "scope": "Fresh successful runs establish unchanged installed-tree producer verification after exact same-phase native resolution reuse. They do not identify the process or execution arm that created earlier temporary files."
+  }
+}

@@ -1,0 +1,334 @@
+{
+  "schemaVersion": 1,
+  "kind": "native-structured-agent-repair-qualification",
+  "startedAt": "2026-10-08T09:59:40.451Z",
+  "finishedAt": "2026-10-08T10:00:24.987Z",
+  "sourceCommit": "32ddcb182f35001846254422623354969bd530ce",
+  "sourcePackageSha256": "2585e919b024b860cf36b88bcb32233b5233c484dc55bf82aa162ea04b10d046",
+  "evaluatorContract": {
+    "version": 2,
+    "briefArguments": "shared-mcp-schema-and-sealed-fixture-files",
+    "statusArguments": "empty-object",
+    "historicalReclassification": false
+  },
+  "entrypoint": {
+    "file": "src/cli.js",
+    "bytes": 29864,
+    "sha256": "73e0c8f60d7c08e533dacd6d2d06cd55ce39398a3d3aa4e487295aa43d6028b1"
+  },
+  "harness": [
+    {
+      "file": "scripts/agent-repair-qualification.js",
+      "bytes": 41013,
+      "sha256": "34fc31e91a45f7a14fcafec5ce1e91ecaf744eb576e72bc35fb7edac29a8529c"
+    },
+    {
+      "file": "scripts/fixture-repair-mcp.js",
+      "bytes": 4702,
+      "sha256": "df1e9ebbeec4444c6035a6319e9c9d1d896f8e455ae252d1c6baf990b00d4393"
+    },
+    {
+      "file": "scripts/maintainer-repair-profile.js",
+      "bytes": 7024,
+      "sha256": "cff8b730bc99d36dfe5969aa1699346b364e95d6ddcf4763dfb7419615a2d3a2"
+    },
+    {
+      "file": "scripts/host-qualification.js",
+      "bytes": 35371,
+      "sha256": "44d97154d0882533c42eb73f31392c21461931ada954008092532248cf32baf6"
+    },
+    {
+      "file": "scripts/claude-structured-account.js",
+      "bytes": 7964,
+      "sha256": "e6634d20d8dcc44caaff77419ea88162852a78a2cb2951c098404898e6d0d3c0"
+    },
+    {
+      "file": "scripts/host-mcp-observer.js",
+      "bytes": 3472,
+      "sha256": "0bdb8d331a208080c4d7855aa796e7564dac6c3393ef4de447e9e90c8ead1df2"
+    },
+    {
+      "file": "src/reporters/node.js",
+      "bytes": 1090,
+      "sha256": "c5fbf1bf0841fd7e36f716198ac00a5481fa288a9662997257b385f64687b24c"
+    },
+    {
+      "file": "src/mcp-inputs.js",
+      "bytes": 320,
+      "sha256": "54499521c0a7070cbe12babea00600a8f37d115cc4e997dc64678385148a92a5"
+    }
+  ],
+  "repairProfile": "maintainer-is-promise",
+  "repairInstructions": "contract-only",
+  "finalAccountFormat": "native-structured",
+  "solutionSupplied": false,
+  "promptSha256": "ba9d4b6d364cfbdd9b14aaf7d40a5a324044ff50bd52da422297b5d988fd0c3c",
+  "finalAccountSchemaSha256": "d4d08afcd4288c2912fde9c63148c36d5f8cdd68317d48dcb861a5baa2b7cb0e",
+  "maintainerProvenance": {
+    "repository": "https://github.com/then/is-promise",
+    "fixed": "ed0eaa4dec17597f0dae892a0472a9b7f459320d",
+    "parent": "2dfb684306b6f3b8b374478c86e63f8bab4a7f06",
+    "oracle": "ed0eaa4dec17597f0dae892a0472a9b7f459320d",
+    "datasetHash": "78d7e6127d15873b351f6c5128e951a39bd14a167fc2c9b8d9d1a5d354fedc0f",
+    "bindings": [
+      {
+        "repo": "then/is-promise",
+        "revision": "ed0eaa4dec17597f0dae892a0472a9b7f459320d",
+        "path": "index.js",
+        "gitBlob": "ca2444c6f69540f83504b8f54f4518af0ffc4cd5",
+        "sha256": "748c681ba64081193dc5fbb27f8b3539c09ba08f4e31ec6d588e2ae8c39234a8",
+        "bytes": 165,
+        "url": "https://github.com/then/is-promise/blob/ed0eaa4dec17597f0dae892a0472a9b7f459320d/index.js"
+      },
+      {
+        "repo": "then/is-promise",
+        "revision": "2dfb684306b6f3b8b374478c86e63f8bab4a7f06",
+        "path": "index.js",
+        "gitBlob": "772600b79091369385ce9b5a3adc779548d41970",
+        "sha256": "1bcef4c606ce23b0a7334bb7e01bec64266b7947c0a9c6acd715d94865c3a25d",
+        "bytes": 163,
+        "url": "https://github.com/then/is-promise/blob/2dfb684306b6f3b8b374478c86e63f8bab4a7f06/index.js"
+      },
+      {
+        "repo": "then/is-promise",
+        "revision": "ed0eaa4dec17597f0dae892a0472a9b7f459320d",
+        "path": "test.js",
+        "gitBlob": "d971c2828fab264d68b662c230e61af5dcaa6e0e",
+        "sha256": "0fce78dda44690c59ba7b397dea9683242d5ce7a1cf7c260a1d92cc4a4dd2b34",
+        "bytes": 1483,
+        "url": "https://github.com/then/is-promise/blob/ed0eaa4dec17597f0dae892a0472a9b7f459320d/test.js"
+      },
+      {
+        "repo": "then/is-promise",
+        "revision": "ed0eaa4dec17597f0dae892a0472a9b7f459320d",
+        "path": "readme.md",
+        "gitBlob": "50d5d989111aa5071420d76fb796e9f9215f8625",
+        "sha256": "2831cabb33577b1054b575c0b7cca7b4f446510d59cab316414122e43234410f",
+        "bytes": 872,
+        "url": "https://github.com/then/is-promise/blob/ed0eaa4dec17597f0dae892a0472a9b7f459320d/readme.md"
+      },
+      {
+        "repo": "then/is-promise",
+        "revision": "ed0eaa4dec17597f0dae892a0472a9b7f459320d",
+        "path": "LICENSE",
+        "gitBlob": "27cc9f3771540a450dae91b1e04dd1383ff1a4d1",
+        "sha256": "44191656d296391e0ec97e32f5385f0d02b6f2992694082d22ea04ba0f66f9e4",
+        "bytes": 1058,
+        "url": "https://github.com/then/is-promise/blob/ed0eaa4dec17597f0dae892a0472a9b7f459320d/LICENSE"
+      }
+    ],
+    "adaptation": "Only imports/framework entry points change; original maintainer assertion bodies remain byte-identical. Not a full upstream Mocha/better-assert qualification."
+  },
+  "limitation": "One genuine historical null/undefined boolean predicate defect, with eight unchanged maintainer assertion bodies on a Node import shim. No general application repair, upstream Mocha environment, or deployment safety claim. Repair inferred from README, faulty source and observed failures without an explicit implementation hint. A canonical admission gate still restricts edits; this is not open-ended autonomous repair.",
+  "nativeHostInvocations": 1,
+  "maximumHostCalls": 1,
+  "retries": 0,
+  "nativeApiRetriesObserved": 0,
+  "providerRequestCount": null,
+  "timeoutMs": 115000,
+  "providerApiKeysRemoved": true,
+  "node": {
+    "version": "22.19.0",
+    "bytes": 110712624,
+    "sha256": "0d005c18e095027ca8f9fe1cc1126f767ee4ad7b004f4d6fb781ec4228a7c5d1"
+  },
+  "host": {
+    "name": "claude",
+    "cliVersion": "2.1.88",
+    "executable": {
+      "bytes": 13047043,
+      "sha256": "75c9611929d9a770fe2e3a393219d8b98f5de17fde539b2a7355c6db3fd2795f"
+    },
+    "nativeReportedModel": "claude-opus-4-6[1m]",
+    "modelOverrideRequested": false
+  },
+  "configuration": {
+    "fixtureOnlyMcpTools": true,
+    "ordinaryToolsDisabled": true,
+    "strictMcpConfig": true,
+    "settingsSourcesDisabled": true,
+    "hooksDisabled": true,
+    "sessionPersistence": false,
+    "nativeStructuredOutput": true,
+    "formattingRetryEnvironmentOverride": false
+  },
+  "qualification": {
+    "qualified": true,
+    "status": "qualified-in-maintainer-contract-scope",
+    "reasons": [],
+    "twoHostAggregateComplete": false,
+    "codexStatus": "not-started",
+    "structuredAccountComplete": true,
+    "readOnlyInputContractVersion": 2,
+    "deploymentSafety": "not-established",
+    "sourceScope": "Only the immutable source and harness identities listed in this receipt are qualified; a different package/release needs its own qualification."
+  },
+  "observedStages": {
+    "orderedTools": [
+      "testlore_brief",
+      "testlore_status",
+      "testlore_plan",
+      "testlore_verify",
+      "repair_fixture",
+      "testlore_plan",
+      "testlore_verify"
+    ],
+    "nativeToolUseCount": 8,
+    "formatter": {
+      "invocations": 1,
+      "completed": true,
+      "terminalResults": 1,
+      "matchingPayload": true,
+      "proseFallback": false
+    },
+    "uniqueNativeUseIds": true,
+    "indexedResponsesBound": true,
+    "onlyAuthorizedToolsObserved": true,
+    "readOnlyInputs": {
+      "brief": {
+        "task": "Inspect quality contract and test inventory for is-promise fixture",
+        "changed": [
+          "src/promise.cjs"
+        ]
+      },
+      "status": {}
+    },
+    "fixtureFilesSealed": 10,
+    "onlyCanonicalSourceChanged": true,
+    "independentCaseIdentityPreserved": true,
+    "baseline": {
+      "passed": 8,
+      "failed": 0
+    },
+    "historical": {
+      "passed": 6,
+      "failed": 2,
+      "failedCases": [
+        {
+          "file": "test/promise.test.cjs",
+          "name": "calling isPromise > with null > returns false",
+          "id": "6746e9eb49b75e776a726ff572a2b0058675cb095c486b0608c9b2bd78b5a827"
+        },
+        {
+          "file": "test/promise.test.cjs",
+          "name": "calling isPromise > with undefined > returns false",
+          "id": "56524740f7ff06425ccbea76baa7dacb3a32c3cb20d0ea79cb2aa63bd8fd12f8"
+        }
+      ]
+    },
+    "afterRepair": {
+      "passed": 8,
+      "failed": 0
+    },
+    "additionalIndependentPostrun": {
+      "complete": true,
+      "passed": 8,
+      "failed": 0,
+      "reportSha256": "e5df6432b27c0c8cde62bf31441f48c31fde365ffc4b0ef337d3adccac69cf0e"
+    },
+    "protectedFixtureFiles": [
+      ".gitignore",
+      "LICENSE.maintainer",
+      "maintainer-provenance.json",
+      "package.json",
+      "provenance/original-test.txt",
+      "README.maintainer.md",
+      "tddswarm.config.json",
+      "tddswarm.requirements.md",
+      "test/promise.test.cjs"
+    ]
+  },
+  "finalAccount": {
+    "verdict": "passed-in-observed-scope",
+    "repairedFile": "src/promise.cjs",
+    "executedFiles": [
+      "test/promise.test.cjs"
+    ],
+    "uncertainty": "This verification covers only the 8 test cases in the single observed test file under Node 22.19 with the built-in test runner. No upstream Mocha environment, browser compatibility, ESM entry point, mutation effectiveness, or broader integration context was evaluated. The scope is limited to the CommonJS export path exercised by the fixture's independent contract assertions.",
+    "nextAction": "Run the original upstream test suite (Mocha-based) against the repaired source in a full CI environment to confirm compatibility beyond the scoped Node built-in runner, and verify the ESM entry point if one exists in the published package.",
+    "deploymentSafety": "not-established"
+  },
+  "timings": {
+    "nativeHostProcessMs": 43471,
+    "completeOuterMs": 49879,
+    "outerTimeIncludes": "Controller setup, native invocation, controller independent postrun, external process cleanup and identity/resource checks. Additional independent audit/postrun recorded separately."
+  },
+  "resources": {
+    "launchFloorBytes": 2684354560,
+    "retainedFloorBytes": 2147483648,
+    "sampleIntervalMs": 1000,
+    "sampleCount": 47,
+    "freeBytesFirstSample": 6617583616,
+    "freeBytesLastSample": 6043975680,
+    "minimumSampledFreeBytes": 6043975680,
+    "outerBoundMs": 120000,
+    "terminationStartedByMs": 118000,
+    "resourceAndIdentityChecksPassed": true,
+    "observedProcessIdentities": 65,
+    "observedSurvivors": 0,
+    "limitation": "Observed PID/start-time descendant cancellation plus owned process-group termination is best effort; unobserved short-lived/reparented descendants cannot be ruled out. No hidden provider request count is established. Free-space changes are system-wide and not attributed to this trial. One-second sampling cannot exclude a shorter reserve breach."
+  },
+  "nativeReportedUsage": {
+    "input_tokens": 11,
+    "cache_creation_input_tokens": 13789,
+    "cache_read_input_tokens": 91764,
+    "output_tokens": 1210,
+    "server_tool_use": {
+      "web_search_requests": 0,
+      "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+      "ephemeral_1h_input_tokens": 13789,
+      "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "",
+    "iterations": [],
+    "speed": "standard"
+  },
+  "clientEstimatedCostUsd": 0.16236825000000002,
+  "actualBilledCostUsd": null,
+  "costLimitation": "Usage/model/cost are local native CLI event reports. Estimated client cost is not a subscription invoice, billed charge or external request audit.",
+  "formattingObservation": "Exactly one formatter invocation and successful completion were visible; no observed formatter repeat. Stream observation cannot establish zero hidden/prebuffered requests or provider-side retries. The pinned five-attempt native default was not overridden.",
+  "rawReceiptBindings": {
+    "native.json": "588abea8b8cf6251bdf48112e07d40c92eeb2a312338652bf79ae178cb424319",
+    "controller.stdout": "a68c4c415f249d0593a07ee033f40036c191ec1a7ee87513eb50ed86bdae0fff",
+    "controller.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "watchdog.json": "b9e2e1c27c5926654c2b477091be2890d7251a497ee0dbb76e63e6d1df27c1d8",
+    "independent-audit.json": "f16a0fb06c374a68b152849518b572bfd1d83e1ba9ab90da0a55309578dfc4d7",
+    "independent-extra-postrun.json": "e5df6432b27c0c8cde62bf31441f48c31fde365ffc4b0ef337d3adccac69cf0e",
+    "retained-native-claude/host.stdout.jsonl": "5be2f4dd29ca38c7edbe837b1ae40cc1a8cfed5470f41a6a16ad3f121a716d2c",
+    "retained-native-claude/host.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "retained-native-claude/readonly-mcp.json": "19f9d223714ee9c4880c12325e33c278ef52d0a7b70c7e56e6aac72e1396bb5a",
+    "retained-native-claude/execution-mcp.json": "4b23c99ccd74ef06e7700cc459410307cd385c05fba774903f82968a84c1d95c",
+    "retained-native-claude/repair.json": "58ca798c191020c951aa807fd09edf31a1786b1a2c4daed14912b25f986c7fd9",
+    "retained-native-claude/commitment.json": "d7e8898174efe67cf181ccc1d7cfb69763105e9a0691dc1e0aa4a80d5bf0b712",
+    "retained-native-claude/independent-after.json": "a184a12c8deb6968d796450de1bdcab552709b3b4445407d5e177b0a8ba49ce7",
+    "../structured-watchdog-v2-32ddcb1.mjs": "4e7ce6b99a8451a05792800f71c449b584ff65154e1c4b6c27c737e5273a102f",
+    "../structured-independent-audit-v2-32ddcb1.mjs": "2765213876bf6f3dbc9a5d83787a1548a0ed60e09e07bfd4a62bbd766260f9da"
+  },
+  "earlierClaudeTrials": [
+    {
+      "receipt": "claude-contract-only-agent-repair.json",
+      "receiptSha256": "8400f2bb4fdf62b4521a2483356ba9072c3dc98505161a063d8953c662bb1cd8",
+      "sourceCommit": "f979e9cf7ca261c04d408a7317d7fe0e0b3c9c1c",
+      "qualified": false,
+      "reasons": [
+        "host-final-repair-account-invalid"
+      ],
+      "rawReportSha256": "87ad10689f59ccffbfd9b5bd03fb840fed7dfa897b108d160fe63595f99024a2",
+      "unchanged": true
+    },
+    {
+      "receipt": "claude-structured-agent-repair.json",
+      "receiptSha256": "b903a3bd4f419a444fb45a541dbba896f2010ed41f2c50c36ebab1543e8231fa",
+      "sourceCommit": "6dd2e53a20c3e1b7b130e995115edd37fa910aea",
+      "qualified": false,
+      "reasons": [
+        "initial:readonly-arguments-mismatch"
+      ],
+      "rawReportSha256": "81d9b4c68b8e25dd63b4c075d6e1fe7a92ef3666eb43e006295384580b2d19b7",
+      "unchanged": true
+    }
+  ]
+}

@@ -6,6 +6,7 @@ import { serveStdio } from '@modelcontextprotocol/server/stdio';
 import { z } from 'zod';
 import { verificationBrief, inspectVerificationStatus } from './agent-contract.js';
 import { boundedSummary } from './mcp-worker.js';
+import {briefInputSchema,statusInputSchema} from './mcp-inputs.js';
 
 const workerPath = fileURLToPath(new URL('./mcp-worker.js', import.meta.url));
 const baseSchema = z.string().min(1).max(200).regex(/^[^-\x00-\x1f][^\x00-\x1f]*$/).optional();
@@ -94,10 +95,10 @@ export async function serveMcp(options = {}) {
         try { assertRoot(); const result = await callback(args, context); assertRoot(); return toolResult(result); } catch (error) { return errorResult(error); }
       });
     register('testlore_brief', 'Inspect the independent quality contract and bounded static test inventory without running project code.',
-      z.strictObject({ task: z.string().max(2000).optional(), changed: z.array(z.string().min(1).max(1000)).max(1000).optional() }), readOnly,
+      briefInputSchema, readOnly,
       args => verificationBrief(root, args));
     register('testlore_status', 'Inspect historical verification receipts without freshness checks, native discovery, runners, or service probes.',
-      z.strictObject({}), readOnly, () => inspectVerificationStatus(root));
+      statusInputSchema, readOnly, () => inspectVerificationStatus(root));
     if (allowExecution) {
       register('testlore_plan', 'Execute configured discovery/resolvers and service probes to propose routing. Requires trusted project execution enabled at startup.',
         z.strictObject({ base: baseSchema }), execution, (args, context) => execute('plan', args, context.signal));
