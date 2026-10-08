@@ -19,6 +19,11 @@ export const freshProfiles=Object.freeze([
  {id:'plain',repo:'sindresorhus/is-plain-obj',fixed:'b51c26ace163a0761fbe0603cdc270192ef23ce9',parent:'d88f6db1ec1b5aeb4f4d6ed2655e0e8d049ab602',oracle:'b51c26ace163a0761fbe0603cdc270192ef23ce9',test:'test.js',readme:'readme.md',license:'license',extension:'mjs',specificationId:'maintainer-plain-object-predicate'},
  {id:'stream',repo:'sindresorhus/is-stream',fixed:'2070240b28cb734eb34c70dac92b6064260a0621',parent:'23a6c15f83866c3c59f509d7515ab43ed8e6e367',oracle:'2070240b28cb734eb34c70dac92b6064260a0621',test:'test.js',readme:'readme.md',license:'license',specificationId:'maintainer-stream-predicates'}
 ]);
+// New prospective units; prior cohorts and their frozen receipts remain unchanged.
+export const frontierProfiles=Object.freeze([
+ {id:'camelcase',repo:'sindresorhus/camelcase',fixed:'e7dccc901ce645138a52dd5945e245773b4684c5',parent:'c9fa59df2e32611c5c71d0f219f661fa8e1dfdf8',oracle:'e7dccc901ce645138a52dd5945e245773b4684c5',test:'test.js',readme:'readme.md',license:'license',extension:'mjs',specificationId:'maintainer-camelcase-options'},
+ {id:'url',repo:'sindresorhus/is-url-superb',fixed:'f34458bdc544e23e29a32b9e76cd7ebbd293c741',parent:'69aa1f432ace2a5eba04366bb450fecad762b5b4',oracle:'f34458bdc544e23e29a32b9e76cd7ebbd293c741',test:'test.js',readme:'readme.md',license:'license',specificationId:'maintainer-url-predicate'}
+]);
 const hash=bytes=>createHash('sha256').update(bytes).digest('hex');
 const blobHash=bytes=>createHash('sha1').update(Buffer.from(`blob ${bytes.length}\0`)).update(bytes).digest('hex');
 export function adaptOracle(profile,original){
@@ -34,6 +39,16 @@ export function adaptOracle(profile,original){
   if(!original.startsWith(prefix))throw new Error('Maintainer Mocha import prefix changed');
   body=original.slice(prefix.length);
   adapted="const {describe,it}=require('node:test');\nvar assert = require('assert')\nvar escapeHtml = require('../src/html.cjs')\n"+body;
+ }else if(profile.id==='camelcase'){
+  prefix="import test from 'ava';\nimport camelCase from './index.js';\n";
+  if(!original.startsWith(prefix))throw new Error('Maintainer AVA camelcase import prefix changed');
+  body=original.slice(prefix.length);
+  adapted="import nodeTest from 'node:test';\nimport assert from 'node:assert/strict';\nimport camelCase from '../src/camelcase.mjs';\nconst test=(name,fn)=>nodeTest(name,()=>fn({is:assert.strictEqual,throws:assert.throws}));\n"+body;
+ }else if(profile.id==='url'){
+  prefix="import test from 'ava';\nimport isUrl from '.';\n";
+  if(!original.startsWith(prefix))throw new Error('Maintainer AVA URL import prefix changed');
+  body=original.slice(prefix.length);
+  adapted="import nodeTest from 'node:test';\nimport assert from 'node:assert/strict';\nimport isUrl from '../src/url.cjs';\nconst test=(name,fn)=>nodeTest(name,()=>fn({true:value=>assert.strictEqual(value,true),false:value=>assert.strictEqual(value,false)}));\n"+body;
  }else if(profile.id==='promise'){
   prefix="var isPromise = require('./');\nvar assert = require('better-assert');\n";
   if(!original.startsWith(prefix))throw new Error('Maintainer Mocha import prefix changed');
@@ -63,8 +78,8 @@ function github(endpoint){
  return JSON.parse(result.stdout);
 }
 export async function preparePublicGeneration({output,read=github,cohort='original'}={}){
- if(!['original','fresh'].includes(cohort))throw new Error('Unknown frozen public cohort');
- const selectedProfiles=cohort==='fresh'?freshProfiles:profiles;
+ if(!['original','fresh','frontier'].includes(cohort))throw new Error('Unknown frozen public cohort');
+ const selectedProfiles=cohort==='frontier'?frontierProfiles:cohort==='fresh'?freshProfiles:profiles;
  if(!output)throw new Error('Explicit new output directory required');
  output=path.resolve(output);if(fs.existsSync(output))throw new Error('Preserve previous dataset: output exists');
  fs.mkdirSync(output,{recursive:true,mode:0o700});
@@ -92,14 +107,14 @@ export async function preparePublicGeneration({output,read=github,cohort='origin
    fixtures.push({id:profile.id,specificationId:profile.specificationId,requirements,files:[{path:source,content:fixed}],referenceTests:[{path:`test/${profile.id}.test.${['html','promise','milliseconds'].includes(profile.id)?'cjs':'mjs'}`,content:oracle.content}],defects:[{id:'historical-parent',files:[{path:source,content:fault}]}]});
    provenance.push({...profile,adaptation:oracle,sourceScope:'Exact fixed and parent source bytes; later independent oracle revision is declared separately when applicable. No full upstream dependency installation; only built-in Node assertion runner shims.'});
   }
-  const dataset=validateDataset({schemaVersion:1,id:cohort==='fresh'?'public-maintainer-fresh-contracts-20261007-v1':'public-maintainer-contracts-20261007-v1',history:defaultDataset().history,fixtures});
-  const commitment=commitDataset(dataset,{owner:'Public upstream maintainers; TestLore transport adaptation',source:`Pinned ${selectedProfiles.map(profile=>profile.repo).join(', ')} README, tests, and genuine historical parent revisions; upstream blob bindings accompany dataset`,independentlyMaintained:true,independenceNotes:'Maintainer specifications/assertions/history independently maintained. TestLore selects snapshots and adapts framework entry points; no assertion bodies change. Stream imports also relocate the fixture read and replace tempy with disposable paths/cleanup. One authored distinct history example is advisory memory. Local byte commitments do not prove model-training isolation, semantic independence or trusted publication time. Four fresh units cannot establish general learning efficacy.'});
-  for(const [name,value]of [['dataset.json',dataset],['commitment.json',commitment],['provenance.json',{schemaVersion:1,profiles:provenance,bindings}],['budget.json',{mode:cohort==='fresh'?'paired-learning':'generation-reliability',repeat:2,maxCalls:cohort==='fresh'?48:12,timeoutMs:115000,maxOutputBytes:65536,stabilityRuns:2,retries:0,learningCompared:cohort==='fresh',promotionAuthorized:false}]])fs.writeFileSync(path.join(output,name),JSON.stringify(value,null,2)+'\n',{flag:'wx',mode:0o600});
+  const dataset=validateDataset({schemaVersion:1,id:cohort==='frontier'?'public-maintainer-frontier-contracts-20261008-v1':cohort==='fresh'?'public-maintainer-fresh-contracts-20261007-v1':'public-maintainer-contracts-20261007-v1',history:defaultDataset().history,fixtures});
+  const commitment=commitDataset(dataset,{owner:'Public upstream maintainers; TestLore transport adaptation',source:`Pinned ${selectedProfiles.map(profile=>profile.repo).join(', ')} README, tests, and genuine historical parent revisions; upstream blob bindings accompany dataset`,independentlyMaintained:true,independenceNotes:cohort==='frontier'?'Maintainer specifications, assertion bodies and historical revisions are independently maintained. TestLore selects snapshots and adapts only runner/import entry points. These two specification IDs and source contents do not occur in either previous public maintainer cohort. Hash/ID disjointness does not establish semantic independence, model-training secrecy or a trusted timestamp. A separate authored numeric-clamp example is advisory memory; retrieval can return no relevant lesson. Two units and two repetitions cannot establish general learning efficacy.':'Maintainer specifications/assertions/history independently maintained. TestLore selects snapshots and adapts framework entry points; no assertion bodies change. Stream imports also relocate the fixture read and replace tempy with disposable paths/cleanup. One authored distinct history example is advisory memory. Local byte commitments do not prove model-training isolation, semantic independence or trusted publication time. Four fresh units cannot establish general learning efficacy.'});
+  for(const [name,value]of [['dataset.json',dataset],['commitment.json',commitment],['provenance.json',{schemaVersion:1,profiles:provenance,bindings}],['budget.json',{mode:cohort!=='original'?'paired-learning':'generation-reliability',repeat:2,maxCalls:cohort==='frontier'?24:cohort==='fresh'?48:12,timeoutMs:115000,maxOutputBytes:65536,stabilityRuns:2,retries:0,learningCompared:cohort!=='original',promotionAuthorized:false}]])fs.writeFileSync(path.join(output,name),JSON.stringify(value,null,2)+'\n',{flag:'wx',mode:0o600});
   return {complete:true,datasetHash:commitment.datasetHash,fixtures:fixtures.length,bindings:bindings.length};
  }catch(error){fs.writeFileSync(path.join(output,'preparation-failure.json'),JSON.stringify({complete:false,error:error.message,bindings},null,2)+'\n',{flag:'wx',mode:0o600});throw error;}
 }
 export async function main(argv=process.argv.slice(2)){
- if(![3,5].includes(argv.length)||argv[0]!=='--fetch'||argv[1]!=='--output'||(argv.length===5&&(argv[3]!=='--cohort'||argv[4]!=='fresh')))throw new Error('Use --fetch --output NEW_DIRECTORY [--cohort fresh]. Explicit source fetch; never invokes a provider.');
+ if(![3,5].includes(argv.length)||argv[0]!=='--fetch'||argv[1]!=='--output'||(argv.length===5&&(argv[3]!=='--cohort'||!['fresh','frontier'].includes(argv[4]))))throw new Error('Use --fetch --output NEW_DIRECTORY [--cohort fresh|frontier]. Explicit source fetch; never invokes a provider.');
  return preparePublicGeneration({output:argv[2],cohort:argv[4]||'original'});
 }
 if(process.argv[1]&&path.resolve(process.argv[1])===fileURLToPath(import.meta.url)){try{console.log(JSON.stringify(await main()));}catch(error){console.error(error.message);process.exitCode=1;}}

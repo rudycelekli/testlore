@@ -28,8 +28,11 @@ export function repairSummarySchema(profileName='synthetic') {
     }};
 }
 
-export function repairQualificationPrompt(profileName='synthetic') {
+export function repairQualificationPrompt(profileName='synthetic',instructions='supplied') {
+  if(!['supplied','contract-only'].includes(instructions))throw new Error('Unknown repair instructions mode');
+  if(instructions==='contract-only'&&profileName!=='maintainer-is-promise')throw new Error('Contract-only instructions require the maintainer profile');
   const profile=repairProfile(profileName);
+  if(instructions==='contract-only')return 'This is an isolated genuine historical then/is-promise maintainer-contract repair qualification. Use ONLY configured TestLore MCP tools. No shell, file, web, or other tools. Call readonly testlore_brief then testlore_status; execution testlore_plan({base:"HEAD"}) then testlore_verify({base:"HEAD",mode:"shadow"}); inspect the independently observed failures. Infer the smallest source correction from the supplied maintainer API contract and faulty source. No repair implementation or historical fixed source is supplied. Call fixture repair_fixture exactly once, supplying the full src/promise.cjs source. Preserve all bytes outside the necessary source correction. Do not alter tests, requirements, README, license or configuration. Maintainer API contract: '+JSON.stringify(profile.readme)+'. Faulty source: '+JSON.stringify(profile.fault)+'. Then execution testlore_plan({base:"HEAD"}) and testlore_verify({base:"HEAD",mode:"full"}). All seven calls must be sequential, exactly once, stop on error. Return only one JSON object satisfying this schema: '+JSON.stringify(repairSummarySchema(profileName))+'. uncertainty and nextAction MUST each be a prose STRING of at least 20 characters. executedFiles must contain exactly the observed test file with no duplicates. This capability admits only one independently frozen canonical correction; alternative equivalent edits can be rejected. Original maintainer assertion bodies are unchanged on Node import shims. Do not claim a complete upstream Mocha environment, broad autonomous application repair or deployment safety. Report actual observed outcomes only.';
   if(profileName==='maintainer-is-promise')return 'This is an isolated genuine historical then/is-promise maintainer-contract repair qualification. Use ONLY configured TestLore MCP tools. No shell, file, web, or other tools. Call readonly testlore_brief then testlore_status; execution testlore_plan({base:"HEAD"}) then testlore_verify({base:"HEAD",mode:"shadow"}); observe the historical null/undefined failures. Call fixture repair_fixture exactly once, supplying the full src/promise.cjs source. Preserve every existing byte except the necessary boolean guard repair: prefix the first obj in the return expression with !!. Do not alter tests, requirements, README, license or configuration. The historical source to repair is '+JSON.stringify(profile.fault)+'. Then execution testlore_plan({base:"HEAD"}) and testlore_verify({base:"HEAD",mode:"full"}). All seven calls must be sequential, exactly once, stop on error. Return only one JSON object satisfying this schema: '+JSON.stringify(repairSummarySchema(profileName))+'. uncertainty and nextAction MUST each be a prose STRING of at least 20 characters. executedFiles must contain exactly the observed test file with no duplicates. The original maintainer assertions are unchanged; imports adapt them to Node. Do not claim a complete upstream Mocha environment, broad repair quality or deployment safety. Report actual observed outcomes only.';
   return 'This is a disposable synthetic repair qualification. Use ONLY configured TestLore MCP tools. No shell, file, web, or other tools. Call readonly testlore_brief then testlore_status; execution testlore_plan({base:"HEAD"}) then testlore_verify({base:"HEAD",mode:"shadow"}); observe the planted failure. Call fixture repair_fixture exactly once with source implementing export const value equal to the independent expected 1, preserving all tests and other files. Then execution testlore_plan({base:"HEAD"}) and testlore_verify({base:"HEAD",mode:"full"}). All seven calls must be sequential, exactly once, stop on error. Return only one JSON object satisfying this final-account schema: '
     + JSON.stringify(repairSummarySchema())
@@ -208,6 +211,8 @@ export async function qualifyRepairHosts(options) {
   if (options.authorizeFixtureRepair !== true || options.authorizeFixtureTools !== true) throw new Error('Explicit fixture repair and execution tool opt-ins are required');
   if (!Number.isInteger(options.timeoutMs) || options.timeoutMs < 1000 || options.timeoutMs > 120000) throw new Error('Host deadline must be 1000..120000ms');
   const profileName=options.repairProfile??'synthetic',profile=repairProfile(profileName);
+  const instructions=options.repairInstructions??'supplied';
+  const qualificationPrompt=repairQualificationPrompt(profileName,instructions);
   if(profileName==='maintainer-is-promise'&&options.claude)throw new Error('The prospective maintainer profile permits at most one explicitly supplied Codex host call');
   const entrypoint = executableIdentity(options.entrypoint), node = executableIdentity(process.execPath), snapshot = packageSnapshot(options.entrypoint);
   assertCanonicalEntrypoint(entrypoint, snapshot);
@@ -218,7 +223,8 @@ export async function qualifyRepairHosts(options) {
   const workspace = fs.mkdtempSync(path.join(os.tmpdir(), 'testlore-agent-repair-'));
   const harness = ['agent-repair-qualification.js', 'fixture-repair-mcp.js','maintainer-repair-profile.js', 'host-qualification.js', 'host-mcp-observer.js', '../src/reporters/node.js'].map(name => executableIdentity(relativeScript(name)));
   const report = {schemaVersion: 1, kind: 'native-agent-repair-qualification', startedAt: new Date().toISOString(), workspace, entrypoint, node, source: snapshot, harness,
-    repairProfile:profileName,maintainerProvenance:profile.provenance||null,limitation:profile.limitation,
+    repairProfile:profileName,repairInstructions:instructions,solutionSupplied:instructions==='supplied',promptSha256:hash(qualificationPrompt),maintainerProvenance:profile.provenance||null,
+    limitation:profile.limitation+(instructions==='contract-only'?' Repair inferred from README, faulty source and observed failures without an explicit implementation hint. A canonical admission gate still restricts edits; this is not open-ended autonomous repair.':''),
     finalAccountSchema: repairSummarySchema(profileName), finalAccountSchemaSha256: hash(JSON.stringify(repairSummarySchema(profileName))),
     maximumHostCalls: profileName==='synthetic'?2:1, retries: 0, timeoutMs: options.timeoutMs, providerApiKeysRemoved: true, hosts: []};
   for (const host of ['codex', 'claude']) {
@@ -248,7 +254,7 @@ export async function qualifyRepairHosts(options) {
     const rootIdentity = fs.statSync(root), repairConfig = {root,repairProfile:profileName, rootIdentity: {dev: rootIdentity.dev, ino: rootIdentity.ino}, expectedFaultSha256: hash(profile.fault), receipt: path.join(directory, 'repair.json')};
     const repairPath = path.join(directory, 'repair-config.json'); fs.writeFileSync(repairPath, JSON.stringify(repairConfig), {mode: 0o600});
     servers.testlore_fixture = {command: node.realpath, args: [relativeScript('fixture-repair-mcp.js'), repairPath]};
-    const prompt = repairQualificationPrompt(profileName), schemaPath = path.join(directory, 'final-account-schema.json');
+    const prompt = qualificationPrompt, schemaPath = path.join(directory, 'final-account-schema.json');
     fs.writeFileSync(schemaPath, JSON.stringify(repairSummarySchema(profileName)), {mode: 0o600});
     const schemaIdentity = executableIdentity(schemaPath);
     let args;
@@ -293,15 +299,18 @@ export async function qualifyRepairHosts(options) {
 
 export function parseRepairArguments(argv) {
   if (argv.filter(flag => flag === '--authorize-fixture-repair').length !== 1) throw new Error('Explicit one-time --authorize-fixture-repair required');
-  const stripped=[],profileFlags=argv.filter(flag=>flag==='--repair-profile');let profileName='synthetic';
+  const stripped=[],profileFlags=argv.filter(flag=>flag==='--repair-profile');let profileName='synthetic',instructions='supplied';
   if(profileFlags.length>1)throw new Error('Duplicate repair profile option');
+  if(argv.filter(flag=>flag==='--repair-instructions').length>1)throw new Error('Duplicate repair instructions option');
   for(let index=0;index<argv.length;index++){
     if(argv[index]==='--repair-profile'){profileName=argv[++index];if(typeof profileName!=='string'||!['synthetic','maintainer-is-promise'].includes(profileName))throw new Error('Unknown named repair qualification profile');}
+    else if(argv[index]==='--repair-instructions'){instructions=argv[++index];if(!['supplied','contract-only'].includes(instructions))throw new Error('Unknown repair instructions mode');}
     else if(argv[index]!=='--authorize-fixture-repair')stripped.push(argv[index]);
   }
   const options = parseHostArguments(stripped);
   if (!options.authorizeFixtureTools) throw new Error('--authorize-fixture-tools required');
-  return {...options,repairProfile:profileName, authorizeFixtureRepair: true};
+  if(instructions==='contract-only'&&profileName!=='maintainer-is-promise')throw new Error('Contract-only instructions require the maintainer profile');
+  return {...options,repairProfile:profileName,repairInstructions:instructions, authorizeFixtureRepair: true};
 }
 export async function main(argv = process.argv.slice(2)) {
   const options = parseRepairArguments(argv);

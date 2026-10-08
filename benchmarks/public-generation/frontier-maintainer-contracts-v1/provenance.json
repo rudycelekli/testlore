@@ -1,0 +1,138 @@
+{
+  "schemaVersion": 1,
+  "profiles": [
+    {
+      "id": "camelcase",
+      "repo": "sindresorhus/camelcase",
+      "fixed": "e7dccc901ce645138a52dd5945e245773b4684c5",
+      "parent": "c9fa59df2e32611c5c71d0f219f661fa8e1dfdf8",
+      "oracle": "e7dccc901ce645138a52dd5945e245773b4684c5",
+      "test": "test.js",
+      "readme": "readme.md",
+      "license": "license",
+      "extension": "mjs",
+      "specificationId": "maintainer-camelcase-options",
+      "adaptation": {
+        "content": "import nodeTest from 'node:test';\nimport assert from 'node:assert/strict';\nimport camelCase from '../src/camelcase.mjs';\nconst test=(name,fn)=>nodeTest(name,()=>fn({is:assert.strictEqual,throws:assert.throws}));\n\ntest('camelCase', t => {\n\tt.is(camelCase('b2b_registration_request'), 'b2bRegistrationRequest');\n\tt.is(camelCase('b2b-registration-request'), 'b2bRegistrationRequest');\n\tt.is(camelCase('b2b_registration_b2b_request'), 'b2bRegistrationB2bRequest');\n\tt.is(camelCase('foo'), 'foo');\n\tt.is(camelCase('IDs'), 'ids');\n\tt.is(camelCase('FooIDs'), 'fooIds');\n\tt.is(camelCase('foo-bar'), 'fooBar');\n\tt.is(camelCase('foo-bar-baz'), 'fooBarBaz');\n\tt.is(camelCase('foo--bar'), 'fooBar');\n\tt.is(camelCase('--foo-bar'), 'fooBar');\n\tt.is(camelCase('--foo--bar'), 'fooBar');\n\tt.is(camelCase('FOO-BAR'), 'fooBar');\n\tt.is(camelCase('FOÈ-BAR'), 'foèBar');\n\tt.is(camelCase('-foo-bar-'), 'fooBar');\n\tt.is(camelCase('--foo--bar--'), 'fooBar');\n\tt.is(camelCase('foo-1'), 'foo1');\n\tt.is(camelCase('foo.bar'), 'fooBar');\n\tt.is(camelCase('foo..bar'), 'fooBar');\n\tt.is(camelCase('..foo..bar..'), 'fooBar');\n\tt.is(camelCase('foo_bar'), 'fooBar');\n\tt.is(camelCase('__foo__bar__'), 'fooBar');\n\tt.is(camelCase('foo bar'), 'fooBar');\n\tt.is(camelCase('  foo  bar  '), 'fooBar');\n\tt.is(camelCase('-'), '');\n\tt.is(camelCase(' - '), '');\n\tt.is(camelCase('fooBar'), 'fooBar');\n\tt.is(camelCase('fooBar-baz'), 'fooBarBaz');\n\tt.is(camelCase('foìBar-baz'), 'foìBarBaz');\n\tt.is(camelCase('fooBarBaz-bazzy'), 'fooBarBazBazzy');\n\tt.is(camelCase('FBBazzy'), 'fbBazzy');\n\tt.is(camelCase('F'), 'f');\n\tt.is(camelCase('FooBar'), 'fooBar');\n\tt.is(camelCase('Foo'), 'foo');\n\tt.is(camelCase('FOO'), 'foo');\n\tt.is(camelCase(['foo', 'bar']), 'fooBar');\n\tt.is(camelCase(['foo', '-bar']), 'fooBar');\n\tt.is(camelCase(['foo', '-bar', 'baz']), 'fooBarBaz');\n\tt.is(camelCase(['', '']), '');\n\tt.is(camelCase('--'), '');\n\tt.is(camelCase(''), '');\n\tt.is(camelCase('_'), '');\n\tt.is(camelCase(' '), '');\n\tt.is(camelCase('.'), '');\n\tt.is(camelCase('..'), '');\n\tt.is(camelCase('--'), '');\n\tt.is(camelCase('  '), '');\n\tt.is(camelCase('__'), '');\n\tt.is(camelCase('--__--_--_'), '');\n\tt.is(camelCase(['---_', '--', '', '-_- ']), '');\n\tt.is(camelCase('foo bar?'), 'fooBar?');\n\tt.is(camelCase('foo bar!'), 'fooBar!');\n\tt.is(camelCase('foo bar$'), 'fooBar$');\n\tt.is(camelCase('foo-bar#'), 'fooBar#');\n\tt.is(camelCase('XMLHttpRequest'), 'xmlHttpRequest');\n\tt.is(camelCase('AjaxXMLHttpRequest'), 'ajaxXmlHttpRequest');\n\tt.is(camelCase('Ajax-XMLHttpRequest'), 'ajaxXmlHttpRequest');\n\tt.is(camelCase([]), '');\n\tt.is(camelCase('mGridCol6@md'), 'mGridCol6@md');\n\tt.is(camelCase('A::a'), 'a::a');\n\tt.is(camelCase('Hello1World'), 'hello1World');\n\tt.is(camelCase('Hello11World'), 'hello11World');\n\tt.is(camelCase('hello1world'), 'hello1World');\n\tt.is(camelCase('Hello1World11foo'), 'hello1World11Foo');\n\tt.is(camelCase('Hello1'), 'hello1');\n\tt.is(camelCase('hello1'), 'hello1');\n\tt.is(camelCase('1Hello'), '1Hello');\n\tt.is(camelCase('1hello'), '1Hello');\n\tt.is(camelCase('h2w'), 'h2W');\n\tt.is(camelCase('розовый_пушистый-единороги'), 'розовыйПушистыйЕдинороги');\n\tt.is(camelCase('розовый_пушистый-единороги'), 'розовыйПушистыйЕдинороги');\n\tt.is(camelCase('РОЗОВЫЙ_ПУШИСТЫЙ-ЕДИНОРОГИ'), 'розовыйПушистыйЕдинороги');\n\tt.is(camelCase('桑德在这里。'), '桑德在这里。');\n\tt.is(camelCase('桑德在这里。'), '桑德在这里。');\n\tt.is(camelCase('桑德_在这里。'), '桑德在这里。');\n});\n\ntest('camelCase with pascalCase option', t => {\n\tt.is(camelCase('b2b_registration_request', {pascalCase: true}), 'B2bRegistrationRequest');\n\tt.is(camelCase('foo', {pascalCase: true}), 'Foo');\n\tt.is(camelCase('foo-bar', {pascalCase: true}), 'FooBar');\n\tt.is(camelCase('foo-bar-baz', {pascalCase: true}), 'FooBarBaz');\n\tt.is(camelCase('foo--bar', {pascalCase: true}), 'FooBar');\n\tt.is(camelCase('--foo-bar', {pascalCase: true}), 'FooBar');\n\tt.is(camelCase('--foo--bar', {pascalCase: true}), 'FooBar');\n\tt.is(camelCase('FOO-BAR', {pascalCase: true}), 'FooBar');\n\tt.is(camelCase('FOÈ-BAR', {pascalCase: true}), 'FoèBar');\n\tt.is(camelCase('-foo-bar-', {pascalCase: true}), 'FooBar');\n\tt.is(camelCase('--foo--bar--', {pascalCase: true}), 'FooBar');\n\tt.is(camelCase('foo-1', {pascalCase: true}), 'Foo1');\n\tt.is(camelCase('foo.bar', {pascalCase: true}), 'FooBar');\n\tt.is(camelCase('foo..bar', {pascalCase: true}), 'FooBar');\n\tt.is(camelCase('..foo..bar..', {pascalCase: true}), 'FooBar');\n\tt.is(camelCase('foo_bar', {pascalCase: true}), 'FooBar');\n\tt.is(camelCase('__foo__bar__', {pascalCase: true}), 'FooBar');\n\tt.is(camelCase('__foo__bar__', {pascalCase: true}), 'FooBar');\n\tt.is(camelCase('foo bar', {pascalCase: true}), 'FooBar');\n\tt.is(camelCase('  foo  bar  ', {pascalCase: true}), 'FooBar');\n\tt.is(camelCase('-', {pascalCase: true}), '');\n\tt.is(camelCase(' - ', {pascalCase: true}), '');\n\tt.is(camelCase('fooBar', {pascalCase: true}), 'FooBar');\n\tt.is(camelCase('fooBar-baz', {pascalCase: true}), 'FooBarBaz');\n\tt.is(camelCase('foìBar-baz', {pascalCase: true}), 'FoìBarBaz');\n\tt.is(camelCase('fooBarBaz-bazzy', {pascalCase: true}), 'FooBarBazBazzy');\n\tt.is(camelCase('FBBazzy', {pascalCase: true}), 'FbBazzy');\n\tt.is(camelCase('F', {pascalCase: true}), 'F');\n\tt.is(camelCase('FooBar', {pascalCase: true}), 'FooBar');\n\tt.is(camelCase('Foo', {pascalCase: true}), 'Foo');\n\tt.is(camelCase('FOO', {pascalCase: true}), 'Foo');\n\tt.is(camelCase(['foo', 'bar'], {pascalCase: true}), 'FooBar');\n\tt.is(camelCase(['foo', '-bar'], {pascalCase: true}), 'FooBar');\n\tt.is(camelCase(['foo', '-bar', 'baz'], {pascalCase: true}), 'FooBarBaz');\n\tt.is(camelCase(['', ''], {pascalCase: true}), '');\n\tt.is(camelCase('--', {pascalCase: true}), '');\n\tt.is(camelCase('', {pascalCase: true}), '');\n\tt.is(camelCase('--__--_--_', {pascalCase: true}), '');\n\tt.is(camelCase(['---_', '--', '', '-_- '], {pascalCase: true}), '');\n\tt.is(camelCase('foo bar?', {pascalCase: true}), 'FooBar?');\n\tt.is(camelCase('foo bar!', {pascalCase: true}), 'FooBar!');\n\tt.is(camelCase('foo bar$', {pascalCase: true}), 'FooBar$');\n\tt.is(camelCase('foo-bar#', {pascalCase: true}), 'FooBar#');\n\tt.is(camelCase('XMLHttpRequest', {pascalCase: true}), 'XmlHttpRequest');\n\tt.is(camelCase('AjaxXMLHttpRequest', {pascalCase: true}), 'AjaxXmlHttpRequest');\n\tt.is(camelCase('Ajax-XMLHttpRequest', {pascalCase: true}), 'AjaxXmlHttpRequest');\n\tt.is(camelCase([], {pascalCase: true}), '');\n\tt.is(camelCase('mGridCol6@md', {pascalCase: true}), 'MGridCol6@md');\n\tt.is(camelCase('A::a', {pascalCase: true}), 'A::a');\n\tt.is(camelCase('Hello1World', {pascalCase: true}), 'Hello1World');\n\tt.is(camelCase('Hello11World', {pascalCase: true}), 'Hello11World');\n\tt.is(camelCase('hello1world', {pascalCase: true}), 'Hello1World');\n\tt.is(camelCase('hello1World', {pascalCase: true}), 'Hello1World');\n\tt.is(camelCase('hello1', {pascalCase: true}), 'Hello1');\n\tt.is(camelCase('Hello1', {pascalCase: true}), 'Hello1');\n\tt.is(camelCase('1hello', {pascalCase: true}), '1Hello');\n\tt.is(camelCase('1Hello', {pascalCase: true}), '1Hello');\n\tt.is(camelCase('h1W', {pascalCase: true}), 'H1W');\n\tt.is(camelCase('РозовыйПушистыйЕдинороги', {pascalCase: true}), 'РозовыйПушистыйЕдинороги');\n\tt.is(camelCase('розовый_пушистый-единороги', {pascalCase: true}), 'РозовыйПушистыйЕдинороги');\n\tt.is(camelCase('РОЗОВЫЙ_ПУШИСТЫЙ-ЕДИНОРОГИ', {pascalCase: true}), 'РозовыйПушистыйЕдинороги');\n\tt.is(camelCase('桑德在这里。', {pascalCase: true}), '桑德在这里。');\n\tt.is(camelCase('桑德_在这里。', {pascalCase: true}), '桑德在这里。');\n\tt.is(camelCase('a1b', {pascalCase: true}), 'A1B');\n});\n\ntest('camelCase with preserveConsecutiveUppercase option', t => {\n\tt.is(camelCase('foo-BAR', {preserveConsecutiveUppercase: true}), 'fooBAR');\n\tt.is(camelCase('Foo-BAR', {preserveConsecutiveUppercase: true}), 'fooBAR');\n\tt.is(camelCase('fooBAR', {preserveConsecutiveUppercase: true}), 'fooBAR');\n\tt.is(camelCase('fooBaR', {preserveConsecutiveUppercase: true}), 'fooBaR');\n\tt.is(camelCase('FOÈ-BAR', {preserveConsecutiveUppercase: true}), 'FOÈBAR');\n\tt.is(camelCase(['foo', 'BAR'], {preserveConsecutiveUppercase: true}), 'fooBAR');\n\tt.is(camelCase(['foo', '-BAR'], {preserveConsecutiveUppercase: true}), 'fooBAR');\n\tt.is(camelCase(['foo', '-BAR', 'baz'], {preserveConsecutiveUppercase: true}), 'fooBARBaz');\n\tt.is(camelCase(['', ''], {preserveConsecutiveUppercase: true}), '');\n\tt.is(camelCase('--', {preserveConsecutiveUppercase: true}), '');\n\tt.is(camelCase('', {preserveConsecutiveUppercase: true}), '');\n\tt.is(camelCase('--__--_--_', {preserveConsecutiveUppercase: true}), '');\n\tt.is(camelCase(['---_', '--', '', '-_- '], {preserveConsecutiveUppercase: true}), '');\n\tt.is(camelCase('foo BAR?', {preserveConsecutiveUppercase: true}), 'fooBAR?');\n\tt.is(camelCase('foo BAR!', {preserveConsecutiveUppercase: true}), 'fooBAR!');\n\tt.is(camelCase('foo BAR$', {preserveConsecutiveUppercase: true}), 'fooBAR$');\n\tt.is(camelCase('foo-BAR#', {preserveConsecutiveUppercase: true}), 'fooBAR#');\n\tt.is(camelCase('XMLHttpRequest', {preserveConsecutiveUppercase: true}), 'XMLHttpRequest');\n\tt.is(camelCase('AjaxXMLHttpRequest', {preserveConsecutiveUppercase: true}), 'ajaxXMLHttpRequest');\n\tt.is(camelCase('Ajax-XMLHttpRequest', {preserveConsecutiveUppercase: true}), 'ajaxXMLHttpRequest');\n\tt.is(camelCase([], {preserveConsecutiveUppercase: true}), '');\n\tt.is(camelCase('mGridCOl6@md', {preserveConsecutiveUppercase: true}), 'mGridCOl6@md');\n\tt.is(camelCase('A::a', {preserveConsecutiveUppercase: true}), 'a::a');\n\tt.is(camelCase('Hello1WORLD', {preserveConsecutiveUppercase: true}), 'hello1WORLD');\n\tt.is(camelCase('Hello11WORLD', {preserveConsecutiveUppercase: true}), 'hello11WORLD');\n\tt.is(camelCase('РозовыйПушистыйFOOдинорогиf', {preserveConsecutiveUppercase: true}), 'розовыйПушистыйFOOдинорогиf');\n\tt.is(camelCase('桑德在这里。', {preserveConsecutiveUppercase: true}), '桑德在这里。');\n\tt.is(camelCase('桑德_在这里。', {preserveConsecutiveUppercase: true}), '桑德在这里。');\n\tt.is(camelCase('IDs', {preserveConsecutiveUppercase: true}), 'iDs');\n\tt.is(camelCase('FooIDs', {preserveConsecutiveUppercase: true}), 'fooIDs');\n});\n\ntest('camelCase with both pascalCase and preserveConsecutiveUppercase option', t => {\n\tt.is(camelCase('foo-BAR', {pascalCase: true, preserveConsecutiveUppercase: true}), 'FooBAR');\n\tt.is(camelCase('fooBAR', {pascalCase: true, preserveConsecutiveUppercase: true}), 'FooBAR');\n\tt.is(camelCase('fooBaR', {pascalCase: true, preserveConsecutiveUppercase: true}), 'FooBaR');\n\tt.is(camelCase('fOÈ-BAR', {pascalCase: true, preserveConsecutiveUppercase: true}), 'FOÈBAR');\n\tt.is(camelCase('--foo.BAR', {pascalCase: true, preserveConsecutiveUppercase: true}), 'FooBAR');\n\tt.is(camelCase(['Foo', 'BAR'], {pascalCase: true, preserveConsecutiveUppercase: true}), 'FooBAR');\n\tt.is(camelCase(['foo', '-BAR'], {pascalCase: true, preserveConsecutiveUppercase: true}), 'FooBAR');\n\tt.is(camelCase(['foo', '-BAR', 'baz'], {pascalCase: true, preserveConsecutiveUppercase: true}), 'FooBARBaz');\n\tt.is(camelCase(['', ''], {pascalCase: true, preserveConsecutiveUppercase: true}), '');\n\tt.is(camelCase('--', {pascalCase: true, preserveConsecutiveUppercase: true}), '');\n\tt.is(camelCase('', {pascalCase: true, preserveConsecutiveUppercase: true}), '');\n\tt.is(camelCase('--__--_--_', {pascalCase: true, preserveConsecutiveUppercase: true}), '');\n\tt.is(camelCase(['---_', '--', '', '-_- '], {pascalCase: true, preserveConsecutiveUppercase: true}), '');\n\tt.is(camelCase('foo BAR?', {pascalCase: true, preserveConsecutiveUppercase: true}), 'FooBAR?');\n\tt.is(camelCase('foo BAR!', {pascalCase: true, preserveConsecutiveUppercase: true}), 'FooBAR!');\n\tt.is(camelCase('Foo BAR$', {pascalCase: true, preserveConsecutiveUppercase: true}), 'FooBAR$');\n\tt.is(camelCase('foo-BAR#', {pascalCase: true, preserveConsecutiveUppercase: true}), 'FooBAR#');\n\tt.is(camelCase('xMLHttpRequest', {pascalCase: true, preserveConsecutiveUppercase: true}), 'XMLHttpRequest');\n\tt.is(camelCase('ajaxXMLHttpRequest', {pascalCase: true, preserveConsecutiveUppercase: true}), 'AjaxXMLHttpRequest');\n\tt.is(camelCase('Ajax-XMLHttpRequest', {pascalCase: true, preserveConsecutiveUppercase: true}), 'AjaxXMLHttpRequest');\n\tt.is(camelCase([], {pascalCase: true, preserveConsecutiveUppercase: true}), '');\n\tt.is(camelCase('mGridCOl6@md', {pascalCase: true, preserveConsecutiveUppercase: true}), 'MGridCOl6@md');\n\tt.is(camelCase('A::a', {pascalCase: true, preserveConsecutiveUppercase: true}), 'A::a');\n\tt.is(camelCase('Hello1WORLD', {pascalCase: true, preserveConsecutiveUppercase: true}), 'Hello1WORLD');\n\tt.is(camelCase('Hello11WORLD', {pascalCase: true, preserveConsecutiveUppercase: true}), 'Hello11WORLD');\n\tt.is(camelCase('pозовыйПушистыйFOOдинорогиf', {pascalCase: true, preserveConsecutiveUppercase: true}), 'PозовыйПушистыйFOOдинорогиf');\n\tt.is(camelCase('桑德在这里。', {pascalCase: true, preserveConsecutiveUppercase: true}), '桑德在这里。');\n\tt.is(camelCase('桑德_在这里。', {pascalCase: true, preserveConsecutiveUppercase: true}), '桑德在这里。');\n});\n\ntest('camelCase with locale option', t => {\n\tt.is(camelCase('lorem-ipsum', {locale: 'tr-TR'}), 'loremİpsum');\n\tt.is(camelCase('lorem-ipsum', {locale: 'en-EN'}), 'loremIpsum');\n\tt.is(camelCase('lorem-ipsum', {locale: ['tr', 'TR', 'tr-TR']}), 'loremİpsum');\n\tt.is(camelCase('lorem-ipsum', {locale: ['en-EN', 'en-GB']}), 'loremIpsum');\n\tt.is(camelCase('ipsum-dolor', {pascalCase: true, locale: 'tr-TR'}), 'İpsumDolor');\n\tt.is(camelCase('ipsum-dolor', {pascalCase: true, locale: 'en-EN'}), 'IpsumDolor');\n\tt.is(camelCase('ipsum-dolor', {pascalCase: true, locale: ['tr', 'TR', 'tr-TR']}), 'İpsumDolor');\n\tt.is(camelCase('ipsum-dolor', {pascalCase: true, locale: ['en-EN', 'en-GB']}), 'IpsumDolor');\n});\n\ntest('camelCase with disabled locale', t => {\n\twithLocaleCaseFunctionsMocked(() => {\n\t\tt.is(camelCase('lorem-ipsum', {locale: false}), 'loremIpsum');\n\t\tt.is(camelCase('ipsum-dolor', {pascalCase: true, locale: false}), 'IpsumDolor');\n\t\tt.is(camelCase('ipsum-DOLOR', {pascalCase: true, locale: false, preserveConsecutiveUppercase: true}), 'IpsumDOLOR');\n\t});\n});\n\ntest('invalid input', t => {\n\tt.throws(() => {\n\t\tcamelCase(1);\n\t}, {\n\t\tmessage: /Expected the input to be/,\n\t});\n});\n\n/* eslint-disable no-extend-native */\nconst withLocaleCaseFunctionsMocked = fn => {\n\tconst throwWhenBeingCalled = () => {\n\t\tthrow new Error('Should not be called');\n\t};\n\n\tconst toLocaleUpperCase = Object.getOwnPropertyDescriptor(String.prototype, 'toLocaleUpperCase');\n\tconst toLocaleLowerCase = Object.getOwnPropertyDescriptor(String.prototype, 'toLocaleLowerCase');\n\n\tObject.defineProperty(String.prototype, 'toLocaleUpperCase', {\n\t\t...toLocaleUpperCase,\n\t\tvalue: throwWhenBeingCalled,\n\t});\n\tObject.defineProperty(String.prototype, 'toLocaleLowerCase', {\n\t\t...toLocaleLowerCase,\n\t\tvalue: throwWhenBeingCalled,\n\t});\n\n\ttry {\n\t\tfn();\n\t} finally {\n\t\tObject.defineProperty(String.prototype, 'toLocaleUpperCase', toLocaleUpperCase);\n\t\tObject.defineProperty(String.prototype, 'toLocaleLowerCase', toLocaleLowerCase);\n\t}\n};\n/* eslint-enable no-extend-native */\n",
+        "adapter": "node-test-import-shim-v1",
+        "originalHash": "1b2622e7bb4440224754f7fe2a45e08eead94e5a5a894b8d2f2b9990d9bfb5c4",
+        "bodyHash": "991c19dc1722078367ba9124091974bc413ca0a7e3a303d3f2f23b390c4885f9",
+        "adaptedHash": "4a0629b3bbdf2c755592bd75b5445c0acec1e22007c9e83e749310e108571b45",
+        "scope": "Only imports/framework entry points change. Maintainer assertion bodies remain byte-identical. This is not an upstream runner qualification."
+      },
+      "sourceScope": "Exact fixed and parent source bytes; later independent oracle revision is declared separately when applicable. No full upstream dependency installation; only built-in Node assertion runner shims."
+    },
+    {
+      "id": "url",
+      "repo": "sindresorhus/is-url-superb",
+      "fixed": "f34458bdc544e23e29a32b9e76cd7ebbd293c741",
+      "parent": "69aa1f432ace2a5eba04366bb450fecad762b5b4",
+      "oracle": "f34458bdc544e23e29a32b9e76cd7ebbd293c741",
+      "test": "test.js",
+      "readme": "readme.md",
+      "license": "license",
+      "specificationId": "maintainer-url-predicate",
+      "adaptation": {
+        "content": "import nodeTest from 'node:test';\nimport assert from 'node:assert/strict';\nimport isUrl from '../src/url.cjs';\nconst test=(name,fn)=>nodeTest(name,()=>fn({true:value=>assert.strictEqual(value,true),false:value=>assert.strictEqual(value,false)}));\n\ntest('main', t => {\n\tt.true(isUrl('https://sindresorhus.com'));\n\tt.true(isUrl('  https://sindresorhus.com  '));\n\tt.false(isUrl('abc https://sindresorhus.com'));\n\tt.false(isUrl('https://sindresorhus.com abc'));\n\tt.false(isUrl('https://sindresorhus.com/abc def'));\n});\n",
+        "adapter": "node-test-import-shim-v1",
+        "originalHash": "139619f55d8ba7679e8480bbf0afbad4b8daf7b54fee0e7f41bcca0957cc01e2",
+        "bodyHash": "269fecd731c91df9f20973910b56ab76cb3615581613852ea24c3a34fcedeebf",
+        "adaptedHash": "93abfc77dfeb46cf46f97bec7b76fb68ca4e0414c5a55afffe9272880ba68af3",
+        "scope": "Only imports/framework entry points change. Maintainer assertion bodies remain byte-identical. This is not an upstream runner qualification."
+      },
+      "sourceScope": "Exact fixed and parent source bytes; later independent oracle revision is declared separately when applicable. No full upstream dependency installation; only built-in Node assertion runner shims."
+    }
+  ],
+  "bindings": [
+    {
+      "repo": "sindresorhus/camelcase",
+      "revision": "e7dccc901ce645138a52dd5945e245773b4684c5",
+      "path": "index.js",
+      "gitBlob": "2be1bd120fbcd8f4b2a84644b3a43f3801fded76",
+      "sha256": "97ff596a70c157d72456883e5fc271d3bece89396a497448bbbb2cb41a4901d1",
+      "bytes": 3550,
+      "url": "https://github.com/sindresorhus/camelcase/blob/e7dccc901ce645138a52dd5945e245773b4684c5/index.js"
+    },
+    {
+      "repo": "sindresorhus/camelcase",
+      "revision": "c9fa59df2e32611c5c71d0f219f661fa8e1dfdf8",
+      "path": "index.js",
+      "gitBlob": "6d803165bb7a52f9a23be405a24d30dacca3bb34",
+      "sha256": "61bfa58716d9461dc7eb50f3a4793793590976af6591c524f25ca7c2de1dcdb9",
+      "bytes": 3456,
+      "url": "https://github.com/sindresorhus/camelcase/blob/c9fa59df2e32611c5c71d0f219f661fa8e1dfdf8/index.js"
+    },
+    {
+      "repo": "sindresorhus/camelcase",
+      "revision": "e7dccc901ce645138a52dd5945e245773b4684c5",
+      "path": "test.js",
+      "gitBlob": "4a013f8a166eda2dabcca9277ab9fb4013ab7e6f",
+      "sha256": "1b2622e7bb4440224754f7fe2a45e08eead94e5a5a894b8d2f2b9990d9bfb5c4",
+      "bytes": 15300,
+      "url": "https://github.com/sindresorhus/camelcase/blob/e7dccc901ce645138a52dd5945e245773b4684c5/test.js"
+    },
+    {
+      "repo": "sindresorhus/camelcase",
+      "revision": "e7dccc901ce645138a52dd5945e245773b4684c5",
+      "path": "readme.md",
+      "gitBlob": "ef8ef972c701ccb5b4d34ff38f542a0264ead686",
+      "sha256": "3170534d15b0375c6eedc40dca88a7a5eed78849b8ca4a25c3cba7be31a56a5d",
+      "bytes": 3812,
+      "url": "https://github.com/sindresorhus/camelcase/blob/e7dccc901ce645138a52dd5945e245773b4684c5/readme.md"
+    },
+    {
+      "repo": "sindresorhus/camelcase",
+      "revision": "e7dccc901ce645138a52dd5945e245773b4684c5",
+      "path": "license",
+      "gitBlob": "fa7ceba3eb4a9657a9db7f3ffca4e4e97a9019de",
+      "sha256": "5c932d88256b4ab958f64a856fa48e8bd1f55bc1d96b8149c65689e0c61789d3",
+      "bytes": 1117,
+      "url": "https://github.com/sindresorhus/camelcase/blob/e7dccc901ce645138a52dd5945e245773b4684c5/license"
+    },
+    {
+      "repo": "sindresorhus/is-url-superb",
+      "revision": "f34458bdc544e23e29a32b9e76cd7ebbd293c741",
+      "path": "index.js",
+      "gitBlob": "672f26441139d37649571742c9c6652fac0793bb",
+      "sha256": "3b056118d9e5097dc742e937aae496896e13db29a540a268bd0f69f35f3a30ac",
+      "bytes": 305,
+      "url": "https://github.com/sindresorhus/is-url-superb/blob/f34458bdc544e23e29a32b9e76cd7ebbd293c741/index.js"
+    },
+    {
+      "repo": "sindresorhus/is-url-superb",
+      "revision": "69aa1f432ace2a5eba04366bb450fecad762b5b4",
+      "path": "index.js",
+      "gitBlob": "4b71e1a21432e93a2a38c7989569d4e0f7175120",
+      "sha256": "7c12bbbde447d4c9f6790bceb38ba1b63e25dfbcf8cf7f51892c00f1bf06bbbc",
+      "bytes": 231,
+      "url": "https://github.com/sindresorhus/is-url-superb/blob/69aa1f432ace2a5eba04366bb450fecad762b5b4/index.js"
+    },
+    {
+      "repo": "sindresorhus/is-url-superb",
+      "revision": "f34458bdc544e23e29a32b9e76cd7ebbd293c741",
+      "path": "test.js",
+      "gitBlob": "22cd9cfc82574d7f138f4a99d8fc2077da2eb540",
+      "sha256": "139619f55d8ba7679e8480bbf0afbad4b8daf7b54fee0e7f41bcca0957cc01e2",
+      "bytes": 315,
+      "url": "https://github.com/sindresorhus/is-url-superb/blob/f34458bdc544e23e29a32b9e76cd7ebbd293c741/test.js"
+    },
+    {
+      "repo": "sindresorhus/is-url-superb",
+      "revision": "f34458bdc544e23e29a32b9e76cd7ebbd293c741",
+      "path": "readme.md",
+      "gitBlob": "296d56664115fd1c95c7e3b64fea76fd70a070d8",
+      "sha256": "7f81460b7d8141767e8b85ab4228040b2d8b038604466b56adfbcc29242abfa8",
+      "bytes": 451,
+      "url": "https://github.com/sindresorhus/is-url-superb/blob/f34458bdc544e23e29a32b9e76cd7ebbd293c741/readme.md"
+    },
+    {
+      "repo": "sindresorhus/is-url-superb",
+      "revision": "f34458bdc544e23e29a32b9e76cd7ebbd293c741",
+      "path": "license",
+      "gitBlob": "fa7ceba3eb4a9657a9db7f3ffca4e4e97a9019de",
+      "sha256": "5c932d88256b4ab958f64a856fa48e8bd1f55bc1d96b8149c65689e0c61789d3",
+      "bytes": 1117,
+      "url": "https://github.com/sindresorhus/is-url-superb/blob/f34458bdc544e23e29a32b9e76cd7ebbd293c741/license"
+    }
+  ]
+}
