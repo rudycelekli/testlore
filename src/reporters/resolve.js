@@ -7,6 +7,7 @@ import { spawnSync } from 'node:child_process';
 import {encodeNativeFrame,nativeFrameReader,readNativeJson} from '../native-protocol.js';
 import {phaseTimings} from '../timing.js';
 import {nativeSourceSummaryReader} from '../native-source-summaries.js';
+import {captureConfigurationInputs,assertConfigurationInputFreshness,admitsCanonicalTempDirectory} from '../configuration-inputs.js';
 const workerTiming=phaseTimings();
 const argvSome=Array.prototype.some,argvStartsWith=String.prototype.startsWith,argvApply=Reflect.apply;
 let protocolOutput, instruction;
@@ -108,6 +109,16 @@ function rejectUnifiedProjectPlugins(files,plugins) {
 }
 
 try {
+  const configurationPolicy={configurationInputs:request.configurationInputs};
+  const physicalInputs=captureConfigurationInputs(root,configurationPolicy);
+  const expectedInputs=request.configurationInputObservations||{schemaVersion:1,profile:'exact-canonical-temp-directory',observations:[],warnings:[]};
+  assertConfigurationInputFreshness(expectedInputs,physicalInputs);
+  if(physicalInputs.observations.length){
+    const {analyze,typescript:ts,assertCurrentEngine}=createRequire(import.meta.url)('../syntax-engine.cjs');
+    assertCurrentEngine();
+    for(const input of physicalInputs.observations)if(!admitsCanonicalTempDirectory(analyze(input.file,fs.readFileSync(path.join(root,input.file),'utf8')).ast,ts))throw Error('Configuration filesystem profile rejected in native worker');
+  }
+  function freshInputs(){const current=captureConfigurationInputs(root,configurationPolicy);assertConfigurationInputFreshness(physicalInputs,current,{allowCanonicalTmpdir:true});return current;}
   if (adapter === 'jest') {
     const result = spawnSync(command[0], [...command.slice(1), '--showConfig'], { cwd: root, encoding: 'utf8', env: process.env, timeout: 30000, maxBuffer: 16 * 1024 * 1024 });
     if (result.status !== 0) throw new Error('Jest config resolution failed');
@@ -204,6 +215,14 @@ try {
     for(const file of request.roots || [])expand(path.resolve(root,file));
     output.configFiles.push(...(loaded?.dependencies || []), ...(loaded?.path ? [loaded.path] : []));
     if(context)output.configFiles.push(...(context.vite.config.configFileDependencies||[]),...(context.vite.config.configFile?[context.vite.config.configFile]:[]));
+    for(const input of physicalInputs.observations){
+      if(!output.configFiles.includes(path.join(root,input.file)))throw Error('Approved configuration input is not a loaded config dependency');
+      for(const project of new Set(context?[context.getRootProject(),...projects]:[])){
+        const env=project.config.env||{};
+        if(env.TMPDIR!==input.canonicalDirectory||env.TMP!==undefined&&env.TMP!==input.environment.TMP||env.TEMP!==undefined&&env.TEMP!==input.environment.TEMP)throw Error('Native project temp environment differs from admitted configuration input');
+      }
+    }
+    output.configurationInputs=freshInputs();
     rejectArgvConfiguration(output.configFiles);
     if(context)for(const project of new Set([context.getRootProject(),...projects]))rejectUnifiedProjectPlugins(output.configFiles,project.vite.config.plugins);
     workerTiming.mark('sourceExpansionAndConfigurationAdmission');
@@ -242,15 +261,18 @@ try {
       for(const project of output.projectContracts)if(!project.isolate&&project.files.some(file=>expected.has(file))&&project.files.some(file=>!expected.has(file)))throw new Error('Unified execution omitted a shared-isolation project member');
       if(typeof context.standalone==='function')await context.standalone();else await context.init();
       workerTiming.mark('runnerInitialization');
+      freshInputs();
       const result=await context.runTestSpecifications(selected,selected.length===specs.length);
       workerTiming.mark('nativeTestsAndReporter');
       if(result.unhandledErrors?.length)throw new Error('Unified native execution has unhandled errors');
       const value=readNativeJson(request.reportFile);
+      value.configurationInputs=freshInputs();
       workerTiming.mark('nativeReportRead');
       await sendBounded({phase:'executed',value,timings:workerTiming.finish()});
     }
     } finally {if(context)await context.close();}
   }
+  output.configurationInputs=freshInputs();
 } catch (error) {
   output.complete = false; output.error = error.message;
   output.additionalResolutions = [];

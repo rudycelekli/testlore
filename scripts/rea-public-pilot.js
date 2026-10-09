@@ -26,9 +26,9 @@ export const REA_PROPERTY_CASES=Object.freeze([
  ['src/dotnet/ManagedMemberInspectorCore.test.ts','agrees with observed first-match ownership for arbitrary metadata ranges'],
 ]);
 export function parseCampaignOptions(args){
- const values={};let unifiedNative=false;
+ const values={};let unifiedNative=false,configurationInputs=false;
  for(let i=0;i<args.length;i++){
-  const key=args[i];if(key==='--unified-native'){if(unifiedNative)throw Error('Duplicate campaign flag');unifiedNative=true;continue;}
+  const key=args[i];if(key==='--configuration-inputs'){if(configurationInputs)throw Error('Duplicate campaign flag');configurationInputs=true;continue;}if(key==='--unified-native'){if(unifiedNative)throw Error('Duplicate campaign flag');unifiedNative=true;continue;}
   if(!['--directory','--output','--property-seed','--candidate-archive','--candidate-sha256','--candidate-revision','--candidate-version'].includes(key)||values[key]!==undefined||args[i+1]===undefined||args[i+1].startsWith('--'))throw Error('Invalid campaign option');
   values[key]=args[++i];
  }
@@ -43,7 +43,8 @@ export function parseCampaignOptions(args){
   candidate={archive:path.resolve(values['--candidate-archive']),sha256:values['--candidate-sha256'],sourceRevision:values['--candidate-revision'],version:values['--candidate-version'],kind:'explicit-source-candidate-not-registry-release'};
  }
  if(unifiedNative&&!candidate)throw Error('Unified native mode requires an explicit candidate');
- return {directory:path.resolve(values['--directory']),output:path.resolve(values['--output']),seed,candidate,unifiedNative};
+ if(configurationInputs&&!candidate)throw Error('Configuration input profile requires an explicit candidate');
+ return {directory:path.resolve(values['--directory']),output:path.resolve(values['--output']),seed,candidate,unifiedNative,configurationInputs};
 }
 
 // Native case identities are recomputed independently from file/name/ordinal.
@@ -258,7 +259,8 @@ export async function main(args=process.argv.slice(2)) {
   const installed=JSON.parse(fs.readFileSync(path.join(tools,'node_modules/testlore/package.json')));if(installed.version!==source.version||installed.gitHead!==source.sourceRevision)throw new Error('Installed archive identity mismatch');
   const blank='src/cliJsonInput.ts';
   const changes=[{name:'path-normalization-comment',file:blank,before:'export const resolveCliJsonPaths = (',after:'// Qualification: unchanged path normalization.\nexport const resolveCliJsonPaths = (',expectedFailure:false},{name:'blank-path-historical-source-reversion',file:blank,before:fs.readFileSync(path.join(upstream,blank),'utf8'),after:git('show','6a7650e93cba9169baad95d2c52b11351ae39d0e:'+blank),expectedFailure:true}];
-  const manifest={schemaVersion:1,repetitions:3,timeoutMs:180000,cachePolicy:{jitiFilesystem:false},projects:[{name:'rea-source-projects',root:upstream,scope,...(propertyReplay?{propertyReplay}:{}),config:{adapter:'vitest',discovery:'native',runner:originalRunner,analysisCache:{enabled:true}},changes}]};
+  const configuredInputs=options.configurationInputs?[{file:'vitest.config.ts',kind:'canonical-temp-directory',sourceSha256:hash(fs.readFileSync(path.join(upstream,'vitest.config.ts')))}]:undefined;
+  const manifest={schemaVersion:1,repetitions:3,timeoutMs:180000,cachePolicy:{jitiFilesystem:false},projects:[{name:'rea-source-projects',root:upstream,scope,...(propertyReplay?{propertyReplay}:{}),config:{adapter:'vitest',discovery:'native',runner:originalRunner,analysisCache:{enabled:true},...(configuredInputs?{configurationInputs:configuredInputs}:{})},changes}]};
   fs.writeFileSync(path.join(output,'preregistered-manifest.json'),JSON.stringify(manifest,null,2));
   fs.copyFileSync(path.join(tools,'package-lock.json'),path.join(output,'tools-installed-lock.json'));
   const cli=path.join(tools,'node_modules/testlore/src/cli.js');

@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 1,
+  "repository": "jonschlinkert/is-number",
+  "fixed": "12749e3c411750f754d50f093471234c7ab270b0",
+  "parent": "204c885659b8ee1946534c61db91603b9a16d661",
+  "bindings": [
+    {
+      "path": "upstream/12749e3c411750f754d50f093471234c7ab270b0/index.js",
+      "bytes": 511,
+      "sha256": "76f4e8f626040311330e6ee10f2f428d350217d668082dce81c2ab0e0768212f",
+      "gitBlob": "f17e7dcb6e3a5bcf6be7cf20b63bead5aabb77a6",
+      "url": "https://github.com/jonschlinkert/is-number/blob/12749e3c411750f754d50f093471234c7ab270b0/index.js"
+    },
+    {
+      "path": "upstream/12749e3c411750f754d50f093471234c7ab270b0/test.js",
+      "bytes": 2675,
+      "sha256": "acb5000f91ab6a43244a94fa01910bf635b39084f5d9fd5ea74354c46c19b139",
+      "gitBlob": "3cbbc56007ea4460b8cc8a0f471d4adc58011354",
+      "url": "https://github.com/jonschlinkert/is-number/blob/12749e3c411750f754d50f093471234c7ab270b0/test.js"
+    },
+    {
+      "path": "upstream/12749e3c411750f754d50f093471234c7ab270b0/README.md",
+      "bytes": 3439,
+      "sha256": "d490f6ac792e0f1e72e0adcf3c4622b97a469cc5c1ce6529cd3e76cad60c8a70",
+      "gitBlob": "8395f913179a7f9495e94fc02096993c1c113a9c",
+      "url": "https://github.com/jonschlinkert/is-number/blob/12749e3c411750f754d50f093471234c7ab270b0/README.md"
+    },
+    {
+      "path": "upstream/12749e3c411750f754d50f093471234c7ab270b0/LICENSE",
+      "bytes": 1088,
+      "sha256": "daca23d50b0f54d36d6da1b16c82dfea6461e2ae20de0e869957e44cc6d34781",
+      "gitBlob": "fa30c4cb3e4c1584e29f19325c587b6f6a2f5627",
+      "url": "https://github.com/jonschlinkert/is-number/blob/12749e3c411750f754d50f093471234c7ab270b0/LICENSE"
+    },
+    {
+      "path": "upstream/12749e3c411750f754d50f093471234c7ab270b0/package.json",
+      "bytes": 1082,
+      "sha256": "2c5fd85cc3e880b9aae77b2830de06d4aec22a8c74b2bfa6c7f552be3b2501e6",
+      "gitBlob": "75b860c11e214f7f106338f2d77aa4813083b40a",
+      "url": "https://github.com/jonschlinkert/is-number/blob/12749e3c411750f754d50f093471234c7ab270b0/package.json"
+    },
+    {
+      "path": "upstream/204c885659b8ee1946534c61db91603b9a16d661/index.js",
+      "bytes": 396,
+      "sha256": "1b572fa10d2a238af614189c499ceff034ab2549f4795cffaa85e5976a3f87a6",
+      "gitBlob": "96ec66d5e2fc1f1cbfa60bc2b97b8d6938e3fd9e",
+      "url": "https://github.com/jonschlinkert/is-number/blob/204c885659b8ee1946534c61db91603b9a16d661/index.js"
+    }
+  ]
+}

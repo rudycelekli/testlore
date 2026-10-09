@@ -1,0 +1,100 @@
+name: AQE shared-candidate runtime comparison
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - src/**
+      - scripts/aqe-comparison.js
+      - scripts/public-corpus-upstream.js
+      - scripts/qualification-process.js
+      - scripts/public-corpus.js
+      - scripts/regression-corpus.js
+      - scripts/evaluation-commitment.js
+      - scripts/worker-identity.js
+      - test/aqe-comparison.test.js
+      - benchmarks/aqe-comparison/**
+      - package.json
+      - package-lock.json
+      - .github/workflows/aqe-runtime-comparison.yml
+permissions:
+  contents: read
+concurrency:
+  group: aqe-runtime-comparison-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  shared-candidates:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7.0.0
+        with:
+          node-version: '22.19.0'
+      - name: Install pinned tools and collect the bounded comparison
+        env:
+          EXPECTED_REVISION: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          node --input-type=module <<'JS'
+          import fs from 'node:fs';
+          import path from 'node:path';
+          import {execFileSync} from 'node:child_process';
+          import {createHash} from 'node:crypto';
+          import {performance} from 'node:perf_hooks';
+          import {boundedInstallProcess} from './scripts/qualification-process.js';
+          import {runAqeComparison} from './scripts/aqe-comparison.js';
+          const started=performance.now(),evidence=path.resolve('.tddswarm/aqe-runtime-comparison');
+          fs.mkdirSync(evidence,{recursive:true,mode:0o700});
+          const save=(name,value)=>fs.writeFileSync(path.join(evidence,name),JSON.stringify(value,null,2)+'\n',{flag:'wx',mode:0o600});
+          const hash=file=>createHash('sha256').update(fs.readFileSync(file)).digest('hex');
+          try{
+            const revision=execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim();
+            if(revision!==process.env.EXPECTED_REVISION)throw Error('Checkout does not match the requested exact head');
+            const root=fs.mkdtempSync(path.join(process.env.RUNNER_TEMP,'aqe-comparison-install-'));
+            const home=path.join(root,'home'),tmp=path.join(root,'tmp'),cache=path.join(root,'cache');
+            for(const directory of [home,tmp,cache])fs.mkdirSync(directory,{mode:0o700});
+            const userConfig=path.join(root,'npm-user-config'),globalConfig=path.join(root,'npm-global-config');
+            for(const file of [userConfig,globalConfig])fs.writeFileSync(file,'',{flag:'wx',mode:0o600});
+            const env={PATH:path.dirname(process.execPath)+path.delimiter+'/usr/local/bin:/usr/bin:/bin',HOME:home,TMPDIR:tmp,TEMP:tmp,TMP:tmp,LANG:'C.UTF-8',CI:'true',npm_config_cache:cache,npm_config_userconfig:userConfig,npm_config_globalconfig:globalConfig,npm_config_ignore_scripts:'false'};
+            const npm=path.resolve(path.dirname(process.execPath),'../lib/node_modules/npm/bin/npm-cli.js');
+            const policy={timeoutMs:180000,reserveBytes:2*1024**3,maxGrowthBytes:450*1024**2,maxLogBytes:2*1024**2,terminateDescendants:true};
+            save('controller.json',{schemaVersion:1,revision,node:process.version,platform:process.platform,arch:process.arch,policy,bootstrapImplementationSha256:hash('scripts/qualification-process.js'),childEnvironment:'Fresh HOME/TMPDIR and empty npm user/global config/cache; PATH/locale/CI only. No inherited credentials.',configurationHashes:{user:hash(userConfig),global:hash(globalConfig)},cost:{providerCurrency:null,tokens:null},scope:'Credential-free shared template candidates; one independent historical defect, two repetitions. No learning or general superiority claim.'});
+            async function install(label,cwd,args){
+              const directory=path.join(evidence,label);fs.mkdirSync(directory);
+              const result=await boundedInstallProcess(process.execPath,[npm,...args],{cwd,directory,env,...policy});
+              fs.writeFileSync(path.join(directory,'receipt.json'),JSON.stringify({command:[process.execPath,npm,...args],...result,policy},null,2)+'\n',{flag:'wx',mode:0o600});
+              if(result.exitCode!==0||result.reason||!result.stdoutSha256||!result.stderrSha256)throw Error(label+' blocked or incomplete: '+(result.reason||result.exitCode));
+              const lock=path.join(cwd,'package-lock.json');fs.copyFileSync(lock,path.join(directory,'package-lock.json'),fs.constants.COPYFILE_EXCL);
+              const {installedTreeIdentity}=await import('./scripts/public-corpus-upstream.js');
+              const inventory=installedTreeIdentity(path.join(cwd,'node_modules'),{captureInventory:true});
+              fs.writeFileSync(path.join(directory,'installed-inventory.json'),JSON.stringify(inventory,null,2)+'\n',{flag:'wx',mode:0o600});
+              if(inventory.inventoryStatus?.status!=='complete')throw Error(label+' installed inventory incomplete');
+            }
+            const lockBefore=hash('package-lock.json');
+            await install('testlore-install',process.cwd(),['ci']);
+            if(hash('package-lock.json')!==lockBefore)throw Error('TestLore lock changed during npm ci');
+            const project=path.join(root,'aqe-runtime');fs.mkdirSync(project);
+            fs.writeFileSync(path.join(project,'package.json'),JSON.stringify({name:'testlore-aqe-runtime-assay',private:true,version:'1.0.0'}),{flag:'wx',mode:0o600});
+            await install('aqe-install',project,['install','--save-exact','agentic-qe@3.14.8','kind-of@3.0.2']);
+            if(fs.readFileSync(userConfig,'utf8')||fs.readFileSync(globalConfig,'utf8'))throw Error('Isolated npm configuration changed');
+            execFileSync('git',['diff','--exit-code','HEAD','--','src','scripts','benchmarks/aqe-comparison','package.json','package-lock.json'],{stdio:['ignore','pipe','pipe']});
+            const result=await runAqeComparison({aqePackage:path.join(project,'node_modules/agentic-qe'),dependencyDirectory:path.join(project,'node_modules'),output:path.join(evidence,'comparison')});
+            save('installation-to-result.json',{schemaVersion:1,revision,completed:result.completed===true,durationMs:performance.now()-started,includes:'Both dependency installations, inventory hashing, generation, native measurements, TestLore validation and report retention',cost:{providerCurrency:null,tokens:null},qualifiedAdvantage:false});
+            if(result.completed!==true)throw Error('Comparison was not completed');
+            console.log('::notice::Bounded comparison collected. Rejections and negative results are retained; no general superiority or learning claim.');
+          }catch(error){
+            save('controller-failure.json',{schemaVersion:1,completed:false,error:String(error.message).slice(0,1000),durationMs:performance.now()-started,cost:{providerCurrency:null,tokens:null},qualifiedAdvantage:false});
+            console.error(error.message);process.exitCode=1;
+          }
+          JS
+      - name: Preserve installation and comparison failures
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: aqe-runtime-comparison-${{ github.run_id }}
+          path: .tddswarm/aqe-runtime-comparison/
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 14

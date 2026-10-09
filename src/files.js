@@ -2,6 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { resolvePluginConfig } from './plugin-config.js';
+import { validateConfigurationInputs } from './configuration-inputs.js';
 
 export const SOURCE = /\.(?:[cm]?[jt]sx?)$/;
 export const TEST = /(?:^|\/)(?:[^/]+\.)?(?:test|spec)\.[cm]?[jt]sx?$|(?:^|\/)(?:__tests__)\/.*\.[cm]?[jt]sx?$/;
@@ -89,6 +90,7 @@ export function readConfig(root) {
 }
 export function validateConfig(raw) {
   const config = resolvePluginConfig(raw);
+  validateConfigurationInputs(config.configurationInputs);
   if(config.executionMode !== undefined && !['shadow','selective'].includes(config.executionMode))throw new Error('executionMode must be shadow or selective');
   if(config.analysisCache!==undefined){
     const cache=config.analysisCache;

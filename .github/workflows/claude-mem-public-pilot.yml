@@ -1,0 +1,108 @@
+name: Claude-mem native Bun qualification
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - src/**
+      - scripts/claude-mem-public-pilot.js
+      - scripts/public-corpus-upstream.js
+      - test/bun-results.test.js
+      - docs/claude-mem-qualification.md
+      - .github/workflows/claude-mem-public-pilot.yml
+permissions:
+  contents: read
+concurrency:
+  group: claude-mem-public-pilot-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  original-bun:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7.0.0
+        with:
+          node-version: '22.19.0'
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6
+        with:
+          bun-version: '1.4.2'
+      - name: Install TestLore qualification dependencies in isolated configuration
+        env:
+          EXPECTED_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          test "$(git rev-parse HEAD)" = "$EXPECTED_HEAD"
+          mkdir -p .tddswarm/claude-mem-hosted "$RUNNER_TEMP/testlore-install-home" "$RUNNER_TEMP/testlore-install-cache"
+          touch "$RUNNER_TEMP/testlore-npm-user" "$RUNNER_TEMP/testlore-npm-global"
+          env -i PATH="$PATH" HOME="$RUNNER_TEMP/testlore-install-home" CI=true npm_config_cache="$RUNNER_TEMP/testlore-install-cache" npm_config_userconfig="$RUNNER_TEMP/testlore-npm-user" npm_config_globalconfig="$RUNNER_TEMP/testlore-npm-global" timeout 180 npm ci --ignore-scripts >.tddswarm/claude-mem-hosted/testlore-install.stdout 2>.tddswarm/claude-mem-hosted/testlore-install.stderr
+      - name: Require genuine Bun reporter and interruption checks
+        env:
+          TESTLORE_REQUIRE_BUN: '1'
+        run: |
+          bun --version
+          node --test test/bun-results.test.js >.tddswarm/claude-mem-hosted/bun-fixtures.tap 2>.tddswarm/claude-mem-hosted/bun-fixtures.stderr
+      - name: Install original claude-mem declarations with bounded resources
+        run: |
+          node --input-type=module <<'JS'
+          import fs from 'node:fs';
+          import path from 'node:path';
+          import {spawnSync} from 'node:child_process';
+          import {createHash} from 'node:crypto';
+          import {boundedInstallProcess} from './scripts/public-corpus-upstream.js';
+          const evidence=path.resolve('.tddswarm/claude-mem-hosted');
+          const save=(name,value)=>fs.writeFileSync(path.join(evidence,name+'.json'),JSON.stringify(value,null,2)+'\n');
+          const revision='fa8ab09f06aa05f958c5225cf3756ce52a3ebb96';
+          const checkout=path.join(process.env.RUNNER_TEMP,'claude-mem-original');
+          const home=path.join(process.env.RUNNER_TEMP,'claude-mem-install-home');
+          const cache=path.join(process.env.RUNNER_TEMP,'claude-mem-install-cache');
+          const tmp=path.join(process.env.RUNNER_TEMP,'claude-mem-install-tmp');
+          for(const directory of [home,cache,tmp])fs.mkdirSync(directory,{recursive:true});
+          const user=path.join(home,'npm-user'),global=path.join(home,'npm-global');fs.writeFileSync(user,'');fs.writeFileSync(global,'');
+          const env={PATH:process.env.PATH,HOME:home,TMPDIR:tmp,CI:'true',npm_config_cache:cache,npm_config_userconfig:user,npm_config_globalconfig:global};
+          const command=(args,cwd)=>{const result=spawnSync('git',args,{cwd,env,encoding:'utf8',timeout:120000,maxBuffer:2*1024**2});if(result.status!==0||result.signal||result.error)throw Error(result.stderr||'Git checkout failed');return result.stdout.trim();};
+          let receipt={schemaVersion:1,repository:'thedotmack/claude-mem',revision,sourceRevision:command(['rev-parse','HEAD'],process.cwd()),qualified:false,upstreamRootLock:false,dependencyMode:'original-declarations-newly-resolved',lifecyclePolicy:'npm install --ignore-scripts; original dependency declarations retained; no production filtering; no personal npm configuration',resourcePolicy:{timeoutMs:180000,reserveBytes:2*1024**3,maxGrowthBytes:1024**3},limitations:['No committed upstream root package lock; retain newly resolved lock without claiming an original frozen upstream environment.','Ignored lifecycle scripts may leave native dependencies unavailable; native baseline failures are retained.']};
+          try {
+            const npmVersion=spawnSync('npm',['--version'],{env,encoding:'utf8',timeout:10000});if(npmVersion.status!==0)throw Error('npm version observation failed');receipt.manager='npm@'+npmVersion.stdout.trim();receipt.node=process.version;
+            command(['clone','--filter=blob:none','--no-checkout','https://github.com/thedotmack/claude-mem.git',checkout],process.env.RUNNER_TEMP);
+            command(['fetch','--depth=1','origin',revision],checkout);command(['checkout','--detach',revision],checkout);
+            if(command(['rev-parse','HEAD'],checkout)!==revision||command(['status','--porcelain'],checkout))throw Error('Original source checkout differs from pin');
+            const manifest=fs.readFileSync(path.join(checkout,'package.json'));fs.writeFileSync(path.join(evidence,'original-package.json'),manifest);receipt.packageSha256=createHash('sha256').update(manifest).digest('hex');
+            const installDirectory=path.join(evidence,'upstream-install');fs.mkdirSync(installDirectory);
+            receipt.install=await boundedInstallProcess('npm',['install','--ignore-scripts','--no-audit','--no-fund'],{cwd:checkout,directory:installDirectory,timeoutMs:180000,reserveBytes:2*1024**3,maxGrowthBytes:1024**3,maxLogBytes:2*1024**2,env,terminateDescendants:true});
+            const lock=path.join(checkout,'package-lock.json');if(fs.existsSync(lock)){const bytes=fs.readFileSync(lock);fs.writeFileSync(path.join(evidence,'resolved-package-lock.json'),bytes);receipt.resolvedLockSha256=createHash('sha256').update(bytes).digest('hex');fs.rmSync(lock);}
+            const inventoryDirectory=path.join(evidence,'upstream-inventory');fs.mkdirSync(inventoryDirectory);
+            receipt.inventory=await boundedInstallProcess('npm',['ls','--all','--json'],{cwd:checkout,directory:inventoryDirectory,timeoutMs:30000,reserveBytes:2*1024**3,maxGrowthBytes:64*1024**2,maxLogBytes:8*1024**2,env,terminateDescendants:true});
+            receipt.trackedInputsUnchanged=fs.readFileSync(path.join(checkout,'package.json')).equals(manifest)&&command(['status','--porcelain'],checkout)==='';
+            receipt.completed=receipt.install.exitCode===0&&!receipt.install.signal&&!receipt.install.reason&&receipt.inventory.exitCode===0&&!receipt.inventory.signal&&!receipt.inventory.reason&&receipt.trackedInputsUnchanged;
+          }catch(error){receipt.completed=false;receipt.error=error.message;}
+          save('upstream-installation',receipt);
+          if(!receipt.completed)process.exitCode=1;
+          JS
+      - name: Collect original baselines and independently executed regression comparisons
+        run: |
+          node --input-type=module <<'JS'
+          import fs from 'node:fs';
+          import path from 'node:path';
+          import {boundedInstallProcess} from './scripts/public-corpus-upstream.js';
+          const directory=path.resolve('.tddswarm/claude-mem-hosted');
+          const output=path.join(directory,'campaign');
+          const processDirectory=path.join(directory,'campaign-process');fs.mkdirSync(processDirectory);
+          const env={PATH:process.env.PATH,HOME:path.join(process.env.RUNNER_TEMP,'claude-mem-controller-home'),CI:'true'};fs.mkdirSync(env.HOME);
+          const result=await boundedInstallProcess(process.execPath,['scripts/claude-mem-public-pilot.js',path.join(process.env.RUNNER_TEMP,'claude-mem-original'),output,path.join(output,'home')],{cwd:process.cwd(),directory:processDirectory,timeoutMs:36*60*1000,reserveBytes:2*1024**3,maxGrowthBytes:1024**3,maxLogBytes:4*1024**2,env,terminateDescendants:true});
+          fs.writeFileSync(path.join(directory,'campaign-process.json'),JSON.stringify(result,null,2)+'\n');
+          if(result.reason||result.signal||![0,3].includes(result.exitCode))process.exit(1);
+          const assessment=JSON.parse(fs.readFileSync(path.join(output,'assessment.json')));
+          if(assessment.upstreamRevision!=='fa8ab09f06aa05f958c5225cf3756ce52a3ebb96'||assessment.bunVersion!=='1.4.2'||assessment.protectedInputsUnchanged!==true||assessment.observationCompleted!==true||assessment.trials.length!==3)process.exit(1);
+          if(!assessment.qualified)console.log('::notice::Completed negative claude-mem measurement; no qualification or speed claim.');
+          JS
+      - name: Preserve raw native reports and losses
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: claude-mem-bun-${{ github.run_id }}
+          path: .tddswarm/claude-mem-hosted/
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 14

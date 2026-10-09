@@ -44,7 +44,7 @@ jobs:
           fs.mkdirSync(directory);
           const pack=sealSourceArchive(process.cwd(),revision,directory);
           const archive=path.join(directory,pack.filename),sha=createHash('sha256').update(fs.readFileSync(archive)).digest('hex');
-          const args=['scripts/rea-public-pilot.js','--directory',path.join(process.env.RUNNER_TEMP,'rea-candidate'), '--output','.tddswarm/rea-candidate','--candidate-archive',archive,'--candidate-sha256',sha,'--candidate-revision',revision,'--candidate-version','0.1.0','--property-seed',process.env.REPLAY_SEED,'--unified-native'];
+          const args=['scripts/rea-public-pilot.js','--directory',path.join(process.env.RUNNER_TEMP,'rea-candidate'), '--output','.tddswarm/rea-candidate','--candidate-archive',archive,'--candidate-sha256',sha,'--candidate-revision',revision,'--candidate-version','0.1.0','--property-seed',process.env.REPLAY_SEED,'--unified-native','--configuration-inputs'];
           const result=spawnSync(process.execPath,args,{stdio:'inherit',timeout:26*60*1000,killSignal:'SIGKILL'});
           if(result.error||![0,3].includes(result.status))process.exit(1);
           const assessment=JSON.parse(fs.readFileSync('.tddswarm/rea-candidate/assessment.json'));

@@ -8,7 +8,7 @@ import { inspectHistoricalChange } from './pilot-history.js';
 import {validatePropertyReplay} from './pilot-property-replay.js';
 
 const worker = fileURLToPath(new URL('./pilot-worker.js', import.meta.url));
-const frameworks = ['node', 'jest', 'vitest', 'playwright'];
+const frameworks = ['node', 'jest', 'vitest', 'playwright', 'bun'];
 export const PILOT_EXECUTION_MODES = Object.freeze(['legacy','unified-native']);
 export function validatePilotCachePolicy(value){
  if(value===undefined)return undefined;

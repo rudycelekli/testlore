@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "kind": "aqe-shared-candidate-runtime-comparison",
+  "frozenAt": "2026-10-09",
+  "upstream": {
+    "version": "3.14.8",
+    "tagSource": "4b0b91a300a12d3645f8344929d2e57f31c706e4",
+    "npmIntegrity": "sha512-VCqf3p6epkFDHAUtvglYvJpzW8Ls7UjbDGMZKvApGCvOxVNAH/Hyw9rRTIUJxz52aexbuwQXeuCQkNeR0Ryp5A=="
+  },
+  "provenance": "provenance.json",
+  "provenanceSha256": "59382770705a3bbcb6b02fc03c2a9fb756ae45c8f7620147fde757a11d3112bb",
+  "budgets": {
+    "generationCalls": 2,
+    "repeat": 2,
+    "stabilityRuns": 2,
+    "retries": 0,
+    "modelCalls": 0,
+    "generationTimeoutMs": 120000,
+    "executionTimeoutMs": 10000
+  },
+  "fixture": {
+    "id": "is-number-whitespace",
+    "fixed": "upstream/12749e3c411750f754d50f093471234c7ab270b0/index.js",
+    "fault": "upstream/204c885659b8ee1946534c61db91603b9a16d661/index.js",
+    "originalOracle": "upstream/12749e3c411750f754d50f093471234c7ab270b0/test.js",
+    "referenceSha256": "3e6057a2867d4b6929f1f9f1e48a3ba37f19192ecf60c17d0bc994a379e94f3d",
+    "requirements": "Maintainer issue #3 contract: whitespace-only strings, including spaces and carriage-return/newline/tab strings, are not numbers. Independent maintainer assertions are retained; generated candidates must pass fixed source, preserve existing tests, and catch the historical parent defect."
+  },
+  "independence": {
+    "newSpecificationForThisProject": true,
+    "maintainerAssertionsChanged": false,
+    "assertionScope": "Two deterministic issue #3 shouldFail table entries with the exact original assertion body; entire upstream test is archived. Runner/import and case titles adapted before generation. Not an upstream Mocha qualification.",
+    "authorContext": "Fixed source and existing selected contract tests only. Historical parent and evaluator source are never copied to author workspace.",
+    "modelsTrainingDataIsolation": false
+  },
+  "promotionAuthorized": false
+}
