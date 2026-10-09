@@ -129,7 +129,7 @@ function planPhase(root, options = {}, nativeSession, phase) {
   timing.mark('decisionsAndFingerprint');
   return {
     schemaVersion: 1, timings: { ...timing.finish(), graph: graph.timings }, analysisCache:graph.analysisCache, provenance, serviceTokens: services.values, configurationFiles: [...graph.configFiles].sort(), mode: mode === 'none' && selected.length ? 'policy' : mode, base: baseSha, changed, ignored, selected,
-    total: graph.tests.length, omitted: graph.tests.length - selected.length, ...(graph.nativeProjects?{nativeProjects:graph.nativeProjects}:{}),
+    configurationInputs:graph.configurationInputs, total: graph.tests.length, omitted: graph.tests.length - selected.length, ...(graph.nativeProjects?{nativeProjects:graph.nativeProjects}:{}),
     uncertainty: { global: globalWarnings.length, retainedTests: [...uncertainTests].sort(), unreachableSources: [...new Set(unresolvedWarnings.filter(w=>w.scope==='unreachable-source').map(w=>w.file))].sort() },
     selectionReduction: graph.tests.length ? 1 - selected.length / graph.tests.length : 0,
     reasons: [...new Set(reasons)], warnings: graph.warnings, decisions, fingerprint, discovery: graph.discovery,

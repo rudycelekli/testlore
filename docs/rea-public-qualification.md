@@ -55,3 +55,19 @@ The evaluator independently challenges file scope, named case/status preservatio
 4. Repeat representative changes with complete CLI cold/warm timing. These measurements do not establish a speed advantage.
 
 Rejected REA source reversions do not increment existing qualified historical-change/original-installation corpus counts. No generation, learning or real agent-host improvement was evaluated here. Paid model calls: zero. GitHub Actions billing is unknown. TestLore remains an experimental alpha.
+
+## October 9 candidate observations
+
+The [new source-bound configuration contract](configuration-inputs.md) removes the exact canonical-temp-directory uncertainty while retaining arbitrary filesystem fallback. A separately sealed candidate completed the [three-seed matrix](../benchmarks/rea-config-inputs-20261009/matrix-7532ad0/README.md): 18 comparisons, 234/261 files selected, 27 omitted per trial, no global fallback and no observed missed failures. **Every seed remains unqualified** because three skipped schema-object titles differ between native processes. TestLore was slower than native related and full execution on all three median comparisons. Seed control certifies observed seed metadata, not exact generated property inputs.
+
+The [explicit source-bound registration experiment](rea-case-registration.md) targets those three rows using original parameter inputs and imported object-reference attestations. It never authorizes omissions; actual native transport, future campaign integration and independent comparison remain separate gates. The [earlier October 9 baseline failure and timing loss](../benchmarks/rea-config-inputs-20261009/README.md) are retained unchanged.
+
+### Fresh source `6cea389`: resolver reuse measured, end-to-end loss retained
+
+The [new completed matrix](https://github.com/rudycelekli/testlore/actions/runs/37953327660) independently retains all 18 comparisons at exact source `6cea38950813e8ccfde6a7b8ea2d7c44ddbd7026`. Every comparison selected **234/261 files**, with no full fallback and no observed missed failures in either TestLore or native related. Twelve individual controlled-profile comparisons preserved case names/statuses; the remaining six differed on the same three skipped Windows schema-object descriptions. **Zero of three seed profiles qualify.** The isolated registration experiment has not been admitted into this campaign, and title equality alone does not certify property inputs.
+
+Across the six change/seed medians, TestLore took **42.51–44.67 seconds**, native related **3.12–3.29 seconds**, and full execution **39.27–41.24 seconds**. Every retained trial contributes, including rejected comparisons. These pilot spans exclude a fresh outer CLI startup and do not establish cold/warm conditions. No performance win is claimed.
+
+Native diagnostic receipts verify **25,872 requested resolver pairs → 8,624 calls**, avoiding **17,248** duplicate calls inside the same live container/SSR request. They also verify **1,048** source-summary hits with zero fresh expansion parses or mismatches. Three project server references share the live container; cross-request caching remains disabled. Native resolution still costs roughly **2.00–2.11 seconds** in median diagnostic spans. These overlapping phase measurements cannot substitute for the slower complete runtime.
+
+[Compact durable evidence](../benchmarks/rea-config-inputs-20261009/latest-6cea389/README.md) preserves raw native names/outcomes for every trial, plans, original and controlled baselines, source/archive hashes, and all timing losses. This separately sealed candidate is not the published npm release and adds no qualified corpus change, learning benefit or superiority claim.

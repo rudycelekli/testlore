@@ -1,0 +1,271 @@
+{
+  "repeat": 1,
+  "sourceHash": "76f4e8f626040311330e6ee10f2f428d350217d668082dce81c2ab0e0768212f",
+  "candidateHash": null,
+  "candidateFiles": [],
+  "generation": {
+    "id": "d4e5eb16-307e-4398-8900-8ec6aaa9f9b9",
+    "directory": "/tmp/testlore-aqe-comparison-ns7V26/repeat-1/.tddswarm/candidates/d4e5eb16-307e-4398-8900-8ec6aaa9f9b9",
+    "provenance": {
+      "schemaVersion": 1,
+      "revision": null,
+      "runner": "2dfaff40f529a7f76513db30a5088f305f29f71527c4725f312ad518190f2f25",
+      "environment": {
+        "node": "v22.19.0",
+        "platform": "linux",
+        "arch": "x64",
+        "labels": {}
+      },
+      "services": {},
+      "serviceWarnings": [],
+      "files": {
+        "package.json": "fa6944a20ca5e6fbaf98fd202eb8c7004d5b4ab786e36b9ed02ee31dbe196c9f",
+        "src/is-number.js": "76f4e8f626040311330e6ee10f2f428d350217d668082dce81c2ab0e0768212f",
+        "tddswarm.config.json": "62665357ee5a7f9732f57279f314e69e1266cd7ce49dd5b11eca6fc10e7b76c1",
+        "test/maintainer.test.mjs": "05b5e393fce563f8a510b231fe0cdb2c58ae97e4917b84f761fd796593fcbe16",
+        "vitest.config.mjs": "957459fb58cb5ac9e3e3a9b49b97f8a23f8709cbb0218b3715e34b2cc22f23f9"
+      },
+      "fingerprint": "7944a2e7612b83112ea9b96c8fc4c8b4cda2f4e39bfeff196447adc09e86874f"
+    },
+    "files": [],
+    "applied": false,
+    "measured": {
+      "execution": false,
+      "mutation": false
+    },
+    "adapter": "agentic-qe-cli",
+    "complete": false,
+    "executed": true,
+    "status": "generation-failed",
+    "exitCode": 1,
+    "error": "AQE exited 1",
+    "stderr": "[15:11:20.449] [WARN ] [security-compliance] No model providers available for consensus verification\n[15:11:20.465] [WARN ] [QueenCoordinator] Dependency graph: 1 warning(s) {\"warnings\":[\"Agents directory not found: /tmp/testlore-aqe-comparison-ns7V26/tmp/tddswarm-aqe-NdqSv4/.claude/agents/v3\"]}\nGeneration rejected 1 invalid or unvalidated test artifact(s):\n  - /tmp/testlore-aqe-comparison-ns7V26/tmp/tddswarm-aqe-NdqSv4/src/is-number.js: Generated test contains no executable assertions.; Test does not import from source file \"is-number\". Tests that never reference the source under test are likely mock-only or dead code.\n"
+  },
+  "generationMs": 589.3571479999991,
+  "evaluationMs": 0.04477799999949639,
+  "validationMs": null,
+  "runs": {
+    "oracleFixed": [
+      {
+        "adapter": "vitest",
+        "exitCode": 0,
+        "durationMs": 366,
+        "tests": [
+          {
+            "file": "test/maintainer.test.mjs",
+            "name": "is not a number \"   \" should not be a number",
+            "status": "passed",
+            "durationMs": 1.107793000000001,
+            "id": "052be0a1eab20c2c2a9d76f697796c3f801854ac3e22e097d799fc64c7c631db"
+          },
+          {
+            "file": "test/maintainer.test.mjs",
+            "name": "is not a number \"\\r\\n\\t\" should not be a number",
+            "status": "passed",
+            "durationMs": 0.16905500000000018,
+            "id": "3dcfa2427f5338e1743a897d5edea0ffb87a5676e34d2743832a942230f556c3"
+          }
+        ],
+        "collectionFiles": [
+          "test/maintainer.test.mjs"
+        ],
+        "requestedFiles": [
+          "test/maintainer.test.mjs"
+        ],
+        "executedFiles": [
+          "test/maintainer.test.mjs"
+        ],
+        "missingFiles": [],
+        "unknownFiles": [],
+        "dependencyFiles": [],
+        "complete": true,
+        "command": [
+          "/opt/hostedtoolcache/node/22.19.0/x64/bin/node",
+          "/home/runner/work/testlore/testlore/node_modules/vitest/vitest.mjs",
+          "run",
+          "--reporter=json",
+          "--outputFile=/tmp/testlore-aqe-comparison-ns7V26/tmp/tddswarm-report-RBqy44/results.json",
+          "./test/maintainer.test.mjs"
+        ],
+        "stdout": "JSON report written to /tmp/testlore-aqe-comparison-ns7V26/tmp/tddswarm-report-RBqy44/results.json\n",
+        "stderr": "",
+        "signal": null,
+        "reportErrors": []
+      },
+      {
+        "adapter": "vitest",
+        "exitCode": 0,
+        "durationMs": 364,
+        "tests": [
+          {
+            "file": "test/maintainer.test.mjs",
+            "name": "is not a number \"   \" should not be a number",
+            "status": "passed",
+            "durationMs": 1.2885770000000036,
+            "id": "052be0a1eab20c2c2a9d76f697796c3f801854ac3e22e097d799fc64c7c631db"
+          },
+          {
+            "file": "test/maintainer.test.mjs",
+            "name": "is not a number \"\\r\\n\\t\" should not be a number",
+            "status": "passed",
+            "durationMs": 0.14471899999999494,
+            "id": "3dcfa2427f5338e1743a897d5edea0ffb87a5676e34d2743832a942230f556c3"
+          }
+        ],
+        "collectionFiles": [
+          "test/maintainer.test.mjs"
+        ],
+        "requestedFiles": [
+          "test/maintainer.test.mjs"
+        ],
+        "executedFiles": [
+          "test/maintainer.test.mjs"
+        ],
+        "missingFiles": [],
+        "unknownFiles": [],
+        "dependencyFiles": [],
+        "complete": true,
+        "command": [
+          "/opt/hostedtoolcache/node/22.19.0/x64/bin/node",
+          "/home/runner/work/testlore/testlore/node_modules/vitest/vitest.mjs",
+          "run",
+          "--reporter=json",
+          "--outputFile=/tmp/testlore-aqe-comparison-ns7V26/tmp/tddswarm-report-1wQOVd/results.json",
+          "./test/maintainer.test.mjs"
+        ],
+        "stdout": "JSON report written to /tmp/testlore-aqe-comparison-ns7V26/tmp/tddswarm-report-1wQOVd/results.json\n",
+        "stderr": "",
+        "signal": null,
+        "reportErrors": []
+      }
+    ],
+    "oracleFault": [
+      {
+        "adapter": "vitest",
+        "exitCode": 1,
+        "durationMs": 367,
+        "tests": [
+          {
+            "file": "test/maintainer.test.mjs",
+            "name": "is not a number \"   \" should not be a number",
+            "status": "failed",
+            "durationMs": 4.722523999999993,
+            "id": "052be0a1eab20c2c2a9d76f697796c3f801854ac3e22e097d799fc64c7c631db"
+          },
+          {
+            "file": "test/maintainer.test.mjs",
+            "name": "is not a number \"\\r\\n\\t\" should not be a number",
+            "status": "failed",
+            "durationMs": 0.6959009999999921,
+            "id": "3dcfa2427f5338e1743a897d5edea0ffb87a5676e34d2743832a942230f556c3"
+          }
+        ],
+        "collectionFiles": [
+          "test/maintainer.test.mjs"
+        ],
+        "requestedFiles": [
+          "test/maintainer.test.mjs"
+        ],
+        "executedFiles": [
+          "test/maintainer.test.mjs"
+        ],
+        "missingFiles": [],
+        "unknownFiles": [],
+        "dependencyFiles": [],
+        "complete": true,
+        "command": [
+          "/opt/hostedtoolcache/node/22.19.0/x64/bin/node",
+          "/home/runner/work/testlore/testlore/node_modules/vitest/vitest.mjs",
+          "run",
+          "--reporter=json",
+          "--outputFile=/tmp/testlore-aqe-comparison-ns7V26/tmp/tddswarm-report-UZKhVi/results.json",
+          "./test/maintainer.test.mjs"
+        ],
+        "stdout": "JSON report written to /tmp/testlore-aqe-comparison-ns7V26/tmp/tddswarm-report-UZKhVi/results.json\n",
+        "stderr": "",
+        "signal": null,
+        "reportErrors": []
+      },
+      {
+        "adapter": "vitest",
+        "exitCode": 1,
+        "durationMs": 364,
+        "tests": [
+          {
+            "file": "test/maintainer.test.mjs",
+            "name": "is not a number \"   \" should not be a number",
+            "status": "failed",
+            "durationMs": 4.580629999999999,
+            "id": "052be0a1eab20c2c2a9d76f697796c3f801854ac3e22e097d799fc64c7c631db"
+          },
+          {
+            "file": "test/maintainer.test.mjs",
+            "name": "is not a number \"\\r\\n\\t\" should not be a number",
+            "status": "failed",
+            "durationMs": 0.6591050000000109,
+            "id": "3dcfa2427f5338e1743a897d5edea0ffb87a5676e34d2743832a942230f556c3"
+          }
+        ],
+        "collectionFiles": [
+          "test/maintainer.test.mjs"
+        ],
+        "requestedFiles": [
+          "test/maintainer.test.mjs"
+        ],
+        "executedFiles": [
+          "test/maintainer.test.mjs"
+        ],
+        "missingFiles": [],
+        "unknownFiles": [],
+        "dependencyFiles": [],
+        "complete": true,
+        "command": [
+          "/opt/hostedtoolcache/node/22.19.0/x64/bin/node",
+          "/home/runner/work/testlore/testlore/node_modules/vitest/vitest.mjs",
+          "run",
+          "--reporter=json",
+          "--outputFile=/tmp/testlore-aqe-comparison-ns7V26/tmp/tddswarm-report-Nb9sVC/results.json",
+          "./test/maintainer.test.mjs"
+        ],
+        "stdout": "JSON report written to /tmp/testlore-aqe-comparison-ns7V26/tmp/tddswarm-report-Nb9sVC/results.json\n",
+        "stderr": "",
+        "signal": null,
+        "reportErrors": []
+      }
+    ],
+    "fixed": [],
+    "fault": []
+  },
+  "validation": null,
+  "summary": {
+    "comparisonExecuted": false,
+    "rejectionCategory": "generation-rejected-or-incomplete",
+    "generationComplete": false,
+    "generationRejected": true,
+    "timedOut": false,
+    "candidateStable": false,
+    "independentFaultDemonstrated": true,
+    "candidateCaughtHistoricalFault": false,
+    "upstreamQualityGates": [],
+    "aqeAlone": {
+      "returnedDraft": false,
+      "measuredCaught": false,
+      "promotionPolicy": "Not inferred from a CLI quality score."
+    },
+    "aqePlusTestLore": {
+      "accepted": false,
+      "measuredCaught": false,
+      "reasons": [
+        "generation-did-not-complete"
+      ]
+    },
+    "detectionImprovementClaim": false,
+    "cost": {
+      "providerCurrency": null,
+      "tokens": null,
+      "paidCredentialsPassed": false
+    },
+    "learningImprovementClaim": false
+  },
+  "timingScope": "Generation includes capability probe, source snapshot, CLI, artifact retention. Candidate-only evaluation excludes composition validation; oracle demonstrations are included in campaign wall time. No falsely additive quality winner."
+}

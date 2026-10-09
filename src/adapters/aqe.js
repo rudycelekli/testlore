@@ -57,7 +57,9 @@ export function aqeGenerate(root, options = {}) {
   safePath(root, target);
   const provenance=snapshot(root,readConfig(root));
   const id=randomUUID(), directory=safePath(root,`.tddswarm/candidates/${id}`);fs.mkdirSync(directory,{recursive:true});
-  const retain = report => {const receipt={id,directory,provenance,files:[],applied:false,measured:{execution:false,mutation:false},...report};fs.writeFileSync(path.join(directory,'aqe-review.json'),JSON.stringify(receipt,null,2));return receipt;};
+  const secretValues=Object.values(options.env||{}).filter(value=>typeof value==='string'&&value);
+  const redact=value=>typeof value==='string'?secretValues.reduce((text,secret)=>text.split(secret).join('[REDACTED]'),value):Array.isArray(value)?value.map(redact):value&&typeof value==='object'?Object.fromEntries(Object.entries(value).map(([key,item])=>[key,redact(item)])):value;
+  const retain = report => {const receipt=redact({id,directory,provenance,files:[],applied:false,measured:{execution:false,mutation:false},...report});fs.writeFileSync(path.join(directory,'aqe-review.json'),JSON.stringify(receipt,null,2));return receipt;};
   const capabilities=aqeCapabilities(command);
   if(!capabilities.available)return retain({...capabilities,executed:false,complete:false,status:'generation-failed'});
   const workspace = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), 'tddswarm-aqe-')));
@@ -88,6 +90,7 @@ export function aqeGenerate(root, options = {}) {
         const destination = path.relative(path.dirname(path.join(workspace, relative)), specifier).split(path.sep).join('/');
         return quote + (destination.startsWith('.') ? destination : './' + destination) + quote;
       });
+      if(secretValues.some(secret=>code.includes(secret)))throw new Error('AQE returned provider credential in candidate code');
       if (files.has(relative) && files.get(relative) !== code) throw new Error('AQE returned conflicting candidate files');
       files.set(relative, code);
     }
@@ -96,5 +99,5 @@ export function aqeGenerate(root, options = {}) {
     const fresh=freshness(provenance,snapshot(root,readConfig(root)));
     if(!fresh.fresh){report.complete=false;report.status='generation-failed';report.error='AQE source provenance changed: '+fresh.reasons.join(', ');}
     return retain(report);
-  } catch(error) {retain({adapter:'agentic-qe-cli',executed:true,complete:false,status:'generation-failed',error:error.message});throw error;} finally { fs.rmSync(workspace, { recursive: true, force: true }); }
+  } catch(error) {const receipt=retain({adapter:'agentic-qe-cli',executed:true,complete:false,status:'generation-failed',error:error.message});const failure=new Error(redact(error.message));failure.artifact=receipt;throw failure;} finally { fs.rmSync(workspace, { recursive: true, force: true }); }
 }

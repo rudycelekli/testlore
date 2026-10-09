@@ -110,3 +110,81 @@ export function installQualityLayer(root,options={}){
  if(amended){fs.writeFileSync(ignorePath,ignore);written.push('.gitignore');}
  if(options.ci!==false)written.push(...installQualityWorkflow(root,options));return written;
 }
+
+export function assertAutofixPrerequisites(root,config=readConfig(root),options={}){
+ if(!/^[a-f0-9]{40}$/.test(policy(options).reference))throw new Error('Autofix requires --action-ref with an exact reviewed 40-character commit SHA');
+ if(repositoryRoot(root)!==fs.realpathSync(root))throw new Error('Autofix workflow setup currently requires the repository root');
+ if(!Array.isArray(config.agent)||!config.agent.length)throw new Error('Autofix requires an explicit agent argv available on a trusted self-hosted runner');
+ if(!Array.isArray(config.repair?.sourcePaths)||!config.repair.sourcePaths.length||config.repair.sourcePaths.length>32)throw new Error('Autofix requires reviewed repair.sourcePaths (1–32 existing production files)');
+ const requirements=safePath(root,'tddswarm.requirements.md');
+ if(!fs.existsSync(requirements)||fs.statSync(requirements).size>65536||!fs.readFileSync(requirements,'utf8').trim())throw new Error('Autofix requires independent tddswarm.requirements.md (at most 64 KiB)');
+ for(const file of config.repair.sourcePaths){const target=safePath(root,file);if(!/^(?:src|lib|app)\//.test(file)||!fs.statSync(target).isFile())throw new Error(`Invalid autofix source scope: ${file}`);}
+ return true;
+}
+
+/** Explicit opt-in only. No privileged fork-PR trigger or implicit scheduler. */
+export function installAutofixWorkflow(root,options={}){
+ root=fs.realpathSync(root);assertAutofixPrerequisites(root,readConfig(root),options);
+ const {reference,defaultBranch}=policy(options);
+ if(!/^[a-f0-9]{40}$/.test(reference))throw new Error('Autofix requires --action-ref with an exact reviewed 40-character commit SHA');
+ const target=safePath(root,'.github/workflows/testlore-autofix.yml');
+ if(fs.existsSync(target))return [];
+ const dependencyCommand=fs.existsSync(safePath(root,'package-lock.json'))?'npm ci --ignore-scripts':fs.existsSync(safePath(root,'pnpm-lock.yaml'))?'corepack enable && pnpm install --frozen-lockfile --ignore-scripts':fs.existsSync(safePath(root,'yarn.lock'))?'corepack enable && yarn install --immutable --mode=skip-builds':'npm install --ignore-scripts';
+ const text=`# Opt-in trusted agent execution. Configure a self-hosted runner labeled testlore.
+# The configured worker must already be authenticated. This workflow never merges PRs.
+name: TestLore bounded agent improvements
+on:
+  push:
+    branches: [${JSON.stringify(defaultBranch)}]
+  workflow_dispatch:
+permissions:
+  contents: write
+  pull-requests: write
+concurrency:
+  group: testlore-autofix
+  cancel-in-progress: false
+jobs:
+  improve:
+    if: github.ref == '${'refs/heads/'+defaultBranch}'
+    runs-on: [self-hosted, testlore]
+    timeout-minutes: 20
+    env:
+      GH_TOKEN: \${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.19.0'
+      - name: Bind identity for the review branch
+        run: |
+          git config user.name 'TestLore quality agent'
+          git config user.email 'testlore@users.noreply.github.com'
+      - name: Avoid duplicate PRs for the same original revision
+        id: pending
+        env:
+          REPO: \${{ github.repository }}
+        run: |
+          gh api --paginate --slurp "repos/$REPO/pulls?state=open&per_page=100" > "$RUNNER_TEMP/testlore-open-prs.json"
+          node --input-type=module -e 'import fs from "node:fs";import {execFileSync} from "node:child_process";const text=fs.readFileSync(process.env.RUNNER_TEMP+"/testlore-open-prs.json","utf8");const pages=JSON.parse(text).flat();const sha=execFileSync("git",["rev-parse","HEAD"],{encoding:"utf8"}).trim();const pending=pages.some(pr=>pr.head?.ref?.startsWith("tddswarm/")&&pr.body?.includes("<!-- testlore-source-head:"+sha+" -->"));fs.appendFileSync(process.env.GITHUB_OUTPUT,"exists="+pending+"\\n");'
+      - name: Install original project dependencies
+        if: steps.pending.outputs.exists != 'true'
+        run: ${dependencyCommand}
+      - name: Install the exact reviewed TestLore revision
+        if: steps.pending.outputs.exists != 'true'
+        run: npm install --prefix "$RUNNER_TEMP/testlore-autofix" --ignore-scripts --omit=dev --no-audit --no-fund 'git+https://github.com/rudycelekli/testlore.git#${reference}'
+      - name: Find, delegate, validate and open a review PR
+        if: steps.pending.outputs.exists != 'true'
+        run: node "$RUNNER_TEMP/testlore-autofix/node_modules/testlore/src/cli.js" autopilot --deadline-ms 900000 --json > "$RUNNER_TEMP/testlore-autofix-result.json"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: testlore-agent-evidence-\${{ github.sha }}
+          path: |
+            \${{ runner.temp }}/testlore-autofix-result.json
+            \${{ runner.temp }}/testlore-repair-*/.tddswarm/repair/
+          include-hidden-files: true
+`;
+ fs.mkdirSync(path.dirname(target),{recursive:true});fs.writeFileSync(target,text,{flag:'wx'});return ['.github/workflows/testlore-autofix.yml'];
+}

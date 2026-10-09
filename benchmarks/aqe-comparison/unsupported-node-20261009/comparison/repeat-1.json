@@ -1,0 +1,280 @@
+{
+  "repeat": 1,
+  "sourceHash": "76f4e8f626040311330e6ee10f2f428d350217d668082dce81c2ab0e0768212f",
+  "candidateHash": null,
+  "candidateFiles": [],
+  "generation": {
+    "id": "970e2955-2901-4ee9-88a5-fe4e78722e30",
+    "directory": "/tmp/testlore-aqe-comparison-crCw4P/repeat-1/.tddswarm/candidates/970e2955-2901-4ee9-88a5-fe4e78722e30",
+    "provenance": {
+      "schemaVersion": 1,
+      "revision": null,
+      "runner": "256cd0394470398694ff6b0324d6c0767d3a5d31636fc8f271311e3bf2db9b66",
+      "environment": {
+        "node": "v22.19.0",
+        "platform": "linux",
+        "arch": "x64",
+        "labels": {}
+      },
+      "services": {},
+      "serviceWarnings": [],
+      "files": {
+        "package.json": "fa6944a20ca5e6fbaf98fd202eb8c7004d5b4ab786e36b9ed02ee31dbe196c9f",
+        "src/is-number.js": "76f4e8f626040311330e6ee10f2f428d350217d668082dce81c2ab0e0768212f",
+        "tddswarm.config.json": "4ee1aff962b1bc8adab78493a3d4739d582053abb69138beb6a310d5a7de2355",
+        "test/maintainer.test.cjs": "3e6057a2867d4b6929f1f9f1e48a3ba37f19192ecf60c17d0bc994a379e94f3d"
+      },
+      "fingerprint": "580e99be21109a559cc22a4148f5dde4e999ec820bec4832672ff9d1aca18469"
+    },
+    "files": [],
+    "applied": false,
+    "measured": {
+      "execution": false,
+      "mutation": false
+    },
+    "adapter": "agentic-qe-cli",
+    "complete": false,
+    "executed": true,
+    "status": "generation-failed",
+    "exitCode": 1,
+    "error": "AQE exited 1",
+    "stderr": "[14:51:23.747] [WARN ] [security-compliance] No model providers available for consensus verification\n[14:51:23.765] [WARN ] [QueenCoordinator] Dependency graph: 1 warning(s) {\"warnings\":[\"Agents directory not found: /tmp/testlore-aqe-comparison-crCw4P/tmp/tddswarm-aqe-4iFfwa/.claude/agents/v3\"]}\nFailed: Unsupported test framework: node\n"
+  },
+  "generationMs": 630.7416899999989,
+  "evaluationMs": 0.04270099999848753,
+  "validationMs": null,
+  "runs": {
+    "oracleFixed": [
+      {
+        "adapter": "node",
+        "exitCode": 0,
+        "durationMs": 79,
+        "tests": [
+          {
+            "file": "test/maintainer.test.cjs",
+            "name": "is not a number > \"   \" should not be a number",
+            "status": "passed",
+            "durationMs": 0.560315,
+            "line": 5,
+            "column": 72,
+            "id": "aaf372fe2838e41a927eddcd7d42dfbaf740d1d2b3425cbe10387b688704d839"
+          },
+          {
+            "file": "test/maintainer.test.cjs",
+            "name": "is not a number > \"\\r\\n\\t\" should not be a number",
+            "status": "passed",
+            "durationMs": 0.100598,
+            "line": 5,
+            "column": 72,
+            "id": "0fe80b0c6bdc3496cbe0b721955ccf8326e137f25783268e2405eeb4cf981875"
+          }
+        ],
+        "collectionFiles": [
+          "test/maintainer.test.cjs"
+        ],
+        "requestedFiles": [
+          "test/maintainer.test.cjs"
+        ],
+        "executedFiles": [
+          "test/maintainer.test.cjs"
+        ],
+        "missingFiles": [],
+        "unknownFiles": [],
+        "dependencyFiles": [],
+        "complete": true,
+        "command": [
+          "/opt/hostedtoolcache/node/22.19.0/x64/bin/node",
+          "--test",
+          "--test-reporter=/home/runner/work/testlore/testlore/src/reporters/node.js",
+          "--test-reporter-destination=/tmp/testlore-aqe-comparison-crCw4P/tmp/tddswarm-report-zwo1Cl/results.json",
+          "./test/maintainer.test.cjs"
+        ],
+        "stdout": "",
+        "stderr": "",
+        "signal": null,
+        "reportErrors": []
+      },
+      {
+        "adapter": "node",
+        "exitCode": 0,
+        "durationMs": 77,
+        "tests": [
+          {
+            "file": "test/maintainer.test.cjs",
+            "name": "is not a number > \"   \" should not be a number",
+            "status": "passed",
+            "durationMs": 0.57758,
+            "line": 5,
+            "column": 72,
+            "id": "aaf372fe2838e41a927eddcd7d42dfbaf740d1d2b3425cbe10387b688704d839"
+          },
+          {
+            "file": "test/maintainer.test.cjs",
+            "name": "is not a number > \"\\r\\n\\t\" should not be a number",
+            "status": "passed",
+            "durationMs": 0.096944,
+            "line": 5,
+            "column": 72,
+            "id": "0fe80b0c6bdc3496cbe0b721955ccf8326e137f25783268e2405eeb4cf981875"
+          }
+        ],
+        "collectionFiles": [
+          "test/maintainer.test.cjs"
+        ],
+        "requestedFiles": [
+          "test/maintainer.test.cjs"
+        ],
+        "executedFiles": [
+          "test/maintainer.test.cjs"
+        ],
+        "missingFiles": [],
+        "unknownFiles": [],
+        "dependencyFiles": [],
+        "complete": true,
+        "command": [
+          "/opt/hostedtoolcache/node/22.19.0/x64/bin/node",
+          "--test",
+          "--test-reporter=/home/runner/work/testlore/testlore/src/reporters/node.js",
+          "--test-reporter-destination=/tmp/testlore-aqe-comparison-crCw4P/tmp/tddswarm-report-47rs1f/results.json",
+          "./test/maintainer.test.cjs"
+        ],
+        "stdout": "",
+        "stderr": "",
+        "signal": null,
+        "reportErrors": []
+      }
+    ],
+    "oracleFault": [
+      {
+        "adapter": "node",
+        "exitCode": 1,
+        "durationMs": 78,
+        "tests": [
+          {
+            "file": "test/maintainer.test.cjs",
+            "name": "is not a number > \"   \" should not be a number",
+            "status": "failed",
+            "durationMs": 1.043514,
+            "line": 5,
+            "column": 72,
+            "id": "aaf372fe2838e41a927eddcd7d42dfbaf740d1d2b3425cbe10387b688704d839"
+          },
+          {
+            "file": "test/maintainer.test.cjs",
+            "name": "is not a number > \"\\r\\n\\t\" should not be a number",
+            "status": "failed",
+            "durationMs": 0.261372,
+            "line": 5,
+            "column": 72,
+            "id": "0fe80b0c6bdc3496cbe0b721955ccf8326e137f25783268e2405eeb4cf981875"
+          }
+        ],
+        "collectionFiles": [
+          "test/maintainer.test.cjs"
+        ],
+        "requestedFiles": [
+          "test/maintainer.test.cjs"
+        ],
+        "executedFiles": [
+          "test/maintainer.test.cjs"
+        ],
+        "missingFiles": [],
+        "unknownFiles": [],
+        "dependencyFiles": [],
+        "complete": true,
+        "command": [
+          "/opt/hostedtoolcache/node/22.19.0/x64/bin/node",
+          "--test",
+          "--test-reporter=/home/runner/work/testlore/testlore/src/reporters/node.js",
+          "--test-reporter-destination=/tmp/testlore-aqe-comparison-crCw4P/tmp/tddswarm-report-bDekdr/results.json",
+          "./test/maintainer.test.cjs"
+        ],
+        "stdout": "",
+        "stderr": "",
+        "signal": null,
+        "reportErrors": []
+      },
+      {
+        "adapter": "node",
+        "exitCode": 1,
+        "durationMs": 78,
+        "tests": [
+          {
+            "file": "test/maintainer.test.cjs",
+            "name": "is not a number > \"   \" should not be a number",
+            "status": "failed",
+            "durationMs": 0.982144,
+            "line": 5,
+            "column": 72,
+            "id": "aaf372fe2838e41a927eddcd7d42dfbaf740d1d2b3425cbe10387b688704d839"
+          },
+          {
+            "file": "test/maintainer.test.cjs",
+            "name": "is not a number > \"\\r\\n\\t\" should not be a number",
+            "status": "failed",
+            "durationMs": 0.264367,
+            "line": 5,
+            "column": 72,
+            "id": "0fe80b0c6bdc3496cbe0b721955ccf8326e137f25783268e2405eeb4cf981875"
+          }
+        ],
+        "collectionFiles": [
+          "test/maintainer.test.cjs"
+        ],
+        "requestedFiles": [
+          "test/maintainer.test.cjs"
+        ],
+        "executedFiles": [
+          "test/maintainer.test.cjs"
+        ],
+        "missingFiles": [],
+        "unknownFiles": [],
+        "dependencyFiles": [],
+        "complete": true,
+        "command": [
+          "/opt/hostedtoolcache/node/22.19.0/x64/bin/node",
+          "--test",
+          "--test-reporter=/home/runner/work/testlore/testlore/src/reporters/node.js",
+          "--test-reporter-destination=/tmp/testlore-aqe-comparison-crCw4P/tmp/tddswarm-report-7Z3dUR/results.json",
+          "./test/maintainer.test.cjs"
+        ],
+        "stdout": "",
+        "stderr": "",
+        "signal": null,
+        "reportErrors": []
+      }
+    ],
+    "fixed": [],
+    "fault": []
+  },
+  "validation": null,
+  "summary": {
+    "generationComplete": false,
+    "generationRejected": true,
+    "timedOut": false,
+    "candidateStable": false,
+    "independentFaultDemonstrated": true,
+    "candidateCaughtHistoricalFault": false,
+    "upstreamQualityGates": [],
+    "aqeAlone": {
+      "returnedDraft": false,
+      "measuredCaught": false,
+      "promotionPolicy": "Not inferred from a CLI quality score."
+    },
+    "aqePlusTestLore": {
+      "accepted": false,
+      "measuredCaught": false,
+      "reasons": [
+        "generation-did-not-complete"
+      ]
+    },
+    "detectionImprovementClaim": false,
+    "cost": {
+      "providerCurrency": null,
+      "tokens": null,
+      "paidCredentialsPassed": false
+    },
+    "learningImprovementClaim": false
+  },
+  "timingScope": "Generation includes capability probe, source snapshot, CLI, artifact retention. Common measurement/evaluation and composition validation are reported separately; no falsely additive quality winner."
+}

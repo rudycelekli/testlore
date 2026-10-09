@@ -1,0 +1,74 @@
+{
+  "schemaVersion": 1,
+  "sourceRevision": "7532ad0005c81686e7edaa3729b349cd5cb43690",
+  "runId": 37947219864,
+  "artifactId": 11623848022,
+  "artifactSha256": "75dd4ed3ed09d229a3a42742ddd59f50218dba6f2201602a9f6478a411552e71",
+  "artifactBytes": 1222014,
+  "members": {
+    "aqe-install/installed-inventory.json": {
+      "bytes": 1225161,
+      "sha256": "243add161b51aaf12a3ecd35ff4243a122a0766a141336212aa5f739374222d5"
+    },
+    "aqe-install/package-lock.json": {
+      "bytes": 67804,
+      "sha256": "d3f1b1afef74119067e839c91e1c0d1d7ecd077984b5288ae2017ef10fffda41"
+    },
+    "aqe-install/receipt.json": {
+      "bytes": 1069,
+      "sha256": "bad0140ecb17808b04e358aba307a1e9cb5356076b1be24b3b87b00336e91371"
+    },
+    "aqe-install/stderr.log": {
+      "bytes": 150,
+      "sha256": "fe49a93af7f6a5072c3a3ef65019009ce521808d6b5a32810ad9a6a433f4524d"
+    },
+    "aqe-install/stdout.log": {
+      "bytes": 144,
+      "sha256": "d2d8bb11f9df33c6e400e1eaeefb473f51b81d48303e97370996f118b8ae5698"
+    },
+    "comparison/preregistration.json": {
+      "bytes": 5683,
+      "sha256": "593d763a705df57c918523fe5539b80df4bf2753800fcd244e4ef5c0ee2af32b"
+    },
+    "comparison/repeat-0.json": {
+      "bytes": 9482,
+      "sha256": "8f849f7eca5958f126f459d0e84ee663475e8251922a44c6b876d1bae2c7db87"
+    },
+    "comparison/repeat-1.json": {
+      "bytes": 9481,
+      "sha256": "0205ca0e85bf8e0dd47b2c38ef7e92043ef64b6e6997b624085284b9244b2ca6"
+    },
+    "comparison/summary.json": {
+      "bytes": 2385,
+      "sha256": "d4c7f68de8cd317811b53a4f0d18dd97bf8cbb76a60c3a998f144a8aa43dbf13"
+    },
+    "controller.json": {
+      "bytes": 959,
+      "sha256": "5c499ad1158952e95b764882c83bd7cfd7bf285b705a40a751a43ca73b50da2c"
+    },
+    "installation-to-result.json": {
+      "bytes": 378,
+      "sha256": "6d28a3c3cc565703d74d6ca04fbf783682afb9f7710fa282695daa2834d81055"
+    },
+    "testlore-install/installed-inventory.json": {
+      "bytes": 3462596,
+      "sha256": "d1509af498d89e368ba2699a8cee9cfe75c2d2daab782248c9374ccf14d4a110"
+    },
+    "testlore-install/package-lock.json": {
+      "bytes": 353775,
+      "sha256": "f4099c07e38ac8a9bf7311a7f048e3844ff06c91933fb7325e1ef9a71f2764ba"
+    },
+    "testlore-install/receipt.json": {
+      "bytes": 998,
+      "sha256": "ef14afcc99199630f266edd488e4e13e5413b32b9960e2f1b26061ba10dbe59d"
+    },
+    "testlore-install/stderr.log": {
+      "bytes": 23283,
+      "sha256": "6b6db7f79076435c987466acc2f53e3925d1b5c983757a32116793a38d2bcd7d"
+    },
+    "testlore-install/stdout.log": {
+      "bytes": 315,
+      "sha256": "f48d650ae7230d1c8fac40ce9d666d48c7307ec5422f30f312b0d21dc8f6a5f8"
+    }
+  }
+}

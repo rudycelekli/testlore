@@ -1,0 +1,21 @@
+{
+  "exitCode": 0,
+  "signal": null,
+  "reason": null,
+  "durationMs": 9086,
+  "finalResources": {
+    "availableBytes": 91282219008,
+    "growthBytes": 442081280,
+    "stdoutBytes": 315,
+    "stderrBytes": 23283
+  },
+  "stdoutSha256": "daf96fe938896a348a3dc16131041933c3dbb9911f02c3b1a37ed6a2541fc6cb",
+  "stderrSha256": "90612893309400f4779a96848d766beac03ae6f149de2c736030534351757bb1",
+  "descendantCleanup": {
+    "scope": "Observed process-tree/start identity best effort; unobserved/reparented children and arbitrary subprocesses are not contained",
+    "observed": 0,
+    "survivingAtClose": 0,
+    "observationFailed": false,
+    "requested": false
+  }
+}

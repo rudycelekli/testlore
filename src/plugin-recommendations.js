@@ -12,7 +12,8 @@ const LIMITATIONS = [
   'Deterministic project-fit rules; no global performance or quality ranking.',
   'Read-only file and installation evidence; no commands, SDK imports, installs, network, or provider requests.',
   'Presence does not certify native compatibility, runtime correctness, worker readiness, or measured quality.',
-  'Automatic configuration may enable ready complementary capabilities; generation and existing explicit choices remain manual.'
+  'Setup may enable ready complementary capabilities; it preserves explicit choices and never persists automatic generation activation.',
+  'Generation routing separately evaluates prerequisites for each bounded round; setup presence evidence does not qualify a generation provider.'
 ];
 
 /** Inspect a fixed bounded inventory. Never import project code or run manifest scripts. */
@@ -144,11 +145,11 @@ export function recommendPlugins(projectRoot) {
   const recommendations = BUILTIN_PLUGINS.map(plugin => {
     const retained = own(configured, plugin.id), ready = installed[plugin.id] && fit[plugin.id];
     const reasons = [];
-    if (fit[plugin.id]) reasons.push(({nx:'Nx workspace or dependency detected.',bazel:'Bazel workspace detected.','pytest-testmon':'Python project configuration detected.',c8:'Declared c8 dependency complements execution with coverage evidence.',stryker:'Declared Stryker dependency complements coverage with mutation evidence.',ruvector:'Intact persisted learning can support indexed recall.','agentic-qe':'Test generation can complement this project after explicit worker setup.'})[plugin.id]);
+    if (fit[plugin.id]) reasons.push(({nx:'Nx workspace or dependency detected.',bazel:'Bazel workspace detected.','pytest-testmon':'Python project configuration detected.',c8:'Declared c8 dependency complements execution with coverage evidence.',stryker:'Declared Stryker dependency complements coverage with mutation evidence.',ruvector:'Intact persisted learning can support indexed recall.','agentic-qe':'Test generation can complement this project when bounded routing prerequisites are satisfied.'})[plugin.id]);
     if (retained) reasons.push('Existing explicit plugin entry is preserved, including disabled settings.');
     if (!fit[plugin.id]) reasons.push('No matching project evidence for automatic activation.');
     if (!installed[plugin.id]) reasons.push('Matching project-local installation is missing or cannot be safely inspected.');
-    if (plugin.id === 'agentic-qe') reasons.push('Generation requires explicit worker/provider setup; never automatically activated.');
+    if (plugin.id === 'agentic-qe') reasons.push('Setup never persists automatic AQE activation. Generation routing evaluates installed worker/provider prerequisites per bounded round and respects explicit choices.');
     if (plugin.id === 'ruvector') reasons.push('Requires enabled local learning with intact persisted episodes; SDK presence is not native compatibility certification.');
     if (plugin.id === 'bazel' && bazelisk && !installed.bazel) reasons.push('Bazelisk can download tools; configure an installed native Bazel binary explicitly.');
     if (plugin.id === 'pytest-testmon' && !pythonTestmon) reasons.push('No declared pytest-testmon dependency found; local extension metadata is required.');
@@ -174,8 +175,16 @@ export function recommendPlugins(projectRoot) {
   for (const item of recommendations) if (item.role === 'execution') item.selected = item.id === selected;
   if (needsChoice) warnings.push(`Multiple project-native execution systems detected: ${nativeCandidates.join(', ')}; choose explicitly.`);
   if (blocked) applicable.length = 0;
+  const automaticIds = new Set(applicable.map(choice => choice.id));
+  for (const item of recommendations) {
+    item.automaticDecision = item.configured || item.id === 'core' && selected === 'core' ? 'retain' : automaticIds.has(item.id) ? 'enable' : 'skip';
+    if (item.automaticDecision === 'enable') item.reasons.push(item.role === 'execution' ? 'Automatic setup selects this sole ready backend; no second execution backend is enabled.' : 'Automatic setup enables this installed complementary capability alongside the selected execution backend.');
+    else if (item.role === 'execution' && item.id !== 'core' && !item.configured && (existingBackend || explicitCore)) item.reasons.push('Automatic setup preserves the existing execution profile instead of enabling another native backend.');
+    if (blocked) item.reasons.push('Unsafe or invalid inspection evidence blocks all automatic changes.');
+  }
+  const decisions = recommendations.map(item => ({id:item.id,role:item.role,action:item.automaticDecision,reasons:[...item.reasons]}));
   const evidenceHash = hash(evidence);
-  const report = { schemaVersion: 1, recommendations, applicable, execution: { selected, needsChoice, candidates: nativeCandidates }, configHash, evidenceHash, blocked, warnings, limitations: LIMITATIONS };
+  const report = { schemaVersion: 1, recommendations, applicable, decisions, execution: { selected, needsChoice, candidates: nativeCandidates }, configHash, evidenceHash, blocked, warnings, limitations: LIMITATIONS };
   return { ...report, fingerprint: hash(report) };
 }
 function boundedDirectory(directory, maximum) {

@@ -1,3 +1,4 @@
+import {captureConfigurationInputs,assertConfigurationInputFreshness} from './configuration-inputs.js';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
@@ -8,12 +9,14 @@ import { spawnSync } from 'node:child_process';
 import { listFiles, TEST, normalize, safePath } from './files.js';
 import {normalizeNativeProjects} from './native-project-contracts.js';
 import {readNativeJson} from './native-protocol.js';
+import {bunCommand,bunResults,readBunReport} from './bun-results.js';
 
 const reporter = fileURLToPath(new URL('./reporters/node.js', import.meta.url));
 const playwrightReporter = fileURLToPath(new URL('./reporters/playwright.cjs', import.meta.url));
 export function adapterFor(config = {}) {
   if (config.adapter) return config.adapter;
   const argv = config.runner || ['node', '--test', '{files}'];
+  if (/(?:^|[/\\])bun(?:\.exe)?$/.test(argv[0]||'') && argv[1]==='test') return 'bun';
   if (argv.some(x => /(?:^|[/\\])vitest(?:\.mjs)?$/.test(x))) return 'vitest';
   if (argv.some(x => /(?:^|[/\\])jest(?:\.js)?$/.test(x))) return 'jest';
   if (argv.some(x => /(?:^|[/\\])playwright(?:\.m?js|\.cmd)?$/.test(x)) || argv.some(x => /[/\\](?:@playwright[/\\]test|playwright)[/\\]cli\.js$/.test(x))) return 'playwright';
@@ -47,7 +50,7 @@ function commandBase(config, adapter, root) {
     const require=createRequire(path.join(root,'package.json'));
     playwright=[process.execPath,require.resolve('@playwright/test/cli'), 'test', '{files}'];
   }
-  const argv = config.runner || playwright || (adapter === 'jest' ? ['jest', '{files}'] : adapter === 'vitest' ? ['vitest', 'run', '{files}'] : ['node', '--test', '{files}']);
+  const argv = config.runner || playwright || (adapter==='bun'?['bun','test','{files}']:adapter === 'jest' ? ['jest', '{files}'] : adapter === 'vitest' ? ['vitest', 'run', '{files}'] : ['node', '--test', '{files}']);
   if (!Array.isArray(argv) || !argv.length || argv.some(x => typeof x !== 'string' || !x)) throw new Error('runner must be a nonempty argv array');
   return argv;
 }
@@ -219,6 +222,10 @@ export function execute(root, files, config = {}, options = {}) {
   try {base=commandBase(config, adapter, root);}catch(error){fs.rmSync(temporary,{recursive:true,force:true});return {adapter,exitCode:2,complete:false,tests:[],collectionFiles:[],requestedFiles:files,executedFiles:[],error:error.message};}
   let command;
   if (adapter === 'node') command = nodeCommand(base, reportFile, files);
+  else if(adapter==='bun') {
+    try{command=bunCommand(base,reportFile,files);}
+    catch(error){fs.rmSync(temporary,{recursive:true,force:true});return {adapter,exitCode:2,complete:false,tests:[],collectionFiles:[],requestedFiles:files,executedFiles:[],error:error.message};}
+  }
   else if (adapter === 'jest') command = [...frameworkBase(base, adapter), '--runTestsByPath', '--watch=false', '--json', `--outputFile=${reportFile}`, ...files.map(f => './' + f)];
   else if (adapter === 'vitest') command = [...frameworkBase(base, adapter), 'run', '--reporter=json', `--outputFile=${reportFile}`, ...files.map(f => './' + f)];
   else if (adapter === 'playwright') {
@@ -232,6 +239,7 @@ export function execute(root, files, config = {}, options = {}) {
   let reportError;
   try {
     if (adapter === 'node') normalized = nodeEvents(root, fs.readFileSync(reportFile, 'utf8'));
+    else if(adapter==='bun')normalized=bunResults(root,readBunReport(reportFile),{exitCode:result.status});
     else if (['jest', 'vitest'].includes(adapter)) normalized = frameworkResults(root, JSON.parse(fs.readFileSync(reportFile, 'utf8')));
     else if (adapter==='playwright')normalized=playwrightResults(root,JSON.parse(fs.readFileSync(reportFile,'utf8')));
 
@@ -281,6 +289,21 @@ export function discover(root, config = {}) {
   root = path.resolve(root);
   const adapter = adapterFor(config);
   const fallback = () => listFiles(root).filter(f => TEST.test(f));
+  if(adapter==='bun'&&config.discovery==='native') {
+    const temporary=fs.mkdtempSync(path.join(os.tmpdir(),'testlore-bun-discovery-'));
+    const started=performance.now();
+    try {
+      // Bun has no admitted list-only mode. Discovery is a genuine full execution,
+      // with its cost and failures retained, rather than an invented dry run.
+      const command=bunCommand(commandBase(config,adapter,root),path.join(temporary,'junit.xml'),[],{scope:config.bunScope||[]});
+      const result=spawn(root,command,config);
+      if(result.error||result.signal)throw new Error(result.error?.message||`Bun interrupted: ${result.signal}`);
+      const report=bunResults(root,readBunReport(path.join(temporary,'junit.xml')),{exitCode:result.status});
+      for(const file of report.collectionFiles)if(!fs.statSync(safePath(root,file)).isFile())throw new Error('Bun collected a missing test file');
+      return {files:report.collectionFiles,complete:true,adapter,method:'full-execution-junit',executionRequired:true,durationMs:Math.round(performance.now()-started),nativeExitCode:result.status,tests:identities(report.tests),warnings:[]};
+    }catch(error){return {files:fallback(),complete:false,adapter,executionRequired:true,durationMs:Math.round(performance.now()-started),warnings:[`native-discovery-failed:${error.message.slice(0,500)}`]};}
+    finally{fs.rmSync(temporary,{recursive:true,force:true});}
+  }
   if (config.discovery !== 'native' && !Array.isArray(config.discovery)) return { files: fallback(), complete: true, adapter: 'filesystem', warnings: [] };
   const temporary = fs.mkdtempSync(path.join(os.tmpdir(), 'tddswarm-discovery-'));
   const reportFile = path.join(temporary, 'files.json');
@@ -322,6 +345,7 @@ export function discover(root, config = {}) {
 /** Resolve a graph's imports with one framework config/server setup. */
 export function resolveNativeBatch(root, imports, config = {}, options = {}) {
   const adapter = adapterFor(config);
+  if(adapter==='bun')return {resolutions:imports.map(()=>({paths:[],unresolved:true})),configFiles:[],complete:false,adapter,supported:true,error:'Bun shared-global isolation and runtime dependency resolution are unqualified'};
   if (!['jest', 'vitest'].includes(adapter)) return { resolutions: [], configFiles: [], complete: true, adapter, supported: false };
   if(adapter==='vitest'&&!vitestInterpreterBound(root,config))return {resolutions:imports.map(()=>({paths:[],unresolved:true})),configFiles:[],adapter,supported:true,complete:false,error:'Requested native Node interpreter is unbound or differs from the resolver runtime'};
   const sharedCommand=options.discover?sharedVitestCommand(root,config):null;
@@ -329,12 +353,13 @@ export function resolveNativeBatch(root, imports, config = {}, options = {}) {
   const temporary = fs.mkdtempSync(path.join(os.tmpdir(), 'tddswarm-resolution-'));
   const requestFile = path.join(temporary, 'request.json');
   const resolutionReportFile=path.join(temporary,'resolver-results.json');
+  const configurationInputObservations=captureConfigurationInputs(root,config);
   let diagnostics;
   try {
     const originalCommand=frameworkBase(commandBase(config,adapter),adapter);
     const cliIndex=originalCommand.findIndex(arg=>/(?:^|[/\\])vitest(?:\.mjs)?$/.test(arg));
     const invocation=sharedCommand?[process.execPath,path.resolve(root,originalCommand[cliIndex]),...originalCommand.slice(cliIndex+1),'list','--filesOnly',`--json=${path.join(temporary,'native-files.json')}`]:undefined;
-    fs.writeFileSync(requestFile, JSON.stringify({ root: fs.realpathSync(root), adapter, imports, invocation, resolutionReportFile, discover: options.discover === true, transitive: options.transitive === true, roots: options.roots || [], command: sharedCommand||originalCommand }));
+    fs.writeFileSync(requestFile, JSON.stringify({ root: fs.realpathSync(root), adapter, imports, invocation, resolutionReportFile, configurationInputs:config.configurationInputs,configurationInputObservations, discover: options.discover === true, transitive: options.transitive === true, roots: options.roots || [], command: sharedCommand||originalCommand }));
     const script = fileURLToPath(new URL('./reporters/resolve.js', import.meta.url));
     const result = spawn(root, [process.execPath, script, requestFile], config);
     const trim=value=>{const bytes=Buffer.from(value||'');return {text:bytes.subarray(0,32768).toString('utf8'),truncated:bytes.length>32768};};
@@ -343,6 +368,8 @@ export function resolveNativeBatch(root, imports, config = {}, options = {}) {
     // Executable configuration may write to stdout, including once per native
     // inline project. It cannot share the authoritative JSON transport.
     const value = readNativeJson(resolutionReportFile);
+    assertConfigurationInputFreshness(configurationInputObservations,value.configurationInputs,{allowCanonicalTmpdir:true});
+    assertConfigurationInputFreshness(configurationInputObservations,captureConfigurationInputs(root,config));
     if (!Array.isArray(value.resolutions) || value.resolutions.length !== imports.length || typeof value.complete !== 'boolean') throw new Error('Invalid native resolver report');
     const resolutions = value.resolutions.map(resolution => ({ ...resolution, paths: (resolution.paths || []).map(file => localFile(root, file)) }));
     const additionalResolutions = (value.additionalResolutions || []).map(item=>{

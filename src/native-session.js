@@ -10,6 +10,7 @@ import {encodeNativeFrame,nativeFrameReader} from './native-protocol.js';
 import {digest} from './provenance.js';
 import {prepareNativeSourceSummaries} from './native-source-summaries.js';
 import {normalizeNativeProjects} from './native-project-contracts.js';
+import {captureConfigurationInputs,assertConfigurationInputFreshness} from './configuration-inputs.js';
 
 // Authority is minted only from a live, canonical worker, never public options.
 const sessions=new WeakMap();
@@ -63,10 +64,11 @@ export async function openNativeSession(root,config,options={},startupInventory)
   const invocation=[...command,'run','--reporter=json',`--outputFile=${reportFile}`];
   const files=startupInventory?startupInventory.files:listFiles(root);
   const sourceSummaries=prepareNativeSourceSummaries(root,files);
+  const configurationInputObservations=captureConfigurationInputs(root,config);
   // The fresh worker expands native-discovered tests, project setup and config
   // transitively. Unreachable repository files still receive parent syntax and
   // uncertainty analysis, but do not require every project's native resolver.
-  fs.writeFileSync(requestFile,JSON.stringify({root,adapter:'vitest',command,imports,invocation,discover:true,transitive:true,roots:[...nativePlanningRoots(root,config,files)],sourceSummaries,unified:true,reportFile}));
+  fs.writeFileSync(requestFile,JSON.stringify({root,adapter:'vitest',command,imports,invocation,discover:true,transitive:true,roots:[...nativePlanningRoots(root,config,files)],sourceSummaries,configurationInputs:config.configurationInputs,configurationInputObservations,unified:true,reportFile}));
   workerSpawned=performance.now();
   child=spawn(process.execPath,[fileURLToPath(new URL('./reporters/resolve.js',import.meta.url)),requestFile],{cwd:root,env:nativeEnvironment(config),detached:process.platform!=='win32',stdio:['ignore','pipe','pipe','pipe','pipe']});
   const wait=phase=>new Promise((resolve,reject)=>{if(failure)return reject(failure);pending.set(phase,{resolve,reject});});
@@ -85,6 +87,8 @@ export async function openNativeSession(root,config,options={},startupInventory)
   timer=setTimeout(()=>rejectAll(new Error('Unified native deadline exceeded')),Math.max(1,deadline-Date.now()));options.signal?.addEventListener('abort',cancel,{once:true});
   const planned=await planning;plannedReceived=performance.now();if(Date.now()>=deadline)throw new Error('Unified native-session deadline exceeded');
   const batch=normalize(root,planned);
+  assertConfigurationInputFreshness(configurationInputObservations,batch.configurationInputs);
+  assertConfigurationInputFreshness(configurationInputObservations,captureConfigurationInputs(root,config));
   // Initial baseline imports precede additional traversal records.
   if(!Array.isArray(batch.resolutions)||batch.resolutions.length!==imports.length)throw new Error('Invalid unified baseline resolution count');
   batch.additionalResolutions.push(...imports.map((item,i)=>({...item,resolution:{...batch.resolutions[i],paths:batch.resolutions[i].paths.map(file=>local(root,file))}})));
@@ -92,12 +96,15 @@ export async function openNativeSession(root,config,options={},startupInventory)
   sessions.set(token,{root,batch:freeze(batch),closed:false});
   return {token,close,failureEvidence:()=>({stdout,stderr}),remaining:()=>deadline-Date.now(),execute:async files=>{
    if(failure)throw failure;if(Date.now()>=deadline)throw new Error('Unified native deadline exceeded');if(options.signal?.aborted)throw new Error('Unified execution cancelled');
+   assertConfigurationInputFreshness(configurationInputObservations,captureConfigurationInputs(root,config));
    files=[...new Set(files)].sort();files.forEach(file=>safePath(root,file));
    const started=performance.now(),execution=wait('executed');child.stdio[3].end(encodeNativeFrame({phase:'execute',files}));
-   const value=await execution,executedReceived=performance.now();if(Date.now()>=deadline)throw new Error('Unified native-session deadline exceeded');
+   const value=await execution,executedReceived=performance.now();
+   assertConfigurationInputFreshness(configurationInputObservations,value.configurationInputs,{allowCanonicalTmpdir:true});
+   assertConfigurationInputFreshness(configurationInputObservations,captureConfigurationInputs(root,config));if(Date.now()>=deadline)throw new Error('Unified native-session deadline exceeded');
    if(child.exitCode===null&&child.signalCode===null)await new Promise(resolve=>child.once('close',resolve));
    if(failure)throw failure;if(Date.now()>=deadline)throw new Error('Unified native-session deadline exceeded');terminate();
-   return normalizeUnifiedExecution(root,files,value,{durationMs:Math.round(performance.now()-started),command:[],nativeInvocation:invocation,nativeExitCode:child.exitCode,signal:child.signalCode,stdout,stderr,unifiedNative:{prototype:true,used:true,programmatic:true,contexts:1,fresh:true,scope:'fresh CLI-selected projects; file memberships are disjoint',projects:batch.projectContracts,sourceSummaryReuse:batch.sourceSummaryReuse,deadlineScope:'native-session; synchronous parent work is not preemptible',timings:{requestPreparationMs:workerSpawned-opened,workerStartupAndPlanningMs:plannedReceived-workerSpawned,executionRequestAndResultMs:executedReceived-started,resultToChildExitMs:performance.now()-executedReceived,worker:workerTimings,scope:'Diagnostic spans; worker starts after static module imports, parent startup includes imports and native planning. Spans overlap and never confer authority.'}}});
+   return normalizeUnifiedExecution(root,files,value,{durationMs:Math.round(performance.now()-started),command:[],nativeInvocation:invocation,nativeExitCode:child.exitCode,signal:child.signalCode,stdout,stderr,unifiedNative:{prototype:true,used:true,programmatic:true,contexts:1,fresh:true,scope:'fresh CLI-selected projects; file memberships are disjoint',projects:batch.projectContracts,sourceSummaryReuse:batch.sourceSummaryReuse,resolutionDiagnostics:batch.nativeResolutionDiagnostics,deadlineScope:'native-session; synchronous parent work is not preemptible',timings:{requestPreparationMs:workerSpawned-opened,workerStartupAndPlanningMs:plannedReceived-workerSpawned,executionRequestAndResultMs:executedReceived-started,resultToChildExitMs:performance.now()-executedReceived,worker:workerTimings,scope:'Diagnostic spans; worker starts after static module imports, parent startup includes imports and native planning. Spans overlap and never confer authority.'}}});
   }};
  }catch(error){error.nativeFailureEvidence={stdout,stderr};await close();throw error;}
 }

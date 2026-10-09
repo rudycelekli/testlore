@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "file": "original-outcomes.json.gz",
+  "sha256": "5be7cbe376fb2762ab8fdd0454cfbca46f62d77b01b935a2e0ca0910dec7ba7c",
+  "compressedBytes": 5966674,
+  "uncompressedSha256": "b085ad055dcc269411ae1cbd7c677c7d12472eabc2570501f119c1336da063e7",
+  "uncompressedBytes": 40436590,
+  "artifact": {
+    "runId": 37953327771,
+    "artifactId": 11626598863,
+    "archiveSha256": "1884ed7d3503a0275aac8201dd896c2cfcda0193f860fd5e5026d8f74e26fe10",
+    "archiveBytes": 5922063,
+    "apiDigestVerifiedBeforeRead": true,
+    "url": "https://github.com/rudycelekli/testlore/actions/runs/37953327771/artifacts/11626598863"
+  },
+  "source": {
+    "revision": "6cea38950813e8ccfde6a7b8ea2d7c44ddbd7026",
+    "controllerPath": "scripts/contributed-e2e-pilot.js",
+    "controllerSha256": "471b593017a8f06e55d7cec2afde9607663d60574a05f3fb97cec9873fb3fe21",
+    "controllerGitBlob": "9d5aec13eec0ce52fbd04339e39cb5ae4f902019"
+  },
+  "utf8OutcomeFiles": 98,
+  "preservation": "Every original artifact member preserves its exact UTF-8 bytes, filename, byte count and SHA-256. Gzip is storage compression; digests are integrity checks, not proof of truth."
+}

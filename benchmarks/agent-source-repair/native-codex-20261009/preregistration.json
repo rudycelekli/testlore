@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "kind": "native-provider-source-repair-prospective",
+  "upstream": "jonschlinkert/is-number",
+  "faultCommit": "204c885659b8ee1946534c61db91603b9a16d661",
+  "originalAssertionsCommit": "12749e3c411750f754d50f093471234c7ab270b0",
+  "caseCount": 8,
+  "oracleScope": "Eight original maintainer assertion bodies ported to Node with fixed labels and original assert.equal semantics. Original Mocha test bytes retained in docs/original-mocha-test.js.txt, not executed. This is an adapted isolated source-repair proof, not an upstream installation or full original-suite qualification.",
+  "sourceSha256": "1b572fa10d2a238af614189c499ceff034ab2549f4795cffaa85e5976a3f87a6",
+  "requirementsSha256": "820ac186d8541546a772811bd14dbdd5199fb6e439757766e65b8ce0ef96646d",
+  "oracleSha256": "e185eb7a96543b1d778db9dd6f46bd900c24f542c341c25fc37a3c30981b2aa6",
+  "workerSha256": "03719bc3c7c27cad9b5736f99829b02bbd01366365c0154d2f0bf2fc13eb6458",
+  "budget": {
+    "rounds": 1,
+    "maxTasks": 3,
+    "maxCalls": 5,
+    "workerTimeoutMs": 120000,
+    "campaignDeadlineMs": 900000
+  },
+  "exactFixSupplied": false,
+  "fixedSourceSupplied": false,
+  "modelTrainingIsolation": false,
+  "livePRRequested": false,
+  "createdAt": "2026-10-09T15:53:23Z",
+  "sourceRevision": "b74a609637a75a3e3b496cd3748f4f397f0cc526",
+  "priorScopeRejection": "baseline-scope-rejected.json",
+  "configurationSha256": "14b689aad9e62e5502aa81ee844f276a74406fcfdb5ef2887b8f60008b52b6bb"
+}

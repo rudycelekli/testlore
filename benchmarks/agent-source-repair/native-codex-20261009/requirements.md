@@ -1,0 +1,1 @@
+Independent maintainer issue #3 and original assertions: numeric values zero, one, and negative one, and numeric string "1" are numbers. Empty string, null, spaces-only string, and carriage-return/newline/tab-only string are not numbers. Preserve the public isNumber function and existing assertions. Make a source repair without changing any oracle or configuration.

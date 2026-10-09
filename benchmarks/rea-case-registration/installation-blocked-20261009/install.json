@@ -1,0 +1,21 @@
+{
+  "exitCode": null,
+  "signal": "SIGTERM",
+  "reason": "disk-growth",
+  "durationMs": 5752,
+  "finalResources": {
+    "availableBytes": 90799706112,
+    "growthBytes": 501014528,
+    "stdoutBytes": 0,
+    "stderrBytes": 0
+  },
+  "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "descendantCleanup": {
+    "scope": "Observed process-tree/start identity best effort; unobserved/reparented children and arbitrary subprocesses are not contained",
+    "observed": 0,
+    "survivingAtClose": 0,
+    "observationFailed": false,
+    "requested": true
+  }
+}

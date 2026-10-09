@@ -1,0 +1,150 @@
+{
+  "schemaVersion": 1,
+  "observation": "native-codex-adapted-source-repair",
+  "faultCommit": "204c885659b8ee1946534c61db91603b9a16d661",
+  "declaredOriginalAssertionsCommit": "12749e3c411750f754d50f093471234c7ab270b0",
+  "observedRepairCommit": "5fa5b5373ef2b466a1959435d8c343f45f7f5cc6",
+  "sourceHead": "b74a609637a75a3e3b496cd3748f4f397f0cc526",
+  "transformations": {
+    "rule": "Replace runtime /Users/<account> prefix with <USER_HOME> and macOS temporary directory prefix with <TEMP>. All other UTF8 bytes retained.",
+    "absoluteRuntimePathsOnly": true,
+    "originalPrivateEvidencePreserved": true,
+    "publicHmacVerifiable": false,
+    "privateHmacVerified": true
+  },
+  "provenanceCorrection": {
+    "retainedMochaTestBlob": "23e324908e6e714f3c50c22f419d1ce25dde63c0",
+    "retainedMochaSourceCommit": "204c885659b8ee1946534c61db91603b9a16d661",
+    "fixedMochaTestBlob": "3cbbc56007ea4460b8cc8a0f471d4adc58011354",
+    "fixedMochaSourceCommit": "12749e3c411750f754d50f093471234c7ab270b0",
+    "scope": "Eight adapted Node cases use original assertion semantics plus issue #3 inputs; they are not eight exact untouched Mocha cases. Negative -1 is a chosen representative input. Both original test versions are retained without execution."
+  },
+  "members": {
+    "preregistration.json": {
+      "bytes": 1473,
+      "sha256": "2d85c25ebd4e78eb1dde8c7492c6bd94d2e879a1e92267100f0ffb5c77b17cb3",
+      "originalBytes": 1473,
+      "originalSha256": "2d85c25ebd4e78eb1dde8c7492c6bd94d2e879a1e92267100f0ffb5c77b17cb3",
+      "runtimePathsTransformed": false
+    },
+    "preregistration-original-scope.json": {
+      "bytes": 1145,
+      "sha256": "4aeb63e62fbfd10cd2aa6097db0d0ae2b39a320993daa99c0f5dd5f397a2f014",
+      "originalBytes": 1145,
+      "originalSha256": "4aeb63e62fbfd10cd2aa6097db0d0ae2b39a320993daa99c0f5dd5f397a2f014",
+      "runtimePathsTransformed": false
+    },
+    "baseline-scope-rejected.json": {
+      "bytes": 1230,
+      "sha256": "a1a7ac972cee8c36414c2a0575b961c3f0f354b163d9ce775070127b55b6beb3",
+      "originalBytes": 1363,
+      "originalSha256": "f837b9ff4085bbbbdfbded95f3c3a9f468fc70add4b206316c016bf40b7612be",
+      "runtimePathsTransformed": true
+    },
+    "result.json": {
+      "bytes": 40022,
+      "sha256": "8a45b17eea243e9661c7565ece078e4f450fc584932c4047604f6a8bb490f260",
+      "originalBytes": 40827,
+      "originalSha256": "6738c6dc6b8d3c1a4b40e3c2af84532f659607ec60c47441599f883e673a87ee",
+      "runtimePathsTransformed": true
+    },
+    "requirements.md": {
+      "bytes": 368,
+      "sha256": "820ac186d8541546a772811bd14dbdd5199fb6e439757766e65b8ce0ef96646d",
+      "originalBytes": 368,
+      "originalSha256": "820ac186d8541546a772811bd14dbdd5199fb6e439757766e65b8ce0ef96646d",
+      "runtimePathsTransformed": false
+    },
+    "oracle.test.cjs": {
+      "bytes": 390,
+      "sha256": "e185eb7a96543b1d778db9dd6f46bd900c24f542c341c25fc37a3c30981b2aa6",
+      "originalBytes": 390,
+      "originalSha256": "e185eb7a96543b1d778db9dd6f46bd900c24f542c341c25fc37a3c30981b2aa6",
+      "runtimePathsTransformed": false
+    },
+    "original-index.js": {
+      "bytes": 396,
+      "sha256": "1b572fa10d2a238af614189c499ceff034ab2549f4795cffaa85e5976a3f87a6",
+      "originalBytes": 396,
+      "originalSha256": "1b572fa10d2a238af614189c499ceff034ab2549f4795cffaa85e5976a3f87a6",
+      "runtimePathsTransformed": false
+    },
+    "repaired-index.js": {
+      "bytes": 472,
+      "sha256": "10c5e80cdb6eff8cdc9fd1d075f0002f496d214732b837cefa3a4f326a48c339",
+      "originalBytes": 472,
+      "originalSha256": "10c5e80cdb6eff8cdc9fd1d075f0002f496d214732b837cefa3a4f326a48c339",
+      "runtimePathsTransformed": false
+    },
+    "source.diff": {
+      "bytes": 368,
+      "sha256": "da8da7087d332500e50037b188e448b3b7a9022da37f31cfea0d8837bc1e310f",
+      "originalBytes": 368,
+      "originalSha256": "da8da7087d332500e50037b188e448b3b7a9022da37f31cfea0d8837bc1e310f",
+      "runtimePathsTransformed": false
+    },
+    "original-mocha-retained.txt": {
+      "bytes": 2604,
+      "sha256": "b1a08ce307b99195272278ebc0038c52480c0fa339ae334b8e32727277d6a94c",
+      "originalBytes": 2604,
+      "originalSha256": "b1a08ce307b99195272278ebc0038c52480c0fa339ae334b8e32727277d6a94c",
+      "runtimePathsTransformed": false
+    },
+    "original-mocha-fixed-12749.txt": {
+      "bytes": 2675,
+      "sha256": "acb5000f91ab6a43244a94fa01910bf635b39084f5d9fd5ea74354c46c19b139",
+      "originalBytes": 2675,
+      "originalSha256": "acb5000f91ab6a43244a94fa01910bf635b39084f5d9fd5ea74354c46c19b139",
+      "runtimePathsTransformed": false
+    },
+    "LICENSE": {
+      "bytes": 1088,
+      "sha256": "daca23d50b0f54d36d6da1b16c82dfea6461e2ae20de0e869957e44cc6d34781",
+      "originalBytes": 1088,
+      "originalSha256": "daca23d50b0f54d36d6da1b16c82dfea6461e2ae20de0e869957e44cc6d34781",
+      "runtimePathsTransformed": false
+    },
+    "package.json": {
+      "bytes": 1082,
+      "sha256": "2c5fd85cc3e880b9aae77b2830de06d4aec22a8c74b2bfa6c7f552be3b2501e6",
+      "originalBytes": 1082,
+      "originalSha256": "2c5fd85cc3e880b9aae77b2830de06d4aec22a8c74b2bfa6c7f552be3b2501e6",
+      "runtimePathsTransformed": false
+    },
+    "runtime-configuration.json": {
+      "bytes": 285,
+      "sha256": "23e1347d300a9af466f143da4d0a4381bd41a745a5e4c8ac248de1e3f3df5feb",
+      "originalBytes": 306,
+      "originalSha256": "14b689aad9e62e5502aa81ee844f276a74406fcfdb5ef2887b8f60008b52b6bb",
+      "runtimePathsTransformed": true
+    },
+    "runtime-lock.json": {
+      "bytes": 115986,
+      "sha256": "06e8a7a1c369084cd7ed06270d797f1ea65b1a130f968dae9525f1036924c948",
+      "originalBytes": 115986,
+      "originalSha256": "06e8a7a1c369084cd7ed06270d797f1ea65b1a130f968dae9525f1036924c948",
+      "runtimePathsTransformed": false
+    },
+    "dependency-install.json": {
+      "bytes": 173,
+      "sha256": "d67cda520fde3cb557b6568d35d1ac8e9f90e31267e85b9b28d58196c2322982",
+      "originalBytes": 173,
+      "originalSha256": "d67cda520fde3cb557b6568d35d1ac8e9f90e31267e85b9b28d58196c2322982",
+      "runtimePathsTransformed": false
+    },
+    "worker-adapter.js": {
+      "bytes": 16753,
+      "sha256": "03719bc3c7c27cad9b5736f99829b02bbd01366365c0154d2f0bf2fc13eb6458",
+      "originalBytes": 16753,
+      "originalSha256": "03719bc3c7c27cad9b5736f99829b02bbd01366365c0154d2f0bf2fc13eb6458",
+      "runtimePathsTransformed": false
+    },
+    "independent-git-state.json": {
+      "bytes": 2430,
+      "sha256": "d915a83d1074d0581dba8dc822396aa0b897b0fda86d6ebdb85dd72565f1885d",
+      "originalBytes": 2430,
+      "originalSha256": "d915a83d1074d0581dba8dc822396aa0b897b0fda86d6ebdb85dd72565f1885d",
+      "runtimePathsTransformed": false
+    }
+  }
+}

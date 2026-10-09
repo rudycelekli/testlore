@@ -43,27 +43,27 @@ TestLore brings **test creation, intelligent routing and reviewed learning** int
 
 ## Start in one command
 
-Give your repository its own quality engineer. One command sets up **shadow verification** and CI:
+Give your repository its own quality engineer. One command from your project sets up **shadow verification**, explains suitable installed adapters, and records a full native run:
 
 ```sh
-npm exec --yes --package=testlore@0.1.0 -- testlore setup
+npm exec --yes --package=github:rudycelekli/testlore#main -- testlore setup --verify --json
 ```
 
-Add `--verify` to configure the project and immediately record a **full shadow run** in the same command:
+This uses the current Git source. Pin a reviewed commit for reproducible adoption. The older verified npm release remains available separately:
 
 ```sh
 npm exec --yes --package=testlore@0.1.0 -- testlore setup --verify --json
 ```
 
-This executes your configured native tests, preserves their failure exit, and saves an inspectable report. Ordinary setup only writes configuration. Run `testlore report` to inspect outcomes, proposed omissions and uncertainty.
+Setup preserves native failure exits and saves an inspectable report. Omit `--verify` for configuration-only setup. Installed complementary coverage, mutation and retrieval tools can be enabled automatically; explicit choices are preserved. Setup performs no optional-tool downloads or provider calls. Generation makes its own bounded, explainable provider decision when there is actual work. [Automatic routing →](docs/plugins.md)
 
 Review and commit the setup files. To generate independently reviewed test improvements on a new isolated branch and open a validated PR, run from a clean, committed checkout:
 
 ```sh
-npm exec --yes --package=testlore@0.1.0 -- testlore improve
+npm exec --yes --package=github:rudycelekli/testlore#main -- testlore autopilot
 ```
 
-**Experimental alpha:** [`testlore@0.1.0`](https://www.npmjs.com/package/testlore/v/0.1.0) is available on npm. Registry bytes match the exact source-qualified archive; commands pin that version for reproducibility. [Release evidence →](docs/npm-release-0.1.0.md) [Adoption and pilots →](docs/adoption.md) [Real REA results, including failures →](docs/rea-public-qualification.md)
+**Experimental alpha:** [`testlore@0.1.0`](https://www.npmjs.com/package/testlore/v/0.1.0) is available on npm, with verified registry bytes. It predates source repair and the new automatic adapter policy; use Git for those features until a new immutable registry release is verified. [Release evidence →](docs/npm-release-0.1.0.md) [Adoption and pilots →](docs/adoption.md) [Real REA results, including failures →](docs/rea-public-qualification.md)
 
 Requires **Node 22.19+ and Git**. It creates your project’s quality-agent identity and local memory immediately. Existing `SPEC.md`, `REQUIREMENTS.md`, or README material can seed a proposed behavior contract on the branch. Commit `tddswarm.requirements.md` for explicit expectations; proposals without meaningful independent behavior must be rejected. Generation uses your configured worker or an installed, authenticated Codex CLI. Automatic PR creation uses your authenticated GitHub CLI. `--local` keeps the result for local review.
 
@@ -84,6 +84,8 @@ Audit + shadow validation on PRs · full tests on default-branch pushes
 ```
 
 Failed validation retains the proposal and its evidence for inspection. Missing requirements or a worker produces a concrete work order. Merging remains your decision. [Full workflow →](docs/improvement.md)
+
+**Source workflow: find → delegate → repair → review.** The next-release source adds `testlore autopilot` and `testlore repair`: bounded agent tasks, unchanged original assertions, repeated native validation, an isolated source-fix branch, and a PR bound to the tested commit. Node assertion repair is the first supported profile. A green suite uses the existing test-improvement flow. These commands are not in npm 0.1.0 yet. [Installed workflow, limits and opt-in ongoing operation →](docs/autonomous-repair.md)
 
 Personalize your project agent:
 
@@ -211,7 +213,7 @@ npm install --save-dev @ruvector/core@0.1.32
 npx --no-install testlore plugins --enable ruvector
 ```
 
-Automatic setup uses explainable project-fit rules, preserves explicit choices, and enables only supported installed tools. Missing tools receive recommendations; ambiguous execution engines require a choice. It performs no downloads or agent calls. Tools are installed separately. Health checks describe availability and supported contracts, not measured quality. All built-in plugins can be enabled together; `executionPlugin` selects the native backend for the project, while other providers run only for their relevant operations. Enabling more tools preserves the current backend. Reviewed branch improvements support Node/Jest/Vitest/Playwright individual-case validation. [Plugin configuration and community contract →](docs/plugins.md) · [RuVector learning →](docs/ruvector.md)
+Automatic setup uses explainable project-fit rules, preserves explicit choices, and enables suitable installed complementary tools by default. Missing tools receive reasons; ambiguous execution engines require a choice. Setup performs no optional downloads or agent calls. During generation, compatible project-local AQE can author distinct tasks in parallel, while the worker retains planning and independent review. Automatic AQE failures retain their evidence and can fall back within the same bounded round; explicit AQE selection fails closed. Current Node source repair uses its dedicated worker roles. Selection is a compatibility policy, not a quality ranking. [Plugin configuration and limits →](docs/plugins.md) · [RuVector learning →](docs/ruvector.md)
 
 Playwright has native discovery, project-aware case reports, and opt-in automatic route/request/JS/CSS observations. Explicit URL and server authorities turn bounded local source maps into reviewable proposals; observations never establish complete dependency coverage. [Browser evidence and fixture →](docs/browser-mappings.md) fast-check composes inside a supported runner. Consumer contracts (Pact), service fixtures (Testcontainers), and API exploration (Schemathesis) remain researched integration seams awaiting their own qualification. Each has a distinct role. [Browser setup →](docs/playwright.md) · [Research and property proof →](docs/ecosystem.md)
 

@@ -1,0 +1,90 @@
+name: REA native skipped-registration evidence
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - scripts/rea-case-registration.js
+      - test/rea-case-registration.test.js
+      - test/fixtures/rea-case-registration/**
+      - .github/workflows/rea-case-registration.yml
+permissions:
+  contents: read
+concurrency:
+  group: rea-case-registration-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  native-registration:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/checkout@v7.0.1
+        with:
+          repository: morluto/rea
+          ref: 3dcb732da33f6ceef597506b14a4536f1c9aff96
+          path: .rea-registration-upstream
+          persist-credentials: false
+      - uses: actions/setup-node@v7.0.0
+        with:
+          node-version: '22.19.0'
+      - name: Observe actual original REA rows through the explicit metadata overlay
+        env:
+          EXPECTED_REVISION: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          node --input-type=module <<'JS'
+          import fs from 'node:fs';import path from 'node:path';import {execFileSync} from 'node:child_process';
+          import {boundedInstallProcess} from './scripts/qualification-process.js';
+          import {prepareReaCaseRegistration,observeReaCaseRegistrations,compareReaSkippedRegistrations,REA_CASE_FILE,registrationHash} from './scripts/rea-case-registration.js';
+          const evidence=path.resolve('.tddswarm/rea-registration-native');fs.mkdirSync(evidence,{recursive:true,mode:0o700});
+          const save=(name,value)=>fs.writeFileSync(path.join(evidence,name),JSON.stringify(value,null,2)+'\n',{flag:'wx',mode:0o600});
+          const git=(cwd,...args)=>execFileSync('git',args,{cwd,encoding:'utf8'}).trim();
+          try{
+            const producerRevision=git(process.cwd(),'rev-parse','HEAD');if(producerRevision!==process.env.EXPECTED_REVISION)throw Error('Producer checkout differs from exact requested head');
+            const upstream=path.resolve('.rea-registration-upstream'),upstreamRevision=git(upstream,'rev-parse','HEAD');if(upstreamRevision!=='3dcb732da33f6ceef597506b14a4536f1c9aff96')throw Error('Upstream checkout differs from pin');
+            const isolated=fs.mkdtempSync(path.join(process.env.RUNNER_TEMP,'rea-registration-'));for(const name of ['home','tmp','cache'])fs.mkdirSync(path.join(isolated,name));
+            const user=path.join(isolated,'npm-user'),global=path.join(isolated,'npm-global');for(const file of [user,global])fs.writeFileSync(file,'',{flag:'wx',mode:0o600});
+            const env={PATH:path.dirname(process.execPath)+':/usr/local/bin:/usr/bin:/bin',HOME:path.join(isolated,'home'),TMPDIR:path.join(isolated,'tmp'),LANG:'C.UTF-8',CI:'true',npm_config_cache:path.join(isolated,'cache'),npm_config_userconfig:user,npm_config_globalconfig:global,npm_config_ignore_scripts:'false'};
+            const npm=path.resolve(path.dirname(process.execPath),'../lib/node_modules/npm/bin/npm-cli.js');
+            const producerInstallDir=path.join(evidence,'producer-install');fs.mkdirSync(producerInstallDir);
+            const producerInstall=await boundedInstallProcess(process.execPath,[npm,'ci','--ignore-scripts'],{cwd:process.cwd(),directory:producerInstallDir,env,timeoutMs:180000,reserveBytes:2*1024**3,maxGrowthBytes:450*1024**2,maxLogBytes:2*1024**2,terminateDescendants:true});save('producer-install.json',producerInstall);
+            if(producerInstall.exitCode!==0||producerInstall.reason)throw Error('Producer dependency installation rejected');
+            const installDir=path.join(evidence,'install');fs.mkdirSync(installDir);
+            const lockBefore=registrationHash(fs.readFileSync(path.join(upstream,'package-lock.json')));
+            const install=await boundedInstallProcess(process.execPath,[npm,'ci'],{cwd:upstream,directory:installDir,env,timeoutMs:180000,reserveBytes:2*1024**3,maxGrowthBytes:768*1024**2,maxLogBytes:2*1024**2,terminateDescendants:true});save('install.json',{...install,resourcePolicy:{timeoutMs:180000,reserveBytes:2*1024**3,maxGrowthBytes:768*1024**2,reviewedReason:'Original full REA npm ci exceeded 450MiB with observed 501014528-byte growth in retained run37947220000; native dependencies remain unfiltered.'}});
+            if(install.exitCode!==0||install.reason||!install.stdoutSha256||!install.stderrSha256)throw Error('Original REA installation blocked or incomplete');
+            if(registrationHash(fs.readFileSync(path.join(upstream,'package-lock.json')))!==lockBefore)throw Error('Original upstream lock changed');
+            fs.copyFileSync(path.join(upstream,'package-lock.json'),path.join(evidence,'package-lock.json'),fs.constants.COPYFILE_EXCL);
+            const {installedTreeIdentity}=await import('./scripts/public-corpus-upstream.js');
+            save('installed-inventory.json',installedTreeIdentity(path.join(upstream,'node_modules'),{captureInventory:true}));
+            const vitest=JSON.parse(fs.readFileSync(path.join(upstream,'node_modules/vitest/package.json')));if(vitest.version!=='5.0.3')throw Error('Original lock did not install the declared Vitest 5.0.3');
+            const profile=prepareReaCaseRegistration(upstream,{upstreamRevision});save('profile.json',{producerRevision,...profile});
+            const config=`import original from './vitest.config.ts';import registration from './${profile.plugin}';export default {...original,plugins:[...(original.plugins||[]),registration],test:{...original.test,includeTaskLocation:true,reporters:['json','./${profile.reporter}']}};`;
+            fs.writeFileSync(path.join(upstream,'testlore.rea-registration.config.mjs'),config,{flag:'wx',mode:0o600});
+            const arms=[];for(let index=0;index<2;index++){
+              const directory=path.join(evidence,'native-'+index);fs.mkdirSync(directory);
+              const command=[path.join(upstream,'node_modules/vitest/vitest.mjs'),'run','--config','testlore.rea-registration.config.mjs','--project','domain','--outputFile',path.join(directory,'native.json'),REA_CASE_FILE];
+              const event=await boundedInstallProcess(process.execPath,command,{cwd:upstream,directory,env,timeoutMs:30000,reserveBytes:2*1024**3,maxGrowthBytes:128*1024**2,maxLogBytes:2*1024**2,terminateDescendants:true});save('native-'+index+'.json',{command,event});
+              if(event.exitCode!==0||event.reason)throw Error('Native registration execution incomplete');
+              const raw=JSON.parse(fs.readFileSync(path.join(directory,'native.json'),'utf8'));if(raw.numFailedTests||raw.numRuntimeErrorTestSuites||raw.testResults?.length!==1||raw.numPendingTests!==3)throw Error('Original native row outcomes differ from declared three skipped cases');
+              const receipt=observeReaCaseRegistrations(fs.readFileSync(path.join(directory,'stdout.log'),'utf8'),profile.manifest);save('registration-'+index+'.json',receipt);
+              const skipped=raw.testResults[0].assertionResults.filter(t=>['pending','skipped','todo','disabled'].includes(t.status));
+              if(JSON.stringify(skipped.map(t=>t.fullName).sort())!==JSON.stringify(receipt.observations.map(t=>t.rawName).sort()))throw Error('Collected actual registrations do not bind the raw native skipped rows');
+              arms.push(receipt.observations);
+            }
+            git(upstream,'diff','--exit-code','HEAD');
+            const assessed=compareReaSkippedRegistrations(profile.manifest,arms);save('assessment.json',{producerRevision,upstreamRevision,...assessed,scope:'One original test file, two original dependency native executions with explicit source-bound metadata transform. No selection or speed qualification.'});
+            if(!assessed.complete)throw Error('Independent native registration profiles did not align');
+          }catch(error){save('failure.json',{complete:false,error:String(error.message).slice(0,1000),omissionAuthority:false});console.error(error.message);process.exitCode=1;}
+          JS
+      - name: Preserve native registrations and rejections
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rea-registration-native-${{ github.run_id }}
+          path: .tddswarm/rea-registration-native/
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 14

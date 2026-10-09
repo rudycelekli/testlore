@@ -4,9 +4,10 @@ import { isBuiltin } from 'node:module';
 import { createHash } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import { createAnalysisCache, ANALYSIS_CACHE_IMPLEMENTATION } from './graph-cache.js';
-import { discover as nativeDiscovery, resolveNativeBatch, combinedNativePlanningSupported } from './execution.js';
+import { adapterFor, discover as nativeDiscovery, resolveNativeBatch, combinedNativePlanningSupported } from './execution.js';
 import { sessionPlanning } from './native-session.js';
 import { declaredInputs } from './inputs.js';
+import {captureConfigurationInputs,admitsCanonicalTempDirectory} from './configuration-inputs.js';
 import { phaseTimings } from './timing.js';
 import { SOURCE, TEST, listFiles, normalize, safePath, readConfig } from './files.js';
 
@@ -47,6 +48,7 @@ function build(root, nativeSession, planningInputs) {
   const selected = files.filter(f => (config.testMatch ? config.testMatch.some(pattern => path.matchesGlob(f,pattern)) : TEST.test(f)) && !(config.testExclude || []).some(pattern => path.matchesGlob(f,pattern)));
   const graph = { files, tests: selected, edges: {}, warnings: [], sources: {}, root, config, discovery: {complete:true,method:'configured-static-conventions'} };
   graph.configFiles = new Set();
+  if(adapterFor(config)==='bun')graph.warnings.push({file:'configuration',reason:'incomplete-native-resolution',detail:'Bun shared-global isolation, preload and runtime dependency contracts remain unqualified'});
   timing.mark('inventory');
   if(config.discovery === 'native' || Array.isArray(config.discovery)) {
     let combined, sharedAttempt;
@@ -123,6 +125,13 @@ function build(root, nativeSession, planningInputs) {
   for(const file of [...graph.configFiles]) for(const dep of dependencies(graph,file)) graph.configFiles.add(dep);
   for(const file of graph.configFiles)if(!set.has(file))graph.warnings.push({file,reason:'resolution-config-outside-graph'});
   timing.mark('declaredInputsAndConfigurationClosure');
+  graph.configurationInputs=captureConfigurationInputs(root,config);
+  for(const input of graph.configurationInputs.observations){
+    const text=graph.sources[input.file];
+    if(!graph.configFiles.has(input.file)||!text||!admitsCanonicalTempDirectory(analyze(input.file,text).ast,ts))graph.configurationInputs.warnings.push({file:input.file,reason:'configuration-input-profile-rejected'});
+    else graph.warnings=graph.warnings.filter(w=>!(w.file===input.file&&w.reason==='runtime-dependency'));
+  }
+  for(const warning of graph.configurationInputs.warnings)graph.warnings.push({...warning,scope:'global'});
   classifyWarnings(graph);
   timing.mark('warningClassification');
   graph.timings = timing.finish();

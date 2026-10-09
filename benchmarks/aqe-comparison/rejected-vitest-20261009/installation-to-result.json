@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "revision": "dc4dc9d39e6661f65e58b5079659361cf560eff4",
+  "completed": true,
+  "durationMs": 27519.1365,
+  "includes": "Both dependency installations, inventory hashing, generation, native measurements, TestLore validation and report retention",
+  "cost": {
+    "providerCurrency": null,
+    "tokens": null
+  },
+  "qualifiedAdvantage": false
+}

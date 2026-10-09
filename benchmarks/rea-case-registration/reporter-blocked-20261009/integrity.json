@@ -1,0 +1,67 @@
+{
+  "schemaVersion": 1,
+  "runId": 37949751822,
+  "artifactId": 11626165120,
+  "sourceRevision": "dc4dc9d39e6661f65e58b5079659361cf560eff4",
+  "artifactSha256": "6b52b0de8c01e9f4dfc7831ba6e7231b060584f8804029a705ccc896daac3a60",
+  "artifactBytes": 635067,
+  "members": {
+    "failure.json": {
+      "bytes": 119,
+      "sha256": "9698dec1fb7a223e8bcf7509ed713e2da6df44581f566842dd52f78263ffd2f4"
+    },
+    "install/stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "install/stdout.log": {
+      "bytes": 200,
+      "sha256": "88cb977982cc924c474448ae6f37ca6f60ac4d2a8a4b6249f97cf0709157df1e"
+    },
+    "install.json": {
+      "bytes": 945,
+      "sha256": "cbbf170c375cd5a06ab9c320cf909b241637179007c9cbcea891187166c23e79"
+    },
+    "installed-inventory.json": {
+      "bytes": 2408248,
+      "sha256": "9320266d673a7f2dae9391e1bd026ea1fb1f93b2ba33763d00a19f811cb6fcbd"
+    },
+    "native-0/native.json": {
+      "bytes": 8913,
+      "sha256": "f1492f860f99c69a969f7e1ec0af7283c8559c3059feddc711cd32629d3cca84"
+    },
+    "native-0/stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "native-0/stdout.log": {
+      "bytes": 114,
+      "sha256": "f3f83e92c0941d8528d41f4f19235fd1eaedff85d5e4658dcdd77fddbf51f998"
+    },
+    "native-0.json": {
+      "bytes": 1098,
+      "sha256": "0154e959c94d003cc1c2a65476b3c3a3d69f052fcb3f40edac9c37bcba785b07"
+    },
+    "package-lock.json": {
+      "bytes": 288176,
+      "sha256": "7296c105b0ee331d613edd79639cea1493568cfdad7ed8077866f7451f920dac"
+    },
+    "producer-install/stderr.log": {
+      "bytes": 23283,
+      "sha256": "90612893309400f4779a96848d766beac03ae6f149de2c736030534351757bb1"
+    },
+    "producer-install/stdout.log": {
+      "bytes": 315,
+      "sha256": "daf96fe938896a348a3dc16131041933c3dbb9911f02c3b1a37ed6a2541fc6cb"
+    },
+    "producer-install.json": {
+      "bytes": 664,
+      "sha256": "c498c5174c411eb0db9912db0c5f6914769e3a77bce3a643c69baccd2144b7b7"
+    },
+    "profile.json": {
+      "bytes": 6385,
+      "sha256": "6049ffd7718b062c4d7fccedd58fd30f1c2995db05279bebfe573ef21a2d5bf9"
+    }
+  },
+  "qualifiedAdvantage": false
+}

@@ -1,0 +1,57 @@
+{
+  "schemaVersion": 1,
+  "originalCaller": {
+    "head": "b74a609637a75a3e3b496cd3748f4f397f0cc526",
+    "branch": "main",
+    "trackedAndUntrackedStatus": ""
+  },
+  "candidate": {
+    "head": "5fa5b5373ef2b466a1959435d8c343f45f7f5cc6",
+    "branch": "tddswarm/repair-910d7eb5-6b4a-4ec3-90a0-005010706171",
+    "changedFiles": [
+      "index.js"
+    ],
+    "sourceSha256": "10c5e80cdb6eff8cdc9fd1d075f0002f496d214732b837cefa3a4f326a48c339"
+  },
+  "protectedInputs": {
+    "oracle.test.cjs": {
+      "originalSha256": "e185eb7a96543b1d778db9dd6f46bd900c24f542c341c25fc37a3c30981b2aa6",
+      "candidateSha256": "e185eb7a96543b1d778db9dd6f46bd900c24f542c341c25fc37a3c30981b2aa6",
+      "unchanged": true
+    },
+    "tddswarm.requirements.md": {
+      "originalSha256": "820ac186d8541546a772811bd14dbdd5199fb6e439757766e65b8ce0ef96646d",
+      "candidateSha256": "820ac186d8541546a772811bd14dbdd5199fb6e439757766e65b8ce0ef96646d",
+      "unchanged": true
+    },
+    "tddswarm.config.json": {
+      "originalSha256": "14b689aad9e62e5502aa81ee844f276a74406fcfdb5ef2887b8f60008b52b6bb",
+      "candidateSha256": "14b689aad9e62e5502aa81ee844f276a74406fcfdb5ef2887b8f60008b52b6bb",
+      "unchanged": true
+    },
+    "docs/original-mocha-test.js.txt": {
+      "originalSha256": "b1a08ce307b99195272278ebc0038c52480c0fa339ae334b8e32727277d6a94c",
+      "candidateSha256": "b1a08ce307b99195272278ebc0038c52480c0fa339ae334b8e32727277d6a94c",
+      "unchanged": true
+    },
+    "LICENSE": {
+      "originalSha256": "daca23d50b0f54d36d6da1b16c82dfea6461e2ae20de0e869957e44cc6d34781",
+      "candidateSha256": "daca23d50b0f54d36d6da1b16c82dfea6461e2ae20de0e869957e44cc6d34781",
+      "unchanged": true
+    },
+    "package.json": {
+      "originalSha256": "2c5fd85cc3e880b9aae77b2830de06d4aec22a8c74b2bfa6c7f552be3b2501e6",
+      "candidateSha256": "2c5fd85cc3e880b9aae77b2830de06d4aec22a8c74b2bfa6c7f552be3b2501e6",
+      "unchanged": true
+    },
+    "package-lock.json": {
+      "originalSha256": "06e8a7a1c369084cd7ed06270d797f1ea65b1a130f968dae9525f1036924c948",
+      "candidateSha256": "06e8a7a1c369084cd7ed06270d797f1ea65b1a130f968dae9525f1036924c948",
+      "unchanged": true
+    }
+  },
+  "privateLocalHmacVerified": true,
+  "toolSourceObservedAfterTrial": "88e96717b844c72a82d214bb1d81a702135249f9",
+  "exactToolSourcePreregistered": false,
+  "workerAdapterSha256": "03719bc3c7c27cad9b5736f99829b02bbd01366365c0154d2f0bf2fc13eb6458"
+}

@@ -1,0 +1,81 @@
+{
+  "schemaVersion": 1,
+  "completed": true,
+  "manifestHash": "2c1cd73ea190cf35a992f3c715a3bd9c97c12111f397218825f94e2270dfc25d",
+  "generatedAt": "2026-10-09T15:11:20.676Z",
+  "campaignMs": 4803.980188999998,
+  "repeats": [
+    {
+      "repeat": 0,
+      "candidateHash": null,
+      "generationMs": 1267.4406899999994,
+      "evaluationMs": 0.05443300000115414,
+      "validationMs": null,
+      "comparisonExecuted": false,
+      "rejectionCategory": "generation-rejected-or-incomplete",
+      "generationComplete": false,
+      "generationRejected": true,
+      "timedOut": false,
+      "candidateStable": false,
+      "independentFaultDemonstrated": true,
+      "candidateCaughtHistoricalFault": false,
+      "upstreamQualityGates": [],
+      "aqeAlone": {
+        "returnedDraft": false,
+        "measuredCaught": false,
+        "promotionPolicy": "Not inferred from a CLI quality score."
+      },
+      "aqePlusTestLore": {
+        "accepted": false,
+        "measuredCaught": false,
+        "reasons": [
+          "generation-did-not-complete"
+        ]
+      },
+      "detectionImprovementClaim": false,
+      "cost": {
+        "providerCurrency": null,
+        "tokens": null,
+        "paidCredentialsPassed": false
+      },
+      "learningImprovementClaim": false
+    },
+    {
+      "repeat": 1,
+      "candidateHash": null,
+      "generationMs": 589.3571479999991,
+      "evaluationMs": 0.04477799999949639,
+      "validationMs": null,
+      "comparisonExecuted": false,
+      "rejectionCategory": "generation-rejected-or-incomplete",
+      "generationComplete": false,
+      "generationRejected": true,
+      "timedOut": false,
+      "candidateStable": false,
+      "independentFaultDemonstrated": true,
+      "candidateCaughtHistoricalFault": false,
+      "upstreamQualityGates": [],
+      "aqeAlone": {
+        "returnedDraft": false,
+        "measuredCaught": false,
+        "promotionPolicy": "Not inferred from a CLI quality score."
+      },
+      "aqePlusTestLore": {
+        "accepted": false,
+        "measuredCaught": false,
+        "reasons": [
+          "generation-did-not-complete"
+        ]
+      },
+      "detectionImprovementClaim": false,
+      "cost": {
+        "providerCurrency": null,
+        "tokens": null,
+        "paidCredentialsPassed": false
+      },
+      "learningImprovementClaim": false
+    }
+  ],
+  "scope": "One new independently maintained historical defect, two credential-free template generation repetitions; no upstream full installation, live model, learning or general superiority qualification.",
+  "qualifiedAdvantage": false
+}

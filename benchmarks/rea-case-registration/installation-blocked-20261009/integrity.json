@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "producerRevision": "7532ad0005c81686e7edaa3729b349cd5cb43690",
+  "runId": 37947220000,
+  "artifactId": 11624840374,
+  "artifactSha256": "9797d393683e28942d2e6c501ab279e043a1b4223577942fb7e8480f80260d86",
+  "artifactBytes": 3334,
+  "members": {
+    "failure.json": {
+      "bytes": 116,
+      "sha256": "31d96f690a4c9817f998b9c9682fa115a1b2af1fdb7ca3211455e3c5a27c7eff"
+    },
+    "install.json": {
+      "bytes": 674,
+      "sha256": "c4be3f610ce6fbcf53edb7a0be262edf625c6030935442a45ff96fffba755808"
+    },
+    "install/stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "install/stdout.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "producer-install.json": {
+      "bytes": 664,
+      "sha256": "31ccb44081e50d5675bb89a7f9fb01793d23091301fc94b20389e63da1b34857"
+    },
+    "producer-install/stderr.log": {
+      "bytes": 23283,
+      "sha256": "6b6db7f79076435c987466acc2f53e3925d1b5c983757a32116793a38d2bcd7d"
+    },
+    "producer-install/stdout.log": {
+      "bytes": 315,
+      "sha256": "f48d650ae7230d1c8fac40ce9d666d48c7307ec5422f30f312b0d21dc8f6a5f8"
+    }
+  }
+}

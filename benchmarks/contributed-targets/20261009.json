@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "kind": "verified-public-contribution-candidate-catalog",
+  "observedDate": "2026-10-09",
+  "author": "rudycelekli",
+  "source": "Live GitHub pull request API, independently confirmed author and non-null merged_at",
+  "exhaustive": false,
+  "countsAsQualifiedBenchmark": false,
+  "targets": [
+    {"repository":"tester-army/e2e","pullRequest":"https://github.com/tester-army/e2e/pull/927","mergedAt":"2026-10-07T21:53:26Z","revision":"0ddea76a7091ac8768e0ced2a9926b37e72e9497","title":"fix(core): match Unicode characters in test globs","state":"genuine-unit-baseline-observed; regression-comparison-pending","evidence":"../../docs/contributed-e2e.md"},
+    {"repository":"ruvnet/ruflo","pullRequest":"https://github.com/ruvnet/ruflo/pull/3901","mergedAt":"2026-10-09T03:42:02Z","revision":"6287f1993808889668f028ac58e2f092475312ce","title":"fix(config): preserve unrelated sections during targeted reset","state":"discovered-not-run"},
+    {"repository":"zhayujie/CowAgent","pullRequest":"https://github.com/zhayujie/CowAgent/pull/3616","mergedAt":"2026-10-09T11:35:04Z","revision":"05f3508392c04d0425a75da8d47d999c21a7c9ba","title":"fix: keep external-content FTS indexes synchronized","state":"discovered-not-run"},
+    {"repository":"fabio-rovai/open-ontologies","pullRequest":"https://github.com/fabio-rovai/open-ontologies/pull/289","mergedAt":"2026-10-09T10:57:55Z","revision":"1b59eda786ac21a98b3c0cd296a9a44384211a7b","title":"fix(version): preserve dataset graph contexts in snapshots","state":"discovered-not-run"}
+  ],
+  "acceptance": ["Pinned genuine upstream environment and baseline", "Retained original specifications and source/configuration identities", "Independent native demonstrations before attributing defect detection", "Complete selector timings, named failure preservation and uncertainty", "Self-authored contribution tests explicitly distinguished from independently authored oracles"]
+}

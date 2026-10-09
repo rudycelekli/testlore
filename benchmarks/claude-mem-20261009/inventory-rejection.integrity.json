@@ -1,0 +1,53 @@
+{
+  "schemaVersion": 1,
+  "runId": 37945888282,
+  "artifactId": 11623636003,
+  "artifactZipBytes": 114839,
+  "artifactZipSha256": "ad50920cbcbc848b458163e0cf5e1b4470404d01bb8a164090114a85818f4ae5",
+  "sourceRevision": "433baa2dce9db28847d71686f8ed092befe8330f",
+  "upstreamRevision": "fa8ab09f06aa05f958c5225cf3756ce52a3ebb96",
+  "compressedSha256": "3cf63d7bf372674b5bc8e723eec26de2c4d4a9379124eb8972924b7cc0b9932b",
+  "members": {
+    "original-package.json": {
+      "sha256": "ccbe33413b0f74b11c4eebc2d5ce1d56cb8154f26cd2c03e2526be1830810401",
+      "bytes": 9269
+    },
+    "bun-fixtures.tap": {
+      "sha256": "b1b965357813a1bcbe84436b983758575060e8ea8b9efdbed0776e246f6237a6",
+      "bytes": 3192
+    },
+    "bun-fixtures.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "resolved-package-lock.json": {
+      "sha256": "c31537a805fd540870ef36736909a0705a88a937e1d07ca585b32594c85b6351",
+      "bytes": 405065
+    },
+    "upstream-installation.json": {
+      "sha256": "0cf2868261b5d48bdf8a958fd769c90bcffcb6c0da4564c14f8480c1b4f5888f",
+      "bytes": 2557
+    },
+    "upstream-install/stderr.log": {
+      "sha256": "ba5478dca42d113c1bd200efc58901e7127e7d688729d7e51d15f6680b897744",
+      "bytes": 332
+    },
+    "upstream-install/stdout.log": {
+      "sha256": "1ed867dffa3657d79556a3e74953a2a39f5fd1d5fc376054d751056bd150a147",
+      "bytes": 27
+    },
+    "upstream-inventory/stderr.log": {
+      "sha256": "17693e0a97cdfb4829d02395538d5e330ae9939f2591e77574e6ef87a0df5a9b",
+      "bytes": 715
+    },
+    "upstream-inventory/stdout.log": {
+      "sha256": "a01f3588d8ca2ddde61445fd5e8f2121220a25a509623738139c5bc55cbf1dbc",
+      "bytes": 230392
+    }
+  },
+  "qualified": false,
+  "nativeBaselineStarted": false,
+  "installationProcessCompleted": true,
+  "dependencyInventoryAccepted": false,
+  "nativeBunFixturesPassed": true
+}
