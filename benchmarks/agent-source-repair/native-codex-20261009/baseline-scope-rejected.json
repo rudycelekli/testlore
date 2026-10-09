@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "kind": "source-repair",
+  "id": "c9dd7720-2c65-4bfe-9618-12bdedb55889",
+  "branch": "tddswarm/repair-c9dd7720-2c65-4bfe-9618-12bdedb55889",
+  "worktreeRoot": "<TEMP>/testlore-repair-Zx7h2x",
+  "worktree": "<TEMP>/testlore-repair-Zx7h2x",
+  "originalCheckout": "<USER_HOME>/Downloads/tddswarm/.tddswarm/oct9-agent-source-repair/is-number",
+  "sourceHead": "f6df425e9c81dcbd5f47d16d43315aa835a98e78",
+  "base": "f6df425e9c81dcbd5f47d16d43315aa835a98e78",
+  "baseBranch": "main",
+  "sha": null,
+  "status": "baseline-incomplete",
+  "published": false,
+  "merged": false,
+  "budget": {
+    "deadlineMs": 900000,
+    "timeoutMs": 120000,
+    "maxTasks": 3,
+    "maxFiles": 3,
+    "maxPatchBytes": 65536,
+    "maxRounds": 1
+  },
+  "sourcePaths": [
+    "index.js"
+  ],
+  "detection": {
+    "exitCode": 2,
+    "complete": false,
+    "tests": [],
+    "discovery": {
+      "files": [
+        "oracle.test.cjs",
+        "test.js"
+      ],
+      "complete": false,
+      "adapter": "node",
+      "warnings": [
+        "native-discovery-failed:Discovery exited 1"
+      ]
+    },
+    "error": "Full native scope is incomplete or empty"
+  },
+  "receipt": "<TEMP>/testlore-repair-Zx7h2x/.tddswarm/repair/result.json"
+}

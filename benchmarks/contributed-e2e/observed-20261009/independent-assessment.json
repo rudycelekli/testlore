@@ -1,0 +1,154 @@
+{
+  "schemaVersion": 1,
+  "repository": "tester-army/e2e",
+  "runId": 37953327771,
+  "sourceRevision": "6cea38950813e8ccfde6a7b8ea2d7c44ddbd7026",
+  "upstreamRevision": "0ddea76a7091ac8768e0ced2a9926b37e72e9497",
+  "artifactId": 11626598863,
+  "artifactArchiveSha256": "1884ed7d3503a0275aac8201dd896c2cfcda0193f860fd5e5026d8f74e26fe10",
+  "archiveBytes": 5922063,
+  "archiveDigestVerifiedBeforeRead": true,
+  "candidateInstallBinding": {
+    "kind": "explicit-source-candidate-not-registry-release",
+    "revision": "6cea38950813e8ccfde6a7b8ea2d7c44ddbd7026",
+    "sha256": "17128f23ce1a3c7e42e211a811ec6df90e492a0313fdf7ad4b0b2bc6b986edd4",
+    "version": "0.1.0",
+    "runId": "37953327771"
+  },
+  "observationCompleted": true,
+  "qualified": false,
+  "baseline": {
+    "files": 174,
+    "cases": 2495,
+    "passed": 2493,
+    "skipped": 2
+  },
+  "restoredRawNamedBaselineExact": true,
+  "duplicateTitleIdentities": [
+    {
+      "file": "tests/unit/locator-wait-for.test.ts",
+      "rawName": "locator.waitFor states waits for hidden until the node changes after 1200 ms",
+      "multiplicity": 2
+    }
+  ],
+  "rows": [
+    {
+      "change": 0,
+      "repetition": 0,
+      "fullFiles": 174,
+      "nativeFiles": 32,
+      "testLoreFiles": 174,
+      "omittedFiles": 0,
+      "rawNamedOracleFailures": 0,
+      "rawNamedMissedFailures": 0,
+      "fullMs": 22923,
+      "nativeMs": 8388,
+      "testLoreMs": 27522,
+      "mode": "full"
+    },
+    {
+      "change": 0,
+      "repetition": 1,
+      "fullFiles": 174,
+      "nativeFiles": 32,
+      "testLoreFiles": 174,
+      "omittedFiles": 0,
+      "rawNamedOracleFailures": 0,
+      "rawNamedMissedFailures": 0,
+      "fullMs": 23548,
+      "nativeMs": 8482,
+      "testLoreMs": 28141,
+      "mode": "full"
+    },
+    {
+      "change": 0,
+      "repetition": 2,
+      "fullFiles": 174,
+      "nativeFiles": 32,
+      "testLoreFiles": 174,
+      "omittedFiles": 0,
+      "rawNamedOracleFailures": 0,
+      "rawNamedMissedFailures": 0,
+      "fullMs": 23227,
+      "nativeMs": 8502,
+      "testLoreMs": 27875,
+      "mode": "full"
+    },
+    {
+      "change": 1,
+      "repetition": 0,
+      "fullFiles": 174,
+      "nativeFiles": 104,
+      "testLoreFiles": 174,
+      "omittedFiles": 0,
+      "rawNamedOracleFailures": 1,
+      "rawNamedMissedFailures": 0,
+      "fullMs": 23409,
+      "nativeMs": 15754,
+      "testLoreMs": 27249,
+      "mode": "full"
+    },
+    {
+      "change": 1,
+      "repetition": 1,
+      "fullFiles": 174,
+      "nativeFiles": 104,
+      "testLoreFiles": 174,
+      "omittedFiles": 0,
+      "rawNamedOracleFailures": 1,
+      "rawNamedMissedFailures": 0,
+      "fullMs": 22973,
+      "nativeMs": 15437,
+      "testLoreMs": 27158,
+      "mode": "full"
+    },
+    {
+      "change": 1,
+      "repetition": 2,
+      "fullFiles": 174,
+      "nativeFiles": 104,
+      "testLoreFiles": 174,
+      "omittedFiles": 0,
+      "rawNamedOracleFailures": 1,
+      "rawNamedMissedFailures": 0,
+      "fullMs": 23454,
+      "nativeMs": 15836,
+      "testLoreMs": 27359,
+      "mode": "full"
+    }
+  ],
+  "mediansByChange": {
+    "0": {
+      "fullMs": 23227,
+      "nativeMs": 8482,
+      "testLoreMs": 27875
+    },
+    "1": {
+      "fullMs": 23409,
+      "nativeMs": 15754,
+      "testLoreMs": 27249
+    }
+  },
+  "completeProcessMedians": {
+    "fullMs": 23318.0,
+    "nativeMs": 11969.5,
+    "testLoreMs": 27440.5
+  },
+  "controllerElapsedMs": 450870,
+  "protectedInScopeHashesIndependentlyMatchedPerTrial": [
+    568,
+    568,
+    568,
+    568,
+    568,
+    568
+  ],
+  "protectedWholeMonorepoFreshness": "Controller admission passed; independent raw replay checks only hashes present in each in-scope TestLore snapshot. Final external workspace bytes are unavailable.",
+  "claims": {
+    "generalSpeedAdvantageEstablished": false,
+    "safeSelectiveOmissionsDemonstrated": false,
+    "individualCasePreservationQualified": false,
+    "independentTestAuthorship": false
+  },
+  "reason": "All six TestLore runs use full fallback and raw duplicate titles remain ambiguous. This is a complete negative observation, not a qualified selection win."
+}

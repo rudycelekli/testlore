@@ -1,0 +1,1464 @@
+{
+  "schemaVersion": 1,
+  "sourceRevision": "6cea38950813e8ccfde6a7b8ea2d7c44ddbd7026",
+  "workflowRun": 37953327660,
+  "workflowUrl": "https://github.com/rudycelekli/testlore/actions/runs/37953327660",
+  "qualified": false,
+  "seeds": [
+    {
+      "seed": 104729,
+      "artifactId": 11627611501,
+      "archiveSha256": "6a9b62e333d1f272045855ec11eb04d7193c099fa42825601aa931f80aca980a",
+      "archiveBytes": 9851937,
+      "upstreamRevision": "3dcb732da33f6ceef597506b14a4536f1c9aff96",
+      "candidateProvenance": {
+        "archive": "/home/runner/work/_temp/candidate-archive/testlore-0.1.0.tgz",
+        "sha256": "17128f23ce1a3c7e42e211a811ec6df90e492a0313fdf7ad4b0b2bc6b986edd4",
+        "sourceRevision": "6cea38950813e8ccfde6a7b8ea2d7c44ddbd7026",
+        "version": "0.1.0",
+        "kind": "explicit-source-candidate-not-registry-release"
+      },
+      "collectorQualified": false,
+      "collectorReasons": [
+        "pilot-incomplete-or-invalid",
+        "pilot-trial-rejected:0:0",
+        "raw-case-preservation-mismatch:0:0:subset named case/status preservation",
+        "pilot-trial-rejected:0:1",
+        "raw-case-preservation-mismatch:0:1:Baseline named inventory drift",
+        "raw-case-preservation-mismatch:0:2:Baseline named inventory drift",
+        "raw-case-preservation-mismatch:1:0:Baseline named inventory drift",
+        "raw-case-preservation-mismatch:1:1:Baseline named inventory drift",
+        "raw-case-preservation-mismatch:1:2:Baseline named inventory drift",
+        "pilot-comparison-rejected"
+      ],
+      "originalNativeCounts": {
+        "numTotalTests": 2784,
+        "numPassedTests": 2781,
+        "numFailedTests": 0,
+        "numPendingTests": 3
+      },
+      "baseline": {
+        "revision": "3dcb732da33f6ceef597506b14a4536f1c9aff96",
+        "files": 261,
+        "cases": 2784,
+        "skipped": 3,
+        "durationMs": 41045
+      },
+      "trials": [
+        {
+          "change": "path-normalization-comment",
+          "repetition": 0,
+          "collectorValid": false,
+          "allNativeArmsComplete": true,
+          "fullCases": 2784,
+          "subsetCases": 2527,
+          "nativeCases": 7,
+          "fullFiles": 261,
+          "selectedFiles": 234,
+          "nativeFiles": 1,
+          "mode": "affected",
+          "fallback": false,
+          "fullFailureCount": 0,
+          "missedFailures": [],
+          "nativeMissedFailures": [],
+          "caseDifferences": {
+            "subsetMissing": [
+              [
+                "src/contracts/sessionPathInputs.test.ts",
+                "Windows absolute path forms accepts ZodObject { \u2026(16) }",
+                "skipped"
+              ],
+              [
+                "src/contracts/sessionPathInputs.test.ts",
+                "Windows absolute path forms accepts ZodObject { \u2026(16) }",
+                "skipped"
+              ],
+              [
+                "src/contracts/sessionPathInputs.test.ts",
+                "Windows absolute path forms accepts ZodObject { \u2026(16) }",
+                "skipped"
+              ]
+            ],
+            "subsetExtra": [
+              [
+                "src/contracts/sessionPathInputs.test.ts",
+                "Windows absolute path forms accepts ZodObject { \u2026(18) }",
+                "skipped"
+              ],
+              [
+                "src/contracts/sessionPathInputs.test.ts",
+                "Windows absolute path forms accepts ZodObject { \u2026(18) }",
+                "skipped"
+              ],
+              [
+                "src/contracts/sessionPathInputs.test.ts",
+                "Windows absolute path forms accepts ZodObject { \u2026(18) }",
+                "skipped"
+              ]
+            ],
+            "baselineMissing": [
+              [
+                "src/contracts/sessionPathInputs.test.ts",
+                "Windows absolute path forms accepts ZodObject { \u2026(18) }"
+              ],
+              [
+                "src/contracts/sessionPathInputs.test.ts",
+                "Windows absolute path forms accepts ZodObject { \u2026(18) }"
+              ],
+              [
+                "src/contracts/sessionPathInputs.test.ts",
+                "Windows absolute path forms accepts ZodObject { \u2026(18) }"
+              ]
+            ],
+            "baselineExtra": [
+              [
+                "src/contracts/sessionPathInputs.test.ts",
+                "Windows absolute path forms accepts ZodObject { \u2026(16) }"
+              ],
+              [
+                "src/contracts/sessionPathInputs.test.ts",
+                "Windows absolute path forms accepts ZodObject { \u2026(16) }"
+              ],
+              [
+                "src/contracts/sessionPathInputs.test.ts",
+                "Windows absolute path forms accepts ZodObject { \u2026(16) }"
+              ]
+            ]
+          },
+          "caseComparisonComparable": false,
+          "testLoreOuterMs": 47085,
+          "nativeSelectionMs": 3290,
+          "fullExecutionMs": 40805,
+          "planningMs": 9063,
+          "nativeResolutionMs": 2112.85934,
+          "resolutionDiagnostics": {
+            "schemaVersion": 2,
+            "policy": "same-live-container-object-and-ssr-per-request",
+            "projectServers": 3,
+            "projectServerObservations": 12936,
+            "requestedPairs": 25872,
+            "uniquePairs": 8624,
+            "requestCount": 4312,
+            "callCount": 8624,
+            "avoidedPairCalls": 17248,
+            "crossRequestCache": false
+          },
+          "sourceSummaryReuse": {
+            "supplied": true,
+            "identityMatched": true,
+            "validatedHits": 1048,
+            "freshParses": 0,
+            "mismatches": 0,
+            "unboundLegacyParses": 0
+          },
+          "rawMembers": {
+            "full": "raw-pilot/change-0-trial-0-full.json",
+            "subset": "raw-pilot/change-0-trial-0-subset.json",
+            "native": "raw-pilot/change-0-trial-0-native.json"
+          }
+        },
+        {
+          "change": "path-normalization-comment",
+          "repetition": 1,
+          "collectorValid": false,
+          "allNativeArmsComplete": true,
+          "fullCases": 2784,
+          "subsetCases": 2527,
+          "nativeCases": 7,
+          "fullFiles": 261,
+          "selectedFiles": 234,
+          "nativeFiles": 1,
+          "mode": "affected",
+          "fallback": false,
+          "fullFailureCount": 0,
+          "missedFailures": [],
+          "nativeMissedFailures": [],
+          "caseDifferences": {
+            "subsetMissing": [
+              [
+                "src/contracts/sessionPathInputs.test.ts",
+                "Windows absolute path forms accepts ZodObject { \u2026(18) }",
+                "skipped"
+              ],
+              [
+                "src/contracts/sessionPathInputs.test.ts",
+                "Windows absolute path forms accepts ZodObject { \u2026(18) }",
+                "skipped"
+              ],
+              [
+                "src/contracts/sessionPathInputs.test.ts",
+                "Windows absolute path forms accepts ZodObject { \u2026(18) }",
+                "skipped"
+              ]
+            ],
+            "subsetExtra": [
+              [
+                "src/contracts/sessionPathInputs.test.ts",
+                "Windows absolute path forms accepts ZodObject { \u2026(16) }",
+                "skipped"
+              ],
+              [
+                "src/contracts/sessionPathInputs.test.ts",
+                "Windows absolute path forms accepts ZodObject { \u2026(16) }",
+                "skipped"
+              ],
+              [
+                "src/contracts/sessionPathInputs.test.ts",
+                "Windows absolute path forms accepts ZodObject { \u2026(16) }",
+                "skipped"
+              ]
+            ],
+            "baselineMissing": [],
+            "baselineExtra": []
+          },
+          "caseComparisonComparable": false,
+          "testLoreOuterMs": 44674,
+          "nativeSelectionMs": 3245,
+          "fullExecutionMs": 40648,
+          "planningMs": 6817,
+          "nativeResolutionMs": 2144.894338,
+          "resolutionDiagnostics": {
+            "schemaVersion": 2,
+            "policy": "same-live-container-object-and-ssr-per-request",
+            "projectServers": 3,
+            "projectServerObservations": 12936,
+            "requestedPairs": 25872,
+            "uniquePairs": 8624,
+            "requestCount": 4312,
+            "callCount": 8624,
+            "avoidedPairCalls": 17248,
+            "crossRequestCache": false
+          },
+          "sourceSummaryReuse": {
+            "supplied": true,
+            "identityMatched": true,
+            "validatedHits": 1048,
+            "freshParses": 0,
+            "mismatches": 0,
+            "unboundLegacyParses": 0
+          },
+          "rawMembers": {
+            "full": "raw-pilot/change-0-trial-1-full.json",
+            "subset": "raw-pilot/change-0-trial-1-subset.json",
+            "native": "raw-pilot/change-0-trial-1-native.json"
+          }
+        },
+        {
+          "change": "path-normalization-comment",
+          "repetition": 2,
+          "collectorValid": true,
+          "allNativeArmsComplete": true,
+          "fullCases": 2784,
+          "subsetCases": 2527,
+          "nativeCases": 7,
+          "fullFiles": 261,
+          "selectedFiles": 234,
+          "nativeFiles": 1,
+          "mode": "affected",
+          "fallback": false,
+          "fullFailureCount": 0,
+          "missedFailures": [],
+          "nativeMissedFailures": [],
+          "caseDifferences": {
+            "subsetMissing": [],
+            "subsetExtra": [],
+            "baselineMissing": [],
+            "baselineExtra": []
+          },
+          "caseComparisonComparable": true,
+          "testLoreOuterMs": 44221,
+          "nativeSelectionMs": 3288,
+          "fullExecutionMs": 40964,
+          "planningMs": 6702,
+          "nativeResolutionMs": 2076.309021,
+          "resolutionDiagnostics": {
+            "schemaVersion": 2,
+            "policy": "same-live-container-object-and-ssr-per-request",
+            "projectServers": 3,
+            "projectServerObservations": 12936,
+            "requestedPairs": 25872,
+            "uniquePairs": 8624,
+            "requestCount": 4312,
+            "callCount": 8624,
+            "avoidedPairCalls": 17248,
+            "crossRequestCache": false
+          },
+          "sourceSummaryReuse": {
+            "supplied": true,
+            "identityMatched": true,
+            "validatedHits": 1048,
+            "freshParses": 0,
+            "mismatches": 0,
+            "unboundLegacyParses": 0
+          },
+          "rawMembers": {
+            "full": "raw-pilot/change-0-trial-2-full.json",
+            "subset": "raw-pilot/change-0-trial-2-subset.json",
+            "native": "raw-pilot/change-0-trial-2-native.json"
+          }
+        },
+        {
+          "change": "blank-path-historical-source-reversion",
+          "repetition": 0,
+          "collectorValid": true,
+          "allNativeArmsComplete": true,
+          "fullCases": 2784,
+          "subsetCases": 2527,
+          "nativeCases": 7,
+          "fullFiles": 261,
+          "selectedFiles": 234,
+          "nativeFiles": 1,
+          "mode": "affected",
+          "fallback": false,
+          "fullFailureCount": 6,
+          "missedFailures": [],
+          "nativeMissedFailures": [],
+          "caseDifferences": {
+            "subsetMissing": [],
+            "subsetExtra": [],
+            "baselineMissing": [],
+            "baselineExtra": []
+          },
+          "caseComparisonComparable": true,
+          "testLoreOuterMs": 45640,
+          "nativeSelectionMs": 3266,
+          "fullExecutionMs": 40740,
+          "planningMs": 8297,
+          "nativeResolutionMs": 2083.195292,
+          "resolutionDiagnostics": {
+            "schemaVersion": 2,
+            "policy": "same-live-container-object-and-ssr-per-request",
+            "projectServers": 3,
+            "projectServerObservations": 12936,
+            "requestedPairs": 25872,
+            "uniquePairs": 8624,
+            "requestCount": 4312,
+            "callCount": 8624,
+            "avoidedPairCalls": 17248,
+            "crossRequestCache": false
+          },
+          "sourceSummaryReuse": {
+            "supplied": true,
+            "identityMatched": true,
+            "validatedHits": 1048,
+            "freshParses": 0,
+            "mismatches": 0,
+            "unboundLegacyParses": 0
+          },
+          "rawMembers": {
+            "full": "raw-pilot/change-1-trial-0-full.json",
+            "subset": "raw-pilot/change-1-trial-0-subset.json",
+            "native": "raw-pilot/change-1-trial-0-native.json"
+          }
+        },
+        {
+          "change": "blank-path-historical-source-reversion",
+          "repetition": 1,
+          "collectorValid": true,
+          "allNativeArmsComplete": true,
+          "fullCases": 2784,
+          "subsetCases": 2527,
+          "nativeCases": 7,
+          "fullFiles": 261,
+          "selectedFiles": 234,
+          "nativeFiles": 1,
+          "mode": "affected",
+          "fallback": false,
+          "fullFailureCount": 6,
+          "missedFailures": [],
+          "nativeMissedFailures": [],
+          "caseDifferences": {
+            "subsetMissing": [],
+            "subsetExtra": [],
+            "baselineMissing": [],
+            "baselineExtra": []
+          },
+          "caseComparisonComparable": true,
+          "testLoreOuterMs": 44483,
+          "nativeSelectionMs": 3337,
+          "fullExecutionMs": 40856,
+          "planningMs": 6832,
+          "nativeResolutionMs": 2116.280171,
+          "resolutionDiagnostics": {
+            "schemaVersion": 2,
+            "policy": "same-live-container-object-and-ssr-per-request",
+            "projectServers": 3,
+            "projectServerObservations": 12936,
+            "requestedPairs": 25872,
+            "uniquePairs": 8624,
+            "requestCount": 4312,
+            "callCount": 8624,
+            "avoidedPairCalls": 17248,
+            "crossRequestCache": false
+          },
+          "sourceSummaryReuse": {
+            "supplied": true,
+            "identityMatched": true,
+            "validatedHits": 1048,
+            "freshParses": 0,
+            "mismatches": 0,
+            "unboundLegacyParses": 0
+          },
+          "rawMembers": {
+            "full": "raw-pilot/change-1-trial-1-full.json",
+            "subset": "raw-pilot/change-1-trial-1-subset.json",
+            "native": "raw-pilot/change-1-trial-1-native.json"
+          }
+        },
+        {
+          "change": "blank-path-historical-source-reversion",
+          "repetition": 2,
+          "collectorValid": true,
+          "allNativeArmsComplete": true,
+          "fullCases": 2784,
+          "subsetCases": 2527,
+          "nativeCases": 7,
+          "fullFiles": 261,
+          "selectedFiles": 234,
+          "nativeFiles": 1,
+          "mode": "affected",
+          "fallback": false,
+          "fullFailureCount": 6,
+          "missedFailures": [],
+          "nativeMissedFailures": [],
+          "caseDifferences": {
+            "subsetMissing": [],
+            "subsetExtra": [],
+            "baselineMissing": [],
+            "baselineExtra": []
+          },
+          "caseComparisonComparable": true,
+          "testLoreOuterMs": 44083,
+          "nativeSelectionMs": 3259,
+          "fullExecutionMs": 40757,
+          "planningMs": 6765,
+          "nativeResolutionMs": 2095.354008,
+          "resolutionDiagnostics": {
+            "schemaVersion": 2,
+            "policy": "same-live-container-object-and-ssr-per-request",
+            "projectServers": 3,
+            "projectServerObservations": 12936,
+            "requestedPairs": 25872,
+            "uniquePairs": 8624,
+            "requestCount": 4312,
+            "callCount": 8624,
+            "avoidedPairCalls": 17248,
+            "crossRequestCache": false
+          },
+          "sourceSummaryReuse": {
+            "supplied": true,
+            "identityMatched": true,
+            "validatedHits": 1048,
+            "freshParses": 0,
+            "mismatches": 0,
+            "unboundLegacyParses": 0
+          },
+          "rawMembers": {
+            "full": "raw-pilot/change-1-trial-2-full.json",
+            "subset": "raw-pilot/change-1-trial-2-subset.json",
+            "native": "raw-pilot/change-1-trial-2-native.json"
+          }
+        }
+      ],
+      "mediansByChange": [
+        {
+          "change": "path-normalization-comment",
+          "testLoreOuterMs": 44674,
+          "nativeSelectionMs": 3288,
+          "fullExecutionMs": 40805,
+          "planningMs": 6817,
+          "nativeResolutionMs": 2112.85934
+        },
+        {
+          "change": "blank-path-historical-source-reversion",
+          "testLoreOuterMs": 44483,
+          "nativeSelectionMs": 3266,
+          "fullExecutionMs": 40757,
+          "planningMs": 6832,
+          "nativeResolutionMs": 2095.354008
+        }
+      ],
+      "comparisonBaselineMember": "raw-pilot/patch-baseline.json",
+      "independentOriginalBaselineMember": "independent-baseline.json",
+      "independentOriginalBaselineNotComparable": "Original config precedes controlled property-seed overlay; do not compare raw property inputs across profiles."
+    },
+    {
+      "seed": 130363,
+      "artifactId": 11627148279,
+      "archiveSha256": "fa160f9df9d6a9983e495a563f57054704d54066307cc0a665371723b5bed2a7",
+      "archiveBytes": 9851928,
+      "upstreamRevision": "3dcb732da33f6ceef597506b14a4536f1c9aff96",
+      "candidateProvenance": {
+        "archive": "/home/runner/work/_temp/candidate-archive/testlore-0.1.0.tgz",
+        "sha256": "17128f23ce1a3c7e42e211a811ec6df90e492a0313fdf7ad4b0b2bc6b986edd4",
+        "sourceRevision": "6cea38950813e8ccfde6a7b8ea2d7c44ddbd7026",
+        "version": "0.1.0",
+        "kind": "explicit-source-candidate-not-registry-release"
+      },
+      "collectorQualified": false,
+      "collectorReasons": [
+        "pilot-incomplete-or-invalid",
+        "raw-case-preservation-mismatch:0:0:Baseline named inventory drift",
+        "raw-case-preservation-mismatch:0:1:Baseline named inventory drift",
+        "raw-case-preservation-mismatch:0:2:Baseline named inventory drift",
+        "raw-case-preservation-mismatch:1:0:Baseline named inventory drift",
+        "pilot-trial-rejected:1:1",
+        "raw-case-preservation-mismatch:1:1:Baseline named inventory drift",
+        "raw-case-preservation-mismatch:1:2:Baseline named inventory drift",
+        "pilot-comparison-rejected"
+      ],
+      "originalNativeCounts": {
+        "numTotalTests": 2784,
+        "numPassedTests": 2781,
+        "numFailedTests": 0,
+        "numPendingTests": 3
+      },
+      "baseline": {
+        "revision": "3dcb732da33f6ceef597506b14a4536f1c9aff96",
+        "files": 261,
+        "cases": 2784,
+        "skipped": 3,
+        "durationMs": 39803
+      },
+      "trials": [
+        {
+          "change": "path-normalization-comment",
+          "repetition": 0,
+          "collectorValid": true,
+          "allNativeArmsComplete": true,
+          "fullCases": 2784,
+          "subsetCases": 2527,
+          "nativeCases": 7,
+          "fullFiles": 261,
+          "selectedFiles": 234,
+          "nativeFiles": 1,
+          "mode": "affected",
+          "fallback": false,
+          "fullFailureCount": 0,
+          "missedFailures": [],
+          "nativeMissedFailures": [],
+          "caseDifferences": {
+            "subsetMissing": [],
+            "subsetExtra": [],
+            "baselineMissing": [],
+            "baselineExtra": []
+          },
+          "caseComparisonComparable": true,
+          "testLoreOuterMs": 45258,
+          "nativeSelectionMs": 3141,
+          "fullExecutionMs": 39760,
+          "planningMs": 8841,
+          "nativeResolutionMs": 2074.052537,
+          "resolutionDiagnostics": {
+            "schemaVersion": 2,
+            "policy": "same-live-container-object-and-ssr-per-request",
+            "projectServers": 3,
+            "projectServerObservations": 12936,
+            "requestedPairs": 25872,
+            "uniquePairs": 8624,
+            "requestCount": 4312,
+            "callCount": 8624,
+            "avoidedPairCalls": 17248,
+            "crossRequestCache": false
+          },
+          "sourceSummaryReuse": {
+            "supplied": true,
+            "identityMatched": true,
+            "validatedHits": 1048,
+            "freshParses": 0,
+            "mismatches": 0,
+            "unboundLegacyParses": 0
+          },
+          "rawMembers": {
+            "full": "raw-pilot/change-0-trial-0-full.json",
+            "subset": "raw-pilot/change-0-trial-0-subset.json",
+            "native": "raw-pilot/change-0-trial-0-native.json"
+          }
+        },
+        {
+          "change": "path-normalization-comment",
+          "repetition": 1,
+          "collectorValid": true,
+          "allNativeArmsComplete": true,
+          "fullCases": 2784,
+          "subsetCases": 2527,
+          "nativeCases": 7,
+          "fullFiles": 261,
+          "selectedFiles": 234,
+          "nativeFiles": 1,
+          "mode": "affected",
+          "fallback": false,
+          "fullFailureCount": 0,
+          "missedFailures": [],
+          "nativeMissedFailures": [],
+          "caseDifferences": {
+            "subsetMissing": [],
+            "subsetExtra": [],
+            "baselineMissing": [],
+            "baselineExtra": []
+          },
+          "caseComparisonComparable": true,
+          "testLoreOuterMs": 43027,
+          "nativeSelectionMs": 3150,
+          "fullExecutionMs": 39693,
+          "planningMs": 6647,
+          "nativeResolutionMs": 2057.1755749999998,
+          "resolutionDiagnostics": {
+            "schemaVersion": 2,
+            "policy": "same-live-container-object-and-ssr-per-request",
+            "projectServers": 3,
+            "projectServerObservations": 12936,
+            "requestedPairs": 25872,
+            "uniquePairs": 8624,
+            "requestCount": 4312,
+            "callCount": 8624,
+            "avoidedPairCalls": 17248,
+            "crossRequestCache": false
+          },
+          "sourceSummaryReuse": {
+            "supplied": true,
+            "identityMatched": true,
+            "validatedHits": 1048,
+            "freshParses": 0,
+            "mismatches": 0,
+            "unboundLegacyParses": 0
+          },
+          "rawMembers": {
+            "full": "raw-pilot/change-0-trial-1-full.json",
+            "subset": "raw-pilot/change-0-trial-1-subset.json",
+            "native": "raw-pilot/change-0-trial-1-native.json"
+          }
+        },
+        {
+          "change": "path-normalization-comment",
+          "repetition": 2,
+          "collectorValid": true,
+          "allNativeArmsComplete": true,
+          "fullCases": 2784,
+          "subsetCases": 2527,
+          "nativeCases": 7,
+          "fullFiles": 261,
+          "selectedFiles": 234,
+          "nativeFiles": 1,
+          "mode": "affected",
+          "fallback": false,
+          "fullFailureCount": 0,
+          "missedFailures": [],
+          "nativeMissedFailures": [],
+          "caseDifferences": {
+            "subsetMissing": [],
+            "subsetExtra": [],
+            "baselineMissing": [],
+            "baselineExtra": []
+          },
+          "caseComparisonComparable": true,
+          "testLoreOuterMs": 43590,
+          "nativeSelectionMs": 3228,
+          "fullExecutionMs": 40514,
+          "planningMs": 6678,
+          "nativeResolutionMs": 2049.8346229999997,
+          "resolutionDiagnostics": {
+            "schemaVersion": 2,
+            "policy": "same-live-container-object-and-ssr-per-request",
+            "projectServers": 3,
+            "projectServerObservations": 12936,
+            "requestedPairs": 25872,
+            "uniquePairs": 8624,
+            "requestCount": 4312,
+            "callCount": 8624,
+            "avoidedPairCalls": 17248,
+            "crossRequestCache": false
+          },
+          "sourceSummaryReuse": {
+            "supplied": true,
+            "identityMatched": true,
+            "validatedHits": 1048,
+            "freshParses": 0,
+            "mismatches": 0,
+            "unboundLegacyParses": 0
+          },
+          "rawMembers": {
+            "full": "raw-pilot/change-0-trial-2-full.json",
+            "subset": "raw-pilot/change-0-trial-2-subset.json",
+            "native": "raw-pilot/change-0-trial-2-native.json"
+          }
+        },
+        {
+          "change": "blank-path-historical-source-reversion",
+          "repetition": 0,
+          "collectorValid": true,
+          "allNativeArmsComplete": true,
+          "fullCases": 2784,
+          "subsetCases": 2527,
+          "nativeCases": 7,
+          "fullFiles": 261,
+          "selectedFiles": 234,
+          "nativeFiles": 1,
+          "mode": "affected",
+          "fallback": false,
+          "fullFailureCount": 6,
+          "missedFailures": [],
+          "nativeMissedFailures": [],
+          "caseDifferences": {
+            "subsetMissing": [],
+            "subsetExtra": [],
+            "baselineMissing": [],
+            "baselineExtra": []
+          },
+          "caseComparisonComparable": true,
+          "testLoreOuterMs": 46527,
+          "nativeSelectionMs": 3290,
+          "fullExecutionMs": 41692,
+          "planningMs": 8392,
+          "nativeResolutionMs": 2070.082663,
+          "resolutionDiagnostics": {
+            "schemaVersion": 2,
+            "policy": "same-live-container-object-and-ssr-per-request",
+            "projectServers": 3,
+            "projectServerObservations": 12936,
+            "requestedPairs": 25872,
+            "uniquePairs": 8624,
+            "requestCount": 4312,
+            "callCount": 8624,
+            "avoidedPairCalls": 17248,
+            "crossRequestCache": false
+          },
+          "sourceSummaryReuse": {
+            "supplied": true,
+            "identityMatched": true,
+            "validatedHits": 1048,
+            "freshParses": 0,
+            "mismatches": 0,
+            "unboundLegacyParses": 0
+          },
+          "rawMembers": {
+            "full": "raw-pilot/change-1-trial-0-full.json",
+            "subset": "raw-pilot/change-1-trial-0-subset.json",
+            "native": "raw-pilot/change-1-trial-0-native.json"
+          }
+        },
+        {
+          "change": "blank-path-historical-source-reversion",
+          "repetition": 1,
+          "collectorValid": false,
+          "allNativeArmsComplete": true,
+          "fullCases": 2784,
+          "subsetCases": 2527,
+          "nativeCases": 7,
+          "fullFiles": 261,
+          "selectedFiles": 234,
+          "nativeFiles": 1,
+          "mode": "affected",
+          "fallback": false,
+          "fullFailureCount": 6,
+          "missedFailures": [],
+          "nativeMissedFailures": [],
+          "caseDifferences": {
+            "subsetMissing": [
+              [
+                "src/contracts/sessionPathInputs.test.ts",
+                "Windows absolute path forms accepts ZodObject { \u2026(18) }",
+                "skipped"
+              ],
+              [
+                "src/contracts/sessionPathInputs.test.ts",
+                "Windows absolute path forms accepts ZodObject { \u2026(18) }",
+                "skipped"
+              ],
+              [
+                "src/contracts/sessionPathInputs.test.ts",
+                "Windows absolute path forms accepts ZodObject { \u2026(18) }",
+                "skipped"
+              ]
+            ],
+            "subsetExtra": [
+              [
+                "src/contracts/sessionPathInputs.test.ts",
+                "Windows absolute path forms accepts ZodObject { \u2026(16) }",
+                "skipped"
+              ],
+              [
+                "src/contracts/sessionPathInputs.test.ts",
+                "Windows absolute path forms accepts ZodObject { \u2026(16) }",
+                "skipped"
+              ],
+              [
+                "src/contracts/sessionPathInputs.test.ts",
+                "Windows absolute path forms accepts ZodObject { \u2026(16) }",
+                "skipped"
+              ]
+            ],
+            "baselineMissing": [],
+            "baselineExtra": []
+          },
+          "caseComparisonComparable": false,
+          "testLoreOuterMs": 44545,
+          "nativeSelectionMs": 3325,
+          "fullExecutionMs": 41110,
+          "planningMs": 6780,
+          "nativeResolutionMs": 2097.1242819999998,
+          "resolutionDiagnostics": {
+            "schemaVersion": 2,
+            "policy": "same-live-container-object-and-ssr-per-request",
+            "projectServers": 3,
+            "projectServerObservations": 12936,
+            "requestedPairs": 25872,
+            "uniquePairs": 8624,
+            "requestCount": 4312,
+            "callCount": 8624,
+            "avoidedPairCalls": 17248,
+            "crossRequestCache": false
+          },
+          "sourceSummaryReuse": {
+            "supplied": true,
+            "identityMatched": true,
+            "validatedHits": 1048,
+            "freshParses": 0,
+            "mismatches": 0,
+            "unboundLegacyParses": 0
+          },
+          "rawMembers": {
+            "full": "raw-pilot/change-1-trial-1-full.json",
+            "subset": "raw-pilot/change-1-trial-1-subset.json",
+            "native": "raw-pilot/change-1-trial-1-native.json"
+          }
+        },
+        {
+          "change": "blank-path-historical-source-reversion",
+          "repetition": 2,
+          "collectorValid": true,
+          "allNativeArmsComplete": true,
+          "fullCases": 2784,
+          "subsetCases": 2527,
+          "nativeCases": 7,
+          "fullFiles": 261,
+          "selectedFiles": 234,
+          "nativeFiles": 1,
+          "mode": "affected",
+          "fallback": false,
+          "fullFailureCount": 6,
+          "missedFailures": [],
+          "nativeMissedFailures": [],
+          "caseDifferences": {
+            "subsetMissing": [],
+            "subsetExtra": [],
+            "baselineMissing": [],
+            "baselineExtra": []
+          },
+          "caseComparisonComparable": true,
+          "testLoreOuterMs": 44615,
+          "nativeSelectionMs": 3261,
+          "fullExecutionMs": 41237,
+          "planningMs": 6760,
+          "nativeResolutionMs": 2096.734357,
+          "resolutionDiagnostics": {
+            "schemaVersion": 2,
+            "policy": "same-live-container-object-and-ssr-per-request",
+            "projectServers": 3,
+            "projectServerObservations": 12936,
+            "requestedPairs": 25872,
+            "uniquePairs": 8624,
+            "requestCount": 4312,
+            "callCount": 8624,
+            "avoidedPairCalls": 17248,
+            "crossRequestCache": false
+          },
+          "sourceSummaryReuse": {
+            "supplied": true,
+            "identityMatched": true,
+            "validatedHits": 1048,
+            "freshParses": 0,
+            "mismatches": 0,
+            "unboundLegacyParses": 0
+          },
+          "rawMembers": {
+            "full": "raw-pilot/change-1-trial-2-full.json",
+            "subset": "raw-pilot/change-1-trial-2-subset.json",
+            "native": "raw-pilot/change-1-trial-2-native.json"
+          }
+        }
+      ],
+      "mediansByChange": [
+        {
+          "change": "path-normalization-comment",
+          "testLoreOuterMs": 43590,
+          "nativeSelectionMs": 3150,
+          "fullExecutionMs": 39760,
+          "planningMs": 6678,
+          "nativeResolutionMs": 2057.1755749999998
+        },
+        {
+          "change": "blank-path-historical-source-reversion",
+          "testLoreOuterMs": 44615,
+          "nativeSelectionMs": 3290,
+          "fullExecutionMs": 41237,
+          "planningMs": 6780,
+          "nativeResolutionMs": 2096.734357
+        }
+      ],
+      "comparisonBaselineMember": "raw-pilot/patch-baseline.json",
+      "independentOriginalBaselineMember": "independent-baseline.json",
+      "independentOriginalBaselineNotComparable": "Original config precedes controlled property-seed overlay; do not compare raw property inputs across profiles."
+    },
+    {
+      "seed": 155921,
+      "artifactId": 11626659135,
+      "archiveSha256": "3ab7ab308ab61461bb402a185eea799f05e186f1277a8d076c7422f2717c499e",
+      "archiveBytes": 9851493,
+      "upstreamRevision": "3dcb732da33f6ceef597506b14a4536f1c9aff96",
+      "candidateProvenance": {
+        "archive": "/home/runner/work/_temp/candidate-archive/testlore-0.1.0.tgz",
+        "sha256": "17128f23ce1a3c7e42e211a811ec6df90e492a0313fdf7ad4b0b2bc6b986edd4",
+        "sourceRevision": "6cea38950813e8ccfde6a7b8ea2d7c44ddbd7026",
+        "version": "0.1.0",
+        "kind": "explicit-source-candidate-not-registry-release"
+      },
+      "collectorQualified": false,
+      "collectorReasons": [
+        "pilot-incomplete-or-invalid",
+        "raw-case-preservation-mismatch:0:0:Baseline named inventory drift",
+        "raw-case-preservation-mismatch:0:1:Baseline named inventory drift",
+        "pilot-trial-rejected:0:2",
+        "raw-case-preservation-mismatch:0:2:Baseline named inventory drift",
+        "raw-case-preservation-mismatch:1:0:Baseline named inventory drift",
+        "pilot-trial-rejected:1:1",
+        "raw-case-preservation-mismatch:1:1:subset named case/status preservation",
+        "pilot-trial-rejected:1:2",
+        "raw-case-preservation-mismatch:1:2:subset named case/status preservation",
+        "pilot-comparison-rejected"
+      ],
+      "originalNativeCounts": {
+        "numTotalTests": 2784,
+        "numPassedTests": 2781,
+        "numFailedTests": 0,
+        "numPendingTests": 3
+      },
+      "baseline": {
+        "revision": "3dcb732da33f6ceef597506b14a4536f1c9aff96",
+        "files": 261,
+        "cases": 2784,
+        "skipped": 3,
+        "durationMs": 39474
+      },
+      "trials": [
+        {
+          "change": "path-normalization-comment",
+          "repetition": 0,
+          "collectorValid": true,
+          "allNativeArmsComplete": true,
+          "fullCases": 2784,
+          "subsetCases": 2527,
+          "nativeCases": 7,
+          "fullFiles": 261,
+          "selectedFiles": 234,
+          "nativeFiles": 1,
+          "mode": "affected",
+          "fallback": false,
+          "fullFailureCount": 0,
+          "missedFailures": [],
+          "nativeMissedFailures": [],
+          "caseDifferences": {
+            "subsetMissing": [],
+            "subsetExtra": [],
+            "baselineMissing": [],
+            "baselineExtra": []
+          },
+          "caseComparisonComparable": true,
+          "testLoreOuterMs": 44795,
+          "nativeSelectionMs": 3119,
+          "fullExecutionMs": 39142,
+          "planningMs": 8677,
+          "nativeResolutionMs": 2009.3530620000001,
+          "resolutionDiagnostics": {
+            "schemaVersion": 2,
+            "policy": "same-live-container-object-and-ssr-per-request",
+            "projectServers": 3,
+            "projectServerObservations": 12936,
+            "requestedPairs": 25872,
+            "uniquePairs": 8624,
+            "requestCount": 4312,
+            "callCount": 8624,
+            "avoidedPairCalls": 17248,
+            "crossRequestCache": false
+          },
+          "sourceSummaryReuse": {
+            "supplied": true,
+            "identityMatched": true,
+            "validatedHits": 1048,
+            "freshParses": 0,
+            "mismatches": 0,
+            "unboundLegacyParses": 0
+          },
+          "rawMembers": {
+            "full": "raw-pilot/change-0-trial-0-full.json",
+            "subset": "raw-pilot/change-0-trial-0-subset.json",
+            "native": "raw-pilot/change-0-trial-0-native.json"
+          }
+        },
+        {
+          "change": "path-normalization-comment",
+          "repetition": 1,
+          "collectorValid": true,
+          "allNativeArmsComplete": true,
+          "fullCases": 2784,
+          "subsetCases": 2527,
+          "nativeCases": 7,
+          "fullFiles": 261,
+          "selectedFiles": 234,
+          "nativeFiles": 1,
+          "mode": "affected",
+          "fallback": false,
+          "fullFailureCount": 0,
+          "missedFailures": [],
+          "nativeMissedFailures": [],
+          "caseDifferences": {
+            "subsetMissing": [],
+            "subsetExtra": [],
+            "baselineMissing": [],
+            "baselineExtra": []
+          },
+          "caseComparisonComparable": true,
+          "testLoreOuterMs": 42629,
+          "nativeSelectionMs": 3143,
+          "fullExecutionMs": 39552,
+          "planningMs": 6566,
+          "nativeResolutionMs": 1997.599259,
+          "resolutionDiagnostics": {
+            "schemaVersion": 2,
+            "policy": "same-live-container-object-and-ssr-per-request",
+            "projectServers": 3,
+            "projectServerObservations": 12936,
+            "requestedPairs": 25872,
+            "uniquePairs": 8624,
+            "requestCount": 4312,
+            "callCount": 8624,
+            "avoidedPairCalls": 17248,
+            "crossRequestCache": false
+          },
+          "sourceSummaryReuse": {
+            "supplied": true,
+            "identityMatched": true,
+            "validatedHits": 1048,
+            "freshParses": 0,
+            "mismatches": 0,
+            "unboundLegacyParses": 0
+          },
+          "rawMembers": {
+            "full": "raw-pilot/change-0-trial-1-full.json",
+            "subset": "raw-pilot/change-0-trial-1-subset.json",
+            "native": "raw-pilot/change-0-trial-1-native.json"
+          }
+        },
+        {
+          "change": "path-normalization-comment",
+          "repetition": 2,
+          "collectorValid": false,
+          "allNativeArmsComplete": true,
+          "fullCases": 2784,
+          "subsetCases": 2527,
+          "nativeCases": 7,
+          "fullFiles": 261,
+          "selectedFiles": 234,
+          "nativeFiles": 1,
+          "mode": "affected",
+          "fallback": false,
+          "fullFailureCount": 0,
+          "missedFailures": [],
+          "nativeMissedFailures": [],
+          "caseDifferences": {
+            "subsetMissing": [
+              [
+                "src/contracts/sessionPathInputs.test.ts",
+                "Windows absolute path forms accepts ZodObject { \u2026(18) }",
+                "skipped"
+              ],
+              [
+                "src/contracts/sessionPathInputs.test.ts",
+                "Windows absolute path forms accepts ZodObject { \u2026(18) }",
+                "skipped"
+              ],
+              [
+                "src/contracts/sessionPathInputs.test.ts",
+                "Windows absolute path forms accepts ZodObject { \u2026(18) }",
+                "skipped"
+              ]
+            ],
+            "subsetExtra": [
+              [
+                "src/contracts/sessionPathInputs.test.ts",
+                "Windows absolute path forms accepts ZodObject { \u2026(16) }",
+                "skipped"
+              ],
+              [
+                "src/contracts/sessionPathInputs.test.ts",
+                "Windows absolute path forms accepts ZodObject { \u2026(16) }",
+                "skipped"
+              ],
+              [
+                "src/contracts/sessionPathInputs.test.ts",
+                "Windows absolute path forms accepts ZodObject { \u2026(16) }",
+                "skipped"
+              ]
+            ],
+            "baselineMissing": [],
+            "baselineExtra": []
+          },
+          "caseComparisonComparable": false,
+          "testLoreOuterMs": 42434,
+          "nativeSelectionMs": 3124,
+          "fullExecutionMs": 39499,
+          "planningMs": 6546,
+          "nativeResolutionMs": 1994.3325170000003,
+          "resolutionDiagnostics": {
+            "schemaVersion": 2,
+            "policy": "same-live-container-object-and-ssr-per-request",
+            "projectServers": 3,
+            "projectServerObservations": 12936,
+            "requestedPairs": 25872,
+            "uniquePairs": 8624,
+            "requestCount": 4312,
+            "callCount": 8624,
+            "avoidedPairCalls": 17248,
+            "crossRequestCache": false
+          },
+          "sourceSummaryReuse": {
+            "supplied": true,
+            "identityMatched": true,
+            "validatedHits": 1048,
+            "freshParses": 0,
+            "mismatches": 0,
+            "unboundLegacyParses": 0
+          },
+          "rawMembers": {
+            "full": "raw-pilot/change-0-trial-2-full.json",
+            "subset": "raw-pilot/change-0-trial-2-subset.json",
+            "native": "raw-pilot/change-0-trial-2-native.json"
+          }
+        },
+        {
+          "change": "blank-path-historical-source-reversion",
+          "repetition": 0,
+          "collectorValid": true,
+          "allNativeArmsComplete": true,
+          "fullCases": 2784,
+          "subsetCases": 2527,
+          "nativeCases": 7,
+          "fullFiles": 261,
+          "selectedFiles": 234,
+          "nativeFiles": 1,
+          "mode": "affected",
+          "fallback": false,
+          "fullFailureCount": 6,
+          "missedFailures": [],
+          "nativeMissedFailures": [],
+          "caseDifferences": {
+            "subsetMissing": [],
+            "subsetExtra": [],
+            "baselineMissing": [],
+            "baselineExtra": []
+          },
+          "caseComparisonComparable": true,
+          "testLoreOuterMs": 44688,
+          "nativeSelectionMs": 3129,
+          "fullExecutionMs": 39273,
+          "planningMs": 8103,
+          "nativeResolutionMs": 1999.393749,
+          "resolutionDiagnostics": {
+            "schemaVersion": 2,
+            "policy": "same-live-container-object-and-ssr-per-request",
+            "projectServers": 3,
+            "projectServerObservations": 12936,
+            "requestedPairs": 25872,
+            "uniquePairs": 8624,
+            "requestCount": 4312,
+            "callCount": 8624,
+            "avoidedPairCalls": 17248,
+            "crossRequestCache": false
+          },
+          "sourceSummaryReuse": {
+            "supplied": true,
+            "identityMatched": true,
+            "validatedHits": 1048,
+            "freshParses": 0,
+            "mismatches": 0,
+            "unboundLegacyParses": 0
+          },
+          "rawMembers": {
+            "full": "raw-pilot/change-1-trial-0-full.json",
+            "subset": "raw-pilot/change-1-trial-0-subset.json",
+            "native": "raw-pilot/change-1-trial-0-native.json"
+          }
+        },
+        {
+          "change": "blank-path-historical-source-reversion",
+          "repetition": 1,
+          "collectorValid": false,
+          "allNativeArmsComplete": true,
+          "fullCases": 2784,
+          "subsetCases": 2527,
+          "nativeCases": 7,
+          "fullFiles": 261,
+          "selectedFiles": 234,
+          "nativeFiles": 1,
+          "mode": "affected",
+          "fallback": false,
+          "fullFailureCount": 6,
+          "missedFailures": [],
+          "nativeMissedFailures": [],
+          "caseDifferences": {
+            "subsetMissing": [
+              [
+                "src/contracts/sessionPathInputs.test.ts",
+                "Windows absolute path forms accepts ZodObject { \u2026(16) }",
+                "skipped"
+              ],
+              [
+                "src/contracts/sessionPathInputs.test.ts",
+                "Windows absolute path forms accepts ZodObject { \u2026(16) }",
+                "skipped"
+              ],
+              [
+                "src/contracts/sessionPathInputs.test.ts",
+                "Windows absolute path forms accepts ZodObject { \u2026(16) }",
+                "skipped"
+              ]
+            ],
+            "subsetExtra": [
+              [
+                "src/contracts/sessionPathInputs.test.ts",
+                "Windows absolute path forms accepts ZodObject { \u2026(18) }",
+                "skipped"
+              ],
+              [
+                "src/contracts/sessionPathInputs.test.ts",
+                "Windows absolute path forms accepts ZodObject { \u2026(18) }",
+                "skipped"
+              ],
+              [
+                "src/contracts/sessionPathInputs.test.ts",
+                "Windows absolute path forms accepts ZodObject { \u2026(18) }",
+                "skipped"
+              ]
+            ],
+            "baselineMissing": [
+              [
+                "src/contracts/sessionPathInputs.test.ts",
+                "Windows absolute path forms accepts ZodObject { \u2026(18) }"
+              ],
+              [
+                "src/contracts/sessionPathInputs.test.ts",
+                "Windows absolute path forms accepts ZodObject { \u2026(18) }"
+              ],
+              [
+                "src/contracts/sessionPathInputs.test.ts",
+                "Windows absolute path forms accepts ZodObject { \u2026(18) }"
+              ]
+            ],
+            "baselineExtra": [
+              [
+                "src/contracts/sessionPathInputs.test.ts",
+                "Windows absolute path forms accepts ZodObject { \u2026(16) }"
+              ],
+              [
+                "src/contracts/sessionPathInputs.test.ts",
+                "Windows absolute path forms accepts ZodObject { \u2026(16) }"
+              ],
+              [
+                "src/contracts/sessionPathInputs.test.ts",
+                "Windows absolute path forms accepts ZodObject { \u2026(16) }"
+              ]
+            ]
+          },
+          "caseComparisonComparable": false,
+          "testLoreOuterMs": 42470,
+          "nativeSelectionMs": 3162,
+          "fullExecutionMs": 39154,
+          "planningMs": 6574,
+          "nativeResolutionMs": 2006.0029139999997,
+          "resolutionDiagnostics": {
+            "schemaVersion": 2,
+            "policy": "same-live-container-object-and-ssr-per-request",
+            "projectServers": 3,
+            "projectServerObservations": 12936,
+            "requestedPairs": 25872,
+            "uniquePairs": 8624,
+            "requestCount": 4312,
+            "callCount": 8624,
+            "avoidedPairCalls": 17248,
+            "crossRequestCache": false
+          },
+          "sourceSummaryReuse": {
+            "supplied": true,
+            "identityMatched": true,
+            "validatedHits": 1048,
+            "freshParses": 0,
+            "mismatches": 0,
+            "unboundLegacyParses": 0
+          },
+          "rawMembers": {
+            "full": "raw-pilot/change-1-trial-1-full.json",
+            "subset": "raw-pilot/change-1-trial-1-subset.json",
+            "native": "raw-pilot/change-1-trial-1-native.json"
+          }
+        },
+        {
+          "change": "blank-path-historical-source-reversion",
+          "repetition": 2,
+          "collectorValid": false,
+          "allNativeArmsComplete": true,
+          "fullCases": 2784,
+          "subsetCases": 2527,
+          "nativeCases": 7,
+          "fullFiles": 261,
+          "selectedFiles": 234,
+          "nativeFiles": 1,
+          "mode": "affected",
+          "fallback": false,
+          "fullFailureCount": 6,
+          "missedFailures": [],
+          "nativeMissedFailures": [],
+          "caseDifferences": {
+            "subsetMissing": [
+              [
+                "src/contracts/sessionPathInputs.test.ts",
+                "Windows absolute path forms accepts ZodObject { \u2026(16) }",
+                "skipped"
+              ],
+              [
+                "src/contracts/sessionPathInputs.test.ts",
+                "Windows absolute path forms accepts ZodObject { \u2026(16) }",
+                "skipped"
+              ],
+              [
+                "src/contracts/sessionPathInputs.test.ts",
+                "Windows absolute path forms accepts ZodObject { \u2026(16) }",
+                "skipped"
+              ]
+            ],
+            "subsetExtra": [
+              [
+                "src/contracts/sessionPathInputs.test.ts",
+                "Windows absolute path forms accepts ZodObject { \u2026(18) }",
+                "skipped"
+              ],
+              [
+                "src/contracts/sessionPathInputs.test.ts",
+                "Windows absolute path forms accepts ZodObject { \u2026(18) }",
+                "skipped"
+              ],
+              [
+                "src/contracts/sessionPathInputs.test.ts",
+                "Windows absolute path forms accepts ZodObject { \u2026(18) }",
+                "skipped"
+              ]
+            ],
+            "baselineMissing": [
+              [
+                "src/contracts/sessionPathInputs.test.ts",
+                "Windows absolute path forms accepts ZodObject { \u2026(18) }"
+              ],
+              [
+                "src/contracts/sessionPathInputs.test.ts",
+                "Windows absolute path forms accepts ZodObject { \u2026(18) }"
+              ],
+              [
+                "src/contracts/sessionPathInputs.test.ts",
+                "Windows absolute path forms accepts ZodObject { \u2026(18) }"
+              ]
+            ],
+            "baselineExtra": [
+              [
+                "src/contracts/sessionPathInputs.test.ts",
+                "Windows absolute path forms accepts ZodObject { \u2026(16) }"
+              ],
+              [
+                "src/contracts/sessionPathInputs.test.ts",
+                "Windows absolute path forms accepts ZodObject { \u2026(16) }"
+              ],
+              [
+                "src/contracts/sessionPathInputs.test.ts",
+                "Windows absolute path forms accepts ZodObject { \u2026(16) }"
+              ]
+            ]
+          },
+          "caseComparisonComparable": false,
+          "testLoreOuterMs": 42511,
+          "nativeSelectionMs": 3162,
+          "fullExecutionMs": 39419,
+          "planningMs": 6570,
+          "nativeResolutionMs": 2000.5349310000001,
+          "resolutionDiagnostics": {
+            "schemaVersion": 2,
+            "policy": "same-live-container-object-and-ssr-per-request",
+            "projectServers": 3,
+            "projectServerObservations": 12936,
+            "requestedPairs": 25872,
+            "uniquePairs": 8624,
+            "requestCount": 4312,
+            "callCount": 8624,
+            "avoidedPairCalls": 17248,
+            "crossRequestCache": false
+          },
+          "sourceSummaryReuse": {
+            "supplied": true,
+            "identityMatched": true,
+            "validatedHits": 1048,
+            "freshParses": 0,
+            "mismatches": 0,
+            "unboundLegacyParses": 0
+          },
+          "rawMembers": {
+            "full": "raw-pilot/change-1-trial-2-full.json",
+            "subset": "raw-pilot/change-1-trial-2-subset.json",
+            "native": "raw-pilot/change-1-trial-2-native.json"
+          }
+        }
+      ],
+      "mediansByChange": [
+        {
+          "change": "path-normalization-comment",
+          "testLoreOuterMs": 42629,
+          "nativeSelectionMs": 3124,
+          "fullExecutionMs": 39499,
+          "planningMs": 6566,
+          "nativeResolutionMs": 1997.599259
+        },
+        {
+          "change": "blank-path-historical-source-reversion",
+          "testLoreOuterMs": 42511,
+          "nativeSelectionMs": 3162,
+          "fullExecutionMs": 39273,
+          "planningMs": 6574,
+          "nativeResolutionMs": 2000.5349310000001
+        }
+      ],
+      "comparisonBaselineMember": "raw-pilot/patch-baseline.json",
+      "independentOriginalBaselineMember": "independent-baseline.json",
+      "independentOriginalBaselineNotComparable": "Original config precedes controlled property-seed overlay; do not compare raw property inputs across profiles."
+    }
+  ],
+  "coldRuntimeQualified": false,
+  "cost": null,
+  "claims": {
+    "speedAdvantage": false,
+    "learningImprovement": false,
+    "overallRoutingQualification": false
+  },
+  "limitations": [
+    "Controlled global-fast-check seed overlay, not exact generated input replay.",
+    "Only original domain/services/adapters projects; no compiled application or whole repository qualification.",
+    "Outer pilot timing excludes a fresh outer CLI start and independent full-suite discovery. OS caches not reset; no cold/warm assertion.",
+    "All retained trials counted, including rejected identity comparisons. Hosted job success means evidence collection, not product qualification.",
+    "Raw native outcomes and plans retained for every trial; binary candidate archive retained privately with API archive SHA binding."
+  ],
+  "totals": {
+    "trials": 18,
+    "qualifiedSeedProfiles": 0,
+    "collectorValidTrials": 12,
+    "independentlyComparableTrials": 12,
+    "fullFallbackTrials": 0,
+    "missedFailureObservations": 0,
+    "nativeMissedFailureObservations": 0,
+    "omittedFileObservations": 486
+  }
+}

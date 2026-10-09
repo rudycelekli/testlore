@@ -1,0 +1,322 @@
+{
+  "schemaVersion": 1,
+  "sourceRevision": "6cea38950813e8ccfde6a7b8ea2d7c44ddbd7026",
+  "workflowRun": 37953327800,
+  "workflowUrl": "https://github.com/rudycelekli/testlore/actions/runs/37953327800",
+  "artifactId": 11627267140,
+  "archiveSha256": "61f5e31fc2767b3bbb53a4bb0542bcf6c128d8d36ec68889a0991e0a398c2f8c",
+  "archiveBytes": 15092234,
+  "upstreamRevision": "fa8ab09f06aa05f958c5225cf3756ce52a3ebb96",
+  "bunVersion": "1.4.2",
+  "collectionCompleted": true,
+  "nativeObservationCompleted": false,
+  "qualified": false,
+  "baselines": [
+    {
+      "scope": "tests",
+      "complete": false,
+      "exitCode": null,
+      "signal": "SIGKILL",
+      "error": "spawnSync bun ETIMEDOUT",
+      "durationMs": 180022,
+      "counts": {},
+      "failedCases": [],
+      "admission": {
+        "admitted": false,
+        "reasons": [
+          "native-baseline-incomplete",
+          "native-baseline-not-green",
+          "native-baseline-process-or-report-error",
+          "native-baseline-empty",
+          "native-baseline-no-passing-cases"
+        ]
+      },
+      "rawMember": "campaign/baseline-tests.json"
+    },
+    {
+      "scope": "tests/sqlite",
+      "complete": true,
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "durationMs": 4190,
+      "counts": {
+        "passed": 244
+      },
+      "failedCases": [],
+      "admission": {
+        "admitted": true,
+        "reasons": []
+      },
+      "rawMember": "campaign/baseline-tests-sqlite.json"
+    },
+    {
+      "scope": "tests/worker/search",
+      "complete": true,
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "durationMs": 467,
+      "counts": {
+        "passed": 80
+      },
+      "failedCases": [],
+      "admission": {
+        "admitted": true,
+        "reasons": []
+      },
+      "rawMember": "campaign/baseline-tests-worker-search.json"
+    },
+    {
+      "scope": "tests/context",
+      "complete": true,
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "durationMs": 9538,
+      "counts": {
+        "passed": 235,
+        "skipped": 1
+      },
+      "failedCases": [],
+      "admission": {
+        "admitted": true,
+        "reasons": []
+      },
+      "rawMember": "campaign/baseline-tests-context.json"
+    },
+    {
+      "scope": "tests/server",
+      "complete": true,
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "durationMs": 2092,
+      "counts": {
+        "passed": 306,
+        "skipped": 16
+      },
+      "failedCases": [],
+      "admission": {
+        "admitted": true,
+        "reasons": []
+      },
+      "rawMember": "campaign/baseline-tests-server.json"
+    },
+    {
+      "scope": "tests/worker/http/routes",
+      "complete": true,
+      "exitCode": 1,
+      "signal": null,
+      "error": null,
+      "durationMs": 158192,
+      "counts": {
+        "passed": 363,
+        "failed": 5
+      },
+      "failedCases": [
+        {
+          "file": "tests/worker/http/routes/restart-page-timeout.browser.test.ts",
+          "name": "{\"classname\":\"\",\"title\":\"restart page recovers after a stalled post request\"}",
+          "title": "restart page recovers after a stalled post request",
+          "classname": "",
+          "line": 16,
+          "column": 0,
+          "status": "failed",
+          "durationMs": 30011.833
+        },
+        {
+          "file": "tests/worker/http/routes/restart-page-timeout.browser.test.ts",
+          "name": "{\"classname\":\"\",\"title\":\"restart page recovers after a stalled health request\"}",
+          "title": "restart page recovers after a stalled health request",
+          "classname": "",
+          "line": 16,
+          "column": 0,
+          "status": "failed",
+          "durationMs": 30003.564000000002
+        },
+        {
+          "file": "tests/worker/http/routes/restart-page-timeout.browser.test.ts",
+          "name": "{\"classname\":\"\",\"title\":\"restart page recovers after a stalled health-body request\"}",
+          "title": "restart page recovers after a stalled health-body request",
+          "classname": "",
+          "line": 16,
+          "column": 0,
+          "status": "failed",
+          "durationMs": 30003.342
+        },
+        {
+          "file": "tests/worker/http/routes/restart-page-timeout.browser.test.ts",
+          "name": "{\"classname\":\"\",\"title\":\"restart page recovers after a stalled readiness request\"}",
+          "title": "restart page recovers after a stalled readiness request",
+          "classname": "",
+          "line": 16,
+          "column": 0,
+          "status": "failed",
+          "durationMs": 30003.173
+        },
+        {
+          "file": "tests/worker/http/routes/restart-page-timeout.browser.test.ts",
+          "name": "{\"classname\":\"\",\"title\":\"restart page recovers after a stalled no-successor request\"}",
+          "title": "restart page recovers after a stalled no-successor request",
+          "classname": "",
+          "line": 16,
+          "column": 0,
+          "status": "failed",
+          "durationMs": 30002.859
+        }
+      ],
+      "admission": {
+        "admitted": false,
+        "reasons": [
+          "native-baseline-not-green",
+          "native-baseline-case-invalid-or-failed"
+        ]
+      },
+      "rawMember": "campaign/baseline-tests-worker-http-routes.json"
+    }
+  ],
+  "sourceFaultApplicationsObserved": 0,
+  "testLoreRegressionTrials": 0,
+  "regressionFaultReports": [],
+  "notRun": [
+    {
+      "repetition": 0,
+      "stage": "fault-full-and-testlore",
+      "reason": "original-route-baseline-rejected",
+      "evidence": [
+        "native-baseline-not-green",
+        "native-baseline-case-invalid-or-failed"
+      ]
+    },
+    {
+      "repetition": 1,
+      "stage": "fault-full-and-testlore",
+      "reason": "original-route-baseline-rejected",
+      "evidence": [
+        "native-baseline-not-green",
+        "native-baseline-case-invalid-or-failed"
+      ]
+    },
+    {
+      "repetition": 2,
+      "stage": "fault-full-and-testlore",
+      "reason": "original-route-baseline-rejected",
+      "evidence": [
+        "native-baseline-not-green",
+        "native-baseline-case-invalid-or-failed"
+      ]
+    },
+    {
+      "stage": "restored-oracle",
+      "reason": "no-fault-applied"
+    }
+  ],
+  "regressionAdmission": {
+    "admitted": false,
+    "reasons": [
+      "native-baseline-not-green",
+      "native-baseline-case-invalid-or-failed"
+    ]
+  },
+  "protectedInputsUnchanged": true,
+  "installation": {
+    "schemaVersion": 1,
+    "repository": "thedotmack/claude-mem",
+    "revision": "fa8ab09f06aa05f958c5225cf3756ce52a3ebb96",
+    "sourceRevision": "6cea38950813e8ccfde6a7b8ea2d7c44ddbd7026",
+    "qualified": false,
+    "upstreamRootLock": false,
+    "dependencyMode": "original-declarations-newly-resolved",
+    "lifecyclePolicy": "npm install --ignore-scripts; original dependency declarations retained; no production filtering; no personal npm configuration",
+    "resourcePolicy": {
+      "timeoutMs": 180000,
+      "reserveBytes": 2147483648,
+      "maxGrowthBytes": 4294967296
+    },
+    "limitations": [
+      "No committed upstream root package lock; retain newly resolved lock without claiming an original frozen upstream environment.",
+      "Ignored lifecycle scripts may leave native dependencies unavailable; native baseline failures are retained."
+    ],
+    "manager": "npm@10.9.3",
+    "node": "v22.19.0",
+    "packageSha256": "ccbe33413b0f74b11c4eebc2d5ce1d56cb8154f26cd2c03e2526be1830810401",
+    "install": {
+      "exitCode": 0,
+      "signal": null,
+      "reason": null,
+      "durationMs": 22648,
+      "finalResources": {
+        "availableBytes": 89427902464,
+        "growthBytes": 1407098880,
+        "stdoutBytes": 27,
+        "stderrBytes": 332
+      },
+      "stdoutSha256": "cab5a432ad9382714cd9bc5b589c44caa03eaba17f9b87966ce700a56aca7ff1",
+      "stderrSha256": "ba5478dca42d113c1bd200efc58901e7127e7d688729d7e51d15f6680b897744",
+      "descendantCleanup": {
+        "scope": "Observed process-tree/start identity best effort; unobserved/reparented children and arbitrary subprocesses are not contained",
+        "observed": 0,
+        "survivingAtClose": 0,
+        "observationFailed": false,
+        "requested": false
+      }
+    },
+    "resolvedLockSha256": "c31537a805fd540870ef36736909a0705a88a937e1d07ca585b32594c85b6351",
+    "inventory": {
+      "exitCode": 1,
+      "signal": null,
+      "reason": null,
+      "durationMs": 424,
+      "finalResources": {
+        "availableBytes": 89427644416,
+        "growthBytes": 253952,
+        "stdoutBytes": 230392,
+        "stderrBytes": 715
+      },
+      "stdoutSha256": "a01f3588d8ca2ddde61445fd5e8f2121220a25a509623738139c5bc55cbf1dbc",
+      "stderrSha256": "a3e12be6d4a2599cd2a29cc6f16472cec749d3ef88c55affd6903141a4505ebc",
+      "descendantCleanup": {
+        "scope": "Observed process-tree/start identity best effort; unobserved/reparented children and arbitrary subprocesses are not contained",
+        "observed": 0,
+        "survivingAtClose": 0,
+        "observationFailed": false,
+        "requested": false
+      }
+    },
+    "trackedInputsUnchanged": true,
+    "installCompleted": true,
+    "dependencyInventoryAccepted": false,
+    "completed": false
+  },
+  "preregistration": {
+    "sourceSha256": "a90543b740fd8d97cb3957e92f1338358f8fac66c4386987b4c3210d2654378b",
+    "oracleSha256": "8da397bff849a4bbd6f04fdaf9a737a73acd4abb325f310f1dbdb2c4afaa8b68",
+    "protectedInputCount": 2240,
+    "timeBudget": {
+      "deadlineMs": 2160000,
+      "armTimeoutMs": 180000,
+      "reportingReserveMs": 60000,
+      "reservedArms": [
+        "native-fault",
+        "testlore-discovery",
+        "testlore-execution",
+        "native-restoration"
+      ]
+    },
+    "credentialsInherited": false
+  },
+  "speedAdvantage": false,
+  "learningImprovement": false,
+  "missedFailures": null,
+  "fallbackTrials": null,
+  "coldRuntimeQualified": false,
+  "cost": null,
+  "scopeLimitations": [
+    "Zero regression comparisons: no defect detection, omission safety or speed claim.",
+    "Fault applications inferred from immutable protected-input receipt, zero fault/result members and explicit gate results; no OS execution trace claimed.",
+    "Full native baseline timed out; partial stdout is not complete trustworthy named outcomes.",
+    "Original declarations but no committed upstream root lock; npm inventory remains rejected.",
+    "Retained root native reports, stderr/stdout and JUnit; isolated home/tmp side effects and binaries retained only in original private ZIP."
+  ]
+}

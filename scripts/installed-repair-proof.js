@@ -52,7 +52,7 @@ export function installedRepairProof({workspace,cli,packageRoot,archiveSha256,so
  const tools=path.join(workspace,'repair-worker-tools');fs.mkdirSync(tools,{recursive:true});
  const home=path.join(tools,'home');fs.mkdirSync(home);
  const env={PATH:process.env.PATH,HOME:home,TMPDIR:process.env.TMPDIR||'/tmp',CI:'true'};
- // This executable is outside every repository and cannot change their tracked inputs.
+ // This deterministic executable logs outside each repository and does not edit its tracked inputs.
  const worker=path.join(tools,'worker.cjs');
  fs.writeFileSync(worker,`const fs=require('fs'),path=require('path');let input='';process.stdin.on('data',d=>input+=d);process.stdin.on('end',()=>{const p=JSON.parse(input),mode=process.argv[2],review={accepted:true,findings:[],oracle:{independent:true,basis:[p.requirements]}};fs.appendFileSync(path.join(__dirname,mode+'.requests.jsonl'),JSON.stringify({role:p.role,sourcePaths:p.sourcePaths||null,baselineFailures:p.baselineFailures})+'\\n');const response=p.role==='repair-architect'?{tasks:[{subject:'src/a.js',instructions:'Restore the independent public contract.'}]}:p.role==='repair-author'?{files:[{path:mode==='oracle-edit'?'test/a.test.js':'src/a.js',content:mode==='oracle-edit'?"import test from 'node:test';test('independent required a value',()=>{});":mode==='wrong-source'?'export const a=99;':'export const a=1;'}]}:review;process.stdout.write(JSON.stringify(response));});`);
  const invoke=(cwd,argv,expected=0)=>{const run=spawnSync(argv[0],argv.slice(1),{cwd,env,shell:false,encoding:'utf8',timeout:45000,killSignal:'SIGKILL',maxBuffer:16*1024*1024});assert.equal(run.error,undefined,run.error?.message);assert.equal(run.status,expected,run.stderr+'\n'+run.stdout);return run.stdout;};

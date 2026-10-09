@@ -13,9 +13,11 @@ function sourceText(root,file){
  try{
   fd=fs.openSync(target,fs.constants.O_RDONLY|(fs.constants.O_NOFOLLOW||0)|(fs.constants.O_NONBLOCK||0));
   const before=fs.fstatSync(fd);if(!before.isFile()||before.size>64*1024)throw Error('Repair source must be an existing regular file of at most 64 KiB');
-  const buffer=Buffer.alloc(before.size+1),size=fs.readSync(fd,buffer,0,buffer.length,0),after=fs.fstatSync(fd),named=fs.lstatSync(safePath(root,file));
+  const buffer=Buffer.alloc(before.size+1);let size=0;
+  for(let count;size<buffer.length&&(count=fs.readSync(fd,buffer,size,buffer.length-size,null));)size+=count;
+  const after=fs.fstatSync(fd),named=fs.lstatSync(safePath(root,file));
   if(size!==before.size||after.size!==before.size||after.mtimeMs!==before.mtimeMs||after.ctimeMs!==before.ctimeMs||named.isSymbolicLink()||named.dev!==before.dev||named.ino!==before.ino)throw Error('Repair source changed during admission');
-  return new TextDecoder('utf-8',{fatal:true}).decode(buffer.subarray(0,size));
+  return new TextDecoder('utf-8',{fatal:true,ignoreBOM:true}).decode(buffer.subarray(0,size));
  }finally{if(fd!==undefined)fs.closeSync(fd);}
 }
 function namedFailures(root,baseline){

@@ -95,6 +95,10 @@ test('source and aggregate context byte bounds prevent large payload submission'
  const {root,options}=project(t);write(root,'src/huge.js','x'.repeat(64*1024+1));await assert.rejects(proposeRepair(root,{...options,sourcePaths:['src/huge.js']}),/64 KiB/);
  for(const file of ['src/v.js','src/w.js','src/x.js','src/y.js','src/z.js'])write(root,file,'x'.repeat(60000));await assert.rejects(proposeRepair(root,{...options,sourcePaths:['src/v.js','src/w.js','src/x.js','src/y.js','src/z.js']}),/256 KiB/);assert.equal(log(root).length,0);
 });
+test('a UTF-8 BOM is retained in the admitted source binding rather than silently stripped',async t=>{
+ const {root,options}=project(t,'valid',{'src/a.js':'\uFEFFexport const a=99;'});const result=await proposeRepair(root,{...options,sourcePaths:['src/a.js']});
+ assert.equal(result.accepted,true);assert.equal(fs.readFileSync(path.join(root,'src/a.js'),'utf8'),'\uFEFFexport const a=99;');assert.equal(result.inputBindings.sourceHashes['src/a.js'],result.provenance.files['src/a.js']);
+});
 test('hung, malformed and oversized deterministic workers leave bounded failed receipts',async t=>{
  for(const mode of ['hung','invalid-json','oversize']){
   const {root,options}=project(t,mode);await assert.rejects(proposeRepair(root,{...options,timeoutMs:100,maxOutputBytes:1024}),error=>{assert.equal(error.repairSwarm.attemptedCalls,1);assert.equal(error.repairSwarm.completedCalls,0);assert.equal(error.repairSwarm.workerReceipts[0].status,'failed');assert.equal(error.repairSwarm.cost.measurement,'not-measured');return true;});

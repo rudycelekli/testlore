@@ -7,6 +7,7 @@ import {snapshot,freshness,digest} from './provenance.js';
 import {discover,execute,adapterFor} from './execution.js';
 import {stageRepair,validateRepair,applyRepair,isRepairSourcePath,captureRepairState} from './repair-candidates.js';
 import {proposeRepair} from './repair-swarm.js';
+import {withRepairEnvironment} from './repair-environment.js';
 
 function changes(root){
  const entries=git(root,['status','--porcelain=v1','-z','--untracked-files=all']).split('\0').filter(Boolean),result=[];
@@ -17,9 +18,11 @@ const metadata=(row,prefix='')=>row.status==='??'&&['.tddswarm','node_modules'].
 const clean=(root,prefix)=>changes(root).filter(row=>!metadata(row,prefix));
 const inputs=root=>digest(Object.fromEntries(listFiles(root).map(file=>[file,digest(fs.readFileSync(safePath(root,file)))])));
 export function repairFullSuite(root,{timeoutMs=120000}={}){
- const config=readConfig(root),discovery=discover(root,{...config,runnerTimeoutMs:timeoutMs,discovery:Array.isArray(config.discovery)?config.discovery:'native'});
- if(!discovery.complete||!discovery.files.length)return {exitCode:2,complete:false,tests:[],discovery,error:'Full native scope is incomplete or empty'};
- return {...execute(root,discovery.files,config,{capture:true,timeoutMs}),discovery};
+ return withRepairEnvironment(readConfig(root),config=>{
+  const discovery=discover(root,{...config,runnerTimeoutMs:timeoutMs,discovery:Array.isArray(config.discovery)?config.discovery:'native'});
+  if(!discovery.complete||!discovery.files.length)return {exitCode:2,complete:false,tests:[],discovery,error:'Full native scope is incomplete or empty'};
+  return {...execute(root,discovery.files,config,{capture:true,timeoutMs}),discovery,credentialPolicy:'fresh-native-home-and-masked-auth-environment'};
+ });
 }
 const inventory=tests=>tests.map(test=>JSON.stringify([test.file,test.name,test.project||null])).sort();
 function boundInteger(value,fallback,max,label){const number=value??fallback;if(!Number.isSafeInteger(number)||number<1||number>max)throw new Error(`${label} must be an integer from 1 to ${max}`);return number;}

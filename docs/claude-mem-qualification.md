@@ -129,3 +129,11 @@ Primary references: [Bun reporters](https://bun.sh/docs/test/reporters),
 [upstream commands](https://github.com/thedotmack/claude-mem/blob/fa8ab09f06aa05f958c5225cf3756ce52a3ebb96/package.json),
 [upstream preload](https://github.com/thedotmack/claude-mem/blob/fa8ab09f06aa05f958c5225cf3756ce52a3ebb96/bunfig.toml),
 [historical bug fix](https://github.com/thedotmack/claude-mem/commit/c84c04756ac935add118e875f1f65d963d650d30).
+
+## Prospective prerequisite gates verified at `6cea389`
+
+The [new completed collection](https://github.com/rudycelekli/testlore/actions/runs/37953327800) at exact source `6cea38950813e8ccfde6a7b8ea2d7c44ddbd7026` preserves the negative baseline and stops before regression mutation: **zero faults applied, zero TestLore comparison trials**, all three repetitions explicitly not run, and protected source/tests/configuration unchanged. No fault/restoration report exists. The unchanged route scope passed **363 cases** and failed **five** restart-page browser cases after approximately 30 seconds each; complete scope runtime was **158.192 seconds**. The full scope timed out at **180.022 seconds** with SIGKILL and no complete JUnit inventory.
+
+Separate original scopes completed: sqlite **244 passed** (4.190 s), search **80 passed** (0.467 s), context **235 passed/1 skipped** (9.538 s), and server **306 passed/16 skipped** (2.092 s). Installation completed under its resource policy, but `npm ls --all` still rejected the dependency inventory; overall installation/qualification remains false. The upstream root has no committed lock, and ignored lifecycle scripts remain a limitation.
+
+[Durable native evidence](../benchmarks/claude-mem-20261009/gated-6cea389/README.md) retains all original scopes, raw failed names, native stderr/JUnit, timeout, installation logs, lock and preregistered bindings with independently verified artifact hashes. No selection, missed-failure, speed or learning result can be inferred from zero admitted comparisons. The green hosted result confirms bounded negative evidence collection.

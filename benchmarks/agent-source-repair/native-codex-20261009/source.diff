@@ -1,0 +1,14 @@
+diff --git a/index.js b/index.js
+index 96ec66d..c578ab2 100644
+--- a/index.js
++++ b/index.js
+@@ -14,6 +14,9 @@ module.exports = function isNumber(num) {
+   if (type !== 'number' && type !== 'string') {
+     return false;
+   }
++  if (type === 'string' && num.trim().length === 0) {
++    return false;
++  }
+   var n = +num;
+   return (n - n + 1) >= 0 && num !== '';
+ };

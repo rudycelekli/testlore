@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 1,
+  "recordedObservationReplayed": true,
+  "verifiedRawMembers": 18,
+  "qualifiedScope": "One adapted eight-case Node source repair through the configured native Codex adapter; original Mocha suite and upstream installation are not qualified.",
+  "recordedNativeRoleCalls": 3,
+  "baseline": {
+    "repetitions": 2,
+    "casesEach": 8,
+    "failuresEach": 2
+  },
+  "candidate": {
+    "repetitions": 2,
+    "casesEach": 8,
+    "failuresEach": 0
+  },
+  "assertionProbes": 2,
+  "final": {
+    "cases": 8,
+    "passed": 8,
+    "declaredFiles": 1,
+    "omittedDeclaredFiles": 0
+  },
+  "sourceHead": "b74a609637a75a3e3b496cd3748f4f397f0cc526",
+  "repairCommit": "5fa5b5373ef2b466a1959435d8c343f45f7f5cc6",
+  "changedFiles": [
+    "index.js"
+  ],
+  "originalCallerPreserved": true,
+  "originalAssertionsPreserved": true,
+  "priorScopeRejected": true,
+  "exactToolSourcePreregistered": false,
+  "publicLocalHmacVerifiable": false,
+  "model": "CLI default not recorded",
+  "tokens": null,
+  "currencyCost": null,
+  "workerDurationMs": 30449,
+  "nativeValidationDurationMs": 3737,
+  "livePRPublished": false,
+  "superiorityEstablished": false,
+  "learningImprovementEstablished": false,
+  "limitations": [
+    "Frozen public runtime paths are replaced; original private receipts and local HMAC key remain private. This replay verifies member bindings and recorded semantics, not external model execution or a new native run.",
+    "Original retained Mocha bytes precede the declared fixed test commit; both versions are preserved and the correction is explicit. Eight Node inputs are adapted; negative -1 is representative.",
+    "The native Codex adapter hash was bound before invocation. The complete running TestLore source revision and CLI model/version/cost were not independently preregistered."
+  ]
+}

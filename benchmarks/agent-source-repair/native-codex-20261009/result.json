@@ -1,0 +1,1248 @@
+{
+  "schemaVersion": 1,
+  "kind": "source-repair",
+  "id": "910d7eb5-6b4a-4ec3-90a0-005010706171",
+  "branch": "tddswarm/repair-910d7eb5-6b4a-4ec3-90a0-005010706171",
+  "worktreeRoot": "<TEMP>/testlore-repair-TxNDEp",
+  "worktree": "<TEMP>/testlore-repair-TxNDEp",
+  "originalCheckout": "<USER_HOME>/Downloads/tddswarm/.tddswarm/oct9-agent-source-repair/is-number",
+  "sourceHead": "b74a609637a75a3e3b496cd3748f4f397f0cc526",
+  "base": "b74a609637a75a3e3b496cd3748f4f397f0cc526",
+  "baseBranch": "main",
+  "sha": "5fa5b5373ef2b466a1959435d8c343f45f7f5cc6",
+  "status": "ready-for-review",
+  "published": false,
+  "merged": false,
+  "budget": {
+    "deadlineMs": 900000,
+    "timeoutMs": 120000,
+    "maxTasks": 3,
+    "maxFiles": 3,
+    "maxPatchBytes": 65536,
+    "maxRounds": 1
+  },
+  "sourcePaths": [
+    "index.js"
+  ],
+  "detection": {
+    "adapter": "node",
+    "exitCode": 1,
+    "durationMs": 278,
+    "tests": [
+      {
+        "file": "oracle.test.cjs",
+        "name": "zero",
+        "status": "passed",
+        "durationMs": 0.847792,
+        "line": 2,
+        "column": 87,
+        "id": "cec1cd33870c6079dbd4b6499bb008724fe2cdea110b06559ba27729248aa7c2"
+      },
+      {
+        "file": "oracle.test.cjs",
+        "name": "one",
+        "status": "passed",
+        "durationMs": 0.078667,
+        "line": 2,
+        "column": 87,
+        "id": "38e66f2cc6e1687f14ea25d95b48a5eb0fad7fd676e5e66135b27b76f4594ee9"
+      },
+      {
+        "file": "oracle.test.cjs",
+        "name": "negative",
+        "status": "passed",
+        "durationMs": 0.134542,
+        "line": 2,
+        "column": 87,
+        "id": "a7e9ed3c0b6b7c052cfdb209c233f67ba93d429bd3f4b4153fe8fa36666ae037"
+      },
+      {
+        "file": "oracle.test.cjs",
+        "name": "numeric-string",
+        "status": "passed",
+        "durationMs": 0.704708,
+        "line": 2,
+        "column": 87,
+        "id": "22a1260b0282544282643ff908081e632ed26b7aa266a1b817fac2ddf1de5832"
+      },
+      {
+        "file": "oracle.test.cjs",
+        "name": "empty",
+        "status": "passed",
+        "durationMs": 0.123541,
+        "line": 3,
+        "column": 107,
+        "id": "9899c94a8896230bc894867f0c60d42489509e5e2c58b39bb4e15d7bc20bf52d"
+      },
+      {
+        "file": "oracle.test.cjs",
+        "name": "null",
+        "status": "passed",
+        "durationMs": 0.097958,
+        "line": 3,
+        "column": 107,
+        "id": "50fdfe1ba27505237ef14d133cfb50a0529b38bce0aa1196288d56f36c68ea39"
+      },
+      {
+        "file": "oracle.test.cjs",
+        "name": "space-only",
+        "status": "failed",
+        "durationMs": 0.489333,
+        "line": 3,
+        "column": 107,
+        "id": "299d8d45f634097ef1c06a153adb807839010a6f916284f058f8c1fdfa4c5b67"
+      },
+      {
+        "file": "oracle.test.cjs",
+        "name": "control-whitespace",
+        "status": "failed",
+        "durationMs": 0.208875,
+        "line": 3,
+        "column": 107,
+        "id": "5eb667639c920f88efb03470c18e48522919194bf13dd7e3dc50cf47ede6af92"
+      }
+    ],
+    "collectionFiles": [
+      "oracle.test.cjs"
+    ],
+    "requestedFiles": [
+      "oracle.test.cjs"
+    ],
+    "executedFiles": [
+      "oracle.test.cjs"
+    ],
+    "missingFiles": [],
+    "unknownFiles": [],
+    "dependencyFiles": [],
+    "complete": true,
+    "command": [
+      "<USER_HOME>/.nvm/versions/node/v22.19.0/bin/node",
+      "--test",
+      "--test-reporter=<USER_HOME>/Downloads/tddswarm/src/reporters/node.js",
+      "--test-reporter-destination=<TEMP>/tddswarm-report-VHO5kO/results.json",
+      "./oracle.test.cjs"
+    ],
+    "stdout": "",
+    "stderr": "",
+    "signal": null,
+    "reportErrors": [],
+    "discovery": {
+      "files": [
+        "oracle.test.cjs"
+      ],
+      "complete": true,
+      "adapter": "node",
+      "warnings": []
+    }
+  },
+  "workers": {
+    "schemaVersion": 1,
+    "status": "reviewed-repair",
+    "accepted": true,
+    "review": {
+      "accepted": true,
+      "findings": [
+        "The index.js string-trimming guard addresses both space-only and control-whitespace failures while preserving acceptance of 0, 1, -1, and \"1\" and rejection of empty string and null.",
+        "Only the allowed production source changes; the public isNumber function, assertions, oracle, and configuration remain unchanged.",
+        "Acceptance is advisory based on source review; no execution or native validation was performed."
+      ],
+      "oracle": {
+        "independent": true,
+        "basis": [
+          "Independent maintainer issue #3 and original assertions require numeric 0, 1, -1, and string \"1\" to be accepted.",
+          "Independent requirements reject empty string, null, spaces-only string, and carriage-return/newline/tab-only string.",
+          "Independent requirements preserve the public isNumber function and existing assertions and permit only a source repair without oracle or configuration changes."
+        ]
+      }
+    },
+    "files": [
+      {
+        "path": "index.js",
+        "content": "/*!\n * is-number <https://github.com/jonschlinkert/is-number>\n *\n * Copyright (c) 2014-2015, Jon Schlinkert.\n * Licensed under the MIT License.\n */\n\n'use strict';\n\nvar typeOf = require('kind-of');\n\nmodule.exports = function isNumber(num) {\n  var type = typeOf(num);\n  if (type !== 'number' && type !== 'string') {\n    return false;\n  }\n  if (type === 'string' && num.trim().length === 0) {\n    return false;\n  }\n  var n = +num;\n  return (n - n + 1) >= 0 && num !== '';\n};\n"
+      }
+    ],
+    "requirements": "Independent maintainer issue #3 and original assertions: numeric values zero, one, and negative one, and numeric string \"1\" are numbers. Empty string, null, spaces-only string, and carriage-return/newline/tab-only string are not numbers. Preserve the public isNumber function and existing assertions. Make a source repair without changing any oracle or configuration.\n",
+    "sourcePaths": [
+      "index.js"
+    ],
+    "baselineFailures": [
+      {
+        "file": "oracle.test.cjs",
+        "name": "space-only",
+        "status": "failed"
+      },
+      {
+        "file": "oracle.test.cjs",
+        "name": "control-whitespace",
+        "status": "failed"
+      }
+    ],
+    "provenance": {
+      "schemaVersion": 1,
+      "revision": "b74a609637a75a3e3b496cd3748f4f397f0cc526",
+      "runner": "984510dcf45734502a91e940b8dfee4206af2fbd0581b38e4e8ae363219aee0d",
+      "environment": {
+        "node": "v22.19.0",
+        "platform": "darwin",
+        "arch": "arm64",
+        "labels": {}
+      },
+      "services": {},
+      "serviceWarnings": [],
+      "files": {
+        ".editorconfig": "10cf152d9d1a562c62400e52b6fdf2d9afd028c51037f8393963bd8bc227b74b",
+        ".eslintrc": "bd3c5de30a28f7a8d5732a6d0bda7393ef17b582035be8fab38cbe811d857ff3",
+        ".gitattributes": "90f8990df23c9bbe01bf2203bb8548bb2daa568916caab135f955cfb7cb87742",
+        ".gitignore": "681c40da6b04a9eac8cb35568954d4a8e0d8c46b9187a0f77fdb05d58da0448b",
+        ".travis.yml": "fb8be8c3338629e95f682daf82fd43e82476833d81481d656e8285eb645e0b72",
+        ".verb.md": "3bc468d5da6c4d19204b531bb97a3537a46220a7cf43ed0e86705d48f255a86d",
+        "LICENSE": "daca23d50b0f54d36d6da1b16c82dfea6461e2ae20de0e869957e44cc6d34781",
+        "README.md": "d490f6ac792e0f1e72e0adcf3c4622b97a469cc5c1ce6529cd3e76cad60c8a70",
+        "benchmark/check.js": "735b9c888413f9e28843221d8e049ff6b799dfc63b94626fb2f5db9b1628bc7b",
+        "benchmark/code/current.js": "73a721d5d8665a78dec44360f4d2a380a4acc9c90cc152e2fefa285141767a4d",
+        "benchmark/code/isFinite.js": "149e4be9fb5739ade43fd4fd06528b9fbece7856298b141244f5693b4e542a33",
+        "benchmark/code/parseFloat.js": "b6f2dea6d21ed94745c91ba1c7ffe9fea45d23d3de97adf3e8bc6a7443dd889a",
+        "benchmark/fixtures/all.js": "caf6dc99a70d33ca60665c9beaa14eed7a623245d5ca74819b8b4c29b575577e",
+        "benchmark/fixtures/infinity.js": "04743e6d111edae1386368abac102ed3debe54bf1113e747565617e4590a9534",
+        "benchmark/fixtures/null.js": "685956a1492ddc73b79b0beadc7a88d445ef1aca5c75cb9f42dc7f3f4833d716",
+        "benchmark/fixtures/number.js": "8af09b1479ea259267d4bba5d5ff001ba42a3135fe32f6b3d0957ae8a02f04b0",
+        "benchmark/fixtures/string-number.js": "ee02dd3b2097057e000e057c4dd3255128e80c4204723f5ebab7643c2a9f90a4",
+        "benchmark/fixtures/string.js": "e9d05aae460995f21043885f969c0069118adad128510fb547bdae9e8172db39",
+        "benchmark/index.js": "b5391d636c843625b2d963de7ec1602ecb927cead97000a9883693ac77848e79",
+        "benchmark/last.txt": "8a034e1f824a8d8d68a01292ec4791a9b6198dba9bbf822aa382425f393f15c9",
+        "benchmark/support.js": "0633d65d9f01022e000a10cdca7f7089743732c6b1313dba1273c525e1fdb92b",
+        "docs/original-mocha-test.js.txt": "b1a08ce307b99195272278ebc0038c52480c0fa339ae334b8e32727277d6a94c",
+        "index.js": "1b572fa10d2a238af614189c499ceff034ab2549f4795cffaa85e5976a3f87a6",
+        "oracle.test.cjs": "e185eb7a96543b1d778db9dd6f46bd900c24f542c341c25fc37a3c30981b2aa6",
+        "package-lock.json": "06e8a7a1c369084cd7ed06270d797f1ea65b1a130f968dae9525f1036924c948",
+        "package.json": "2c5fd85cc3e880b9aae77b2830de06d4aec22a8c74b2bfa6c7f552be3b2501e6",
+        "tddswarm.config.json": "14b689aad9e62e5502aa81ee844f276a74406fcfdb5ef2887b8f60008b52b6bb",
+        "tddswarm.requirements.md": "820ac186d8541546a772811bd14dbdd5199fb6e439757766e65b8ce0ef96646d"
+      },
+      "fingerprint": "c3f4195e44528c48c647bc31f418cc69a411204ff15bf28fe23dc101e30cf1ab"
+    },
+    "inputBindings": {
+      "requirementsSha256": "820ac186d8541546a772811bd14dbdd5199fb6e439757766e65b8ce0ef96646d",
+      "baselineFailuresSha256": "ae31a71d7bfeaa583b09a68d3a6524b8bddf696e8c85c95b93ad057a324a98f2",
+      "sourceHashes": {
+        "index.js": "1b572fa10d2a238af614189c499ceff034ab2549f4795cffaa85e5976a3f87a6"
+      },
+      "repositoryFingerprint": "c3f4195e44528c48c647bc31f418cc69a411204ff15bf28fe23dc101e30cf1ab",
+      "scopeFingerprint": "ca6cd7a46e789beb67b4a6a36084e3d261f72d5f7d32c8a0b7389c8131d64184",
+      "dependencyFingerprint": "16f1e2708374c9009f3386f4c5f207dd7560bb18a36c5ccdccf83e4494805498"
+    },
+    "attemptedCalls": 3,
+    "completedCalls": 3,
+    "durationMs": 30449,
+    "workerReceipts": [
+      {
+        "role": "repair-architect",
+        "round": 1,
+        "startedAfterMs": 604,
+        "timeoutMs": 120000,
+        "requestPayloadSha256": "e1a68413d8532dd38e9c4169c6c656bef1158ae5251ee163e8e82653a56d8866",
+        "status": "completed",
+        "responseSha256": "7d8adf39082381106a2fac003c8769122831f763363e5f166f9a985395422c19",
+        "durationMs": 9555
+      },
+      {
+        "role": "repair-author",
+        "subject": "index.js",
+        "round": 1,
+        "startedAfterMs": 10358,
+        "timeoutMs": 120000,
+        "requestPayloadSha256": "9bd607c89faa3fac2e7d9bf6c02c86db4bc61b1562c4799d280e25d17c8773b3",
+        "status": "completed",
+        "responseSha256": "aacd7234b586607efc9a049515ee27350a4b648e57607bd8343217246dd4e7af",
+        "durationMs": 9212
+      },
+      {
+        "role": "repair-reviewer",
+        "round": 1,
+        "startedAfterMs": 20482,
+        "timeoutMs": 120000,
+        "requestPayloadSha256": "c8ba1db8e5996966441936c0b8f46e8fe681aee5dc85c1594c0b2b3a0193e931",
+        "status": "completed",
+        "responseSha256": "d0783b8c889fc97f1cb3d65ce1db5d204c4f7b3e9c6159a61cec587225cf6860",
+        "durationMs": 9777
+      }
+    ],
+    "budgets": {
+      "timeoutMs": 120000,
+      "deadlineMs": 898388,
+      "maxTasks": 3,
+      "maxCalls": 5,
+      "maxOutputBytes": 131072,
+      "rounds": 1
+    },
+    "cost": {
+      "measurement": "not-measured",
+      "tokens": null,
+      "amount": null,
+      "currency": null
+    },
+    "applied": false,
+    "executionValidated": false,
+    "authority": "proposal-only"
+  },
+  "candidate": {
+    "id": "6a44f810-9eee-423b-84ff-d03c3e77113c",
+    "directory": "<TEMP>/testlore-repair-TxNDEp/.tddswarm/repairs/6a44f810-9eee-423b-84ff-d03c3e77113c",
+    "candidatePath": ".tddswarm/repairs/6a44f810-9eee-423b-84ff-d03c3e77113c",
+    "kind": "source-repair",
+    "status": "reviewed-repair",
+    "applied": false
+  },
+  "files": [
+    "index.js"
+  ],
+  "validation": {
+    "schemaVersion": 1,
+    "kind": "source-repair",
+    "accepted": true,
+    "reasons": [],
+    "manifestHash": "4a70ff8685f7798419a5006876008a7d0ca86bc289f38856ec30d75696b0f8f5",
+    "inputFingerprint": "2cedb5f74a4addb8ee3b1776acdfb5cb1ff297242391302c149a75ea2940b146",
+    "baseline": [
+      {
+        "adapter": "node",
+        "exitCode": 1,
+        "durationMs": 232,
+        "tests": [
+          {
+            "file": "oracle.test.cjs",
+            "name": "zero",
+            "status": "passed",
+            "durationMs": 0.905583,
+            "line": 2,
+            "column": 87,
+            "id": "cec1cd33870c6079dbd4b6499bb008724fe2cdea110b06559ba27729248aa7c2"
+          },
+          {
+            "file": "oracle.test.cjs",
+            "name": "one",
+            "status": "passed",
+            "durationMs": 0.090833,
+            "line": 2,
+            "column": 87,
+            "id": "38e66f2cc6e1687f14ea25d95b48a5eb0fad7fd676e5e66135b27b76f4594ee9"
+          },
+          {
+            "file": "oracle.test.cjs",
+            "name": "negative",
+            "status": "passed",
+            "durationMs": 0.1555,
+            "line": 2,
+            "column": 87,
+            "id": "a7e9ed3c0b6b7c052cfdb209c233f67ba93d429bd3f4b4153fe8fa36666ae037"
+          },
+          {
+            "file": "oracle.test.cjs",
+            "name": "numeric-string",
+            "status": "passed",
+            "durationMs": 0.765667,
+            "line": 2,
+            "column": 87,
+            "id": "22a1260b0282544282643ff908081e632ed26b7aa266a1b817fac2ddf1de5832"
+          },
+          {
+            "file": "oracle.test.cjs",
+            "name": "empty",
+            "status": "passed",
+            "durationMs": 0.102,
+            "line": 3,
+            "column": 107,
+            "id": "9899c94a8896230bc894867f0c60d42489509e5e2c58b39bb4e15d7bc20bf52d"
+          },
+          {
+            "file": "oracle.test.cjs",
+            "name": "null",
+            "status": "passed",
+            "durationMs": 0.062542,
+            "line": 3,
+            "column": 107,
+            "id": "50fdfe1ba27505237ef14d133cfb50a0529b38bce0aa1196288d56f36c68ea39"
+          },
+          {
+            "file": "oracle.test.cjs",
+            "name": "space-only",
+            "status": "failed",
+            "durationMs": 0.646375,
+            "line": 3,
+            "column": 107,
+            "id": "299d8d45f634097ef1c06a153adb807839010a6f916284f058f8c1fdfa4c5b67"
+          },
+          {
+            "file": "oracle.test.cjs",
+            "name": "control-whitespace",
+            "status": "failed",
+            "durationMs": 0.304084,
+            "line": 3,
+            "column": 107,
+            "id": "5eb667639c920f88efb03470c18e48522919194bf13dd7e3dc50cf47ede6af92"
+          }
+        ],
+        "collectionFiles": [
+          "oracle.test.cjs"
+        ],
+        "requestedFiles": [
+          "oracle.test.cjs"
+        ],
+        "executedFiles": [
+          "oracle.test.cjs"
+        ],
+        "missingFiles": [],
+        "unknownFiles": [],
+        "dependencyFiles": [],
+        "complete": true,
+        "command": [
+          "<USER_HOME>/.nvm/versions/node/v22.19.0/bin/node",
+          "--test",
+          "--test-reporter=<USER_HOME>/Downloads/tddswarm/src/reporters/node.js",
+          "--test-reporter-destination=<TEMP>/tddswarm-report-dPPaYH/results.json",
+          "./oracle.test.cjs"
+        ],
+        "stdout": "",
+        "stderr": "",
+        "signal": null,
+        "reportErrors": [],
+        "discovery": {
+          "files": [
+            "oracle.test.cjs"
+          ],
+          "complete": true,
+          "adapter": "node",
+          "warnings": []
+        }
+      },
+      {
+        "adapter": "node",
+        "exitCode": 1,
+        "durationMs": 682,
+        "tests": [
+          {
+            "file": "oracle.test.cjs",
+            "name": "zero",
+            "status": "passed",
+            "durationMs": 0.913417,
+            "line": 2,
+            "column": 87,
+            "id": "cec1cd33870c6079dbd4b6499bb008724fe2cdea110b06559ba27729248aa7c2"
+          },
+          {
+            "file": "oracle.test.cjs",
+            "name": "one",
+            "status": "passed",
+            "durationMs": 0.0915,
+            "line": 2,
+            "column": 87,
+            "id": "38e66f2cc6e1687f14ea25d95b48a5eb0fad7fd676e5e66135b27b76f4594ee9"
+          },
+          {
+            "file": "oracle.test.cjs",
+            "name": "negative",
+            "status": "passed",
+            "durationMs": 0.162166,
+            "line": 2,
+            "column": 87,
+            "id": "a7e9ed3c0b6b7c052cfdb209c233f67ba93d429bd3f4b4153fe8fa36666ae037"
+          },
+          {
+            "file": "oracle.test.cjs",
+            "name": "numeric-string",
+            "status": "passed",
+            "durationMs": 0.956625,
+            "line": 2,
+            "column": 87,
+            "id": "22a1260b0282544282643ff908081e632ed26b7aa266a1b817fac2ddf1de5832"
+          },
+          {
+            "file": "oracle.test.cjs",
+            "name": "empty",
+            "status": "passed",
+            "durationMs": 0.098958,
+            "line": 3,
+            "column": 107,
+            "id": "9899c94a8896230bc894867f0c60d42489509e5e2c58b39bb4e15d7bc20bf52d"
+          },
+          {
+            "file": "oracle.test.cjs",
+            "name": "null",
+            "status": "passed",
+            "durationMs": 0.063333,
+            "line": 3,
+            "column": 107,
+            "id": "50fdfe1ba27505237ef14d133cfb50a0529b38bce0aa1196288d56f36c68ea39"
+          },
+          {
+            "file": "oracle.test.cjs",
+            "name": "space-only",
+            "status": "failed",
+            "durationMs": 0.554541,
+            "line": 3,
+            "column": 107,
+            "id": "299d8d45f634097ef1c06a153adb807839010a6f916284f058f8c1fdfa4c5b67"
+          },
+          {
+            "file": "oracle.test.cjs",
+            "name": "control-whitespace",
+            "status": "failed",
+            "durationMs": 0.236958,
+            "line": 3,
+            "column": 107,
+            "id": "5eb667639c920f88efb03470c18e48522919194bf13dd7e3dc50cf47ede6af92"
+          }
+        ],
+        "collectionFiles": [
+          "oracle.test.cjs"
+        ],
+        "requestedFiles": [
+          "oracle.test.cjs"
+        ],
+        "executedFiles": [
+          "oracle.test.cjs"
+        ],
+        "missingFiles": [],
+        "unknownFiles": [],
+        "dependencyFiles": [],
+        "complete": true,
+        "command": [
+          "<USER_HOME>/.nvm/versions/node/v22.19.0/bin/node",
+          "--test",
+          "--test-reporter=<USER_HOME>/Downloads/tddswarm/src/reporters/node.js",
+          "--test-reporter-destination=<TEMP>/tddswarm-report-kcT0zJ/results.json",
+          "./oracle.test.cjs"
+        ],
+        "stdout": "",
+        "stderr": "",
+        "signal": null,
+        "reportErrors": [],
+        "discovery": {
+          "files": [
+            "oracle.test.cjs"
+          ],
+          "complete": true,
+          "adapter": "node",
+          "warnings": []
+        }
+      }
+    ],
+    "candidateRuns": [
+      {
+        "adapter": "node",
+        "exitCode": 0,
+        "durationMs": 138,
+        "tests": [
+          {
+            "file": "oracle.test.cjs",
+            "name": "zero",
+            "status": "passed",
+            "durationMs": 0.759042,
+            "line": 2,
+            "column": 87,
+            "id": "cec1cd33870c6079dbd4b6499bb008724fe2cdea110b06559ba27729248aa7c2"
+          },
+          {
+            "file": "oracle.test.cjs",
+            "name": "one",
+            "status": "passed",
+            "durationMs": 0.076625,
+            "line": 2,
+            "column": 87,
+            "id": "38e66f2cc6e1687f14ea25d95b48a5eb0fad7fd676e5e66135b27b76f4594ee9"
+          },
+          {
+            "file": "oracle.test.cjs",
+            "name": "negative",
+            "status": "passed",
+            "durationMs": 0.128416,
+            "line": 2,
+            "column": 87,
+            "id": "a7e9ed3c0b6b7c052cfdb209c233f67ba93d429bd3f4b4153fe8fa36666ae037"
+          },
+          {
+            "file": "oracle.test.cjs",
+            "name": "numeric-string",
+            "status": "passed",
+            "durationMs": 0.712875,
+            "line": 2,
+            "column": 87,
+            "id": "22a1260b0282544282643ff908081e632ed26b7aa266a1b817fac2ddf1de5832"
+          },
+          {
+            "file": "oracle.test.cjs",
+            "name": "empty",
+            "status": "passed",
+            "durationMs": 0.180792,
+            "line": 3,
+            "column": 107,
+            "id": "9899c94a8896230bc894867f0c60d42489509e5e2c58b39bb4e15d7bc20bf52d"
+          },
+          {
+            "file": "oracle.test.cjs",
+            "name": "null",
+            "status": "passed",
+            "durationMs": 0.075209,
+            "line": 3,
+            "column": 107,
+            "id": "50fdfe1ba27505237ef14d133cfb50a0529b38bce0aa1196288d56f36c68ea39"
+          },
+          {
+            "file": "oracle.test.cjs",
+            "name": "space-only",
+            "status": "passed",
+            "durationMs": 0.062417,
+            "line": 3,
+            "column": 107,
+            "id": "299d8d45f634097ef1c06a153adb807839010a6f916284f058f8c1fdfa4c5b67"
+          },
+          {
+            "file": "oracle.test.cjs",
+            "name": "control-whitespace",
+            "status": "passed",
+            "durationMs": 0.055042,
+            "line": 3,
+            "column": 107,
+            "id": "5eb667639c920f88efb03470c18e48522919194bf13dd7e3dc50cf47ede6af92"
+          }
+        ],
+        "collectionFiles": [
+          "oracle.test.cjs"
+        ],
+        "requestedFiles": [
+          "oracle.test.cjs"
+        ],
+        "executedFiles": [
+          "oracle.test.cjs"
+        ],
+        "missingFiles": [],
+        "unknownFiles": [],
+        "dependencyFiles": [],
+        "complete": true,
+        "command": [
+          "<USER_HOME>/.nvm/versions/node/v22.19.0/bin/node",
+          "--test",
+          "--test-reporter=<USER_HOME>/Downloads/tddswarm/src/reporters/node.js",
+          "--test-reporter-destination=<TEMP>/tddswarm-report-a9vkI0/results.json",
+          "./oracle.test.cjs"
+        ],
+        "stdout": "",
+        "stderr": "",
+        "signal": null,
+        "reportErrors": [],
+        "discovery": {
+          "files": [
+            "oracle.test.cjs"
+          ],
+          "complete": true,
+          "adapter": "node",
+          "warnings": []
+        }
+      },
+      {
+        "adapter": "node",
+        "exitCode": 0,
+        "durationMs": 168,
+        "tests": [
+          {
+            "file": "oracle.test.cjs",
+            "name": "zero",
+            "status": "passed",
+            "durationMs": 0.925083,
+            "line": 2,
+            "column": 87,
+            "id": "cec1cd33870c6079dbd4b6499bb008724fe2cdea110b06559ba27729248aa7c2"
+          },
+          {
+            "file": "oracle.test.cjs",
+            "name": "one",
+            "status": "passed",
+            "durationMs": 0.088667,
+            "line": 2,
+            "column": 87,
+            "id": "38e66f2cc6e1687f14ea25d95b48a5eb0fad7fd676e5e66135b27b76f4594ee9"
+          },
+          {
+            "file": "oracle.test.cjs",
+            "name": "negative",
+            "status": "passed",
+            "durationMs": 0.152,
+            "line": 2,
+            "column": 87,
+            "id": "a7e9ed3c0b6b7c052cfdb209c233f67ba93d429bd3f4b4153fe8fa36666ae037"
+          },
+          {
+            "file": "oracle.test.cjs",
+            "name": "numeric-string",
+            "status": "passed",
+            "durationMs": 1.379959,
+            "line": 2,
+            "column": 87,
+            "id": "22a1260b0282544282643ff908081e632ed26b7aa266a1b817fac2ddf1de5832"
+          },
+          {
+            "file": "oracle.test.cjs",
+            "name": "empty",
+            "status": "passed",
+            "durationMs": 0.179791,
+            "line": 3,
+            "column": 107,
+            "id": "9899c94a8896230bc894867f0c60d42489509e5e2c58b39bb4e15d7bc20bf52d"
+          },
+          {
+            "file": "oracle.test.cjs",
+            "name": "null",
+            "status": "passed",
+            "durationMs": 0.084875,
+            "line": 3,
+            "column": 107,
+            "id": "50fdfe1ba27505237ef14d133cfb50a0529b38bce0aa1196288d56f36c68ea39"
+          },
+          {
+            "file": "oracle.test.cjs",
+            "name": "space-only",
+            "status": "passed",
+            "durationMs": 0.070041,
+            "line": 3,
+            "column": 107,
+            "id": "299d8d45f634097ef1c06a153adb807839010a6f916284f058f8c1fdfa4c5b67"
+          },
+          {
+            "file": "oracle.test.cjs",
+            "name": "control-whitespace",
+            "status": "passed",
+            "durationMs": 0.061459,
+            "line": 3,
+            "column": 107,
+            "id": "5eb667639c920f88efb03470c18e48522919194bf13dd7e3dc50cf47ede6af92"
+          }
+        ],
+        "collectionFiles": [
+          "oracle.test.cjs"
+        ],
+        "requestedFiles": [
+          "oracle.test.cjs"
+        ],
+        "executedFiles": [
+          "oracle.test.cjs"
+        ],
+        "missingFiles": [],
+        "unknownFiles": [],
+        "dependencyFiles": [],
+        "complete": true,
+        "command": [
+          "<USER_HOME>/.nvm/versions/node/v22.19.0/bin/node",
+          "--test",
+          "--test-reporter=<USER_HOME>/Downloads/tddswarm/src/reporters/node.js",
+          "--test-reporter-destination=<TEMP>/tddswarm-report-IyJVgB/results.json",
+          "./oracle.test.cjs"
+        ],
+        "stdout": "",
+        "stderr": "",
+        "signal": null,
+        "reportErrors": [],
+        "discovery": {
+          "files": [
+            "oracle.test.cjs"
+          ],
+          "complete": true,
+          "adapter": "node",
+          "warnings": []
+        }
+      }
+    ],
+    "assertionRuns": [
+      {
+        "complete": true,
+        "exitCode": 1,
+        "assertions": [
+          {
+            "file": "oracle.test.cjs",
+            "name": "space-only",
+            "code": "ERR_ASSERTION",
+            "nameOfError": "AssertionError"
+          },
+          {
+            "file": "oracle.test.cjs",
+            "name": "control-whitespace",
+            "code": "ERR_ASSERTION",
+            "nameOfError": "AssertionError"
+          }
+        ],
+        "tests": [
+          {
+            "file": "oracle.test.cjs",
+            "name": "zero",
+            "status": "passed"
+          },
+          {
+            "file": "oracle.test.cjs",
+            "name": "one",
+            "status": "passed"
+          },
+          {
+            "file": "oracle.test.cjs",
+            "name": "negative",
+            "status": "passed"
+          },
+          {
+            "file": "oracle.test.cjs",
+            "name": "numeric-string",
+            "status": "passed"
+          },
+          {
+            "file": "oracle.test.cjs",
+            "name": "empty",
+            "status": "passed"
+          },
+          {
+            "file": "oracle.test.cjs",
+            "name": "null",
+            "status": "passed"
+          },
+          {
+            "file": "oracle.test.cjs",
+            "name": "space-only",
+            "status": "failed"
+          },
+          {
+            "file": "oracle.test.cjs",
+            "name": "control-whitespace",
+            "status": "failed"
+          }
+        ],
+        "command": [
+          "<USER_HOME>/.nvm/versions/node/v22.19.0/bin/node",
+          "--test",
+          "--test-reporter=<TEMP>/testlore-assertion-BlcOGE/reporter.mjs",
+          "--test-reporter-destination=<TEMP>/testlore-assertion-BlcOGE/events.jsonl",
+          "./oracle.test.cjs"
+        ],
+        "durationMs": 179
+      },
+      {
+        "complete": true,
+        "exitCode": 1,
+        "assertions": [
+          {
+            "file": "oracle.test.cjs",
+            "name": "space-only",
+            "code": "ERR_ASSERTION",
+            "nameOfError": "AssertionError"
+          },
+          {
+            "file": "oracle.test.cjs",
+            "name": "control-whitespace",
+            "code": "ERR_ASSERTION",
+            "nameOfError": "AssertionError"
+          }
+        ],
+        "tests": [
+          {
+            "file": "oracle.test.cjs",
+            "name": "zero",
+            "status": "passed"
+          },
+          {
+            "file": "oracle.test.cjs",
+            "name": "one",
+            "status": "passed"
+          },
+          {
+            "file": "oracle.test.cjs",
+            "name": "negative",
+            "status": "passed"
+          },
+          {
+            "file": "oracle.test.cjs",
+            "name": "numeric-string",
+            "status": "passed"
+          },
+          {
+            "file": "oracle.test.cjs",
+            "name": "empty",
+            "status": "passed"
+          },
+          {
+            "file": "oracle.test.cjs",
+            "name": "null",
+            "status": "passed"
+          },
+          {
+            "file": "oracle.test.cjs",
+            "name": "space-only",
+            "status": "failed"
+          },
+          {
+            "file": "oracle.test.cjs",
+            "name": "control-whitespace",
+            "status": "failed"
+          }
+        ],
+        "command": [
+          "<USER_HOME>/.nvm/versions/node/v22.19.0/bin/node",
+          "--test",
+          "--test-reporter=<TEMP>/testlore-assertion-fuf8Nq/reporter.mjs",
+          "--test-reporter-destination=<TEMP>/testlore-assertion-fuf8Nq/events.jsonl",
+          "./oracle.test.cjs"
+        ],
+        "durationMs": 290
+      }
+    ],
+    "original": {
+      "adapter": "node",
+      "exitCode": 1,
+      "durationMs": 232,
+      "tests": [
+        {
+          "file": "oracle.test.cjs",
+          "name": "zero",
+          "status": "passed",
+          "durationMs": 0.905583,
+          "line": 2,
+          "column": 87,
+          "id": "cec1cd33870c6079dbd4b6499bb008724fe2cdea110b06559ba27729248aa7c2"
+        },
+        {
+          "file": "oracle.test.cjs",
+          "name": "one",
+          "status": "passed",
+          "durationMs": 0.090833,
+          "line": 2,
+          "column": 87,
+          "id": "38e66f2cc6e1687f14ea25d95b48a5eb0fad7fd676e5e66135b27b76f4594ee9"
+        },
+        {
+          "file": "oracle.test.cjs",
+          "name": "negative",
+          "status": "passed",
+          "durationMs": 0.1555,
+          "line": 2,
+          "column": 87,
+          "id": "a7e9ed3c0b6b7c052cfdb209c233f67ba93d429bd3f4b4153fe8fa36666ae037"
+        },
+        {
+          "file": "oracle.test.cjs",
+          "name": "numeric-string",
+          "status": "passed",
+          "durationMs": 0.765667,
+          "line": 2,
+          "column": 87,
+          "id": "22a1260b0282544282643ff908081e632ed26b7aa266a1b817fac2ddf1de5832"
+        },
+        {
+          "file": "oracle.test.cjs",
+          "name": "empty",
+          "status": "passed",
+          "durationMs": 0.102,
+          "line": 3,
+          "column": 107,
+          "id": "9899c94a8896230bc894867f0c60d42489509e5e2c58b39bb4e15d7bc20bf52d"
+        },
+        {
+          "file": "oracle.test.cjs",
+          "name": "null",
+          "status": "passed",
+          "durationMs": 0.062542,
+          "line": 3,
+          "column": 107,
+          "id": "50fdfe1ba27505237ef14d133cfb50a0529b38bce0aa1196288d56f36c68ea39"
+        },
+        {
+          "file": "oracle.test.cjs",
+          "name": "space-only",
+          "status": "failed",
+          "durationMs": 0.646375,
+          "line": 3,
+          "column": 107,
+          "id": "299d8d45f634097ef1c06a153adb807839010a6f916284f058f8c1fdfa4c5b67"
+        },
+        {
+          "file": "oracle.test.cjs",
+          "name": "control-whitespace",
+          "status": "failed",
+          "durationMs": 0.304084,
+          "line": 3,
+          "column": 107,
+          "id": "5eb667639c920f88efb03470c18e48522919194bf13dd7e3dc50cf47ede6af92"
+        }
+      ],
+      "collectionFiles": [
+        "oracle.test.cjs"
+      ],
+      "requestedFiles": [
+        "oracle.test.cjs"
+      ],
+      "executedFiles": [
+        "oracle.test.cjs"
+      ],
+      "missingFiles": [],
+      "unknownFiles": [],
+      "dependencyFiles": [],
+      "complete": true,
+      "command": [
+        "<USER_HOME>/.nvm/versions/node/v22.19.0/bin/node",
+        "--test",
+        "--test-reporter=<USER_HOME>/Downloads/tddswarm/src/reporters/node.js",
+        "--test-reporter-destination=<TEMP>/tddswarm-report-dPPaYH/results.json",
+        "./oracle.test.cjs"
+      ],
+      "stdout": "",
+      "stderr": "",
+      "signal": null,
+      "reportErrors": [],
+      "discovery": {
+        "files": [
+          "oracle.test.cjs"
+        ],
+        "complete": true,
+        "adapter": "node",
+        "warnings": []
+      }
+    },
+    "candidate": {
+      "adapter": "node",
+      "exitCode": 0,
+      "durationMs": 138,
+      "tests": [
+        {
+          "file": "oracle.test.cjs",
+          "name": "zero",
+          "status": "passed",
+          "durationMs": 0.759042,
+          "line": 2,
+          "column": 87,
+          "id": "cec1cd33870c6079dbd4b6499bb008724fe2cdea110b06559ba27729248aa7c2"
+        },
+        {
+          "file": "oracle.test.cjs",
+          "name": "one",
+          "status": "passed",
+          "durationMs": 0.076625,
+          "line": 2,
+          "column": 87,
+          "id": "38e66f2cc6e1687f14ea25d95b48a5eb0fad7fd676e5e66135b27b76f4594ee9"
+        },
+        {
+          "file": "oracle.test.cjs",
+          "name": "negative",
+          "status": "passed",
+          "durationMs": 0.128416,
+          "line": 2,
+          "column": 87,
+          "id": "a7e9ed3c0b6b7c052cfdb209c233f67ba93d429bd3f4b4153fe8fa36666ae037"
+        },
+        {
+          "file": "oracle.test.cjs",
+          "name": "numeric-string",
+          "status": "passed",
+          "durationMs": 0.712875,
+          "line": 2,
+          "column": 87,
+          "id": "22a1260b0282544282643ff908081e632ed26b7aa266a1b817fac2ddf1de5832"
+        },
+        {
+          "file": "oracle.test.cjs",
+          "name": "empty",
+          "status": "passed",
+          "durationMs": 0.180792,
+          "line": 3,
+          "column": 107,
+          "id": "9899c94a8896230bc894867f0c60d42489509e5e2c58b39bb4e15d7bc20bf52d"
+        },
+        {
+          "file": "oracle.test.cjs",
+          "name": "null",
+          "status": "passed",
+          "durationMs": 0.075209,
+          "line": 3,
+          "column": 107,
+          "id": "50fdfe1ba27505237ef14d133cfb50a0529b38bce0aa1196288d56f36c68ea39"
+        },
+        {
+          "file": "oracle.test.cjs",
+          "name": "space-only",
+          "status": "passed",
+          "durationMs": 0.062417,
+          "line": 3,
+          "column": 107,
+          "id": "299d8d45f634097ef1c06a153adb807839010a6f916284f058f8c1fdfa4c5b67"
+        },
+        {
+          "file": "oracle.test.cjs",
+          "name": "control-whitespace",
+          "status": "passed",
+          "durationMs": 0.055042,
+          "line": 3,
+          "column": 107,
+          "id": "5eb667639c920f88efb03470c18e48522919194bf13dd7e3dc50cf47ede6af92"
+        }
+      ],
+      "collectionFiles": [
+        "oracle.test.cjs"
+      ],
+      "requestedFiles": [
+        "oracle.test.cjs"
+      ],
+      "executedFiles": [
+        "oracle.test.cjs"
+      ],
+      "missingFiles": [],
+      "unknownFiles": [],
+      "dependencyFiles": [],
+      "complete": true,
+      "command": [
+        "<USER_HOME>/.nvm/versions/node/v22.19.0/bin/node",
+        "--test",
+        "--test-reporter=<USER_HOME>/Downloads/tddswarm/src/reporters/node.js",
+        "--test-reporter-destination=<TEMP>/tddswarm-report-a9vkI0/results.json",
+        "./oracle.test.cjs"
+      ],
+      "stdout": "",
+      "stderr": "",
+      "signal": null,
+      "reportErrors": [],
+      "discovery": {
+        "files": [
+          "oracle.test.cjs"
+        ],
+        "complete": true,
+        "adapter": "node",
+        "warnings": []
+      }
+    },
+    "durationMs": 3737,
+    "bounds": {
+      "totalTimeoutMs": 600000,
+      "perNativeTimeoutMs": 120000,
+      "retainedReportBytes": 2097152,
+      "nativeTransportMaxBufferBytes": 67108864
+    },
+    "cost": null,
+    "integrity": "24e0fb0b1b93799f4576ea3f69b4d7f6600dd7d08b401482ed6d8d6ac05bd5b9"
+  },
+  "application": {
+    "kind": "source-repair",
+    "applied": true,
+    "files": [
+      "index.js"
+    ],
+    "validationIntegrity": "24e0fb0b1b93799f4576ea3f69b4d7f6600dd7d08b401482ed6d8d6ac05bd5b9"
+  },
+  "fullRun": {
+    "adapter": "node",
+    "exitCode": 0,
+    "durationMs": 175,
+    "tests": [
+      {
+        "file": "oracle.test.cjs",
+        "name": "zero",
+        "status": "passed",
+        "durationMs": 0.88325,
+        "line": 2,
+        "column": 87,
+        "id": "cec1cd33870c6079dbd4b6499bb008724fe2cdea110b06559ba27729248aa7c2"
+      },
+      {
+        "file": "oracle.test.cjs",
+        "name": "one",
+        "status": "passed",
+        "durationMs": 0.087666,
+        "line": 2,
+        "column": 87,
+        "id": "38e66f2cc6e1687f14ea25d95b48a5eb0fad7fd676e5e66135b27b76f4594ee9"
+      },
+      {
+        "file": "oracle.test.cjs",
+        "name": "negative",
+        "status": "passed",
+        "durationMs": 0.150209,
+        "line": 2,
+        "column": 87,
+        "id": "a7e9ed3c0b6b7c052cfdb209c233f67ba93d429bd3f4b4153fe8fa36666ae037"
+      },
+      {
+        "file": "oracle.test.cjs",
+        "name": "numeric-string",
+        "status": "passed",
+        "durationMs": 0.856625,
+        "line": 2,
+        "column": 87,
+        "id": "22a1260b0282544282643ff908081e632ed26b7aa266a1b817fac2ddf1de5832"
+      },
+      {
+        "file": "oracle.test.cjs",
+        "name": "empty",
+        "status": "passed",
+        "durationMs": 0.094042,
+        "line": 3,
+        "column": 107,
+        "id": "9899c94a8896230bc894867f0c60d42489509e5e2c58b39bb4e15d7bc20bf52d"
+      },
+      {
+        "file": "oracle.test.cjs",
+        "name": "null",
+        "status": "passed",
+        "durationMs": 0.062667,
+        "line": 3,
+        "column": 107,
+        "id": "50fdfe1ba27505237ef14d133cfb50a0529b38bce0aa1196288d56f36c68ea39"
+      },
+      {
+        "file": "oracle.test.cjs",
+        "name": "space-only",
+        "status": "passed",
+        "durationMs": 0.057584,
+        "line": 3,
+        "column": 107,
+        "id": "299d8d45f634097ef1c06a153adb807839010a6f916284f058f8c1fdfa4c5b67"
+      },
+      {
+        "file": "oracle.test.cjs",
+        "name": "control-whitespace",
+        "status": "passed",
+        "durationMs": 0.058084,
+        "line": 3,
+        "column": 107,
+        "id": "5eb667639c920f88efb03470c18e48522919194bf13dd7e3dc50cf47ede6af92"
+      }
+    ],
+    "collectionFiles": [
+      "oracle.test.cjs"
+    ],
+    "requestedFiles": [
+      "oracle.test.cjs"
+    ],
+    "executedFiles": [
+      "oracle.test.cjs"
+    ],
+    "missingFiles": [],
+    "unknownFiles": [],
+    "dependencyFiles": [],
+    "complete": true,
+    "command": [
+      "<USER_HOME>/.nvm/versions/node/v22.19.0/bin/node",
+      "--test",
+      "--test-reporter=<USER_HOME>/Downloads/tddswarm/src/reporters/node.js",
+      "--test-reporter-destination=<TEMP>/tddswarm-report-FA8JRn/results.json",
+      "./oracle.test.cjs"
+    ],
+    "stdout": "",
+    "stderr": "",
+    "signal": null,
+    "reportErrors": [],
+    "discovery": {
+      "files": [
+        "oracle.test.cjs"
+      ],
+      "complete": true,
+      "adapter": "node",
+      "warnings": []
+    }
+  },
+  "next": [
+    "Review the source diff and repeated unchanged assertion outcomes.",
+    "The CLI opens a verified GitHub PR unless --local is supplied. No automatic merge."
+  ],
+  "receipt": "<TEMP>/testlore-repair-TxNDEp/.tddswarm/repair/result.json"
+}

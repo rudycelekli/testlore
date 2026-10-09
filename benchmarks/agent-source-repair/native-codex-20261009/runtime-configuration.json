@@ -1,0 +1,13 @@
+{
+  "adapter": "node",
+  "discovery": "native",
+  "runner": [
+    "<USER_HOME>/.nvm/versions/node/v22.19.0/bin/node",
+    "--test",
+    "{files}"
+  ],
+  "agent": [
+    "<USER_HOME>/.nvm/versions/node/v22.19.0/bin/node",
+    "<USER_HOME>/Downloads/tddswarm/src/adapters/codex.js"
+  ]
+}

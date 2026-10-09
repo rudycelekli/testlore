@@ -6,6 +6,7 @@ import {spawnSync} from 'node:child_process';
 import {SOURCE, TEST, safePath, readConfig} from './files.js';
 import {digest, freshness, snapshot} from './provenance.js';
 import {adapterFor, discover, execute, nativeEnvironment} from './execution.js';
+import {withRepairEnvironment} from './repair-environment.js';
 
 const MAX_TEXT = 65536, MAX_REPORT = 2 * 1024 * 1024;
 const canonical = file => typeof file === 'string' && !file.includes('\\') && !file.includes('\0') && !path.isAbsolute(file) && file.split('/').every(part => part && part !== '.' && part !== '..');
@@ -179,18 +180,21 @@ export function validateRepair(root, candidatePath, options={}) {
     for(const candidate of [false,false,true,true]) {
       const result=copied(root,manifest.state.scope,temp=>{
         if(candidate)for(const file of manifest.files)fs.writeFileSync(regular(temp,file.path),fs.readFileSync(regular(directory,`files/${file.path}`)));
-        const before=tree(temp,{deadline}),localConfig=readConfig(temp),discovery=discover(temp,{...localConfig,discovery:'native',runnerTimeoutMs:remaining()});
+        const before=tree(temp,{deadline}),localConfig=readConfig(temp);
+        return withRepairEnvironment(localConfig,isolatedConfig=>{
+        const discovery=discover(temp,{...isolatedConfig,discovery:'native',runnerTimeoutMs:remaining()});
         if(!discovery.complete||!discovery.files.length)throw new Error('full-native-discovery-incomplete-or-empty');
         if(discovery.files.some(file=>manifest.sourcePaths.includes(file)))throw new Error('repair-source-is-native-test-file');
-        const report={...execute(temp,discovery.files,localConfig,{capture:true,timeoutMs:remaining()}),discovery};
+        const report={...execute(temp,discovery.files,isolatedConfig,{capture:true,timeoutMs:remaining()}),discovery};
         if(Buffer.byteLength(JSON.stringify(report))>MAX_REPORT)throw new Error('repair-report-output-budget-exceeded');
         (candidate?candidateRuns:baseline).push(report);
         const cases=inventory(report);
         if(discovery.files.some(file=>!report.collectionFiles?.includes(file))||report.collectionFiles?.some(file=>!discovery.files.includes(file)))throw new Error('native-full-scope-mismatch');
         if(candidate){if(report.exitCode!==0||cases.some(([,status])=>status==='failed'))throw new Error('candidate-suite-not-all-green');}
-        else {if(report.exitCode===0||!cases.some(([,status])=>status==='failed'))throw new Error('repeatable-assertion-baseline-required');assertionRuns.push(assertionProbe(temp,report,localConfig,remaining()));}
+        else {if(report.exitCode===0||!cases.some(([,status])=>status==='failed'))throw new Error('repeatable-assertion-baseline-required');assertionRuns.push(withRepairEnvironment(localConfig,probeConfig=>assertionProbe(temp,report,probeConfig,remaining())));}
         if(tree(temp,{deadline}).fingerprint!==before.fingerprint)throw new Error('native-execution-mutated-project-inputs');
         return report;
+        });
       });
       if(tree(root,{dependencies:true,deadline}).fingerprint!==manifest.state.dependencies.fingerprint)throw new Error('native-execution-mutated-dependencies');
       if(baseline.length===2&&digest(inventory(baseline[0]))!==digest(inventory(baseline[1])))throw new Error('baseline-case-outcomes-not-repeatable');
