@@ -107,6 +107,7 @@ export async function improve(root, options = {}) {
   try {
     git(repository, ['worktree', 'add', '-b', branch, worktreeRoot, base]);
     const dependencies = path.join(root, 'node_modules');
+    const dependencyMetadata=fs.existsSync(dependencies)&&fs.lstatSync(dependencies).isDirectory()?{root:fs.realpathSync(root),nodeModules:fs.realpathSync(dependencies),sourceHead:base}:undefined;
     if (fs.existsSync(dependencies) && !fs.existsSync(path.join(worktree, 'node_modules'))) fs.symlinkSync(fs.realpathSync(dependencies), path.join(worktree, 'node_modules'), 'dir');
     result.agentProfile=ensureQualityAgent(worktree,{name:qualityAgent(root).name}).profile;
     result.learningSeed=copyLearning(root,worktree);
@@ -129,9 +130,11 @@ export async function improve(root, options = {}) {
       }
       const requirements=safePath(worktree,'tddswarm.requirements.md');
       if(!fs.existsSync(requirements)||!fs.readFileSync(requirements,'utf8').trim()){result.status='awaiting-requirements';result.workOrder=await generate(worktree);return receipt();}
-      staged = await generate(worktree, { execute: true, agent: options.agent, plugin: options.plugin });
+      staged = await generate(worktree, { execute: true, agent: options.agent, plugin: options.plugin,provider:options.provider,dependencyMetadata });
     }
     result.candidate = { id: staged.id, directory: staged.directory };
+    if(staged.generationPlan)result.generationPlan=staged.generationPlan;
+    if(staged.generation)result.generation=staged.generation;
     const validation = validateCandidates(worktree, staged.id, options);
     result.validation = validation;
     if (!validation.accepted) { result.status = 'validation-rejected'; return receipt(); }
@@ -186,6 +189,7 @@ export async function improve(root, options = {}) {
     return receipt();
   } catch (error) {
     result.status = 'failed'; result.error = error.message;
+    if(error.generation)result.generation=error.generation;
     // A created branch/worktree is intentionally retained, including rejected code.
     if (fs.existsSync(path.join(worktreeRoot, '.git'))) return receipt();
     fs.rmSync(worktreeRoot, { recursive: true, force: true });

@@ -4,6 +4,7 @@ import fs from 'node:fs';
 import {sealSourceArchive} from './archive-source.js';
 import {packedEvidenceComplete} from './packed-evidence.js';
 import {verifyInstalledRepairRawEvidence} from './installed-repair-proof.js';
+import {verifyOneCommandRawEvidence} from './one-command-proof.js';
 import path from 'node:path';
 import { createHash } from 'node:crypto';
 import { spawnSync } from 'node:child_process';
@@ -21,8 +22,9 @@ if(options['--verify']){
  if(JSON.parse(fs.readFileSync(path.join(root,'package.json'),'utf8')).version!==receipt.version)throw new Error('Release version differs from checked-out source');
  const directory=path.dirname(file),archive=path.join(directory,receipt.archive),proof=path.join(directory,'packed-proof.json');
  if(hash(archive)!==receipt.archiveSha256||hash(proof)!==receipt.proofSha256)throw new Error('Sealed archive or packed proof changed');
- const evidence=JSON.parse(fs.readFileSync(proof,'utf8'));if(!packedEvidenceComplete(receipt,evidence,{proofScriptSha256:hash(path.join(root,'scripts/packed-proof.js')),sourceManifestSha256:hash(path.join(root,'package.json')),installedRepairProofSha256:hash(path.join(root,'scripts/installed-repair-proof.js'))}))throw new Error('Packed artifact evidence incomplete');
+ const evidence=JSON.parse(fs.readFileSync(proof,'utf8'));if(!packedEvidenceComplete(receipt,evidence,{proofScriptSha256:hash(path.join(root,'scripts/packed-proof.js')),sourceManifestSha256:hash(path.join(root,'package.json')),installedRepairProofSha256:hash(path.join(root,'scripts/installed-repair-proof.js')),oneCommandProofSha256:hash(path.join(root,'scripts/one-command-proof.js'))}))throw new Error('Packed artifact evidence incomplete');
  verifyInstalledRepairRawEvidence(path.join(directory,'installed-repair-raw'),evidence.installedRepair);
+ verifyOneCommandRawEvidence(path.join(directory,'one-command-raw'),evidence.oneCommand);
  if(options.publish&&(!/^\d+\.\d+\.\d+(?:-alpha\.\d+)?$/.test(receipt.version)||process.env.NODE_AUTH_TOKEN||process.env.NPM_TOKEN))throw new Error('Publish requires a valid scoped alpha candidate version and token-free trusted OIDC');
  if(options.publish&&(process.env.GITHUB_ACTIONS!=='true'||!process.env.ACTIONS_ID_TOKEN_REQUEST_URL||!process.env.ACTIONS_ID_TOKEN_REQUEST_TOKEN))throw new Error('Publish check requires a GitHub Actions OIDC-enabled job; publisher mapping is still an external gate');
  console.log(JSON.stringify({...receipt,verified:true,alphaVersionEligible:/^\d+\.\d+\.\d+(?:-alpha\.\d+)?$/.test(receipt.version)},null,2));

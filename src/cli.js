@@ -9,7 +9,7 @@ const commandModules = {
   'loop-status': ['evidence-loop'], challenge: ['evidence-loop'],
   outcome: ['evidence-loop'], 'outcome-lessons': ['evidence-loop'],
   brief: ['agent-contract'], doctor: ['adoption-readiness'],
-  setup: ['quality-layer', 'agent-profile', 'files', 'adoption-readiness', 'plugin-recommendations'],
+  setup: ['quality-layer', 'agent-profile', 'files', 'adoption-readiness', 'plugin-recommendations', 'plugins'],
   report: ['files', 'run-report'], mappings: ['routing-proposals'],
   'mapping-qualify': ['files', 'mapping-qualification'],
   'browser-build': ['files', 'browser-evidence'], 'browser-instrument': ['browser-evidence'],
@@ -95,6 +95,7 @@ Options:
   --execute          Invoke an agent (generate) or apply a validated patch (apply)
   --local            Keep a tested improvement branch without opening a PR
   --sources <paths>  Comma-separated existing production source scope for repair
+  --provider <name>  Generation author choice: auto (default), json-worker, agentic-qe
   --autofix          setup: add an opt-in trusted self-hosted agent workflow
   --no-ci            Do not add a project quality workflow
   --action-ref <ref>  Pin the installed quality action to a reviewed Git ref
@@ -107,7 +108,7 @@ need explicit declarations. No AI account required for audit, plan, or run.
 export function parseArgs(args) {
   const options = {};
   let command = 'help';
-  const values = new Set(['root','base','changed','output','report','type','provenance','repeat','id','patch','target','framework','head','action-ref','base-branch','query','name','enable','disable','select','plugin','settings','manifest','mutate','defects','revision','deadline-ms','trusted-key','checkpoint','claim','verdict','reviewer','sources']);
+  const values = new Set(['root','base','changed','output','report','type','provenance','repeat','id','patch','target','framework','head','action-ref','base-branch','query','name','enable','disable','select','plugin','settings','manifest','mutate','defects','revision','deadline-ms','trusted-key','checkpoint','claim','verdict','reviewer','sources','provider']);
   const flags = new Set(['json', 'full', 'shadow', 'execute', 'help', 'version', 'local', 'no-ci','check','recommend','auto','selective','allow-execution','unified-native','verify','autofix']);
   if (args[0] && !args[0].startsWith('-')) command = args.shift();
   for (let i = 0; i < args.length; i++) {
@@ -205,6 +206,7 @@ export async function main(args = process.argv.slice(2)) {
   if(options.verify&&command!=='setup')throw new Error('--verify applies only to setup');
   if(options.autofix&&command!=='setup')throw new Error('--autofix applies only to setup');
   if(options.sources&&!['repair','autopilot'].includes(command))throw new Error('--sources applies only to repair or autopilot');
+  if(options.provider!==undefined){if(!['generate','improve','autopilot'].includes(command))throw new Error('--provider applies only to generation, improvement or autopilot');if(!['auto','json-worker','agentic-qe'].includes(options.provider))throw new Error('--provider must be auto, json-worker or agentic-qe');if(options.plugin)throw new Error('Choose --provider or --plugin, not both');}
   if(options.verify&&options.selective)throw new Error('setup --verify always uses full shadow verification');
   if (options['allow-execution']) throw new Error('--allow-execution applies only to mcp');
   if ((options.auto || options.recommend) && command !== 'plugins') throw new Error('--auto and --recommend require the plugins command');
@@ -251,7 +253,10 @@ export async function main(args = process.argv.slice(2)) {
       const written=installQualityLayer(root,{ci:!options['no-ci'],actionRef:options['action-ref']});
       if(options.autofix)written.push(...installAutofixWorkflow(root,{actionRef:options['action-ref']}));
       const agent=ensureQualityAgent(root,{name:options.name});
-      result={written,agent,executionMode:readConfig(root).executionMode||'existing-policy',readiness:adoptionReadiness(root),plugins:recommendPlugins(root),next:['testlore doctor --json','testlore run --shadow --base HEAD --json','testlore report','testlore mappings --json']};
+      const recommendation=recommendPlugins(root);
+      const plugins=recommendation.blocked?{...recommendation,applied:[],changed:false}:configurePluginsAutomatically(root,recommendation);
+      if(plugins.changed&&!written.includes('tddswarm.config.json'))written.push('tddswarm.config.json');
+      result={written,agent,executionMode:readConfig(root).executionMode||'existing-policy',readiness:adoptionReadiness(root),plugins,next:['testlore doctor --json','testlore run --shadow --base HEAD --json','testlore report','testlore mappings --json']};
       if(options.verify){
         const {run:verify}=await import('./runner.js');
         result.verification=verify(root,{base:options.base||'HEAD',shadow:true,capture:true});
@@ -261,8 +266,8 @@ export async function main(args = process.argv.slice(2)) {
     }
     case 'repair':
     case 'autopilot': {
-      const permitted=new Set(['root','json','local','sources','deadline-ms','base-branch','patch']);
-      if(Object.keys(options).some(key=>!permitted.has(key)))throw new Error(`${command} accepts only --root, --json, --local, --sources, --deadline-ms, --base-branch and --patch`);
+      const permitted=new Set(['root','json','local','sources','deadline-ms','base-branch','patch','provider']);
+      if(Object.keys(options).some(key=>!permitted.has(key)))throw new Error(`${command} accepts only --root, --json, --local, --sources, --deadline-ms, --base-branch, --patch and --provider`);
       const {spawnSync}=await import('node:child_process');
       let agent=readConfig(root).agent;
       if(!agent&&!options.patch){const probe=spawnSync('codex',['--version'],{encoding:'utf8',timeout:5000,shell:false});if(!probe.error&&probe.status===0)agent=[process.execPath,fileURLToPath(new URL('./adapters/codex.js',import.meta.url))];}
@@ -272,8 +277,9 @@ export async function main(args = process.argv.slice(2)) {
       result=await repair(root,repairOptions);
       if(command==='autopilot'&&!patchFile&&(result.status==='no-failures'||result.status==='unsupported-repair-evidence'||result.status==='baseline-incomplete'&&result.detection?.discovery?.complete&&!result.detection.discovery.files.length)){
         const detection={status:result.status,receipt:result.receipt,sourceRepairSupported:result.status!=='unsupported-repair-evidence'};
-        result=await improve(root,{agent});result.autopilotDetection=detection;
+        result=await improve(root,{agent,provider:options.provider});result.autopilotDetection=detection;
       }
+      if(options.provider&&result.kind==='source-repair')result.generationProviderRequest={provider:options.provider,applied:false,reason:'Author-provider selection applies to test generation. Source repair retains dedicated JSON-worker roles.'};
       if(result.status==='ready-for-review'&&!options.local){try{result=publishImprovement(root,result,{baseBranch:options['base-branch']});}catch(error){result={...result,published:false,publicationError:error.message};}}
       if(result.receipt)fs.writeFileSync(result.receipt,JSON.stringify(result,null,2));
       break;

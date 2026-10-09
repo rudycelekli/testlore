@@ -34,10 +34,12 @@ Adoption progress is evidence-driven: retain misses and overhead, establish a st
 ## One-command local setup
 
 ```sh
-npm exec --yes --package=testlore@0.1.0 -- testlore setup
+npm exec --yes --package=github:rudycelekli/testlore#main -- testlore setup --verify --json
 ```
 
-This creates a named project quality-agent profile, native runner configuration with local analysis caching and shadow execution, and a shadow/full GitHub workflow. It preserves existing configuration/workflows and makes no agent calls or optional SDK downloads. Inspect and commit those files before running `improve`. A local TestLore dev dependency is required for the optional `testlore/playwright` fixture; temporary npm execution cannot supply a persistent project import.
+This uses current Git source, configures a named project quality-agent profile and shadow/full workflow, chooses suitable installed complementary adapters, and immediately executes native full shadow verification. Pin a reviewed Git commit for reproducibility. Omit `--verify` to avoid execution. Existing choices and workflows are preserved; setup makes no agent calls or optional SDK downloads. Inspect and commit those files and independent requirements before running `autopilot`. Temporary npm execution does not create a persistent project dependency; use `npm install --save-dev github:rudycelekli/testlore#YOUR_REVIEWED_COMMIT` for that, including the optional `testlore/playwright` fixture.
+
+The older npm 0.1.0 release supports its original setup/improvement workflow but predates source repair and the new automatic adapter policy. npm authentication must be restored before publishing another immutable registry version; source installation does not imply registry publication. [Adapter decisions and bounded parallel generation](plugins.md).
 
 An explicit `node --test` package script takes precedence over installed Vitest/Jest development dependencies. Otherwise setup chooses the installed native framework. Local Vitest commands use a portable project-relative CLI path; existing runner configuration stays explicit.
 

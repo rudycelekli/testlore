@@ -5,6 +5,7 @@ import path from 'node:path';
 import { createHash } from 'node:crypto';
 import { fixture, write } from './helpers.js';
 import { recommendPlugins } from '../src/plugin-recommendations.js';
+import { configurePluginsAutomatically } from '../src/plugins.js';
 import { digest } from '../src/provenance.js';
 
 const sha = value => createHash('sha256').update(value).digest('hex');
@@ -34,7 +35,7 @@ test('ordinary Node/Jest/Vitest projects reuse core and never invoke package scr
   const report = recommendPlugins(root);
   assert.equal(report.execution.selected, 'core'); assert.equal(report.execution.needsChoice, false);
   assert.deepEqual(report.applicable, []); assert.equal(recommendation(report, 'agentic-qe').ready, true);
-  assert.ok(recommendation(report, 'agentic-qe').reasons.some(reason => reason.includes('never automatically')));
+  assert.ok(recommendation(report, 'agentic-qe').reasons.some(reason => reason.includes('never persists automatic')));
   assert.equal(fs.existsSync(path.join(root, 'EXECUTED_FORBIDDEN')), false);
   assert.deepEqual(recommendPlugins(root), report);
 });
@@ -75,6 +76,41 @@ test('coverage and mutation require matching declared dependencies and safe inst
   write(root, 'package.json', { name: 'sample' });
   assert.deepEqual(recommendPlugins(root).applicable, []); assert.equal(recommendation(recommendPlugins(root), 'c8').status, 'available');
   assert.equal(fs.existsSync(path.join(root, 'EXECUTED_FORBIDDEN')), false);
+});
+
+test('ready complementary add-ons compose while the explicit execution profile and generation stay intact', t => {
+  const root=fixture(t,{'package.json':{name:'sample',devDependencies:{nx:'1',c8:'1','@stryker-mutator/core':'1'}},'nx.json':{},'tddswarm.config.json':{adapter:'node',runner:['node','--test','{files}'],executionMode:'shadow'}});
+  for(const [name,bin] of [['nx','nx'],['c8','c8'],['@stryker-mutator/core','stryker'],['agentic-qe','aqe'],['@ruvector/core']])installed(root,name,bin);
+  memory(root);
+  const recommendation= recommendPlugins(root),result=configurePluginsAutomatically(root,recommendation),config=JSON.parse(fs.readFileSync(path.join(root,'tddswarm.config.json')));
+  assert.deepEqual(result.applied,['c8','stryker','ruvector']);assert.equal(result.execution.selected,'core');
+  assert.equal(config.executionMode,'shadow');assert.equal(config.adapter,'node');assert.deepEqual(config.runner,['node','--test','{files}']);
+  assert.equal(config.plugins.nx,undefined);assert.equal(config.plugins['agentic-qe'],undefined);
+  for(const id of result.applied)assert.deepEqual(config.plugins[id],{enabled:true});
+  assert.deepEqual(result.decisions.filter(item=>item.action==='enable').map(item=>item.id),result.applied);
+  assert.ok(result.decisions.find(item=>item.id==='nx').reasons.some(reason=>reason.includes('preserves the existing execution profile')));
+  assert.equal(fs.existsSync(path.join(root,'EXECUTED_FORBIDDEN')),false);
+  const repeated=configurePluginsAutomatically(root,recommendPlugins(root));assert.deepEqual(repeated.applied,[]);assert.equal(repeated.changed,false);
+  assert.ok(repeated.decisions.filter(item=>result.applied.includes(item.id)).every(item=>item.action==='retain'));
+});
+
+test('explicit disabled add-ons stay disabled while unrelated installed capabilities can be enabled', t => {
+  const root=fixture(t,{'package.json':{name:'sample',devDependencies:{c8:'1','@stryker-mutator/core':'1'}},'tddswarm.config.json':{adapter:'node',executionMode:'shadow',plugins:{c8:{enabled:false},ruvector:{enabled:false}}}});
+  installed(root,'c8','c8');installed(root,'@stryker-mutator/core','stryker');installed(root,'@ruvector/core');memory(root);
+  const result=configurePluginsAutomatically(root,recommendPlugins(root)),config=JSON.parse(fs.readFileSync(path.join(root,'tddswarm.config.json')));
+  assert.deepEqual(result.applied,['stryker']);assert.deepEqual(config.plugins.c8,{enabled:false});assert.deepEqual(config.plugins.ruvector,{enabled:false});
+  assert.equal(result.decisions.find(item=>item.id==='c8').action,'retain');assert.equal(result.decisions.find(item=>item.id==='ruvector').action,'retain');
+  assert.equal(fs.existsSync(path.join(root,'EXECUTED_FORBIDDEN')),false);
+});
+
+test('automatic complementary activation retains the explicitly selected native backend and its settings', t => {
+  const native={enabled:true,options:['manual-target']},root=fixture(t,{'package.json':{name:'native-profile',devDependencies:{c8:'1','@stryker-mutator/core':'1',nx:'1'}},'nx.json':{},'MODULE.bazel':'module(name="sample")','tddswarm.config.json':{executionMode:'shadow',executionPlugin:'nx',plugins:{nx:native}}});
+  for(const [name,bin] of [['nx','nx'],['c8','c8'],['@stryker-mutator/core','stryker']])installed(root,name,bin);
+  write(root,'tools/bazel','#!/bin/sh\nexit 99');fs.chmodSync(path.join(root,'tools/bazel'),0o755);
+  const result=configurePluginsAutomatically(root,recommendPlugins(root)),config=JSON.parse(fs.readFileSync(path.join(root,'tddswarm.config.json')));
+  assert.deepEqual(result.applied,['c8','stryker']);assert.equal(result.execution.selected,'nx');assert.equal(result.execution.needsChoice,false);
+  assert.equal(config.executionPlugin,'nx');assert.deepEqual(config.plugins.nx,native);assert.equal(config.plugins.bazel,undefined);assert.equal(config.executionMode,'shadow');
+  assert.equal(result.decisions.find(item=>item.id==='nx').action,'retain');assert.equal(result.decisions.find(item=>item.id==='bazel').action,'skip');assert.equal(fs.existsSync(path.join(root,'EXECUTED_FORBIDDEN')),false);
 });
 
 test('RuVector requires intact nonempty local learning and preserves disabled learning', t => {
