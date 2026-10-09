@@ -85,6 +85,8 @@ Audit + shadow validation on PRs · full tests on default-branch pushes
 
 Failed validation retains the proposal and its evidence for inspection. Missing requirements or a worker produces a concrete work order. Merging remains your decision. [Full workflow →](docs/improvement.md)
 
+**Source workflow: find → delegate → repair → review.** The next-release source adds `testlore autopilot` and `testlore repair`: bounded agent tasks, unchanged original assertions, repeated native validation, an isolated source-fix branch, and a PR bound to the tested commit. Node assertion repair is the first supported profile. A green suite uses the existing test-improvement flow. These commands are not in npm 0.1.0 yet. [Installed workflow, limits and opt-in ongoing operation →](docs/autonomous-repair.md)
+
 Personalize your project agent:
 
 ```sh

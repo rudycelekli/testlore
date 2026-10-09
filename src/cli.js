@@ -17,6 +17,8 @@ const commandModules = {
   pilot: ['pilot'], 'pilot-export': ['pilot'],
   plugins: ['files', 'plugins', 'plugin-recommendations'],
   improve: ['files', 'agent-profile', 'improvement', 'quality-layer', 'pull-request'],
+  repair: ['files', 'repair', 'pull-request'],
+  autopilot: ['files', 'repair', 'improvement', 'pull-request'],
   agent: ['agent-profile'], learn: ['learning'], recall: ['learning'], 'learning-export': ['learning'],
   snapshot: ['files', 'provenance'], evidence: ['evidence'],
   mutation: ['files', 'quality-measurement', 'evidence'], effectiveness: ['files', 'quality-measurement'],
@@ -50,6 +52,8 @@ Usage: testlore <command> [options]
   agent       Create or inspect your project quality agent (--name optional)
   plugins     Choose project-fit tools with --recommend/--auto; enable, disable, select, check
   improve     New branch, reviewed tests, full validation, automatic GitHub PR
+  repair      Bounded source repair of repeated Node assertion failures, automatic PR
+  autopilot   Discover failures or test gaps; delegate, validate, and open a review PR
   init        Create configuration and a local health report (never overwrite)
   audit       Grade static test structure; report what has not been measured
   plan        Explain which tests a Git change can affect
@@ -90,6 +94,8 @@ Options:
   --shadow           Run the full suite while recording the proposed selection
   --execute          Invoke an agent (generate) or apply a validated patch (apply)
   --local            Keep a tested improvement branch without opening a PR
+  --sources <paths>  Comma-separated existing production source scope for repair
+  --autofix          setup: add an opt-in trusted self-hosted agent workflow
   --no-ci            Do not add a project quality workflow
   --action-ref <ref>  Pin the installed quality action to a reviewed Git ref
   --json             Machine-readable output
@@ -101,8 +107,8 @@ need explicit declarations. No AI account required for audit, plan, or run.
 export function parseArgs(args) {
   const options = {};
   let command = 'help';
-  const values = new Set(['root','base','changed','output','report','type','provenance','repeat','id','patch','target','framework','head','action-ref','base-branch','query','name','enable','disable','select','plugin','settings','manifest','mutate','defects','revision','deadline-ms','trusted-key','checkpoint','claim','verdict','reviewer']);
-  const flags = new Set(['json', 'full', 'shadow', 'execute', 'help', 'version', 'local', 'no-ci','check','recommend','auto','selective','allow-execution','unified-native','verify']);
+  const values = new Set(['root','base','changed','output','report','type','provenance','repeat','id','patch','target','framework','head','action-ref','base-branch','query','name','enable','disable','select','plugin','settings','manifest','mutate','defects','revision','deadline-ms','trusted-key','checkpoint','claim','verdict','reviewer','sources']);
+  const flags = new Set(['json', 'full', 'shadow', 'execute', 'help', 'version', 'local', 'no-ci','check','recommend','auto','selective','allow-execution','unified-native','verify','autofix']);
   if (args[0] && !args[0].startsWith('-')) command = args.shift();
   for (let i = 0; i < args.length; i++) {
     const key = args[i].replace(/^--/, '');
@@ -126,6 +132,11 @@ const loopOptions = {
 };
 function validateLoopOptions(command, options) {
   if (!Object.hasOwn(loopOptions, command)) {
+    if(['repair','autopilot'].includes(command)){
+      if(options['deadline-ms']!==undefined&&(!/^\d+$/.test(options['deadline-ms'])||Number(options['deadline-ms'])<1||Number(options['deadline-ms'])>900000))throw new Error('--deadline-ms must be 1–900000');
+      for(const key of ['revision','trusted-key','checkpoint','claim','verdict','reviewer'])if(key in options)throw new Error(`--${key} requires an evidence-loop command`);
+      return;
+    }
     for (const key of ['revision', 'deadline-ms', 'trusted-key', 'checkpoint', 'claim', 'verdict', 'reviewer']) if (key in options) throw new Error(`--${key} requires an evidence-loop command`);
     return;
   }
@@ -172,7 +183,7 @@ function human(command, result) {
   if (command === 'audit') return `${result.testFiles} test files · static triage grade ${result.grade}${result.score === null ? '' : ` (${result.score}/100)`}\n${Object.entries(result.measured).map(([key,value])=>`${key}: ${value?'measured (see JSON scope)':'not measured'}`).join(' · ')}\n${result.files.flatMap(f => f.findings.map(x => `  ${f.file}:${x.line} — ${x.message}`)).join('\n')}\n${result.sourcesWithoutImportingTests.length} source files have no importing tests (not a coverage result).`;
   if (command === 'plan') return `${result.mode.toUpperCase()} · ${result.selected.length}/${result.total} test files selected\n${result.reasons.length ? `Reasons: ${result.reasons.join(', ')}\n` : ''}${result.decisions.map(d => `${d.selected ? 'RUN ' : 'SKIP'} ${d.test} — ${d.reasons.join(', ')}${d.paths.length ? `\n     ${d.paths.map(p => p.join(' → ')).join('\n     ')}` : ''}`).join('\n')}\nStatic evidence; runtime dependencies require declarations.`;
   if (command === 'run') return `${human('plan', result.plan)}\n${result.error || (result.executed ? `Runner exited ${result.exitCode}${result.shadow ? ' (shadow: full suite)' : ''} in ${result.durationMs} ms.` : 'No tests selected.')}`;
-  if(command==='improve')return `${result.status} · ${result.branch}\n${result.worktree||''}\n${result.pullRequest||result.publicationError||result.error||'Review the retained improvement receipt.'}`;
+  if(['improve','repair','autopilot'].includes(command))return `${result.status} · ${result.branch||result.kind||command}\n${result.worktree||''}\n${result.pullRequest||result.publicationError||result.error||result.next?.join('\n')||'Review the retained improvement receipt.'}`;
   if (command === 'modules') return `${result.groups.map(g => `${g.name}: ${g.tests.join(', ')}`).join('\n')}\nProposal only; no tests rewritten.`;
   if (command === 'generate') return result.executed ? `${result.status}: ${result.files.length} files staged in ${result.directory}\n${result.review.findings.join('\n')}\nExecution and mutation effectiveness: not measured. Review candidates before copying.` : `${result.purpose}: ${result.subjects.length} subjects\nRoles: ${result.roles.join(' → ')}\nNo agent invoked. Configure an agent and requirements, then use generate --execute.\nUse --json to export the complete work order.`;
   return JSON.stringify(result, null, 2);
@@ -192,6 +203,8 @@ export async function main(args = process.argv.slice(2)) {
   }
   if (options['unified-native'] && !['run','pilot'].includes(command)) throw new Error('--unified-native applies only to run or pilot');
   if(options.verify&&command!=='setup')throw new Error('--verify applies only to setup');
+  if(options.autofix&&command!=='setup')throw new Error('--autofix applies only to setup');
+  if(options.sources&&!['repair','autopilot'].includes(command))throw new Error('--sources applies only to repair or autopilot');
   if(options.verify&&options.selective)throw new Error('setup --verify always uses full shadow verification');
   if (options['allow-execution']) throw new Error('--allow-execution applies only to mcp');
   if ((options.auto || options.recommend) && command !== 'plugins') throw new Error('--auto and --recommend require the plugins command');
@@ -200,7 +213,7 @@ export async function main(args = process.argv.slice(2)) {
   const implementations = await loadCommand(command);
   const {audit, modules, plan, generate, run, runUnifiedNative, snapshot, ingestQuality,
     measureStability, captureRuntime, stagePatch, validateCandidates, applyPatch,
-    externalPlan, externalRun, aqeGenerate, improve, installQualityLayer, installQualityWorkflow,
+    externalPlan, externalRun, aqeGenerate, improve, repair, installQualityLayer, installQualityWorkflow, installAutofixWorkflow, assertAutofixPrerequisites,
     publishImprovement, recallLessons, reflectLearning, exportLearning, ensureQualityAgent,
     seedRequirements, initializeWitness, observeQuality, inspectEvidenceLoop, challengeEvidence,
     reviewEvidence, recallOutcomeLessons, safePath, readConfig, git, pluginCatalog, configurePlugin,
@@ -232,7 +245,11 @@ export async function main(args = process.argv.slice(2)) {
       result=adoptionReadiness(root);break;
     }
     case 'setup': {
+      if(options.autofix&&options['no-ci'])throw new Error('setup --autofix requires CI');
+      // Validate agent prerequisites before mutating setup files.
+      if(options.autofix)assertAutofixPrerequisites(root,readConfig(root),{actionRef:options['action-ref']});
       const written=installQualityLayer(root,{ci:!options['no-ci'],actionRef:options['action-ref']});
+      if(options.autofix)written.push(...installAutofixWorkflow(root,{actionRef:options['action-ref']}));
       const agent=ensureQualityAgent(root,{name:options.name});
       result={written,agent,executionMode:readConfig(root).executionMode||'existing-policy',readiness:adoptionReadiness(root),plugins:recommendPlugins(root),next:['testlore doctor --json','testlore run --shadow --base HEAD --json','testlore report','testlore mappings --json']};
       if(options.verify){
@@ -240,6 +257,25 @@ export async function main(args = process.argv.slice(2)) {
         result.verification=verify(root,{base:options.base||'HEAD',shadow:true,capture:true});
         result.next=['testlore report','Review the retained full-run outcomes and uncertainties before permitting omissions.','testlore mappings --json'];
       }
+      break;
+    }
+    case 'repair':
+    case 'autopilot': {
+      const permitted=new Set(['root','json','local','sources','deadline-ms','base-branch','patch']);
+      if(Object.keys(options).some(key=>!permitted.has(key)))throw new Error(`${command} accepts only --root, --json, --local, --sources, --deadline-ms, --base-branch and --patch`);
+      const {spawnSync}=await import('node:child_process');
+      let agent=readConfig(root).agent;
+      if(!agent&&!options.patch){const probe=spawnSync('codex',['--version'],{encoding:'utf8',timeout:5000,shell:false});if(!probe.error&&probe.status===0)agent=[process.execPath,fileURLToPath(new URL('./adapters/codex.js',import.meta.url))];}
+      const patchFile=options.patch?safePath(root,options.patch):null;
+      if(patchFile&&fs.statSync(patchFile).size>128*1024)throw new Error('Repair patch exceeds 128 KiB');
+      const repairOptions={agent,sourcePaths:options.sources?.split(',').filter(Boolean),deadlineMs:options['deadline-ms']===undefined?undefined:Number(options['deadline-ms']),patch:patchFile?JSON.parse(fs.readFileSync(patchFile,'utf8')):undefined};
+      result=await repair(root,repairOptions);
+      if(command==='autopilot'&&!patchFile&&(result.status==='no-failures'||result.status==='unsupported-repair-evidence'||result.status==='baseline-incomplete'&&result.detection?.discovery?.complete&&!result.detection.discovery.files.length)){
+        const detection={status:result.status,receipt:result.receipt,sourceRepairSupported:result.status!=='unsupported-repair-evidence'};
+        result=await improve(root,{agent});result.autopilotDetection=detection;
+      }
+      if(result.status==='ready-for-review'&&!options.local){try{result=publishImprovement(root,result,{baseBranch:options['base-branch']});}catch(error){result={...result,published:false,publicationError:error.message};}}
+      if(result.receipt)fs.writeFileSync(result.receipt,JSON.stringify(result,null,2));
       break;
     }
     case 'report': result=JSON.parse(fs.readFileSync(safePath(root,options.report||'.tddswarm/last-run.json'),'utf8'));if(!options.json){console.log(renderRunReport(result));return result.exitCode||0;}break;
@@ -348,7 +384,7 @@ export async function main(args = process.argv.slice(2)) {
   if(command==='observe')return result.exitCode ?? 2;
   if(command==='loop-status')return result.valid && result.complete ? 0 : 2;
   if(command==='challenge')return result.supported ? 0 : 1;
-  if(command==='improve')return result.status==='ready-for-review'&&(options.local||result.published)?0:2;
+  if(['improve','repair','autopilot'].includes(command))return result.status==='ready-for-review'&&(options.local||result.published)?0:2;
   if(command==='plugins' && options.check)return result.exitCode || 0;
   if(command==='doctor')return result.blocked.length?1:0;
   if(command==='pilot' && result.executed)return result.valid?0:1;

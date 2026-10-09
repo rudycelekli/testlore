@@ -50,3 +50,17 @@ test('explicit Node test scripts win over SDK dependencies and produce usable sh
  assert.equal(config.adapter,'node');assert.deepEqual(config.runner,['node','--test','{files}']);
  const report=run(root,{capture:true});assert.equal(report.complete,true);assert.equal(report.shadow,true);assert.equal(report.exitCode,0);assert.equal(report.tests.length,2);
 });
+
+test('autofix is explicit, pinned and restricted to trusted default-branch agent runners',async t=>{
+ const {installAutofixWorkflow}=await import('../src/quality-layer.js');const {commit}=await import('./helpers.js');
+ const root=fixture(t,{...twoModules,'tddswarm.requirements.md':'a must export one and b must export two.','tddswarm.config.json':{adapter:'node',agent:['node','quality-worker.cjs'],repair:{sourcePaths:['src/a.js']}}});commit(root);
+ assert.throws(()=>installAutofixWorkflow(root,{actionRef:'main'}),/exact reviewed/);assert.equal(fs.existsSync(path.join(root,'.github/workflows/testlore-autofix.yml')),false);
+ assert.deepEqual(installAutofixWorkflow(root,{actionRef:'a'.repeat(40)}),['.github/workflows/testlore-autofix.yml']);
+ const workflow=fs.readFileSync(path.join(root,'.github/workflows/testlore-autofix.yml'),'utf8');
+ assert.match(workflow,/runs-on: \[self-hosted, testlore\]/);assert.match(workflow,/if: github.ref == 'refs\/heads\/main'/);assert.match(workflow,/contents: write/);assert.match(workflow,/pull-requests: write/);assert.doesNotMatch(workflow,/pull_request:/);assert.match(workflow,/--paginate --slurp/);assert.match(workflow,/testlore-source-head/);assert.match(workflow,/--ignore-scripts --omit=dev/);assert.match(workflow,/autopilot --deadline-ms 900000/);assert.doesNotMatch(workflow,/pr merge|pull_request_target/);
+ assert.deepEqual(installAutofixWorkflow(root,{actionRef:'a'.repeat(40)}),[]);
+});
+test('autofix without independent requirements or a configured worker does not write a workflow',async t=>{
+ const {installAutofixWorkflow}=await import('../src/quality-layer.js');const {commit}=await import('./helpers.js');const root=fixture(t,twoModules);commit(root);
+ assert.throws(()=>installAutofixWorkflow(root,{actionRef:'a'.repeat(40)}),/explicit agent/);assert.equal(fs.existsSync(path.join(root,'.github/workflows/testlore-autofix.yml')),false);
+});
