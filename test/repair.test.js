@@ -32,6 +32,14 @@ test('wrong source repair never commits, and test edits cannot replace a repair'
  const root=project(t),wrong=await repair(root,{patch:patch('export const a=99;'),sourcePaths:['src/a.js']});cleanup(t,root,wrong);assert.equal(wrong.status,'validation-rejected');assert.equal(wrong.sha,null);
  const oracle=await repair(root,{patch:{files:[{path:'test/a.test.js',content:"import test from 'node:test';test('a',()=>{});"}],review},sourcePaths:['src/a.js']});cleanup(t,root,oracle);assert.equal(oracle.status,'failed');assert.equal(oracle.sha,null);assert.match(oracle.error,/source|path|scope|file/i);
 });
+test('a final assertion unexpectedly skipped after repeated candidate passes cannot commit',async t=>{
+ const root=project(t,{'test/a.test.js':`import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';import {a} from '../src/a.js';
+const marker='.tddswarm/executed-original-case';test('a',{skip:a===1&&fs.existsSync(marker)},()=>{fs.mkdirSync('.tddswarm',{recursive:true});fs.writeFileSync(marker,'observed');assert.equal(a,1);});`});
+ const result=await repair(root,{patch:patch('export const a=1;'),sourcePaths:['src/a.js']});cleanup(t,root,result);
+ assert.equal(result.validation.accepted,true);assert.equal(result.fullRun.complete,true);assert.equal(result.fullRun.exitCode,0);
+ assert.equal(result.fullRun.tests.find(row=>row.name==='a').status,'skipped');
+ assert.equal(result.status,'full-run-failed');assert.equal(result.sha,null);assert.equal(result.published,false);
+});
 test('dirty callers, empty requirements, unsupported evidence and oversized scopes stay bounded',async t=>{
  const root=project(t);write(root,'src/b.js','export const b=3;');await assert.rejects(repair(root,{patch:patch('export const a=1;')}),/Commit or stash/);git(root,'restore','src/b.js');
  await assert.rejects(repair(root,{sourcePaths:Array(33).fill('src/a.js')}),/1–32/);await assert.rejects(repair(root,{deadlineMs:900001}),/deadlineMs/);

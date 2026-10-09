@@ -28,7 +28,7 @@ export function repairFullSuite(root,{timeoutMs=120000}={}){
   return {...execute(root,discovery.files,config,{capture:true,timeoutMs:remaining()}),discovery,credentialPolicy:'fresh-native-home-and-masked-auth-environment'};
  });
 }
-const inventory=tests=>tests.map(test=>JSON.stringify([test.file,test.name,test.project||null])).sort();
+const inventory=tests=>tests.map(test=>JSON.stringify([test.file,test.name,test.project||null,test.status])).sort();
 function boundInteger(value,fallback,max,label){const number=value??fallback;if(!Number.isSafeInteger(number)||number<1||number>max)throw new Error(`${label} must be an integer from 1 to ${max}`);return number;}
 
 /** A single bounded repair round. Agents propose; only the controller writes. */
@@ -75,7 +75,7 @@ export async function repair(root,options={}){
   const tested=snapshot(worktree,readConfig(worktree)),testedInputs=inputs(worktreeRoot),testedState=captureRepairState(worktree,{deadline:performance.now()+remaining()});
   result.fullRun=repairFullSuite(worktree,{timeoutMs:Math.min(timeoutMs,remaining())});
   const final=result.fullRun,expected=result.validation.candidate?.tests;
-  if(!final.complete||final.exitCode!==0||!final.tests.some(test=>test.status==='passed')||!expected||JSON.stringify(inventory(expected))!==JSON.stringify(inventory(final.tests))){result.status='full-run-failed';return receipt();}
+  if(!final.complete||final.exitCode!==0||!final.tests.some(test=>test.status==='passed')||!expected||JSON.stringify(inventory(expected))!==JSON.stringify(inventory(final.tests))){result.status='full-run-failed';result.error='Final native execution must preserve the validated case identities and pass/skip outcomes';result.next=['Inspect final native evidence for missing, failed or newly skipped assertions.','Resolve unstable outcomes before starting another bounded repair round.'];return receipt();}
   const afterRun=captureRepairState(worktree,{deadline:performance.now()+remaining()}),callerState=captureRepairState(root,{deadline:performance.now()+remaining()});
   if(inputs(worktreeRoot)!==testedInputs||!freshness(tested,snapshot(worktree,readConfig(worktree))).fresh||afterRun.scope.fingerprint!==testedState.scope.fingerprint||afterRun.dependencies.fingerprint!==testedState.dependencies.fingerprint)throw new Error('Repository or dependencies changed during final repair validation');
   if(git(repository,['rev-parse','HEAD']).trim()!==base||clean(repository,prefix).length||!freshness(before,snapshot(root,readConfig(root))).fresh||callerState.scope.fingerprint!==originalState.scope.fingerprint||callerState.dependencies.fingerprint!==originalState.dependencies.fingerprint)throw new Error('Original checkout changed during repair');
