@@ -110,7 +110,11 @@ export async function contributedE2EPilot({directory,output,candidateRoot}){
   protectedHashes=Object.fromEntries(files.filter(file=>!SOURCES.map(source=>'packages/e2e/'+source).includes(file)).map(file=>[file,trackedDigest(upstream,file)]));
   for(const file of SOURCES)sourceOriginal[file]=fs.readFileSync(path.join(root,file));
   await checked('install-pnpm',tools,['npm','install','--prefix',tools,'--ignore-scripts','--no-audit','--no-fund','pnpm@12.3.4'],180000);
-  const pnpmIdentity=declaredPnpmExecutable(path.join(tools,'node_modules/pnpm')),pnpm=[pnpmIdentity.executable];await checked('pnpm-version',upstream,[...pnpm,'--version']);if(stdout('pnpm-version')!=='12.3.4')throw Error('pnpm version mismatch');
+  const pnpmIdentity=declaredPnpmExecutable(path.join(tools,'node_modules/pnpm')),pnpm=[pnpmIdentity.executable];
+  // Original scripts invoke pnpm recursively by name. Expose the verified
+  // pinned executable as a normal installed manager, before any ambient one.
+  env.PATH=[path.dirname(pnpmIdentity.executable),path.dirname(process.execPath),env.PATH].join(path.delimiter);
+  await checked('pnpm-version',upstream,[...pnpm,'--version']);if(stdout('pnpm-version')!=='12.3.4')throw Error('pnpm version mismatch');
   await checked('original-install',upstream,[...pnpm,'install','--frozen-lockfile'],600000);await checked('original-build',upstream,[...pnpm,'run','build'],600000);
   const vitest=path.join(root,'node_modules/vitest/vitest.mjs'),cli=path.join(candidateRoot,'src/cli.js');
   const candidatePackage=JSON.parse(fs.readFileSync(path.join(candidateRoot,'package.json')));if(candidatePackage.name!=='testlore'||candidatePackage.version!=='0.1.0'||!/^[a-f0-9]{40}$/.test(candidatePackage.gitHead||''))throw Error('Sealed installed TestLore candidate provenance missing');

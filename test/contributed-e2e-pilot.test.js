@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
+import {spawnSync} from 'node:child_process';
 import {assessContributedE2E,declaredPnpmExecutable} from '../scripts/contributed-e2e-pilot.js';
 const root='/upstream/packages/e2e',oracle='tests/unit/globs.test.ts',other='tests/unit/regexp.test.ts';
 const name='glob grammar ? matches exactly one non-/ character';
@@ -41,5 +42,15 @@ test('pnpm executable follows exact installed metadata instead of guessed v11 la
   const result=declaredPnpmExecutable(root);assert.equal(result.executable,path.join(root,'pnpm'));assert.equal(result.entry,'pnpm');assert.match(result.executableSha256,/^[a-f0-9]{64}$/);
   for(const bin of ['../outside','/absolute','missing']){fs.writeFileSync(path.join(root,'package.json'),JSON.stringify({...manifest,bin:{pnpm:bin}}));assert.throws(()=>declaredPnpmExecutable(root));}
   fs.writeFileSync(path.join(root,'package.json'),JSON.stringify({...manifest,version:'11.0.0'}));assert.throws(()=>declaredPnpmExecutable(root));
+ }finally{fs.rmSync(root,{recursive:true,force:true});}
+});
+
+test('recursive original build scripts find the verified pinned package manager by name',()=>{
+ const root=fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(),'testlore-pnpm-path-')));
+ try{
+  fs.writeFileSync(path.join(root,'package.json'),JSON.stringify({name:'pnpm',version:'12.3.4',bin:{pnpm:'pnpm'}}));
+  fs.writeFileSync(path.join(root,'pnpm'),"#!/bin/sh\nprintf '12.3.4\\n'\n",{mode:0o755});
+  const pinned=declaredPnpmExecutable(root),env={PATH:[path.dirname(pinned.executable),path.dirname(process.execPath)].join(path.delimiter)};
+  const result=spawnSync('/bin/sh',['-c','pnpm --version'],{encoding:'utf8',env});assert.equal(result.status,0,result.stderr);assert.equal(result.stdout.trim(),'12.3.4');
  }finally{fs.rmSync(root,{recursive:true,force:true});}
 });

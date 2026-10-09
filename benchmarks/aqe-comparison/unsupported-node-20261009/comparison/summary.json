@@ -1,0 +1,77 @@
+{
+  "schemaVersion": 1,
+  "completed": true,
+  "manifestHash": "27b80e2241f6abf12861411e1067dbaaddd4b7fd3c485a90716888599893bd1b",
+  "generatedAt": "2026-10-09T14:51:23.984Z",
+  "campaignMs": 1939.267275000002,
+  "repeats": [
+    {
+      "repeat": 0,
+      "candidateHash": null,
+      "generationMs": 616.1964289999996,
+      "evaluationMs": 0.05253200000151992,
+      "validationMs": null,
+      "generationComplete": false,
+      "generationRejected": true,
+      "timedOut": false,
+      "candidateStable": false,
+      "independentFaultDemonstrated": true,
+      "candidateCaughtHistoricalFault": false,
+      "upstreamQualityGates": [],
+      "aqeAlone": {
+        "returnedDraft": false,
+        "measuredCaught": false,
+        "promotionPolicy": "Not inferred from a CLI quality score."
+      },
+      "aqePlusTestLore": {
+        "accepted": false,
+        "measuredCaught": false,
+        "reasons": [
+          "generation-did-not-complete"
+        ]
+      },
+      "detectionImprovementClaim": false,
+      "cost": {
+        "providerCurrency": null,
+        "tokens": null,
+        "paidCredentialsPassed": false
+      },
+      "learningImprovementClaim": false
+    },
+    {
+      "repeat": 1,
+      "candidateHash": null,
+      "generationMs": 630.7416899999989,
+      "evaluationMs": 0.04270099999848753,
+      "validationMs": null,
+      "generationComplete": false,
+      "generationRejected": true,
+      "timedOut": false,
+      "candidateStable": false,
+      "independentFaultDemonstrated": true,
+      "candidateCaughtHistoricalFault": false,
+      "upstreamQualityGates": [],
+      "aqeAlone": {
+        "returnedDraft": false,
+        "measuredCaught": false,
+        "promotionPolicy": "Not inferred from a CLI quality score."
+      },
+      "aqePlusTestLore": {
+        "accepted": false,
+        "measuredCaught": false,
+        "reasons": [
+          "generation-did-not-complete"
+        ]
+      },
+      "detectionImprovementClaim": false,
+      "cost": {
+        "providerCurrency": null,
+        "tokens": null,
+        "paidCredentialsPassed": false
+      },
+      "learningImprovementClaim": false
+    }
+  ],
+  "scope": "One new independently maintained historical defect, two credential-free template generation repetitions; no upstream full installation, live model, learning or general superiority qualification.",
+  "qualifiedAdvantage": false
+}

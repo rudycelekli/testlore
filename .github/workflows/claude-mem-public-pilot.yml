@@ -13,7 +13,8 @@ permissions:
   contents: read
 concurrency:
   group: claude-mem-public-pilot-${{ github.ref }}
-  cancel-in-progress: true
+  # Original native campaigns must finish and upload losses before replacements.
+  cancel-in-progress: false
 jobs:
   original-bun:
     runs-on: ubuntu-latest

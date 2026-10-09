@@ -8,7 +8,7 @@ Primary source: [published tag's CLI generation contract](https://github.com/pro
 
 ## Frozen independent challenge
 
-The new unit is maintainer-authored `jonschlinkert/is-number` [issue #3's genuine fix](https://github.com/jonschlinkert/is-number/commit/12749e3c411750f754d50f093471234c7ab270b0), compared with its first parent `204c885659b8ee1946534c61db91603b9a16d661`. The complete original source, tests, package declaration, README and license are archived with SHA-256 and Git blob identities. This specification was not in TestLore's earlier generation cohorts. That disjointness does not prove semantic independence, provider-training secrecy or a trusted timestamp.
+The unit is maintainer-authored `jonschlinkert/is-number` [issue #3's genuine fix](https://github.com/jonschlinkert/is-number/commit/12749e3c411750f754d50f093471234c7ab270b0), compared with its first parent `204c885659b8ee1946534c61db91603b9a16d661`. The complete original source, tests, package declaration, README and license are archived with SHA-256 and Git blob identities. This specification was not in TestLore's earlier generation cohorts. That disjointness does not prove semantic independence, provider-training secrecy or a trusted timestamp.
 
 The executable oracle selects the maintainer's two deterministic whitespace-only table entries and preserves the exact `assert.equal(isNumber(num), false);` assertion body. It adapts Mocha/import entry points and deterministic case titles before generation. The entire historical test also includes random values and timestamps; this assay explicitly qualifies the two issue #3 cases, not the entire upstream Mocha environment. Original archived bytes never change. `kind-of@3.0.2` is pinned within the original `^3.0.2` dependency declaration; its lockfile is retained by the runner.
 
@@ -17,6 +17,8 @@ The generator sees fixed source and the existing selected contract tests. It nev
 ## Equal budgets and separate measurements
 
 Two independent AQE generation repetitions each have one bounded CLI invocation, 120 seconds, no retries and no passed provider credentials. The adapter's capability probe, source snapshot, actual generation, output parsing and retention are included in generation timing. Both arms share each resulting candidate identity; the composition is not given additional author calls or hidden repairs.
+
+The default supported profile now uses the same root-installed, lock-bound Vitest 5.0.2 CLI in both arms. Its independently frozen reference imports Vitest describe/it and Node createRequire for the exact CommonJS source, preserving the maintainer assertion body and real CR/LF/tab input bytes. The earlier Node framework profile remains immutable.
 
 Each draft runs twice on fixed source and twice on the historical parent with a ten-second execution limit. The maintainer oracle separately demonstrates fixed pass/parent failure twice. Defect detection requires named assertion failures, not syntax errors, imports failing or `<file-load>` failures. Stable identities and outcomes matter. TestLore's existing `stagePatch`/`validateCandidates` path then checks preservation of original cases and the independently demonstrated defect in disposable file copies. This file isolation is not a security sandbox; only pinned, trusted upstream code belongs in the campaign.
 
@@ -51,3 +53,9 @@ A successful script exit means the bounded comparison was collected, even if bot
 ## Bootstrap observations (October 9)
 
 The first hosted attempt stopped before installation because the dependency-free bootstrap omitted its `node:path` import. The second installed both exact distributions but rejected the executable declaration: npm's registry metadata reported `dist/cli/bundle.js`, while the integrity-verified tarball contains `./dist/cli/bundle.js`. Both spellings resolve to the same pinned relative entry point; the runner now admits those two exact spellings. Neither attempt executed generation or established a quality improvement. The installed lock and inventory are retained in the [second run](https://github.com/rudycelekli/testlore/actions/runs/37945888316).
+
+## Actual retained unsupported-profile result
+
+[Hosted run 37947219864](https://github.com/rudycelekli/testlore/actions/runs/37947219864) completed collection under source `7532ad0`, but both AQE calls rejected `Unsupported test framework: node`. There were no drafts or TestLore candidate validations. Independent fixed-source assertions passed and the historical parent failed twice per repetition. Generation took about 616/631 ms; installation-to-result took 29.65 s. Currency/token cost is unknown. This establishes an unsupported CLI path and a demonstrated held-out fault, not a combination advantage. The [original artifact and negative replay](../benchmarks/aqe-comparison/unsupported-node-20261009/README.md) are preserved.
+
+The separate [prospective Vitest manifest](../benchmarks/aqe-comparison/is-number-whitespace-v1/manifest-vitest.json) changes only the runner/import adaptation under identical author budgets. The source, defect and assertion body are unchanged; this is no longer an unseen task, and no learning claim is permitted. The next actual run must qualify its fixed/fault native oracle and complete supported generation before comparing drafts.

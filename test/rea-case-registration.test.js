@@ -5,6 +5,7 @@ import os from 'node:os';
 import path from 'node:path';
 import {spawnSync} from 'node:child_process';
 import {fileURLToPath} from 'node:url';
+import {runInNewContext} from 'node:vm';
 import {REA_CASE_FILE,REA_CASE_SOURCE_SHA256,WINDOWS_DECLARATION,registrationHash,plainParameterDigest,registerReaWindowsCases,transformReaWindowsCases,assessReaRegistrations,observeReaCaseRegistrations,reaRegistrationReporterSource,reaRegistrationRuntimeSource} from '../scripts/rea-case-registration.js';
 const original=fs.readFileSync(new URL('./fixtures/rea-case-registration/sessionPathInputs.test.ts.txt',import.meta.url),'utf8');
 function fixture(){
@@ -63,13 +64,14 @@ test('native Vitest carries actual row metadata from collection through skipped 
  fs.writeFileSync(path.join(root,'package.json'),JSON.stringify({type:'module'}));fs.mkdirSync(path.join(root,'src/contracts'),{recursive:true});
  const {manifest}=fixture();manifest.platform=process.platform;
  fs.writeFileSync(path.join(root,'src/contracts/testlore.rea-case-registration.runtime.mjs'),reaRegistrationRuntimeSource());
- const source=String.raw`import {describe,it} from 'vitest';import {z} from 'zod';
+ const tableSource=WINDOWS_DECLARATION.slice('it.each('.length,WINDOWS_DECLARATION.indexOf('])("accepts')+1);
+ const source=`import {describe,it} from 'vitest';import {z} from 'zod';
 import {registerReaWindowsCases} from './testlore.rea-case-registration.runtime.mjs';
 const closeBinaryInputSchema=z.strictObject({snapshot_path:z.string().optional()});
 const exportEvidenceBundleInputSchema=z.strictObject({path:z.string()});
 describe.skip('controlled metadata transport only',()=>{
-registerReaWindowsCases(it,[[closeBinaryInputSchema,{snapshot_path:'C:\rea\analysis.json'}],[closeBinaryInputSchema,{snapshot_path:'C:/rea/analysis.json'}],[exportEvidenceBundleInputSchema,{path:'C:/rea/bundle.json'}]],'accepts %o',()=>{}, {closeBinaryInputSchema,exportEvidenceBundleInputSchema},MANIFEST);
-});`.replace('MANIFEST',JSON.stringify(manifest));
+registerReaWindowsCases(it,${tableSource},'accepts %o',()=>{}, {closeBinaryInputSchema,exportEvidenceBundleInputSchema},${JSON.stringify(manifest)});
+});`;
  fs.writeFileSync(path.join(root,REA_CASE_FILE),source);
  fs.writeFileSync(path.join(root,'registration-reporter.mjs'),reaRegistrationReporterSource(manifest));
  fs.writeFileSync(path.join(root,'vitest.config.mjs'),"export default {test:{includeTaskLocation:true,include:['src/contracts/sessionPathInputs.test.ts'],maxWorkers:1,reporters:['default','./registration-reporter.mjs']}};");
@@ -78,4 +80,12 @@ registerReaWindowsCases(it,[[closeBinaryInputSchema,{snapshot_path:'C:\rea\analy
  assert.equal(result.error,undefined,result.error?.message);assert.equal(result.status,0,result.stdout+result.stderr);
  const receipt=observeReaCaseRegistrations(result.stdout,manifest);assert.equal(receipt.observations.length,3);assert.equal(receipt.independentlyRechecked,true);assert.equal(receipt.omissionAuthority,false);
  // This exercises real transport, not the pinned REA source or its dependency environment.
+});
+
+test('frozen raw table literal and metadata digest preserve the actual single Windows path separators',()=>{
+ const {manifest}=fixture();const tableSource=WINDOWS_DECLARATION.slice('it.each('.length,WINDOWS_DECLARATION.indexOf('])("accepts')+1);
+ const actual=runInNewContext('('+tableSource+')',{closeBinaryInputSchema:{},exportEvidenceBundleInputSchema:{}});
+ const input=JSON.parse(JSON.stringify(actual[0][1]));
+ assert.equal(input.snapshot_path,'C:'+String.fromCharCode(92)+'rea'+String.fromCharCode(92)+'analysis.json');
+ assert.equal(plainParameterDigest(input),manifest.rows[0].inputSha256);
 });

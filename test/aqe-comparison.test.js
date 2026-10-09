@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
+import {runInNewContext} from 'node:vm';
 import {loadAqeComparison,summarizeAqePair} from '../scripts/aqe-comparison.js';
 
 const passed={complete:true,exitCode:0,tests:[{file:'candidate.test.js',name:'whitespace',status:'passed'}]};
@@ -42,4 +43,19 @@ test('missing independent oracle repetitions and rejected generation cannot demo
  const empty=runs();empty.oracleFixed=[];empty.oracleFault=[];
  assert.equal(summarizeAqePair({complete:true},empty,{accepted:true}).independentFaultDemonstrated,false);
  assert.equal(summarizeAqePair({complete:false},runs(),{accepted:true}).candidateCaughtHistoricalFault,false);
+});
+
+test('supported Vitest profile preserves Node oracle and genuine whitespace bytes without rewriting old manifest',()=>{
+ const original=loadAqeComparison(new URL('../benchmarks/aqe-comparison/is-number-whitespace-v1/manifest.json',import.meta.url).pathname),supported=loadAqeComparison();
+ assert.equal(original.framework,'node');assert.equal(supported.framework,'vitest');assert.equal(supported.manifest.nativeRunner.version,'5.0.2');
+ assert.equal(original.source,supported.source);assert.equal(original.fault,supported.fault);assert.match(supported.reference,/assert.equal\(isNumber\(num\), false\);/);
+ assert.match(supported.reference,/createRequire/);assert.doesNotMatch(supported.reference,/node:test/);
+ for(const reference of [original.reference,supported.reference]){const values=runInNewContext(reference.match(/const shouldFail=(.+);\ndescribe/)[1]);assert.deepEqual(Array.from(values[1],c=>c.charCodeAt(0)),[13,10,9]);}
+ assert.deepEqual(original.manifest.budgets,supported.manifest.budgets);
+});
+
+test('retained actual CLI rejection replays as unsupported, not a successful combination',async()=>{
+ const {verifyUnsupportedAqeObservation}=await import('../scripts/aqe-frozen-replay.js');
+ const report=verifyUnsupportedAqeObservation();assert.equal(report.observationReplayed,true);assert.equal(report.comparisonExecuted,false);assert.equal(report.qualifiedAdvantage,false);
+ for(const repeat of report.repetitions){assert.equal(repeat.rejectionCategory,'unsupported-framework');assert.equal(repeat.independentFaultDemonstrated,true);assert.equal(repeat.candidateCaughtHistoricalFault,false);assert.equal(repeat.aqePlusTestLore.accepted,false);assert.equal(repeat.cost.tokens,null);}
 });

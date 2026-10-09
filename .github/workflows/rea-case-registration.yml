@@ -53,7 +53,7 @@ jobs:
             if(producerInstall.exitCode!==0||producerInstall.reason)throw Error('Producer dependency installation rejected');
             const installDir=path.join(evidence,'install');fs.mkdirSync(installDir);
             const lockBefore=registrationHash(fs.readFileSync(path.join(upstream,'package-lock.json')));
-            const install=await boundedInstallProcess(process.execPath,[npm,'ci'],{cwd:upstream,directory:installDir,env,timeoutMs:180000,reserveBytes:2*1024**3,maxGrowthBytes:450*1024**2,maxLogBytes:2*1024**2,terminateDescendants:true});save('install.json',install);
+            const install=await boundedInstallProcess(process.execPath,[npm,'ci'],{cwd:upstream,directory:installDir,env,timeoutMs:180000,reserveBytes:2*1024**3,maxGrowthBytes:768*1024**2,maxLogBytes:2*1024**2,terminateDescendants:true});save('install.json',{...install,resourcePolicy:{timeoutMs:180000,reserveBytes:2*1024**3,maxGrowthBytes:768*1024**2,reviewedReason:'Original full REA npm ci exceeded 450MiB with observed 501014528-byte growth in retained run37947220000; native dependencies remain unfiltered.'}});
             if(install.exitCode!==0||install.reason||!install.stdoutSha256||!install.stderrSha256)throw Error('Original REA installation blocked or incomplete');
             if(registrationHash(fs.readFileSync(path.join(upstream,'package-lock.json')))!==lockBefore)throw Error('Original upstream lock changed');
             fs.copyFileSync(path.join(upstream,'package-lock.json'),path.join(evidence,'package-lock.json'),fs.constants.COPYFILE_EXCL);

@@ -19,3 +19,9 @@ This evidence supports comparison of **these three actually skipped registration
 The overlay never authorizes an omission. All other named outcomes retain strict native comparison. Unknown dependencies and unsupported plugins retain conservative fallback. The producer is deliberately an explicit experimental profile rather than a claim of untouched original runner execution. A selective or faster run is not established until the complete independent campaign succeeds under its own criteria.
 
 The local tests validate transformations and rejection rules using controlled registration objects. They do not claim that Vitest collected metadata successfully; an actual native run must supply that evidence separately. The archived maintainer test fixture retains its source license.
+
+## Retained actual failures
+
+The first hosted producer attempt under source `7532ad0` never reached REA task collection: its original installation exceeded 450 MiB growth. The [immutable installation rejection](../benchmarks/rea-case-registration/installation-blocked-20261009/README.md) retains the artifact and raw receipts. A separately reviewed 768 MiB cap applies prospectively to REA only, with the same deadline/reserve and original dependencies.
+
+The first full-source native transport fixture also exposed an incorrectly escaped Windows input in its handwritten JavaScript source template. The source-bound producer metadata was already correct. The native fixture now uses the exact original frozen table source rather than a separately escaped copy; matching rules were not relaxed. A direct raw-literal-to-input-digest test now catches that error. Passing controlled evaluator tests still cannot substitute for native REA registration evidence.

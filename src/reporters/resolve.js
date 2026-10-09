@@ -6,6 +6,7 @@ import { pathToFileURL } from 'node:url';
 import { spawnSync } from 'node:child_process';
 import {encodeNativeFrame,nativeFrameReader,readNativeJson} from '../native-protocol.js';
 import {phaseTimings} from '../timing.js';
+import {createNativeResolutionPass} from '../native-resolution-targets.js';
 import {nativeSourceSummaryReader} from '../native-source-summaries.js';
 import {captureConfigurationInputs,assertConfigurationInputFreshness,admitsCanonicalTempDirectory} from '../configuration-inputs.js';
 const workerTiming=phaseTimings();
@@ -228,15 +229,16 @@ try {
     workerTiming.mark('sourceExpansionAndConfigurationAdmission');
     const aliases = value => Array.isArray(value) ? value : Object.entries(value || {}).map(([find, replacement]) => ({ find, replacement }));
     const server = context ? context.vite : await vite.createServer({ ...base, root, mode, configFile: false, logLevel: 'silent', server: { ...base.server, middlewareMode: true, watch: null }, resolve: { ...base.resolve, alias: [...aliases(base.test?.alias), ...aliases(base.resolve?.alias)] } });
+    let resolutionPass;
     try {
+      resolutionPass=createNativeResolutionPass(()=>context?projects.map(project=>project.vite):[server]);
       for (let index=0;index<queue.length;index++) {
         const { file, specifier } = queue[index];
         const resolved = [];
         // Preserve both client and SSR possibilities instead of guessing package conditions.
         let missing=false;
-        for (const projectServer of context?projects.map(project=>project.vite):[server]) for (const ssr of [false, true]) {
-          const container = ssr && projectServer.environments?.ssr?.pluginContainer || projectServer.pluginContainer;
-          const found=(await container.resolveId(specifier, path.resolve(root, file), { ssr }))?.id?.split('?')[0];
+        for(const response of await resolutionPass.resolve(specifier,path.resolve(root,file))) {
+          const found=response?.id?.split('?')[0];
           if(!found)missing=true;
           resolved.push(found);
         }
@@ -246,7 +248,7 @@ try {
         if(missing)result.unresolved=true;
         record(result,queue[index],index);
       }
-    } finally { if(!context)await server.close(); }
+    } finally { if(resolutionPass)output.nativeResolutionDiagnostics=resolutionPass.diagnostics();if(!context)await server.close(); }
     workerTiming.mark('nativeImportResolution');
     if(request.unified) {
       const plannedTiming=workerTiming.finish();
