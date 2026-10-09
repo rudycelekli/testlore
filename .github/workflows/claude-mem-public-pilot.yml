@@ -98,8 +98,12 @@ jobs:
           fs.writeFileSync(path.join(directory,'campaign-process.json'),JSON.stringify(result,null,2)+'\n');
           if(result.reason||result.signal||![0,3].includes(result.exitCode))process.exit(1);
           const assessment=JSON.parse(fs.readFileSync(path.join(output,'assessment.json')));
-          if(assessment.upstreamRevision!=='fa8ab09f06aa05f958c5225cf3756ce52a3ebb96'||assessment.bunVersion!=='1.4.2'||assessment.protectedInputsUnchanged!==true||assessment.observationCompleted!==true||assessment.trials.length!==3)process.exit(1);
-          if(!assessment.qualified)console.log('::notice::Completed negative claude-mem measurement; no qualification or speed claim.');
+          if(assessment.upstreamRevision!=='fa8ab09f06aa05f958c5225cf3756ce52a3ebb96'||assessment.bunVersion!=='1.4.2'||assessment.protectedInputsUnchanged!==true||assessment.collectionCompleted!==true||assessment.baselines?.length!==6)process.exit(1);
+          const assigned=[...(assessment.trials||[]).map(t=>t.repetition),...(assessment.notRun||[]).filter(t=>t.stage==='fault-full-and-testlore').map(t=>t.repetition)].sort();
+          if(JSON.stringify(assigned)!=='[0,1,2]')process.exit(1);
+          if(assessment.regressionAdmission?.admitted===false&&(assessment.trials.length!==0||assessment.notRun?.length!==4))process.exit(1);
+          if(assessment.qualified&&assessment.observationCompleted!==true)process.exit(1);
+          if(!assessment.qualified)console.log('::notice::Finished bounded negative collection; rejected/incomplete native outcomes remain unqualified and faults after rejected prerequisites were not run.');
           JS
       - name: Preserve raw native reports and losses
         if: always()

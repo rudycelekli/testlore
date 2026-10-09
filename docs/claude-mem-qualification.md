@@ -2,8 +2,9 @@
 
 The first campaign pins `thedotmack/claude-mem` at
 `fa8ab09f06aa05f958c5225cf3756ce52a3ebb96` (13.35.0), and Bun at 1.4.2.
-There is no current qualified public result or speed claim until the raw campaign
-artifacts have been produced and independently assessed.
+The recorded native campaign remains unqualified and establishes no speed
+advantage. Individually completed original scopes are reported separately from
+the rejected full suite and routing profile.
 
 The first hosted attempt at TestLore source `664d762ffe12ef5c53b28384aa2a6ef3f9220a13`
 passed all 17 Bun/evaluator checks but did not reach an upstream baseline. The
@@ -30,6 +31,26 @@ diagnostic baselines after a completed installation, but preserves the rejected
 inventory and forces overall qualification false. It adds no missing packages,
 changes no source tests and upgrades no runtime to manufacture a successful
 environment.
+
+The [third campaign](https://github.com/rudycelekli/testlore/actions/runs/37947220123)
+at source `7532ad0005c81686e7edaa3729b349cd5cb43690` finally executed genuine Bun
+tests. Original SQLite (244 cases/34 files), worker search (80/7), context (236/30)
+and server (322/43) scopes completed green. The full `bun test tests` timed out
+at 180 seconds and remains incomplete. The routes scope completed with five
+existing browser failures: Chromium never signalled restart-page readiness
+within each test's original 30-second window. That scope took about 159 seconds.
+
+The old harness wrongly proceeded to fault trials despite the rejected routes
+baseline. Three trials independently demonstrated the timestamp-tie failure and
+TestLore retained all six observed failures, but these are diagnostic trials,
+not qualified regression results. TestLore ran all 57 files and took 321–323
+seconds versus native execution's 158–159 seconds. Full-execution discovery
+itself took about 159 seconds; planning beyond discovery was about five seconds.
+Restoration still had the same five browser failures. There is no omission or
+speed win. The original receipt's per-trial `valid:true` flags are insufficient
+because the original scope never qualified; the new prerequisite gate rejects
+that promotion. `native-diagnostics.json.gz` retains every original native
+JSON/XML/stdout/stderr and TestLore report, unchanged, including negative outcomes.
 
 TestLore uses Bun's own terminal JUnit file, rather than parsing console output
 or translating Bun tests into Node tests. The parser validates aggregate counts,
@@ -69,6 +90,23 @@ that upstream provided an immutable root dependency environment.
 The optional installation receipt binds the original manifest and completed
 installation process. Missing or rejected dependency inventory cannot establish
 overall qualification, even if native diagnostic trials finish successfully.
+
+Before any historical fault, the unchanged original worker/http/routes baseline
+must finish green, and the exact original timestamp-tie oracle must independently
+pass. A rejected or interrupted prerequisite leaves all three fault trials
+explicitly not run; independent preregistered baseline scopes are still retained.
+After a fault is applied, a complete native run must independently demonstrate
+that specific defect before TestLore executes. An incomplete TestLore arm stops
+remaining trials for that scope. The collector can finish reporting a bounded
+negative campaign (`collectionCompleted`) while native execution remains
+unqualified (`observationCompleted:false`). These fields are deliberately
+separate: a timeout is never counted as completed native execution.
+Before each fault iteration, the prospective profile reserves four complete
+180-second arms (native fault, TestLore discovery, TestLore execution and native
+restoration) plus a 60-second planning/reporting margin inside the unchanged
+36-minute controller deadline. Remaining repetitions are explicitly not run if
+that budget no longer fits. These gates are prospective; old results are not
+retroactively rewritten.
 
 Preregistered baselines are `bun test tests`, plus sqlite, worker/search, context,
 server and worker/http/routes scopes. Baseline losses remain in the result. Three regression trials

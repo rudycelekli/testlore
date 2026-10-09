@@ -1,0 +1,91 @@
+{
+  "schemaVersion": 1,
+  "runId": 37950751379,
+  "artifactId": 11626405703,
+  "sourceRevision": "c124677344aad9f4d2bdba70a48c43c9d0b378cb",
+  "artifactSha256": "c96000c574720975850e11e92cf1e3fcb32ecc52b57abb39787dd0b5cf9aac9f",
+  "artifactBytes": 645039,
+  "members": {
+    "assessment.json": {
+      "bytes": 12598,
+      "sha256": "c9bb6f67871df053657e341ba6fdbbb0bb343b5302ecf4798ef29d42b5f6f887"
+    },
+    "install/stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "install/stdout.log": {
+      "bytes": 200,
+      "sha256": "1e14bf62e6ed39189bdab17c57ad9472cc84be746403f913cd454e514babafe2"
+    },
+    "install.json": {
+      "bytes": 945,
+      "sha256": "cc51e6a3704c30a8033652097c4466f0f3134093ff213e4ccaaf3d973bdffbc5"
+    },
+    "installed-inventory.json": {
+      "bytes": 2408248,
+      "sha256": "9320266d673a7f2dae9391e1bd026ea1fb1f93b2ba33763d00a19f811cb6fcbd"
+    },
+    "native-0/native.json": {
+      "bytes": 8914,
+      "sha256": "1537f7d746dd9614a065763b7d30a7f0e16e94634a2f089897147d47058c4b6b"
+    },
+    "native-0/stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "native-0/stdout.log": {
+      "bytes": 4793,
+      "sha256": "c0f2a684e42ad143e2c33e748265ff2fb1c8fbd17f8b716fd866b7cfd54efd3d"
+    },
+    "native-0.json": {
+      "bytes": 1099,
+      "sha256": "74eba1df02856c0c4323524fbb5b4a0e265b8948b51536071ce8065d6a78102a"
+    },
+    "native-1/native.json": {
+      "bytes": 8915,
+      "sha256": "a07b85405f43bfec306b0aec95ffb776d787412066ffaa9a99f86ccb31d40cef"
+    },
+    "native-1/stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "native-1/stdout.log": {
+      "bytes": 4793,
+      "sha256": "0fbce22a852dbfd690ffdc9e55d876e60ce3599020a6e5a693b4fb3c10c6b0c2"
+    },
+    "native-1.json": {
+      "bytes": 1099,
+      "sha256": "b8539fe4a94a57c6632d6e93c746bb0422d5819204e05d3603d0b90261fdcccc"
+    },
+    "package-lock.json": {
+      "bytes": 288176,
+      "sha256": "7296c105b0ee331d613edd79639cea1493568cfdad7ed8077866f7451f920dac"
+    },
+    "producer-install/stderr.log": {
+      "bytes": 23283,
+      "sha256": "90612893309400f4779a96848d766beac03ae6f149de2c736030534351757bb1"
+    },
+    "producer-install.json": {
+      "bytes": 664,
+      "sha256": "f10cf06ac689d62b671d4c9ade99d1ea1e6e092151d450aa7f9eb89529d6c755"
+    },
+    "producer-install/stdout.log": {
+      "bytes": 315,
+      "sha256": "f48d650ae7230d1c8fac40ce9d666d48c7307ec5422f30f312b0d21dc8f6a5f8"
+    },
+    "profile.json": {
+      "bytes": 6385,
+      "sha256": "6f136435d5cb1dc1da18d5adda29a1b64180db4ab8e3f35281ead3788cafabff"
+    },
+    "registration-0.json": {
+      "bytes": 5665,
+      "sha256": "75da903524dde55822c4f7f8d5fc3ff464035743c5f4f02aa7b8e93e137981b0"
+    },
+    "registration-1.json": {
+      "bytes": 5665,
+      "sha256": "75da903524dde55822c4f7f8d5fc3ff464035743c5f4f02aa7b8e93e137981b0"
+    }
+  },
+  "omissionAuthority": false
+}

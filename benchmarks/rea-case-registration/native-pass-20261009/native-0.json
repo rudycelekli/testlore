@@ -1,0 +1,34 @@
+{
+  "command": [
+    "/home/runner/work/testlore/testlore/.rea-registration-upstream/node_modules/vitest/vitest.mjs",
+    "run",
+    "--config",
+    "testlore.rea-registration.config.mjs",
+    "--project",
+    "domain",
+    "--outputFile",
+    "/home/runner/work/testlore/testlore/.tddswarm/rea-registration-native/native-0/native.json",
+    "src/contracts/sessionPathInputs.test.ts"
+  ],
+  "event": {
+    "exitCode": 0,
+    "signal": null,
+    "reason": null,
+    "durationMs": 1544,
+    "finalResources": {
+      "availableBytes": 90719911936,
+      "growthBytes": 57344,
+      "stdoutBytes": 4793,
+      "stderrBytes": 0
+    },
+    "stdoutSha256": "c0f2a684e42ad143e2c33e748265ff2fb1c8fbd17f8b716fd866b7cfd54efd3d",
+    "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "descendantCleanup": {
+      "scope": "Observed process-tree/start identity best effort; unobserved/reparented children and arbitrary subprocesses are not contained",
+      "observed": 0,
+      "survivingAtClose": 0,
+      "observationFailed": false,
+      "requested": false
+    }
+  }
+}

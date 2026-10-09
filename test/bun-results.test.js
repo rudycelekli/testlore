@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 import {spawnSync} from 'node:child_process';
-import {bunResults,bunCommand,readBunReport} from '../src/bun-results.js';
+import {bunResults,bunCommand,readBunReport,bunBaselineAdmission,bunTrialBudget} from '../src/bun-results.js';
 import {execute,discover,adapterFor,resolveNativeBatch} from '../src/execution.js';
 import {fixture} from './helpers.js';
 
@@ -32,6 +32,23 @@ test('Bun command uses exact relative paths and rejects scope/mutation/early-exi
  assert.equal(adapterFor({runner:['bun','test','{files}']}),'bun');assert.deepEqual(bunCommand(['bun','test','--timeout','5000','{files}'],'/private/report',['a.test.ts']).slice(-1),['./a.test.ts']);
  for(const arg of ['--bail','--only','--changed','-t','--update-snapshots','tests','--rerun-each=3'])assert.throws(()=>bunCommand(['bun','test',arg],'/private/report',['a.test.ts']));
  assert.equal(resolveNativeBatch('.',[],{adapter:'bun'}).complete,false);
+});
+test('Bun regression admission requires the independently passing original oracle, not a successful process alone',()=>{
+ const prerequisite={requiredFile:'original.test.ts',requiredTitleContains:'same millisecond'};
+ const oracle={file:'original.test.ts',name:'native semantic case',title:'same millisecond',line:8,status:'passed'};
+ const baseline={complete:true,exitCode:0,tests:[oracle]};
+ assert.equal(bunBaselineAdmission(baseline,prerequisite).admitted,true);
+ assert.equal(bunBaselineAdmission({...baseline,tests:[{...oracle,status:'skipped'}]}).admitted,false);
+ for(const value of [null,{...baseline,complete:false},{...baseline,exitCode:null,signal:'SIGKILL',error:'ETIMEDOUT'},{...baseline,exitCode:1},{...baseline,tests:[]},{...baseline,tests:[{...oracle,status:'skipped'}]},{...baseline,tests:[{...oracle,status:'failed'}]},{...baseline,tests:[{...oracle,line:0}]},{...baseline,tests:[{...oracle,file:'unrelated.test.ts'}]},{...baseline,tests:[oracle,oracle]}]){
+  const admission=bunBaselineAdmission(value,prerequisite);assert.equal(admission.admitted,false);assert.ok(admission.reasons.length);
+ }
+});
+test('Bun trial reserves native fault, discovery, execution, restoration and reporting before starting',()=>{
+ const ceiling=36*60*1000,reserve=4*180000+60000;
+ assert.equal(bunTrialBudget(ceiling-reserve).admitted,true);
+ const rejected=bunTrialBudget(ceiling-reserve+1);assert.equal(rejected.admitted,false);assert.equal(rejected.requiredMs,reserve);
+ assert.equal(bunTrialBudget(ceiling+1).remainingMs,0);
+ for(const elapsed of [NaN,Infinity,-1])assert.throws(()=>bunTrialBudget(elapsed));
 });
 const available=spawnSync('bun',['--version'],{encoding:'utf8'}).status===0;
 test('native Bun full discovery and execution preserve exact case failures and skips',{skip:!available&&process.env.TESTLORE_REQUIRE_BUN!=='1'},t=>{

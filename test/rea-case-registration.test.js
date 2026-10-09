@@ -102,3 +102,9 @@ test('frozen raw table literal and metadata digest preserve the actual single Wi
  assert.equal(input.snapshot_path,'C:'+String.fromCharCode(92)+'rea'+String.fromCharCode(92)+'analysis.json');
  assert.equal(plainParameterDigest(input),manifest.rows[0].inputSha256);
 });
+
+test('actual original native receipt archive replays only its captured skipped scope',async t=>{
+ const {verifyCapturedReaRegistrations}=await import('../scripts/rea-registration-replay.js');const report=verifyCapturedReaRegistrations();assert.equal(report.complete,true);assert.equal(report.arms,2);assert.equal(report.actualSkippedRegistrationsPerArm,3);assert.equal(report.omissionAuthority,false);assert.equal(report.inputEquivalenceClaim,false);
+ const root=fs.mkdtempSync(path.join(os.tmpdir(),'testlore-rea-native-replay-'));t.after(()=>fs.rmSync(root,{recursive:true,force:true}));fs.cpSync(fileURLToPath(new URL('../benchmarks/rea-case-registration/native-pass-20261009/',import.meta.url)),root,{recursive:true});
+ fs.appendFileSync(path.join(root,'native-0/stdout.log'),'changed');assert.throws(()=>verifyCapturedReaRegistrations(root),/member changed/);
+});

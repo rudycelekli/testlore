@@ -93,3 +93,27 @@ export function bunCommand(base,reportFile,files,{scope=[]}={}) {
  for(const file of files.length?files:scope){if(typeof file!=='string'||!file||file.startsWith('-')||path.isAbsolute(file)||file.split(/[\\/]/).includes('..'))throw new Error('Invalid Bun test path');command.push('./'+file.replace(/^\.\//,''));}
  return command;
 }
+
+/** A fault campaign must start from a genuinely green original oracle scope. */
+export function bunBaselineAdmission(value,{requiredFile,requiredTitleContains}={}) {
+ const reasons=[];
+ if(value?.complete!==true)reasons.push('native-baseline-incomplete');
+ if(value?.exitCode!==0)reasons.push('native-baseline-not-green');
+ if(value?.signal||value?.error)reasons.push('native-baseline-process-or-report-error');
+ const tests=Array.isArray(value?.tests)?value.tests:[];
+ if(!tests.length)reasons.push('native-baseline-empty');
+ if(!tests.some(test=>test?.status==='passed'))reasons.push('native-baseline-no-passing-cases');
+ if(tests.some(test=>!test||typeof test.file!=='string'||typeof test.name!=='string'||!test.name||!Number.isInteger(test.line)||test.line<1||!['passed','skipped'].includes(test.status)))reasons.push('native-baseline-case-invalid-or-failed');
+ if(requiredFile){
+  const target=tests.filter(test=>test?.file===requiredFile&&typeof test.title==='string'&&test.title.includes(requiredTitleContains));
+  if(target.length!==1||target[0].status!=='passed')reasons.push('original-oracle-not-independently-passed');
+ }
+ return {admitted:reasons.length===0,reasons};
+}
+
+/** Reserve the entire worst-case trial plus restoration before changing source. */
+export function bunTrialBudget(elapsedMs,{deadlineMs=36*60*1000,armTimeoutMs=180000,reportingReserveMs=60000}={}) {
+ for(const n of [elapsedMs,deadlineMs,armTimeoutMs,reportingReserveMs])if(!Number.isFinite(n)||n<0)throw new Error('Invalid Bun campaign time budget');
+ const remainingMs=Math.max(0,deadlineMs-elapsedMs),requiredMs=4*armTimeoutMs+reportingReserveMs;
+ return {admitted:remainingMs>=requiredMs,remainingMs,requiredMs,reason:remainingMs>=requiredMs?null:'insufficient-complete-trial-and-restoration-budget'};
+}

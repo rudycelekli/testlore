@@ -1,0 +1,198 @@
+{
+  "schemaVersion": 1,
+  "independentlyReplayed": true,
+  "sourceRevision": "7532ad0005c81686e7edaa3729b349cd5cb43690",
+  "upstreamRevision": "fa8ab09f06aa05f958c5225cf3756ce52a3ebb96",
+  "verifiedMembers": 56,
+  "completeNativeReports": 9,
+  "baselineRows": [
+    {
+      "report": "campaign/baseline-tests-context.json",
+      "complete": true,
+      "exitCode": 0,
+      "cases": 236,
+      "files": 30,
+      "baselineGreen": true,
+      "durationMs": 9349
+    },
+    {
+      "report": "campaign/baseline-tests-server.json",
+      "complete": true,
+      "exitCode": 0,
+      "cases": 322,
+      "files": 43,
+      "baselineGreen": true,
+      "durationMs": 2503
+    },
+    {
+      "report": "campaign/baseline-tests-sqlite.json",
+      "complete": true,
+      "exitCode": 0,
+      "cases": 244,
+      "files": 34,
+      "baselineGreen": true,
+      "durationMs": 4198
+    },
+    {
+      "report": "campaign/baseline-tests-worker-http-routes.json",
+      "complete": true,
+      "exitCode": 1,
+      "cases": 368,
+      "files": 57,
+      "baselineGreen": false,
+      "durationMs": 159021
+    },
+    {
+      "report": "campaign/baseline-tests-worker-search.json",
+      "complete": true,
+      "exitCode": 0,
+      "cases": 80,
+      "files": 7,
+      "baselineGreen": true,
+      "durationMs": 554
+    },
+    {
+      "report": "campaign/baseline-tests.json",
+      "complete": false,
+      "exitCode": null,
+      "cases": 0,
+      "files": 0,
+      "baselineGreen": false,
+      "durationMs": 180029
+    },
+    {
+      "report": "campaign/regression-0.json",
+      "complete": true,
+      "exitCode": 1,
+      "cases": 368,
+      "files": 57,
+      "durationMs": 158972
+    },
+    {
+      "report": "campaign/regression-1.json",
+      "complete": true,
+      "exitCode": 1,
+      "cases": 368,
+      "files": 57,
+      "durationMs": 158219
+    },
+    {
+      "report": "campaign/regression-2.json",
+      "complete": true,
+      "exitCode": 1,
+      "cases": 368,
+      "files": 57,
+      "durationMs": 158791
+    },
+    {
+      "report": "campaign/restored-oracle.json",
+      "complete": true,
+      "exitCode": 1,
+      "cases": 368,
+      "files": 57,
+      "durationMs": 158933
+    }
+  ],
+  "originalRouteFailures": [
+    {
+      "file": "tests/worker/http/routes/restart-page-timeout.browser.test.ts",
+      "name": "{\"classname\":\"\",\"title\":\"restart page recovers after a stalled post request\"}",
+      "line": 16,
+      "status": "failed"
+    },
+    {
+      "file": "tests/worker/http/routes/restart-page-timeout.browser.test.ts",
+      "name": "{\"classname\":\"\",\"title\":\"restart page recovers after a stalled health request\"}",
+      "line": 16,
+      "status": "failed"
+    },
+    {
+      "file": "tests/worker/http/routes/restart-page-timeout.browser.test.ts",
+      "name": "{\"classname\":\"\",\"title\":\"restart page recovers after a stalled health-body request\"}",
+      "line": 16,
+      "status": "failed"
+    },
+    {
+      "file": "tests/worker/http/routes/restart-page-timeout.browser.test.ts",
+      "name": "{\"classname\":\"\",\"title\":\"restart page recovers after a stalled readiness request\"}",
+      "line": 16,
+      "status": "failed"
+    },
+    {
+      "file": "tests/worker/http/routes/restart-page-timeout.browser.test.ts",
+      "name": "{\"classname\":\"\",\"title\":\"restart page recovers after a stalled no-successor request\"}",
+      "line": 16,
+      "status": "failed"
+    }
+  ],
+  "diagnosticComparisons": [
+    {
+      "repetition": 0,
+      "nativeComplete": true,
+      "testLoreComplete": true,
+      "exactCaseStatusPreserved": true,
+      "selectedFiles": 57,
+      "totalFiles": 57,
+      "nativeMs": 158972,
+      "testLoreMs": 323276,
+      "testLoreMeasuredTotalMs": 323258,
+      "finalReportSealingExcluded": true,
+      "additionalHistoricalFault": [
+        {
+          "file": "tests/worker/http/routes/native-prompt-init.test.ts",
+          "name": "{\"classname\":\"native prompt init HTTP contract\",\"title\":\"broadcasts and vector-syncs each turn's own prompt when two native turns are saved in the same millisecond\"}",
+          "line": 133,
+          "status": "failed"
+        }
+      ]
+    },
+    {
+      "repetition": 1,
+      "nativeComplete": true,
+      "testLoreComplete": true,
+      "exactCaseStatusPreserved": true,
+      "selectedFiles": 57,
+      "totalFiles": 57,
+      "nativeMs": 158219,
+      "testLoreMs": 322557,
+      "testLoreMeasuredTotalMs": 322539,
+      "finalReportSealingExcluded": true,
+      "additionalHistoricalFault": [
+        {
+          "file": "tests/worker/http/routes/native-prompt-init.test.ts",
+          "name": "{\"classname\":\"native prompt init HTTP contract\",\"title\":\"broadcasts and vector-syncs each turn's own prompt when two native turns are saved in the same millisecond\"}",
+          "line": 133,
+          "status": "failed"
+        }
+      ]
+    },
+    {
+      "repetition": 2,
+      "nativeComplete": true,
+      "testLoreComplete": true,
+      "exactCaseStatusPreserved": true,
+      "selectedFiles": 57,
+      "totalFiles": 57,
+      "nativeMs": 158791,
+      "testLoreMs": 321135,
+      "testLoreMeasuredTotalMs": 321116,
+      "finalReportSealingExcluded": true,
+      "additionalHistoricalFault": [
+        {
+          "file": "tests/worker/http/routes/native-prompt-init.test.ts",
+          "name": "{\"classname\":\"native prompt init HTTP contract\",\"title\":\"broadcasts and vector-syncs each turn's own prompt when two native turns are saved in the same millisecond\"}",
+          "line": 133,
+          "status": "failed"
+        }
+      ]
+    }
+  ],
+  "collectionProcessMs": 1958399,
+  "qualified": false,
+  "reasons": [
+    "original-full-suite-timeout",
+    "original-route-baseline-not-green",
+    "dependency-inventory-rejected",
+    "full-fallback-no-speed-advantage"
+  ]
+}
