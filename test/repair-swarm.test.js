@@ -41,7 +41,8 @@ const worker=String.raw`const fs=require('fs');let input='';process.stdin.on('da
 function project(t,mode='valid',extras={}){
  const root=fixture(t,{'package.json':{type:'module'},'src/a.js':'export const a=99;','lib/b.cjs':'export const b=99;','test/a.test.js':'Independent immutable oracle bytes.','.tddswarm/worker.cjs':worker,...extras});
  const baseline={complete:true,exitCode:1,tests:[{file:'test/a.test.js',name:'a satisfies independent contract',status:'failed'}]};
- return {root,options:{agent:[process.execPath,path.join(root,'.tddswarm/worker.cjs'),mode],sourcePaths:['src/a.js','lib/b.cjs'],requirements:'Independent specification: a is one and b is two.',baseline,timeoutMs:2000,deadlineMs:10000}};
+ // Correctness guards use production budgets; timeout tests set their own short bound.
+ return {root,options:{agent:[process.execPath,path.join(root,'.tddswarm/worker.cjs'),mode],sourcePaths:['src/a.js','lib/b.cjs'],requirements:'Independent specification: a is one and b is two.',baseline}};
 }
 const log=root=>fs.existsSync(path.join(root,'.tddswarm/calls.jsonl'))?fs.readFileSync(path.join(root,'.tddswarm/calls.jsonl'),'utf8').trim().split('\n').map(line=>JSON.parse(line)):[];
 test('deterministic repair protocol proposes disjoint source patches without applying or certifying them',async t=>{
@@ -83,12 +84,12 @@ test('Git-ignored oracles, file modes and trusted dependency bytes also bind bef
 });
 test('source admission rejects missing, symlinked, test and config paths before any worker',async t=>{
  const {root,options}=project(t);fs.symlinkSync(path.join(root,'src/a.js'),path.join(root,'src/link.js'));
- for(const sourcePaths of [['src/missing.js'],['src/link.js'],['test/a.test.js'],['vitest.config.js'],['../escape.js'],['src/a.js','src/a.js']])await assert.rejects(proposeRepair(root,{...options,sourcePaths}));
+ for(const sourcePaths of [['src/missing.js'],['src/link.js'],['test/a.test.js'],['vitest.config.js'],['../escape.js'],['src/a.js','src/a.js']])await assert.rejects(proposeRepair(root,{...options,sourcePaths}),error=>{assert.equal(error.repairSwarm.failureStage,'admission');assert.equal(error.repairSwarm.attemptedCalls,0);assert.equal(error.repairSwarm.inputBindings,null);assert.equal(error.repairSwarm.accepted,false);return true;});
  assert.equal(log(root).length,0);
 });
 test('missing requirements, nonassertion or ambiguous baseline and invalid budgets invoke no workers',async t=>{
  const {root,options}=project(t);
- for(const edit of [{requirements:''},{baseline:{complete:false,exitCode:1,tests:options.baseline.tests}},{baseline:{complete:true,exitCode:0,tests:options.baseline.tests}},{baseline:{complete:true,exitCode:1,tests:[{file:'test/a.test.js',name:'<file-load>',status:'failed'}]}},{baseline:{...options.baseline,tests:[...options.baseline.tests,...options.baseline.tests]}},{maxTasks:4},{deadlineMs:0},{agent:['node','bad\0arg']}])await assert.rejects(proposeRepair(root,{...options,...edit}));
+ for(const edit of [{requirements:''},{baseline:{complete:false,exitCode:1,tests:options.baseline.tests}},{baseline:{complete:true,exitCode:0,tests:options.baseline.tests}},{baseline:{complete:true,exitCode:1,tests:[{file:'test/a.test.js',name:'<file-load>',status:'failed'}]}},{baseline:{...options.baseline,tests:[...options.baseline.tests,...options.baseline.tests]}},{maxTasks:4},{deadlineMs:0},{agent:['node','bad\0arg']}])await assert.rejects(proposeRepair(root,{...options,...edit}),error=>{assert.equal(error.repairSwarm.failureStage,'admission');assert.equal(error.repairSwarm.attemptedCalls,0);assert.equal(error.repairSwarm.cost.measurement,'not-measured');assert.equal(error.repairSwarm.accepted,false);return true;});
  assert.equal(log(root).length,0);
 });
 test('source and aggregate context byte bounds prevent large payload submission',async t=>{
@@ -104,6 +105,26 @@ test('hung, malformed and oversized deterministic workers leave bounded failed r
   const {root,options}=project(t,mode);await assert.rejects(proposeRepair(root,{...options,timeoutMs:100,maxOutputBytes:1024}),error=>{assert.equal(error.repairSwarm.attemptedCalls,1);assert.equal(error.repairSwarm.completedCalls,0);assert.equal(error.repairSwarm.workerReceipts[0].status,'failed');assert.equal(error.repairSwarm.cost.measurement,'not-measured');return true;});
  }
 });
-test('one global deadline bounds later roles instead of granting every role a fresh round budget',async t=>{
- const {root,options}=project(t,'slow');const start=performance.now();await assert.rejects(proposeRepair(root,{...options,timeoutMs:1000,deadlineMs:170}),error=>{assert.ok(error.repairSwarm.workerReceipts.every(receipt=>receipt.timeoutMs<=170));assert.ok(error.repairSwarm.workerReceipts.length<=3);assert.equal(error.repairSwarm.accepted,false);return true;});assert.ok(performance.now()-start<1200);assert.equal(log(root).some(row=>row.role==='repair-reviewer'),false);
+test('one shared deadline reaches real subprocesses with only the remaining round budget',async t=>{
+ const {root,options}=project(t,'slow'),deadlineMs=180000;
+ const result=await proposeRepair(root,{...options,timeoutMs:deadlineMs,deadlineMs}),receipts=result.workerReceipts,starts=log(root).filter(row=>row.event==='start');
+ assert.equal(receipts.length,4);assert.equal(starts.length,4);assert.equal(result.completedCalls,4);
+ for(const receipt of receipts){
+  // Rounded start times permit one millisecond, not a fresh per-role campaign.
+  assert.ok(receipt.timeoutMs<=deadlineMs-receipt.startedAfterMs+1);
+  assert.equal(starts.find(row=>row.role===receipt.role&&row.subject===receipt.subject).timeout,receipt.timeoutMs);
+ }
+ const architect=receipts[0],reviewer=receipts.at(-1);
+ assert.ok(reviewer.startedAfterMs>architect.startedAfterMs+100);
+ assert.ok(reviewer.timeoutMs<architect.timeoutMs-100);
+ assert.equal(result.budgets.rounds,1);
+});
+test('a deadline exhausted during admission retains a rejected zero-worker receipt',async t=>{
+ const {root,options}=project(t);await assert.rejects(proposeRepair(root,{...options,deadlineMs:1}),error=>{
+  assert.match(error.message,/time-budget|deadline/);const receipt=error.repairSwarm;
+  assert.equal(receipt.failureStage,'admission');assert.equal(receipt.status,'failed');assert.equal(receipt.accepted,false);
+  assert.equal(receipt.attemptedCalls,0);assert.equal(receipt.completedCalls,0);assert.deepEqual(receipt.workerReceipts,[]);
+  assert.equal(receipt.inputBindings,null);assert.equal(receipt.budgets.deadlineMs,1);assert.ok(receipt.durationMs>=1);
+  assert.equal(receipt.applied,false);assert.equal(receipt.executionValidated,false);assert.equal(receipt.cost.measurement,'not-measured');return true;
+ });assert.equal(log(root).length,0);
 });

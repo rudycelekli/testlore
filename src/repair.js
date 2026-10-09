@@ -18,10 +18,14 @@ const metadata=(row,prefix='')=>row.status==='??'&&['.tddswarm','node_modules'].
 const clean=(root,prefix)=>changes(root).filter(row=>!metadata(row,prefix));
 const inputs=root=>digest(Object.fromEntries(listFiles(root).map(file=>[file,digest(fs.readFileSync(safePath(root,file)))])));
 export function repairFullSuite(root,{timeoutMs=120000}={}){
+ const deadline=performance.now()+boundInteger(timeoutMs,120000,120000,'timeoutMs');
  return withRepairEnvironment(readConfig(root),config=>{
-  const discovery=discover(root,{...config,runnerTimeoutMs:timeoutMs,discovery:Array.isArray(config.discovery)?config.discovery:'native'});
+  const remaining=()=>Math.floor(deadline-performance.now());
+  if(remaining()<1)return {exitCode:2,complete:false,tests:[],error:'Full native phase deadline exhausted before discovery'};
+  const discovery=discover(root,{...config,runnerTimeoutMs:remaining(),discovery:Array.isArray(config.discovery)?config.discovery:'native'});
   if(!discovery.complete||!discovery.files.length)return {exitCode:2,complete:false,tests:[],discovery,error:'Full native scope is incomplete or empty'};
-  return {...execute(root,discovery.files,config,{capture:true,timeoutMs}),discovery,credentialPolicy:'fresh-native-home-and-masked-auth-environment'};
+  if(remaining()<1)return {exitCode:2,complete:false,tests:[],discovery,error:'Full native phase deadline exhausted after discovery'};
+  return {...execute(root,discovery.files,config,{capture:true,timeoutMs:remaining()}),discovery,credentialPolicy:'fresh-native-home-and-masked-auth-environment'};
  });
 }
 const inventory=tests=>tests.map(test=>JSON.stringify([test.file,test.name,test.project||null])).sort();

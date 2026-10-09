@@ -4,13 +4,22 @@ import fs from 'node:fs';
 import path from 'node:path';
 import {spawnSync} from 'node:child_process';
 import {fileURLToPath} from 'node:url';
-import {repair} from '../src/repair.js';
+import {repair,repairFullSuite} from '../src/repair.js';
 import {fixture,commit,git,twoModules,write} from './helpers.js';
 const requirements='Module a must export the integer 1. Module b must continue exporting 2. Preserve all public behavior and unchanged tests.';
 const review={accepted:true,findings:[],oracle:{independent:true,basis:[requirements]}};
 function project(t,files={}){const root=fixture(t,{...twoModules,'src/a.js':'export const a=9;','tddswarm.requirements.md':requirements,...files});commit(root);return root;}
 function cleanup(t,root,result){if(!result.worktreeRoot)return;t.after(()=>{try{git(root,'worktree','remove','--force',result.worktreeRoot);}catch{};try{git(root,'branch','-D',result.branch);}catch{};fs.rmSync(result.worktreeRoot,{force:true,recursive:true});});}
 const patch=content=>({files:[{path:'src/a.js',content}],review});
+test('full native discovery and execution share one phase timeout rather than separate allowances',t=>{
+ const root=fixture(t,{
+  'package.json':{type:'module'},
+  'test/slow.test.js':"import test from 'node:test';test('slow independent case',async()=>{await new Promise(resolve=>setTimeout(resolve,1800));});",
+  'tddswarm.config.json':{adapter:'node',discovery:[process.execPath,'-e',"setTimeout(()=>console.log(JSON.stringify({complete:true,files:['test/slow.test.js']})),1800)"],runner:[process.execPath,'--test','{files}']}
+ });
+ const report=repairFullSuite(root,{timeoutMs:3000});
+ assert.equal(report.discovery.complete,true);assert.equal(report.complete,false);assert.notEqual(report.exitCode,0);
+});
 test('source repair validates repeated unchanged assertions and commits an isolated exact tree',async t=>{
  const root=project(t),head=git(root,'rev-parse','HEAD').trim();
  const result=await repair(root,{patch:patch('export const a=1;'),sourcePaths:['src/a.js'],deadlineMs:30000});cleanup(t,root,result);

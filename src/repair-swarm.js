@@ -45,9 +45,14 @@ function workerFailure(error){
 
 /** One bounded source-repair proposal round. Acceptance here is review, never execution proof. */
 export async function proposeRepair(root,{agent,sourcePaths,requirements,baseline,timeoutMs=60000,deadlineMs=180000,maxTasks=3,maxOutputBytes=128*1024}={}){
- const started=performance.now();root=fs.realpathSync(path.resolve(root));
+ const started=performance.now(),workerReceipts=[];
+ let inputBindings=null,budgets=null,phase='admission';
+ const accounting=()=>({attemptedCalls:workerReceipts.length,completedCalls:workerReceipts.filter(receipt=>receipt.status==='completed').length,durationMs:Math.round(performance.now()-started),workerReceipts,budgets,cost:{measurement:'not-measured',tokens:null,amount:null,currency:null}});
+ try{
+ root=fs.realpathSync(path.resolve(root));
  if(!Array.isArray(agent)||!agent.length||agent.length>64||agent.some(arg=>typeof arg!=='string'||!arg||arg.includes('\0')))throw Error('Repair agent must be an executable and argv array');
  if(!Number.isInteger(timeoutMs)||timeoutMs<1||timeoutMs>360000||!Number.isInteger(deadlineMs)||deadlineMs<1||deadlineMs>900000||!Number.isInteger(maxTasks)||maxTasks<1||maxTasks>3||!Number.isInteger(maxOutputBytes)||maxOutputBytes<1024||maxOutputBytes>256*1024)throw Error('Invalid repair worker budgets');
+ budgets={timeoutMs,deadlineMs,maxTasks,maxCalls:maxTasks+2,maxOutputBytes,rounds:1};
  if(!boundedString(requirements,64*1024))throw Error('Repair requires independent requirements of at most 64 KiB');
  if(!Array.isArray(sourcePaths)||!sourcePaths.length||sourcePaths.length>32||new Set(sourcePaths).size!==sourcePaths.length||sourcePaths.some(file=>!isRepairSourcePath(file)||file.split('/').some(part=>!part||part==='.')))throw Error('Repair requires 1–32 distinct allowlisted existing source paths');
  const failures=namedFailures(root,baseline),inputState=captureRepairState(root,{deadline:started+deadlineMs}),provenance=inputState.provenance;
@@ -60,10 +65,7 @@ export async function proposeRepair(root,{agent,sourcePaths,requirements,baselin
   if(!state.fresh||provenance.revision!==current.provenance.revision||inputState.scope.fingerprint!==current.scope.fingerprint||inputState.dependencies.fingerprint!==current.dependencies.fingerprint)throw Error('Repair inputs changed while workers were running: '+state.reasons.join(', '));
  };
  const remaining=()=>Math.floor(deadlineMs-(performance.now()-started));
- const workerReceipts=[];
- const inputBindings={requirementsSha256:digest(requirements),baselineFailuresSha256:digest(failures),sourceHashes:Object.fromEntries(context.map(item=>[item.file,digest(item.content)])),repositoryFingerprint:provenance.fingerprint,scopeFingerprint:inputState.scope.fingerprint,dependencyFingerprint:inputState.dependencies.fingerprint};
- const budgets={timeoutMs,deadlineMs,maxTasks,maxCalls:maxTasks+2,maxOutputBytes,rounds:1};
- const accounting=()=>({attemptedCalls:workerReceipts.length,completedCalls:workerReceipts.filter(receipt=>receipt.status==='completed').length,durationMs:Math.round(performance.now()-started),workerReceipts,budgets,cost:{measurement:'not-measured',tokens:null,amount:null,currency:null}});
+ inputBindings={requirementsSha256:digest(requirements),baselineFailuresSha256:digest(failures),sourceHashes:Object.fromEntries(context.map(item=>[item.file,digest(item.content)])),repositoryFingerprint:provenance.fingerprint,scopeFingerprint:inputState.scope.fingerprint,dependencyFingerprint:inputState.dependencies.fingerprint};
  async function invoke(role,payload,subject){
   immutable();const available=remaining();if(available<1)throw Error('Repair round deadline exhausted');
   const timeout=Math.min(timeoutMs,available),begin=performance.now(),request={schemaVersion:1,role,requirements,baselineFailures:failures,...payload};
@@ -74,7 +76,7 @@ export async function proposeRepair(root,{agent,sourcePaths,requirements,baselin
   }catch(error){receipt.status='failed';receipt.failure=workerFailure(error);throw Error(`Repair ${role}: ${receipt.failure}`);}
   finally{receipt.durationMs=Math.round(performance.now()-begin);}
  }
- try{
+  phase='proposal';
   immutable();
   const plan=await invoke('repair-architect',{context,sourcePaths,maxTasks,acceptance:['Repair only existing allowlisted source files.','Each task owns exactly one distinct source path.','Tests, configuration, requirements and dependencies are immutable.','Return JSON proposals only; do not execute tools or edit files.']});
   if(!exact(plan,['tasks'])||!Array.isArray(plan.tasks)||!plan.tasks.length||plan.tasks.length>maxTasks)throw Error('Repair architect must return 1–'+maxTasks+' tasks');
@@ -98,5 +100,5 @@ export async function proposeRepair(root,{agent,sourcePaths,requirements,baselin
   const accepted=review.accepted&&review.oracle.independent&&review.oracle.basis.length>0;
   immutable();if(remaining()<1)throw Error('Repair round deadline exhausted');
   return {schemaVersion:1,status:accepted?'reviewed-repair':'review-rejected',accepted,review,files,requirements,sourcePaths:[...sourcePaths],baselineFailures:failures,provenance,inputBindings,...accounting(),applied:false,executionValidated:false,authority:'proposal-only'};
- }catch(error){error.repairSwarm={schemaVersion:1,status:'failed',accepted:false,inputBindings,...accounting(),applied:false,executionValidated:false};throw error;}
+ }catch(error){error.repairSwarm={schemaVersion:1,status:'failed',accepted:false,failureStage:phase,inputBindings,...accounting(),applied:false,executionValidated:false,authority:'proposal-only'};throw error;}
 }
