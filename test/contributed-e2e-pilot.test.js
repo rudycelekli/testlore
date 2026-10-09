@@ -4,7 +4,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import {spawnSync} from 'node:child_process';
-import {assessContributedE2E,declaredPnpmExecutable} from '../scripts/contributed-e2e-pilot.js';
+import {assessContributedE2E,declaredPnpmExecutable,e2eNativeCases} from '../scripts/contributed-e2e-pilot.js';
 const root='/upstream/packages/e2e',oracle='tests/unit/globs.test.ts',other='tests/unit/regexp.test.ts';
 const name='glob grammar ? matches exactly one non-/ character';
 const raw=(failed=false,files=[oracle,other])=>({success:!failed,numTotalTests:files.length,numPassedTests:files.length-(failed?1:0),numFailedTests:failed?1:0,numPendingTests:0,numRuntimeErrorTestSuites:0,testResults:files.map(file=>({name:root+'/'+file,status:failed&&file===oracle?'failed':'passed',assertionResults:[{fullName:file===oracle?name:'regexp escapes literal symbols',status:failed&&file===oracle?'failed':'passed'}]}))});
@@ -32,6 +32,21 @@ test('contradictory exit metadata and native count tampering cannot qualify',()=
 test('native selection misses remain measured while preserved TestLore failures can qualify',()=>{
  const x=fixture();for(const trial of x.trials.filter(row=>row.change===1)){trial.native=raw(false,[]);trial.nativeEvent=event(false);}
  const result=assess(x);assert.equal(result.qualified,true);assert.equal(result.rows[3].nativeMissedFailures,1);assert.equal(result.rows[3].missedFailures,0);
+});
+test('duplicate original titles permit complete negative observations but never qualified case identities',()=>{
+ const x=fixture();for(const report of [x.baseline,...x.trials.map(trial=>trial.full)]){
+  report.testResults[1].assertionResults.push(structuredClone(report.testResults[1].assertionResults[0]));report.numTotalTests++;report.numPassedTests++;
+ }
+ const result=assess(x);assert.equal(result.observationCompleted,true);assert.equal(result.qualified,false);assert.equal(result.caseIdentitiesComplete,false);assert.equal(result.ambiguousNames.length,1);
+ assert.equal(result.rows.length,6);assert.equal(result.rows[3].failedCases,1);assert.equal(result.rows[3].missedFailures,0);assert.equal(result.rows[3].testLoreMs,30);assert.equal(result.speedAdvantageObserved,false);
+ assert.ok(result.rows.every(row=>!row.valid&&row.reasons.includes('Original duplicate titles have no proven parameter identity')));
+});
+test('observed duplicate names retain exact outcome multiplicities without ordinal equivalence',()=>{
+ const report=raw();report.testResults[1].assertionResults.push({...report.testResults[1].assertionResults[0],status:'skipped'});report.numTotalTests++;report.numPendingTests++;
+ assert.throws(()=>e2eNativeCases(report,root),/Ambiguous/);
+ const observed=e2eNativeCases(report,root,{allowAmbiguousNames:true});assert.equal(observed.ambiguousNames.length,1);assert.equal(observed.cases.filter(row=>row.file===other).length,2);
+ report.testResults[1].assertionResults.reverse();assert.deepEqual(e2eNativeCases(report,root,{allowAmbiguousNames:true}),observed);
+ report.testResults[1].assertionResults.pop();assert.throws(()=>e2eNativeCases(report,root,{allowAmbiguousNames:true}),/counts/);
 });
 
 test('pnpm executable follows exact installed metadata instead of guessed v11 layout',()=>{

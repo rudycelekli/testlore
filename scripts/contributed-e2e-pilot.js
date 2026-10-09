@@ -23,9 +23,9 @@ export function declaredPnpmExecutable(directory){
  return {executable:target,packageSha256:digest(fs.readFileSync(path.join(directory,'package.json'))),executableSha256:digest(fs.readFileSync(target)),entry};
 }
 /** Reconstruct exact named outcomes independently of TestLore IDs and aggregate gates. */
-export function e2eNativeCases(value,root){
+export function e2eNativeCases(value,root,{allowAmbiguousNames=false}={}){
  if(!value||!Array.isArray(value.testResults)||typeof value.success!=='boolean'||value.numRuntimeErrorTestSuites||value.testExecError)throw Error('Native report incomplete');
- const files=[],cases=[],keys=new Set();
+ const files=[],cases=[],keys=new Set(),ambiguousNames=new Set();
  for(const suite of value.testResults){
   const file=path.isAbsolute(suite.name||suite.testFilePath)?path.relative(root,suite.name||suite.testFilePath):suite.name||suite.testFilePath;
   if(typeof file!=='string'||!/^tests\/unit\/.*\.test\.ts$/.test(file)||file.split('/').includes('..')||files.includes(file)||!Array.isArray(suite.assertionResults))throw Error('Native file scope invalid');
@@ -33,32 +33,36 @@ export function e2eNativeCases(value,root){
   for(const assertion of suite.assertionResults){
    const name=assertion.fullName||[...(assertion.ancestorTitles||[]),assertion.title].join(' '),status=['pending','todo','disabled','skipped'].includes(assertion.status)?'skipped':assertion.status;
    const key=JSON.stringify([file,name]);
-   if(typeof name!=='string'||!name||name==='<file-load>'||!['passed','failed','skipped'].includes(status)||keys.has(key))throw Error('Ambiguous or malformed native case');
+   if(typeof name!=='string'||!name||name==='<file-load>'||!['passed','failed','skipped'].includes(status))throw Error('Ambiguous or malformed native case');
+   if(keys.has(key)){if(!allowAmbiguousNames)throw Error('Ambiguous or malformed native case');ambiguousNames.add(key);}
    keys.add(key);cases.push({key,file,name,status});
   }
   if(suite.status==='failed'&&!suite.assertionResults.some(test=>test.status==='failed'))throw Error('File-load error is not an assertion failure');
  }
  if(value.numTotalTests!==cases.length||value.numPassedTests!==cases.filter(test=>test.status==='passed').length||value.numFailedTests!==cases.filter(test=>test.status==='failed').length||value.numPendingTests!==cases.filter(test=>test.status==='skipped').length||value.success!==(value.numFailedTests===0))throw Error('Native named counts or success mismatch');
- return {files:files.sort(),cases:cases.sort((a,b)=>a.key.localeCompare(b.key))};
+ return {files:files.sort(),cases:cases.sort((a,b)=>a.key.localeCompare(b.key)||a.status.localeCompare(b.status)),ambiguousNames:[...ambiguousNames].sort()};
 }
-function normalizedTestLore(value){
+function normalizedTestLore(value,{allowAmbiguousNames=false}={}){
  if(!value?.complete||!value.executed||!Array.isArray(value.tests)||!Array.isArray(value.executedTests)||!Array.isArray(value.collectionFiles)||!value.plan||!same([...value.executedTests].sort(),[...value.collectionFiles].sort())||!same([...value.plan.selected].sort(),[...value.executedTests].sort())||value.reportErrors?.length||value.error||value.signal||value.tests.some(test=>test.name==='<file-load>'))throw Error('TestLore execution incomplete');
- const keys=new Set(),cases=[];
- for(const test of value.tests){const key=JSON.stringify([test.file,test.name]);if(!value.executedTests.includes(test.file)||typeof test.name!=='string'||!test.name||!['passed','failed','skipped'].includes(test.status)||keys.has(key))throw Error('TestLore named case ambiguous');keys.add(key);cases.push({key,file:test.file,name:test.name,status:test.status});}
- return {files:[...value.executedTests].sort(),cases:cases.sort((a,b)=>a.key.localeCompare(b.key))};
+ const keys=new Set(),cases=[],ambiguousNames=new Set();
+ for(const test of value.tests){const key=JSON.stringify([test.file,test.name]);if(!value.executedTests.includes(test.file)||typeof test.name!=='string'||!test.name||!['passed','failed','skipped'].includes(test.status))throw Error('TestLore named case ambiguous');if(keys.has(key)){if(!allowAmbiguousNames)throw Error('TestLore named case ambiguous');ambiguousNames.add(key);}keys.add(key);cases.push({key,file:test.file,name:test.name,status:test.status});}
+ return {files:[...value.executedTests].sort(),cases:cases.sort((a,b)=>a.key.localeCompare(b.key)||a.status.localeCompare(b.status)),ambiguousNames:[...ambiguousNames].sort()};
 }
 /** Qualification never follows from equal counts, self-reported recall or low timings. */
 export function assessContributedE2E(baseline,trials,root,{protectedInputsUnchanged,restoredGreen}={}){
  const assessment={schemaVersion:1,repository:'tester-army/e2e',upstreamRevision:E2E_PIN,contribution:'https://github.com/tester-army/e2e/pull/927',scope:'Original e2e unit Vitest project only, following original monorepo install/build',qualified:false,observationCompleted:false,reasons:[],rows:[],claims:{generalSpeedAdvantageEstablished:false,worldClassEstablished:false,independentTestAuthorship:false},limitations:['The regression assertions landed with our own merged contribution. Upstream tests are untouched, but their authorship is not independent of our contribution.','Two source files are restored from the contribution parent while later upstream tests stay fixed; this is not the original historical full tree.','Original pnpm lock/config/package declarations and build order are retained; full means one complete unit project, not integration/browser/provider/application qualification.','Complete test-process timings include CLI imports, planning/execution/reporting and exit. Original build preparation is shared across arms and recorded separately, outside these test timings. OS caches are not reset; ordered repetitions are not certified cold/warm benchmarks.']};
  try{
-  const base=e2eNativeCases(baseline,root);if(!base.cases.length||base.cases.some(test=>test.status==='failed')||!baseline.success)throw Error('Original unit baseline is not green');
+  const base=e2eNativeCases(baseline,root,{allowAmbiguousNames:true});if(!base.cases.length||base.cases.some(test=>test.status==='failed')||!baseline.success)throw Error('Original unit baseline is not green');
+  assessment.caseIdentitiesComplete=base.ambiguousNames.length===0;assessment.ambiguousNames=base.ambiguousNames;
+  assessment.comparisonBasis='Exact file/title/status multisets; duplicate titles never receive invented ordinal identities';
+  if(!assessment.caseIdentitiesComplete)assessment.limitations.push('The original report contains duplicate case titles without parameter identities. Exact named outcome multiplicities can be observed, but individual case preservation cannot qualify.');
   if(protectedInputsUnchanged!==true)throw Error('Protected original inputs changed');if(restoredGreen!==true)throw Error('Restored unit baseline rejected');
   if(!Array.isArray(trials)||trials.length!==6||new Set(trials.map(trial=>trial.change+':'+trial.repetition)).size!==6||trials.some(trial=>![0,1].includes(trial.change)||![0,1,2].includes(trial.repetition)))throw Error('Six preregistered trials are required');
   let completed=true;
   for(const trial of trials){
    const row={change:trial.change,repetition:trial.repetition,valid:false,reasons:[]};assessment.rows.push(row);
    try{
-    const full=e2eNativeCases(trial.full,root),native=e2eNativeCases(trial.native,root),subset=normalizedTestLore(trial.testLore);
+    const full=e2eNativeCases(trial.full,root,{allowAmbiguousNames:true}),native=e2eNativeCases(trial.native,root,{allowAmbiguousNames:true}),subset=normalizedTestLore(trial.testLore,{allowAmbiguousNames:true});
     if(trial.testLore.exitCode!==trial.testLoreEvent?.exitCode)throw Error('TestLore reported/process exit mismatch');
     for(const event of [trial.fullEvent,trial.nativeEvent,trial.testLoreEvent])if(!event||event.signal||event.stoppedReason||![0,1].includes(event.exitCode)||!Number.isFinite(event.durationMs)||event.durationMs<0)throw Error('Native process incomplete');
     if(!same(full.files,base.files)||!same(full.cases.map(test=>test.key),base.cases.map(test=>test.key))||trial.testLore.plan.total!==base.files.length)throw Error('Full original named inventory drift');
@@ -72,7 +76,8 @@ export function assessContributedE2E(baseline,trials,root,{protectedInputsUnchan
     }
     const omitted=base.files.filter(file=>!subset.files.includes(file));
     if(omitted.some(file=>!trial.testLore.plan.decisions?.some(decision=>decision.test===file&&!decision.selected&&Array.isArray(decision.reasons)&&decision.reasons.length)))throw Error('Omission explanation missing');
-    Object.assign(row,{valid:true,fullFiles:base.files.length,selectedFiles:subset.files.length,nativeFiles:native.files.length,omittedFiles:omitted.length,failedCases:failures.length,missedFailures:0,nativeMissedFailures:failures.filter(test=>!native.cases.some(other=>other.key===test.key&&other.status==='failed')).length,mode:trial.testLore.plan.mode,fullMs:trial.fullEvent.durationMs,nativeMs:trial.nativeEvent.durationMs,testLoreMs:trial.testLoreEvent.durationMs});
+    Object.assign(row,{valid:assessment.caseIdentitiesComplete,caseIdentitiesComplete:assessment.caseIdentitiesComplete,fullFiles:base.files.length,selectedFiles:subset.files.length,nativeFiles:native.files.length,omittedFiles:omitted.length,failedCases:failures.length,missedFailures:0,nativeMissedFailures:failures.filter(test=>!native.cases.some(other=>other.key===test.key&&other.status==='failed')).length,mode:trial.testLore.plan.mode,fullMs:trial.fullEvent.durationMs,nativeMs:trial.nativeEvent.durationMs,testLoreMs:trial.testLoreEvent.durationMs});
+    if(!assessment.caseIdentitiesComplete){row.reasons.push('Original duplicate titles have no proven parameter identity');assessment.reasons.push(`trial-${trial.change}-${trial.repetition}:Original duplicate titles have no proven parameter identity`);}
    }catch(error){row.reasons.push(error.message);assessment.reasons.push(`trial-${trial.change}-${trial.repetition}:`+error.message);if(/incomplete|malformed|ambiguous|size bound|File-load|counts or success mismatch|scope invalid/.test(error.message))completed=false;}
   }
   assessment.observationCompleted=completed;assessment.qualified=assessment.rows.every(row=>row.valid);assessment.speedAdvantageObserved=assessment.qualified&&assessment.rows.every(row=>row.testLoreMs<row.nativeMs);
@@ -109,6 +114,9 @@ export async function contributedE2EPilot({directory,output,candidateRoot}){
   const files=fs.readFileSync(path.join(output,'tracked-files.stdout'),'utf8').split('\0').filter(Boolean);
   protectedHashes=Object.fromEntries(files.filter(file=>!SOURCES.map(source=>'packages/e2e/'+source).includes(file)).map(file=>[file,trackedDigest(upstream,file)]));
   for(const file of SOURCES)sourceOriginal[file]=fs.readFileSync(path.join(root,file));
+  // Preserve the original bytes even if installation or the first native
+  // baseline is rejected before the later change-campaign preregistration.
+  save('original-input-bindings',{schemaVersion:1,upstreamRevision:E2E_PIN,parentRevision:E2E_PARENT,node:process.version,lockSha256:E2E_LOCK_SHA,protectedHashes,sourceHashes:Object.fromEntries(SOURCES.map(file=>[file,digest(sourceOriginal[file])])),configurationSha256:digest(fs.readFileSync(path.join(root,'vitest.config.ts'))),oracleSha256:digest(fs.readFileSync(path.join(root,ORACLE)))});
   await checked('install-pnpm',tools,['npm','install','--prefix',tools,'--ignore-scripts','--no-audit','--no-fund','pnpm@12.3.4'],180000);
   const pnpmIdentity=declaredPnpmExecutable(path.join(tools,'node_modules/pnpm')),pnpm=[pnpmIdentity.executable];
   // Original scripts invoke pnpm recursively by name. Expose the verified
@@ -123,7 +131,8 @@ export async function contributedE2EPilot({directory,output,candidateRoot}){
   fs.writeFileSync(path.join(root,'tddswarm.config.json'),JSON.stringify(config));
   await checked('overlay-add',root,['git','-c','core.hooksPath=/dev/null','add','--','tddswarm.config.json']);await checked('overlay-commit',root,['git','-c','core.hooksPath=/dev/null','-c','user.name=TestLore Pilot','-c','user.email=pilot@localhost','commit','-m','Controlled quality configuration overlay']);
   const native=async(label,related,changedSources=SOURCES)=>{const report=path.join(output,label+'.json'),command=[process.execPath,vitest,related?'related':'run','--config','vitest.config.ts','--project','unit',...(related?[...changedSources.map(file=>'./'+file),'--run','--passWithNoTests']:[]),'--reporter=json','--outputFile='+report];const event=await invoke(label,root,command);return {value:boundedJson(report),event};};
-  const reference=await native('independent-original-unit-baseline',false);baseline=reference.value;const base=e2eNativeCases(baseline,root);if(reference.event.exitCode!==0||!base.cases.length)throw Error('Original unit baseline rejected');
+  const reference=await native('independent-original-unit-baseline',false);baseline=reference.value;const base=e2eNativeCases(baseline,root,{allowAmbiguousNames:true});if(reference.event.exitCode!==0||!base.cases.length)throw Error('Original unit baseline rejected');
+  save('baseline-case-identities',{complete:base.ambiguousNames.length===0,ambiguousNames:base.ambiguousNames,policy:'Observe duplicate-title multisets without assigning ordinal identity; qualification remains blocked'});
   await checked('old-globs',root,['git','show',E2E_PARENT+':packages/e2e/'+SOURCES[0]]);await checked('old-regexp',root,['git','show',E2E_PARENT+':packages/e2e/'+SOURCES[1]]);const old=Object.fromEntries(SOURCES.map((file,index)=>[file,fs.readFileSync(path.join(output,(index?'old-regexp':'old-globs')+'.stdout'))]));
   if(!sourceOriginal[SOURCES[0]].toString().includes("new RegExp(`${source}$`, 'u')")||old[SOURCES[0]].toString().includes("new RegExp(`${source}$`, 'u')")||digest(fs.readFileSync(path.join(root,ORACLE)))!=='2580f561b298ce270295ad4991c15f6828cdc29428a697b103eb76946ef5a636')throw Error('Unicode regression preregistration mismatch');
   save('preregistered-manifest',{schemaVersion:1,upstreamRevision:E2E_PIN,parentRevision:E2E_PARENT,node:process.version,pnpm:'12.3.4',pnpmExecutable:pnpmIdentity,lockSha256:E2E_LOCK_SHA,scope:'Original e2e unit project',originalConfigurationSha256:digest(fs.readFileSync(path.join(root,'vitest.config.ts'))),oracleSha256:digest(fs.readFileSync(path.join(root,ORACLE))),protectedHashes,sourceHashes:Object.fromEntries(SOURCES.map(file=>[file,{original:digest(sourceOriginal[file]),historical:digest(old[file])}])),candidateCliSha256:digest(fs.readFileSync(cli)),candidatePackageSha256:digest(fs.readFileSync(path.join(candidateRoot,'package.json'))),candidateSourceRevision:JSON.parse(fs.readFileSync(path.join(candidateRoot,'package.json'))).gitHead||null,repetitions:3,changes:['comment-only','exact-parent-Unicode-glob-reversion'],modelBudget:0,modelCostMeasured:false,providerCredentialsInherited:false});
@@ -137,7 +146,7 @@ export async function contributedE2EPilot({directory,output,candidateRoot}){
     trials.push(trial);save(`trial-${change}-${repetition}`,trial);
    }
   }
-  for(const file of SOURCES)fs.writeFileSync(path.join(root,file),sourceOriginal[file]);await checked('original-build-restored',upstream,[...pnpm,'run','build'],600000);const restored=await native('restored-original-unit-baseline',false);const restoredCases=e2eNativeCases(restored.value,root);
+  for(const file of SOURCES)fs.writeFileSync(path.join(root,file),sourceOriginal[file]);await checked('original-build-restored',upstream,[...pnpm,'run','build'],600000);const restored=await native('restored-original-unit-baseline',false);const restoredCases=e2eNativeCases(restored.value,root,{allowAmbiguousNames:true});
   const protectedInputsUnchanged=Object.entries(protectedHashes).every(([file,hash])=>trackedDigest(upstream,file)===hash)&&digest(fs.readFileSync(path.join(upstream,'pnpm-lock.yaml')))===E2E_LOCK_SHA;
   assessment=assessContributedE2E(baseline,trials,root,{protectedInputsUnchanged,restoredGreen:restored.event.exitCode===0&&same(base,restoredCases)});
  }catch(error){assessment={schemaVersion:1,repository:'tester-army/e2e',upstreamRevision:E2E_PIN,qualified:false,observationCompleted:false,reasons:[error.message],trialsCollected:trials.length};}

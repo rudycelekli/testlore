@@ -52,14 +52,27 @@ test('receipt collection requires exactly one native output and independently re
  assert.throws(()=>observeReaCaseRegistrations(line+'\n'+line,manifest),/Unique/);
  assert.throws(()=>observeReaCaseRegistrations(line),/expected/);
  const forged={...receipt,observations:observations.slice(0,2)};assert.throws(()=>observeReaCaseRegistrations('TESTLORE_REA_CASE_REGISTRATION '+JSON.stringify(forged),manifest),/differs/);
- assert.match(reaRegistrationReporterSource(manifest),/onCollected/);assert.match(reaRegistrationReporterSource(manifest),/collection-to-result-registration-mismatch/);
+ assert.match(reaRegistrationReporterSource(manifest),/onTestModuleCollected/);assert.match(reaRegistrationReporterSource(manifest),/collection-to-result-registration-mismatch/);
 });
 
+
+test('Vitest 5 reported-task hooks bind collection to outcomes and reject changed native linkage',()=>{
+ const {manifest,observations}=fixture(),logs=[];
+ const source=reaRegistrationReporterSource(manifest).replace(/^import[^\n]*\n/,'').replace('export default class ReaRegistrationReporter','class ReaRegistrationReporter')+'\nthis.Reporter=ReaRegistrationReporter;';
+ const sandbox={assessReaRegistrations,console:{log:line=>logs.push(line)}};runInNewContext(source,sandbox);
+ const module={moduleId:'/isolated/'+REA_CASE_FILE,project:{name:'domain'}};let state='pending';
+ const tasks=observations.map(o=>({meta:()=>({testloreReaRegistration:o.registration}),parent:{type:'suite',name:'Windows absolute path forms',parent:{type:'module'}},name:'accepts ZodObject { …(16) }',fullName:'Windows absolute path forms > accepts ZodObject { …(16) }',id:o.nativeTaskId,module,project:module.project,location:o.taskLocation,result:()=>({state})}));module.children={allTests:function*(){yield* tasks;}};
+ const reporter=new sandbox.Reporter();reporter.onTestModuleCollected(module);state='skipped';reporter.onTestRunEnd([module]);
+ const receipt=observeReaCaseRegistrations(logs[0],manifest);assert.equal(receipt.observations[0].rawReportedFullName,tasks[0].fullName);assert.equal(receipt.observations[0].rawName,observations[0].rawName);
+ logs.length=0;const changed=new sandbox.Reporter();changed.onTestModuleCollected(module);tasks[0].id='changed';changed.onTestRunEnd([module]);assert.throws(()=>observeReaCaseRegistrations(logs[0],manifest),/incomplete/);
+ logs.length=0;const absent=new sandbox.Reporter();absent.onTestRunEnd([module]);assert.throws(()=>observeReaCaseRegistrations(logs[0],manifest),/incomplete/);
+});
 
 test('native Vitest carries actual row metadata from collection through skipped outcomes in a controlled transport fixture',t=>{
  const root=fs.mkdtempSync(path.join(os.tmpdir(),'testlore-rea-registration-native-'));t.after(()=>fs.rmSync(root,{recursive:true,force:true}));
  const repo=fileURLToPath(new URL('../',import.meta.url)),cli=path.join(repo,'node_modules/vitest/vitest.mjs');
  assert.equal(fs.existsSync(cli),true,'Required native Vitest dependency is missing; this check cannot be skipped.');
+ assert.equal(JSON.parse(fs.readFileSync(path.join(repo,'node_modules/vitest/package.json'),'utf8')).version,'5.0.2','The controlled native producer transport contract is pinned to root Vitest 5.0.2.');
  fs.symlinkSync(path.join(repo,'node_modules'),path.join(root,'node_modules'),'dir');
  fs.writeFileSync(path.join(root,'package.json'),JSON.stringify({type:'module'}));fs.mkdirSync(path.join(root,'src/contracts'),{recursive:true});
  const {manifest}=fixture();manifest.platform=process.platform;

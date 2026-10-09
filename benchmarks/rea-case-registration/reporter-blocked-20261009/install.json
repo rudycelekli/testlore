@@ -1,0 +1,27 @@
+{
+  "exitCode": 0,
+  "signal": null,
+  "reason": null,
+  "durationMs": 5838,
+  "finalResources": {
+    "availableBytes": 90785636352,
+    "growthBytes": 496574464,
+    "stdoutBytes": 200,
+    "stderrBytes": 0
+  },
+  "stdoutSha256": "88cb977982cc924c474448ae6f37ca6f60ac4d2a8a4b6249f97cf0709157df1e",
+  "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "descendantCleanup": {
+    "scope": "Observed process-tree/start identity best effort; unobserved/reparented children and arbitrary subprocesses are not contained",
+    "observed": 0,
+    "survivingAtClose": 0,
+    "observationFailed": false,
+    "requested": false
+  },
+  "resourcePolicy": {
+    "timeoutMs": 180000,
+    "reserveBytes": 2147483648,
+    "maxGrowthBytes": 805306368,
+    "reviewedReason": "Original full REA npm ci exceeded 450MiB with observed 501014528-byte growth in retained run37947220000; native dependencies remain unfiltered."
+  }
+}

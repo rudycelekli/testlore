@@ -1,0 +1,110 @@
+{
+  "producerRevision": "dc4dc9d39e6661f65e58b5079659361cf560eff4",
+  "manifest": {
+    "schemaVersion": 1,
+    "kind": "rea-windows-plain-input-registration-overlay",
+    "file": "src/contracts/sessionPathInputs.test.ts",
+    "sourceSha256": "6c2de4420b2b36ba34ba6da27e0cd36b269f70a442b34c5b963d1c3977213814",
+    "declarationSha256": "42c91a5b8c1729d44bde9e184add9aec45e8b9c4054980b1e151ca586fbcaddd",
+    "declarationLine": 159,
+    "bindings": {
+      "closeBinaryInputSchema": {
+        "importBinding": "closeBinaryInputSchema",
+        "file": "src/contracts/sessionLifecycleInputs.ts",
+        "sourceSha256": "fafb38cbc3dab5c72496e1f1e864bb87da8d050106c27e65075afcd812ff2917",
+        "upstreamRevision": "3dcb732da33f6ceef597506b14a4536f1c9aff96",
+        "kind": "opaque-imported-object-reference-attestation-not-structural-equivalence"
+      },
+      "exportEvidenceBundleInputSchema": {
+        "importBinding": "exportEvidenceBundleInputSchema",
+        "file": "src/contracts/sessionToolContracts.ts",
+        "sourceSha256": "9afbd4b85a9e1d9d9aa4e1bb8a53fcc00b2e6f52a90a72ec2f7be91583b96e47",
+        "upstreamRevision": "3dcb732da33f6ceef597506b14a4536f1c9aff96",
+        "kind": "opaque-imported-object-reference-attestation-not-structural-equivalence"
+      }
+    },
+    "dependencyLockSha256": "7296c105b0ee331d613edd79639cea1493568cfdad7ed8077866f7451f920dac",
+    "upstreamRevision": "3dcb732da33f6ceef597506b14a4536f1c9aff96",
+    "node": "v22.19.0",
+    "platform": "linux",
+    "arch": "x64",
+    "rows": [
+      {
+        "file": "src/contracts/sessionPathInputs.test.ts",
+        "sourceSha256": "6c2de4420b2b36ba34ba6da27e0cd36b269f70a442b34c5b963d1c3977213814",
+        "declarationSha256": "42c91a5b8c1729d44bde9e184add9aec45e8b9c4054980b1e151ca586fbcaddd",
+        "declarationRowSha256": "04386c2619f8ccb85c6e6d65244fe3b9575f1ec545ec46d3c9a94c21ae761e30",
+        "inputSha256": "26d897a8bcb3ed9e19769f65a83b9584758a6eb62fd0ec7e035bfb107177d5d2",
+        "binding": {
+          "importBinding": "closeBinaryInputSchema",
+          "file": "src/contracts/sessionLifecycleInputs.ts",
+          "sourceSha256": "fafb38cbc3dab5c72496e1f1e864bb87da8d050106c27e65075afcd812ff2917",
+          "upstreamRevision": "3dcb732da33f6ceef597506b14a4536f1c9aff96",
+          "kind": "opaque-imported-object-reference-attestation-not-structural-equivalence"
+        },
+        "dependencyLockSha256": "7296c105b0ee331d613edd79639cea1493568cfdad7ed8077866f7451f920dac",
+        "upstreamRevision": "3dcb732da33f6ceef597506b14a4536f1c9aff96",
+        "node": "v22.19.0",
+        "platform": "linux",
+        "arch": "x64",
+        "registrationId": "75f16a6ac5c2546a436ebab1a0523193574761582767e6801c93732c0aa8f8f6"
+      },
+      {
+        "file": "src/contracts/sessionPathInputs.test.ts",
+        "sourceSha256": "6c2de4420b2b36ba34ba6da27e0cd36b269f70a442b34c5b963d1c3977213814",
+        "declarationSha256": "42c91a5b8c1729d44bde9e184add9aec45e8b9c4054980b1e151ca586fbcaddd",
+        "declarationRowSha256": "5a9dfcc209d8ece26fef124d806ee100e7f5bbef4ecec614a7a14699dd982779",
+        "inputSha256": "bc1dda4bb5a7445e9d71d6aaad32d39b68fd123408a444c9f00e5fc93c7f1a83",
+        "binding": {
+          "importBinding": "closeBinaryInputSchema",
+          "file": "src/contracts/sessionLifecycleInputs.ts",
+          "sourceSha256": "fafb38cbc3dab5c72496e1f1e864bb87da8d050106c27e65075afcd812ff2917",
+          "upstreamRevision": "3dcb732da33f6ceef597506b14a4536f1c9aff96",
+          "kind": "opaque-imported-object-reference-attestation-not-structural-equivalence"
+        },
+        "dependencyLockSha256": "7296c105b0ee331d613edd79639cea1493568cfdad7ed8077866f7451f920dac",
+        "upstreamRevision": "3dcb732da33f6ceef597506b14a4536f1c9aff96",
+        "node": "v22.19.0",
+        "platform": "linux",
+        "arch": "x64",
+        "registrationId": "bccf4404c9dc75d1f58b4d94c36a602a4bf748c713ded1fe49bf747b8b3d9d12"
+      },
+      {
+        "file": "src/contracts/sessionPathInputs.test.ts",
+        "sourceSha256": "6c2de4420b2b36ba34ba6da27e0cd36b269f70a442b34c5b963d1c3977213814",
+        "declarationSha256": "42c91a5b8c1729d44bde9e184add9aec45e8b9c4054980b1e151ca586fbcaddd",
+        "declarationRowSha256": "ce0740eca9bc32c40bc5555d67f840ea8302584abcbfc31246053d792ee13ed6",
+        "inputSha256": "992e52da054319182ebc708bdee555987b9c0de09893149baf0b6aeb8457e663",
+        "binding": {
+          "importBinding": "exportEvidenceBundleInputSchema",
+          "file": "src/contracts/sessionToolContracts.ts",
+          "sourceSha256": "9afbd4b85a9e1d9d9aa4e1bb8a53fcc00b2e6f52a90a72ec2f7be91583b96e47",
+          "upstreamRevision": "3dcb732da33f6ceef597506b14a4536f1c9aff96",
+          "kind": "opaque-imported-object-reference-attestation-not-structural-equivalence"
+        },
+        "dependencyLockSha256": "7296c105b0ee331d613edd79639cea1493568cfdad7ed8077866f7451f920dac",
+        "upstreamRevision": "3dcb732da33f6ceef597506b14a4536f1c9aff96",
+        "node": "v22.19.0",
+        "platform": "linux",
+        "arch": "x64",
+        "registrationId": "c816d99575dbb4ae4449fd318a34452aae30e9b1103c13e79605b7f69420d8e2"
+      }
+    ],
+    "omissionAuthority": false,
+    "scope": "Three actual registrations, plain input digests and opaque original import reference bindings; not schema serialization or equivalent runtime semantics."
+  },
+  "files": {
+    "src/contracts/testlore.rea-case-registration.runtime.mjs": "277d2983eb884c8892169018f0cbdb6e4b61a66ad204445da46e52981350d654",
+    "testlore.rea-case-registration.plugin.mjs": "d1526ddf124f33195aa72556158c0d593c99493daff3420d3c32052c1c219b00",
+    "testlore.rea-case-registration.reporter.mjs": "51e2901023025ce40ba14521f29be595ae2a1768533662b9bb04c92efef4636d"
+  },
+  "plugin": "testlore.rea-case-registration.plugin.mjs",
+  "reporter": "testlore.rea-case-registration.reporter.mjs",
+  "omissionAuthority": false,
+  "limitations": [
+    "Original source bytes stay unchanged; explicit transform adds per-row metadata via public TestOptions.meta.",
+    "Requires actual native collection/finish receipts; mocks cannot qualify this producer.",
+    "Opaque binding attestation is not runtime schema structural equivalence. Compare only actual skipped registrations under matching profile identities.",
+    "This plugin does not authorize test omissions and may retain conservative fallback."
+  ]
+}

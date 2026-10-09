@@ -60,8 +60,19 @@ export function assessReaRegistrations(manifest,observations,{requireSkipped=tru
 }
 
 export function reaRegistrationReporterSource(manifest){
- return `import {assessReaRegistrations} from './src/contracts/testlore.rea-case-registration.runtime.mjs';\nconst manifest=${JSON.stringify(manifest)};\nconst rows=files=>{const output=[];const visit=(task,parents=[])=>{if(task.type==='test'&&task.meta?.testloreReaRegistration)output.push({rawName:[...parents,task.name].join(' '),nativeTaskId:task.id,nativeFile:task.file?.filepath||'',nativeProject:task.file?.projectName??'',taskLocation:task.location||null,status:task.result?.state==='skip'||task.mode==='skip'?'skipped':task.result?.state==='pass'?'passed':task.result?.state==='fail'?'failed':'unknown',registration:task.meta.testloreReaRegistration});for(const child of task.tasks||[])visit(child,task.type==='suite'?[...parents,task.name]:parents);};for(const file of files||[])for(const child of file.tasks||[])visit(child);return output;};\nexport default class ReaRegistrationReporter{onCollected(files){this.collected=rows(files);}onFinished(files){const observed=rows(files),assessment=assessReaRegistrations(manifest,observed);if(!this.collected||JSON.stringify(this.collected.map(r=>[r.nativeTaskId,r.registration.registrationId]))!==JSON.stringify(observed.map(r=>[r.nativeTaskId,r.registration.registrationId]))){assessment.complete=false;assessment.reasons.push('collection-to-result-registration-mismatch');}console.log('TESTLORE_REA_CASE_REGISTRATION '+JSON.stringify(assessment));}}\n`;
+ return `import {assessReaRegistrations} from './src/contracts/testlore.rea-case-registration.runtime.mjs';
+const manifest=${JSON.stringify(manifest)};
+// Vitest 5 public reported-task API; the removed legacy hooks never produce receipts.
+const rows=modules=>{const output=[];for(const module of modules||[])for(const task of module.children.allTests()){const registration=task.meta().testloreReaRegistration;if(!registration)continue;const parents=[];let parent=task.parent;while(parent?.type==='suite'){parents.unshift(parent.name);parent=parent.parent;}output.push({rawName:[...parents,task.name].join(' '),rawReportedFullName:task.fullName,nativeTaskId:task.id,nativeFile:task.module.moduleId,nativeProject:task.project.name,taskLocation:task.location||null,status:task.result().state,registration});}return output;};
+const linkage=observations=>observations.map(r=>[r.nativeFile,r.nativeProject,r.nativeTaskId,r.registration.registrationId]).sort((a,b)=>JSON.stringify(a).localeCompare(JSON.stringify(b)));
+export default class ReaRegistrationReporter{
+ constructor(){this.collected=new Map();this.duplicateCollection=false;}
+ onTestModuleCollected(module){const key=JSON.stringify([module.moduleId,module.project.name]);if(this.collected.has(key))this.duplicateCollection=true;this.collected.set(key,rows([module]));}
+ onTestRunEnd(modules){const observed=rows(modules),assessment=assessReaRegistrations(manifest,observed),collected=[...this.collected.values()].flat();if(this.duplicateCollection||this.collected.size===0||JSON.stringify(linkage(collected))!==JSON.stringify(linkage(observed))){assessment.complete=false;assessment.reasons.push('collection-to-result-registration-mismatch');}console.log('TESTLORE_REA_CASE_REGISTRATION '+JSON.stringify(assessment));}
 }
+`;
+}
+
 export function prepareReaCaseRegistration(root,options={}){
  const manifest=reaCaseRegistrationManifest(root,options);
  const names=['src/contracts/testlore.rea-case-registration.runtime.mjs','testlore.rea-case-registration.plugin.mjs','testlore.rea-case-registration.reporter.mjs'];

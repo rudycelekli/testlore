@@ -55,3 +55,9 @@ The evaluator independently challenges file scope, named case/status preservatio
 4. Repeat representative changes with complete CLI cold/warm timing. These measurements do not establish a speed advantage.
 
 Rejected REA source reversions do not increment existing qualified historical-change/original-installation corpus counts. No generation, learning or real agent-host improvement was evaluated here. Paid model calls: zero. GitHub Actions billing is unknown. TestLore remains an experimental alpha.
+
+## October 9 candidate observations
+
+The [new source-bound configuration contract](configuration-inputs.md) removes the exact canonical-temp-directory uncertainty while retaining arbitrary filesystem fallback. A separately sealed candidate completed the [three-seed matrix](../benchmarks/rea-config-inputs-20261009/matrix-7532ad0/README.md): 18 comparisons, 234/261 files selected, 27 omitted per trial, no global fallback and no observed missed failures. **Every seed remains unqualified** because three skipped schema-object titles differ between native processes. TestLore was slower than native related and full execution on all three median comparisons. Seed control certifies observed seed metadata, not exact generated property inputs.
+
+The [explicit source-bound registration experiment](rea-case-registration.md) targets those three rows using original parameter inputs and imported object-reference attestations. It never authorizes omissions; actual native transport, future campaign integration and independent comparison remain separate gates. The [earlier October 9 baseline failure and timing loss](../benchmarks/rea-config-inputs-20261009/README.md) are retained unchanged.

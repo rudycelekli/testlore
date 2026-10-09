@@ -59,3 +59,8 @@ test('retained actual CLI rejection replays as unsupported, not a successful com
  const report=verifyUnsupportedAqeObservation();assert.equal(report.observationReplayed,true);assert.equal(report.comparisonExecuted,false);assert.equal(report.qualifiedAdvantage,false);
  for(const repeat of report.repetitions){assert.equal(repeat.rejectionCategory,'unsupported-framework');assert.equal(repeat.independentFaultDemonstrated,true);assert.equal(repeat.candidateCaughtHistoricalFault,false);assert.equal(repeat.aqePlusTestLore.accepted,false);assert.equal(repeat.cost.tokens,null);}
 });
+
+test('actual supported native framework does not disguise upstream generation rejections as validation wins',async()=>{
+ const {verifyRejectedVitestAqeObservation}=await import('../scripts/aqe-frozen-replay.js');const report=verifyRejectedVitestAqeObservation();assert.equal(report.observationReplayed,true);assert.equal(report.comparisonExecuted,false);assert.equal(report.qualifiedAdvantage,false);assert.equal(report.installationToResultMs,27519.1365);
+ for(const repeat of report.repetitions){assert.equal(repeat.generationRejected,true);assert.equal(repeat.rejectionCategory,'generation-rejected-or-incomplete');assert.equal(repeat.independentFaultDemonstrated,true);assert.equal(repeat.candidateCaughtHistoricalFault,false);assert.equal(repeat.aqePlusTestLore.accepted,false);assert.equal(repeat.validationMs,null);assert.equal(repeat.cost.tokens,null);}
+});
