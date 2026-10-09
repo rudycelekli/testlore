@@ -5,6 +5,20 @@ The first campaign pins `thedotmack/claude-mem` at
 There is no current qualified public result or speed claim until the raw campaign
 artifacts have been produced and independently assessed.
 
+The first hosted attempt at TestLore source `664d762ffe12ef5c53b28384aa2a6ef3f9220a13`
+passed all 17 Bun/evaluator checks but did not reach an upstream baseline. The
+original-declaration npm install exceeded the campaign's 1 GiB growth ceiling
+after 25.1 seconds (1,094,934,528 bytes growth, 89,794,072,576 bytes remaining).
+The process was stopped and its incomplete inventory rejected. This is a
+resource rejection, not a test failure or successful claude-mem qualification.
+The retained [hosted attempt](https://github.com/rudycelekli/testlore/actions/runs/37945257806)
+and `benchmarks/claude-mem-20261009/install-interruption.json.gz` preserve the
+original reports and installation warning: newly resolved Posthog 5.55.1 declares
+Node 22.22 or later while this campaign uses Node 22.19. The next recipe changes
+only the hosted install growth ceiling to 4 GiB, retaining the 180-second deadline,
+2 GiB free-space reserve, original declarations, Node/Bun versions and ignored
+lifecycle scripts. Baseline failures remain disqualifying.
+
 TestLore uses Bun's own terminal JUnit file, rather than parsing console output
 or translating Bun tests into Node tests. The parser validates aggregate counts,
 nested suite structure, exact file/classname/title/source-line identities,

@@ -31,8 +31,8 @@ export function summarizeAqePair(generation,runs,validation){
  const caught=report=>report?.complete===true&&report.exitCode===1&&report.tests?.some(t=>t.status==='failed'&&t.name!=='<file-load>');
  const identities=report=>(report?.tests||[]).map(t=>[t.file,t.name,t.status]).sort((a,b)=>JSON.stringify(a).localeCompare(JSON.stringify(b)));
  const stable=runs.fixed.length===2&&runs.fixed.every(success)&&JSON.stringify(identities(runs.fixed[0]))===JSON.stringify(identities(runs.fixed[1]));
- const demonstrated=runs.oracleFixed.every(success)&&runs.oracleFault.every(caught);
- const faultCaught=stable&&demonstrated&&runs.fault.length===2&&runs.fault.every(caught)&&JSON.stringify(identities(runs.fault[0]))===JSON.stringify(identities(runs.fault[1]));
+ const demonstrated=runs.oracleFixed.length===2&&runs.oracleFault.length===2&&runs.oracleFixed.every(success)&&runs.oracleFault.every(caught);
+ const faultCaught=generation.complete===true&&stable&&demonstrated&&runs.fault.length===2&&runs.fault.every(caught)&&JSON.stringify(identities(runs.fault[0]))===JSON.stringify(identities(runs.fault[1]));
  return {generationComplete:generation.complete===true,generationRejected:generation.complete!==true,timedOut:/timed?\s*out|ETIMEDOUT/i.test(generation.error||''),candidateStable:stable,independentFaultDemonstrated:demonstrated,candidateCaughtHistoricalFault:faultCaught,upstreamQualityGates:generation.upstream?.qualityGates||[],aqeAlone:{returnedDraft:generation.complete===true,measuredCaught:faultCaught,promotionPolicy:'Not inferred from a CLI quality score.'},aqePlusTestLore:{accepted:validation?.accepted===true,measuredCaught:validation?.accepted===true&&faultCaught,reasons:validation?.reasons||['generation-did-not-complete']},detectionImprovementClaim:false,cost:{providerCurrency:null,tokens:null,paidCredentialsPassed:false},learningImprovementClaim:false};
 }
 

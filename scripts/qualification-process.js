@@ -1,5 +1,6 @@
 // Dependency-free bounded transport for qualification bootstrap; imports never install tools.
 import fs from 'node:fs';
+import path from 'node:path';
 import {execFileSync,spawn} from 'node:child_process';
 import {fileIdentity} from './worker-identity.js';
 

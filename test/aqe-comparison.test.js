@@ -37,3 +37,9 @@ test('committed upstream files are checked rather than trusting declared provena
  fs.appendFileSync(path.join(root,'upstream/204c885659b8ee1946534c61db91603b9a16d661/index.js'),'\n');
  assert.throws(()=>loadAqeComparison(path.join(root,'manifest.json')),/identity changed/);
 });
+
+test('missing independent oracle repetitions and rejected generation cannot demonstrate a defect win',()=>{
+ const empty=runs();empty.oracleFixed=[];empty.oracleFault=[];
+ assert.equal(summarizeAqePair({complete:true},empty,{accepted:true}).independentFaultDemonstrated,false);
+ assert.equal(summarizeAqePair({complete:false},runs(),{accepted:true}).candidateCaughtHistoricalFault,false);
+});

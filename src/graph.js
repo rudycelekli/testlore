@@ -4,7 +4,7 @@ import { isBuiltin } from 'node:module';
 import { createHash } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import { createAnalysisCache, ANALYSIS_CACHE_IMPLEMENTATION } from './graph-cache.js';
-import { discover as nativeDiscovery, resolveNativeBatch, combinedNativePlanningSupported } from './execution.js';
+import { adapterFor, discover as nativeDiscovery, resolveNativeBatch, combinedNativePlanningSupported } from './execution.js';
 import { sessionPlanning } from './native-session.js';
 import { declaredInputs } from './inputs.js';
 import {captureConfigurationInputs,admitsCanonicalTempDirectory} from './configuration-inputs.js';
@@ -48,7 +48,7 @@ function build(root, nativeSession, planningInputs) {
   const selected = files.filter(f => (config.testMatch ? config.testMatch.some(pattern => path.matchesGlob(f,pattern)) : TEST.test(f)) && !(config.testExclude || []).some(pattern => path.matchesGlob(f,pattern)));
   const graph = { files, tests: selected, edges: {}, warnings: [], sources: {}, root, config, discovery: {complete:true,method:'configured-static-conventions'} };
   graph.configFiles = new Set();
-  if(config.adapter==='bun')graph.warnings.push({file:'configuration',reason:'incomplete-native-resolution',detail:'Bun shared-global isolation, preload and runtime dependency contracts remain unqualified'});
+  if(adapterFor(config)==='bun')graph.warnings.push({file:'configuration',reason:'incomplete-native-resolution',detail:'Bun shared-global isolation, preload and runtime dependency contracts remain unqualified'});
   timing.mark('inventory');
   if(config.discovery === 'native' || Array.isArray(config.discovery)) {
     let combined, sharedAttempt;
