@@ -75,10 +75,13 @@ jobs:
             const inventoryDirectory=path.join(evidence,'upstream-inventory');fs.mkdirSync(inventoryDirectory);
             receipt.inventory=await boundedInstallProcess('npm',['ls','--all','--json'],{cwd:checkout,directory:inventoryDirectory,timeoutMs:30000,reserveBytes:2*1024**3,maxGrowthBytes:64*1024**2,maxLogBytes:8*1024**2,env,terminateDescendants:true});
             receipt.trackedInputsUnchanged=fs.readFileSync(path.join(checkout,'package.json')).equals(manifest)&&command(['status','--porcelain'],checkout)==='';
-            receipt.completed=receipt.install.exitCode===0&&!receipt.install.signal&&!receipt.install.reason&&receipt.inventory.exitCode===0&&!receipt.inventory.signal&&!receipt.inventory.reason&&receipt.trackedInputsUnchanged;
-          }catch(error){receipt.completed=false;receipt.error=error.message;}
+            receipt.installCompleted=receipt.install.exitCode===0&&!receipt.install.signal&&!receipt.install.reason&&receipt.trackedInputsUnchanged;
+            receipt.dependencyInventoryAccepted=receipt.inventory.exitCode===0&&!receipt.inventory.signal&&!receipt.inventory.reason;
+            receipt.completed=receipt.installCompleted&&receipt.dependencyInventoryAccepted;
+          }catch(error){receipt.installCompleted=false;receipt.completed=false;receipt.error=error.message;}
           save('upstream-installation',receipt);
-          if(!receipt.completed)process.exitCode=1;
+          if(!receipt.installCompleted)process.exitCode=1;
+          else if(!receipt.dependencyInventoryAccepted)console.log('::notice::Original declarations installed but npm inventory rejected; proceed with isolated diagnostic baselines only, retaining unqualified dependency environment.');
           JS
       - name: Collect original baselines and independently executed regression comparisons
         run: |
@@ -90,7 +93,7 @@ jobs:
           const output=path.join(directory,'campaign');
           const processDirectory=path.join(directory,'campaign-process');fs.mkdirSync(processDirectory);
           const env={PATH:process.env.PATH,HOME:path.join(process.env.RUNNER_TEMP,'claude-mem-controller-home'),CI:'true'};fs.mkdirSync(env.HOME);
-          const result=await boundedInstallProcess(process.execPath,['scripts/claude-mem-public-pilot.js',path.join(process.env.RUNNER_TEMP,'claude-mem-original'),output,path.join(output,'home')],{cwd:process.cwd(),directory:processDirectory,timeoutMs:36*60*1000,reserveBytes:2*1024**3,maxGrowthBytes:1024**3,maxLogBytes:4*1024**2,env,terminateDescendants:true});
+          const result=await boundedInstallProcess(process.execPath,['scripts/claude-mem-public-pilot.js',path.join(process.env.RUNNER_TEMP,'claude-mem-original'),output,path.join(output,'home'),path.join(directory,'upstream-installation.json')],{cwd:process.cwd(),directory:processDirectory,timeoutMs:36*60*1000,reserveBytes:2*1024**3,maxGrowthBytes:1024**3,maxLogBytes:4*1024**2,env,terminateDescendants:true});
           fs.writeFileSync(path.join(directory,'campaign-process.json'),JSON.stringify(result,null,2)+'\n');
           if(result.reason||result.signal||![0,3].includes(result.exitCode))process.exit(1);
           const assessment=JSON.parse(fs.readFileSync(path.join(output,'assessment.json')));

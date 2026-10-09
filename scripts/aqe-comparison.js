@@ -40,7 +40,7 @@ export async function runAqeComparison({output,aqePackage,dependencyDirectory,ma
  const loaded=loadAqeComparison(manifestFile),{manifest,source,fault,reference}=loaded;
  if(!output||fs.existsSync(path.resolve(output)))throw new Error('Explicit fresh output directory required');
  const pkg=readBoundedJson(path.join(path.resolve(aqePackage||''),'package.json'));
- if(pkg.name!=='agentic-qe'||pkg.version!==manifest.upstream.version||pkg.bin?.aqe!=='dist/cli/bundle.js')throw new Error('Installed AQE differs from preregistered release');
+ if(pkg.name!=='agentic-qe'||pkg.version!==manifest.upstream.version||!['dist/cli/bundle.js','./dist/cli/bundle.js'].includes(pkg.bin?.aqe))throw new Error('Installed AQE differs from preregistered release');
  const cli=path.join(path.resolve(aqePackage),'dist/cli/bundle.js');
  const dep=readBoundedJson(path.join(path.resolve(dependencyDirectory||''),'kind-of/package.json'));
  if(dep.name!=='kind-of'||dep.version!=='3.0.2')throw new Error('Historical dependency must be kind-of@3.0.2');

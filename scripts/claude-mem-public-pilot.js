@@ -6,6 +6,8 @@ import {fileURLToPath} from 'node:url';
 import {bunResults,readBunReport} from '../src/bun-results.js';
 import {run,compareSubsetCases} from '../src/runner.js';
 import {git,safePath} from '../src/files.js';
+import {readNativeJson} from '../src/native-protocol.js';
+import {fileIdentity} from './worker-identity.js';
 
 export const CLAUDE_MEM_PIN='fa8ab09f06aa05f958c5225cf3756ce52a3ebb96';
 export const BUN_VERSION='1.4.2';
@@ -20,7 +22,7 @@ function trackedHash(root,file){
 }
 /** Inputs must be a disposable clean checkout with original dependencies installed.
  * This script never installs, starts a personal worker, or builds/syncs a plugin. */
-export function claudeMemPilot({root,output,home}) {
+export function claudeMemPilot({root,output,home,installationReceipt}) {
  root=fs.realpathSync(root);output=path.resolve(output);home=path.resolve(home);
  if(home===process.env.HOME||!home.startsWith(output+path.sep))throw new Error('Campaign HOME must be isolated inside its new output directory');
  if(fs.existsSync(output))throw new Error('Evidence directory must be new');
@@ -32,8 +34,19 @@ export function claudeMemPilot({root,output,home}) {
  const protectedFiles=git(root,['ls-files','-z']).split('\0').filter(Boolean).filter(f=>f!==source);
  const protectedHashes=Object.fromEntries(protectedFiles.map(file=>[file,trackedHash(root,file)]));
  const original=fs.readFileSync(safePath(root,source),'utf8');
+ let installation=null;
+ let installationSha256=null;
+ if(installationReceipt){
+  installationSha256=fileIdentity(installationReceipt,2*1024*1024).sha256;
+  installation=readNativeJson(installationReceipt,2*1024*1024);
+  if(fileIdentity(installationReceipt,2*1024*1024).sha256!==installationSha256)throw new Error('Installation receipt changed during admission');
+  if(installation.repository!=='thedotmack/claude-mem'||installation.revision!==CLAUDE_MEM_PIN||installation.installCompleted!==true||installation.trackedInputsUnchanged!==true||installation.packageSha256!==digest(fs.readFileSync(safePath(root,'package.json'))))throw new Error('Diagnostic campaign requires a bound completed original-declaration installation');
+ }
  const receipt={schemaVersion:1,repository:'thedotmack/claude-mem',upstreamRevision:CLAUDE_MEM_PIN,historicalFix,bunVersion:BUN_VERSION,scope:'Original bun test tests plus preregistered sqlite/search/context/server/routes scopes',qualified:false,observationCompleted:false,learningImproved:false,superiorityEstablished:false,trials:[],errors:[],dependencyMode:'original-declarations-installed',timingScope:'Native duration is process+JUnit validation; TestLore duration includes full execution discovery, graph, selected execution and serialization. Native changed selector is not yet qualified.'};
  const nativeObservations=[];
+ receipt.dependencyInventoryAccepted=installation?.dependencyInventoryAccepted===true;
+ receipt.installationReceiptSha256=installationSha256;
+ if(!receipt.dependencyInventoryAccepted)receipt.errors.push('dependency-environment-unqualified');
  const save=(name,value)=>fs.writeFileSync(path.join(output,name+'.json'),JSON.stringify(value,null,2)+'\n');
  const native=(name,scope)=>{
   const report=path.join(output,name+'.xml'),command=['bun','test','./'+scope,'--reporter=junit','--reporter-outfile='+report];
@@ -90,6 +103,6 @@ export function claudeMemPilot({root,output,home}) {
  return receipt;
 }
 if(process.argv[1]&&path.resolve(process.argv[1])===fileURLToPath(import.meta.url)){
- const args=process.argv.slice(2);if(args.length!==3)throw new Error('Usage: node scripts/claude-mem-public-pilot.js DISPOSABLE_CHECKOUT NEW_EVIDENCE_DIRECTORY ISOLATED_HOME');
- const result=claudeMemPilot({root:args[0],output:args[1],home:args[2]});console.log(JSON.stringify(result,null,2));process.exitCode=result.qualified?0:3;
+ const args=process.argv.slice(2);if(![3,4].includes(args.length))throw new Error('Usage: node scripts/claude-mem-public-pilot.js DISPOSABLE_CHECKOUT NEW_EVIDENCE_DIRECTORY ISOLATED_HOME [INSTALLATION_RECEIPT]');
+ const result=claudeMemPilot({root:args[0],output:args[1],home:args[2],installationReceipt:args[3]});console.log(JSON.stringify(result,null,2));process.exitCode=result.qualified?0:3;
 }

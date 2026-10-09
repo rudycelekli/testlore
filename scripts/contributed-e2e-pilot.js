@@ -13,6 +13,15 @@ const digest=value=>createHash('sha256').update(value).digest('hex');
 const same=(a,b)=>JSON.stringify(a)===JSON.stringify(b);
 function trackedDigest(root,file){const full=path.join(root,file);return fs.lstatSync(full).isSymbolicLink()?digest('symlink:'+fs.readlinkSync(full)):digest(fs.readFileSync(full));}
 function boundedJson(file){const fd=fs.openSync(file,fs.constants.O_RDONLY|(fs.constants.O_NOFOLLOW||0));try{const stat=fs.fstatSync(fd);if(!stat.isFile()||stat.size>32*1024**2)throw Error('Native report size bound exceeded');const bytes=Buffer.alloc(stat.size+1);let size=0;for(let n;size<bytes.length&&(n=fs.readSync(fd,bytes,size,bytes.length-size,null));)size+=n;if(size!==stat.size)throw Error('Report changed during read');return JSON.parse(bytes.subarray(0,size));}finally{fs.closeSync(fd);}}
+/** Resolve the exact installed package's declared executable; never guess historical layouts. */
+export function declaredPnpmExecutable(directory){
+ directory=fs.realpathSync(directory);const manifest=boundedJson(path.join(directory,'package.json'));
+ const entry=manifest.bin?.pnpm;
+ if(manifest.name!=='pnpm'||manifest.version!=='12.3.4'||typeof entry!=='string'||!entry||entry.includes('\\')||entry.includes('\0')||path.isAbsolute(entry)||entry.split('/').includes('..'))throw Error('Pinned pnpm declared executable invalid');
+ const target=fs.realpathSync(path.resolve(directory,entry));
+ if(!target.startsWith(directory+path.sep)||!fs.statSync(target).isFile())throw Error('Pinned pnpm executable escapes installed package');
+ return {executable:target,packageSha256:digest(fs.readFileSync(path.join(directory,'package.json'))),executableSha256:digest(fs.readFileSync(target)),entry};
+}
 /** Reconstruct exact named outcomes independently of TestLore IDs and aggregate gates. */
 export function e2eNativeCases(value,root){
  if(!value||!Array.isArray(value.testResults)||typeof value.success!=='boolean'||value.numRuntimeErrorTestSuites||value.testExecError)throw Error('Native report incomplete');
@@ -101,7 +110,7 @@ export async function contributedE2EPilot({directory,output,candidateRoot}){
   protectedHashes=Object.fromEntries(files.filter(file=>!SOURCES.map(source=>'packages/e2e/'+source).includes(file)).map(file=>[file,trackedDigest(upstream,file)]));
   for(const file of SOURCES)sourceOriginal[file]=fs.readFileSync(path.join(root,file));
   await checked('install-pnpm',tools,['npm','install','--prefix',tools,'--ignore-scripts','--no-audit','--no-fund','pnpm@12.3.4'],180000);
-  const pnpm=[process.execPath,path.join(tools,'node_modules/pnpm/bin/pnpm.cjs')];await checked('pnpm-version',upstream,[...pnpm,'--version']);if(stdout('pnpm-version')!=='12.3.4')throw Error('pnpm version mismatch');
+  const pnpmIdentity=declaredPnpmExecutable(path.join(tools,'node_modules/pnpm')),pnpm=[pnpmIdentity.executable];await checked('pnpm-version',upstream,[...pnpm,'--version']);if(stdout('pnpm-version')!=='12.3.4')throw Error('pnpm version mismatch');
   await checked('original-install',upstream,[...pnpm,'install','--frozen-lockfile'],600000);await checked('original-build',upstream,[...pnpm,'run','build'],600000);
   const vitest=path.join(root,'node_modules/vitest/vitest.mjs'),cli=path.join(candidateRoot,'src/cli.js');
   const candidatePackage=JSON.parse(fs.readFileSync(path.join(candidateRoot,'package.json')));if(candidatePackage.name!=='testlore'||candidatePackage.version!=='0.1.0'||!/^[a-f0-9]{40}$/.test(candidatePackage.gitHead||''))throw Error('Sealed installed TestLore candidate provenance missing');
@@ -113,7 +122,7 @@ export async function contributedE2EPilot({directory,output,candidateRoot}){
   const reference=await native('independent-original-unit-baseline',false);baseline=reference.value;const base=e2eNativeCases(baseline,root);if(reference.event.exitCode!==0||!base.cases.length)throw Error('Original unit baseline rejected');
   await checked('old-globs',root,['git','show',E2E_PARENT+':packages/e2e/'+SOURCES[0]]);await checked('old-regexp',root,['git','show',E2E_PARENT+':packages/e2e/'+SOURCES[1]]);const old=Object.fromEntries(SOURCES.map((file,index)=>[file,fs.readFileSync(path.join(output,(index?'old-regexp':'old-globs')+'.stdout'))]));
   if(!sourceOriginal[SOURCES[0]].toString().includes("new RegExp(`${source}$`, 'u')")||old[SOURCES[0]].toString().includes("new RegExp(`${source}$`, 'u')")||digest(fs.readFileSync(path.join(root,ORACLE)))!=='2580f561b298ce270295ad4991c15f6828cdc29428a697b103eb76946ef5a636')throw Error('Unicode regression preregistration mismatch');
-  save('preregistered-manifest',{schemaVersion:1,upstreamRevision:E2E_PIN,parentRevision:E2E_PARENT,node:process.version,pnpm:'12.3.4',lockSha256:E2E_LOCK_SHA,scope:'Original e2e unit project',originalConfigurationSha256:digest(fs.readFileSync(path.join(root,'vitest.config.ts'))),oracleSha256:digest(fs.readFileSync(path.join(root,ORACLE))),protectedHashes,sourceHashes:Object.fromEntries(SOURCES.map(file=>[file,{original:digest(sourceOriginal[file]),historical:digest(old[file])}])),candidateCliSha256:digest(fs.readFileSync(cli)),candidatePackageSha256:digest(fs.readFileSync(path.join(candidateRoot,'package.json'))),candidateSourceRevision:JSON.parse(fs.readFileSync(path.join(candidateRoot,'package.json'))).gitHead||null,repetitions:3,changes:['comment-only','exact-parent-Unicode-glob-reversion'],modelBudget:0,modelCostMeasured:false,providerCredentialsInherited:false});
+  save('preregistered-manifest',{schemaVersion:1,upstreamRevision:E2E_PIN,parentRevision:E2E_PARENT,node:process.version,pnpm:'12.3.4',pnpmExecutable:pnpmIdentity,lockSha256:E2E_LOCK_SHA,scope:'Original e2e unit project',originalConfigurationSha256:digest(fs.readFileSync(path.join(root,'vitest.config.ts'))),oracleSha256:digest(fs.readFileSync(path.join(root,ORACLE))),protectedHashes,sourceHashes:Object.fromEntries(SOURCES.map(file=>[file,{original:digest(sourceOriginal[file]),historical:digest(old[file])}])),candidateCliSha256:digest(fs.readFileSync(cli)),candidatePackageSha256:digest(fs.readFileSync(path.join(candidateRoot,'package.json'))),candidateSourceRevision:JSON.parse(fs.readFileSync(path.join(candidateRoot,'package.json'))).gitHead||null,repetitions:3,changes:['comment-only','exact-parent-Unicode-glob-reversion'],modelBudget:0,modelCostMeasured:false,providerCredentialsInherited:false});
   for(let change=0;change<2;change++){
    for(const file of SOURCES)fs.writeFileSync(path.join(root,file),change?old[file]:sourceOriginal[file]);if(!change)fs.appendFileSync(path.join(root,SOURCES[0]),'\n// Controlled comment-only change.\n');
    await checked('original-build-change-'+change,upstream,[...pnpm,'run','build'],600000);

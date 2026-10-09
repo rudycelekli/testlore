@@ -47,3 +47,7 @@ node scripts/aqe-comparison.js \
 ```
 
 A successful script exit means the bounded comparison was collected, even if both drafts were rejected or no advantage was demonstrated. Retain all repetitions, stderr/errors and the preregistration. The manifest currently covers one defect and two repetitions. That is a limited composition assay, not a public leaderboard or gold-standard qualification.
+
+## Bootstrap observations (October 9)
+
+The first hosted attempt stopped before installation because the dependency-free bootstrap omitted its `node:path` import. The second installed both exact distributions but rejected the executable declaration: npm's registry metadata reported `dist/cli/bundle.js`, while the integrity-verified tarball contains `./dist/cli/bundle.js`. Both spellings resolve to the same pinned relative entry point; the runner now admits those two exact spellings. Neither attempt executed generation or established a quality improvement. The installed lock and inventory are retained in the [second run](https://github.com/rudycelekli/testlore/actions/runs/37945888316).

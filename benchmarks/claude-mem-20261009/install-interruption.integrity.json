@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "runId": 37945257806,
+  "artifactId": 11623094646,
+  "artifactZipBytes": 24229,
+  "artifactZipSha256": "4cfec1f7007358d8b551604407e5e7576041ca82b491fa676e525864e2a764f1",
+  "sourceRevision": "664d762ffe12ef5c53b28384aa2a6ef3f9220a13",
+  "upstreamRevision": "fa8ab09f06aa05f958c5225cf3756ce52a3ebb96",
+  "compressedSha256": "092d354a69bd35dc5a3268dca6083721148fd321e3291afe03fb11c51fc74af5",
+  "members": {
+    "original-package.json": {
+      "sha256": "ccbe33413b0f74b11c4eebc2d5ce1d56cb8154f26cd2c03e2526be1830810401",
+      "bytes": 9269
+    },
+    "bun-fixtures.tap": {
+      "sha256": "cfa07337a9e3570393af6de31e314f7e2768976a37e7027f279f11d70e4b44cc",
+      "bytes": 3196
+    },
+    "bun-fixtures.stderr": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "upstream-installation.json": {
+      "sha256": "f9f8d595177d12252a40b16c2a680088e227f3bbef0af5245e047fec12b794a3",
+      "bytes": 2483
+    },
+    "upstream-install/stderr.log": {
+      "sha256": "ba5478dca42d113c1bd200efc58901e7127e7d688729d7e51d15f6680b897744",
+      "bytes": 332
+    },
+    "upstream-install/stdout.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "upstream-inventory/stderr.log": {
+      "sha256": "91084c42f1e15261ee81d664b768d413066fe6e67d721d6729c5cc22d33dc263",
+      "bytes": 12876
+    },
+    "upstream-inventory/stdout.log": {
+      "sha256": "2b3fb24f4b2705a32ca6b9a9169a06a9028ded157d657533616959c5b50cf950",
+      "bytes": 211308
+    }
+  },
+  "qualified": false,
+  "nativeBaselineStarted": false,
+  "observedInstallStop": "disk-growth",
+  "nativeBunFixturesPassed": true
+}

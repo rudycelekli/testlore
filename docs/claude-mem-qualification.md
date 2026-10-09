@@ -19,6 +19,18 @@ only the hosted install growth ceiling to 4 GiB, retaining the 180-second deadli
 2 GiB free-space reserve, original declarations, Node/Bun versions and ignored
 lifecycle scripts. Baseline failures remain disqualifying.
 
+The [second attempt](https://github.com/rudycelekli/testlore/actions/runs/37945888282)
+at source `433baa2dce9db28847d71686f8ed092befe8330f` completed installation
+in 27.1 seconds with 1,407,172,608 bytes growth. The original declarations'
+`npm ls --all` still rejected missing peers (`@anthropic-ai/sdk`, several
+tree-sitter versions) and an invalid picomatch dependency. No native claude-mem
+baseline ran. `inventory-rejection.json.gz` retains the exact original receipt,
+newly resolved lock and rejected inventory. The next harness permits isolated
+diagnostic baselines after a completed installation, but preserves the rejected
+inventory and forces overall qualification false. It adds no missing packages,
+changes no source tests and upgrades no runtime to manufacture a successful
+environment.
+
 TestLore uses Bun's own terminal JUnit file, rather than parsing console output
 or translating Bun tests into Node tests. The parser validates aggregate counts,
 nested suite structure, exact file/classname/title/source-line identities,
@@ -44,7 +56,7 @@ In an isolated checkout with Bun 1.4.2 and the original declared dependencies
 installed, use:
 
 ```sh
-node scripts/claude-mem-public-pilot.js /absolute/disposable/claude-mem /absolute/new/evidence /absolute/new/evidence/home
+node scripts/claude-mem-public-pilot.js /absolute/disposable/claude-mem /absolute/new/evidence /absolute/new/evidence/home /absolute/installation-receipt.json
 ```
 
 The script requires the pinned clean checkout. It never installs dependencies,
@@ -54,6 +66,9 @@ The root of this upstream pin has no committed package lock: retain the
 installation's generated lock and dependency inventory as campaign evidence.
 This is an original-source and original-declaration installation, not a claim
 that upstream provided an immutable root dependency environment.
+The optional installation receipt binds the original manifest and completed
+installation process. Missing or rejected dependency inventory cannot establish
+overall qualification, even if native diagnostic trials finish successfully.
 
 Preregistered baselines are `bun test tests`, plus sqlite, worker/search, context,
 server and worker/http/routes scopes. Baseline losses remain in the result. Three regression trials

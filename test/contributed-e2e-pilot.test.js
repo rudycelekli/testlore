@@ -1,6 +1,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {assessContributedE2E} from '../scripts/contributed-e2e-pilot.js';
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
+import {assessContributedE2E,declaredPnpmExecutable} from '../scripts/contributed-e2e-pilot.js';
 const root='/upstream/packages/e2e',oracle='tests/unit/globs.test.ts',other='tests/unit/regexp.test.ts';
 const name='glob grammar ? matches exactly one non-/ character';
 const raw=(failed=false,files=[oracle,other])=>({success:!failed,numTotalTests:files.length,numPassedTests:files.length-(failed?1:0),numFailedTests:failed?1:0,numPendingTests:0,numRuntimeErrorTestSuites:0,testResults:files.map(file=>({name:root+'/'+file,status:failed&&file===oracle?'failed':'passed',assertionResults:[{fullName:file===oracle?name:'regexp escapes literal symbols',status:failed&&file===oracle?'failed':'passed'}]}))});
@@ -28,4 +31,15 @@ test('contradictory exit metadata and native count tampering cannot qualify',()=
 test('native selection misses remain measured while preserved TestLore failures can qualify',()=>{
  const x=fixture();for(const trial of x.trials.filter(row=>row.change===1)){trial.native=raw(false,[]);trial.nativeEvent=event(false);}
  const result=assess(x);assert.equal(result.qualified,true);assert.equal(result.rows[3].nativeMissedFailures,1);assert.equal(result.rows[3].missedFailures,0);
+});
+
+test('pnpm executable follows exact installed metadata instead of guessed v11 layout',()=>{
+ const root=fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(),'testlore-pnpm-bin-')));
+ try{
+  const manifest={name:'pnpm',version:'12.3.4',bin:{pnpm:'pnpm'}};
+  fs.writeFileSync(path.join(root,'package.json'),JSON.stringify(manifest));fs.writeFileSync(path.join(root,'pnpm'),'#!/bin/sh\nexit 0\n',{mode:0o755});
+  const result=declaredPnpmExecutable(root);assert.equal(result.executable,path.join(root,'pnpm'));assert.equal(result.entry,'pnpm');assert.match(result.executableSha256,/^[a-f0-9]{64}$/);
+  for(const bin of ['../outside','/absolute','missing']){fs.writeFileSync(path.join(root,'package.json'),JSON.stringify({...manifest,bin:{pnpm:bin}}));assert.throws(()=>declaredPnpmExecutable(root));}
+  fs.writeFileSync(path.join(root,'package.json'),JSON.stringify({...manifest,version:'11.0.0'}));assert.throws(()=>declaredPnpmExecutable(root));
+ }finally{fs.rmSync(root,{recursive:true,force:true});}
 });
