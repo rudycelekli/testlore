@@ -30,5 +30,5 @@ export function packedEvidenceComplete(receipt, evidence, {proofScriptSha256, so
     evidence.oneCommand.sourceRevision === receipt.sourceRevision && assessmentImportEvidenceComplete(evidence.assessmentImports) &&
     hex(assessmentImportProofSha256) && evidence.assessmentImports.proofScriptSha256 === assessmentImportProofSha256 &&
     evidence.assessmentImports.archiveSha256 === receipt.archiveSha256 && evidence.assessmentImports.installedManifestSha256 === receipt.packedManifestSha256 &&
-    evidence.assessmentImports.sourceRevision === receipt.sourceRevision;
+    evidence.assessmentImports.sourceRevision === receipt.sourceRevision && evidence.assessmentImports.installedCliSha256 === evidence.oneCommand.installedCliSha256;
 }

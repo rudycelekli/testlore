@@ -52,12 +52,12 @@ export function assessmentImportEvidenceComplete(proof) {
     typeof proof.sourceRevision === 'string' && /^[a-f0-9]{40}$/.test(proof.sourceRevision) &&
     JSON.stringify(proof.outcomes) === JSON.stringify(cases.map(item => ({ id: item.id, exitCode: item.exit, outcome: item.outcome }))) &&
     Array.isArray(proof.rawEvidence) && proof.rawEvidence.length === 15 && new Set(proof.rawEvidence.map(item => item.file)).size === 15 &&
-    proof.rawEvidence.every(item => /^(guardana|ifixai|unsupported)\.(input\.json|stdout\.json|stderr\.txt|process\.json|receipt\.json)$/.test(item.file) && Number.isSafeInteger(item.bytes) && item.bytes >= 0 && /^[a-f0-9]{64}$/.test(item.sha256));
+    proof.rawEvidence.every(item => /^(guardana|ifixai|unsupported)\.(input\.json|stdout\.json|stderr\.txt|process\.json|receipt\.json)$/.test(item.file) && Number.isSafeInteger(item.bytes) && item.bytes >= 0 && item.bytes <= 4 * 1024 * 1024 && /^[a-f0-9]{64}$/.test(item.sha256));
 }
 export function verifyAssessmentImportRawEvidence(directory, proof) {
   assert.equal(assessmentImportEvidenceComplete(proof), true, 'Installed assessment import proof is incomplete');
   for (const record of proof.rawEvidence) {
-    const file = path.join(directory, record.file); assert.equal(fs.lstatSync(file).isFile(), true);
+    const file = path.join(directory, record.file), stat = fs.lstatSync(file); assert.equal(stat.isFile(), true); assert.equal(stat.size, record.bytes);
     const bytes = fs.readFileSync(file); assert.equal(bytes.length, record.bytes); assert.equal(digest(bytes), record.sha256);
   }
   for (const item of cases) {
