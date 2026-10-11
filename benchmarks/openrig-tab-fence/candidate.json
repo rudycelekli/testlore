@@ -1,0 +1,67 @@
+{
+  "schemaVersion": 1,
+  "patchSha256": "2bcfe7784b94487b3e41b012f13fdd9ce45dac38d859ca5d73b2ffa18580e3f8",
+  "sourceProposalPaths": [
+    "packages/daemon/src/domain/markdown-address.ts",
+    "packages/daemon/assets/plugins/openrig-core/skills/loading-addressable-markdown/scripts/resolve-markdown.mjs"
+  ],
+  "agent": {
+    "provider": "authenticated native Codex CLI through TestLore audited read-only adapter",
+    "adapterSha256": "03719bc3c7c27cad9b5736f99829b02bbd01366365c0154d2f0bf2fc13eb6458",
+    "protocolSha256": "bcb5a1a902bd253e90b879e6f89575885afe236ee6b86ec9b2acafaa3bf91dc1",
+    "executableSha256": "61b0194f3bb6534439c8d26a3ed57d0805f84b884588b761795323eeb92fcf70",
+    "modelIdentity": "unknown CLI default",
+    "toolsAttempted": 0,
+    "authorCalls": 2,
+    "independentReviewerCalls": 1,
+    "requirementsProvidedBeforeGeneration": true,
+    "exactSolutionProvided": false,
+    "usage": [
+      {
+        "input_tokens": 24731,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 3551,
+        "reasoning_output_tokens": 17
+      },
+      {
+        "input_tokens": 23016,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1790,
+        "reasoning_output_tokens": 0
+      },
+      {
+        "input_tokens": 31728,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 277,
+        "reasoning_output_tokens": 41
+      }
+    ],
+    "modelCost": null,
+    "scope": "Two source-only proposals and independent review; outside the current one-module proactive repair-controller profile"
+  },
+  "review": {
+    "accepted": true,
+    "oracleIndependent": true,
+    "basis": [
+      "Frozen independent contract: tabs advance to four-column stops, while fence indentation permits at most three columns.",
+      "Expected behavior 1: tab-indented markers must not open fences or hide the following sibling section.",
+      "Expected behavior 2: tab-indented matching markers must not close real fences or expose example headings.",
+      "Expected behavior 3: preserve these results with LF and CRLF.",
+      "Frozen scope addendum: apply the repair to the shipped resolver, preserve unrelated reader differences, and retain normal fenced CLI resolution."
+    ],
+    "scope": "Static proposal review; no native execution authority"
+  },
+  "moduleOracle": {
+    "repeats": 2,
+    "passedPerRepeat": 16,
+    "failedPerRepeat": 0,
+    "scope": "Frozen constructed CommonMark current-module probes; genuine upstream native suites still required"
+  },
+  "nativeQualification": false,
+  "upstreamSubmission": null,
+  "maintainerAcceptance": false,
+  "learningPromoted": false
+}

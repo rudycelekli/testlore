@@ -37,7 +37,7 @@ jobs:
           node --input-type=module <<'JS'
           import fs from 'node:fs';import path from 'node:path';import {execFileSync} from 'node:child_process';
           import {boundedInstallProcess} from './scripts/qualification-process.js';
-          import {prepareReaCaseRegistration,observeReaCaseRegistrations,compareReaSkippedRegistrations,REA_CASE_FILE,registrationHash} from './scripts/rea-case-registration.js';
+          import {prepareReaCaseRegistration,observeReaCaseRegistrations,compareReaNativeOutcomes,REA_CASE_FILE,registrationHash} from './scripts/rea-case-registration.js';
           const evidence=path.resolve('.tddswarm/rea-registration-native');fs.mkdirSync(evidence,{recursive:true,mode:0o700});
           const save=(name,value)=>fs.writeFileSync(path.join(evidence,name),JSON.stringify(value,null,2)+'\n',{flag:'wx',mode:0o600});
           const git=(cwd,...args)=>execFileSync('git',args,{cwd,encoding:'utf8'}).trim();
@@ -69,14 +69,14 @@ jobs:
               const event=await boundedInstallProcess(process.execPath,command,{cwd:upstream,directory,env,timeoutMs:30000,reserveBytes:2*1024**3,maxGrowthBytes:128*1024**2,maxLogBytes:2*1024**2,terminateDescendants:true});save('native-'+index+'.json',{command,event});
               if(event.exitCode!==0||event.reason)throw Error('Native registration execution incomplete');
               const raw=JSON.parse(fs.readFileSync(path.join(directory,'native.json'),'utf8'));if(raw.numFailedTests||raw.numRuntimeErrorTestSuites||raw.testResults?.length!==1||raw.numPendingTests!==3)throw Error('Original native row outcomes differ from declared three skipped cases');
-              const receipt=observeReaCaseRegistrations(fs.readFileSync(path.join(directory,'stdout.log'),'utf8'),profile.manifest);save('registration-'+index+'.json',receipt);
+              const stdout=fs.readFileSync(path.join(directory,'stdout.log'),'utf8'),receipt=observeReaCaseRegistrations(stdout,profile.manifest);save('registration-'+index+'.json',receipt);
               const skipped=raw.testResults[0].assertionResults.filter(t=>['pending','skipped','todo','disabled'].includes(t.status));
               if(JSON.stringify(skipped.map(t=>t.fullName).sort())!==JSON.stringify(receipt.observations.map(t=>t.rawName).sort()))throw Error('Collected actual registrations do not bind the raw native skipped rows');
-              arms.push(receipt.observations);
+              arms.push({native:raw,stdout,event});
             }
             git(upstream,'diff','--exit-code','HEAD');
-            const assessed=compareReaSkippedRegistrations(profile.manifest,arms);save('assessment.json',{producerRevision,upstreamRevision,...assessed,scope:'One original test file, two original dependency native executions with explicit source-bound metadata transform. No selection or speed qualification.'});
-            if(!assessed.complete)throw Error('Independent native registration profiles did not align');
+            const assessed=compareReaNativeOutcomes(profile.manifest,arms);save('assessment.json',{producerRevision,upstreamRevision,...assessed});
+            if(!assessed.complete)throw Error('Independent original native outcomes or skipped registration profiles did not align');
           }catch(error){save('failure.json',{complete:false,error:String(error.message).slice(0,1000),omissionAuthority:false});console.error(error.message);process.exitCode=1;}
           JS
       - name: Preserve native registrations and rejections

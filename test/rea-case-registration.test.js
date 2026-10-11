@@ -6,7 +6,7 @@ import path from 'node:path';
 import {spawnSync} from 'node:child_process';
 import {fileURLToPath} from 'node:url';
 import {runInNewContext} from 'node:vm';
-import {REA_CASE_FILE,REA_CASE_SOURCE_SHA256,WINDOWS_DECLARATION,registrationHash,plainParameterDigest,registerReaWindowsCases,transformReaWindowsCases,assessReaRegistrations,observeReaCaseRegistrations,reaRegistrationReporterSource,reaRegistrationRuntimeSource} from '../scripts/rea-case-registration.js';
+import {REA_CASE_FILE,REA_CASE_SOURCE_SHA256,WINDOWS_DECLARATION,registrationHash,plainParameterDigest,registerReaWindowsCases,transformReaWindowsCases,assessReaRegistrations,observeReaCaseRegistrations,reaRegistrationReporterSource,reaRegistrationRuntimeSource,compareReaNativeOutcomes} from '../scripts/rea-case-registration.js';
 const original=fs.readFileSync(new URL('./fixtures/rea-case-registration/sessionPathInputs.test.ts.txt',import.meta.url),'utf8');
 function fixture(){
  const close={},exported={};const table=[[close,{snapshot_path:'C:\\rea\\analysis.json'}],[close,{snapshot_path:'C:/rea/analysis.json'}],[exported,{path:'C:/rea/bundle.json'}]];
@@ -107,4 +107,41 @@ test('actual original native receipt archive replays only its captured skipped s
  const {verifyCapturedReaRegistrations}=await import('../scripts/rea-registration-replay.js');const report=verifyCapturedReaRegistrations();assert.equal(report.complete,true);assert.equal(report.arms,2);assert.equal(report.actualSkippedRegistrationsPerArm,3);assert.equal(report.omissionAuthority,false);assert.equal(report.inputEquivalenceClaim,false);
  const root=fs.mkdtempSync(path.join(os.tmpdir(),'testlore-rea-native-replay-'));t.after(()=>fs.rmSync(root,{recursive:true,force:true}));fs.cpSync(fileURLToPath(new URL('../benchmarks/rea-case-registration/native-pass-20261009/',import.meta.url)),root,{recursive:true});
  fs.appendFileSync(path.join(root,'native-0/stdout.log'),'changed');assert.throws(()=>verifyCapturedReaRegistrations(root),/member changed/);
+});
+
+function capturedNativeOutcomes(){
+ const root=fileURLToPath(new URL('../benchmarks/rea-case-registration/native-pass-20261009/',import.meta.url));
+ const manifest=JSON.parse(fs.readFileSync(path.join(root,'profile.json'))).manifest;
+ const arms=[0,1].map(index=>({native:JSON.parse(fs.readFileSync(path.join(root,`native-${index}/native.json`))),stdout:fs.readFileSync(path.join(root,`native-${index}/stdout.log`),'utf8'),event:JSON.parse(fs.readFileSync(path.join(root,`native-${index}.json`))).event}));
+ return {manifest,arms};
+}
+test('complete actual original native outcomes retain fourteen strict cases and three attested skips',()=>{
+ const {manifest,arms}=capturedNativeOutcomes(),result=compareReaNativeOutcomes(manifest,arms);
+ assert.equal(result.complete,true,JSON.stringify(result.reasons));assert.equal(result.originalCasesPerArm,17);assert.equal(result.omissionAuthority,false);assert.equal(result.inputEquivalenceClaim,false);
+ for(let index=0;index<2;index++)assert.deepEqual(result.arms[index].cases.map(row=>row.rawName),arms[index].native.testResults[0].assertionResults.map(row=>row.fullName));
+ // This rechecks captured native execution; it does not label replay as a fresh campaign.
+});
+test('native title drift is admissible only when that exact row binds matching actual skipped metadata',()=>{
+ const {manifest,arms}=capturedNativeOutcomes();const prefix='TESTLORE_REA_CASE_REGISTRATION ';
+ const lines=arms[1].stdout.split('\n'),index=lines.findIndex(line=>line.startsWith(prefix)),receipt=JSON.parse(lines[index].slice(prefix.length));
+ const observation=receipt.observations[0],native=arms[1].native.testResults[0].assertionResults.find(row=>row.meta?.testloreReaRegistration?.registrationId===observation.registration.registrationId);
+ observation.rawName+=' different opaque rendering';native.fullName=observation.rawName;lines[index]=prefix+JSON.stringify(receipt);arms[1].stdout=lines.join('\n');
+ const result=compareReaNativeOutcomes(manifest,arms);assert.equal(result.complete,true,JSON.stringify(result.reasons));assert.notDeepEqual(result.arms[0].cases.map(row=>row.rawName),result.arms[1].cases.map(row=>row.rawName));
+ delete native.meta.testloreReaRegistration;assert.equal(compareReaNativeOutcomes(manifest,arms).complete,false);
+});
+test('complete native comparator rejects non-skipped drift, mismatched metadata and partial execution',()=>{
+ const mutations=[
+  arm=>{arm.native.testResults[0].assertionResults[0].fullName+=' changed';},
+  arm=>{arm.native.testResults[0].assertionResults[0].status='failed';},
+  arm=>{arm.native.testResults[0].assertionResults[0].location.line++;},
+  arm=>{arm.native.testResults[0].assertionResults.pop();},
+  arm=>{arm.native.numPassedTests--;},
+  arm=>{arm.event.exitCode=1;},
+  arm=>{arm.event.signal='SIGKILL';},
+  arm=>{arm.native.testResults[0].name='/other.test.ts';},
+  arm=>{arm.native.testResults[0].assertionResults.find(row=>row.status==='skipped').meta.testloreReaRegistration.inputSha256='d'.repeat(64);},
+  arm=>{arm.native.testResults[0].assertionResults.find(row=>row.status==='skipped').fullName+=' unbound drift';},
+  arm=>{arm.stdout='';}
+ ];
+ for(const mutate of mutations){const {manifest,arms}=capturedNativeOutcomes();mutate(arms[1]);assert.equal(compareReaNativeOutcomes(manifest,arms).complete,false,mutate.toString());}
 });

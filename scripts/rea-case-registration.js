@@ -105,3 +105,39 @@ export function compareReaSkippedRegistrations(manifest,arms){
  const aligned=assessed.every(a=>a.complete)&&arms.every(rows=>JSON.stringify(canonical(rows))===JSON.stringify(canonical(arms[0])));
  return{schemaVersion:1,complete:aligned,reasons:aligned?[]:['actual-skipped-registration-profiles-not-aligned'],arms:assessed,omissionAuthority:false,inputEquivalenceClaim:false,scope:'Only these three skipped registrations can be compared by captured plain input/declaration/import binding identity; raw title drift retained.'};
 }
+
+/** Compare the complete original file; only actually attested skipped rows use registration identities. */
+export function compareReaNativeOutcomes(manifest,arms){
+ if(!Array.isArray(arms)||arms.length<2||arms.length>8)throw Error('Two to eight independent native outcome arms required');
+ const reasons=[],captures=[];
+ for(let index=0;index<arms.length;index++)try{
+  const {native,stdout,event}=arms[index];
+  if(event?.exitCode!==0||event.signal||event.reason||event.stoppedReason||native?.success!==true||native.numRuntimeErrorTestSuites||native.numTotalTests!==17||native.numPassedTests!==14||native.numPendingTests!==3||native.numFailedTests!==0||native.numTodoTests!==0||native.testResults?.length!==1)throw Error('Incomplete original native outcome');
+  const receipt=observeReaCaseRegistrations(stdout,manifest),suite=native.testResults[0],file=suite.name||suite.testFilePath;
+  if(typeof file!=='string'||!file.replaceAll('\\','/').endsWith('/'+manifest.file)||suite.status!=='passed'||suite.assertionResults?.length!==17)throw Error('Original native file scope changed');
+  const observations=new Map(receipt.observations.map(row=>[row.registration.registrationId,row])),seen=new Set(),ordinals=new Map(),cases=[];
+  for(const row of suite.assertionResults){
+   if(typeof row.fullName!=='string'||!row.fullName||!['passed','skipped'].includes(row.status)||!Number.isInteger(row.location?.line)||row.location.line<1||!Number.isInteger(row.location.column)||row.location.column<1||!Array.isArray(row.failureMessages)||row.failureMessages.length)throw Error('Malformed original named outcome');
+   const registration=row.meta?.testloreReaRegistration;let identity;
+   if(registration!==undefined){
+    const observation=observations.get(registration.registrationId);
+    if(!observation||seen.has(registration.registrationId)||row.status!=='skipped'||row.fullName!==observation.rawName||JSON.stringify(row.location)!==JSON.stringify(observation.taskLocation)||JSON.stringify(registration)!==JSON.stringify(observation.registration))throw Error('Native outcome does not bind actual skipped registration');
+    seen.add(registration.registrationId);identity=registrationHash({file:manifest.file,registrationId:registration.registrationId,project:observation.nativeProject});
+   }else{
+    // Every skipped row in this pinned file must be one of the three attested rows.
+    if(row.status==='skipped')throw Error('Unattested skipped outcome');
+    const key=JSON.stringify([manifest.file,row.fullName,row.location]),ordinal=ordinals.get(key)||0;ordinals.set(key,ordinal+1);identity=registrationHash({key,ordinal});
+   }
+   cases.push({identity,rawName:row.fullName,status:row.status,location:row.location,...(registration?{registrationId:registration.registrationId}:{})});
+  }
+  if(seen.size!==3||cases.filter(row=>row.status==='passed').length!==14||new Set(cases.map(row=>row.identity)).size!==17)throw Error('Original named outcome inventory incomplete');
+  captures.push({complete:true,receipt,cases});
+ }catch(error){reasons.push('native-arm-'+index+':'+error.message);captures.push({complete:false});}
+ if(captures.every(arm=>arm.complete)){
+  const registrations=compareReaSkippedRegistrations(manifest,captures.map(arm=>arm.receipt.observations));
+  if(!registrations.complete)reasons.push(...registrations.reasons);
+  const canonical=arm=>arm.cases.map(row=>[row.identity,row.status,row.location]).sort((a,b)=>a[0].localeCompare(b[0]));
+  if(captures.some(arm=>JSON.stringify(canonical(arm))!==JSON.stringify(canonical(captures[0]))))reasons.push('original-named-case-or-status-drift');
+ }
+ return {schemaVersion:1,complete:reasons.length===0,reasons,arms:captures,originalCasesPerArm:17,attestedSkippedCasesPerArm:3,omissionAuthority:false,inputEquivalenceClaim:false,scope:'Complete pinned original file: strict named outcomes plus three actually attested skipped registrations; raw names retained. No routing, property-input, speed or Windows execution qualification.'};
+}

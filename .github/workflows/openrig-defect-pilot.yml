@@ -1,0 +1,84 @@
+name: OpenRig independent defect pilot
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/openrig-defect-pilot.yml'
+      - 'scripts/openrig-defect-pilot.js'
+      - 'benchmarks/openrig-tab-fence/**'
+  workflow_dispatch:
+    inputs:
+      phase:
+        description: Original baseline or hash-bound repaired candidate
+        required: true
+        default: baseline
+        type: choice
+        options: [baseline, candidate]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: openrig-pilot-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  native-leg:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - suite: repo
+            os: ubuntu-latest
+          - suite: daemon
+            os: macos-latest
+          - suite: cli
+            os: macos-latest
+          - suite: tui
+            os: macos-latest
+          - suite: ui
+            os: macos-latest
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7.0.0
+        with:
+          node-version: '22.19.0'
+      - uses: actions/checkout@v7.0.1
+        with:
+          repository: mvschwarz/openrig
+          ref: 8376d390140b761800430b143cc4131c1f020e42
+          path: .tddswarm/openrig-pilot-source
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Prepare upstream native tmux requirement
+        if: runner.os == 'macOS'
+        run: command -v tmux || brew install tmux
+      - name: Test evaluator refusal and preservation controls
+        run: node --test benchmarks/openrig-tab-fence/runner-controls.test.mjs
+      - name: Unmodified native baseline, independent regression, then optional candidate
+        env:
+          REQUESTED_PHASE: ${{ inputs.phase || '' }}
+          SUITE: ${{ matrix.suite }}
+        run: |
+          phase=baseline
+          if [ -n "$REQUESTED_PHASE" ]; then
+            phase="$REQUESTED_PHASE"
+          elif [ -f benchmarks/openrig-tab-fence/candidate.json ]; then
+            phase=candidate
+          fi
+          node scripts/openrig-defect-pilot.js \
+            --upstream .tddswarm/openrig-pilot-source \
+            --output "$RUNNER_TEMP/openrig-pilot-evidence/$SUITE" \
+            --phase "$phase" --suite "$SUITE"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: openrig-pilot-${{ matrix.suite }}-${{ github.event.pull_request.head.sha || github.sha }}
+          path: ${{ runner.temp }}/openrig-pilot-evidence/${{ matrix.suite }}/
+          include-hidden-files: true
+          if-no-files-found: error
