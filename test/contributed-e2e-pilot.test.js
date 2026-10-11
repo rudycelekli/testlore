@@ -5,7 +5,8 @@ import os from 'node:os';
 import path from 'node:path';
 import {fileURLToPath,pathToFileURL} from 'node:url';
 import {spawnSync} from 'node:child_process';
-import {assessContributedE2E,declaredPnpmExecutable,e2eNativeCases} from '../scripts/contributed-e2e-pilot.js';
+import {vitestCaseHash} from '../src/vitest-case-contracts.js';
+import {assessContributedE2E,assessContributedE2EWithCases,reconcileE2ECaseCapture,declaredPnpmExecutable,e2eNativeFlags,e2eNativeCases,compareE2EWorkspaceBaseline} from '../scripts/contributed-e2e-pilot.js';
 const root='/upstream/packages/e2e',oracle='tests/unit/globs.test.ts',other='tests/unit/regexp.test.ts';
 const name='glob grammar ? matches exactly one non-/ character';
 const raw=(failed=false,files=[oracle,other])=>({success:!failed,numTotalTests:files.length,numPassedTests:files.length-(failed?1:0),numFailedTests:failed?1:0,numPendingTests:0,numRuntimeErrorTestSuites:0,testResults:files.map(file=>({name:root+'/'+file,status:failed&&file===oracle?'failed':'passed',assertionResults:[{fullName:file===oracle?name:'regexp escapes literal symbols',status:failed&&file===oracle?'failed':'passed'}]}))});
@@ -18,6 +19,11 @@ function fixture(){
  return {baseline:raw(),trials};
 }
 const assess=x=>assessContributedE2E(x.baseline,x.trials,root,{protectedInputsUnchanged:true,restoredGreen:true});
+test('workspace flags bind the original absolute config without duplicating the native root',()=>{
+ assert.deepEqual(e2eNativeFlags(root,'workspace'),['--config',root+'/vitest.config.ts','--root',root]);
+ assert.deepEqual(e2eNativeFlags(root,'package'),['--config','vitest.config.ts']);
+ assert.throws(()=>e2eNativeFlags('relative','workspace'),/Invalid/);
+});
 test('campaign bootstrap loads before checkout dependencies are installed',t=>{
  const isolated=fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(),'testlore-e2e-bootstrap-')));
  t.after(()=>fs.rmSync(isolated,{recursive:true,force:true}));
@@ -57,6 +63,52 @@ test('observed duplicate names retain exact outcome multiplicities without ordin
  const observed=e2eNativeCases(report,root,{allowAmbiguousNames:true});assert.equal(observed.ambiguousNames.length,1);assert.equal(observed.cases.filter(row=>row.file===other).length,2);
  report.testResults[1].assertionResults.reverse();assert.deepEqual(e2eNativeCases(report,root,{allowAmbiguousNames:true}),observed);
  report.testResults[1].assertionResults.pop();assert.throws(()=>e2eNativeCases(report,root,{allowAmbiguousNames:true}),/counts/);
+});
+
+test('semantic sidecars must reconcile with every separately observed native JSON outcome',()=>{
+ const report=raw();report.testResults[1].assertionResults.push({...report.testResults[1].assertionResults[0],status:'skipped'});report.numTotalTests++;report.numPendingTests++;
+ const named=e2eNativeCases(report,root,{allowAmbiguousNames:true}),capture={actualFiles:named.files,tests:named.cases.map(({file,name,status})=>({project:'unit',file,rawName:name,status}))};
+ assert.equal(reconcileE2ECaseCapture(capture,named).cases,3);
+ for(const mutate of [c=>c.tests[0].rawName='renamed',c=>c.tests[0].project='integration',c=>c.tests.pop(),c=>c.tests.find(t=>t.status==='skipped').status='passed',c=>c.actualFiles.pop()]){const changed=structuredClone(capture);mutate(changed);assert.throws(()=>reconcileE2ECaseCapture(changed,named),/differs/);}
+});
+test('asserted semantic success cannot qualify missing native case artifacts',async()=>{
+ const x=fixture(),candidateRoot=fileURLToPath(new URL('../',import.meta.url));
+ const result=await assessContributedE2EWithCases(x.baseline,x.trials,root,{candidateRoot,baselineCapture:{complete:true,identityComplete:true,omissionAuthority:false},observerParity:{outcomesEqual:true},protectedInputsUnchanged:true,restoredGreen:true});
+ assert.equal(result.qualified,false);assert.equal(result.caseIdentitiesComplete,false);assert.equal(result.speedAdvantageObserved,false);assert.ok(result.reasons.includes('Incomplete or changed native case producer evidence'));
+});
+test('constructed evaluator data distinguishes case qualification from application acceptance',async()=>{
+ // Pure evaluator fixture, not a native execution receipt or application measurement.
+ const candidateRoot=fileURLToPath(new URL('../',import.meta.url)),producers=['src/reporters/vitest-cases.js','src/vitest-case-contracts.js'].map(file=>vitestCaseHash(fs.readFileSync(path.join(candidateRoot,file)))),x=fixture();
+ const capture=(report,scope)=>{
+  const named=e2eNativeCases(report,root),inputs=[oracle,other,'vitest.config.ts'].map(file=>({file,sha256:vitestCaseHash('constructed source '+file)}));
+  const inventory=named.cases.map(({file,name},index)=>{const entry={file,project:'unit',nativeId:'fixture-'+index,titles:[name],rawName:name,rawReportedFullName:name,location:{line:1,column:1},sourceSha256:inputs.find(input=>input.file===file).sha256,each:false,registration:null};entry.semanticId=vitestCaseHash({project:entry.project,file,titles:entry.titles,sourceSha256:entry.sourceSha256});return entry;});
+  const value={schemaVersion:1,kind:'native-vitest-case-capture',vitestVersion:'5.0.1',producerSha256:producers,runtimeManifestSha256:'a'.repeat(64),environmentSha256:'b'.repeat(64),lifecycle:{initialized:true,started:true,ended:true},complete:true,identityComplete:true,omissionAuthority:false,inputEquivalenceClaim:false,inputs,registrationContracts:[],inventory,tests:inventory.map((entry,index)=>({...entry,status:named.cases[index].status,diagnostic:{retryCount:0,repeatCount:0,flaky:false},hadErrors:named.cases[index].status==='failed'})),errors:[],actualFiles:named.files,scope,nativeReason:report.success?'passed':'failed'};value.integrity=vitestCaseHash(value);return value;
+ };
+ for(const trial of x.trials){trial.fullCapture=capture(trial.full,'full');trial.nativeCapture=capture(trial.native,'native-related');trial.testLore.nativeCaseEvidence=capture(trial.native,'deferred');for(const arm of ['full','native']){trial[arm+'Observed']=structuredClone(trial[arm]);trial[arm+'ObserverEvent']={...trial[arm+'Event']};}}
+ const options={candidateRoot,baselineCapture:capture(x.baseline,'full'),observerParity:{original:x.baseline,instrumented:x.baseline,originalEvent:event(false),instrumentedEvent:event(false)},protectedInputsUnchanged:true,restoredGreen:true};
+ const slower=await assessContributedE2EWithCases(x.baseline,x.trials,root,options);
+ assert.equal(slower.caseComparisonQualified,true,JSON.stringify(slower.reasons));assert.equal(slower.applicationSuccess,false);assert.equal(slower.applicationAcceptance.nativeTimingAdvantage,false);
+ for(const trial of x.trials)trial.testLoreEvent.durationMs=1;
+ const faster=await assessContributedE2EWithCases(x.baseline,x.trials,root,options);assert.equal(faster.applicationSuccess,true);
+ for(const trial of x.trials){trial.testLore.plan.selected=[oracle,other];trial.testLore.plan.decisions=[];trial.testLore.executedTests=[oracle,other];trial.testLore.collectionFiles=[oracle,other];trial.testLore.tests=e2eNativeCases(trial.full,root).cases.map(({file,name,status})=>({file,name,status}));trial.testLore.nativeCaseEvidence=capture(trial.full,'deferred');}
+ const noOmissions=await assessContributedE2EWithCases(x.baseline,x.trials,root,options);assert.equal(noOmissions.caseComparisonQualified,true,JSON.stringify(noOmissions.reasons));assert.equal(noOmissions.applicationSuccess,false);assert.equal(noOmissions.applicationAcceptance.safeOmissionsObserved,false);
+});
+
+test('workspace comparison independently binds original and workspace native baseline outcomes and cwd',()=>{
+ const options={originalEvent:{...event(false),cwd:root},workspaceEvent:{...event(false),cwd:root}};
+ const a=raw(),b=raw();assert.equal(compareE2EWorkspaceBaseline(a,b,root,options).outcomesEqual,true);
+ b.testResults[0].assertionResults[0].fullName='same count, different contract';assert.equal(compareE2EWorkspaceBaseline(a,b,root,options).outcomesEqual,false);
+ assert.throws(()=>compareE2EWorkspaceBaseline(a,raw(),root,{...options,workspaceEvent:{...options.workspaceEvent,cwd:'/upstream'}}),/cwd/);
+ assert.throws(()=>compareE2EWorkspaceBaseline(a,raw(),root,{...options,workspaceEvent:{...options.workspaceEvent,signal:'SIGKILL'}}),/incomplete/);
+});
+test('workspace evaluator rejects asserted parity and preserves exact in-project names and omission explanations',()=>{
+ const x=fixture(),workspaceParity={original:x.baseline,workspace:x.baseline,originalEvent:{...event(false),cwd:root},workspaceEvent:{...event(false),cwd:root}};
+ for(const t of x.trials){const r=t.testLore;r.executedTests=r.executedTests.map(f=>'packages/e2e/'+f);r.collectionFiles=r.collectionFiles.map(f=>'packages/e2e/'+f);r.tests=r.tests.map(t=>({...t,file:'packages/e2e/'+t.file}));r.plan.selected=[...r.executedTests];r.plan.decisions=r.plan.decisions.map(d=>({...d,test:'packages/e2e/'+d.test}));}
+ const options={protectedInputsUnchanged:true,restoredGreen:true,profile:'workspace',workspaceParity};
+ assert.equal(assessContributedE2E(x.baseline,x.trials,root,options).qualified,true);
+ assert.equal(assessContributedE2E(x.baseline,x.trials,root,{...options,workspaceParity:{outcomesEqual:true,omissionAuthority:false}}).qualified,false);
+ x.trials[0].testLore.plan.decisions[0].test=other;assert.equal(assessContributedE2E(x.baseline,x.trials,root,options).qualified,false);
+ x.trials[0].testLore.tests[0].file='packages/another/'+oracle;assert.equal(assessContributedE2E(x.baseline,x.trials,root,options).qualified,false);
 });
 
 test('pnpm executable follows exact installed metadata instead of guessed v11 layout',()=>{

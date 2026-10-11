@@ -4,22 +4,48 @@ function analyze(file, text) {
   const ast = ts.createSourceFile(file, text, ts.ScriptTarget.Latest, true);
   const imports = new Set();
   const warnings = [];
+  const registrationCalls = [];
   if (ast.parseDiagnostics.length) warnings.push('parse-error');
   const add = node => {
     if (node && ts.isStringLiteralLike(node)) imports.add(node.text);
     else warnings.push('dynamic-dependency');
   };
   function visit(node) {
+    // Taking a registration method as a callback is still an unknown state or
+    // loader capability. Its later invocation need not preserve the spelling.
+    const referencedProperty=ts.isPropertyAccessExpression(node)?node.name.text:ts.isElementAccessExpression(node)&&node.argumentExpression&&ts.isStringLiteralLike(node.argumentExpression)?node.argumentExpression.text:null;
+    if(['register','registerHooks'].includes(referencedProperty))warnings.push('runtime-registration');
     if (ts.isImportDeclaration(node) || ts.isExportDeclaration(node)) {
       if (node.moduleSpecifier) add(node.moduleSpecifier);
+      // A loader capability can escape through aliases, callbacks or reexports.
+      // Named imports of unrelated module helpers do not grant that capability.
+      if (node.moduleSpecifier && ts.isStringLiteralLike(node.moduleSpecifier) && /^(?:node:)?module$/.test(node.moduleSpecifier.text)) {
+        const bindings=ts.isImportDeclaration(node)?node.importClause?.namedBindings:node.exportClause;
+        const wholeModule=ts.isImportDeclaration(node)?Boolean(node.importClause?.name || (bindings&&ts.isNamespaceImport(bindings))):!bindings || !ts.isNamedExports(bindings);
+        if(wholeModule || (bindings && (ts.isNamedImports(bindings)||ts.isNamedExports(bindings)) && bindings.elements.some(element=>['register','registerHooks'].includes((element.propertyName||element.name).text))))warnings.push('runtime-registration');
+      }
     }
-    if (ts.isImportEqualsDeclaration(node) && ts.isExternalModuleReference(node.moduleReference)) add(node.moduleReference.expression);
+    if (ts.isImportEqualsDeclaration(node) && ts.isExternalModuleReference(node.moduleReference)) {
+      add(node.moduleReference.expression);
+      if(node.moduleReference.expression&&ts.isStringLiteralLike(node.moduleReference.expression)&&/^(?:node:)?module$/.test(node.moduleReference.expression.text))warnings.push('runtime-registration');
+    }
     if (ts.isCallExpression(node)) {
       const name = node.expression.getText(ast);
       if (node.expression.kind === ts.SyntaxKind.ImportKeyword || name === 'require' || name === 'require.resolve') add(node.arguments[0]);
+      if((node.expression.kind===ts.SyntaxKind.ImportKeyword||name==='require') && node.arguments[0] && ts.isStringLiteralLike(node.arguments[0]) && /^(?:node:)?module$/.test(node.arguments[0].text)) {
+        const parent=node.parent;
+        const unrelatedDestructure=ts.isVariableDeclaration(parent)&&ts.isObjectBindingPattern(parent.name)&&parent.name.elements.every(element=>!element.dotDotDotToken&&ts.isIdentifier(element.name)&&!element.initializer&&ts.isIdentifier(element.propertyName||element.name)&&!['register','registerHooks'].includes((element.propertyName||element.name).text));
+        if(!unrelatedDestructure)warnings.push('runtime-registration');
+      }
       if (['eval', 'Function', 'import.meta.glob', 'import.meta.globEager', 'require.context'].includes(name)) warnings.push('dynamic-dependency');
       if (name === 'fetch' || name === 'globalThis.fetch' || name.endsWith('.fetch')) warnings.push('runtime-dependency');
-      if (name.endsWith('.register') || name === 'module.register') warnings.push('runtime-registration');
+      let expression=node.expression;
+      while(ts.isParenthesizedExpression(expression)||ts.isNonNullExpression(expression)||ts.isAsExpression(expression)||ts.isTypeAssertionExpression(expression)||ts.isSatisfiesExpression(expression))expression=expression.expression;
+      const property=ts.isPropertyAccessExpression(expression)?expression.name.text:ts.isElementAccessExpression(expression)&&expression.argumentExpression&&ts.isStringLiteralLike(expression.argumentExpression)?expression.argumentExpression.text:null;
+      if(['register','registerHooks'].includes(property)||ts.isIdentifier(expression)&&['register','registerHooks'].includes(expression.text)) {
+        warnings.push('runtime-registration');
+        registrationCalls.push({start:node.getStart(ast),end:node.end,callee:name,method:property||expression.text});
+      }
     }
     if (ts.isNewExpression(node)) {
       const name=node.expression.getText(ast);
@@ -32,7 +58,7 @@ function analyze(file, text) {
   for (const spec of imports) {
     if (/^(?:node:)?(?:fs|fs\/promises|vm|child_process|module|worker_threads|http|https|http2|net|tls|dns|dns\/promises|dgram|wasi)$/.test(spec)) warnings.push('runtime-dependency');
   }
-  return { ast, imports: [...imports], warnings: [...new Set(warnings)] };
+  return { ast, imports: [...imports], warnings: [...new Set(warnings)], registrationCalls };
 }
 
 function configurationFlags(ast) {

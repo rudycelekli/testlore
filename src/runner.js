@@ -8,6 +8,8 @@ import { runnerIdentity, snapshot, freshness, digest } from './provenance.js';
 import { renderRunReport } from './run-report.js';
 import { openNativeSession, unifiedNativeEligibility } from './native-session.js';
 import { externalRun } from './integrations.js';
+import { captureVitestWorkspaceRoot } from './native-workspace-root.js';
+import { captureNativeVitestCases } from './native-vitest-cases.js';
 
 export function compareShadow(selection, execution) {
   const proposed = new Set(selection.selected);
@@ -43,8 +45,10 @@ export async function runUnifiedNative(root,options={}) {
  if(options.changed)throw new Error('--changed is diagnostic only. Unified execution requires Git change discovery.');
  if(options.shadow&&options.selective)throw new Error('Choose shadow or selective execution');
  if(options.signal?.aborted)return {exitCode:2,executed:false,complete:false,error:'Unified execution cancelled'};
+ // An explicit workspace profile cannot escape rejection through legacy fallback.
+ if(adapterFor(config)==='vitest')try{captureVitestWorkspaceRoot(root,config.runner||[],{nativeCwd:config.nativeCwd});captureNativeVitestCases(root,config,config.runner||[]);}catch(error){return {exitCode:2,executed:false,complete:false,tests:[],requestedFiles:[],error:error.message,unifiedNative:{prototype:true,used:false,reason:'Explicit workspace/case profile rejected before native startup'}};}
  const unsupported=unifiedNativeEligibility(root,config);
- if(unsupported){const result=run(root,options);return {...result,unifiedNative:{prototype:true,used:false,fallbackReason:unsupported}};}
+ if(unsupported){if(config.nativeCwd!==undefined)return {exitCode:2,executed:false,complete:false,tests:[],requestedFiles:[],error:'Explicit native cwd cannot use legacy fallback: '+unsupported,unifiedNative:{prototype:true,used:false,fallbackReason:unsupported}};const result=run(root,options);return {...result,unifiedNative:{prototype:true,used:false,fallbackReason:unsupported}};}
  const initial=snapshot(root,config);let session,prepared,executionAttempted=false;
  try {
   session=await openNativeSession(root,config,options,{root,configurationDigest:digest(config),files:Object.keys(initial.files)});
