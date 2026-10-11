@@ -218,6 +218,7 @@ export function execute(root, files, config = {}, options = {}) {
   root = path.resolve(root);
   files = [...new Set(files.map(file => localFile(root, file)))].sort();
   const adapter = adapterFor(config);
+  if(config.nativeCwd!==undefined)return {adapter,exitCode:2,complete:false,tests:[],collectionFiles:[],requestedFiles:files,executedFiles:[],error:'Explicit native cwd requires fresh unified execution; legacy execution cannot ignore it'};
   if (!files.length) return { adapter, exitCode: adapter==='playwright'?2:0, tests: [], collectionFiles: [], requestedFiles: [], executedFiles: [], complete: adapter!=='playwright', durationMs: 0, command: [], stdout: '', stderr: '' };
   const temporary = fs.mkdtempSync(path.join(os.tmpdir(), 'tddswarm-report-'));
   const reportFile = path.join(temporary, 'results.json');
@@ -274,6 +275,7 @@ export function execute(root, files, config = {}, options = {}) {
 
 /** Run the framework's own dependency selector for comparative measurements. */
 export function executeNativeRelated(root, changed, config = {}, options = {}) {
+ if(config.nativeCwd!==undefined)return {adapter:adapterFor(config),complete:false,exitCode:2,tests:[],executedFiles:[],collectionFiles:[],error:'Explicit native cwd requires independently invoked native selectors; legacy related execution cannot ignore it'};
  root=path.resolve(root);const adapter=adapterFor(config);
  if(!['vitest','jest'].includes(adapter))throw new Error('Native related selection requires Vitest or Jest');
  changed=[...new Set(changed.map(file=>localFile(root,file)))].sort();
@@ -292,6 +294,7 @@ export function discover(root, config = {}) {
   root = path.resolve(root);
   const adapter = adapterFor(config);
   const fallback = () => listFiles(root).filter(f => TEST.test(f));
+  if(config.nativeCwd!==undefined)return {files:fallback(),complete:false,adapter,warnings:['native-discovery-failed:Explicit native cwd requires fresh shared Vitest discovery']};
   if(adapter==='bun'&&config.discovery==='native') {
     const temporary=fs.mkdtempSync(path.join(os.tmpdir(),'testlore-bun-discovery-'));
     const started=performance.now();
@@ -348,6 +351,7 @@ export function discover(root, config = {}) {
 /** Resolve a graph's imports with one framework config/server setup. */
 export function resolveNativeBatch(root, imports, config = {}, options = {}) {
   const adapter = adapterFor(config);
+  if(config.nativeCwd!==undefined&&(!options.discover||adapter!=='vitest'))return {resolutions:imports.map(()=>({paths:[],unresolved:true})),configFiles:[],adapter,supported:true,complete:false,error:'Explicit native cwd requires a fresh shared Vitest discovery context'};
   if(adapter==='bun')return {resolutions:imports.map(()=>({paths:[],unresolved:true})),configFiles:[],complete:false,adapter,supported:true,error:'Bun shared-global isolation and runtime dependency resolution are unqualified'};
   if (!['jest', 'vitest'].includes(adapter)) return { resolutions: [], configFiles: [], complete: true, adapter, supported: false };
   if(adapter==='vitest'&&!options.discover&&(config.runner||[]).some(arg=>/^(?:--root|-r)(?:=|$)/.test(arg)))return {resolutions:imports.map(()=>({paths:[],unresolved:true})),configFiles:[],adapter,supported:true,complete:false,error:'Native workspace root requires a fresh shared discovery context'};
@@ -361,21 +365,21 @@ export function resolveNativeBatch(root, imports, config = {}, options = {}) {
   let workspaceRoot,vitestCases;
   let diagnostics;
   try {
-    workspaceRoot=sharedCommand?captureVitestWorkspaceRoot(root,sharedCommand):null;
+    workspaceRoot=sharedCommand?captureVitestWorkspaceRoot(root,sharedCommand,{nativeCwd:config.nativeCwd}):null;
     vitestCases=sharedCommand?captureNativeVitestCases(root,config,sharedCommand):null;
     const originalCommand=frameworkBase(commandBase(config,adapter),adapter);
     const cliIndex=originalCommand.findIndex(arg=>/(?:^|[/\\])vitest(?:\.mjs)?$/.test(arg));
     const invocation=sharedCommand?[process.execPath,path.resolve(root,originalCommand[cliIndex]),...originalCommand.slice(cliIndex+1),'list','--filesOnly',`--json=${path.join(temporary,'native-files.json')}`]:undefined;
-    fs.writeFileSync(requestFile, JSON.stringify({ root: fs.realpathSync(root), adapter, imports, invocation, workspaceRoot,vitestCases,resolutionReportFile, configurationInputs:config.configurationInputs,configurationInputObservations, discover: options.discover === true, transitive: options.transitive === true, roots: options.roots || [], command: sharedCommand||originalCommand }));
+    fs.writeFileSync(requestFile, JSON.stringify({ root: fs.realpathSync(root), adapter, imports, invocation, workspaceRoot,nativeCwd:config.nativeCwd,vitestCases,resolutionReportFile, configurationInputs:config.configurationInputs,configurationInputObservations, discover: options.discover === true, transitive: options.transitive === true, roots: options.roots || [], command: sharedCommand||originalCommand }));
     const script = fileURLToPath(new URL('./reporters/resolve.js', import.meta.url));
-    const result = spawn(root, [process.execPath, script, requestFile], config);
+    const result = spawn(workspaceRoot?.cwd||root, [process.execPath, script, requestFile], config);
     const trim=value=>{const bytes=Buffer.from(value||'');return {text:bytes.subarray(0,32768).toString('utf8'),truncated:bytes.length>32768};};
     diagnostics={stdout:trim(result.stdout),stderr:trim(result.stderr)};
     if (result.status !== 0 || result.error) throw new Error(result.error?.message || 'Native resolver failed');
     // Executable configuration may write to stdout, including once per native
     // inline project. It cannot share the authoritative JSON transport.
     const value = readNativeJson(resolutionReportFile);
-    if(sharedCommand){assertVitestWorkspaceRoot(workspaceRoot,value.workspaceRoot);assertVitestWorkspaceRoot(workspaceRoot,captureVitestWorkspaceRoot(root,sharedCommand));}
+    if(sharedCommand){assertVitestWorkspaceRoot(workspaceRoot,value.workspaceRoot);assertVitestWorkspaceRoot(workspaceRoot,captureVitestWorkspaceRoot(root,sharedCommand,{nativeCwd:config.nativeCwd}));}
     if(vitestCases){assertNativeVitestCases(vitestCases,value.vitestCases);assertNativeVitestCases(vitestCases,captureNativeVitestCases(root,config,sharedCommand));assertNativeCaseConfiguration(root,value.nativeCaseConfigurationInputs);}
     assertConfigurationInputFreshness(configurationInputObservations,value.configurationInputs,{allowCanonicalTmpdir:true});
     assertConfigurationInputFreshness(configurationInputObservations,captureConfigurationInputs(root,config));
@@ -485,7 +489,7 @@ export function sharedVitestCommand(root,config) {
     if(valued.has(option)) {if(!base[i].includes('=')){if(!base[i+1]||base[i+1].startsWith('-'))return null;i++;}}
     else if(!switches.has(base[i]))return null;
   }
-  try{captureVitestWorkspaceRoot(root,base);}catch{return null;}
+  try{captureVitestWorkspaceRoot(root,base,{nativeCwd:config.nativeCwd});}catch{return null;}
   try {
     return /^(?:4\.1\.|5\.)/.test(selected.version)?base:null;
   }catch{return null;}

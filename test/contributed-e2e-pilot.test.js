@@ -20,7 +20,7 @@ function fixture(){
 }
 const assess=x=>assessContributedE2E(x.baseline,x.trials,root,{protectedInputsUnchanged:true,restoredGreen:true});
 test('workspace flags bind the original absolute config without duplicating the native root',()=>{
- assert.deepEqual(e2eNativeFlags(root,'workspace'),['--config',root+'/vitest.config.ts','--root','packages/e2e']);
+ assert.deepEqual(e2eNativeFlags(root,'workspace'),['--config',root+'/vitest.config.ts','--root',root]);
  assert.deepEqual(e2eNativeFlags(root,'package'),['--config','vitest.config.ts']);
  assert.throws(()=>e2eNativeFlags('relative','workspace'),/Invalid/);
 });
@@ -95,14 +95,14 @@ test('constructed evaluator data distinguishes case qualification from applicati
 });
 
 test('workspace comparison independently binds original and workspace native baseline outcomes and cwd',()=>{
- const options={originalEvent:{...event(false),cwd:root},workspaceEvent:{...event(false),cwd:'/upstream'}};
+ const options={originalEvent:{...event(false),cwd:root},workspaceEvent:{...event(false),cwd:root}};
  const a=raw(),b=raw();assert.equal(compareE2EWorkspaceBaseline(a,b,root,options).outcomesEqual,true);
  b.testResults[0].assertionResults[0].fullName='same count, different contract';assert.equal(compareE2EWorkspaceBaseline(a,b,root,options).outcomesEqual,false);
- assert.throws(()=>compareE2EWorkspaceBaseline(a,raw(),root,{...options,workspaceEvent:{...options.workspaceEvent,cwd:root}}),/cwd/);
+ assert.throws(()=>compareE2EWorkspaceBaseline(a,raw(),root,{...options,workspaceEvent:{...options.workspaceEvent,cwd:'/upstream'}}),/cwd/);
  assert.throws(()=>compareE2EWorkspaceBaseline(a,raw(),root,{...options,workspaceEvent:{...options.workspaceEvent,signal:'SIGKILL'}}),/incomplete/);
 });
 test('workspace evaluator rejects asserted parity and preserves exact in-project names and omission explanations',()=>{
- const x=fixture(),workspaceParity={original:x.baseline,workspace:x.baseline,originalEvent:{...event(false),cwd:root},workspaceEvent:{...event(false),cwd:'/upstream'}};
+ const x=fixture(),workspaceParity={original:x.baseline,workspace:x.baseline,originalEvent:{...event(false),cwd:root},workspaceEvent:{...event(false),cwd:root}};
  for(const t of x.trials){const r=t.testLore;r.executedTests=r.executedTests.map(f=>'packages/e2e/'+f);r.collectionFiles=r.collectionFiles.map(f=>'packages/e2e/'+f);r.tests=r.tests.map(t=>({...t,file:'packages/e2e/'+t.file}));r.plan.selected=[...r.executedTests];r.plan.decisions=r.plan.decisions.map(d=>({...d,test:'packages/e2e/'+d.test}));}
  const options={protectedInputsUnchanged:true,restoredGreen:true,profile:'workspace',workspaceParity};
  assert.equal(assessContributedE2E(x.baseline,x.trials,root,options).qualified,true);

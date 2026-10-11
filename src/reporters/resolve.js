@@ -114,7 +114,9 @@ function rejectUnifiedProjectPlugins(files,plugins,trustedPlugins=new Set()) {
 }
 
 try {
-  const workspaceRoot=request.discover?captureVitestWorkspaceRoot(root,command):null;
+  if(request.nativeCwd!==undefined&&(!request.discover||adapter!=='vitest'))throw Error('Explicit native cwd requires a fresh shared Vitest discovery context');
+  const workspacePolicy={nativeCwd:request.nativeCwd};
+  const workspaceRoot=request.discover?captureVitestWorkspaceRoot(root,command,workspacePolicy):null;
   if(request.discover)assertVitestWorkspaceRoot(request.workspaceRoot??null,workspaceRoot);
   output.workspaceRoot=workspaceRoot;
   const casePolicy={vitestCases:request.vitestCases?.profile};
@@ -133,11 +135,13 @@ try {
     }
   }}
   freshNativeCases();
-  let workspaceContext,workspaceEffective,workspaceClosed=false;
+  let workspaceContext,workspaceEffective,workspaceClosed=false,nativeArgvReflected=false;
+  const boundNativeArgv=Array.isArray(request.invocation)?[...request.invocation]:null;
   function freshWorkspaceRoot(){
     if(workspaceRoot){
-      if(fs.realpathSync(process.cwd())!==root)throw Error('Native workspace cwd changed');
-      assertVitestWorkspaceRoot(workspaceRoot,captureVitestWorkspaceRoot(root,command));
+      if(fs.realpathSync(process.cwd())!==workspaceRoot.cwd)throw Error('Native workspace cwd changed');
+      assertVitestWorkspaceRoot(workspaceRoot,captureVitestWorkspaceRoot(root,command,workspacePolicy));
+      if(request.nativeCwd!==undefined&&nativeArgvReflected&&JSON.stringify(process.argv)!==JSON.stringify(boundNativeArgv))throw Error('Native workspace argv changed');
       if(workspaceContext){
         const viteConfig=workspaceClosed?workspaceEffective.viteConfig:workspaceContext.vite?.config;
         const projectConfig=workspaceClosed?workspaceEffective.projectConfig:workspaceContext.getRootProject()?.config;
@@ -193,6 +197,7 @@ try {
     if(request.discover) {
       if(!Array.isArray(request.invocation))throw new Error('Missing native invocation binding');
       process.argv=[...request.invocation];
+      nativeArgvReflected=true;freshWorkspaceRoot();
       const index=command.findIndex(arg=>/(?:^|[/\\])vitest(?:\.mjs)?$/.test(arg));
       const requireCLI=createRequire(command[index]);
       workerTiming.mark('requestAndAdmission');

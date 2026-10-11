@@ -31,10 +31,12 @@ function configIdentity(root,value){
     return {...file,sha256:createHash('sha256').update(data.subarray(0,offset)).digest('hex')};
   }finally{fs.closeSync(fd);}
 }
-/** Internal, fresh directory/config binding. A CLI root never changes native cwd. */
-export function captureVitestWorkspaceRoot(root,command){
+/** Fresh scope/cwd/config binding. Changed cwd is always explicit and contained. */
+export function captureVitestWorkspaceRoot(root,command,policy={}){
+  const explicitCwd=policy.nativeCwd!==undefined;
+  if(explicitCwd&&(typeof policy.nativeCwd!=='string'||!policy.nativeCwd||path.isAbsolute(policy.nativeCwd)))throw Error('Native cwd must be an inventory-relative canonical directory');
   const roots=argument(command,['--root']);
-  if(!roots.length)return null;
+  if(!roots.length){if(explicitCwd)throw Error('Explicit native cwd requires an explicit workspace root');return null;}
   if(roots.length!==1||argument(command,['-r']).length)throw Error('Duplicate or conflicting native workspace root');
   const configs=argument(command,['--config','-c']);
   if(configs.length!==1)throw Error('Native workspace root requires one explicit config');
@@ -44,9 +46,15 @@ export function captureVitestWorkspaceRoot(root,command){
   if(root!==requestedRoot)throw Error('Native inventory root must be canonical without symlink parents');
   const inventory=fs.lstatSync(root);
   const native=contained(root,roots[0],{directory:true}),config=configIdentity(root,configs[0]);
+  const cwd=explicitCwd?contained(root,policy.nativeCwd,{directory:true}):null;
+  if(cwd&&cwd.absolute!==root){
+    if(!path.isAbsolute(roots[0])||!path.isAbsolute(configs[0]))throw Error('Changed native cwd requires absolute root and config arguments');
+    if(cwd.absolute!==native.absolute)throw Error('Changed native cwd must match the admitted package root');
+    if(!path.isAbsolute(command[0])||!path.isAbsolute(command[1]))throw Error('Changed native cwd requires absolute Node and Vitest executable paths');
+  }
   const files=listFiles(root);
   if(!files.includes(config.relative)||!files.some(file=>!native.relative||file.startsWith(native.relative+'/')))throw Error('Native workspace root/config is outside the observed inventory');
-  return {schemaVersion:1,inventoryRoot:root,inventoryIdentity:{dev:String(inventory.dev),ino:String(inventory.ino)},cwd:root,nativeRoot:native.absolute,rootIdentity:{dev:native.dev,ino:native.ino},configFile:config.absolute,configIdentity:{dev:config.dev,ino:config.ino,sha256:config.sha256}};
+  return {schemaVersion:1,inventoryRoot:root,inventoryIdentity:{dev:String(inventory.dev),ino:String(inventory.ino)},cwd:cwd?.absolute||root,...(cwd?{nativeCwd:policy.nativeCwd,cwdIdentity:{dev:cwd.dev,ino:cwd.ino}}:{}),nativeRoot:native.absolute,rootIdentity:{dev:native.dev,ino:native.ino},configFile:config.absolute,configIdentity:{dev:config.dev,ino:config.ino,sha256:config.sha256}};
 }
 export function assertVitestWorkspaceRoot(expected,current){
   if(JSON.stringify(expected)!==JSON.stringify(current))throw Error('Native workspace root/config binding changed');

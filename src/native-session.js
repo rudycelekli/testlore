@@ -42,7 +42,7 @@ export async function openNativeSession(root,config,options={},startupInventory)
  if(startupInventory && (startupInventory.root!==requestedRoot || startupInventory.configurationDigest!==digest(config) || !Array.isArray(startupInventory.files)))throw new Error('Unbound startup analysis inventory');
  // Validate the caller's spelling before realpath can erase a symlink root.
  // This explicit profile is never admitted through a canonicalized alias.
- captureVitestWorkspaceRoot(requestedRoot,config.runner||[]);
+ captureVitestWorkspaceRoot(requestedRoot,config.runner||[],{nativeCwd:config.nativeCwd});
  captureNativeVitestCases(requestedRoot,config,config.runner||[]);
  root=fs.realpathSync(root);
  if(options.signal?.aborted)throw new Error('Unified execution cancelled');
@@ -71,14 +71,14 @@ export async function openNativeSession(root,config,options={},startupInventory)
   const files=startupInventory?startupInventory.files:listFiles(root);
   const sourceSummaries=prepareNativeSourceSummaries(root,files);
   const configurationInputObservations=captureConfigurationInputs(root,config);
-  const workspaceRoot=captureVitestWorkspaceRoot(root,command);
+  const workspaceRoot=captureVitestWorkspaceRoot(root,command,{nativeCwd:config.nativeCwd});
   const vitestCases=captureNativeVitestCases(root,config,command);
   // The fresh worker expands native-discovered tests, project setup and config
   // transitively. Unreachable repository files still receive parent syntax and
   // uncertainty analysis, but do not require every project's native resolver.
-  fs.writeFileSync(requestFile,JSON.stringify({root,adapter:'vitest',command,imports,invocation,workspaceRoot,vitestCases,discover:true,transitive:true,roots:[...nativePlanningRoots(root,config,files)],sourceSummaries,configurationInputs:config.configurationInputs,configurationInputObservations,unified:true,reportFile}));
+  fs.writeFileSync(requestFile,JSON.stringify({root,adapter:'vitest',command,imports,invocation,workspaceRoot,nativeCwd:config.nativeCwd,vitestCases,discover:true,transitive:true,roots:[...nativePlanningRoots(root,config,files)],sourceSummaries,configurationInputs:config.configurationInputs,configurationInputObservations,unified:true,reportFile}));
   workerSpawned=performance.now();
-  child=spawn(process.execPath,[fileURLToPath(new URL('./reporters/resolve.js',import.meta.url)),requestFile],{cwd:root,env:nativeEnvironment(config),detached:process.platform!=='win32',stdio:['ignore','pipe','pipe','pipe','pipe']});
+  child=spawn(process.execPath,[fileURLToPath(new URL('./reporters/resolve.js',import.meta.url)),requestFile],{cwd:workspaceRoot?.cwd||root,env:nativeEnvironment(config),detached:process.platform!=='win32',stdio:['ignore','pipe','pipe','pipe','pipe']});
   const wait=phase=>new Promise((resolve,reject)=>{if(failure)return reject(failure);pending.set(phase,{resolve,reject});});
   const planning=wait('planned');
   for(const [stream,name] of [[child.stdout,'stdout'],[child.stderr,'stderr']])stream.on('data',bytes=>{if(failure)return;const text=bytes.toString(),length=Buffer.byteLength(text);if(outputBytes+length>4*1024*1024)return rejectAll(new Error('Unified native output exceeded 4 MiB'));outputBytes+=length;if(name==='stdout')stdout+=text;else stderr+=text;});
@@ -96,7 +96,7 @@ export async function openNativeSession(root,config,options={},startupInventory)
   const planned=await planning;plannedReceived=performance.now();if(Date.now()>=deadline)throw new Error('Unified native-session deadline exceeded');
   const batch=normalize(root,planned);
   assertVitestWorkspaceRoot(workspaceRoot,batch.workspaceRoot);
-  assertVitestWorkspaceRoot(workspaceRoot,captureVitestWorkspaceRoot(root,command));
+  assertVitestWorkspaceRoot(workspaceRoot,captureVitestWorkspaceRoot(root,command,{nativeCwd:config.nativeCwd}));
   if(vitestCases){assertNativeVitestCases(vitestCases,batch.vitestCases);assertNativeVitestCases(vitestCases,captureNativeVitestCases(root,config,command));assertNativeCaseConfiguration(root,batch.nativeCaseConfigurationInputs);}
   assertConfigurationInputFreshness(configurationInputObservations,batch.configurationInputs);
   assertConfigurationInputFreshness(configurationInputObservations,captureConfigurationInputs(root,config));
@@ -108,12 +108,12 @@ export async function openNativeSession(root,config,options={},startupInventory)
   return {token,close,failureEvidence:()=>({stdout,stderr}),remaining:()=>deadline-Date.now(),execute:async files=>{
    if(failure)throw failure;if(Date.now()>=deadline)throw new Error('Unified native deadline exceeded');if(options.signal?.aborted)throw new Error('Unified execution cancelled');
    assertConfigurationInputFreshness(configurationInputObservations,captureConfigurationInputs(root,config));
-   assertVitestWorkspaceRoot(workspaceRoot,captureVitestWorkspaceRoot(root,command));
+   assertVitestWorkspaceRoot(workspaceRoot,captureVitestWorkspaceRoot(root,command,{nativeCwd:config.nativeCwd}));
    if(vitestCases){assertNativeVitestCases(vitestCases,captureNativeVitestCases(root,config,command));assertNativeCaseConfiguration(root,batch.nativeCaseConfigurationInputs);}
    files=[...new Set(files)].sort();files.forEach(file=>safePath(root,file));
    const started=performance.now(),execution=wait('executed');child.stdio[3].end(encodeNativeFrame({phase:'execute',files}));
    const value=await execution,executedReceived=performance.now();
-   assertVitestWorkspaceRoot(workspaceRoot,captureVitestWorkspaceRoot(root,command));
+   assertVitestWorkspaceRoot(workspaceRoot,captureVitestWorkspaceRoot(root,command,{nativeCwd:config.nativeCwd}));
    if(vitestCases){assertNativeVitestCases(vitestCases,captureNativeVitestCases(root,config,command));assertNativeCaseConfiguration(root,batch.nativeCaseConfigurationInputs);assertNativeVitestCases({profile:vitestCases,configurationInputs:batch.nativeCaseConfigurationInputs},value.nativeCaseEvidenceBinding);}
    assertConfigurationInputFreshness(configurationInputObservations,value.configurationInputs,{allowCanonicalTmpdir:true});
    assertConfigurationInputFreshness(configurationInputObservations,captureConfigurationInputs(root,config));if(Date.now()>=deadline)throw new Error('Unified native-session deadline exceeded');

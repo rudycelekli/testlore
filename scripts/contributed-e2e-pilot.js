@@ -14,7 +14,7 @@ const same=(a,b)=>JSON.stringify(a)===JSON.stringify(b);
 /** Vitest resolves relative --config from --root, while process.cwd stays unchanged. */
 export function e2eNativeFlags(root,profile){
  if(!path.isAbsolute(root)||!['package','workspace'].includes(profile))throw Error('Invalid e2e native flags');
- return profile==='workspace'?['--config',path.join(root,'vitest.config.ts'),'--root','packages/e2e']:['--config','vitest.config.ts'];
+ return profile==='workspace'?['--config',path.join(root,'vitest.config.ts'),'--root',root]:['--config','vitest.config.ts'];
 }
 function trackedDigest(root,file){const full=path.join(root,file);return fs.lstatSync(full).isSymbolicLink()?digest('symlink:'+fs.readlinkSync(full)):digest(fs.readFileSync(full));}
 function boundedJson(file){const fd=fs.openSync(file,fs.constants.O_RDONLY|(fs.constants.O_NOFOLLOW||0));try{const stat=fs.fstatSync(fd);if(!stat.isFile()||stat.size>32*1024**2)throw Error('Native report size bound exceeded');const bytes=Buffer.alloc(stat.size+1);let size=0;for(let n;size<bytes.length&&(n=fs.readSync(fd,bytes,size,bytes.length-size,null));)size+=n;if(size!==stat.size)throw Error('Report changed during read');return JSON.parse(bytes.subarray(0,size));}finally{fs.closeSync(fd);}}
@@ -49,12 +49,12 @@ export function e2eNativeCases(value,root,{allowAmbiguousNames=false}={}){
 }
 /** Compare separately executed native invocations; this observes outcomes, not dependency completeness. */
 export function compareE2EWorkspaceBaseline(original,workspace,root,{originalEvent,workspaceEvent}={}){
- const expectedWorkspace=path.resolve(root,'../..');
+ const expectedInventory=path.resolve(root,'../..');
  for(const event of [originalEvent,workspaceEvent])if(!event||event.exitCode!==0||event.signal||event.stoppedReason||!Number.isFinite(event.durationMs)||event.durationMs<0)throw Error('Native workspace baseline process incomplete');
- if(originalEvent.cwd!==root||workspaceEvent.cwd!==expectedWorkspace)throw Error('Native workspace baseline cwd mismatch');
+ if(originalEvent.cwd!==root||workspaceEvent.cwd!==root)throw Error('Native workspace baseline cwd mismatch');
  const a=e2eNativeCases(original,root,{allowAmbiguousNames:true}),b=e2eNativeCases(workspace,root,{allowAmbiguousNames:true});
  if(!a.cases.length||!original.success||!workspace.success)throw Error('Native workspace baseline is not green');
- return {outcomesEqual:same(a,b),files:a.files.length,cases:a.cases.length,originalCwd:root,workspaceCwd:expectedWorkspace,caseIdentitiesComplete:a.ambiguousNames.length===0,omissionAuthority:false,limitation:'Exact named outcome parity in one separately executed baseline; parameter identity and runtime/configuration contracts require their own evidence.'};
+ return {outcomesEqual:same(a,b),files:a.files.length,cases:a.cases.length,originalCwd:root,workspaceCwd:root,inventoryRoot:expectedInventory,caseIdentitiesComplete:a.ambiguousNames.length===0,omissionAuthority:false,limitation:'Exact named outcome parity in one separately executed baseline; parameter identity and runtime/configuration contracts require their own evidence.'};
 }
 function normalizedTestLore(value,{allowAmbiguousNames=false,projectPrefix=''}={}){
  if(!value?.complete||!value.executed||!Array.isArray(value.tests)||!Array.isArray(value.executedTests)||!Array.isArray(value.collectionFiles)||!value.plan||!same([...value.executedTests].sort(),[...value.collectionFiles].sort())||!same([...value.plan.selected].sort(),[...value.executedTests].sort())||value.reportErrors?.length||value.error||value.signal||value.tests.some(test=>test.name==='<file-load>'))throw Error('TestLore execution incomplete');
@@ -221,7 +221,7 @@ export async function contributedE2EPilot({directory,output,candidateRoot,profil
   save('diagnostic-producer-binding',{candidateSourceRevision:candidatePackage.gitHead,diagnosticSha256,mode:'sealed-installed-candidate',freshnessVerified:false,omissionAuthority:false});
   const executionRoot=profile==='workspace'?upstream:root;
   const nativeFlags=e2eNativeFlags(root,profile);
-  const config={adapter:'vitest',discovery:'native',runner:[process.execPath,vitest,'run',...nativeFlags,'--project','unit','{files}'],analysisCache:{enabled:true},vitestCases:{profile:'e2e-locator-runtime-v1',projectRoot:profile==='workspace'?'packages/e2e':'.',upstreamRevision:E2E_PIN},...(profile==='workspace'?{tsconfig:'packages/e2e/tsconfig.json'}:{})};
+  const config={adapter:'vitest',discovery:'native',runner:[process.execPath,vitest,'run',...nativeFlags,'--project','unit','{files}'],analysisCache:{enabled:true},vitestCases:{profile:'e2e-locator-runtime-v1',projectRoot:profile==='workspace'?'packages/e2e':'.',upstreamRevision:E2E_PIN},...(profile==='workspace'?{tsconfig:'packages/e2e/tsconfig.json',nativeCwd:'packages/e2e'}:{})};
   fs.writeFileSync(path.join(executionRoot,'tddswarm.config.json'),JSON.stringify(config));
   await checked('overlay-add',executionRoot,['git','-c','core.hooksPath=/dev/null','add','--','tddswarm.config.json']);await checked('overlay-commit',executionRoot,['git','-c','core.hooksPath=/dev/null','-c','user.name=TestLore Pilot','-c','user.email=pilot@localhost','commit','-m','Controlled quality configuration overlay']);
   const native=async(label,related,changedSources=SOURCES,originalPackage=false,observe=!!nativeObserver)=>{
@@ -233,8 +233,8 @@ export async function contributedE2EPilot({directory,output,candidateRoot,profil
     save(label+'.case-request',{schemaVersion:1,root,expectedFiles:nativeObserver.files,inputs,vitestVersion:'5.0.1',reportFile:captureFile,registrationContracts:[nativeObserver.contract],scope:related?'native-related':'full'});
     extra.push('--includeTaskLocation','--reporter='+nativeObserver.reporter);extraEnv.TESTLORE_VITEST_CASE_REQUEST=requestFile;
    }
-   const command=[process.execPath,vitest,related?'related':'run',...flags,'--project','unit',...(related?[...changedSources.map(file=>'./'+(workspace?'packages/e2e/':'')+file),'--run','--passWithNoTests']:[]),'--reporter=json','--outputFile='+report,...extra];
-   const event=await invoke(label,workspace?upstream:root,command,180000,extraEnv);
+   const command=[process.execPath,vitest,related?'related':'run',...flags,'--project','unit',...(related?[...changedSources.map(file=>'./'+file),'--run','--passWithNoTests']:[]),'--reporter=json','--outputFile='+report,...extra];
+   const event=await invoke(label,root,command,180000,extraEnv);
    if(observe&&digest(fs.readFileSync(nativeObserver.configFile))!==nativeObserver.sha256)throw Error('Native observer configuration drift');
    return {value:boundedJson(report),event,...(captureFile?{capture:boundedJson(captureFile)}:{})};
   };
@@ -260,7 +260,7 @@ export async function contributedE2EPilot({directory,output,candidateRoot,profil
   save('baseline-case-identities',baselineCapture);
   await checked('old-globs',root,['git','show',E2E_PARENT+':packages/e2e/'+SOURCES[0]]);await checked('old-regexp',root,['git','show',E2E_PARENT+':packages/e2e/'+SOURCES[1]]);const old=Object.fromEntries(SOURCES.map((file,index)=>[file,fs.readFileSync(path.join(output,(index?'old-regexp':'old-globs')+'.stdout'))]));
   if(!sourceOriginal[SOURCES[0]].toString().includes("new RegExp(`${source}$`, 'u')")||old[SOURCES[0]].toString().includes("new RegExp(`${source}$`, 'u')")||digest(fs.readFileSync(path.join(root,ORACLE)))!=='2580f561b298ce270295ad4991c15f6828cdc29428a697b103eb76946ef5a636')throw Error('Unicode regression preregistration mismatch');
-  save('preregistered-manifest',{schemaVersion:1,upstreamRevision:E2E_PIN,parentRevision:E2E_PARENT,node:process.version,pnpm:'12.3.4',pnpmExecutable:pnpmIdentity,lockSha256:E2E_LOCK_SHA,scope:'Original e2e unit project',profile,inventoryRoot:executionRoot,nativeRoot:root,executionCwd:executionRoot,caseObserverConfigSha256:nativeObserver.sha256,caseCollectionIncludedInTimings:{testLore:true,native:false,full:false,observers:true},originalConfigurationSha256:digest(fs.readFileSync(path.join(root,'vitest.config.ts'))),oracleSha256:digest(fs.readFileSync(path.join(root,ORACLE))),protectedHashes,sourceHashes:Object.fromEntries(SOURCES.map(file=>[file,{original:digest(sourceOriginal[file]),historical:digest(old[file])}])),candidateCliSha256:digest(fs.readFileSync(cli)),candidatePackageSha256:digest(fs.readFileSync(path.join(candidateRoot,'package.json'))),candidateSourceRevision:JSON.parse(fs.readFileSync(path.join(candidateRoot,'package.json'))).gitHead||null,repetitions:3,changes:['comment-only','exact-parent-Unicode-glob-reversion'],modelBudget:0,modelCostMeasured:false,providerCredentialsInherited:false});
+  save('preregistered-manifest',{schemaVersion:1,upstreamRevision:E2E_PIN,parentRevision:E2E_PARENT,node:process.version,pnpm:'12.3.4',pnpmExecutable:pnpmIdentity,lockSha256:E2E_LOCK_SHA,scope:'Original e2e unit project',profile,inventoryRoot:executionRoot,nativeRoot:root,executionCwd:root,controllerCwd:executionRoot,caseObserverConfigSha256:nativeObserver.sha256,caseCollectionIncludedInTimings:{testLore:true,native:false,full:false,observers:true},originalConfigurationSha256:digest(fs.readFileSync(path.join(root,'vitest.config.ts'))),oracleSha256:digest(fs.readFileSync(path.join(root,ORACLE))),protectedHashes,sourceHashes:Object.fromEntries(SOURCES.map(file=>[file,{original:digest(sourceOriginal[file]),historical:digest(old[file])}])),candidateCliSha256:digest(fs.readFileSync(cli)),candidatePackageSha256:digest(fs.readFileSync(path.join(candidateRoot,'package.json'))),candidateSourceRevision:JSON.parse(fs.readFileSync(path.join(candidateRoot,'package.json'))).gitHead||null,repetitions:3,changes:['comment-only','exact-parent-Unicode-glob-reversion'],modelBudget:0,modelCostMeasured:false,providerCredentialsInherited:false});
   for(let change=0;change<2;change++){
    for(const file of SOURCES)fs.writeFileSync(path.join(root,file),change?old[file]:sourceOriginal[file]);if(!change)fs.appendFileSync(path.join(root,SOURCES[0]),'\n// Controlled comment-only change.\n');
    await checked('original-build-change-'+change,upstream,[...pnpm,'run','build'],600000);

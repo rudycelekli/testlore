@@ -46,9 +46,9 @@ export async function runUnifiedNative(root,options={}) {
  if(options.shadow&&options.selective)throw new Error('Choose shadow or selective execution');
  if(options.signal?.aborted)return {exitCode:2,executed:false,complete:false,error:'Unified execution cancelled'};
  // An explicit workspace profile cannot escape rejection through legacy fallback.
- if(adapterFor(config)==='vitest')try{captureVitestWorkspaceRoot(root,config.runner||[]);captureNativeVitestCases(root,config,config.runner||[]);}catch(error){return {exitCode:2,executed:false,complete:false,tests:[],requestedFiles:[],error:error.message,unifiedNative:{prototype:true,used:false,reason:'Explicit workspace/case profile rejected before native startup'}};}
+ if(adapterFor(config)==='vitest')try{captureVitestWorkspaceRoot(root,config.runner||[],{nativeCwd:config.nativeCwd});captureNativeVitestCases(root,config,config.runner||[]);}catch(error){return {exitCode:2,executed:false,complete:false,tests:[],requestedFiles:[],error:error.message,unifiedNative:{prototype:true,used:false,reason:'Explicit workspace/case profile rejected before native startup'}};}
  const unsupported=unifiedNativeEligibility(root,config);
- if(unsupported){const result=run(root,options);return {...result,unifiedNative:{prototype:true,used:false,fallbackReason:unsupported}};}
+ if(unsupported){if(config.nativeCwd!==undefined)return {exitCode:2,executed:false,complete:false,tests:[],requestedFiles:[],error:'Explicit native cwd cannot use legacy fallback: '+unsupported,unifiedNative:{prototype:true,used:false,fallbackReason:unsupported}};const result=run(root,options);return {...result,unifiedNative:{prototype:true,used:false,fallbackReason:unsupported}};}
  const initial=snapshot(root,config);let session,prepared,executionAttempted=false;
  try {
   session=await openNativeSession(root,config,options,{root,configurationDigest:digest(config),files:Object.keys(initial.files)});

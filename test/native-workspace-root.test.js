@@ -4,11 +4,12 @@ import fs from 'node:fs';
 import path from 'node:path';
 import {createRequire} from 'node:module';
 import {pathToFileURL} from 'node:url';
-import {execute,resolveNativeBatch,sharedVitestCommand} from '../src/execution.js';
+import {spawnSync} from 'node:child_process';
+import {execute,executeNativeRelated,discover,resolveNativeBatch,sharedVitestCommand,normalizeUnifiedExecution} from '../src/execution.js';
 import {runUnifiedNative,compareSubsetCases} from '../src/runner.js';
 import {plan} from '../src/selector.js';
 import {captureVitestWorkspaceRoot,assertVitestWorkspaceRoot} from '../src/native-workspace-root.js';
-import {openNativeSession} from '../src/native-session.js';
+import {openNativeSession,sessionPlanning} from '../src/native-session.js';
 import {fixture,write,commit} from './helpers.js';
 const cli=process.env.TDDSWARM_VITEST_BIN||path.join(path.dirname(createRequire(import.meta.url).resolve('vitest/package.json')),'vitest.mjs');
 const files=['packages/app/test/a.test.js','packages/app/test/b.test.js'];
@@ -136,3 +137,66 @@ test('implicit executable root changes cannot bypass the explicit workspace prof
   const withoutRoot={...config,runner:config.runner.filter((arg,index,args)=>arg!=='--root'&&args[index-1]!=='--root')};
   assert.equal(resolveNativeBatch(root,[],withoutRoot,{discover:true,transitive:true}).complete,false);
 });
+
+function packageContext(t){
+ const {root,config}=workspace(t),native=path.join(root,'packages/app');
+ config.nativeCwd='packages/app';config.runner[config.runner.indexOf('--root')+1]=native;
+ write(root,'packages/app/relative-input.json',{value:'package input'});write(root,'relative-input.json',{value:'wrong workspace input'});
+ write(root,files[0],`import {test,expect,inject} from 'vitest';import fs from 'node:fs';import value from '../src/a.js';test('independent sibling defect',()=>expect(value).toBe(1));test('original package cwd, setup and relative-file contract',()=>{expect(process.cwd()).toBe(${JSON.stringify(native)});expect(globalThis.setupCwd).toBe(${JSON.stringify(native)});expect(globalThis.setupLocation).toBe(${JSON.stringify(pathToFileURL(path.join(native,'setup.js')).href)});expect(inject('nativeRoot')).toBe(${JSON.stringify(native)});expect(JSON.parse(fs.readFileSync('relative-input.json','utf8')).value).toBe('package input');});`);
+ write(root,'tddswarm.config.json',config);commit(root);return {root,native,config};
+}
+function independentNative(root,cwd,config){
+ const report=path.join(root,'.tddswarm','cwd-independent.json');fs.mkdirSync(path.dirname(report),{recursive:true});
+ const env={...process.env};delete env.NODE_TEST_CONTEXT;
+ const command=[...config.runner.slice(2).filter(arg=>arg!=='{files}'),'--reporter=json',`--outputFile=${report}`,...files.map(file=>path.join(root,file))];
+ const result=spawnSync(config.runner[0],[config.runner[1],...command],{cwd,env,encoding:'utf8',timeout:30000,maxBuffer:4*1024*1024});
+ assert.equal(result.error,undefined,result.error?.message);const raw=JSON.parse(fs.readFileSync(report));
+ return normalizeUnifiedExecution(root,files,raw,{nativeExitCode:result.status,stdout:result.stdout,stderr:result.stderr});
+}
+
+test('explicit package cwd preserves original CLI configuration/setup/relative inputs and genuine failures',async t=>{
+ const {root,native,config}=packageContext(t),original=independentNative(root,native,config);assert.equal(original.complete,true);assert.equal(original.exitCode,0,original.stdout+original.stderr);
+ const wrong=independentNative(root,root,config);assert.equal(wrong.exitCode,1);assert.ok(wrong.tests.some(row=>row.status==='failed'),'Workspace cwd must actually challenge the original package contract');
+ const batch=resolveNativeBatch(root,[],config,{discover:true,transitive:true,roots:['packages/app/tsconfig.json']});assert.equal(batch.complete,true,JSON.stringify(batch));
+ assert.deepEqual(batch.discovery.files,files);assert.equal(batch.workspaceRoot.cwd,native);assert.ok(batch.configFiles.includes('packages/app/setup.js'));
+ assert.ok(batch.additionalResolutions.some(row=>row.file==='packages/app/src/a.js'&&row.resolution.paths.includes('shared/value.js')),'Native imports retain inventory-root prefixes');
+ const unified=await runUnifiedNative(root,{full:true,capture:true});assert.equal(unified.complete,true,unified.error);assert.equal(unified.exitCode,0,unified.stdout+unified.stderr);assert.equal(compareSubsetCases(original,unified,files).complete,true);
+ write(root,'shared/value.js','export default 9;');const changedNative=independentNative(root,native,config),changedUnified=await runUnifiedNative(root,{full:true,capture:true});
+ assert.equal(changedNative.exitCode,1);assert.equal(changedUnified.complete,true,changedUnified.error);assert.equal(changedUnified.exitCode,1);assert.equal(compareSubsetCases(changedNative,changedUnified,files).complete,true);
+ assert.equal(execute(root,files,config).complete,false);assert.equal(executeNativeRelated(root,['shared/value.js'],config).complete,false);assert.equal(discover(root,config).complete,false);
+});
+
+test('native cwd rejects outside, symlink, missing, ambiguous and conflicting package contexts',async t=>{
+ const {root,config}=packageContext(t);fs.symlinkSync(path.join(root,'packages/app'),path.join(root,'linked-app'),'dir');
+ for(const nativeCwd of ['../outside','missing','shared/value.js','linked-app','packages/./app','packages//app','node_modules',path.join(root,'packages/app'),null]){
+  const invalid={...config,nativeCwd};assert.equal(sharedVitestCommand(root,invalid),null,JSON.stringify(nativeCwd));await assert.rejects(openNativeSession(root,invalid));
+ }
+ for(const runner of [config.runner.filter((arg,index,args)=>arg!=='--root'&&args[index-1]!=='--root'),config.runner.map((arg,index,args)=>args[index-1]==='--root'?'packages/app':arg),config.runner.map((arg,index,args)=>args[index-1]==='--config'?'packages/app/vitest.config.mjs':arg),config.runner.map((arg,index,args)=>args[index-1]==='--root'?root:arg)])assert.equal(sharedVitestCommand(root,{...config,runner}),null);
+ assert.equal(resolveNativeBatch(root,[],config,{discover:false}).complete,false);
+ write(root,'tddswarm.config.json',{...config,runner:[...config.runner.slice(0,-1),'--coverage','{files}']});
+ const unsupported=await runUnifiedNative(root,{full:true,capture:true});assert.equal(unsupported.executed,false);assert.equal(unsupported.complete,false);assert.match(unsupported.error,/cannot use legacy fallback/);
+});
+
+test('native package cwd directory and executable configuration stay fresh across planning and execution',async t=>{
+ for(const changed of ['directory','configuration']){
+  const {root,native,config}=packageContext(t),session=await openNativeSession(root,config);
+  try{
+   assert.ok(sessionPlanning(session.token,root).workspaceRoot.cwdIdentity.ino);
+   if(changed==='directory'){const old=path.join(root,'packages/old-app');fs.renameSync(native,old);fs.cpSync(old,native,{recursive:true});}
+   else fs.appendFileSync(path.join(native,'vitest.config.mjs'),'\n// changed configuration');
+   await assert.rejects(session.execute(files),/binding changed/);
+  }finally{await session.close();}
+ }
+});
+
+test('direct argv-dependent setup remains rejected before execution',async t=>{
+ const {root}=packageContext(t);write(root,'packages/app/global.js',`export default function(context){context.provide('nativeRoot',context.config.root);process.argv.push('--changed-after-admission');}`);
+ const result=await runUnifiedNative(root,{full:true,capture:true});assert.equal(result.complete,false);assert.equal(result.executed,false);assert.match(result.error,/runtime-argv-dependent-native-configuration/);assert.notEqual(result.unifiedNative.partial,true);
+});
+
+for(const [kind,code] of [['argv','Reflect.get(process,String.fromCharCode(97,114,103,118)).push("--changed-after-admission");'],['cwd',`process.chdir(${JSON.stringify('/tmp')});`]]){
+ test(`global setup cannot mutate the explicitly reflected ${kind}`,async t=>{
+  const {root}=packageContext(t);write(root,'packages/app/global.js',`export default function(context){context.provide('nativeRoot',context.config.root);${code}}`);
+  const result=await runUnifiedNative(root,{full:true,capture:true});assert.equal(result.complete,false);assert.match(result.error,/Native workspace (argv|cwd) changed/);assert.equal(result.unifiedNative.partial,true);
+ });
+}
