@@ -20,9 +20,9 @@ The five declared legs cover build/lint/repository/package inventories/installed
 
 Strict individual identity validation rejects duplicate names. Separate source-bound observations permit nonselective full-suite preservation for a finite pinned profile:
 
-- CLI: 44 parameter outcomes in 20 reviewed raw groups, with exact unchanged titles, ancestors, full names, reported-location shape and status cardinalities, bound to twelve original test-source hashes.
+- CLI: 44 outcomes in 20 reviewed repeated raw groups, bound to twelve original test-source hashes. Five additional source-bound `process.pid` rows retain both distinct raw input sets and require exact row keys, types, ports, host, ancestors, full names, absent locations and passing status cardinalities. Every other raw group remains exact; input equivalence and individual identities for these ephemeral rows are unqualified.
 - TUI: one repeated delayed-owner group of two passing outcomes, plus one source-bound `process.pid` input. Both actual PID names and values are retained independently; their input equivalence and individual identity preservation are unqualified. All other raw groups must remain exact.
-- Daemon: a prospective contract for exactly two four-outcome groups, one transcript-backspace title and one package-digest vector title, bound to both tests and the vector fixture. Static review does not establish native success: actual original/fixed native JSON must confirm the precise contract. Any unknown ambiguity rejects the pilot.
+- Daemon: exactly 15 repeated raw groups covering 45 outcomes observed in a successful original native run, bound to nine original test sources and two input fixtures. These include a pair of separately declared tests sharing one title, so named individual test identities remain ambiguous. A fresh complete original/fixed comparison must confirm exact raw names, ancestors, full names, location shape and status cardinalities; unknown ambiguities reject the pilot.
 
 These observations grant no selection or omission authority. Every repeated parameter/input identity remains unqualified. The daemon's additional regression file still requires sixteen unique, exact, passing native outcomes, without allowing arbitrary added outcomes.
 
@@ -30,13 +30,16 @@ The original daemon suite previously exceeded a 1 GiB whole-runner growth limit 
 
 The fixed job requires a successful complete baseline from the same TestLore head, run and attempt. A separate paired replay binds every declared command, finite resource/duration observation, raw log and JSON hash, pinned source/lock/runtime, original native test-source hashes, generated digest and final patch. Checkout relocation applies only to declared canonical source paths; raw titles are not normalized. Missing, truncated, drifted or unsuccessful evidence refuses acceptance.
 
-`assessment.json` starts with `qualified:false`. Individual successful legs set `legQualified:true`; the aggregate and upstream acceptance require independent inspection of every leg, unchanged inputs and the final patch. Failures, infrastructure gaps and timeouts are retained. A green TestLore source test or evaluator control is not an upstream native result.
+`assessment.json` starts with `qualified:false`. The previous `e64db605` run retained green repository/UI/TUI legs, a green original daemon suite (14,400 passed of 14,413; thirteen unexercised) whose unexpected duplicate groups rejected the baseline gate, and two green CLI suites whose five distinct PID inputs rejected comparison. Those rejection records are retained; the amended finite profiles do not retroactively qualify them or the skipped daemon repair. A fresh full run is required.
+
+Individual successful legs set `legQualified:true`; the aggregate and upstream acceptance require independent inspection of every leg, unchanged inputs and the final patch. Failures, infrastructure gaps and timeouts are retained. A green TestLore source test or evaluator control is not an upstream native result.
 
 Reproduce on a disposable complete checkout of the pinned revision with the upstream prerequisites installed:
 
 ```sh
 node --test benchmarks/openrig-tab-fence/runner-controls.test.mjs \
-  benchmarks/openrig-tab-fence/daemon-pair-controls.test.mjs
+  benchmarks/openrig-tab-fence/daemon-pair-controls.test.mjs \
+  benchmarks/openrig-tab-fence/ephemeral-profile-controls.test.mjs
 node scripts/openrig-defect-pilot.js --upstream /absolute/pinned/original-openrig \
   --output /absolute/new/baseline --phase baseline --suite daemon
 node scripts/openrig-defect-pilot.js --upstream /absolute/fresh/pinned/openrig \

@@ -58,7 +58,7 @@ jobs:
         if: runner.os == 'macOS'
         run: command -v tmux || brew install tmux
       - name: Test evaluator refusal and preservation controls
-        run: node --test benchmarks/openrig-tab-fence/runner-controls.test.mjs benchmarks/openrig-tab-fence/daemon-pair-controls.test.mjs
+        run: node --test benchmarks/openrig-tab-fence/runner-controls.test.mjs benchmarks/openrig-tab-fence/daemon-pair-controls.test.mjs benchmarks/openrig-tab-fence/ephemeral-profile-controls.test.mjs
       - name: Unmodified native baseline, independent regression, then optional candidate
         env:
           REQUESTED_PHASE: ${{ inputs.phase || '' }}
@@ -101,7 +101,7 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
       - run: command -v tmux || brew install tmux
-      - run: node --test benchmarks/openrig-tab-fence/runner-controls.test.mjs benchmarks/openrig-tab-fence/daemon-pair-controls.test.mjs
+      - run: node --test benchmarks/openrig-tab-fence/runner-controls.test.mjs benchmarks/openrig-tab-fence/daemon-pair-controls.test.mjs benchmarks/openrig-tab-fence/ephemeral-profile-controls.test.mjs
       - name: Complete untouched original daemon suite and independent red oracle
         run: |
           node scripts/openrig-defect-pilot.js --upstream .tddswarm/openrig-pilot-source \
@@ -135,7 +135,7 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
       - run: command -v tmux || brew install tmux
-      - run: node --test benchmarks/openrig-tab-fence/runner-controls.test.mjs benchmarks/openrig-tab-fence/daemon-pair-controls.test.mjs
+      - run: node --test benchmarks/openrig-tab-fence/runner-controls.test.mjs benchmarks/openrig-tab-fence/daemon-pair-controls.test.mjs benchmarks/openrig-tab-fence/ephemeral-profile-controls.test.mjs
       - uses: actions/download-artifact@v4
         with:
           name: openrig-pilot-daemon-baseline-${{ github.event.pull_request.head.sha || github.sha }}-${{ github.run_attempt }}
@@ -165,7 +165,7 @@ jobs:
       - uses: actions/setup-node@v7.0.0
         with:
           node-version: '22.19.0'
-      - run: node --test benchmarks/openrig-tab-fence/runner-controls.test.mjs benchmarks/openrig-tab-fence/daemon-pair-controls.test.mjs
+      - run: node --test benchmarks/openrig-tab-fence/runner-controls.test.mjs benchmarks/openrig-tab-fence/daemon-pair-controls.test.mjs benchmarks/openrig-tab-fence/ephemeral-profile-controls.test.mjs
       - uses: actions/download-artifact@v4
         with:
           name: openrig-pilot-daemon-baseline-${{ github.event.pull_request.head.sha || github.sha }}-${{ github.run_attempt }}

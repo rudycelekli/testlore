@@ -24,7 +24,7 @@ const tap = passed => 'TAP version 13\n' + names.map((name, i) => `${passed ? 'o
 const groupProfile = JSON.parse(fs.readFileSync(path.join(corpus, 'daemon-full-suite-groups.json')));
 const fixtureSource = name => gunzipSync(fs.readFileSync(path.join(corpus, 'fixtures', name + '.gz')), { maxOutputLength: 64 * 1024 });
 const originalSources = Object.keys(manifest.originalSources);
-const inputs = () => Object.fromEntries([['daemonGroupProfileSha256', 'daemon-full-suite-groups.json'], ['runnerSha256', '../../scripts/openrig-defect-pilot.js'], ['manifestSha256', 'manifest.json'], ['regressionSha256', 'regression.mjs'], ['nativeRegressionSha256', 'markdown-address-tab-fence.test.ts'], ['candidatePatchSha256', 'fixed.patch']].map(([name, relative]) => [name, sha(fs.readFileSync(path.resolve(corpus, relative)))]));
+const inputs = () => Object.fromEntries([['cliPidProfileSha256', 'cli-ephemeral-pid-profile.json'], ['daemonGroupProfileSha256', 'daemon-full-suite-groups.json'], ['runnerSha256', '../../scripts/openrig-defect-pilot.js'], ['manifestSha256', 'manifest.json'], ['regressionSha256', 'regression.mjs'], ['nativeRegressionSha256', 'markdown-address-tab-fence.test.ts'], ['candidatePatchSha256', 'fixed.patch']].map(([name, relative]) => [name, sha(fs.readFileSync(path.resolve(corpus, relative)))]));
 
 function fixture() {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'openrig-pair-control-'));
@@ -41,8 +41,8 @@ function fixture() {
     const receipt = { schemaVersion: 1, phase: phase === 'baseline' ? 'baseline' : 'paired-candidate', suite: 'daemon', status: phase === 'baseline' ? 'native-baseline-and-independent-defect-reproduced' : 'bounded-candidate-preserves-original-native-leg', legQualified: true, qualified: false, repository: manifest.repository, revision: manifest.revision, manifestSha256: sha(fs.readFileSync(path.join(corpus, 'manifest.json'))), producer, producerRoot: '/declared/producer', corpusRoot: '/declared/producer/benchmarks/openrig-tab-fence', producerInputs: inputs(), upstreamRoot: upstream, physicalScratch: scratch, outputRoot: output, nodeVersion: process.version, originalSources: manifest.originalSources, originalLockSha256: manifest.originalLockSha256, hostedGitHubMarker: true, resourceBudget: { maxGrowthBytes: 3 * 1024 ** 3, reserveBytes: 1024 ** 3, maxLogBytes: 2 * 1024 ** 2, timeoutMs: 17 * 60_000 }, executions: [], limitations: ['Synthetic rejection control, not native execution evidence'], originalNativeSourceHashes: { 'packages/daemon/test/original.test.ts': sha('original native test') } };
     receipt.originalDaemonGroupSources = groupProfile.sources; receipt.daemonGroupProfileSha256 = sha(fs.readFileSync(path.join(corpus, 'daemon-full-suite-groups.json')));
     for (const [relative, digest] of Object.entries(groupProfile.sources)) {
-      for (const prefix of phase === 'fixed' ? ['original', 'fixed'] : ['original']) { const target = path.join(directory, prefix + '-group-sources', relative); fs.mkdirSync(path.dirname(target), { recursive: true }); fs.copyFileSync(path.join(corpus, 'fixtures/daemon-group-sources', relative), target); }
-      if (relative.startsWith('packages/daemon/test/')) receipt.originalNativeSourceHashes[relative] = digest;
+      for (const prefix of phase === 'fixed' ? ['original', 'fixed'] : ['original']) { const target = path.join(directory, prefix + '-group-sources', relative); fs.mkdirSync(path.dirname(target), { recursive: true }); const source = path.join(corpus, 'fixtures/daemon-group-sources', relative); fs.writeFileSync(target, fs.existsSync(source) ? fs.readFileSync(source) : gunzipSync(fs.readFileSync(source + '.gz'), { maxOutputLength: 64 * 1024 })); }
+      if (relative.endsWith('.test.ts')) receipt.originalNativeSourceHashes[relative] = digest;
     }
     if (phase === 'fixed') receipt.fixedDaemonGroupSources = groupProfile.sources;
     fs.writeFileSync(path.join(directory, 'original-lock.json'), 'fixture lock');
@@ -63,8 +63,12 @@ function fixture() {
     receipt.durationMs = commandNames.length * 2 + 1; receipt.completedAt = new Date(origin + receipt.durationMs).toISOString();
     receipt.originalOracle = assertOracleCounts(tap(false), 0, 16, 16);
     const nativeFile = { name: upstream + '/packages/daemon/test/original.test.ts', status: 'passed', assertionResults: [{ ancestorTitles: [], title: 'unchanged assertion', fullName: 'unchanged assertion', status: 'passed' }] };
-    const raw = { success: true, numFailedTests: 0, numFailedTestSuites: 0, numTotalTests: phase === 'baseline' ? 9 : 25, numPassedTests: phase === 'baseline' ? 9 : 25, testResults: [nativeFile] };
-    for (const group of groupProfile.groups) raw.testResults.push({ name: upstream + '/' + group.rawIdentity[0], status: 'passed', assertionResults: Array.from({ length: 4 }, () => ({ ancestorTitles: group.rawIdentity[1], title: group.rawIdentity[2], fullName: group.rawIdentity[3], status: 'passed' })) });
+    const raw = { success: true, numFailedTests: 0, numFailedTestSuites: 0, numTotalTests: phase === 'baseline' ? 46 : 62, numPassedTests: phase === 'baseline' ? 46 : 62, testResults: [nativeFile] };
+    for (const group of groupProfile.groups) {
+      const name = upstream + '/' + group.rawIdentity[0]; let file = raw.testResults.find(item => item.name === name);
+      if (!file) { file = { name, status: 'passed', assertionResults: [] }; raw.testResults.push(file); }
+      file.assertionResults.push(...Array.from({ length: group.statuses.passed }, () => ({ ancestorTitles: group.rawIdentity[1], title: group.rawIdentity[2], fullName: group.rawIdentity[3], status: 'passed' })));
+    }
     if (phase === 'fixed') {
       raw.testResults.push({ name: upstream + '/packages/daemon/test/markdown-address-tab-fence.test.ts', status: 'passed', assertionResults: names.map(name => ({ ancestorTitles: [], title: name.replaceAll('\\\\', '\\'), fullName: name.replaceAll('\\\\', '\\'), status: 'passed' })) });
       receipt.fixedOracle = assertOracleCounts(tap(true), 16, 0, 16); receipt.frozenNativeAssertions = 16;
@@ -88,7 +92,7 @@ function fixture() {
 test('paired daemon replay requires full baseline authority, exact raw bindings and 16 frozen additions', () => {
   const f = fixture();
   try {
-    assert.equal(validateDaemonBaseline(f.dirs.baseline, producer, manifest).groups.total, 9);
+    assert.equal(validateDaemonBaseline(f.dirs.baseline, producer, manifest).groups.total, 46);
     const result = validateDaemonPair(f.dirs.baseline, f.dirs.fixed, producer, manifest);
     assert.equal(result.legQualified, true); assert.equal(result.qualified, false); assert.equal(result.omissionAuthority, false); assert.equal(result.frozenNativeAssertions, 16);
     const mutate = (phase, change) => { const receipt = structuredClone(f.receipts[phase]); change(receipt); fs.writeFileSync(path.join(f.dirs[phase], 'assessment.json'), JSON.stringify(receipt)); assert.throws(() => validateDaemonPair(f.dirs.baseline, f.dirs.fixed, producer, manifest)); fs.writeFileSync(path.join(f.dirs[phase], 'assessment.json'), JSON.stringify(f.receipts[phase])); };
@@ -113,7 +117,7 @@ test('paired daemon replay requires full baseline authority, exact raw bindings 
     mutate('fixed', r => { r.fixedNativeSourceHashes['packages/daemon/test/original.test.ts'] = sha('weakened native source'); });
     mutate('fixed', r => { r.frozenNativeAssertions = 15; });
     const nativePath = path.join(f.dirs.fixed, 'fixed-native.json'); const originalNative = fs.readFileSync(nativePath);
-    for (const change of [raw => { raw.testResults[0].assertionResults[0].title = 'renamed original'; }, raw => { raw.testResults[1].assertionResults.pop(); raw.numTotalTests--; raw.numPassedTests--; }, raw => { raw.testResults[0].assertionResults.push({ ancestorTitles: [], title: 'unexpected extra', fullName: 'unexpected extra', status: 'passed' }); raw.numTotalTests++; raw.numPassedTests++; }, raw => { raw.testResults[1].assertionResults[0].location = { line: 1, column: 1 }; }, raw => { raw.testResults[3].assertionResults.pop(); raw.numTotalTests--; raw.numPassedTests--; }]) {
+    for (const change of [raw => { raw.testResults[0].assertionResults[0].title = 'renamed original'; }, raw => { raw.testResults[1].assertionResults.pop(); raw.numTotalTests--; raw.numPassedTests--; }, raw => { raw.testResults[0].assertionResults.push({ ancestorTitles: [], title: 'unexpected extra', fullName: 'unexpected extra', status: 'passed' }); raw.numTotalTests++; raw.numPassedTests++; }, raw => { raw.testResults[1].assertionResults[0].location = { line: 1, column: 1 }; }, raw => { raw.testResults.find(file => file.name.endsWith('/markdown-address-tab-fence.test.ts')).assertionResults.pop(); raw.numTotalTests--; raw.numPassedTests--; }]) {
       const raw = JSON.parse(originalNative); change(raw); const bytes = JSON.stringify(raw); fs.writeFileSync(nativePath, bytes);
       mutate('fixed', r => { r.fixedInventory.sha256 = sha(bytes); r.fixedInventory.total = raw.numTotalTests; r.fixedInventory.passed = raw.numPassedTests; });
       fs.writeFileSync(nativePath, originalNative);

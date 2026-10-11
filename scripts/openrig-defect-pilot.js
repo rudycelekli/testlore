@@ -15,11 +15,14 @@ const sourcePaths = [
 const tuiPidSourcePath = 'packages/tui/test/socket-collision.test.ts';
 const tuiPidSourceSha256 = '4ca84e22bbe60040c7038336ec0eb1107fdc3fc83265cae6b564a1aed32a7500';
 const cliGroupProfileSha256 = '5a6a62457dabbb299df1b03d2ce1501259ba7291bfbc7b9136d1f19b540ab9e7';
-const daemonGroupProfileSha256 = '528f9ae3b3c87d7ff26268c0b5c275fb52900a452bbf0010b7158ab1b2d3ff8f';
+const cliPidProfileSha256 = '7c140f635cf9ddf73961cca11be5522c0cf425986a94640f74bf8a9f25babad7';
+const cliPidSourcePath = 'packages/cli/test/client-endpoint.test.ts';
+const cliPidSourceSha256 = '8a0a5de27eda52c231821546d18a60dad4ec5d15c04a68e8f42fa01a0f9929e3';
+const daemonGroupProfileSha256 = 'e666ddd989a0b763a6a65cc986ddee074c5831412587261b84615abb3aacc305';
 const digestGeneratorSha256 = '3550f93d879f815d7ec4d63eff399ae5d7bc0a23cdbcc3839be179c4025447fc';
 const workspace = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const sandboxProfile = '(version 1)(allow default)(deny network-outbound)(allow network-outbound (remote ip "localhost:*"))(allow network-outbound (subpath (param "IPC_ROOT")))';
-const producerInputs = () => ({ daemonGroupProfileSha256: hash(fs.readFileSync(path.join(corpus, 'daemon-full-suite-groups.json'))), runnerSha256: hash(fs.readFileSync(fileURLToPath(import.meta.url))), manifestSha256: hash(fs.readFileSync(path.join(corpus, 'manifest.json'))), regressionSha256: hash(fs.readFileSync(path.join(corpus, 'regression.mjs'))), nativeRegressionSha256: hash(fs.readFileSync(path.join(corpus, 'markdown-address-tab-fence.test.ts'))), candidatePatchSha256: hash(fs.readFileSync(path.join(corpus, 'fixed.patch'))) });
+const producerInputs = () => ({ cliPidProfileSha256: hash(fs.readFileSync(path.join(corpus, 'cli-ephemeral-pid-profile.json'))), daemonGroupProfileSha256: hash(fs.readFileSync(path.join(corpus, 'daemon-full-suite-groups.json'))), runnerSha256: hash(fs.readFileSync(fileURLToPath(import.meta.url))), manifestSha256: hash(fs.readFileSync(path.join(corpus, 'manifest.json'))), regressionSha256: hash(fs.readFileSync(path.join(corpus, 'regression.mjs'))), nativeRegressionSha256: hash(fs.readFileSync(path.join(corpus, 'markdown-address-tab-fence.test.ts'))), candidatePatchSha256: hash(fs.readFileSync(path.join(corpus, 'fixed.patch'))) });
 const readEvidence = (directory, relative, limit) => {
   if (path.isAbsolute(relative) || relative.split('/').includes('..')) throw new Error('Evidence path outside artifact');
   const root = fs.realpathSync(directory); const file = path.join(root, relative);
@@ -271,6 +274,41 @@ export function preservesTuiFullSuiteObservations(original, candidate, upstream,
   return { original: before, fixed: after, stableRawGroups: retainedOriginal.groups.size, individualInputIdentityQualified: false, inputEquivalenceEstablished: false, omissionAuthority: false, scope: 'Both full native suites passed; one source-bound process.pid input observed independently each time. No assertion that these distinct inputs are equivalent.' };
 }
 
+export function cliEphemeralPidObservation(observation, upstream, sourceSha256) {
+  const bytes = fs.readFileSync(path.join(corpus, 'cli-ephemeral-pid-profile.json'));
+  const profile = JSON.parse(bytes);
+  if (hash(bytes) !== cliPidProfileSha256 || sourceSha256 !== cliPidSourceSha256 || profile.sourcePath !== cliPidSourcePath || profile.sourceSha256 !== cliPidSourceSha256) throw new Error('Reviewed CLI ephemeral source/profile changed');
+  const expected = profile.expectedRows;
+  const rows = [];
+  for (const [identity, statuses] of observation.groups) {
+    const raw = JSON.parse(identity);
+    if (raw[0] !== path.join(upstream, cliPidSourcePath) || !raw[2].startsWith(profile.rawTitlePrefix)) continue;
+    // The literal %j is actual native output for the empty argument-array row.
+    // All five static raw names stay untouched in the exact full-suite comparator.
+    const suffix = raw[2].slice(profile.rawTitlePrefix.length);
+    if (profile.staticRawSuffixes.includes(suffix)) continue;
+    let input;
+    try { input = JSON.parse(suffix); } catch { throw new Error('Malformed raw CLI state title'); }
+    if (!input || typeof input !== 'object' || Array.isArray(input) || !Number.isSafeInteger(input.pid) || input.pid < 1 || input.pid > 2147483647 || raw[2] !== profile.rawTitlePrefix + JSON.stringify(input) || raw[3] !== profile.rawFullNamePrefix + JSON.stringify(input) || JSON.stringify(raw[1]) !== JSON.stringify(profile.ancestorTitles) || raw[4].reported || raw[4].value !== null || statuses.passed !== 1 || Object.keys(statuses).length !== 1) throw new Error('Unreviewed CLI ephemeral raw identity or outcome');
+    const matches = expected.filter(row => JSON.stringify(Object.keys(input)) === JSON.stringify(row.keys) && input.port === row.port && (Object.hasOwn(row, 'host') ? input.host === row.host : !Object.hasOwn(input, 'host')));
+    if (matches.length !== 1) throw new Error('Unknown CLI ephemeral port/host/row shape');
+    rows.push({ rawIdentity: raw, rawGroupKey: identity, rawInput: input, statuses });
+  }
+  if (rows.length !== 5 || new Set(rows.map(row => JSON.stringify([row.rawInput.port, row.rawInput.host ?? null]))).size !== 5 || new Set(rows.map(row => row.rawInput.pid)).size !== 1) throw new Error('Missing, additional or inconsistent CLI ephemeral inputs');
+  return { rawObservations: rows, actualPid: rows[0].rawInput.pid, sourcePath: cliPidSourcePath, sourceSha256, individualInputIdentitiesQualified: false, inputEquivalenceEstablished: false, omissionAuthority: false, scope: 'Five independently passing process.pid inputs in one complete native suite; raw names/inputs retained, no stable individual identity or OS PID attestation' };
+}
+
+export function preservesCliFullSuiteObservations(original, candidate, upstream, originalSourceSha256, fixedSourceSha256) {
+  const before = cliEphemeralPidObservation(original, upstream, originalSourceSha256);
+  const after = cliEphemeralPidObservation(candidate, upstream, fixedSourceSha256);
+  const retainedOriginal = { ...original, groups: new Map(original.groups) };
+  const retainedCandidate = { ...candidate, groups: new Map(candidate.groups) };
+  for (const row of before.rawObservations) retainedOriginal.groups.delete(row.rawGroupKey);
+  for (const row of after.rawObservations) retainedCandidate.groups.delete(row.rawGroupKey);
+  preservesFullSuiteGroups(retainedOriginal, retainedCandidate);
+  return { original: before, fixed: after, stableRawGroups: retainedOriginal.groups.size, individualInputIdentitiesQualified: false, inputEquivalenceEstablished: false, omissionAuthority: false, scope: 'Both complete native suites passed; five source-bound process.pid inputs observed independently in each phase. Distinct inputs are not declared equivalent.' };
+}
+
 export function assertReviewedDuplicateGroups(observation, profile, upstream, sourceHashes) {
   if (profile.individualInputIdentitiesQualified !== false || profile.inputEquivalenceEstablished !== false || profile.omissionAuthority !== false || !Array.isArray(profile.groups) || Object.keys(sourceHashes).length !== Object.keys(profile.sources).length || Object.entries(profile.sources).some(([file, digest]) => sourceHashes[file] !== digest)) throw new Error('Reviewed duplicate-group source binding differs');
   const expected = new Map(profile.groups.map(group => [JSON.stringify([path.join(upstream, group.rawIdentity[0]), ...group.rawIdentity.slice(1)]), JSON.stringify(group.statuses)]));
@@ -420,10 +458,11 @@ async function main(argv) {
     }
     const verifyCliSources = () => {
       const sources = Object.fromEntries(Object.keys(cliGroupProfile.sources).map(relative => [relative, hash(fs.readFileSync(path.join(upstream, relative)))]));
+      if (hash(fs.readFileSync(path.join(upstream, cliPidSourcePath))) !== cliPidSourceSha256) throw new Error('Reviewed CLI ephemeral input source changed');
       if (Object.entries(cliGroupProfile.sources).some(([relative, digest]) => sources[relative] !== digest)) throw new Error('Reviewed CLI parameter source changed');
       return sources;
     };
-    if (args.suite === 'cli') { receipt[prefix + 'CliGroupSources'] = verifyCliSources(); receipt.cliGroupProfileSha256 = cliGroupProfileSha256; write(); }
+    if (args.suite === 'cli') { receipt[prefix + 'CliGroupSources'] = verifyCliSources(); receipt.cliGroupProfileSha256 = cliGroupProfileSha256; receipt[prefix + 'CliPidSourceSha256'] = cliPidSourceSha256; write(); }
     const verifyDaemonSources = () => {
       const sources = Object.fromEntries(Object.keys(daemonGroupProfile().sources).map(relative => [relative, hash(fs.readFileSync(path.join(upstream, relative)))]));
       if (JSON.stringify(sources) !== JSON.stringify(daemonGroupProfile().sources)) throw new Error('Prospective daemon parameter source or fixture changed');
@@ -469,7 +508,7 @@ async function main(argv) {
       }
       receipt[prefix + 'GroupObservation'] = { ...groups, groups: undefined };
     }
-    if (args.suite === 'daemon') { receipt[prefix + 'GroupObservation'] = { ...groups, groups: undefined }; receipt.limitations.push(`${prefix}: prospective reviewed daemon profile confirmed eight passing parameter outcomes across two raw groups only; individual input identities and equivalence remain unqualified, with no routing or omission authority`); }
+    if (args.suite === 'daemon') { receipt[prefix + 'GroupObservation'] = { ...groups, groups: undefined }; receipt.limitations.push(`${prefix}: reviewed daemon profile confirmed 45 passing outcomes across 15 raw groups only; individual input identities and equivalence remain unqualified, with no routing or omission authority`); }
     const total = cases?.size ?? groups.total;
     const passed = cases ? [...cases.values()].filter(s => s === 'passed').length : groups.passed;
     receipt[prefix + 'Inventory'] = { sha256: hash(raw), total, passed, unexercised: total - passed, runtimeErrorCounter: parsed.numRuntimeErrorTestSuites ?? null, identityQualification: cases ? 'unique-native-named-cases' : 'raw-full-suite-groups-only' };
@@ -563,6 +602,9 @@ async function main(argv) {
       if (args.suite === 'tui') {
         receipt.tuiEphemeralPidObservation = preservesTuiFullSuiteObservations(originalCases.groups, candidateGroups, upstream, receipt.originalTuiPidSourceSha256, receipt.fixedTuiPidSourceSha256);
         receipt.limitations.push('One TUI native parameter is process.pid: both distinct raw PID names/inputs passed independently under unchanged source; input equivalence and individual identity preservation are unqualified, with no routing or omission authority');
+      } else if (args.suite === 'cli') {
+        receipt.cliEphemeralPidObservation = preservesCliFullSuiteObservations(originalCases.groups, candidateGroups, upstream, receipt.originalCliPidSourceSha256, receipt.fixedCliPidSourceSha256);
+        receipt.limitations.push('Five CLI native inputs include process.pid: both distinct raw PID sets passed independently under unchanged source; individual identities, input equivalence and OS PID attestation remain unqualified, with no routing or omission authority');
       } else preservesFullSuiteGroups(originalCases.groups, candidateGroups, args.suite === 'daemon' ? frozenTest : null);
     }
     if (args.suite === 'daemon') receipt.frozenNativeAssertions = assertNewRegression(daemonFrozenCases(JSON.parse(fs.readFileSync(path.join(output, 'fixed-native.json'))), frozenTest), frozenTest, receipt.fixedOracle.names);
