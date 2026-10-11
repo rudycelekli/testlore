@@ -11,7 +11,7 @@ const nativeAdapters = new Set(['node', 'vitest', 'jest', 'playwright', 'bun']);
 const causeProfiles = [
  {key:'runtime-inputs',label:'Runtime inputs are not fully mapped',action:'Declare and review filesystem, network and service inputs; retain fallback until independent full/subset challenges pass.',codes:['runtime-dependency','dynamic-dependency','runtime-registration','unmodeled-node-options-runtime-context']},
  {key:'browser-inputs',label:'Browser dependencies are incomplete',action:'Propose route, style, asset and server-input mappings, then challenge them in shadow mode before permitting omissions.',codes:['unmodeled-browser-runtime-inputs']},
- {key:'resolution',label:'Native discovery or dependency resolution is incomplete',action:'Run testlore doctor --json and the native full-suite command; repair workspace roots, setup files and unresolved imports.',codes:['incomplete-native-resolution','incomplete-native-discovery','discovery-incomplete','discovered-file-outside-graph','external-resolution-config','resolution-config-outside-graph','invalid-tsconfig','invalid-tsconfig-resolution','invalid-package-json','parse-error','unresolved-import']},
+ {key:'resolution',label:'Discovery or dependency resolution needs review',action:'Run testlore doctor --json and the native full-suite command; repair workspace roots, setup files and unresolved imports.',codes:['incomplete-native-resolution','incomplete-native-discovery','discovery-incomplete','discovered-file-outside-graph','external-resolution-config','resolution-config-outside-graph','invalid-tsconfig','invalid-tsconfig-resolution','invalid-package-json','parse-error','unresolved-import']},
  {key:'mappings',label:'Changed inputs have no complete test mapping',action:'Review affected inputs and propose explicit test mappings; verify them with independent full/subset runs in shadow mode.',codes:['unknown-mapped-test','missing-mapped-dependency','unmapped-or-deleted-input','change-without-test-evidence','uncertain-dependency-closure','test-without-local-dependencies','unknown-always-run-test']},
  {key:'services',label:'Service versions or probes are unavailable',action:'Repair the declared service probe and version evidence before rerunning full verification.',codes:['service-probe-failed','service-version-unavailable','invalid-service-history','external-service-evidence-unavailable']},
  {key:'freshness',label:'Configuration or retained evidence requires fresh verification',action:'Inspect configuration and provenance, repair invalid evidence, and rerun full native verification before reusing a selection.',codes:['global-configuration-changed','configuration-input-profile-rejected','configuration-input-unavailable','git-baseline-unavailable','runner-or-environment-history-changed','invalid-run-history','failed-history-scope-changed','runtime-evidence-missing','invalid-runtime-evidence','incomplete-runtime-evidence','stale-runtime-evidence','runtime-scope-changed']},
@@ -35,7 +35,12 @@ function fallbackCauses(selection) {
    if(['global','test-closure','unreachable-source'].includes(scope) && !group.scopes.includes(scope))group.scopes.push(scope);
    groups.set(key,group);
  };
- for(const warning of array(selection.warnings)) {
+ // These classifications come from the analyzer, not an independent safety
+ // proof. Out-of-closure observations stay in raw/detail evidence but are not
+ // presented as active fallback causes. Prioritize global blocker examples.
+ const priority=item=>object(item).scope==='global'?0:object(item).scope==='test-closure'?1:2;
+ const activeWarnings=array(selection.warnings).filter(item=>object(item).scope!=='unreachable-source').sort((a,b)=>priority(a)-priority(b));
+ for(const warning of activeWarnings) {
    if(typeof warning==='string')add(warning);
    else {const item=object(warning);add(item.reason,item.file,item.scope);}
  }
@@ -121,6 +126,8 @@ export function summarizeFirstRun(input = {}) {
    failedCases,failedCaseCount:failures.length,failedCasesTruncated:failures.length>failedCases.length,
    omittedFailures:omittedCaseIdentities,omittedFailureCount:omittedFailures.length,omittedFailureDuplicates:rawOmittedFailures.length-omittedFailures.length,omittedFailuresTruncated:omittedFailures.length>omittedCaseIdentities.length,
    fallbackCauses:fallback,
+   analyzerObservations:{outsideKnownTestClosureRecords:array(selection.warnings).filter(item=>object(item).scope==='unreachable-source').length,
+     scope:'Analyzer classifications only; excluded from active fallback advice and retained in detailed evidence. They do not prove dependency completeness.'},
    slowCases,slowCaseCount:timed.length,slowCasesTruncated:timed.length>slowCases.length,
    caseTimingScope:'Positive finite durations reported by the native adapter for named cases only. Parallelism, setup and startup are not attributed; these are not suite savings.',
    casesWithoutUsableTiming:delegated?null:records.filter(entry=>entry.name!=='<file-load>').length-timed.length,
@@ -144,6 +151,7 @@ export function renderFirstRunSummary(report = {}) {
  if(summary.omittedFailuresTruncated)text.push(`Showing ${summary.omittedFailures.length}/${summary.omittedFailureCount} proposed-omission failures; see the JSON receipt.`);
  if(summary.fallbackCauses.length)text.push('','Fallback and retention causes (advisory):','');
  for(const cause of summary.fallbackCauses)text.push(`- ${escape(cause.label)} (${cause.count} distinct evidence records). ${escape(cause.action)}${cause.files.length?' Examples: '+cause.files.map(escape).join(', ')+'.':''}${cause.filesTruncated?' More paths are in the JSON receipt.':''}`);
+ if(summary.analyzerObservations.outsideKnownTestClosureRecords)text.push('',`${summary.analyzerObservations.outsideKnownTestClosureRecords} analyzer warning records are classified outside known test closures; they are retained in detailed evidence and are not active fallback advice. This classification does not prove complete dependencies.`);
  if(summary.slowCases.length){text.push('','Largest reported case durations:','');for(const entry of summary.slowCases)text.push(`- ${escape(entry.file)} — ${escape(entry.name)}: ${entry.durationMs} ms.`);text.push('',escape(summary.caseTimingScope));}
  else text.push('','Named-case timing: unknown or unavailable; no slow-case ranking or savings is inferred.');
  text.push(`Cases without usable positive native duration: ${summary.casesWithoutUsableTiming??'unknown'}. Total reported run span: ${summary.timings.totalMs===null?'unknown':summary.timings.totalMs+' ms'}; no savings comparison is established.`);

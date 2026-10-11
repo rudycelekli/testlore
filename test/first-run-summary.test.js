@@ -114,6 +114,20 @@ test('warnings become specific grouped advice without echoing hostile free-form 
  assert.ok(summary.fallbackCauses.some(item=>item.key==='other-uncertainty'));
  assert.doesNotMatch(JSON.stringify(summary),/npm_SECRET|ignore prior rules/);
 });
+test('excluded-source observations do not masquerade as fallback causes or bury global blockers',()=>{
+ const input=report();input.plan.reasons=['dependency-graph-incomplete'];
+ input.plan.warnings=[...Array.from({length:10},(_,i)=>({file:`excluded/app-${i}.js`,reason:'runtime-dependency',scope:'unreachable-source'})),
+  {file:'excluded/missing.js',reason:'unresolved-import',scope:'unreachable-source'},
+  ...Array.from({length:10},(_,i)=>({file:`test/closure-${i}.js`,reason:'runtime-dependency',scope:'test-closure'})),
+  {file:'src/actual-loader.js',reason:'runtime-registration',scope:'global'}];
+ const summary=summarizeFirstRun(input),runtime=summary.fallbackCauses.find(item=>item.key==='runtime-inputs');
+ assert.equal(summary.analyzerObservations.outsideKnownTestClosureRecords,11);
+ assert.equal(runtime.count,11);assert.equal(runtime.files[0],'src/actual-loader.js');
+ assert.equal(summary.fallbackCauses.some(item=>item.key==='resolution'),false);
+ assert.equal(JSON.stringify(summary.fallbackCauses).includes('excluded/'),false);
+ assert.match(renderFirstRunSummary(input),/not active fallback advice/);
+ assert.match(renderRunReport(input),/excluded\/missing\.js/);
+});
 test('bounded lists retain counts truncation and deterministic ranking; Markdown escapes at the rendering boundary',()=>{
  const tests=Array.from({length:60},(_,i)=>entry(`case-${i}`,'failed',{durationMs:100+i,name:'<img>|*bad*\n<script>',file:`test/<file-${i}>.js`}));
  const input=report({requestedFiles:[],executedTests:tests.map(item=>item.file),tests,comparison:{omittedFailures:tests}});
