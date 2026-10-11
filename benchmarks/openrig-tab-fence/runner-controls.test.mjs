@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { inventory, preservesCases, assertOracleCounts, assertCandidatePaths, assertFreshOutput, assertNewRegression, pilotEnvironment, createPilotScratch, fullSuiteGroupObservation, preservesFullSuiteGroups } from '../../scripts/openrig-defect-pilot.js';
+import { inventory, preservesCases, preservesExactCases, assertOracleCounts, assertCandidatePaths, assertFreshOutput, assertNewRegression, pilotEnvironment, createPilotScratch, fullSuiteGroupObservation, preservesFullSuiteGroups, tuiEphemeralPidObservation, preservesTuiFullSuiteObservations, assertReviewedDuplicateGroups } from '../../scripts/openrig-defect-pilot.js';
 
 const native = entries => ({ success: true, numTotalTests: entries.length, numPassedTests: entries.filter(([, status]) => status === 'passed').length, numFailedTests: 0, numFailedTestSuites: 0, numRuntimeErrorTestSuites: 0, testResults: [{ name: 'file', status: 'passed', assertionResults: entries.map(([title, status]) => ({ ancestorTitles: ['scope'], title, status })) }] });
 test('preserves native named cases and distinguishes unexercised outcomes', () => {
@@ -12,6 +12,19 @@ test('preserves native named cases and distinguishes unexercised outcomes', () =
   assert.equal(preservesCases(original, candidate), true);
   assert.throws(() => preservesCases(original, inventory(native([['kept', 'passed']]))));
   assert.throws(() => preservesCases(original, inventory(native([['kept', 'pending'], ['opt-in', 'pending']]))));
+});
+test('allows only exact passing frozen additions to a unique native inventory', () => {
+  const original = new Map([['original', 'passed'], ['original opt-in', 'pending']]);
+  const same = new Map(original);
+  assert.equal(preservesExactCases(original, same), true);
+  const fixed = new Map([...original, ['frozen regression', 'passed']]);
+  assert.equal(preservesExactCases(original, fixed, ['frozen regression']), true);
+  assert.throws(() => preservesExactCases(original, fixed));
+  assert.throws(() => preservesExactCases(original, new Map([...fixed, ['unknown new case', 'passed']]), ['frozen regression']));
+  assert.throws(() => preservesExactCases(original, same, ['frozen regression']));
+  assert.throws(() => preservesExactCases(original, new Map([...original, ['frozen regression', 'pending']]), ['frozen regression']));
+  assert.throws(() => preservesExactCases(original, same, ['original']));
+  assert.throws(() => preservesExactCases(original, fixed, ['frozen regression', 'frozen regression']));
 });
 test('refuses failed, empty and ambiguous native inventories', () => {
   assert.throws(() => inventory({ success: false, testResults: [] }));
@@ -130,4 +143,69 @@ test('separates nonselective raw group cardinality from individual parameter ide
   assert.throws(() => preservesFullSuiteGroups(original, fullSuiteGroupObservation(located)));
   const failed = fixture(['passed', 'failed']); assert.throws(() => fullSuiteGroupObservation(failed));
   const truncated = fixture(['passed', 'passed']); truncated.numTotalTests = 3; assert.throws(() => fullSuiteGroupObservation(truncated));
+});
+test('retains distinct source-bound PID names without claiming input equivalence or omission authority', () => {
+  const upstream = '/pinned/upstream';
+  const digest = '4ca84e22bbe60040c7038336ec0eb1107fdc3fc83265cae6b564a1aed32a7500';
+  const prefix = 'reports an active or unidentifiable recovery reservation without changing its live socket (';
+  const fixture = pid => {
+    const title = prefix + JSON.stringify(`${pid}\n`) + ')';
+    const json = native([['stable outcome', 'passed'], [title, 'passed']]);
+    json.testResults[0].name = path.join(upstream, 'packages/tui/test/socket-collision.test.ts');
+    for (const item of json.testResults[0].assertionResults) { item.ancestorTitles = []; item.fullName = item.title; }
+    return fullSuiteGroupObservation(json);
+  };
+  const before = fixture('32372'); const after = fixture('34519');
+  assert.throws(() => preservesFullSuiteGroups(before, after));
+  const result = preservesTuiFullSuiteObservations(before, after, upstream, digest, digest);
+  assert.equal(result.original.actualPid, '32372');
+  assert.equal(result.fixed.actualPid, '34519');
+  assert.notDeepEqual(result.original.rawIdentity, result.fixed.rawIdentity);
+  assert.equal(result.individualInputIdentityQualified, false);
+  assert.equal(result.inputEquivalenceEstablished, false);
+  assert.equal(result.omissionAuthority, false);
+  assert.throws(() => tuiEphemeralPidObservation(before, upstream, 'different source'));
+  assert.throws(() => tuiEphemeralPidObservation(fixture('0'), upstream, digest));
+  assert.throws(() => tuiEphemeralPidObservation(fixture('01'), upstream, digest));
+  assert.throws(() => tuiEphemeralPidObservation(fixture('invalid'), upstream, digest));
+  assert.throws(() => tuiEphemeralPidObservation(fixture('2147483648'), upstream, digest));
+  const mutate = change => { const observation = fixture('32372'); const [key, value] = [...observation.groups][1]; observation.groups.delete(key); const raw = JSON.parse(key); change(raw, value); observation.groups.set(JSON.stringify(raw), value); return observation; };
+  assert.throws(() => tuiEphemeralPidObservation(mutate((raw, value) => { value.passed = 2; }), upstream, digest));
+  assert.throws(() => tuiEphemeralPidObservation(mutate((raw, value) => { delete value.passed; value.pending = 1; }), upstream, digest));
+  assert.throws(() => tuiEphemeralPidObservation(mutate(raw => { raw[1] = ['changed ancestor']; }), upstream, digest));
+  assert.throws(() => tuiEphemeralPidObservation(mutate(raw => { raw[4] = { reported: true, value: { line: 12 } }; }), upstream, digest));
+  const dropped = fixture('34519'); dropped.groups.delete([...dropped.groups.keys()][1]);
+  assert.throws(() => preservesTuiFullSuiteObservations(before, dropped, upstream, digest, digest));
+  const extra = fixture('34519'); const secondPid = [...fixture('99999').groups][1]; extra.groups.set(...secondPid);
+  assert.throws(() => preservesTuiFullSuiteObservations(before, extra, upstream, digest, digest));
+  const stableDrift = fixture('34519'); const stableKey = [...stableDrift.groups.keys()][0]; stableDrift.groups.delete(stableKey);
+  assert.throws(() => preservesTuiFullSuiteObservations(before, stableDrift, upstream, digest, digest));
+});
+test('limits CLI full-suite ambiguity to reviewed raw groups, cardinalities and unchanged sources', () => {
+  const profile = JSON.parse(fs.readFileSync(new URL('./cli-full-suite-groups.json', import.meta.url)));
+  const upstream = '/pinned/upstream';
+  const files = new Map();
+  for (const group of profile.groups) {
+    const raw = group.rawIdentity;
+    const file = files.get(raw[0]) || { name: path.join(upstream, raw[0]), status: 'passed', assertionResults: [] };
+    for (let n = 0; n < group.statuses.passed; n++) file.assertionResults.push({ ancestorTitles: raw[1], title: raw[2], fullName: raw[3], status: 'passed' });
+    files.set(raw[0], file);
+  }
+  const json = { success: true, numTotalTests: 44, numPassedTests: 44, numFailedTests: 0, numFailedTestSuites: 0, testResults: [...files.values()] };
+  const baseline = fullSuiteGroupObservation(json);
+  assert.throws(() => inventory(json), /Ambiguous/);
+  assert.equal(assertReviewedDuplicateGroups(baseline, profile, upstream, profile.sources), true);
+  assert.throws(() => assertReviewedDuplicateGroups(baseline, profile, upstream, {}));
+  assert.throws(() => assertReviewedDuplicateGroups(baseline, profile, upstream, { ...profile.sources, extra: 'unexpected' }));
+  const altered = { ...profile.sources, [Object.keys(profile.sources)[0]]: 'changed source' };
+  assert.throws(() => assertReviewedDuplicateGroups(baseline, profile, upstream, altered));
+  const corrupt = change => { const copy = structuredClone(baseline); change(copy.duplicates[0]); return copy; };
+  assert.throws(() => assertReviewedDuplicateGroups(corrupt(g => { g.statuses.passed--; }), profile, upstream, profile.sources));
+  assert.throws(() => assertReviewedDuplicateGroups(corrupt(g => { g.statuses.passed++; }), profile, upstream, profile.sources));
+  assert.throws(() => assertReviewedDuplicateGroups(corrupt(g => { g.rawIdentity[1] = ['different ancestor']; }), profile, upstream, profile.sources));
+  assert.throws(() => assertReviewedDuplicateGroups(corrupt(g => { g.rawIdentity[2] += ' changed'; }), profile, upstream, profile.sources));
+  assert.throws(() => assertReviewedDuplicateGroups(corrupt(g => { g.rawIdentity[3] += ' changed'; }), profile, upstream, profile.sources));
+  assert.throws(() => assertReviewedDuplicateGroups(corrupt(g => { g.rawIdentity[4] = { reported: true, value: { line: 12 } }; }), profile, upstream, profile.sources));
+  assert.throws(() => assertReviewedDuplicateGroups({ ...baseline, duplicates: baseline.duplicates.slice(1) }, profile, upstream, profile.sources));
+  assert.throws(() => assertReviewedDuplicateGroups({ ...baseline, duplicates: [...baseline.duplicates, { ...baseline.duplicates[0], rawIdentity: ['unknown', [], 'unknown', 'unknown', { reported: false, value: null }] }] }, profile, upstream, profile.sources));
 });

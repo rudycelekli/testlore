@@ -1,0 +1,48 @@
+{
+  "upstreamRevision": "8376d390140b761800430b143cc4131c1f020e42",
+  "suite": "daemon",
+  "registration": "prospective-source-reviewed-only; exact native shapes must confirm this contract before any full-suite acceptance",
+  "scope": "Pinned repair full native runs only; no individual parameter identity, input equivalence, selection or omission authority",
+  "individualInputIdentitiesQualified": false,
+  "inputEquivalenceEstablished": false,
+  "omissionAuthority": false,
+  "sources": {
+    "packages/daemon/test/transcript-backspace-native.test.ts": "ec954ca7c6e41671bccb195706c2a0bd414e1ac307bb79dfda63da3cbd88fd81",
+    "packages/daemon/test/bundle-identity.test.ts": "9b27ea3c87b9d755ab20a1be1f377e9cc6713eb09a6adf4957f49649b7591bbf",
+    "docs/reference/schemas/fixtures/identity-vectors.json": "fb1fe611a513bdd00f59badcdef8e1075fff73bf5a2970514332d767b4e49494"
+  },
+  "groups": [
+    {
+      "rawIdentity": [
+        "packages/daemon/test/transcript-backspace-native.test.ts",
+        [],
+        "normalizes consecutive and Unicode backspaces from owned transcript bytes",
+        "normalizes consecutive and Unicode backspaces from owned transcript bytes",
+        {
+          "reported": false,
+          "value": null
+        }
+      ],
+      "statuses": {
+        "passed": 4
+      }
+    },
+    {
+      "rawIdentity": [
+        "packages/daemon/test/bundle-identity.test.ts",
+        [
+          "bundle identity"
+        ],
+        "package digest vector",
+        "bundle identity package digest vector",
+        {
+          "reported": false,
+          "value": null
+        }
+      ],
+      "statuses": {
+        "passed": 4
+      }
+    }
+  ]
+}

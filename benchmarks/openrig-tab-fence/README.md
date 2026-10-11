@@ -14,20 +14,37 @@ The defect was discovered during manual source review. TestLore is not credited 
 
 ## Genuine upstream checks
 
-The [hosted workflow](../../.github/workflows/openrig-defect-pilot.yml) installs the unchanged original lock, executes original native checks before the failing regression, applies only the hash-bound two-reader patch, regenerates the skill digest with the pinned upstream generator, then runs the same native checks again. Package test legs preserve named original outcomes and platform opt-ins. The daemon leg also requires actual collection and passing outcomes for every added frozen regression.
+The [hosted workflow](../../.github/workflows/openrig-defect-pilot.yml) installs the unchanged original lock, executes original native checks before the failing regression, applies only the hash-bound two-reader patch, regenerates the skill digest with the pinned upstream generator, then runs the same native checks again. Package test legs preserve raw original outcomes and platform opt-ins, subject to the explicit identity limits below. The daemon leg also requires actual collection and passing outcomes for every added frozen regression.
 
 The five declared legs cover build/lint/repository/package inventories/installed scenarios on Linux and daemon/CLI/TUI/UI package suites under the upstream macOS fixture sandbox. Native skips and todos remain unexercised; the selected Node 22 profile does not qualify every upstream runtime or platform. Commands have bounded deadlines, output, disk growth and reserve; observed descendant cleanup is best effort, not an adversarial execution sandbox.
 
-The pinned TUI suite has one repeated raw parameter title for two passing delayed-owner cases, without reported locations. Strict individual identity validation still rejects duplicates. A separate observation admits only this reviewed group for full-suite validation and requires unchanged raw naming and exact status cardinality before/after. Individual parameter identities remain unqualified; this observation grants no routing or omission authority. Every other ambiguity rejects the pilot.
+Strict individual identity validation rejects duplicate names. Separate source-bound observations permit nonselective full-suite preservation for a finite pinned profile:
+
+- CLI: 44 parameter outcomes in 20 reviewed raw groups, with exact unchanged titles, ancestors, full names, reported-location shape and status cardinalities, bound to twelve original test-source hashes.
+- TUI: one repeated delayed-owner group of two passing outcomes, plus one source-bound `process.pid` input. Both actual PID names and values are retained independently; their input equivalence and individual identity preservation are unqualified. All other raw groups must remain exact.
+- Daemon: a prospective contract for exactly two four-outcome groups, one transcript-backspace title and one package-digest vector title, bound to both tests and the vector fixture. Static review does not establish native success: actual original/fixed native JSON must confirm the precise contract. Any unknown ambiguity rejects the pilot.
+
+These observations grant no selection or omission authority. Every repeated parameter/input identity remains unqualified. The daemon's additional regression file still requires sixteen unique, exact, passing native outcomes, without allowing arbitrary added outcomes.
+
+The original daemon suite previously exceeded a 1 GiB whole-runner growth limit after about 10.8 minutes; that stop remains inconclusive. Its complete original and fixed suites now run in distinct gated hosted jobs, each with a 17-minute runner deadline and 20-minute workflow ceiling. Only the hosted daemon allowance is 3 GiB per command, justified by the observed 1.25 GiB lower bound and about 100 GB remaining; the 1 GiB reserve, 2 MiB combined command logs, full native assertions and local 1 GiB growth bound remain intact. Raw whole-runner signed space deltas and before/after task `du` footprints are recorded separately.
+
+The fixed job requires a successful complete baseline from the same TestLore head, run and attempt. A separate paired replay binds every declared command, finite resource/duration observation, raw log and JSON hash, pinned source/lock/runtime, original native test-source hashes, generated digest and final patch. Checkout relocation applies only to declared canonical source paths; raw titles are not normalized. Missing, truncated, drifted or unsuccessful evidence refuses acceptance.
 
 `assessment.json` starts with `qualified:false`. Individual successful legs set `legQualified:true`; the aggregate and upstream acceptance require independent inspection of every leg, unchanged inputs and the final patch. Failures, infrastructure gaps and timeouts are retained. A green TestLore source test or evaluator control is not an upstream native result.
 
 Reproduce on a disposable complete checkout of the pinned revision with the upstream prerequisites installed:
 
 ```sh
-node --test benchmarks/openrig-tab-fence/runner-controls.test.mjs
-node scripts/openrig-defect-pilot.js --upstream /absolute/pinned/openrig \
-  --output /absolute/new/evidence --phase candidate --suite daemon
+node --test benchmarks/openrig-tab-fence/runner-controls.test.mjs \
+  benchmarks/openrig-tab-fence/daemon-pair-controls.test.mjs
+node scripts/openrig-defect-pilot.js --upstream /absolute/pinned/original-openrig \
+  --output /absolute/new/baseline --phase baseline --suite daemon
+node scripts/openrig-defect-pilot.js --upstream /absolute/fresh/pinned/openrig \
+  --output /absolute/new/fixed --phase paired-candidate --suite daemon \
+  --baseline /absolute/new/baseline
+node scripts/openrig-daemon-pair.js --baseline /absolute/new/baseline \
+  --fixed /absolute/new/fixed --output /absolute/new/paired \
+  --run-id ACTUAL_HOSTED_RUN --run-attempt ACTUAL_ATTEMPT
 ```
 
-Each leg needs a fresh output directory and clean original checkout. Read [the manifest](manifest.json), upstream contribution instructions and runner before execution. This command executes trusted upstream project code; it does not invoke a model or publish a PR.
+The paired daemon authority is a hosted-only profile; local executions retain smaller resource bounds and do not produce qualifying hosted baseline authority. Other package legs use `--phase candidate --suite cli|tui|ui` as appropriate; the repository leg uses `--suite repo`. Each leg needs a fresh output directory and clean original checkout. Read [the manifest](manifest.json), upstream contribution instructions and runner before execution. This command executes trusted upstream project code; it does not invoke a model or publish a PR.

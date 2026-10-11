@@ -5,6 +5,7 @@ on:
     paths:
       - '.github/workflows/openrig-defect-pilot.yml'
       - 'scripts/openrig-defect-pilot.js'
+      - 'scripts/openrig-daemon-pair.js'
       - 'benchmarks/openrig-tab-fence/**'
   workflow_dispatch:
     inputs:
@@ -30,8 +31,6 @@ jobs:
         include:
           - suite: repo
             os: ubuntu-latest
-          - suite: daemon
-            os: macos-latest
           - suite: cli
             os: macos-latest
           - suite: tui
@@ -59,7 +58,7 @@ jobs:
         if: runner.os == 'macOS'
         run: command -v tmux || brew install tmux
       - name: Test evaluator refusal and preservation controls
-        run: node --test benchmarks/openrig-tab-fence/runner-controls.test.mjs
+        run: node --test benchmarks/openrig-tab-fence/runner-controls.test.mjs benchmarks/openrig-tab-fence/daemon-pair-controls.test.mjs
       - name: Unmodified native baseline, independent regression, then optional candidate
         env:
           REQUESTED_PHASE: ${{ inputs.phase || '' }}
@@ -81,4 +80,107 @@ jobs:
           name: openrig-pilot-${{ matrix.suite }}-${{ github.event.pull_request.head.sha || github.sha }}
           path: ${{ runner.temp }}/openrig-pilot-evidence/${{ matrix.suite }}/
           include-hidden-files: true
+          if-no-files-found: error
+
+  daemon-baseline:
+    runs-on: macos-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7.0.0
+        with:
+          node-version: '22.19.0'
+      - uses: actions/checkout@v7.0.1
+        with:
+          repository: mvschwarz/openrig
+          ref: 8376d390140b761800430b143cc4131c1f020e42
+          path: .tddswarm/openrig-pilot-source
+          fetch-depth: 0
+          persist-credentials: false
+      - run: command -v tmux || brew install tmux
+      - run: node --test benchmarks/openrig-tab-fence/runner-controls.test.mjs benchmarks/openrig-tab-fence/daemon-pair-controls.test.mjs
+      - name: Complete untouched original daemon suite and independent red oracle
+        run: |
+          node scripts/openrig-defect-pilot.js --upstream .tddswarm/openrig-pilot-source \
+            --output "$RUNNER_TEMP/openrig-daemon-baseline" --phase baseline --suite daemon
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: openrig-pilot-daemon-baseline-${{ github.event.pull_request.head.sha || github.sha }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/openrig-daemon-baseline/
+          include-hidden-files: true
+          if-no-files-found: error
+
+  daemon-fixed:
+    needs: daemon-baseline
+    if: github.event_name == 'pull_request' || inputs.phase == 'candidate'
+    runs-on: macos-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7.0.0
+        with:
+          node-version: '22.19.0'
+      - uses: actions/checkout@v7.0.1
+        with:
+          repository: mvschwarz/openrig
+          ref: 8376d390140b761800430b143cc4131c1f020e42
+          path: .tddswarm/openrig-pilot-source
+          fetch-depth: 0
+          persist-credentials: false
+      - run: command -v tmux || brew install tmux
+      - run: node --test benchmarks/openrig-tab-fence/runner-controls.test.mjs benchmarks/openrig-tab-fence/daemon-pair-controls.test.mjs
+      - uses: actions/download-artifact@v4
+        with:
+          name: openrig-pilot-daemon-baseline-${{ github.event.pull_request.head.sha || github.sha }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/original-daemon-evidence/
+      - name: Verify baseline authority, then complete repaired daemon suite
+        run: |
+          node scripts/openrig-defect-pilot.js --upstream .tddswarm/openrig-pilot-source \
+            --output "$RUNNER_TEMP/openrig-daemon-fixed" --phase paired-candidate --suite daemon \
+            --baseline "$RUNNER_TEMP/original-daemon-evidence"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: openrig-pilot-daemon-fixed-${{ github.event.pull_request.head.sha || github.sha }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/openrig-daemon-fixed/
+          include-hidden-files: true
+          if-no-files-found: error
+
+  daemon-paired-evidence:
+    needs: [daemon-baseline, daemon-fixed]
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7.0.0
+        with:
+          node-version: '22.19.0'
+      - run: node --test benchmarks/openrig-tab-fence/runner-controls.test.mjs benchmarks/openrig-tab-fence/daemon-pair-controls.test.mjs
+      - uses: actions/download-artifact@v4
+        with:
+          name: openrig-pilot-daemon-baseline-${{ github.event.pull_request.head.sha || github.sha }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/daemon-pair/original/
+      - uses: actions/download-artifact@v4
+        with:
+          name: openrig-pilot-daemon-fixed-${{ github.event.pull_request.head.sha || github.sha }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/daemon-pair/fixed/
+      - name: Independently replay both complete raw native outcomes
+        run: |
+          node scripts/openrig-daemon-pair.js --baseline "$RUNNER_TEMP/daemon-pair/original" \
+            --fixed "$RUNNER_TEMP/daemon-pair/fixed" --output "$RUNNER_TEMP/daemon-pair/assessment"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: openrig-pilot-daemon-pair-${{ github.event.pull_request.head.sha || github.sha }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/daemon-pair/assessment/
           if-no-files-found: error
