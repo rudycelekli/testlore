@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
+import {fileURLToPath,pathToFileURL} from 'node:url';
 import {spawnSync} from 'node:child_process';
 import {assessContributedE2E,declaredPnpmExecutable,e2eNativeCases} from '../scripts/contributed-e2e-pilot.js';
 const root='/upstream/packages/e2e',oracle='tests/unit/globs.test.ts',other='tests/unit/regexp.test.ts';
@@ -17,6 +18,15 @@ function fixture(){
  return {baseline:raw(),trials};
 }
 const assess=x=>assessContributedE2E(x.baseline,x.trials,root,{protectedInputsUnchanged:true,restoredGreen:true});
+test('campaign bootstrap loads before checkout dependencies are installed',t=>{
+ const isolated=fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(),'testlore-e2e-bootstrap-')));
+ t.after(()=>fs.rmSync(isolated,{recursive:true,force:true}));
+ const controller=path.join(isolated,'controller.mjs');
+ fs.copyFileSync(fileURLToPath(new URL('../scripts/contributed-e2e-pilot.js',import.meta.url)),controller);
+ const script=`const m=await import(${JSON.stringify(pathToFileURL(controller).href)});if(typeof m.contributedE2EPilot!=="function")throw Error("Controller unavailable");`;
+ const result=spawnSync(process.execPath,['--input-type=module','-e',script],{cwd:isolated,env:{PATH:path.dirname(process.execPath)},encoding:'utf8',timeout:5000,maxBuffer:1024*1024});
+ assert.equal(result.status,0,result.stderr);assert.equal(result.signal,null);assert.equal(result.error,undefined);
+});
 test('qualifies genuine exact case preservation while retaining a native performance loss',()=>{const result=assess(fixture());assert.equal(result.qualified,true);assert.equal(result.observationCompleted,true);assert.equal(result.rows[0].omittedFiles,1);assert.equal(result.speedAdvantageObserved,false);assert.equal(result.claims.independentTestAuthorship,false);});
 test('aggregate claims cannot hide a missed actual Unicode failure',()=>{const x=fixture();x.trials[3].testLore.tests[0].status='passed';x.trials[3].testLore.exitCode=0;x.trials[3].testLoreEvent.exitCode=0;assert.equal(assess(x).qualified,false);});
 test('a source reversion requires the exact upstream Unicode assertion failure',()=>{const x=fixture();for(const trial of x.trials.filter(t=>t.change===1)){trial.full.testResults[0].assertionResults[0].fullName='unrelated failure';}assert.equal(assess(x).qualified,false);});

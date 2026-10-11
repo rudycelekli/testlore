@@ -25,9 +25,27 @@ const ACTIONS={
   'explicit-full-run':['policy','Honor the requested full verification.'],
   'git-baseline-unavailable':['baseline','Restore an immutable baseline before reviewing selective execution.']
 };
+const WARNING_ACTIONS={
+  'external-resolution-config':'Track inherited workspace configuration within a verified inventory and bind its current bytes to planning and execution. Preserve full fallback until that context is bound.',
+  'runtime-registration':'Review the actual registration contract and its side effects, including loader hooks and shared state. Do not suppress uncertainty solely because a method name looks like a domain API.'
+};
 function bounded(values,label){if(!Array.isArray(values)||values.length>MAX_ITEMS)throw new Error(`Invalid or over-bound ${label}`);return values;}
 function strings(values,label){bounded(values,label);if(values.some(value=>typeof value!=='string'||!value||value.length>4096||value.includes('\0')))throw new Error(`Invalid ${label}`);return values;}
 function projectPath(value){safePath('/testlore-project',value);if(value.split('/').some(part=>!part||part==='.'||['.git','node_modules','.tddswarm'].includes(part)))throw new Error('Invalid diagnostic project path');return value;}
+function warningIdentifier(warning){
+  const value=warning.file;
+  if(typeof value!=='string'||!value||value.length>4096)throw new Error('Invalid diagnostic warning identifier');
+  if(value.startsWith('../')){
+    // An inherited compiler configuration can sit outside a package inventory.
+    // This is a display label only: never pass it to a filesystem reader or
+    // treat it as a dependency. The warning still requires full fallback.
+    const parts=value.split('/');let parents=0;
+    while(parts[parents]==='..')parents++;
+    if(warning.reason!=='external-resolution-config'||warning.scope!=='global'||!Array.isArray(warning.tests)||warning.tests.length||parents>16||parents===parts.length||parts.slice(parents).some(part=>!part||part==='.'||part==='..'||['.git','node_modules','.tddswarm'].includes(part)||!/^[A-Za-z0-9_.@+ -]+$/.test(part)))throw new Error('Invalid external configuration warning identifier');
+    return value;
+  }
+  return projectPath(value);
+}
 function checked(selection){
   if(!selection||selection.schemaVersion!==1||!['full','affected','none','policy'].includes(selection.mode))throw new Error('Expected a native selection receipt');
   for(const key of ['changed','ignored','selected','reasons'])strings(selection[key],key);
@@ -43,7 +61,7 @@ function checked(selection){
   }
   if(selection.total!==tests.size||selection.omitted!==tests.size-selection.selected.length||digest(selection.selected)!==digest(selection.decisions.filter(entry=>entry.selected).map(entry=>entry.test)))throw new Error('Selection scope does not match decisions');
   if(selection.mode==='full'&&selection.selected.length!==tests.size)throw new Error('Full fallback cannot omit retained tests');
-  for(const warning of selection.warnings){if(!warning||typeof warning.reason!=='string'||warning.reason.length>4096||!['global','test-closure','unreachable-source'].includes(warning.scope))throw new Error('Invalid scoped graph warning');projectPath(warning.file);if(warning.tests!==undefined){strings(warning.tests,'warning tests');warning.tests.forEach(projectPath);}}
+  for(const warning of selection.warnings){if(!warning||typeof warning.reason!=='string'||warning.reason.length>4096||!['global','test-closure','unreachable-source'].includes(warning.scope))throw new Error('Invalid scoped graph warning');warningIdentifier(warning);if(warning.tests!==undefined){strings(warning.tests,'warning tests');warning.tests.forEach(projectPath);}}
   return selection;
 }
 const category=input=>/\.(?:md|txt|rst)$/.test(input)?'document-or-contract':/\.(?:html|css|scss|sass|less|svg|png|jpe?g|webp|woff2?)$/.test(input)?'browser-or-asset':/\.(?:sql|sh)$/.test(input)?'database-or-command':'source-or-configuration';
@@ -56,9 +74,9 @@ export function diagnoseFallbackSelection(selection){
     const consumers=selection.decisions.filter(entry=>entry.paths.some(chain=>chain.at(-1)===input)).map(entry=>entry.test);
     return {input,category:category(input),knownConsumers:consumers,mapped:consumers.length>0,reason:consumers.length?'retained-dependency-path':'no-retained-consumer-evidence',nextAction:consumers.length?'Retain the evidenced consumers and their uncertainty policies.':'Review actual consumers and whether this suite can verify the changed behavior; do not fabricate a dependency to a convenient test.'};
   });
-  const warnings=selection.warnings.map(entry=>({code:entry.reason.split(':')[0],scope:entry.scope,file:entry.file,tests:entry.tests||[],effect:entry.scope==='global'?'full-fallback':entry.scope==='test-closure'?'retain-uncertain-consumers':'unreachable-under-current-graph',nextAction:entry.scope==='unreachable-source'?'Review suite scope; this warning did not itself cause full fallback.':'Review runtime, browser, service or resolver evidence; local edge additions do not remove this uncertainty.'}));
+  const warnings=selection.warnings.map(entry=>({code:entry.reason.split(':')[0],scope:entry.scope,file:entry.file,tests:entry.tests||[],effect:entry.scope==='global'?'full-fallback':entry.scope==='test-closure'?'retain-uncertain-consumers':'unreachable-under-current-graph',nextAction:entry.scope==='unreachable-source'?'Review suite scope; this warning did not itself cause full fallback.':Object.hasOwn(WARNING_ACTIONS,entry.reason)?WARNING_ACTIONS[entry.reason]:'Review runtime, browser, service or resolver evidence; local edge additions do not remove this uncertainty.'}));
   return {schemaVersion:1,type:'fallback-diagnostic-summary',selectionHash:digest(selection),mode:selection.mode,total:selection.total,selected:selection.selected.length,omitted:selection.omitted,freshnessVerified:false,
-    causes:selection.reasons.map(code=>{const [kind,nextAction]=ACTIONS[code]||['other-conservative-gate','Repair the retained gate before narrowing verification.'];return {code,kind,nextAction};}),changes,warnings,
+    causes:selection.reasons.map(code=>{const [kind,nextAction]=Object.hasOwn(ACTIONS,code)?ACTIONS[code]:['other-conservative-gate','Repair the retained gate before narrowing verification.'];return {code,kind,nextAction};}),changes,warnings,
     omissions:selection.decisions.filter(entry=>!entry.selected).map(entry=>({test:entry.test,reasons:entry.reasons,explanation:'No retained dependency path or required execution policy selected this test. This is a planning explanation, not an independent safety proof.'})),
     retainedUncertainty:selection.decisions.filter(entry=>entry.selected&&entry.reasons.includes('uncertain-dependency-closure')).map(entry=>entry.test),reviewRequired:true,applied:false,closedWorld:false,limitations:LIMITATIONS};
 }

@@ -9,6 +9,74 @@ import {diagnoseFallbackSelection,fallbackDiagnostics,validateFallbackDiagnostic
 import {fallbackCampaign} from '../scripts/fallback-campaign.js';
 const reseal=value=>{const {integrity,...payload}=value;return {...payload,integrity:digest(payload)};};
 
+// Projection of a retained genuine Vitest monorepo capture, preserving the
+// changed path, warning and these two decisions. Counts reflect this projection.
+// Upstream tester-army/e2e 0ddea76a7091ac8768e0ced2a9926b37e72e9497;
+// TestLore candidate 6c1cf02474a0b3ade48d74728219520b8ff0e896;
+// source capture SHA256 fd0c5c0b254ecbae4ec019e7ff3174735dc75ae50b1fa741892eff34b14f2572.
+function projectedMonorepoReceipt(){return {
+  schemaVersion:1,mode:'full',changed:['src/internal/globs.ts'],ignored:[],
+  selected:['tests/unit/globs.test.ts','tests/unit/wordmark.test.ts'],total:2,omitted:0,
+  reasons:['dependency-graph-incomplete'],
+  warnings:[{file:'../../tsconfig.base.json',reason:'external-resolution-config',scope:'global',tests:[]}],
+  decisions:[
+    {test:'tests/unit/globs.test.ts',selected:true,reasons:['dependency-graph-incomplete','dependency-path','uncertain-dependency-closure'],paths:[['tests/unit/globs.test.ts','src/internal/globs.ts']]},
+    {test:'tests/unit/wordmark.test.ts',selected:true,reasons:['dependency-graph-incomplete'],paths:[]}
+  ]
+};}
+
+test('genuine inherited compiler warning is a display-only full-fallback explanation',()=>{
+  const selection=projectedMonorepoReceipt(),before=structuredClone(selection),report=diagnoseFallbackSelection(selection);
+  assert.deepEqual(selection,before);assert.equal(report.warnings[0].file,'../../tsconfig.base.json');
+  assert.equal(report.warnings[0].effect,'full-fallback');assert.deepEqual(report.warnings[0].tests,[]);
+  assert.match(report.warnings[0].nextAction,/verified inventory/);assert.match(report.warnings[0].nextAction,/Preserve full fallback/);
+  assert.equal(report.mode,'full');assert.equal(report.selected,2);assert.equal(report.omitted,0);assert.deepEqual(report.omissions,[]);
+  assert.equal(report.freshnessVerified,false);assert.equal(report.applied,false);assert.equal(report.closedWorld,false);assert.equal(report.reviewRequired,true);
+});
+
+test('external warning labels cannot become project inputs, test identities or scoped dependency authority',()=>{
+  const mutate=fn=>{const value=projectedMonorepoReceipt();fn(value);assert.throws(()=>diagnoseFallbackSelection(value),/Unsafe|Invalid|origin|scope/);};
+  for(const property of ['changed','ignored','selected'])mutate(value=>value[property]=['../../tsconfig.base.json']);
+  mutate(value=>value.decisions[0].test='../../tsconfig.base.json');
+  mutate(value=>value.decisions[0].paths=[['tests/unit/globs.test.ts','../../tsconfig.base.json']]);
+  for(const reason of ['runtime-dependency','runtime-registration','unresolved-import:elsewhere','external-resolution-config:invented'])mutate(value=>value.warnings[0].reason=reason);
+  for(const scope of ['test-closure','unreachable-source'])mutate(value=>value.warnings[0].scope=scope);
+  mutate(value=>value.warnings[0].tests=['tests/unit/globs.test.ts']);
+  mutate(value=>delete value.warnings[0].tests);
+  mutate(value=>value.warnings[0].tests=['../../tsconfig.base.json']);
+  mutate(value=>value.warnings[0].tests=Symbol('not an inventory'));
+});
+
+test('external display identifiers remain bounded plain relative labels',()=>{
+  for(const file of ['../','.././base.json','../nested/../base.json','..//base.json','../node_modules/base.json','../.git/config','../.tddswarm/base.json','../a\\b.json','../a\0b.json','../a\nb.json','../<script>.json','../$(secret).json','../a;command.json','../'+ 'a'.repeat(4097),'../'.repeat(17)+'base.json','/tmp/base.json','https://example.com/base.json',Symbol('path')]){
+    const value=projectedMonorepoReceipt();value.warnings[0].file=file;assert.throws(()=>diagnoseFallbackSelection(value),/Unsafe|Invalid/);
+  }
+});
+
+test('real configuration placeholders and registration warnings remain conservative metadata',()=>{
+  const value=projectedMonorepoReceipt();value.warnings.push(
+    {file:'configuration',reason:'external-resolution-config',scope:'global',tests:[]},
+    {file:'__external_runner_config__',reason:'resolution-config-outside-graph',scope:'global',tests:[]},
+    {file:'src/internal/redact.ts',reason:'runtime-registration',scope:'global',tests:[]}
+  );
+  const report=diagnoseFallbackSelection(value);assert.ok(report.warnings.every(warning=>warning.effect==='full-fallback'));
+  assert.match(report.warnings[3].nextAction,/actual registration contract/);assert.match(report.warnings[3].nextAction,/Do not suppress/);
+  assert.deepEqual(report.omissions,[]);assert.equal(report.closedWorld,false);
+});
+
+test('unknown prototype-named gates keep serializable conservative actions',()=>{
+  for(const reason of ['constructor','__proto__','toString','unknown-future-gate']){
+    const selection=projectedMonorepoReceipt();selection.reasons=[reason];
+    selection.warnings=[{file:'configuration',reason,scope:'global',tests:[]}];
+    const report=JSON.parse(JSON.stringify(diagnoseFallbackSelection(selection)));
+    assert.equal(report.causes[0].kind,'other-conservative-gate');
+    assert.equal(typeof report.causes[0].nextAction,'string');
+    assert.equal(typeof report.warnings[0].nextAction,'string');
+    assert.match(report.warnings[0].nextAction,/do not remove this uncertainty/);
+    assert.equal(report.omitted,0);assert.equal(report.closedWorld,false);
+  }
+});
+
 test('retained diagnostics distinguish global policy, unmapped scope and closure warnings without asserting omissions safe',t=>{
   const root=fixture(t,{...twoModules,'unverified.html':'page','src/a.js':"import fs from 'node:fs';export const a=1;"});
   const selection=plan(root,{changed:['.gitignore','unverified.html']}),report=diagnoseFallbackSelection(selection);
