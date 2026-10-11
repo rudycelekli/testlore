@@ -16,6 +16,10 @@ jobs:
   original-unit-project:
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        profile: [package, workspace]
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -42,18 +46,19 @@ jobs:
           const installed=spawnSync('npm',['install','--prefix',tools,'--ignore-scripts','--no-audit','--no-fund',archive],{env,stdio:'inherit',timeout:180000,killSignal:'SIGKILL'});
           if(installed.status!==0||installed.error)process.exit(1);
           const metadata=JSON.parse(fs.readFileSync(path.join(tools,'node_modules/testlore/package.json')));if(metadata.gitHead!==revision)throw Error('Installed candidate source binding differs');
-          const result=spawnSync(process.execPath,['scripts/contributed-e2e-pilot.js','--directory',path.join(process.env.RUNNER_TEMP,'contributed-upstream'),'--output',output,'--candidate-root',path.join(tools,'node_modules/testlore')],{stdio:'inherit',timeout:26*60*1000,killSignal:'SIGKILL'});
+          const result=spawnSync(process.execPath,['scripts/contributed-e2e-pilot.js','--directory',path.join(process.env.RUNNER_TEMP,'contributed-upstream'),'--output',output,'--candidate-root',path.join(tools,'node_modules/testlore'),'--profile','${{ matrix.profile }}'],{stdio:'inherit',timeout:26*60*1000,killSignal:'SIGKILL'});
           const binding={kind:'explicit-source-candidate-not-registry-release',revision,sha256:createHash('sha256').update(fs.readFileSync(archive)).digest('hex'),version:'0.1.0',runId:process.env.GITHUB_RUN_ID};
           if(fs.existsSync(output))fs.writeFileSync(path.join(output,'candidate-install-binding.json'),JSON.stringify(binding,null,2)+'\n');
           if(result.error||![0,3].includes(result.status))process.exit(1);
           const assessment=JSON.parse(fs.readFileSync(path.join(output,'assessment.json')));if(!assessment.observationCompleted)process.exit(1);
           if(!assessment.qualified)console.log('::notice::Complete negative contributed-project comparison; no qualification or speed claim.');
+          if(!assessment.applicationSuccess)console.log('::notice::Application acceptance remains incomplete: '+JSON.stringify(assessment.applicationAcceptance||{}));
           JS
       - name: Preserve original named outcomes, timings and rejected comparisons
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
-          name: contributed-e2e-${{ github.run_id }}
+          name: contributed-e2e-${{ github.run_id }}-${{ matrix.profile }}
           path: .tddswarm/contributed-e2e/
           include-hidden-files: true
           if-no-files-found: error

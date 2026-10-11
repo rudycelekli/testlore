@@ -9,6 +9,10 @@ import {phaseTimings} from '../timing.js';
 import {createNativeResolutionPass} from '../native-resolution-targets.js';
 import {nativeSourceSummaryReader} from '../native-source-summaries.js';
 import {captureConfigurationInputs,assertConfigurationInputFreshness,admitsCanonicalTempDirectory} from '../configuration-inputs.js';
+import {captureVitestWorkspaceRoot,assertVitestWorkspaceRoot} from '../native-workspace-root.js';
+import {captureNativeVitestCases,assertNativeVitestCases,captureNativeCaseConfiguration,assertNativeCaseConfiguration} from '../native-vitest-cases.js';
+import {createE2ELocatorRegistrationPlugin,vitestCaseHash} from '../vitest-case-contracts.js';
+import TestLoreVitestCaseReporter from './vitest-cases.js';
 const workerTiming=phaseTimings();
 const argvSome=Array.prototype.some,argvStartsWith=String.prototype.startsWith,argvApply=Reflect.apply;
 let protocolOutput, instruction;
@@ -96,7 +100,7 @@ function rejectArgvConfiguration(files) {
   if(argvApply(argvSome,summaries,[summary=>summary.argvPrefixChecks?.length])&&argvApply(argvSome,summaries,[summary=>summary.argvIntrinsicMutation]))throw new Error('runtime-argv-dependent-native-configuration');
 }
 
-function rejectUnifiedProjectPlugins(files,plugins) {
+function rejectUnifiedProjectPlugins(files,plugins,trustedPlugins=new Set()) {
   // This prototype has not established stateful user-plugin planning/run parity.
   // Reject both observed configuration declarations and unknown resolved plugins.
   for(const file of files) {
@@ -104,12 +108,44 @@ function rejectUnifiedProjectPlugins(files,plugins) {
     const relative=path.relative(root,file).split(path.sep).join('/');
     if(sourceSummary.read(relative,fs.readFileSync(file)).projectPlugins)throw new Error('Unified native prototype does not support project plugins; verify with the legacy native full run');
   }
-  const known=new Set(['vite:optimized-deps','vite:watch-package-data','vite:pre-alias','alias','vitest:capture-raw-test-config','vitest:config:cli','vitest:config','vitest:css-disable','vitest:resolve-core','vitest:resolve-root','vitest:project','vitest:meta-env-replacer','vitest:ssr-module-runner-fixer','vitest:browser:loader','vite:modulepreload-polyfill','vite:resolve-dev','vite:resolve-builtin:get-environment','vite:resolve-builtin','vite:html-inline-proxy','vite:css','builtin:oxc-runtime','vite:oxc','builtin:vite-json','vite:wasm-helper','vite:worker','vite:asset','vite:forward-console','vitest:test-config','vitest:config:server-defaults','vitest:environments-module-runner','vite:define','vite:css-post','vite:build-html','vite:worker-import-meta-url','vite:asset-import-meta-url','vite:dynamic-import-vars','vite:import-glob','vitest:config:server','vitest:config:append','vitest:css-empty-post','vitest:mocks','vitest:automock','vitest:coverage-transform','vitest:normalize-url','vitest:ui-injector','vitest:browser:loader:post','vite:client-inject','vite:css-analysis','vite:import-analysis','vitest','vite:resolve','vite:esbuild','vite:json','vitest:normalize-optimizer','vite:wasm-fallback']);
-  const unknown=Array.isArray(plugins)?plugins.filter(plugin=>typeof plugin?.name!=='string'||!known.has(plugin.name)):null;
+  const known=new Set(['vite:optimized-deps','vite:watch-package-data','vite:pre-alias','alias','vitest:capture-raw-test-config','vitest:config:cli','vitest:config','vitest:css-disable','vitest:resolve-core','vitest:resolve-root','vitest:project','vitest:meta-env-replacer','vitest:ssr-module-runner-fixer','vitest:browser:loader','vite:modulepreload-polyfill','vite:resolve-dev','vite:resolve-builtin:get-environment','vite:resolve-builtin','vite:html-inline-proxy','vite:css','builtin:oxc-runtime','vite:oxc','builtin:vite-json','vite:wasm-helper','vite:worker','vite:asset','vite:forward-console','vitest:test-config','vitest:config:server-defaults','vitest:environments-module-runner','vite:define','vite:css-post','vite:build-html','vite:worker-import-meta-url','vite:asset-import-meta-url','vite:dynamic-import-vars','vite:import-glob','vitest:config:server','vitest:config:append','vitest:css-empty-post','vitest:mocks','vitest:automock','vitest:coverage-transform','vitest:normalize-url','vitest:ui-injector','vitest:browser:loader:post','vite:client-inject','vite:bundled-dev-client-imports','vite:css-analysis','vite:import-analysis','vitest','vite:resolve','vite:esbuild','vite:json','vitest:normalize-optimizer','vite:wasm-fallback']);
+  const unknown=Array.isArray(plugins)?plugins.filter(plugin=>!trustedPlugins.has(plugin)&&(typeof plugin?.name!=='string'||!known.has(plugin.name))):null;
   if(!unknown||unknown.length){const names=unknown?.slice(0,5).map(plugin=>typeof plugin?.name==='string'?plugin.name.slice(0,80):'<unnamed>');throw new Error('Unified native prototype encountered an unqualified resolved plugin'+(names?': '+JSON.stringify(names):' inventory')+'; use the legacy native full run');}
 }
 
 try {
+  const workspaceRoot=request.discover?captureVitestWorkspaceRoot(root,command):null;
+  if(request.discover)assertVitestWorkspaceRoot(request.workspaceRoot??null,workspaceRoot);
+  output.workspaceRoot=workspaceRoot;
+  const casePolicy={vitestCases:request.vitestCases?.profile};
+  const vitestCases=request.vitestCases?captureNativeVitestCases(root,casePolicy,command):null;
+  assertNativeVitestCases(request.vitestCases??null,vitestCases);
+  output.vitestCases=vitestCases;
+  let caseReporter,nativeCaseConfigurationInputs,caseRuntime;
+  const trustedCasePlugins=new Set();
+  function freshNativeCases(){if(vitestCases){
+    assertNativeVitestCases(vitestCases,captureNativeVitestCases(root,casePolicy,command));
+    if(nativeCaseConfigurationInputs)assertNativeCaseConfiguration(root,nativeCaseConfigurationInputs);
+    if(caseRuntime){
+      const projects=workspaceClosed?caseRuntime.projects:workspaceContext.projects;
+      const globalConfig=workspaceClosed?caseRuntime.globalConfig:workspaceContext.config;
+      if(projects.length!==1||projects[0].config.name!=='unit'||projects[0].config.root!==vitestCases.projectRoot||(projects[0].config.includeTaskLocation??globalConfig.includeTaskLocation)!==true)throw Error('Native case effective unit context changed');
+    }
+  }}
+  freshNativeCases();
+  let workspaceContext,workspaceEffective,workspaceClosed=false;
+  function freshWorkspaceRoot(){
+    if(workspaceRoot){
+      if(fs.realpathSync(process.cwd())!==root)throw Error('Native workspace cwd changed');
+      assertVitestWorkspaceRoot(workspaceRoot,captureVitestWorkspaceRoot(root,command));
+      if(workspaceContext){
+        const viteConfig=workspaceClosed?workspaceEffective.viteConfig:workspaceContext.vite?.config;
+        const projectConfig=workspaceClosed?workspaceEffective.projectConfig:workspaceContext.getRootProject()?.config;
+        if(viteConfig?.root!==workspaceRoot.nativeRoot||projectConfig?.root!==workspaceRoot.nativeRoot||viteConfig?.configFile!==workspaceRoot.configFile)throw Error('Native workspace effective root/config differs from admitted invocation');
+      }
+    }
+  }
+  freshWorkspaceRoot();
   const configurationPolicy={configurationInputs:request.configurationInputs};
   const physicalInputs=captureConfigurationInputs(root,configurationPolicy);
   const expectedInputs=request.configurationInputObservations||{schemaVersion:1,profile:'exact-canonical-temp-directory',observations:[],warnings:[]};
@@ -151,7 +187,7 @@ try {
   } else {
     // Match Vitest's config-loading environment, including CLI-supplied mode.
     process.env.TEST = 'true'; process.env.VITEST = 'true'; process.env.NODE_ENV ??= 'test';
-    const unsupported = command.some(arg => /^(?:--(?:workspace|browser|root|configLoader|environment|no-isolate|isolate)|-r)(?:=|$)/.test(arg)) || !request.discover && command.some(arg=>/^--project(?:=|$)/.test(arg));
+    const unsupported = command.some(arg => /^(?:--(?:workspace|browser|configLoader|environment|no-isolate|isolate)|-r)(?:=|$)/.test(arg)) || !request.discover && command.some(arg=>/^--(?:project|root)(?:=|$)/.test(arg));
     if (unsupported) throw new Error('Unsupported native resolution context; use a full suite');
     let context, unifiedSpecs;
     if(request.discover) {
@@ -162,13 +198,25 @@ try {
       workerTiming.mark('requestAndAdmission');
       const vitest=await import(pathToFileURL(requireCLI.resolve('vitest/node')).href);
       workerTiming.mark('frameworkImport');
-      const version=JSON.parse(fs.readFileSync(requireCLI.resolve('vitest/package.json'),'utf8')).version;
+      const runtimeBytes=fs.readFileSync(requireCLI.resolve('vitest/package.json'));
+      const version=JSON.parse(runtimeBytes).version;
+      if(vitestCases&&(version!==vitestCases.vitestVersion||vitestCaseHash(runtimeBytes)!==vitestCases.runtimeManifestSha256))throw Error('Native case runtime differs from admitted project runtime');
       const parsed=vitest.parseCLI(['vitest',...command.slice(index+1)]);
       if(parsed.filter.length)throw new Error('Shared native planning does not accept positional scope filters');
-      const options={...parsed.options,root,run:true,watch:false,...(request.unified?{reporters:['json'],outputFile:request.reportFile}: {})};
-      if(/^4\.1\./.test(version))context=await vitest.createVitest('test',options,{logLevel:'silent'});
-      else if(/^5\./.test(version))context=await vitest.createVitest(options,{logLevel:'silent'});
+      // With no CLI root, let native configuration resolve it from the same
+      // cwd as the CLI. Forcing inventoryRoot would hide an unsupported root
+      // declared by executable config before the containment guard observes it.
+      const casePlugins=vitestCases?vitestCases.registrationContracts.map(contract=>createE2ELocatorRegistrationPlugin(vitestCases.projectRoot,contract)):[];
+      for(const plugin of casePlugins)trustedCasePlugins.add(plugin);
+      if(vitestCases&&request.unified)caseReporter=new TestLoreVitestCaseReporter({schemaVersion:1,root:vitestCases.projectRoot,expectedFiles:vitestCases.expectedFiles,inputs:vitestCases.inputs,vitestVersion:version,reportFile:null,registrationContracts:vitestCases.registrationContracts,scope:'deferred'});
+      const options={...parsed.options,...(workspaceRoot?{root:workspaceRoot.nativeRoot}:{}),run:true,watch:false,...(vitestCases?{includeTaskLocation:true}:{}),...(request.unified?{reporters:caseReporter?['json',caseReporter]:['json'],outputFile:request.reportFile}: {})};
+      const overrides={logLevel:'silent',...(casePlugins.length?{plugins:casePlugins}:{})};
+      if(/^4\.1\./.test(version))context=await vitest.createVitest('test',options,overrides);
+      else if(/^5\./.test(version))context=await vitest.createVitest(options,overrides);
       else throw new Error('Unsupported shared native planning API version');
+      workspaceContext=context;
+      workspaceEffective={viteConfig:context.vite.config,projectConfig:context.getRootProject().config};
+      freshWorkspaceRoot();
       workerTiming.mark('frameworkInitializationAndConfiguration');
     }
     try {
@@ -180,9 +228,13 @@ try {
     const loaded = context ? null : await vite.loadConfigFromFile({ command: 'serve', mode, isSsrBuild: false, isPreview: false }, configFile, root, 'silent');
     const base = context ? { ...context.vite.config, test:context.getRootProject().config } : loaded?.config || {};
     if (!context && base.test?.isolate === false) throw new Error('Shared test isolation requires a fresh native project graph');
-    if (!context && (base.test?.projects?.length || base.test?.workspace) || base.test?.browser?.enabled || base.root && path.resolve(root,base.root)!==root || base.test?.environment && !['node','jsdom','happy-dom'].includes(base.test.environment)) throw new Error('Unsupported projects/browser resolution requires a native project graph');
+    if (!context && (base.test?.projects?.length || base.test?.workspace) || base.test?.browser?.enabled || base.root && path.resolve(root,base.root)!==(workspaceRoot?.nativeRoot||root) || base.test?.environment && !['node','jsdom','happy-dom'].includes(base.test.environment)) throw new Error('Unsupported projects/browser resolution requires a native project graph');
     const projects=context?context.projects:[];
     if(context && (!projects.length||projects.length>128))throw new Error('Missing or unbounded native project inventory');
+    // Vitest serializes a project's undefined value from the global CLI option.
+    if(vitestCases&&(projects.length!==1||projects[0].config.name!=='unit'||(projects[0].config.includeTaskLocation??context.config.includeTaskLocation)!==true))throw Error('Reviewed native case profile requires the unit project and native task locations');
+    if(vitestCases&&[...trustedCasePlugins].some(plugin=>!projects[0].vite.config.plugins.includes(plugin)))throw Error('Native unit project did not retain the exact reviewed observer plugin');
+    if(vitestCases){caseRuntime={projects:[...projects],globalConfig:context.config};freshNativeCases();}
     for(const project of projects) {
       const config=project.config;
       if(!config || typeof config.name!=='string' || typeof config.isolate!=='boolean' || config.browser?.enabled || !['node','jsdom','happy-dom'].includes(config.environment) || !['threads','forks'].includes(config.pool) || !project.vite)throw new Error('Unqualified native project runtime');
@@ -190,7 +242,7 @@ try {
     }
     // Root global setup can provide values across all projects. Setup files
     // belong to their resolved project and are attached to its test closures.
-    globals(base.test || {},context?['globalSetup']:['setupFiles','globalSetup']);
+    globals(base.test || {},context?['globalSetup']:['setupFiles','globalSetup'],context?context.getRootProject().config.root:root);
     workerTiming.mark('contextAndGlobalInputs');
     if(context) {
       const specs=await context.getRelevantTestSpecifications([]);
@@ -210,6 +262,7 @@ try {
         return {name:project.config.name,files,isolate:project.config.isolate,setupFiles:normalizedSetup};
       });
       if(memberships.size!==output.discovery.files.length)throw new Error('Incomplete native project specification membership');
+      if(vitestCases){const actual=output.discovery.files.map(file=>path.relative(vitestCases.projectRoot,file).split(path.sep).join('/')).sort();if(JSON.stringify(actual)!==JSON.stringify(vitestCases.expectedFiles))throw Error('Native case discovered unit inventory differs from reviewed 174-file profile');}
       for(const file of output.discovery.files)expand(file);
     }
     workerTiming.mark('nativeDiscoveryAndDiscoveredSourceExpansion');
@@ -225,7 +278,8 @@ try {
     }
     output.configurationInputs=freshInputs();
     rejectArgvConfiguration(output.configFiles);
-    if(context)for(const project of new Set([context.getRootProject(),...projects]))rejectUnifiedProjectPlugins(output.configFiles,project.vite.config.plugins);
+    if(vitestCases){nativeCaseConfigurationInputs=captureNativeCaseConfiguration(root,output.configFiles);output.nativeCaseConfigurationInputs=nativeCaseConfigurationInputs;freshNativeCases();}
+    if(context)for(const project of new Set([context.getRootProject(),...projects]))rejectUnifiedProjectPlugins(output.configFiles,project.vite.config.plugins,trustedCasePlugins);
     workerTiming.mark('sourceExpansionAndConfigurationAdmission');
     const aliases = value => Array.isArray(value) ? value : Object.entries(value || {}).map(([find, replacement]) => ({ find, replacement }));
     const server = context ? context.vite : await vite.createServer({ ...base, root, mode, configFile: false, logLevel: 'silent', server: { ...base.server, middlewareMode: true, watch: null }, resolve: { ...base.resolve, alias: [...aliases(base.test?.alias), ...aliases(base.resolve?.alias)] } });
@@ -251,6 +305,8 @@ try {
     } finally { if(resolutionPass)output.nativeResolutionDiagnostics=resolutionPass.diagnostics();if(!context)await server.close(); }
     workerTiming.mark('nativeImportResolution');
     if(request.unified) {
+      freshWorkspaceRoot();
+      freshNativeCases();
       const plannedTiming=workerTiming.finish();
       await sendBounded({phase:'planned',value:output,timings:plannedTiming});
       const selectedInstruction=await instruction;
@@ -261,20 +317,32 @@ try {
       const selected=specs.filter(spec=>expected.has(spec.moduleId));
       if(expected.size!==new Set(selected.map(spec=>spec.moduleId)).size)throw new Error('Unified requested specifications are missing');
       for(const project of output.projectContracts)if(!project.isolate&&project.files.some(file=>expected.has(file))&&project.files.some(file=>!expected.has(file)))throw new Error('Unified execution omitted a shared-isolation project member');
+      if(caseReporter)caseReporter.bindExecutionScope(selected.map(spec=>path.relative(vitestCases.projectRoot,spec.moduleId).split(path.sep).join('/')));
+      freshWorkspaceRoot();
+      freshNativeCases();
       if(typeof context.standalone==='function')await context.standalone();else await context.init();
+      freshWorkspaceRoot();
+      freshNativeCases();
       workerTiming.mark('runnerInitialization');
       freshInputs();
+      freshWorkspaceRoot();
+      freshNativeCases();
       const result=await context.runTestSpecifications(selected,selected.length===specs.length);
       workerTiming.mark('nativeTestsAndReporter');
+      freshWorkspaceRoot();
+      freshNativeCases();
       if(result.unhandledErrors?.length)throw new Error('Unified native execution has unhandled errors');
       const value=readNativeJson(request.reportFile);
+      if(caseReporter){value.nativeCaseEvidence=caseReporter.capture();value.nativeCaseEvidenceBinding={profile:vitestCases,configurationInputs:nativeCaseConfigurationInputs};}
       value.configurationInputs=freshInputs();
       workerTiming.mark('nativeReportRead');
       await sendBounded({phase:'executed',value,timings:workerTiming.finish()});
     }
-    } finally {if(context)await context.close();}
+    } finally {if(context){try{freshWorkspaceRoot();}finally{await context.close();workspaceClosed=true;}}}
   }
   output.configurationInputs=freshInputs();
+  freshWorkspaceRoot();
+  freshNativeCases();
 } catch (error) {
   output.complete = false; output.error = error.message;
   output.additionalResolutions = [];

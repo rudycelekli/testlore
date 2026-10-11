@@ -10,6 +10,9 @@ import { listFiles, TEST, normalize, safePath } from './files.js';
 import {normalizeNativeProjects} from './native-project-contracts.js';
 import {readNativeJson} from './native-protocol.js';
 import {bunCommand,bunResults,readBunReport} from './bun-results.js';
+import {captureVitestWorkspaceRoot,assertVitestWorkspaceRoot} from './native-workspace-root.js';
+import {captureNativeVitestCases,assertNativeVitestCases,assertNativeCaseConfiguration} from './native-vitest-cases.js';
+import {validateVitestCaseCapture} from './reporters/vitest-cases.js';
 
 const reporter = fileURLToPath(new URL('./reporters/node.js', import.meta.url));
 const playwrightReporter = fileURLToPath(new URL('./reporters/playwright.cjs', import.meta.url));
@@ -347,6 +350,7 @@ export function resolveNativeBatch(root, imports, config = {}, options = {}) {
   const adapter = adapterFor(config);
   if(adapter==='bun')return {resolutions:imports.map(()=>({paths:[],unresolved:true})),configFiles:[],complete:false,adapter,supported:true,error:'Bun shared-global isolation and runtime dependency resolution are unqualified'};
   if (!['jest', 'vitest'].includes(adapter)) return { resolutions: [], configFiles: [], complete: true, adapter, supported: false };
+  if(adapter==='vitest'&&!options.discover&&(config.runner||[]).some(arg=>/^(?:--root|-r)(?:=|$)/.test(arg)))return {resolutions:imports.map(()=>({paths:[],unresolved:true})),configFiles:[],adapter,supported:true,complete:false,error:'Native workspace root requires a fresh shared discovery context'};
   if(adapter==='vitest'&&!vitestInterpreterBound(root,config))return {resolutions:imports.map(()=>({paths:[],unresolved:true})),configFiles:[],adapter,supported:true,complete:false,error:'Requested native Node interpreter is unbound or differs from the resolver runtime'};
   const sharedCommand=options.discover?sharedVitestCommand(root,config):null;
   if(options.discover&&!sharedCommand)return {resolutions:imports.map(()=>({paths:[],unresolved:true})),configFiles:[],adapter,supported:true,complete:false,error:'Unsupported or unbound shared native command'};
@@ -354,12 +358,15 @@ export function resolveNativeBatch(root, imports, config = {}, options = {}) {
   const requestFile = path.join(temporary, 'request.json');
   const resolutionReportFile=path.join(temporary,'resolver-results.json');
   const configurationInputObservations=captureConfigurationInputs(root,config);
+  let workspaceRoot,vitestCases;
   let diagnostics;
   try {
+    workspaceRoot=sharedCommand?captureVitestWorkspaceRoot(root,sharedCommand):null;
+    vitestCases=sharedCommand?captureNativeVitestCases(root,config,sharedCommand):null;
     const originalCommand=frameworkBase(commandBase(config,adapter),adapter);
     const cliIndex=originalCommand.findIndex(arg=>/(?:^|[/\\])vitest(?:\.mjs)?$/.test(arg));
     const invocation=sharedCommand?[process.execPath,path.resolve(root,originalCommand[cliIndex]),...originalCommand.slice(cliIndex+1),'list','--filesOnly',`--json=${path.join(temporary,'native-files.json')}`]:undefined;
-    fs.writeFileSync(requestFile, JSON.stringify({ root: fs.realpathSync(root), adapter, imports, invocation, resolutionReportFile, configurationInputs:config.configurationInputs,configurationInputObservations, discover: options.discover === true, transitive: options.transitive === true, roots: options.roots || [], command: sharedCommand||originalCommand }));
+    fs.writeFileSync(requestFile, JSON.stringify({ root: fs.realpathSync(root), adapter, imports, invocation, workspaceRoot,vitestCases,resolutionReportFile, configurationInputs:config.configurationInputs,configurationInputObservations, discover: options.discover === true, transitive: options.transitive === true, roots: options.roots || [], command: sharedCommand||originalCommand }));
     const script = fileURLToPath(new URL('./reporters/resolve.js', import.meta.url));
     const result = spawn(root, [process.execPath, script, requestFile], config);
     const trim=value=>{const bytes=Buffer.from(value||'');return {text:bytes.subarray(0,32768).toString('utf8'),truncated:bytes.length>32768};};
@@ -368,6 +375,8 @@ export function resolveNativeBatch(root, imports, config = {}, options = {}) {
     // Executable configuration may write to stdout, including once per native
     // inline project. It cannot share the authoritative JSON transport.
     const value = readNativeJson(resolutionReportFile);
+    if(sharedCommand){assertVitestWorkspaceRoot(workspaceRoot,value.workspaceRoot);assertVitestWorkspaceRoot(workspaceRoot,captureVitestWorkspaceRoot(root,sharedCommand));}
+    if(vitestCases){assertNativeVitestCases(vitestCases,value.vitestCases);assertNativeVitestCases(vitestCases,captureNativeVitestCases(root,config,sharedCommand));assertNativeCaseConfiguration(root,value.nativeCaseConfigurationInputs);}
     assertConfigurationInputFreshness(configurationInputObservations,value.configurationInputs,{allowCanonicalTmpdir:true});
     assertConfigurationInputFreshness(configurationInputObservations,captureConfigurationInputs(root,config));
     if (!Array.isArray(value.resolutions) || value.resolutions.length !== imports.length || typeof value.complete !== 'boolean') throw new Error('Invalid native resolver report');
@@ -469,13 +478,14 @@ export function sharedVitestCommand(root,config) {
   if(!path.isAbsolute(base[index])&&!base[index].includes(path.sep))return null;
   const selected=canonicalVitestCLI(root,base[index]);if(!selected)return null;
   base=[...base];base[0]=process.execPath;base[index]=selected.cli;
-  const valued=new Set(['--config','-c','--mode','--maxWorkers','--minWorkers','--pool','--project']);
+  const valued=new Set(['--config','-c','--mode','--maxWorkers','--minWorkers','--pool','--project','--root']);
   const switches=new Set(['--no-file-parallelism','--passWithNoTests','--cache=false']);
   for(let i=index+1;i<base.length;i++) {
     const option=base[i].split('=')[0];
     if(valued.has(option)) {if(!base[i].includes('=')){if(!base[i+1]||base[i+1].startsWith('-'))return null;i++;}}
     else if(!switches.has(base[i]))return null;
   }
+  try{captureVitestWorkspaceRoot(root,base);}catch{return null;}
   try {
     return /^(?:4\.1\.|5\.)/.test(selected.version)?base:null;
   }catch{return null;}
@@ -494,5 +504,18 @@ export function normalizeUnifiedExecution(root, files, value, details) {
   const complete=normalized.valid&&!missingFiles.length&&!unknownFiles.length&&!normalized.errors.length&&!details.signal&&[0,1].includes(details.nativeExitCode);
   const tests=identities(normalized.tests);
   const exitCode=complete?(tests.some(test=>test.status==='failed')?1:details.nativeExitCode):2;
-  return {adapter:'vitest',...details,tests,collectionFiles:normalized.collectionFiles,requestedFiles:files,executedFiles:files,missingFiles,unknownFiles,dependencyFiles:[],complete,exitCode,reportErrors:normalized.errors};
+  const observation=value.nativeCaseEvidence;
+  let caseSidecar={};
+  if(observation)try{
+    if(!validateVitestCaseCapture(observation).valid)throw Error();
+    const binding=value.nativeCaseEvidenceBinding,profile=binding?.profile;
+    if(!profile||profile.inventoryRoot!==fs.realpathSync(root)||observation.scope!=='deferred'||observation.vitestVersion!==profile.vitestVersion||observation.runtimeManifestSha256!==profile.runtimeManifestSha256||JSON.stringify(observation.producerSha256)!==JSON.stringify(profile.producerSha256)||JSON.stringify(observation.inputs)!==JSON.stringify(profile.inputs)||JSON.stringify(observation.registrationContracts)!==JSON.stringify(profile.registrationContracts))throw Error();
+    const selected=files.map(file=>path.relative(profile.projectRoot,path.resolve(root,file)).split(path.sep).join('/')).sort();
+    if(JSON.stringify(selected)!==JSON.stringify([...observation.actualFiles].sort()))throw Error();
+    const originalConfig=profile.inputs.at(-1)?.file;
+    assertNativeVitestCases(profile,captureNativeVitestCases(root,{vitestCases:profile.profile},['--config',path.join(profile.projectRoot,originalConfig)]));
+    assertNativeCaseConfiguration(root,binding.configurationInputs);
+    caseSidecar={nativeCaseEvidence:observation,nativeCaseEvidenceBinding:binding};
+  }catch{caseSidecar={nativeCaseEvidenceError:'Optional native case evidence is incomplete, invalid or differs from its source/scope binding'};}
+  return {adapter:'vitest',...details,...caseSidecar,tests,collectionFiles:normalized.collectionFiles,requestedFiles:files,executedFiles:files,missingFiles,unknownFiles,dependencyFiles:[],complete,exitCode,reportErrors:normalized.errors};
 }
