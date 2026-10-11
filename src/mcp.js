@@ -9,6 +9,7 @@ import { boundedSummary } from './mcp-worker.js';
 import {briefInputSchema,statusInputSchema} from './mcp-inputs.js';
 
 const workerPath = fileURLToPath(new URL('./mcp-worker.js', import.meta.url));
+const packageVersion = JSON.parse(fs.readFileSync(new URL('../package.json', import.meta.url), 'utf8')).version;
 const baseSchema = z.string().min(1).max(200).regex(/^[^-\x00-\x1f][^\x00-\x1f]*$/).optional();
 const readOnly = { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false };
 const execution = { readOnlyHint: false, destructiveHint: true, idempotentHint: false, openWorldHint: true };
@@ -87,7 +88,7 @@ export async function serveMcp(options = {}) {
     });
   }
   function factory() {
-    const server = new McpServer({ name: 'testlore', version: '0.1.0' }, {
+    const server = new McpServer({ name: 'testlore', version: packageVersion }, {
       instructions: 'Start with testlore_brief. Evidence is scoped and advisory. Historical receipts do not establish current deployment safety. Execution tools are available only when explicitly enabled at server startup.'
     });
     const register = (name, description, inputSchema, annotations, callback) => server.registerTool(name,

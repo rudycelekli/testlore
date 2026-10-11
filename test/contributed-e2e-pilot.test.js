@@ -6,7 +6,7 @@ import path from 'node:path';
 import {fileURLToPath,pathToFileURL} from 'node:url';
 import {spawnSync} from 'node:child_process';
 import {vitestCaseHash} from '../src/vitest-case-contracts.js';
-import {assessContributedE2E,assessContributedE2EWithCases,reconcileE2ECaseCapture,declaredPnpmExecutable,e2eNativeFlags,e2eNativeCases,compareE2EWorkspaceBaseline} from '../scripts/contributed-e2e-pilot.js';
+import {assessContributedE2E,assessContributedE2EWithCases,reconcileE2ECaseCapture,declaredPnpmExecutable,e2eNativeFlags,e2eNativeCases,compareE2EWorkspaceBaseline,verifyE2ECandidateManifest} from '../scripts/contributed-e2e-pilot.js';
 const root='/upstream/packages/e2e',oracle='tests/unit/globs.test.ts',other='tests/unit/regexp.test.ts';
 const name='glob grammar ? matches exactly one non-/ character';
 const raw=(failed=false,files=[oracle,other])=>({success:!failed,numTotalTests:files.length,numPassedTests:files.length-(failed?1:0),numFailedTests:failed?1:0,numPendingTests:0,numRuntimeErrorTestSuites:0,testResults:files.map(file=>({name:root+'/'+file,status:failed&&file===oracle?'failed':'passed',assertionResults:[{fullName:file===oracle?name:'regexp escapes literal symbols',status:failed&&file===oracle?'failed':'passed'}]}))});
@@ -19,6 +19,17 @@ function fixture(){
  return {baseline:raw(),trials};
 }
 const assess=x=>assessContributedE2E(x.baseline,x.trials,root,{protectedInputsUnchanged:true,restoredGreen:true});
+test('candidate campaigns require the actual declared source version and retained revision evidence',()=>{
+ const sourceVersion=JSON.parse(fs.readFileSync(new URL('../package.json',import.meta.url),'utf8')).version;
+ const installed={name:'testlore',version:sourceVersion,gitHead:'a'.repeat(40)};
+ assert.deepEqual(verifyE2ECandidateManifest(installed,sourceVersion),{version:sourceVersion,sourceRevision:installed.gitHead});
+ for(const candidate of [{...installed,version:'0.0.0'},{...installed,name:'other'},{...installed,gitHead:undefined},{...installed,gitHead:'not-a-revision'},null])assert.throws(()=>verifyE2ECandidateManifest(candidate,sourceVersion),/provenance/);
+ assert.throws(()=>verifyE2ECandidateManifest(installed,undefined),/provenance/);
+ // Historical manifests retain their own version; they do not impersonate a
+ // fresh source candidate merely because their previous campaign passed.
+ assert.deepEqual(verifyE2ECandidateManifest({...installed,version:'0.1.0'},'0.1.0').version,'0.1.0');
+ if(sourceVersion!=='0.1.0')assert.throws(()=>verifyE2ECandidateManifest({...installed,version:'0.1.0'},sourceVersion),/provenance/);
+});
 test('workspace flags bind the original absolute config without duplicating the native root',()=>{
  assert.deepEqual(e2eNativeFlags(root,'workspace'),['--config',root+'/vitest.config.ts','--root',root]);
  assert.deepEqual(e2eNativeFlags(root,'package'),['--config','vitest.config.ts']);

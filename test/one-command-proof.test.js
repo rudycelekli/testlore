@@ -6,6 +6,25 @@ import path from 'node:path';
 import {createHash} from 'node:crypto';
 import {oneCommandEvidenceComplete,verifyOneCommandRawEvidence} from '../scripts/one-command-proof.js';
 import {oneCommandFixture} from './one-command-evidence-fixture.js';
+import {summarizeFirstRun} from '../src/run-report.js';
+
+test('new install receipts require summaries bound to retained outcomes while historical receipts remain replayable',()=>{
+ const evidence=oneCommandFixture();assert.equal(oneCommandEvidenceComplete(evidence),true);
+ evidence.firstRunSummaryVerified=true;
+ for(const name of ['default','disabled','negative']){
+  const run=evidence[name].verification;
+  // Historical fixture has no routing/execution metadata; add the actual new
+  // producer fields rather than pretending that the old UI was qualified.
+  run.executed=true;run.adapter='node';run.plan={total:2,selected:['test/a.test.js','test/b.test.js'],decisions:[{test:'test/a.test.js'},{test:'test/b.test.js'}]};
+  run.tests=run.tests.map((entry,index)=>({...entry,id:`synthetic-${index}`}));
+  run.summary=summarizeFirstRun(run);evidence[name].summary=structuredClone(run.summary);
+ }
+ assert.equal(oneCommandEvidenceComplete(evidence),true);
+ for(const changed of [false,'true'])assert.equal(oneCommandEvidenceComplete({...evidence,firstRunSummaryVerified:changed}),false);
+ const forged=structuredClone(evidence);forged.negative.summary.verdict='passed-in-observed-scope';assert.equal(oneCommandEvidenceComplete(forged),false);
+ const mismatch=structuredClone(evidence);mismatch.default.verification.summary.nextAction='Invented';assert.equal(oneCommandEvidenceComplete(mismatch),false);
+ const invented=structuredClone(evidence);invented.default.summary.nextAction='Safe to deploy';invented.default.verification.summary.nextAction='Safe to deploy';assert.equal(oneCommandEvidenceComplete(invented),false);
+});
 
 test('one-command evaluator requires real-install boundaries, shadow outcomes and retained disabled choices',()=>{
  const evidence=oneCommandFixture();assert.equal(oneCommandEvidenceComplete(evidence),true);

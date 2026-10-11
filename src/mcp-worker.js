@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import { plan } from './selector.js';
 import { run } from './runner.js';
-import {nextVerificationAction,executionFileEvidence} from './run-report.js';
+import {nextVerificationAction,executionFileEvidence,summarizeFirstRun} from './run-report.js';
 
 // This is an internal, fixed-argv worker. Project runner output never shares the
 // MCP protocol stream; the parent supervises this process and its descendants.
@@ -26,16 +26,16 @@ export function summarizePlan(selection) {
 }
 
 export function summarizeRun(report, mode, receipts) {
-  const tests = report.tests || [];
+  const tests = Array.isArray(report.tests)?report.tests:[];
+  const firstRun=summarizeFirstRun(report);
   const fileEvidence=executionFileEvidence(report),unverified=fileEvidence.unverified;
   const caseOutcomesAvailable = Array.isArray(report.tests);
   const observedScope = unverified?fileEvidence.executedFiles.length>0:caseOutcomesAvailable ? tests.some(t => ['passed', 'failed'].includes(t.status))
     : Array.isArray(report.plan?.targets) && report.plan.targets.length > 0;
   return {
     kind: 'agent-verification-run', authority: 'observed-run', mode,
-    executed: report.executed === true, complete: report.complete === true&&!unverified,
-    verdict: report.complete !== true || report.executed !== true || unverified ? 'incomplete'
-      : report.exitCode !== 0 ? 'failed' : observedScope ? 'passed-in-observed-scope' : 'incomplete',
+    executed: report.executed === true, complete: firstRun.complete,
+    verdict: firstRun.verdict==='native-result-reported'?(observedScope?'passed-in-observed-scope':'incomplete'):firstRun.verdict,
     observedScopeEstablished: observedScope,
     exitCode: report.exitCode, error: report.error, executedFiles: fileEvidence.executedFiles,
     ...(unverified?{actualExecutedFilesUnverified:true,requestedFiles:fileEvidence.requestedFiles,requestedFileCount:fileEvidence.requestedFiles.length,executedFileCount:fileEvidence.executedFiles.length}:{}),
@@ -46,11 +46,12 @@ export function summarizeRun(report, mode, receipts) {
       skipped: caseOutcomesAvailable ? tests.filter(t => t.status === 'skipped').length : null },
     failedCases: tests.filter(t => t.status === 'failed').map(t => ({ id: t.id, file: t.file, name: t.name })),
     timings: report.timings, plan: report.plan && summarizePlan(report.plan),
-    comparison: report.comparison && { complete: unverified?false:report.comparison.complete,
-      noObservedMisses: unverified?null:report.comparison.noObservedMisses,
-      decisionRecall: unverified?null:report.comparison.decisionRecall, limitation: unverified?'Requested execution is unverified; omitted-test preservation cannot be established.':report.comparison.limitation },
+    comparison: report.comparison && { complete: !firstRun.complete?false:report.comparison.complete,
+      noObservedMisses: !firstRun.complete?null:report.comparison.noObservedMisses,
+      decisionRecall: !firstRun.complete?null:report.comparison.decisionRecall, limitation: !firstRun.complete?'Execution or identity evidence is incomplete; omitted-test preservation cannot be established.':report.comparison.limitation },
     receipts,
-    nextAction: nextVerificationAction(report),
+    summary: firstRun,
+    nextAction: firstRun.nextAction,
     deploymentSafety: 'not-established', learningImprovement: 'not-established'
   };
 }

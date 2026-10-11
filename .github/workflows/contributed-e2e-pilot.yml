@@ -47,7 +47,7 @@ jobs:
           if(installed.status!==0||installed.error)process.exit(1);
           const metadata=JSON.parse(fs.readFileSync(path.join(tools,'node_modules/testlore/package.json')));if(metadata.gitHead!==revision)throw Error('Installed candidate source binding differs');
           const result=spawnSync(process.execPath,['scripts/contributed-e2e-pilot.js','--directory',path.join(process.env.RUNNER_TEMP,'contributed-upstream'),'--output',output,'--candidate-root',path.join(tools,'node_modules/testlore'),'--profile','${{ matrix.profile }}'],{stdio:'inherit',timeout:26*60*1000,killSignal:'SIGKILL'});
-          const binding={kind:'explicit-source-candidate-not-registry-release',revision,sha256:createHash('sha256').update(fs.readFileSync(archive)).digest('hex'),version:'0.1.0',runId:process.env.GITHUB_RUN_ID};
+          const binding={kind:'explicit-source-candidate-not-registry-release',revision,sha256:createHash('sha256').update(fs.readFileSync(archive)).digest('hex'),version:metadata.version,runId:process.env.GITHUB_RUN_ID};
           if(fs.existsSync(output))fs.writeFileSync(path.join(output,'candidate-install-binding.json'),JSON.stringify(binding,null,2)+'\n');
           if(result.error||![0,3].includes(result.status))process.exit(1);
           const assessment=JSON.parse(fs.readFileSync(path.join(output,'assessment.json')));if(!assessment.observationCompleted)process.exit(1);

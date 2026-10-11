@@ -9,7 +9,7 @@ const commandModules = {
   'loop-status': ['evidence-loop'], challenge: ['evidence-loop'],
   outcome: ['evidence-loop'], 'outcome-lessons': ['evidence-loop'],
   brief: ['agent-contract'], doctor: ['adoption-readiness'],
-  setup: ['quality-layer', 'agent-profile', 'files', 'adoption-readiness', 'plugin-recommendations', 'plugins'],
+  setup: ['quality-layer', 'agent-profile', 'files', 'adoption-readiness', 'plugin-recommendations', 'plugins', 'run-report'],
   report: ['files', 'run-report'], mappings: ['routing-proposals'],
   'mapping-qualify': ['files', 'mapping-qualification'],
   'browser-build': ['files', 'browser-evidence'], 'browser-instrument': ['browser-evidence'],
@@ -27,7 +27,7 @@ const commandModules = {
   validate: ['candidates'], apply: ['candidates'],
   'external-plan': ['files', 'integrations'], 'external-run': ['files', 'integrations'],
   aqe: ['adapters/aqe'], init: ['files', 'audit', 'quality-layer'],
-  audit: ['audit'], plan: ['selector'], run: ['runner'], modules: ['audit'],
+  audit: ['audit'], plan: ['selector'], run: ['runner', 'run-report'], modules: ['audit'],
   generate: ['swarm'], demo: ['selector']
 };
 async function loadCommand(command) {
@@ -176,7 +176,10 @@ function init(root, {safePath, defaultNativeAdapter, defaultNativeRunner, audit}
   fs.writeFileSync(path.join(dir, 'audit.json'), JSON.stringify(report, null, 2));
   return { config: file, created, report, next: report.testFiles ? ['tddswarm plan --base HEAD', 'tddswarm run --shadow'] : ['tddswarm generate', 'Add tddswarm.requirements.md and configure an agent for generation.'] };
 }
-function human(command, result) {
+function human(command, result, implementations = {}) {
+  if(command==='setup'&&result.verification)return `${implementations.renderFirstRunSummary(result.verification)}\n${result.verification.executed===true&&!result.verification.delegated?'Receipts: .tddswarm/last-run.md and .tddswarm/last-run.json':'No new per-case receipt is confirmed; inspect the native result and rerun full verification.'}\nSetup files: ${result.written.join(', ')||'existing configuration preserved'}\nUse testlore report for the full decisions and uncertainty.`;
+  if(command==='setup')return `TestLore setup: ${result.readiness.state}\n${result.written.length} setup files written; execution mode ${result.executionMode}.\nNo tests executed.\nNext: ${result.readiness.nextAction}\nUse testlore setup --verify to collect full shadow evidence.`;
+  if(command==='run')return `${implementations.renderFirstRunSummary(result)}\n${result.executed===true&&!result.delegated?'Receipts: .tddswarm/last-run.md and .tddswarm/last-run.json':'No new per-case receipt is confirmed; inspect the native result and rerun full verification.'}\nUse testlore report for the full decisions and uncertainty.`;
   if (command === 'campaign') return `${result.summary.retainedAttempts} retained attempts; ${result.summary.qualifiedRegressions} scoped regressions, ${result.summary.qualifiedRouting} routing comparisons, ${result.summary.measuredSpeedAdvantages} measured speed advantages.\n${result.attempts.map(item => `${item.id}: ${item.status} — ${item.reasons.join('; ') || 'review captured scope and provenance'}`).join('\n')}\nSubmitted: ${result.summary.submitted}; captured accepted: ${result.summary.accepted}. Historical captures; source independence and current GitHub status need review.`;
   if (command === 'assess') return result.assessments.map(item => `${item.plugin} · ${item.outcome} · historical report (current binding unverified)\n${item.nextAction}`).join('\n') + `\n${result.nextAction}\nReceipt: ${result.receipt}`;
   if (command === 'doctor') return `${result.state}\n${result.checks.map(row => `${row.id}: ${row.status} — ${row.reason}`).join('\n')}\nNext: ${result.nextAction}\nStatic prerequisites only; native execution and routing remain unqualified.`;
@@ -188,7 +191,6 @@ function human(command, result) {
   if (command === 'init') return `${result.created ? 'Created' : 'Kept'} ${result.config}\n${human('audit', result.report)}\nNext: ${result.next.join(' → ')}`;
   if (command === 'audit') return `${result.testFiles} test files · static triage grade ${result.grade}${result.score === null ? '' : ` (${result.score}/100)`}\n${Object.entries(result.measured).map(([key,value])=>`${key}: ${value?'measured (see JSON scope)':'not measured'}`).join(' · ')}\n${result.files.flatMap(f => f.findings.map(x => `  ${f.file}:${x.line} — ${x.message}`)).join('\n')}\n${result.sourcesWithoutImportingTests.length} source files have no importing tests (not a coverage result).`;
   if (command === 'plan') return `${result.mode.toUpperCase()} · ${result.selected.length}/${result.total} test files selected\n${result.reasons.length ? `Reasons: ${result.reasons.join(', ')}\n` : ''}${result.decisions.map(d => `${d.selected ? 'RUN ' : 'SKIP'} ${d.test} — ${d.reasons.join(', ')}${d.paths.length ? `\n     ${d.paths.map(p => p.join(' → ')).join('\n     ')}` : ''}`).join('\n')}\nStatic evidence; runtime dependencies require declarations.`;
-  if (command === 'run') return `${human('plan', result.plan)}\n${result.error || (result.executed ? `Runner exited ${result.exitCode}${result.shadow ? ' (shadow: full suite)' : ''} in ${result.durationMs} ms.` : 'No tests selected.')}`;
   if(['improve','repair','autopilot'].includes(command))return `${result.status} · ${result.branch||result.kind||command}\n${result.worktree||''}\n${result.pullRequest||result.publicationError||result.error||result.next?.join('\n')||'Review the retained improvement receipt.'}`;
   if (command === 'modules') return `${result.groups.map(g => `${g.name}: ${g.tests.join(', ')}`).join('\n')}\nProposal only; no tests rewritten.`;
   if (command === 'generate') return result.executed ? `${result.status}: ${result.files.length} files staged in ${result.directory}\n${result.review.findings.join('\n')}\nExecution and mutation effectiveness: not measured. Review candidates before copying.` : `${result.purpose}: ${result.subjects.length} subjects\nRoles: ${result.roles.join(' → ')}\nNo agent invoked. Configure an agent and requirements, then use generate --execute.\nUse --json to export the complete work order.`;
@@ -269,6 +271,7 @@ export async function main(args = process.argv.slice(2)) {
       if(options.verify){
         const {run:verify}=await import('./runner.js');
         result.verification=verify(root,{base:options.base||'HEAD',shadow:true,capture:true});
+        result.summary=implementations.summarizeFirstRun(result.verification);
         result.next=['testlore report','Review the retained full-run outcomes and uncertainties before permitting omissions.','testlore mappings --json'];
       }
       break;
@@ -381,7 +384,7 @@ export async function main(args = process.argv.slice(2)) {
     case 'init': result = init(root, implementations); break;
     case 'audit': result = audit(root); break;
     case 'plan': result = plan(root, options); break;
-    case 'run': result = options['unified-native'] ? await runUnifiedNative(root, { ...options, capture: options.json }) : run(root, { ...options, capture: options.json }); break;
+    case 'run': result = options['unified-native'] ? await runUnifiedNative(root, { ...options, capture: true }) : run(root, { ...options, capture: true }); result.summary=implementations.summarizeFirstRun(result); break;
     case 'modules': result = modules(root); break;
     case 'generate': result = await generate(root, options); break;
     case 'demo': {
@@ -400,7 +403,7 @@ export async function main(args = process.argv.slice(2)) {
     }
     default: throw new Error(`Unknown command: ${command}`);
   }
-  console.log(options.json ? JSON.stringify(result, null, 2) : human(command, result));
+  console.log(options.json ? JSON.stringify(result, null, 2) : human(command, result, implementations));
   if(command==='observe')return result.exitCode ?? 2;
   if(command==='loop-status')return result.valid && result.complete ? 0 : 2;
   if(command==='challenge')return result.supported ? 0 : 1;

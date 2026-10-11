@@ -4,7 +4,7 @@
 
 <p align="center">
   <strong>Your quality engineer. Your tools. Evidence you can inspect.</strong><br />
-  An open-source quality-engineering layer for developers and coding agents.
+  The verification layer for coding agents and developers.
 </p>
 
 <p align="center">
@@ -48,14 +48,16 @@ TestLore brings **test creation, intelligent routing and reviewed learning** int
 Give your repository its own quality engineer. One command from your project sets up **shadow verification**, explains suitable installed adapters, and records a full native run:
 
 ```sh
-npm exec --yes --package=github:rudycelekli/testlore#main -- testlore setup --verify --json
+npm exec --yes --package=github:rudycelekli/testlore#main -- testlore setup --verify
 ```
 
-This uses the current Git source. Pin a reviewed commit for reproducible adoption. The older verified npm release remains available separately:
+This uses moving Git source, not the pending npm candidate. For reproducible adoption, replace `#main` with a reviewed full Git SHA; [adoption](docs/adoption.md) includes an immutable fallback. The older verified npm release remains available separately:
 
 ```sh
 npm exec --yes --package=testlore@0.1.0 -- testlore setup --verify --json
 ```
+
+The human report leads with the observed verdict, failed cases, proposed versus executed test files, fallback causes and a concrete next action; receipt paths let you inspect the full evidence. Add `--json` for agents and scripts. These reporting changes belong to the current source candidate.
 
 Setup preserves native failure exits and saves an inspectable report. Omit `--verify` for configuration-only setup. Installed complementary coverage, mutation and retrieval tools can be enabled automatically; explicit choices are preserved. Setup performs no optional-tool downloads or provider calls. Generation makes its own bounded, explainable provider decision when there is actual work. [Automatic routing →](docs/plugins.md)
 
@@ -65,7 +67,7 @@ Review and commit the setup files. To generate independently reviewed test impro
 npm exec --yes --package=github:rudycelekli/testlore#main -- testlore autopilot
 ```
 
-**Experimental alpha:** [`testlore@0.1.0`](https://www.npmjs.com/package/testlore/v/0.1.0) is available on npm, with verified registry bytes. It predates source repair and the new automatic adapter policy; use Git for those features until a new immutable registry release is verified. [Release evidence →](docs/npm-release-0.1.0.md) [Adoption and pilots →](docs/adoption.md) [Real REA results, including failures →](docs/rea-public-qualification.md)
+**Experimental alpha:** the source candidate is **`0.2.0-alpha.1`**, pending publication and exact registry-byte verification. Use Git for its current features. The older [`testlore@0.1.0`](https://www.npmjs.com/package/testlore/v/0.1.0) has verified registry bytes but predates source repair and automatic adapter policy. [Candidate release gates →](docs/releases/0.2.0-alpha.1.md) · [Historical release evidence →](docs/npm-release-0.1.0.md) · [Adoption and pilots →](docs/adoption.md) · [Real REA results, including failures →](docs/rea-public-qualification.md)
 
 Requires **Node 22.19+ and Git**. It creates your project’s quality-agent identity and local memory immediately. Existing `SPEC.md`, `REQUIREMENTS.md`, or README material can seed a proposed behavior contract on the branch. Commit `tddswarm.requirements.md` for explicit expectations; proposals without meaningful independent behavior must be rejected. Generation uses your configured worker or an installed, authenticated Codex CLI. Automatic PR creation uses your authenticated GitHub CLI. `--local` keeps the result for local review.
 
@@ -92,18 +94,18 @@ Failed validation retains the proposal and its evidence for inspection. Missing 
 Personalize your project agent:
 
 ```sh
-npm exec --yes --package=testlore@0.1.0 -- testlore agent --name "My project quality engineer" --json
+npm exec --yes --package=github:rudycelekli/testlore#main -- testlore agent --name "My project quality engineer" --json
 ```
 
 The agent runs when you invoke it or CI; its identity and history persist between runs. Customize `qualityAgent.name` and `qualityAgent.focus` in project configuration.
 
-`npm exec` uses a temporary package for that invocation. Before running any `npx --no-install testlore` commands below, including learning commands, install it locally with `npm install --save-dev testlore@0.1.0`.
+`npm exec` uses a temporary package for that invocation. Before running any `npx --no-install testlore` commands below, including learning commands, install current source locally with `npm install --save-dev github:rudycelekli/testlore#main`. Use a reviewed full SHA in place of `main` to freeze the installed source.
 
 Want a useful report before configuring agents?
 
 ```sh
-npm exec --yes --package=testlore@0.1.0 -- testlore init
-npm install --save-dev testlore@0.1.0
+npm exec --yes --package=github:rudycelekli/testlore#main -- testlore setup --verify
+npm install --save-dev github:rudycelekli/testlore#main
 npx --no-install testlore doctor --json
 npx --no-install testlore audit --json
 npx --no-install testlore run --shadow --base HEAD
@@ -199,7 +201,7 @@ TestLore is a complementary coordination layer. Bring your specialist tools into
 Choose a setup in one command without first installing TestLore locally:
 
 ```sh
-npm exec --yes --package=testlore@0.1.0 -- testlore plugins --auto
+npm exec --yes --package=github:rudycelekli/testlore#main -- testlore plugins --auto
 ```
 
 Or inspect the choices and manage tools after a local install:
