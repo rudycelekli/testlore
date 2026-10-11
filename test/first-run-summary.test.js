@@ -83,8 +83,15 @@ test('interruption metadata cannot be concealed by complete and passed flags, an
 test('native delegation has unknown individual cases and omissions rather than invented zero passing cases',()=>{
  const input={executed:true,complete:true,exitCode:0,delegated:true,adapter:'nx',tests:null,plan:{targets:['web','api'],mode:'affected'}};
  const summary=summarizeFirstRun(input);assert.equal(summary.verdict,'native-result-reported');assert.equal(summary.cases,null);
+ assert.deepEqual(summary.nativeExecution,{adapter:'nx',mode:'affected',targetCount:2});
  assert.equal(summary.files.actualOmissions,null);assert.equal(summary.casesWithoutUsableTiming,null);
  const text=renderFirstRunSummary(input);assert.doesNotMatch(text,/0 passed/);assert.match(text,/unknown/);
+ assert.match(text,/nx.*2 native targets/);assert.match(text,/Runner exited 0/);assert.match(text,/no individual-case comparison/);
+ const unknown={...input,plan:{mode:'<script>unsafe</script>'},adapter:'<img>'.repeat(1000)};
+ assert.equal(summarizeFirstRun(unknown).nativeExecution.adapter.length,512);
+ assert.equal(summarizeFirstRun(unknown).nativeExecution.targetCount,null);
+ assert.doesNotMatch(renderFirstRunSummary(unknown),/(?<!\\)<img>|(?<!\\)<script>/);
+ assert.match(renderFirstRunSummary({...input,exitCode:1}),/Runner exited 1/);
  assert.match(renderRunReport(input),/Native targets: 2/);
  assert.equal(summarizeFirstRun({...input,exitCode:1}).verdict,'failed');
  assert.equal(summarizeFirstRun({...input,complete:false}).verdict,'incomplete');

@@ -111,6 +111,7 @@ export function summarizeFirstRun(input = {}) {
  const timing=object(report.timings),validTiming=value=>typeof value==='number'&&Number.isFinite(value)&&value>=0?value:null;
  return {
    schemaVersion:1,advisory:true,verdict,complete:!incomplete,delegated,
+   nativeExecution:delegated?{adapter:label(report.adapter||selection.adapter),mode:label(selection.mode||'native'),targetCount:Array.isArray(selection.targets)?selection.targets.length:null}:null,
    displayLimits:{maxLabelCharacters:512,maxFailures:10,maxOmittedFailures:10,maxSlowCases:5,maxCauseFileExamples:5},
    labelsTruncated:[...failures,...omittedFailures,...timed].some(entry=>[entry.id,entry.file,entry.name].some(value=>typeof value==='string'&&value.length>512)),
    authority:{selection:'unchanged',deploymentSafety:'not-established',measuredSavings:'not-established'},
@@ -137,7 +138,10 @@ export function summarizeFirstRun(input = {}) {
 }
 export function renderFirstRunSummary(report = {}) {
  const summary=summarizeFirstRun(report),text=['## TestLore first-run summary','',`Result: **${escape(summary.verdict)}**. ${escape(summary.scope)}`,'',`Next action: ${escape(summary.nextAction)}`,''];
- if(summary.delegated)text.push('Case outcomes and actual omissions: unknown; inspect the native engine report.');
+ if(summary.delegated){
+   text.push(`${escape(summary.nativeExecution.adapter||'unknown engine')} · ${escape(summary.nativeExecution.mode)} · ${summary.nativeExecution.targetCount===null?'target selection delegated to native execution':summary.nativeExecution.targetCount+' native targets'}. Runner exited ${Number.isInteger(report.exitCode)?report.exitCode:'unknown'}; evidence ${summary.complete?'complete':'incomplete'}.`);
+   text.push('Case outcomes and actual omissions: unknown; inspect the native engine report. Native scope is preserved; no individual-case comparison is implied.');
+ }
  else {
    text.push(`Requested files: ${summary.files.requested}. Reported file scope: ${summary.files.observed}${summary.files.actualScopeVerified?'':' (unverified as a complete execution)'}. Reported native outcomes: ${summary.cases.passed} passed, ${summary.cases.failed} failed, ${summary.cases.skipped} skipped${summary.cases.fileLoadFailures?' (includes '+summary.cases.fileLoadFailures+' file-load failures)':''}.`);
    text.push(`Proposed omissions: ${summary.files.proposedOmissions??'unknown'}. Actual omissions: ${summary.files.actualOmissions??'unverified'}. A proposed omission is not an executed subset or a speed measurement.`);
@@ -172,7 +176,7 @@ export function executionFileEvidence(report={}){
 }
 export function nextVerificationAction(report={}){
  report=object(report);
- if(report.executed!==true||report.complete!==true||report.actualExecutedFilesUnverified===true)return 'Inspect the execution or discovery issue and run testlore doctor --json; repair the prerequisites and rerun verification after changes with the full native suite.';
+ if(report.executed!==true||report.complete!==true||report.actualExecutedFilesUnverified===true)return 'Inspect the execution or discovery issue and run testlore doctor --json; repair the prerequisites and rerun full native verification after changes.';
  if(report.comparison?.omittedFailures?.length)return 'Keep shadow mode enabled. Investigate the omitted failing case identities and revise dependency mappings before considering selective execution.';
  if(report.exitCode!==0)return 'Inspect the failed case identities and durable receipts, repair the independently established defect, then rerun the full suite.';
  if(report.delegated)return 'Inspect the native engine report and target decisions; individual case preservation and omitted-test safety remain unverified.';

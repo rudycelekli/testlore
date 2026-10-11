@@ -41,7 +41,8 @@ test('npm-style symlinked bin entrypoints actually execute the CLI', t => {
   const bin = path.join(root,'tddswarm');
   fs.symlinkSync(cli,bin);
   const result = spawnSync('node',[bin,'--version'],{cwd:root,encoding:'utf8'});
-  assert.equal(result.status,0); assert.equal(result.stdout.trim(),'0.1.0');
+  const manifest=JSON.parse(fs.readFileSync(new URL('../package.json',import.meta.url),'utf8'));
+  assert.equal(result.status,0); assert.equal(result.stdout.trim(),manifest.version);
 });
 test('pilot CLI forwards unified execution instead of rejecting or silently ignoring it',t=>{
   const root=fixture(t,twoModules);commit(root);
