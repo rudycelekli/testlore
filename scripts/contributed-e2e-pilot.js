@@ -4,6 +4,7 @@ import path from 'node:path';
 import {spawn} from 'node:child_process';
 import {createHash} from 'node:crypto';
 import {fileURLToPath} from 'node:url';
+import {diagnoseFallbackSelection} from '../src/fallback-diagnostics.js';
 
 export const E2E_PIN='0ddea76a7091ac8768e0ced2a9926b37e72e9497';
 export const E2E_PARENT='b2a28d4813df9e0c0816cfffbdb51f4cc4e04faa';
@@ -143,6 +144,9 @@ export async function contributedE2EPilot({directory,output,candidateRoot}){
     fs.rmSync(path.join(root,'.tddswarm'),{recursive:true,force:true});const trial={change,repetition};
     const arms=['full','native','testLore'];const order=arms.slice(repetition).concat(arms.slice(0,repetition));trial.order=order;
     for(const arm of order){const label=`change-${change}-trial-${repetition}-${arm}`;if(arm==='testLore'){const event=await invoke(label,root,[process.execPath,cli,'run','--root',root,'--selective','--unified-native','--json']);trial.testLore=boundedJson(path.join(output,label+'.stdout'));trial.testLoreEvent=event;}else{const result=await native(label,arm==='native',change?SOURCES:[SOURCES[0]]);trial[arm]=result.value;trial[arm+'Event']=result.event;}}
+    // Diagnose the actual retained plan; this offline summary cannot authorize
+    // omissions or turn ambiguous case identities into a qualified comparison.
+    save(`change-${change}-trial-${repetition}-fallback-diagnostic`,diagnoseFallbackSelection(trial.testLore.plan));
     trials.push(trial);save(`trial-${change}-${repetition}`,trial);
    }
   }

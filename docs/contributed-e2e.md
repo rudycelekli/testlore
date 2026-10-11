@@ -1,5 +1,7 @@
 # Contributed-project campaign: tester-army/e2e
 
+[Current monorepo diagnostic correction and remaining precision contracts](real-monorepo-trial.md).
+
 This campaign targets the merged [Unicode glob contribution, PR #927](https://github.com/tester-army/e2e/pull/927). It is a genuine upstream source regression with retained upstream tests. Rudy authored the contribution and its new Unicode assertions: it **does not establish independent test authorship** or independent benchmark maintenance.
 
 The preregistered checkout is `0ddea76a7091ac8768e0ced2a9926b37e72e9497`; source reversion uses the two exact parent files from `b2a28d4813df9e0c0816cfffbdb51f4cc4e04faa`. Original configuration, tests, package declarations and lockfile remain intact. This restores the missing `u` regexp flag and old character escaping while retaining later tests; it is not the complete original historical environment.
