@@ -6,6 +6,8 @@ export const BUILTIN_PLUGINS = Object.freeze([
   { id: 'bazel', kind: 'native-backend', capabilities: ['native-selection', 'native-execution'] },
   { id: 'c8', kind: 'measured-import', capabilities: ['existing-coverage-report-import'], limitation: 'Enabling does not produce or certify a coverage report.' },
   { id: 'stryker', kind: 'measured-import', capabilities: ['existing-mutation-report-import'], limitation: 'Enabling does not produce or certify a mutation report.' },
+  { id: 'guardana', kind: 'assessment-import', capabilities: ['existing-security-assessment-import'], limitation: 'Historical producer report only; no live probes, security certification, or acceptance authority.' },
+  { id: 'ifixai', kind: 'assessment-import', capabilities: ['existing-agent-behavior-assessment-import'], limitation: 'Historical producer report only; missing checks and classifications remain uncertain. No live probes or acceptance authority.' },
   { id: 'ruvector', kind: 'learning-retrieval', capabilities: ['local-advisory-vector-retrieval'], limitation: 'Derived retrieval cache; no model-weight training or acceptance authority.' }
 ].map(item => Object.freeze({ ...item, capabilities: Object.freeze(item.capabilities) })));
 const object = value => value !== null && typeof value === 'object' && !Array.isArray(value);
@@ -43,6 +45,9 @@ function validateEnabled(id, entry) {
     if (id !== 'bazel' && ['queryOptions', 'targets', 'fileLabels'].some(key => entry[key] !== undefined)) throw new Error(`${id} does not support Bazel label settings`);
     if (entry.targets !== undefined && (!Array.isArray(entry.targets) || !entry.targets.length || entry.targets.some(label => label !== '//...' && !/^\/\/[A-Za-z0-9_./-]*:[A-Za-z0-9_.*+-]+$/.test(label)))) throw new Error('Bazel targets must be explicit labels or //...');
     if (entry.fileLabels !== undefined && (!object(entry.fileLabels) || Object.entries(entry.fileLabels).some(([file, labels]) => !file || file.startsWith('/') || file.includes('\\') || file.split('/').includes('..') || !Array.isArray(labels) || !labels.length || labels.some(label => !/^\/\/[A-Za-z0-9_./-]*:[A-Za-z0-9_.*+-]+$/.test(label))))) throw new Error('Bazel fileLabels must map project paths to explicit labels');
+  } else if (builtin.kind === 'assessment-import') {
+    keys(entry, ['enabled', 'report'], id);
+    if (entry.report !== undefined && (typeof entry.report !== 'string' || !entry.report || entry.report.length > 512 || entry.report.includes('\0') || entry.report.includes('\\') || entry.report.startsWith('/') || /^[A-Za-z]:/.test(entry.report) || entry.report.split('/').some(part => !part || ['.', '..'].includes(part)))) throw new Error(`${id}.report must be a bounded project-relative file path`);
   } else if (id === 'ruvector') {
     keys(entry, ['enabled', 'dimensions', 'embedding', 'timeoutMs'], id);
     if (entry.dimensions !== undefined) integer(entry.dimensions, 'ruvector.dimensions', 16, 2048);

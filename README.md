@@ -215,6 +215,15 @@ npx --no-install testlore plugins --enable ruvector
 
 Automatic setup uses explainable project-fit rules, preserves explicit choices, and enables suitable installed complementary tools by default. Missing tools receive reasons; ambiguous execution engines require a choice. Setup performs no optional downloads or agent calls. During generation, compatible project-local AQE can author distinct tasks in parallel, while the worker retains planning and independent review. Automatic AQE failures retain their evidence and can fall back within the same bounded round; explicit AQE selection fails closed. Current Node source repair uses its dedicated worker roles. Selection is a compatibility policy, not a quality ranking. [Plugin configuration and limits →](docs/plugins.md) · [RuVector learning →](docs/ruvector.md)
 
+**Add specialist assessments to the same workflow.** Guardana contributes security-contract reports; iFixAi contributes agent-behavior reports. Both are optional local report adapters that retain missing evidence and uncertainty. They complement AQE generation and TestLore routing without overriding native validation.
+
+```sh
+npx --no-install testlore assess --plugin guardana --report reports/security.json --json
+npx --no-install testlore assess --plugin ifixai --report reports/behavior.json --json
+```
+
+Available in the current source; the older npm 0.1.0 release does not include these adapters. Enabling them never runs live evaluations or paid probes. Imported grades remain historical, advisory evidence. [Supported formats, configuration and limits →](docs/assessment-adapters.md)
+
 Playwright has native discovery, project-aware case reports, and opt-in automatic route/request/JS/CSS observations. Explicit URL and server authorities turn bounded local source maps into reviewable proposals; observations never establish complete dependency coverage. [Browser evidence and fixture →](docs/browser-mappings.md) fast-check composes inside a supported runner. Consumer contracts (Pact), service fixtures (Testcontainers), and API exploration (Schemathesis) remain researched integration seams awaiting their own qualification. Each has a distinct role. [Browser setup →](docs/playwright.md) · [Research and property proof →](docs/ecosystem.md)
 
 Built to work alongside [Agentic QE](https://github.com/proffesor-for-testing/agentic-qe), [RuVector](https://github.com/ruvnet/ruvector), [pytest-testmon](https://www.testmon.org/), [Nx](https://nx.dev/), [Bazel](https://bazel.build/), [c8](https://github.com/bcoe/c8), and [Stryker](https://stryker-mutator.io/). Each remains an independently maintained project; integration does not imply affiliation or endorsement.
@@ -306,6 +315,7 @@ Source/service changes, incomplete reports, and altered receipts invalidate evid
 | --- | --- |
 | `agent` | Create or inspect your project’s named quality agent. |
 | `plugins` | Recommend a project-fit setup, enable it with `--auto`, or manage and check tools explicitly. |
+| `assess` | Import Guardana/iFixAi reports with per-check outcomes, uncertainty and private receipts. |
 | `improve` | New branch, reviewed candidates, full validation, automatic PR. |
 | `init`, `audit`, `modules` | Setup, quality triage and modular group proposals. |
 | `plan`, `run`, `run --shadow`, `run --full` | Explain and execute test selections; compare with full outcomes. |

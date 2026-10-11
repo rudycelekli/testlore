@@ -1,7 +1,8 @@
 import {installedRepairEvidenceComplete} from './installed-repair-proof.js';
 import {oneCommandEvidenceComplete} from './one-command-proof.js';
+import {assessmentImportEvidenceComplete} from './assessment-import-proof.js';
 /** Validate the independently produced installed-archive proof, without truthy attestations. */
-export function packedEvidenceComplete(receipt, evidence, {proofScriptSha256, sourceManifestSha256, installedRepairProofSha256,oneCommandProofSha256}) {
+export function packedEvidenceComplete(receipt, evidence, {proofScriptSha256, sourceManifestSha256, installedRepairProofSha256,oneCommandProofSha256,assessmentImportProofSha256}) {
   const hex = value => typeof value === 'string' && /^[a-f0-9]{64}$/.test(value);
   return receipt.schemaVersion === 1 && receipt.qualified === true && evidence.schemaVersion === 1 &&
     typeof receipt.sourceRevision === 'string' && /^[a-f0-9]{40}$/.test(receipt.sourceRevision) &&
@@ -26,5 +27,8 @@ export function packedEvidenceComplete(receipt, evidence, {proofScriptSha256, so
     evidence.oneCommand.proofScriptSha256 === oneCommandProofSha256 &&
     evidence.oneCommand.archiveSha256 === receipt.archiveSha256 &&
     evidence.oneCommand.installedManifestSha256 === receipt.packedManifestSha256 &&
-    evidence.oneCommand.sourceRevision === receipt.sourceRevision;
+    evidence.oneCommand.sourceRevision === receipt.sourceRevision && assessmentImportEvidenceComplete(evidence.assessmentImports) &&
+    hex(assessmentImportProofSha256) && evidence.assessmentImports.proofScriptSha256 === assessmentImportProofSha256 &&
+    evidence.assessmentImports.archiveSha256 === receipt.archiveSha256 && evidence.assessmentImports.installedManifestSha256 === receipt.packedManifestSha256 &&
+    evidence.assessmentImports.sourceRevision === receipt.sourceRevision && evidence.assessmentImports.installedCliSha256 === evidence.oneCommand.installedCliSha256;
 }

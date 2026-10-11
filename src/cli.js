@@ -16,6 +16,7 @@ const commandModules = {
   'browser-capture': ['browser-evidence'], 'browser-mappings': ['files', 'browser-evidence'],
   pilot: ['pilot'], 'pilot-export': ['pilot'],
   plugins: ['files', 'plugins', 'plugin-recommendations'],
+  assess: ['assessments'],
   improve: ['files', 'agent-profile', 'improvement', 'quality-layer', 'pull-request'],
   repair: ['files', 'repair', 'pull-request'],
   autopilot: ['files', 'repair', 'improvement', 'pull-request'],
@@ -51,6 +52,7 @@ Usage: testlore <command> [options]
   browser-instrument Propose an opt-in fixture patch (review only)
   agent       Create or inspect your project quality agent (--name optional)
   plugins     Choose project-fit tools with --recommend/--auto; enable, disable, select, check
+  assess      Import advisory Guardana/iFixAi reports (--plugin name --report local.json)
   improve     New branch, reviewed tests, full validation, automatic GitHub PR
   repair      Bounded source repair of repeated Node assertion failures, automatic PR
   autopilot   Discover failures or test gaps; delegate, validate, and open a review PR
@@ -174,6 +176,7 @@ function init(root, {safePath, defaultNativeAdapter, defaultNativeRunner, audit}
   return { config: file, created, report, next: report.testFiles ? ['tddswarm plan --base HEAD', 'tddswarm run --shadow'] : ['tddswarm generate', 'Add tddswarm.requirements.md and configure an agent for generation.'] };
 }
 function human(command, result) {
+  if (command === 'assess') return result.assessments.map(item => `${item.plugin} · ${item.outcome} · historical report (current binding unverified)\n${item.nextAction}`).join('\n') + `\n${result.nextAction}\nReceipt: ${result.receipt}`;
   if (command === 'doctor') return `${result.state}\n${result.checks.map(row => `${row.id}: ${row.status} — ${row.reason}`).join('\n')}\nNext: ${result.nextAction}\nStatic prerequisites only; native execution and routing remain unqualified.`;
   if ((command === 'plan' || command === 'run') && (result.delegated || result.targets !== undefined || result.plan?.targets !== undefined)) {
     const selection = result.plan || result;
@@ -222,9 +225,13 @@ export async function main(args = process.argv.slice(2)) {
     checkPlugins, configurePluginsAutomatically, recommendPlugins, measureMutation,
     measureTestEffectiveness, renderRunReport, routingProposals, captureBrowserEvidence,
     proposeBrowserMappings, proposeBrowserInstrumentation, inspectBrowserBuildArtifacts,
-    pilot, exportPilot, verificationBrief, qualifyRoutingMappings, adoptionReadiness} = implementations;
+    pilot, exportPilot, verificationBrief, qualifyRoutingMappings, adoptionReadiness, importAssessments} = implementations;
   let result;
   switch (command) {
+    case 'assess': {
+      if (Object.keys(options).some(key => !['root','json','plugin','report','output'].includes(key))) throw new Error('assess accepts only --root, --json, --plugin, --report and --output; it never executes providers');
+      result = importAssessments(root, { plugin: options.plugin, report: options.report, output: options.output }); break;
+    }
     case 'witness-init': result = initializeWitness(root, {output: path.resolve(root, options.output)}); break;
     case 'observe': {
       const output = options.output ? path.resolve(root, options.output) : undefined;
@@ -392,6 +399,7 @@ export async function main(args = process.argv.slice(2)) {
   if(command==='challenge')return result.supported ? 0 : 1;
   if(['improve','repair','autopilot'].includes(command))return result.status==='ready-for-review'&&(options.local||result.published)?0:2;
   if(command==='plugins' && options.check)return result.exitCode || 0;
+  if(command==='assess')return result.exitCode;
   if(command==='doctor')return result.blocked.length?1:0;
   if(command==='pilot' && result.executed)return result.valid?0:1;
   if(['plan','run','external-run','external-plan','aqe'].includes(command))return result.exitCode||0;
