@@ -1,0 +1,80 @@
+{
+  "schemaVersion": 1,
+  "registration": "Source-reviewed contract for actual five process.pid inputs observed in both original/fixed native suites; fresh full-suite qualification required",
+  "revision": "8376d390140b761800430b143cc4131c1f020e42",
+  "suite": "cli",
+  "sourcePath": "packages/cli/test/client-endpoint.test.ts",
+  "sourceSha256": "8a0a5de27eda52c231821546d18a60dad4ec5d15c04a68e8f42fa01a0f9929e3",
+  "sourceGitBlob": "52d3ce501a908f69760cc4ee1ccee628b8ad75bb",
+  "sourceLine": 96,
+  "scope": "Only the five declared process.pid-parameterized inputs in both complete native runs for the pinned two-scanner repair. No title normalization, stable individual-case identities, input equivalence or omissions authority.",
+  "individualInputIdentitiesQualified": false,
+  "inputEquivalenceEstablished": false,
+  "omissionAuthority": false,
+  "ancestorTitles": [
+    "default client endpoint selection"
+  ],
+  "rawTitlePrefix": "falls back on unusable state shape: ",
+  "rawFullNamePrefix": "default client endpoint selection falls back on unusable state shape: ",
+  "location": {
+    "reported": false,
+    "value": null
+  },
+  "expectedRows": [
+    {
+      "keys": [
+        "pid",
+        "port"
+      ],
+      "port": "27451"
+    },
+    {
+      "keys": [
+        "pid",
+        "port"
+      ],
+      "port": 0
+    },
+    {
+      "keys": [
+        "pid",
+        "port"
+      ],
+      "port": 65536
+    },
+    {
+      "keys": [
+        "pid",
+        "port"
+      ],
+      "port": 1.5
+    },
+    {
+      "keys": [
+        "pid",
+        "port",
+        "host"
+      ],
+      "port": 27451,
+      "host": 12
+    }
+  ],
+  "outcomesEach": {
+    "passed": 1
+  },
+  "pidContract": "Each phase retains its five exact raw names and JSON inputs, requires one consistent positive integer PID <=2147483647 across exactly five rows, and records that raw value. Independent phases may have distinct PIDs; equivalence is not established. Source binding supports interpretation of process.pid, not an independent OS-identity attestation.",
+  "preservationContract": "Remove only these five individually validated raw group keys from each separate full-suite observation, then require all remaining raw group keys/status/cardinalities unchanged. Keep the existing exact20duplicate group/source contract. Unknown/added/missing/malformed/status/ancestor/location/fullName/source drift rejects.",
+  "originalEvidence": {
+    "runId": "38177949076",
+    "producerHead": "e64db60572db958fa6e1bb03f9a40b42cebdf17e",
+    "originalNativeSha256": "be8e5ae09195984da5361a6407ee7b030628313694fd433154fc1392951468ed",
+    "fixedNativeSha256": "ff3749f53e8f3c50ed959bbb8624e2e10cfc8bedf6846f6363dd4b4bc030f74e"
+  },
+  "staticRawSuffixes": [
+    "null",
+    "%j",
+    "{}",
+    "{\"pid\":-1,\"port\":27451}",
+    "{\"pid\":\"12\",\"port\":27451}"
+  ]
+}

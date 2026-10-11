@@ -13,6 +13,7 @@ import {captureVitestWorkspaceRoot,assertVitestWorkspaceRoot} from '../native-wo
 import {captureNativeVitestCases,assertNativeVitestCases,captureNativeCaseConfiguration,assertNativeCaseConfiguration} from '../native-vitest-cases.js';
 import {createE2ELocatorRegistrationPlugin,vitestCaseHash} from '../vitest-case-contracts.js';
 import TestLoreVitestCaseReporter from './vitest-cases.js';
+import {captureReaObservation,assertReaObservation,createReaObservationPlugin,createReaObservationReporter} from '../rea-observation.js';
 const workerTiming=phaseTimings();
 const argvSome=Array.prototype.some,argvStartsWith=String.prototype.startsWith,argvApply=Reflect.apply;
 let protocolOutput, instruction;
@@ -123,6 +124,13 @@ try {
   const vitestCases=request.vitestCases?captureNativeVitestCases(root,casePolicy,command):null;
   assertNativeVitestCases(request.vitestCases??null,vitestCases);
   output.vitestCases=vitestCases;
+  const reaPolicy=request.reaObservation?{reaObservation:request.reaObservation.profile,executionMode:'shadow'}:{};
+  const reaObservation=request.reaObservation?captureReaObservation(root,reaPolicy,command):null;
+  assertReaObservation(request.reaObservation??null,reaObservation);
+  if(reaObservation&&(!request.unified||vitestCases))throw Error('REA observation requires its fresh shadow-only native session');
+  output.reaObservation=reaObservation;
+  let reaReporter;
+  const freshReaObservation=()=>{if(reaObservation)assertReaObservation(reaObservation,captureReaObservation(root,reaPolicy,command));};
   let caseReporter,nativeCaseConfigurationInputs,caseRuntime;
   const trustedCasePlugins=new Set();
   function freshNativeCases(){if(vitestCases){
@@ -133,7 +141,7 @@ try {
       const globalConfig=workspaceClosed?caseRuntime.globalConfig:workspaceContext.config;
       if(projects.length!==1||projects[0].config.name!=='unit'||projects[0].config.root!==vitestCases.projectRoot||(projects[0].config.includeTaskLocation??globalConfig.includeTaskLocation)!==true)throw Error('Native case effective unit context changed');
     }
-  }}
+  }freshReaObservation();}
   freshNativeCases();
   let workspaceContext,workspaceEffective,workspaceClosed=false,nativeArgvReflected=false;
   const boundNativeArgv=Array.isArray(request.invocation)?[...request.invocation]:null;
@@ -205,16 +213,18 @@ try {
       workerTiming.mark('frameworkImport');
       const runtimeBytes=fs.readFileSync(requireCLI.resolve('vitest/package.json'));
       const version=JSON.parse(runtimeBytes).version;
+      if(reaObservation&&(version!==reaObservation.vitestVersion||vitestCaseHash(runtimeBytes)!==reaObservation.runtimeManifestSha256))throw Error('REA observed native runtime changed');
       if(vitestCases&&(version!==vitestCases.vitestVersion||vitestCaseHash(runtimeBytes)!==vitestCases.runtimeManifestSha256))throw Error('Native case runtime differs from admitted project runtime');
       const parsed=vitest.parseCLI(['vitest',...command.slice(index+1)]);
       if(parsed.filter.length)throw new Error('Shared native planning does not accept positional scope filters');
       // With no CLI root, let native configuration resolve it from the same
       // cwd as the CLI. Forcing inventoryRoot would hide an unsupported root
       // declared by executable config before the containment guard observes it.
-      const casePlugins=vitestCases?vitestCases.registrationContracts.map(contract=>createE2ELocatorRegistrationPlugin(vitestCases.projectRoot,contract)):[];
+      const casePlugins=vitestCases?vitestCases.registrationContracts.map(contract=>createE2ELocatorRegistrationPlugin(vitestCases.projectRoot,contract)):reaObservation?[createReaObservationPlugin(reaObservation)]:[];
       for(const plugin of casePlugins)trustedCasePlugins.add(plugin);
+      if(reaObservation)reaReporter=createReaObservationReporter(reaObservation);
       if(vitestCases&&request.unified)caseReporter=new TestLoreVitestCaseReporter({schemaVersion:1,root:vitestCases.projectRoot,expectedFiles:vitestCases.expectedFiles,inputs:vitestCases.inputs,vitestVersion:version,reportFile:null,registrationContracts:vitestCases.registrationContracts,scope:'deferred'});
-      const options={...parsed.options,...(workspaceRoot?{root:workspaceRoot.nativeRoot}:{}),run:true,watch:false,...(vitestCases?{includeTaskLocation:true}:{}),...(request.unified?{reporters:caseReporter?['json',caseReporter]:['json'],outputFile:request.reportFile}: {})};
+      const options={...parsed.options,...(workspaceRoot?{root:workspaceRoot.nativeRoot}:{}),run:true,watch:false,...(vitestCases||reaObservation?{includeTaskLocation:true}:{}),...(request.unified?{reporters:caseReporter?['json',caseReporter]:reaReporter?['json',reaReporter]:['json'],outputFile:request.reportFile}: {})};
       const overrides={logLevel:'silent',...(casePlugins.length?{plugins:casePlugins}:{})};
       if(/^4\.1\./.test(version))context=await vitest.createVitest('test',options,overrides);
       else if(/^5\./.test(version))context=await vitest.createVitest(options,overrides);
@@ -239,6 +249,7 @@ try {
     // Vitest serializes a project's undefined value from the global CLI option.
     if(vitestCases&&(projects.length!==1||projects[0].config.name!=='unit'||(projects[0].config.includeTaskLocation??context.config.includeTaskLocation)!==true))throw Error('Reviewed native case profile requires the unit project and native task locations');
     if(vitestCases&&[...trustedCasePlugins].some(plugin=>!projects[0].vite.config.plugins.includes(plugin)))throw Error('Native unit project did not retain the exact reviewed observer plugin');
+    if(reaObservation&&(projects.map(project=>project.config.name).sort().join(',')!=='adapters,domain,services'||projects.some(project=>[...trustedCasePlugins].some(plugin=>!project.vite.config.plugins.includes(plugin))||(project.config.includeTaskLocation??context.config.includeTaskLocation)!==true)))throw Error('REA shadow profile requires original three projects and the exact internal observer');
     if(vitestCases){caseRuntime={projects:[...projects],globalConfig:context.config};freshNativeCases();}
     for(const project of projects) {
       const config=project.config;
@@ -320,6 +331,7 @@ try {
       const expected=new Set(selectedInstruction.files.map(file=>path.resolve(root,file)));
       const specs=unifiedSpecs;
       const selected=specs.filter(spec=>expected.has(spec.moduleId));
+      if(reaObservation&&selected.length!==specs.length)throw Error('REA observation cannot omit any discovered specification');
       if(expected.size!==new Set(selected.map(spec=>spec.moduleId)).size)throw new Error('Unified requested specifications are missing');
       for(const project of output.projectContracts)if(!project.isolate&&project.files.some(file=>expected.has(file))&&project.files.some(file=>!expected.has(file)))throw new Error('Unified execution omitted a shared-isolation project member');
       if(caseReporter)caseReporter.bindExecutionScope(selected.map(spec=>path.relative(vitestCases.projectRoot,spec.moduleId).split(path.sep).join('/')));
@@ -339,6 +351,7 @@ try {
       if(result.unhandledErrors?.length)throw new Error('Unified native execution has unhandled errors');
       const value=readNativeJson(request.reportFile);
       if(caseReporter){value.nativeCaseEvidence=caseReporter.capture();value.nativeCaseEvidenceBinding={profile:vitestCases,configurationInputs:nativeCaseConfigurationInputs};}
+      if(reaReporter){value.reaObservationReceipt=reaReporter.receipt;value.reaObservationBinding=reaObservation;}
       value.configurationInputs=freshInputs();
       workerTiming.mark('nativeReportRead');
       await sendBounded({phase:'executed',value,timings:workerTiming.finish()});

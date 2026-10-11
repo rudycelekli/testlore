@@ -1,0 +1,351 @@
+{
+  "upstreamRevision": "8376d390140b761800430b143cc4131c1f020e42",
+  "suite": "cli",
+  "scope": "Reviewed original/fixed nonselective full native CLI suite for this pinned two-scanner repair only; individual parameter identities and input equivalence are unqualified, with no routing or omission authority",
+  "individualInputIdentitiesQualified": false,
+  "omissionAuthority": false,
+  "sources": {
+    "packages/cli/test/broadcast.test.ts": "3cffe8ce4ee03875ed34c51f934673aebc81ddd9d6f961dd91ced8c4b67a1ab5",
+    "packages/cli/test/bundle-behaviour.test.ts": "67e62d6f31da96cea7d893590f90054fe8f582e1155a9a3e9523fa0d275e2503",
+    "packages/cli/test/bundle-source.test.ts": "685da16b4b555d36e9d8c9f9f987096810fc45fbb07ed1d2e4d3eb7e1e0cbcaf",
+    "packages/cli/test/chatroom.test.ts": "43ffae3cd4a9cf64da289b62609c8a99299a74f99a0a2995cdf002527cea9014",
+    "packages/cli/test/command-status-evidence.test.ts": "0ec6a836fb4172f4052b0c6962d7d03126c2eab59f8df6bbf55fbcb4ca590e60",
+    "packages/cli/test/env-status-http-errors.test.ts": "c8932d4c05c0f7088d8729d6916a84a4456ed12db7beed59379f44d46d533efb",
+    "packages/cli/test/env-summary-http-errors.test.ts": "de59dba7c5f7f5c29ee479cc7860d7e6afe24bfb30f502495670d7ccd4344f4a",
+    "packages/cli/test/gateway-human-lifecycle-verb.test.ts": "4b8d9c43c24358d2193669be8fba6a5e4976245c376d46ed41b097b82b27dd64",
+    "packages/cli/test/identity-routing-hint.test.ts": "4eb82555196a2cd1ef7fe40413816d0805d74c9db955d00a53bf362dd2b91d8f",
+    "packages/cli/test/queue-not-found-guidance.test.ts": "78b4e33d2665540c91b0523c0737c9cedc145e93ff7693a056396c0b61d01b28",
+    "packages/cli/test/read-defaults.test.ts": "a19b3beb6175530dbfc9632f0f65bd8d2e6349de7336461ce6377246f6ab5e5f",
+    "packages/cli/test/send.test.ts": "fd2779c558240cbc3a720493b0f30b460b477828418d69742bf0aa0095aed04b"
+  },
+  "groups": [
+    {
+      "rawIdentity": [
+        "packages/cli/test/broadcast.test.ts",
+        [
+          "Broadcast CLI"
+        ],
+        "broadcast refuses empty or whitespace-only content before transport",
+        "Broadcast CLI broadcast refuses empty or whitespace-only content before transport",
+        {
+          "reported": false,
+          "value": null
+        }
+      ],
+      "statuses": {
+        "passed": 2
+      }
+    },
+    {
+      "rawIdentity": [
+        "packages/cli/test/bundle-behaviour.test.ts",
+        [
+          "before-action bundle view"
+        ],
+        "keeps view failure diagnostic",
+        "before-action bundle view keeps view failure diagnostic",
+        {
+          "reported": false,
+          "value": null
+        }
+      ],
+      "statuses": {
+        "passed": 2
+      }
+    },
+    {
+      "rawIdentity": [
+        "packages/cli/test/bundle-source.test.ts",
+        [
+          "GitHub bundle source"
+        ],
+        "rejects unsupported input without echoing it",
+        "GitHub bundle source rejects unsupported input without echoing it",
+        {
+          "reported": false,
+          "value": null
+        }
+      ],
+      "statuses": {
+        "passed": 4
+      }
+    },
+    {
+      "rawIdentity": [
+        "packages/cli/test/chatroom.test.ts",
+        [
+          "Chatroom CLI"
+        ],
+        "chatroom wait reports an HTTP error (--timeout,0.05, 503)",
+        "Chatroom CLI chatroom wait reports an HTTP error (--timeout,0.05, 503)",
+        {
+          "reported": false,
+          "value": null
+        }
+      ],
+      "statuses": {
+        "passed": 2
+      }
+    },
+    {
+      "rawIdentity": [
+        "packages/cli/test/command-status-evidence.test.ts",
+        [
+          "command daemon status evidence"
+        ],
+        "bootstrap preserves inconclusive status instead of asserting down",
+        "command daemon status evidence bootstrap preserves inconclusive status instead of asserting down",
+        {
+          "reported": false,
+          "value": null
+        }
+      ],
+      "statuses": {
+        "passed": 2
+      }
+    },
+    {
+      "rawIdentity": [
+        "packages/cli/test/command-status-evidence.test.ts",
+        [
+          "command daemon status evidence"
+        ],
+        "discover preserves inconclusive status instead of asserting down",
+        "command daemon status evidence discover preserves inconclusive status instead of asserting down",
+        {
+          "reported": false,
+          "value": null
+        }
+      ],
+      "statuses": {
+        "passed": 2
+      }
+    },
+    {
+      "rawIdentity": [
+        "packages/cli/test/command-status-evidence.test.ts",
+        [
+          "command daemon status evidence"
+        ],
+        "workflow preserves inconclusive status instead of asserting down",
+        "command daemon status evidence workflow preserves inconclusive status instead of asserting down",
+        {
+          "reported": false,
+          "value": null
+        }
+      ],
+      "statuses": {
+        "passed": 2
+      }
+    },
+    {
+      "rawIdentity": [
+        "packages/cli/test/command-status-evidence.test.ts",
+        [
+          "command daemon status evidence"
+        ],
+        "workspace preserves inconclusive status instead of asserting down",
+        "command daemon status evidence workspace preserves inconclusive status instead of asserting down",
+        {
+          "reported": false,
+          "value": null
+        }
+      ],
+      "statuses": {
+        "passed": 2
+      }
+    },
+    {
+      "rawIdentity": [
+        "packages/cli/test/env-status-http-errors.test.ts",
+        [],
+        "reports HTTP 200 with JSON=false and exit=+0",
+        "reports HTTP 200 with JSON=false and exit=+0",
+        {
+          "reported": false,
+          "value": null
+        }
+      ],
+      "statuses": {
+        "passed": 2
+      }
+    },
+    {
+      "rawIdentity": [
+        "packages/cli/test/env-status-http-errors.test.ts",
+        [],
+        "reports HTTP 200 with JSON=true and exit=+0",
+        "reports HTTP 200 with JSON=true and exit=+0",
+        {
+          "reported": false,
+          "value": null
+        }
+      ],
+      "statuses": {
+        "passed": 2
+      }
+    },
+    {
+      "rawIdentity": [
+        "packages/cli/test/env-summary-http-errors.test.ts",
+        [],
+        "preserves rig summary 503 when running env 'status'",
+        "preserves rig summary 503 when running env 'status'",
+        {
+          "reported": false,
+          "value": null
+        }
+      ],
+      "statuses": {
+        "passed": 2
+      }
+    },
+    {
+      "rawIdentity": [
+        "packages/cli/test/env-summary-http-errors.test.ts",
+        [],
+        "preserves rig summary 503 when running env 'logs'",
+        "preserves rig summary 503 when running env 'logs'",
+        {
+          "reported": false,
+          "value": null
+        }
+      ],
+      "statuses": {
+        "passed": 2
+      }
+    },
+    {
+      "rawIdentity": [
+        "packages/cli/test/env-summary-http-errors.test.ts",
+        [],
+        "preserves rig summary 503 when running env 'down'",
+        "preserves rig summary 503 when running env 'down'",
+        {
+          "reported": false,
+          "value": null
+        }
+      ],
+      "statuses": {
+        "passed": 2
+      }
+    },
+    {
+      "rawIdentity": [
+        "packages/cli/test/gateway-human-lifecycle-verb.test.ts",
+        [
+          "rig gateway human lifecycle verbs (S12)"
+        ],
+        "keeps human removal indeterminate for HTTP 200 (force=false)",
+        "rig gateway human lifecycle verbs (S12) keeps human removal indeterminate for HTTP 200 (force=false)",
+        {
+          "reported": false,
+          "value": null
+        }
+      ],
+      "statuses": {
+        "passed": 2
+      }
+    },
+    {
+      "rawIdentity": [
+        "packages/cli/test/gateway-human-lifecycle-verb.test.ts",
+        [
+          "rig gateway human lifecycle verbs (S12)"
+        ],
+        "keeps human removal indeterminate for HTTP 200 (force=true)",
+        "rig gateway human lifecycle verbs (S12) keeps human removal indeterminate for HTTP 200 (force=true)",
+        {
+          "reported": false,
+          "value": null
+        }
+      ],
+      "statuses": {
+        "passed": 2
+      }
+    },
+    {
+      "rawIdentity": [
+        "packages/cli/test/identity-routing-hint.test.ts",
+        [],
+        "identity enrichment failure keeps the original error and useful routing advice",
+        "identity enrichment failure keeps the original error and useful routing advice",
+        {
+          "reported": false,
+          "value": null
+        }
+      ],
+      "statuses": {
+        "passed": 3
+      }
+    },
+    {
+      "rawIdentity": [
+        "packages/cli/test/queue-not-found-guidance.test.ts",
+        [],
+        "keeps recovery and exit1 when host identity is unavailable",
+        "keeps recovery and exit1 when host identity is unavailable",
+        {
+          "reported": false,
+          "value": null
+        }
+      ],
+      "statuses": {
+        "passed": 3
+      }
+    },
+    {
+      "rawIdentity": [
+        "packages/cli/test/read-defaults.test.ts",
+        [
+          "deliberate full reads"
+        ],
+        "explicit diagnosis full is lossless: --full",
+        "deliberate full reads explicit diagnosis full is lossless: --full",
+        {
+          "reported": false,
+          "value": null
+        }
+      ],
+      "statuses": {
+        "passed": 2
+      }
+    },
+    {
+      "rawIdentity": [
+        "packages/cli/test/read-defaults.test.ts",
+        [
+          "deliberate full reads"
+        ],
+        "queue retains existing body semantics and adds exact full discovery",
+        "deliberate full reads queue retains existing body semantics and adds exact full discovery",
+        {
+          "reported": false,
+          "value": null
+        }
+      ],
+      "statuses": {
+        "passed": 2
+      }
+    },
+    {
+      "rawIdentity": [
+        "packages/cli/test/send.test.ts",
+        [
+          "Send CLI"
+        ],
+        "refuses an empty or whitespace-only direct message before transport",
+        "Send CLI refuses an empty or whitespace-only direct message before transport",
+        {
+          "reported": false,
+          "value": null
+        }
+      ],
+      "statuses": {
+        "passed": 2
+      }
+    }
+  ],
+  "schemaVersion": 1,
+  "inputEquivalenceEstablished": false
+}

@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "repository": "https://github.com/mvschwarz/openrig",
+  "revision": "8376d390140b761800430b143cc4131c1f020e42",
+  "nodeMajor": 22,
+  "packageManager": "npm ci (original upstream lock)",
+  "originalLockSha256": "9d88b9dd1da10b584c517504c94d33de0a742caa2009ce81d9727f06ce3d4a4f",
+  "originalSources": {
+    "packages/daemon/src/domain/markdown-address.ts": "3cbe44d27d22927782f661feb480a0c14f7f9b0cb669abd4cf6dd4699d392202",
+    "packages/daemon/assets/plugins/openrig-core/skills/loading-addressable-markdown/scripts/resolve-markdown.mjs": "61a6d52c6c94fb1878361d19bdfaeb4524062fc4c483f557ab2f140e516d15f9"
+  },
+  "protectedArtifacts": {
+    "specification.md": "2249a296c1057330034d8ace37739188cd8a12493c97f7798451444fab689fcd",
+    "scope-addendum.md": "8881f655e740bf335620c042b28ce89c0b87221194d2dbafd3b901a678ee1460",
+    "markdown-address-tab-fence.test.ts": "cbeaad8a49a88fd92825ef14fd4f70fa5233bfd8aeaf68c5c5db56d04b02d5e2",
+    "regression.mjs": "9d5e764c3124691ffde6f91e9f046127affe0b8ad7ca49232797038a21c7dda8"
+  },
+  "candidateAllowedPaths": [
+    "packages/daemon/src/domain/markdown-address.ts",
+    "packages/daemon/assets/plugins/openrig-core/skills/loading-addressable-markdown/scripts/resolve-markdown.mjs",
+    "scripts/skill-edge-digests.generated.json"
+  ],
+  "expectedOracleCases": 16,
+  "originalExpectedPass": 0,
+  "originalExpectedFail": 16,
+  "attribution": "Manual current source inspection; TestLore orchestration/evaluation attribution must be measured separately",
+  "status": "Frozen current-module failures; no candidate patch, complete native baseline, upstream submission or acceptance yet",
+  "limitations": [
+    "The expectations are investigator-constructed from primary CommonMark and existing upstream behavior, not untouched maintainer-provided tests.",
+    "Full native opt-in skips and todo cases are retained, never treated as exercised.",
+    "No routing runtime win, learning gain or agent contribution established by this corpus."
+  ]
+}

@@ -1,0 +1,286 @@
+{
+  "upstreamRevision": "8376d390140b761800430b143cc4131c1f020e42",
+  "suite": "daemon",
+  "registration": "Actual original native 15 groups/45 outcomes confirmed; finite source-reviewed contract for future original/fixed full-run checks only",
+  "scope": "Pinned repair full native runs only; repeated case/input identities remain unqualified; no input equivalence, selection or omission authority",
+  "individualInputIdentitiesQualified": false,
+  "inputEquivalenceEstablished": false,
+  "omissionAuthority": false,
+  "originalEvidence": {
+    "runId": "38177949076",
+    "producerHead": "e64db60572db958fa6e1bb03f9a40b42cebdf17e",
+    "nativeJsonSha256": "622800437edd2d0681453541f70394cf80522b7579915bdf5c42bfdb80032928"
+  },
+  "sources": {
+    "packages/daemon/test/bundle-identity.test.ts": "9b27ea3c87b9d755ab20a1be1f377e9cc6713eb09a6adf4957f49649b7591bbf",
+    "packages/daemon/test/bundle-preconditions.test.ts": "eb9521b9aa6b6b9a41b6bf3ae484ddd6aee7bfa6e6656fc49f40132c94b05af0",
+    "packages/daemon/test/claim-service.test.ts": "24f8e2f47fcad4d9829168adb691be3f47731b2ae08d146abd73d9a1471242e1",
+    "packages/daemon/test/claude-warning-footer-readiness.test.ts": "5a768d75b26cd8c8b4a5315f66f31fdd20b3a7b9fb15c2b0398f139b7de86418",
+    "packages/daemon/test/context-pack-startup-files.test.ts": "2be68298247c10b8e4d080ad75959108fe7e5bbd5ffc0bdea94b04c380e32410",
+    "packages/daemon/test/native-resume-probe.test.ts": "409ea98728a448f3161e9d01013a2a52c4ae0e3a2e6c38271d89f38ef29d7c17",
+    "packages/daemon/test/pi-readiness.test.ts": "d95b5880c9ec738d8655262074ff5024a2728afe0574940d663251d639dc3d43",
+    "packages/daemon/test/queue-recovery-read-work.test.ts": "056c2a3f4e5ed64561ead394fc33cd7f21ae503490c0998d0b90a8b49e67d83b",
+    "packages/daemon/test/transcript-backspace-native.test.ts": "ec954ca7c6e41671bccb195706c2a0bd414e1ac307bb79dfda63da3cbd88fd81",
+    "docs/reference/schemas/fixtures/identity-vectors.json": "fb1fe611a513bdd00f59badcdef8e1075fff73bf5a2970514332d767b4e49494",
+    "packages/daemon/test/fixtures/claude-bypass-consent.ts": "86501750381a38a2eb772e12b6947ca1b9d54277d5758b36b09eeeeb181eb5db"
+  },
+  "groups": [
+    {
+      "rawIdentity": [
+        "packages/daemon/test/bundle-identity.test.ts",
+        [
+          "bundle identity"
+        ],
+        "package digest vector",
+        "bundle identity package digest vector",
+        {
+          "reported": false,
+          "value": null
+        }
+      ],
+      "statuses": {
+        "passed": 4
+      }
+    },
+    {
+      "rawIdentity": [
+        "packages/daemon/test/bundle-preconditions.test.ts",
+        [
+          "authored bundle setup preconditions",
+          "'pod' creation"
+        ],
+        "warns and omits the whole malformed block: 'preconditions must be an array'",
+        "authored bundle setup preconditions 'pod' creation warns and omits the whole malformed block: 'preconditions must be an array'",
+        {
+          "reported": false,
+          "value": null
+        }
+      ],
+      "statuses": {
+        "passed": 2
+      }
+    },
+    {
+      "rawIdentity": [
+        "packages/daemon/test/bundle-preconditions.test.ts",
+        [
+          "authored bundle setup preconditions",
+          "'pod' creation"
+        ],
+        "warns and omits the whole malformed block: 'preconditions[0].commands'",
+        "authored bundle setup preconditions 'pod' creation warns and omits the whole malformed block: 'preconditions[0].commands'",
+        {
+          "reported": false,
+          "value": null
+        }
+      ],
+      "statuses": {
+        "passed": 2
+      }
+    },
+    {
+      "rawIdentity": [
+        "packages/daemon/test/bundle-preconditions.test.ts",
+        [
+          "authored bundle setup preconditions",
+          "'legacy' creation"
+        ],
+        "warns and omits the whole malformed block: 'preconditions must be an array'",
+        "authored bundle setup preconditions 'legacy' creation warns and omits the whole malformed block: 'preconditions must be an array'",
+        {
+          "reported": false,
+          "value": null
+        }
+      ],
+      "statuses": {
+        "passed": 2
+      }
+    },
+    {
+      "rawIdentity": [
+        "packages/daemon/test/bundle-preconditions.test.ts",
+        [
+          "authored bundle setup preconditions",
+          "'legacy' creation"
+        ],
+        "warns and omits the whole malformed block: 'preconditions[0].commands'",
+        "authored bundle setup preconditions 'legacy' creation warns and omits the whole malformed block: 'preconditions[0].commands'",
+        {
+          "reported": false,
+          "value": null
+        }
+      ],
+      "statuses": {
+        "passed": 2
+      }
+    },
+    {
+      "rawIdentity": [
+        "packages/daemon/test/claim-service.test.ts",
+        [
+          "ClaimService"
+        ],
+        "bind delivers post-claim identity hint via sendText + sendKeys",
+        "ClaimService bind delivers post-claim identity hint via sendText + sendKeys",
+        {
+          "reported": false,
+          "value": null
+        }
+      ],
+      "statuses": {
+        "passed": 2
+      }
+    },
+    {
+      "rawIdentity": [
+        "packages/daemon/test/claude-warning-footer-readiness.test.ts",
+        [
+          "Claude composer below noninteractive status warnings"
+        ],
+        "keeps completed work idle with suffix \"\u2718 Auto-update failed: no write permission to npm prefix \u00b7 Run claude doctor\"",
+        "Claude composer below noninteractive status warnings keeps completed work idle with suffix \"\u2718 Auto-update failed: no write permission to npm prefix \u00b7 Run claude doctor\"",
+        {
+          "reported": false,
+          "value": null
+        }
+      ],
+      "statuses": {
+        "passed": 3
+      }
+    },
+    {
+      "rawIdentity": [
+        "packages/daemon/test/claude-warning-footer-readiness.test.ts",
+        [
+          "Claude composer below noninteractive status warnings"
+        ],
+        "requires a complete input frame for warning-suffixed idle: \"\u2718 Auto-update failed: no write permission to npm prefix \u00b7 Run claude doctor\"",
+        "Claude composer below noninteractive status warnings requires a complete input frame for warning-suffixed idle: \"\u2718 Auto-update failed: no write permission to npm prefix \u00b7 Run claude doctor\"",
+        {
+          "reported": false,
+          "value": null
+        }
+      ],
+      "statuses": {
+        "passed": 3
+      }
+    },
+    {
+      "rawIdentity": [
+        "packages/daemon/test/context-pack-startup-files.test.ts",
+        [
+          "startup_files rejects the retired delivery-coupled context_pack representation"
+        ],
+        "rejects 'context_pack' input rather than converting it to send_text",
+        "startup_files rejects the retired delivery-coupled context_pack representation rejects 'context_pack' input rather than converting it to send_text",
+        {
+          "reported": false,
+          "value": null
+        }
+      ],
+      "statuses": {
+        "passed": 2
+      }
+    },
+    {
+      "rawIdentity": [
+        "packages/daemon/test/native-resume-probe.test.ts",
+        [
+          "default-path consent"
+        ],
+        "recognizes the current consent menu",
+        "default-path consent recognizes the current consent menu",
+        {
+          "reported": false,
+          "value": null
+        }
+      ],
+      "statuses": {
+        "passed": 2
+      }
+    },
+    {
+      "rawIdentity": [
+        "packages/daemon/test/native-resume-probe.test.ts",
+        [
+          "default-path consent"
+        ],
+        "does not treat prose or an inactive menu as consent",
+        "default-path consent does not treat prose or an inactive menu as consent",
+        {
+          "reported": false,
+          "value": null
+        }
+      ],
+      "statuses": {
+        "passed": 6
+      }
+    },
+    {
+      "rawIdentity": [
+        "packages/daemon/test/pi-readiness.test.ts",
+        [
+          "Pi credential presence, not online validation"
+        ],
+        "recognizes a declared local credential without publishing or refreshing it",
+        "Pi credential presence, not online validation recognizes a declared local credential without publishing or refreshing it",
+        {
+          "reported": false,
+          "value": null
+        }
+      ],
+      "statuses": {
+        "passed": 3
+      }
+    },
+    {
+      "rawIdentity": [
+        "packages/daemon/test/pi-readiness.test.ts",
+        [
+          "Pi credential presence, not online validation"
+        ],
+        "does not guess a saved/default model's credential",
+        "Pi credential presence, not online validation does not guess a saved/default model's credential",
+        {
+          "reported": false,
+          "value": null
+        }
+      ],
+      "statuses": {
+        "passed": 4
+      }
+    },
+    {
+      "rawIdentity": [
+        "packages/daemon/test/queue-recovery-read-work.test.ts",
+        [
+          "recovery lookup work and fresh disposition"
+        ],
+        "keeps exact decoded membership and arbitrary escaped identities",
+        "recovery lookup work and fresh disposition keeps exact decoded membership and arbitrary escaped identities",
+        {
+          "reported": false,
+          "value": null
+        }
+      ],
+      "statuses": {
+        "passed": 4
+      }
+    },
+    {
+      "rawIdentity": [
+        "packages/daemon/test/transcript-backspace-native.test.ts",
+        [],
+        "normalizes consecutive and Unicode backspaces from owned transcript bytes",
+        "normalizes consecutive and Unicode backspaces from owned transcript bytes",
+        {
+          "reported": false,
+          "value": null
+        }
+      ],
+      "statuses": {
+        "passed": 4
+      }
+    }
+  ]
+}

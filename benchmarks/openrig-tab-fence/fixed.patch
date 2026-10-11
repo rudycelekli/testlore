@@ -1,0 +1,26 @@
+diff --git a/packages/daemon/assets/plugins/openrig-core/skills/loading-addressable-markdown/scripts/resolve-markdown.mjs b/packages/daemon/assets/plugins/openrig-core/skills/loading-addressable-markdown/scripts/resolve-markdown.mjs
+index 0f37233..1fb9cc3 100644
+--- a/packages/daemon/assets/plugins/openrig-core/skills/loading-addressable-markdown/scripts/resolve-markdown.mjs
++++ b/packages/daemon/assets/plugins/openrig-core/skills/loading-addressable-markdown/scripts/resolve-markdown.mjs
+@@ -49,7 +49,7 @@ function scanHeaders(lines) {
+ 
+   for (let lineNumber = 0; lineNumber < lines.length; lineNumber++) {
+     const line = lines[lineNumber];
+-    const fenceMatch = line.match(/^\s{0,3}(`{3,}|~{3,})/);
++    const fenceMatch = line.match(/^ {0,3}(`{3,}|~{3,})/);
+     if (fenceMatch) {
+       const marker = fenceMatch[1][0];
+       const length = fenceMatch[1].length;
+diff --git a/packages/daemon/src/domain/markdown-address.ts b/packages/daemon/src/domain/markdown-address.ts
+index 77c2fd3..89793a3 100644
+--- a/packages/daemon/src/domain/markdown-address.ts
++++ b/packages/daemon/src/domain/markdown-address.ts
+@@ -110,7 +110,7 @@ function scanHeaders(lines: string[]): HeaderScan {
+   let fence: { marker: string; length: number; line: number } | null = null;
+   for (let i = 0; i < lines.length; i++) {
+     const line = lines[i]!;
+-    const fenceMatch = line.match(/^\s{0,3}(`{3,}|~{3,})/);
++    const fenceMatch = line.match(/^ {0,3}(`{3,}|~{3,})/);
+     if (fenceMatch) {
+       const marker = fenceMatch[1]![0]!;
+       const length = fenceMatch[1]!.length;

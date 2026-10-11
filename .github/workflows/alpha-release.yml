@@ -133,6 +133,8 @@ jobs:
           npm publish ".tddswarm/alpha-release/$ARCHIVE" --ignore-scripts --access public --tag alpha --provenance
       - name: Verify registry bytes against the qualified archive
         run: node scripts/registry-proof.js --receipt .tddswarm/alpha-release/release-candidate.json
+      - name: Qualify the exact registry-version setup command in fresh isolated projects
+        run: node scripts/registry-setup-proof.js --receipt .tddswarm/alpha-release/release-candidate.json --output .tddswarm/alpha-release/registry-setup
       - uses: actions/upload-artifact@v4
         if: always()
         with:

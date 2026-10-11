@@ -13,6 +13,7 @@ import {normalizeNativeProjects} from './native-project-contracts.js';
 import {captureConfigurationInputs,assertConfigurationInputFreshness} from './configuration-inputs.js';
 import {captureVitestWorkspaceRoot,assertVitestWorkspaceRoot} from './native-workspace-root.js';
 import {captureNativeVitestCases,assertNativeVitestCases,assertNativeCaseConfiguration} from './native-vitest-cases.js';
+import {captureReaObservation,assertReaObservation} from './rea-observation.js';
 
 // Authority is minted only from a live, canonical worker, never public options.
 const sessions=new WeakMap();
@@ -44,6 +45,8 @@ export async function openNativeSession(root,config,options={},startupInventory)
  // This explicit profile is never admitted through a canonicalized alias.
  captureVitestWorkspaceRoot(requestedRoot,config.runner||[],{nativeCwd:config.nativeCwd});
  captureNativeVitestCases(requestedRoot,config,config.runner||[]);
+ const reaObservation=captureReaObservation(requestedRoot,config,config.runner||[]);
+ if(reaObservation&&options.selective)throw Error('REA observation is shadow-only; selective execution is not admitted');
  root=fs.realpathSync(root);
  if(options.signal?.aborted)throw new Error('Unified execution cancelled');
  const unsupported=unifiedNativeEligibility(root,config);if(unsupported)return {unsupported};
@@ -76,7 +79,7 @@ export async function openNativeSession(root,config,options={},startupInventory)
   // The fresh worker expands native-discovered tests, project setup and config
   // transitively. Unreachable repository files still receive parent syntax and
   // uncertainty analysis, but do not require every project's native resolver.
-  fs.writeFileSync(requestFile,JSON.stringify({root,adapter:'vitest',command,imports,invocation,workspaceRoot,nativeCwd:config.nativeCwd,vitestCases,discover:true,transitive:true,roots:[...nativePlanningRoots(root,config,files)],sourceSummaries,configurationInputs:config.configurationInputs,configurationInputObservations,unified:true,reportFile}));
+  fs.writeFileSync(requestFile,JSON.stringify({root,adapter:'vitest',command,imports,invocation,workspaceRoot,nativeCwd:config.nativeCwd,vitestCases,reaObservation,discover:true,transitive:true,roots:[...nativePlanningRoots(root,config,files)],sourceSummaries,configurationInputs:config.configurationInputs,configurationInputObservations,unified:true,reportFile}));
   workerSpawned=performance.now();
   child=spawn(process.execPath,[fileURLToPath(new URL('./reporters/resolve.js',import.meta.url)),requestFile],{cwd:workspaceRoot?.cwd||root,env:nativeEnvironment(config),detached:process.platform!=='win32',stdio:['ignore','pipe','pipe','pipe','pipe']});
   const wait=phase=>new Promise((resolve,reject)=>{if(failure)return reject(failure);pending.set(phase,{resolve,reject});});
@@ -95,6 +98,8 @@ export async function openNativeSession(root,config,options={},startupInventory)
   timer=setTimeout(()=>rejectAll(new Error('Unified native deadline exceeded')),Math.max(1,deadline-Date.now()));options.signal?.addEventListener('abort',cancel,{once:true});
   const planned=await planning;plannedReceived=performance.now();if(Date.now()>=deadline)throw new Error('Unified native-session deadline exceeded');
   const batch=normalize(root,planned);
+  assertReaObservation(reaObservation,batch.reaObservation??null);
+  if(reaObservation)assertReaObservation(reaObservation,captureReaObservation(root,config,command));
   assertVitestWorkspaceRoot(workspaceRoot,batch.workspaceRoot);
   assertVitestWorkspaceRoot(workspaceRoot,captureVitestWorkspaceRoot(root,command,{nativeCwd:config.nativeCwd}));
   if(vitestCases){assertNativeVitestCases(vitestCases,batch.vitestCases);assertNativeVitestCases(vitestCases,captureNativeVitestCases(root,config,command));assertNativeCaseConfiguration(root,batch.nativeCaseConfigurationInputs);}
@@ -111,8 +116,10 @@ export async function openNativeSession(root,config,options={},startupInventory)
    assertVitestWorkspaceRoot(workspaceRoot,captureVitestWorkspaceRoot(root,command,{nativeCwd:config.nativeCwd}));
    if(vitestCases){assertNativeVitestCases(vitestCases,captureNativeVitestCases(root,config,command));assertNativeCaseConfiguration(root,batch.nativeCaseConfigurationInputs);}
    files=[...new Set(files)].sort();files.forEach(file=>safePath(root,file));
+   if(reaObservation){assertReaObservation(reaObservation,captureReaObservation(root,config,command));if(JSON.stringify(files)!==JSON.stringify(batch.discovery.files))throw Error('REA observation cannot omit a discovered test file');}
    const started=performance.now(),execution=wait('executed');child.stdio[3].end(encodeNativeFrame({phase:'execute',files}));
    const value=await execution,executedReceived=performance.now();
+   if(reaObservation){assertReaObservation(reaObservation,captureReaObservation(root,config,command));assertReaObservation(reaObservation,value.reaObservationBinding);}
    assertVitestWorkspaceRoot(workspaceRoot,captureVitestWorkspaceRoot(root,command,{nativeCwd:config.nativeCwd}));
    if(vitestCases){assertNativeVitestCases(vitestCases,captureNativeVitestCases(root,config,command));assertNativeCaseConfiguration(root,batch.nativeCaseConfigurationInputs);assertNativeVitestCases({profile:vitestCases,configurationInputs:batch.nativeCaseConfigurationInputs},value.nativeCaseEvidenceBinding);}
    assertConfigurationInputFreshness(configurationInputObservations,value.configurationInputs,{allowCanonicalTmpdir:true});
