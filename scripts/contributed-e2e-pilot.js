@@ -3,8 +3,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import {spawn} from 'node:child_process';
 import {createHash} from 'node:crypto';
-import {fileURLToPath} from 'node:url';
-import {diagnoseFallbackSelection} from '../src/fallback-diagnostics.js';
+import {fileURLToPath,pathToFileURL} from 'node:url';
 
 export const E2E_PIN='0ddea76a7091ac8768e0ced2a9926b37e72e9497';
 export const E2E_PARENT='b2a28d4813df9e0c0816cfffbdb51f4cc4e04faa';
@@ -128,6 +127,14 @@ export async function contributedE2EPilot({directory,output,candidateRoot}){
   const vitest=path.join(root,'node_modules/vitest/vitest.mjs'),cli=path.join(candidateRoot,'src/cli.js');
   const candidatePackage=JSON.parse(fs.readFileSync(path.join(candidateRoot,'package.json')));if(candidatePackage.name!=='testlore'||candidatePackage.version!=='0.1.0'||!/^[a-f0-9]{40}$/.test(candidatePackage.gitHead||''))throw Error('Sealed installed TestLore candidate provenance missing');
   if(!fs.existsSync(vitest)||!fs.existsSync(cli))throw Error('Original Vitest or candidate CLI unavailable');
+  // This controller starts before the source checkout has dependencies. Load
+  // diagnostics from the sealed installed candidate, whose production runtime
+  // was installed and bound above, rather than from the uninstalled checkout.
+  const diagnosticFile=path.join(candidateRoot,'src/fallback-diagnostics.js');
+  const diagnosticSha256=digest(fs.readFileSync(diagnosticFile));
+  const {diagnoseFallbackSelection}=await import(pathToFileURL(diagnosticFile));
+  if(typeof diagnoseFallbackSelection!=='function')throw Error('Installed candidate diagnostic unavailable');
+  save('diagnostic-producer-binding',{candidateSourceRevision:candidatePackage.gitHead,diagnosticSha256,mode:'sealed-installed-candidate',freshnessVerified:false,omissionAuthority:false});
   const config={adapter:'vitest',discovery:'native',runner:[process.execPath,vitest,'run','--config','vitest.config.ts','--project','unit','{files}'],analysisCache:{enabled:true}};
   fs.writeFileSync(path.join(root,'tddswarm.config.json'),JSON.stringify(config));
   await checked('overlay-add',root,['git','-c','core.hooksPath=/dev/null','add','--','tddswarm.config.json']);await checked('overlay-commit',root,['git','-c','core.hooksPath=/dev/null','-c','user.name=TestLore Pilot','-c','user.email=pilot@localhost','commit','-m','Controlled quality configuration overlay']);
@@ -146,6 +153,7 @@ export async function contributedE2EPilot({directory,output,candidateRoot}){
     for(const arm of order){const label=`change-${change}-trial-${repetition}-${arm}`;if(arm==='testLore'){const event=await invoke(label,root,[process.execPath,cli,'run','--root',root,'--selective','--unified-native','--json']);trial.testLore=boundedJson(path.join(output,label+'.stdout'));trial.testLoreEvent=event;}else{const result=await native(label,arm==='native',change?SOURCES:[SOURCES[0]]);trial[arm]=result.value;trial[arm+'Event']=result.event;}}
     // Diagnose the actual retained plan; this offline summary cannot authorize
     // omissions or turn ambiguous case identities into a qualified comparison.
+    if(digest(fs.readFileSync(diagnosticFile))!==diagnosticSha256)throw Error('Installed diagnostic producer changed');
     save(`change-${change}-trial-${repetition}-fallback-diagnostic`,diagnoseFallbackSelection(trial.testLore.plan));
     trials.push(trial);save(`trial-${change}-${repetition}`,trial);
    }
