@@ -49,7 +49,7 @@ iFixAi's native exporter has no report schema-version field and does not export 
 
 Each import preserves the input SHA-256 and byte count, normalized checks, uncertainty and a next action. Raw prompts, responses, trace contents, URLs and free-form finding prose are omitted; review the original report privately for details. Inputs are limited to 4 MiB, structural JSON bounds and 2,048 normalized checks. Duplicate JSON keys, unsafe paths, symlinks, nonregular files and detected concurrent changes are refused. One invalid adapter does not discard another adapter's usable report.
 
-Receipts are new private files under `.tddswarm/assessments/`, created with mode `0600`. `--output` can choose a new project-relative file; existing files are never overwritten. They are separate from native-run, routing, quality-evidence and learning stores.
+Receipts are new private files under `.tddswarm/assessments/`, created with mode `0600`. `--output` can choose a new project-relative file; existing files are never overwritten. Inside `.tddswarm`, custom output is restricted to `assessments/`, keeping receipts separate from native-run, routing, quality-evidence and learning stores.
 
 | Result | Exit | Meaning |
 | --- | --- | --- |

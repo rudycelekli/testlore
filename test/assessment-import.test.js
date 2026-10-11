@@ -107,6 +107,8 @@ test('CLI imports both configured reports and preserves nonzero findings or unce
 
 test('receipt destinations cannot replace inputs, existing reports, or escape the project', t => {
   const root = fixture(t), before = fs.readFileSync(path.join(root, 'guardana.json'));
-  for (const output of ['guardana.json','../outside.json','tddswarm.config.json']) assert.throws(() => importAssessments(root, { plugin: 'guardana', report: 'guardana.json', output }));
+  for (const output of ['guardana.json','../outside.json','tddswarm.config.json','.tddswarm/last-run.json','.tddswarm/learning/index.json','./.tddswarm/evidence.json']) assert.throws(() => importAssessments(root, { plugin: 'guardana', report: 'guardana.json', output }));
+  assert.equal(fs.existsSync(path.join(root, '.tddswarm/learning')), false);
+  assert.equal(fs.existsSync(path.join(root, '.tddswarm/last-run.json')), false);
   assert.deepEqual(fs.readFileSync(path.join(root, 'guardana.json')), before);
 });

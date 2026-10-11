@@ -125,6 +125,8 @@ export function importAssessments(projectRoot, { plugin, report, output } = {}) 
     nextAction: assessments.length ? 'Review each assessment and its uncertainty. Use testlore run --shadow for independent native verification.' : 'No assessment adapters are enabled. Supply --plugin guardana|ifixai --report local-report.json, or configure report paths explicitly.' };
   const destination = output ?? `.tddswarm/assessments/${receipt.id}.json`;
   const target = safePath(root, destination);
+  const relative = path.relative(root, target).split(path.sep);
+  if (relative[0] === '.tddswarm' && relative[1] !== 'assessments') throw new Error('Assessment receipts must stay in .tddswarm/assessments or outside the internal evidence store');
   if (selections.some(item => item.report && path.resolve(root, item.report) === target)) throw new Error('Assessment receipt must not replace an input report');
   fs.mkdirSync(path.dirname(target), { recursive: true });
   safePath(root, destination);
