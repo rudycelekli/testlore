@@ -1,0 +1,97 @@
+{
+  "schemaVersion": 1,
+  "kind": "public-contribution-lookup-aggregate",
+  "date": "2026-10-11",
+  "inventory": {
+    "publicAuthored": 3593,
+    "upstreamRecords": 3432,
+    "externalRepositories": 83,
+    "mergedMetadata": 1549,
+    "ownRepositoriesExcluded": 160,
+    "forkTargetsExcluded": 1,
+    "detailedSamples": 24,
+    "upstreamDetailedSamples": 20,
+    "observationMode": "mixed-window-observations",
+    "verifiedDefectFixes": "unknown"
+  },
+  "initialDevelopment": {
+    "rawProofSha256": "4bc88a7b93cca41447d28479aaaf2c35033be0f6147f57257703b0ca79874a36",
+    "retrievalModuleSha256": "54aa02ffc193d0ef3110662a1fc40c3e9927a3c68820e6a35b4b3182ae7da79c",
+    "trainingRecords": 3409,
+    "metrics": {
+      "cases": 6,
+      "positiveCases": 4,
+      "negativeCases": 2,
+      "returnedPatterns": 14,
+      "relevantPatterns": 4,
+      "usefulCases": 4,
+      "precision": 0.2857142857142857,
+      "abstentions": 0,
+      "correctAbstentions": 0,
+      "falsePositiveCases": 6,
+      "totalPayloadBytes": 17176,
+      "totalLookupMs": 258.541
+    },
+    "interpretation": "Noisy: four positive family hits, unrelated patterns and both failed abstentions. These cases became development data."
+  },
+  "separatelyFrozenConstructedQueries": {
+    "rawProofSha256": "b3cb748b996a9d6749c60ec0d0990ce6e2f498e8af8cad11f1bb0b3b13a71eb7",
+    "retrievalModuleSha256": "f599fd87d8d7fe2a0633e287c988e1525b522d5f98519beaf8b2c7c762287d62",
+    "trainingRecords": 3409,
+    "withheldFamilyCount": 1,
+    "heldoutRepositories": 10,
+    "budget": {
+      "lookupsPerQuery": 1,
+      "maxRecords": 3,
+      "maxPayloadBytes": 6000,
+      "maxQueryBytes": 4096,
+      "maxContractBytes": 16000,
+      "providerCalls": 0,
+      "networkRequests": 0
+    },
+    "metrics": {
+      "cases": 10,
+      "positiveCases": 7,
+      "negativeCases": 3,
+      "returnedPatterns": 7,
+      "relevantPatterns": 7,
+      "returnedRecords": 21,
+      "relevantRecords": 21,
+      "recordPrecision": 1,
+      "usefulCases": 7,
+      "precision": 1,
+      "abstentions": 3,
+      "correctAbstentions": 3,
+      "falsePositiveCases": 0,
+      "totalPayloadBytes": 18006,
+      "totalLookupMs": 1721.744
+    },
+    "noRetrieval": {
+      "cases": 10,
+      "positiveCases": 7,
+      "negativeCases": 3,
+      "returnedPatterns": 0,
+      "relevantPatterns": 0,
+      "returnedRecords": 0,
+      "relevantRecords": 0,
+      "recordPrecision": null,
+      "usefulCases": 0,
+      "precision": null,
+      "abstentions": 10,
+      "correctAbstentions": 3,
+      "falsePositiveCases": 0,
+      "totalPayloadBytes": 0,
+      "totalLookupMs": 0
+    }
+  },
+  "fixQualityMeasured": false,
+  "learningPromoted": false,
+  "publicArtifactScope": "Aggregate counts only; full personal corpus, source descriptions and local evaluation records remain private.",
+  "limitations": [
+    "Constructed contract queries and human-authored relevance labels measure metadata lookup usefulness only.",
+    "No target PR body, patch or exact fix is supplied to retrieval. All evaluation repositories are withheld before ranking.",
+    "Novel pattern families are absent from the frozen corpus and tested only for abstention.",
+    "No generated repair, bug detection, model tokens or provider cost is evaluated. Empty no-memory lookup is a descriptive baseline, not evidence of improved agent outcomes.",
+    "Public PR metadata and merge outcomes do not establish genuine fixes or causal transfer."
+  ]
+}
