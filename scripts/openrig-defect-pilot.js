@@ -63,6 +63,16 @@ export function assertFreshOutput(output) {
   return true;
 }
 
+export function pilotEnvironment(createdScratch, upstream, ambient = process.env) {
+  // Match upstream pwd -P: sandbox IPC subpaths must name the physical socket root.
+  const scratch = fs.realpathSync(createdScratch);
+  const env = { PATH: ambient.PATH, HOME: path.join(scratch, 'home'), TMPDIR: scratch, TMUX_TMPDIR: scratch, CI: 'true', TERM: 'xterm-256color', LANG: 'en_US.UTF-8', TESTLORE_PILOT_UPSTREAM: upstream };
+  // The unchanged installed-scenario runner admits actual GitHub CI explicitly.
+  // Keep its nonsecret marker; never manufacture hosted execution on a local run.
+  if (ambient.GITHUB_ACTIONS === 'true') env.GITHUB_ACTIONS = 'true';
+  return { scratch, env };
+}
+
 export function assertNewRegression(cases, filename, expectedNames) {
   const entries = [...cases].map(([identity, status]) => ({ parts: JSON.parse(identity), status })).filter(item => item.parts[0] === filename);
   const expected = expectedNames.map(name => name.replaceAll('\\\\', '\\'));
@@ -92,10 +102,9 @@ async function main(argv) {
   const manifest = JSON.parse(fs.readFileSync(path.join(corpus, 'manifest.json')));
   const started = Date.now();
   const deadline = started + 17 * 60_000;
-  const scratch = fs.mkdtempSync(path.join(os.tmpdir(), 'testlore-openrig-'));
-  const env = { PATH: process.env.PATH, HOME: path.join(scratch, 'home'), TMPDIR: scratch, TMUX_TMPDIR: scratch, CI: 'true', TERM: 'xterm-256color', LANG: 'en_US.UTF-8', TESTLORE_PILOT_UPSTREAM: upstream };
+  const { scratch, env } = pilotEnvironment(fs.mkdtempSync(path.join(os.tmpdir(), 'testlore-openrig-')), upstream);
   fs.mkdirSync(env.HOME);
-  const receipt = { schemaVersion: 1, phase: args.phase, suite: args.suite, repository: manifest.repository, revision: manifest.revision, manifestSha256: hash(fs.readFileSync(path.join(corpus, 'manifest.json'))), attribution: manifest.attribution, executions: [], qualified: false, status: 'running', limitations: manifest.limitations };
+  const receipt = { schemaVersion: 1, phase: args.phase, suite: args.suite, repository: manifest.repository, revision: manifest.revision, manifestSha256: hash(fs.readFileSync(path.join(corpus, 'manifest.json'))), attribution: manifest.attribution, executions: [], qualified: false, status: 'running', physicalScratch: scratch, hostedGitHubMarker: env.GITHUB_ACTIONS === 'true', limitations: manifest.limitations };
   const write = () => fs.writeFileSync(path.join(output, 'assessment.json'), JSON.stringify(receipt, null, 2) + '\n');
   write();
   const git = (...values) => {

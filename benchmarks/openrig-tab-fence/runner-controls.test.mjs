@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { inventory, preservesCases, assertOracleCounts, assertCandidatePaths, assertFreshOutput, assertNewRegression } from '../../scripts/openrig-defect-pilot.js';
+import { inventory, preservesCases, assertOracleCounts, assertCandidatePaths, assertFreshOutput, assertNewRegression, pilotEnvironment } from '../../scripts/openrig-defect-pilot.js';
 
 const native = entries => ({ success: true, numTotalTests: entries.length, numPassedTests: entries.filter(([, status]) => status === 'passed').length, numFailedTests: 0, numFailedTestSuites: 0, numRuntimeErrorTestSuites: 0, testResults: [{ name: 'file', status: 'passed', assertionResults: entries.map(([title, status]) => ({ ancestorTitles: ['scope'], title, status })) }] });
 test('preserves native named cases and distinguishes unexercised outcomes', () => {
@@ -70,4 +70,23 @@ test('requires every new frozen regression in the actual native inventory', () =
   assert.throws(() => assertNewRegression(cases, 'regression.ts', ['first', 'second', 'missing']));
   assert.throws(() => assertNewRegression(new Map(), 'regression.ts', ['first', 'second']));
   assert.throws(() => assertNewRegression(new Map([[JSON.stringify(['regression.ts', 'first']), 'pending']]), 'regression.ts', ['first']));
+});
+test('uses physical socket paths while preserving only actual nonsecret hosted markers', () => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'testlore-pilot-physical-control-'));
+  try {
+    fs.mkdirSync(path.join(root, 'real'));
+    fs.symlinkSync(path.join(root, 'real'), path.join(root, 'alias'));
+    const physical = fs.realpathSync(path.join(root, 'real'));
+    const ambient = { PATH: '/fixture/bin', GITHUB_ACTIONS: 'true', GITHUB_TOKEN: 'fake-sensitive-control', CODEX_HOME: '/fake/provider', HOME: '/fake/user' };
+    const prepared = pilotEnvironment(path.join(root, 'alias'), '/pinned/upstream', ambient);
+    assert.equal(prepared.scratch, physical);
+    assert.equal(prepared.env.TMPDIR, physical);
+    assert.equal(prepared.env.TMUX_TMPDIR, physical);
+    assert.equal(prepared.env.HOME, path.join(physical, 'home'));
+    assert.equal(prepared.env.GITHUB_ACTIONS, 'true');
+    assert.equal(prepared.env.GITHUB_TOKEN, undefined);
+    assert.equal(prepared.env.CODEX_HOME, undefined);
+    assert.equal(pilotEnvironment(path.join(root, 'alias'), '/pinned/upstream', { PATH: '/fixture/bin' }).env.GITHUB_ACTIONS, undefined);
+    assert.equal(pilotEnvironment(path.join(root, 'alias'), '/pinned/upstream', { PATH: '/fixture/bin', GITHUB_ACTIONS: 'false' }).env.GITHUB_ACTIONS, undefined);
+  } finally { fs.rmSync(root, { recursive: true, force: true }); }
 });
