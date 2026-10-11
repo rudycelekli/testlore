@@ -6,7 +6,7 @@ import path from 'node:path';
 import {fileURLToPath,pathToFileURL} from 'node:url';
 import {spawnSync} from 'node:child_process';
 import {vitestCaseHash} from '../src/vitest-case-contracts.js';
-import {assessContributedE2E,assessContributedE2EWithCases,reconcileE2ECaseCapture,declaredPnpmExecutable,e2eNativeCases,compareE2EWorkspaceBaseline} from '../scripts/contributed-e2e-pilot.js';
+import {assessContributedE2E,assessContributedE2EWithCases,reconcileE2ECaseCapture,declaredPnpmExecutable,e2eNativeFlags,e2eNativeCases,compareE2EWorkspaceBaseline} from '../scripts/contributed-e2e-pilot.js';
 const root='/upstream/packages/e2e',oracle='tests/unit/globs.test.ts',other='tests/unit/regexp.test.ts';
 const name='glob grammar ? matches exactly one non-/ character';
 const raw=(failed=false,files=[oracle,other])=>({success:!failed,numTotalTests:files.length,numPassedTests:files.length-(failed?1:0),numFailedTests:failed?1:0,numPendingTests:0,numRuntimeErrorTestSuites:0,testResults:files.map(file=>({name:root+'/'+file,status:failed&&file===oracle?'failed':'passed',assertionResults:[{fullName:file===oracle?name:'regexp escapes literal symbols',status:failed&&file===oracle?'failed':'passed'}]}))});
@@ -19,6 +19,11 @@ function fixture(){
  return {baseline:raw(),trials};
 }
 const assess=x=>assessContributedE2E(x.baseline,x.trials,root,{protectedInputsUnchanged:true,restoredGreen:true});
+test('workspace flags bind the original absolute config without duplicating the native root',()=>{
+ assert.deepEqual(e2eNativeFlags(root,'workspace'),['--config',root+'/vitest.config.ts','--root','packages/e2e']);
+ assert.deepEqual(e2eNativeFlags(root,'package'),['--config','vitest.config.ts']);
+ assert.throws(()=>e2eNativeFlags('relative','workspace'),/Invalid/);
+});
 test('campaign bootstrap loads before checkout dependencies are installed',t=>{
  const isolated=fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(),'testlore-e2e-bootstrap-')));
  t.after(()=>fs.rmSync(isolated,{recursive:true,force:true}));

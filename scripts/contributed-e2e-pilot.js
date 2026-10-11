@@ -11,6 +11,11 @@ export const E2E_LOCK_SHA='8fc2fe6cf6b13b501483f30854e7fe56a957cfce04ac41c8ce2a7
 const ORACLE='tests/unit/globs.test.ts',SOURCES=['src/internal/globs.ts','src/internal/regexp.ts'];
 const digest=value=>createHash('sha256').update(value).digest('hex');
 const same=(a,b)=>JSON.stringify(a)===JSON.stringify(b);
+/** Vitest resolves relative --config from --root, while process.cwd stays unchanged. */
+export function e2eNativeFlags(root,profile){
+ if(!path.isAbsolute(root)||!['package','workspace'].includes(profile))throw Error('Invalid e2e native flags');
+ return profile==='workspace'?['--config',path.join(root,'vitest.config.ts'),'--root','packages/e2e']:['--config','vitest.config.ts'];
+}
 function trackedDigest(root,file){const full=path.join(root,file);return fs.lstatSync(full).isSymbolicLink()?digest('symlink:'+fs.readlinkSync(full)):digest(fs.readFileSync(full));}
 function boundedJson(file){const fd=fs.openSync(file,fs.constants.O_RDONLY|(fs.constants.O_NOFOLLOW||0));try{const stat=fs.fstatSync(fd);if(!stat.isFile()||stat.size>32*1024**2)throw Error('Native report size bound exceeded');const bytes=Buffer.alloc(stat.size+1);let size=0;for(let n;size<bytes.length&&(n=fs.readSync(fd,bytes,size,bytes.length-size,null));)size+=n;if(size!==stat.size)throw Error('Report changed during read');return JSON.parse(bytes.subarray(0,size));}finally{fs.closeSync(fd);}}
 /** Resolve the exact installed package's declared executable; never guess historical layouts. */
@@ -215,7 +220,7 @@ export async function contributedE2EPilot({directory,output,candidateRoot,profil
   if(typeof diagnoseFallbackSelection!=='function')throw Error('Installed candidate diagnostic unavailable');
   save('diagnostic-producer-binding',{candidateSourceRevision:candidatePackage.gitHead,diagnosticSha256,mode:'sealed-installed-candidate',freshnessVerified:false,omissionAuthority:false});
   const executionRoot=profile==='workspace'?upstream:root;
-  const nativeFlags=profile==='workspace'?['--config','packages/e2e/vitest.config.ts','--root','packages/e2e']:['--config','vitest.config.ts'];
+  const nativeFlags=e2eNativeFlags(root,profile);
   const config={adapter:'vitest',discovery:'native',runner:[process.execPath,vitest,'run',...nativeFlags,'--project','unit','{files}'],analysisCache:{enabled:true},vitestCases:{profile:'e2e-locator-runtime-v1',projectRoot:profile==='workspace'?'packages/e2e':'.',upstreamRevision:E2E_PIN},...(profile==='workspace'?{tsconfig:'packages/e2e/tsconfig.json'}:{})};
   fs.writeFileSync(path.join(executionRoot,'tddswarm.config.json'),JSON.stringify(config));
   await checked('overlay-add',executionRoot,['git','-c','core.hooksPath=/dev/null','add','--','tddswarm.config.json']);await checked('overlay-commit',executionRoot,['git','-c','core.hooksPath=/dev/null','-c','user.name=TestLore Pilot','-c','user.email=pilot@localhost','commit','-m','Controlled quality configuration overlay']);
