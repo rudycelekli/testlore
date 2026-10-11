@@ -120,7 +120,7 @@
         "exitCode": 0,
         "signal": null,
         "reason": null,
-        "durationMs": 53.841,
+        "durationMs": 49.909,
         "result": {
           "schemaVersion": 1,
           "module": "runtime/unicode/original/subject.cjs",
@@ -164,7 +164,7 @@
         "exitCode": 0,
         "signal": null,
         "reason": null,
-        "durationMs": 54.888,
+        "durationMs": 50.069,
         "result": {
           "schemaVersion": 1,
           "module": "runtime/unicode/original/subject.cjs",
@@ -203,12 +203,12 @@
         "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
       }
     ],
-    "durationMs": 112.473,
+    "durationMs": 104.175,
     "providerCalls": 0,
     "networkRequests": 0,
     "authority": "module-replay-only",
     "isolation": "disposable-copy-credential-scrubbed-vm-not-os-sandbox",
-    "integrity": "5ffb12fa193eb1cc5dbdf2723b0e2cbfa8868e4e7ae88e977fa7f725df18e9d8"
+    "integrity": "1635944d270b2eee2be74e6ee4fcf476276940ff1aa601c4325878d0017186c3"
   },
   "fixed": {
     "schemaVersion": 1,
@@ -326,7 +326,7 @@
         "exitCode": 0,
         "signal": null,
         "reason": null,
-        "durationMs": 53.493,
+        "durationMs": 49.698,
         "result": {
           "schemaVersion": 1,
           "module": "runtime/unicode/fixed/subject.cjs",
@@ -370,7 +370,7 @@
         "exitCode": 0,
         "signal": null,
         "reason": null,
-        "durationMs": 52.86,
+        "durationMs": 53.429,
         "result": {
           "schemaVersion": 1,
           "module": "runtime/unicode/fixed/subject.cjs",
@@ -409,12 +409,12 @@
         "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
       }
     ],
-    "durationMs": 109.894,
+    "durationMs": 106.708,
     "providerCalls": 0,
     "networkRequests": 0,
     "authority": "module-replay-only",
     "isolation": "disposable-copy-credential-scrubbed-vm-not-os-sandbox",
-    "integrity": "72a6a1943396e0ea10368716c09ad0dd9120ace6401697b4d877d6ac7f730203"
+    "integrity": "2c30bcfa6bc61c69236be707642cfa4278d4752d2e497635e06a4f66af2ca4c0"
   },
   "evidence": {
     "recipe": {
@@ -423,11 +423,11 @@
     },
     "original": {
       "file": "original.json",
-      "sha256": "f7d1712126e0edb187a86a9342a926a910ea9bf1fe45f16674b96d0cfab098e5"
+      "sha256": "043c87fbe9836a0b4ee1a92326e3029153de1f1f4a5826e672f166541962b039"
     },
     "fixed": {
       "file": "fixed.json",
-      "sha256": "30937ee44bf43ac2cb099a556837ad2c120f7a2f431f3af36d88f12758695df2"
+      "sha256": "e10b65e7b9278a18231070b9fa6d173773d662ff07a93e63f597a8948e6fa0d8"
     }
   },
   "scope": "pure-module-replay",
@@ -436,5 +436,5 @@
   "repairAuthority": "none",
   "providerCalls": 0,
   "networkRequests": 0,
-  "integrity": "b1617a44bb35b09129cd98b350beb7c571a817d9e7dfb897f8409b82a2ee8259"
+  "integrity": "a858e70bae15d0331c6bef0694e8c1a267ebc442369b77b9a41982f20b9b71d5"
 }

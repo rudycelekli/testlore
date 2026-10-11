@@ -128,7 +128,7 @@
           "exitCode": 0,
           "signal": null,
           "reason": null,
-          "durationMs": 59.496,
+          "durationMs": 52.89,
           "result": {
             "schemaVersion": 1,
             "module": "runtime/numeric/original/subject.cjs",
@@ -172,7 +172,7 @@
           "exitCode": 0,
           "signal": null,
           "reason": null,
-          "durationMs": 58.577,
+          "durationMs": 51.142,
           "result": {
             "schemaVersion": 1,
             "module": "runtime/numeric/original/subject.cjs",
@@ -211,12 +211,12 @@
           "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
         }
       ],
-      "durationMs": 125.997,
+      "durationMs": 113.244,
       "providerCalls": 0,
       "networkRequests": 0,
       "authority": "module-replay-only",
       "isolation": "disposable-copy-credential-scrubbed-vm-not-os-sandbox",
-      "integrity": "c9890774ac383829e912d675dcb045a7145450b0985babbdf846017146763ef0"
+      "integrity": "b536cb1b0be52f596e7ce0462909da7d2c88751f6d7cc58b6bfbd9ee13e998b4"
     },
     "fixed": {
       "schemaVersion": 1,
@@ -344,7 +344,7 @@
           "exitCode": 0,
           "signal": null,
           "reason": null,
-          "durationMs": 61.256,
+          "durationMs": 50.548,
           "result": {
             "schemaVersion": 1,
             "module": "runtime/numeric/fixed/subject.cjs",
@@ -388,7 +388,7 @@
           "exitCode": 0,
           "signal": null,
           "reason": null,
-          "durationMs": 56.97,
+          "durationMs": 49.989,
           "result": {
             "schemaVersion": 1,
             "module": "runtime/numeric/fixed/subject.cjs",
@@ -427,12 +427,12 @@
           "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
         }
       ],
-      "durationMs": 123.484,
+      "durationMs": 106.742,
       "providerCalls": 0,
       "networkRequests": 0,
       "authority": "module-replay-only",
       "isolation": "disposable-copy-credential-scrubbed-vm-not-os-sandbox",
-      "integrity": "cf0ee2a8119ce27ca3443860181f390a65089987f620b7751c4cfe1668a60814"
+      "integrity": "3b23b50c1d1986804e6a803efadff8259a760fcb8ec9266347fb603858f08a47"
     },
     "targetRepository": "validatorjs/validator.js",
     "targetRevision": "9ff342479591ca5a43cb30000195bcf55c1bbed9",
@@ -563,7 +563,7 @@
           "exitCode": 0,
           "signal": null,
           "reason": null,
-          "durationMs": 62.238,
+          "durationMs": 50.194,
           "result": {
             "schemaVersion": 1,
             "module": "runtime/targets/validator/isNumeric.js",
@@ -607,7 +607,7 @@
           "exitCode": 0,
           "signal": null,
           "reason": null,
-          "durationMs": 60.35,
+          "durationMs": 51.215,
           "result": {
             "schemaVersion": 1,
             "module": "runtime/targets/validator/isNumeric.js",
@@ -646,12 +646,12 @@
           "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
         }
       ],
-      "durationMs": 128.507,
+      "durationMs": 107.712,
       "providerCalls": 0,
       "networkRequests": 0,
       "authority": "module-replay-only",
       "isolation": "disposable-copy-credential-scrubbed-vm-not-os-sandbox",
-      "integrity": "ed2ba122f09bfc082b9171a3a873ef2e08bc650ee019d101c3363421f14e89c6"
+      "integrity": "a2fb5e813b09dad2325b4166d9733018875f887d928960668d3e46073a22a870"
     },
     "guided": {
       "schemaVersion": 1,
@@ -779,7 +779,7 @@
           "exitCode": 0,
           "signal": null,
           "reason": null,
-          "durationMs": 58.198,
+          "durationMs": 50.778,
           "result": {
             "schemaVersion": 1,
             "module": "runtime/targets/validator/isNumeric.js",
@@ -823,7 +823,7 @@
           "exitCode": 0,
           "signal": null,
           "reason": null,
-          "durationMs": 59.332,
+          "durationMs": 52.89,
           "result": {
             "schemaVersion": 1,
             "module": "runtime/targets/validator/isNumeric.js",
@@ -862,12 +862,12 @@
           "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
         }
       ],
-      "durationMs": 123.443,
+      "durationMs": 110.077,
       "providerCalls": 0,
       "networkRequests": 0,
       "authority": "module-replay-only",
       "isolation": "disposable-copy-credential-scrubbed-vm-not-os-sandbox",
-      "integrity": "094c2bb27dd1430407944f1c36f81607cb99bfc6f69d1636d45b2cf7cfd79598"
+      "integrity": "cfc059a93b4e11b3ee581f081c2854568a70f34f660b9c99b78b8f9fcd14824e"
     },
     "abstentionReason": null
   },
@@ -990,7 +990,7 @@
           "exitCode": 0,
           "signal": null,
           "reason": null,
-          "durationMs": 71.861,
+          "durationMs": 62.095,
           "result": {
             "schemaVersion": 1,
             "module": "runtime/plus/original/subject.cjs",
@@ -1034,7 +1034,7 @@
           "exitCode": 0,
           "signal": null,
           "reason": null,
-          "durationMs": 88.005,
+          "durationMs": 51.16,
           "result": {
             "schemaVersion": 1,
             "module": "runtime/plus/original/subject.cjs",
@@ -1073,12 +1073,12 @@
           "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
         }
       ],
-      "durationMs": 166.111,
+      "durationMs": 119.429,
       "providerCalls": 0,
       "networkRequests": 0,
       "authority": "module-replay-only",
       "isolation": "disposable-copy-credential-scrubbed-vm-not-os-sandbox",
-      "integrity": "cc1bbeb87c49622ffcb7178af16d22088f5e791478b0ecc702331b8e8cd0300c"
+      "integrity": "53edf0dd7b1cc74621cee8c5a97ce44a6561b3557c2f53860cd20539813b5708"
     },
     "fixed": {
       "schemaVersion": 1,
@@ -1196,7 +1196,7 @@
           "exitCode": 0,
           "signal": null,
           "reason": null,
-          "durationMs": 104.052,
+          "durationMs": 51.078,
           "result": {
             "schemaVersion": 1,
             "module": "runtime/plus/fixed/subject.cjs",
@@ -1240,7 +1240,7 @@
           "exitCode": 0,
           "signal": null,
           "reason": null,
-          "durationMs": 101.382,
+          "durationMs": 56.261,
           "result": {
             "schemaVersion": 1,
             "module": "runtime/plus/fixed/subject.cjs",
@@ -1279,12 +1279,12 @@
           "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
         }
       ],
-      "durationMs": 215.257,
+      "durationMs": 112.863,
       "providerCalls": 0,
       "networkRequests": 0,
       "authority": "module-replay-only",
       "isolation": "disposable-copy-credential-scrubbed-vm-not-os-sandbox",
-      "integrity": "674e5054ffb6d28f4b15c05b9c0ad4c9e2f1a364da1fbd71736e432ca536a10a"
+      "integrity": "a944b16d9f34f055842b8f63b23a17803d4de2799c584e54b0e14cbefe09ca7f"
     },
     "targetRepository": "pillarjs/encodeurl",
     "targetRevision": "059977240f83b724c75b4f8f684d583dd4779c48",
@@ -1405,7 +1405,7 @@
           "exitCode": 0,
           "signal": null,
           "reason": null,
-          "durationMs": 89.19,
+          "durationMs": 49.998,
           "result": {
             "schemaVersion": 1,
             "module": "runtime/targets/encodeurl/subject.cjs",
@@ -1449,7 +1449,7 @@
           "exitCode": 0,
           "signal": null,
           "reason": null,
-          "durationMs": 84.856,
+          "durationMs": 49.803,
           "result": {
             "schemaVersion": 1,
             "module": "runtime/targets/encodeurl/subject.cjs",
@@ -1488,12 +1488,12 @@
           "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
         }
       ],
-      "durationMs": 180.686,
+      "durationMs": 104.749,
       "providerCalls": 0,
       "networkRequests": 0,
       "authority": "module-replay-only",
       "isolation": "disposable-copy-credential-scrubbed-vm-not-os-sandbox",
-      "integrity": "34f05e811b55725dab868303ca2c155839f04718bc74d3d8cbc34095b241901e"
+      "integrity": "7f6c9fc0b333b278d024e3880ae6da60f59431b555002429bc913a15d1cd9593"
     },
     "guided": {
       "schemaVersion": 1,
@@ -1611,7 +1611,7 @@
           "exitCode": 0,
           "signal": null,
           "reason": null,
-          "durationMs": 72.519,
+          "durationMs": 50.382,
           "result": {
             "schemaVersion": 1,
             "module": "runtime/targets/encodeurl/subject.cjs",
@@ -1655,7 +1655,7 @@
           "exitCode": 0,
           "signal": null,
           "reason": null,
-          "durationMs": 73.745,
+          "durationMs": 52.001,
           "result": {
             "schemaVersion": 1,
             "module": "runtime/targets/encodeurl/subject.cjs",
@@ -1694,12 +1694,12 @@
           "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
         }
       ],
-      "durationMs": 151.605,
+      "durationMs": 107.028,
       "providerCalls": 0,
       "networkRequests": 0,
       "authority": "module-replay-only",
       "isolation": "disposable-copy-credential-scrubbed-vm-not-os-sandbox",
-      "integrity": "e4c9946bb13a84a17a53d39980a8323e71063a9d10bc04faa21fbbc24f3ff525"
+      "integrity": "35a039c23240aee2a4faec4f34c33648b5097e54f96eab2a57c433efc9659d61"
     },
     "abstentionReason": null
   },
@@ -1822,7 +1822,7 @@
           "exitCode": 0,
           "signal": null,
           "reason": null,
-          "durationMs": 69.103,
+          "durationMs": 50.531,
           "result": {
             "schemaVersion": 1,
             "module": "runtime/unicode/original/subject.cjs",
@@ -1866,7 +1866,7 @@
           "exitCode": 0,
           "signal": null,
           "reason": null,
-          "durationMs": 98.834,
+          "durationMs": 50.129,
           "result": {
             "schemaVersion": 1,
             "module": "runtime/unicode/original/subject.cjs",
@@ -1905,12 +1905,12 @@
           "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
         }
       ],
-      "durationMs": 173.316,
+      "durationMs": 105.278,
       "providerCalls": 0,
       "networkRequests": 0,
       "authority": "module-replay-only",
       "isolation": "disposable-copy-credential-scrubbed-vm-not-os-sandbox",
-      "integrity": "91e8c6a8dd8dd1fc19f046322a86bff8f819d9cbaca39b25c36896453e674035"
+      "integrity": "49f12e076aadf72706eb2bbd02ec8343ec9a43051b51b11ca5a4909603336a92"
     },
     "fixed": {
       "schemaVersion": 1,
@@ -2028,7 +2028,7 @@
           "exitCode": 0,
           "signal": null,
           "reason": null,
-          "durationMs": 74.669,
+          "durationMs": 49.522,
           "result": {
             "schemaVersion": 1,
             "module": "runtime/unicode/fixed/subject.cjs",
@@ -2072,7 +2072,7 @@
           "exitCode": 0,
           "signal": null,
           "reason": null,
-          "durationMs": 55.411,
+          "durationMs": 50.62,
           "result": {
             "schemaVersion": 1,
             "module": "runtime/unicode/fixed/subject.cjs",
@@ -2111,12 +2111,12 @@
           "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
         }
       ],
-      "durationMs": 135.782,
+      "durationMs": 104.417,
       "providerCalls": 0,
       "networkRequests": 0,
       "authority": "module-replay-only",
       "isolation": "disposable-copy-credential-scrubbed-vm-not-os-sandbox",
-      "integrity": "6fe24954b9582657dd4d167bfdbd952bd13ce29b90b5c44c668fff54ef5e6f74"
+      "integrity": "24dbe16330f7504883b28bee9df615502030dc413ef83e0c6076db14eea64357"
     },
     "targetRepository": "delvedor/fast-decode-uri-component",
     "targetRevision": "c124e25816434dcb25813a4a7b9c3898eec76922",
@@ -2237,7 +2237,7 @@
           "exitCode": 0,
           "signal": null,
           "reason": null,
-          "durationMs": 51.569,
+          "durationMs": 49.652,
           "result": {
             "schemaVersion": 1,
             "module": "runtime/targets/fastdecode/subject.cjs",
@@ -2281,7 +2281,7 @@
           "exitCode": 0,
           "signal": null,
           "reason": null,
-          "durationMs": 54.975,
+          "durationMs": 48.676,
           "result": {
             "schemaVersion": 1,
             "module": "runtime/targets/fastdecode/subject.cjs",
@@ -2320,12 +2320,12 @@
           "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
         }
       ],
-      "durationMs": 110.524,
+      "durationMs": 102.55,
       "providerCalls": 0,
       "networkRequests": 0,
       "authority": "module-replay-only",
       "isolation": "disposable-copy-credential-scrubbed-vm-not-os-sandbox",
-      "integrity": "3e8acddb617de4605fa95ee48c3685c64af7bdf87923b57f6e2c3db17717d92f"
+      "integrity": "cf5753f8f1aa98011c50f04b6e372bfc77355de7ae8a4e126d23d55589d954c9"
     },
     "guided": null,
     "abstentionReason": "Direct fork ancestry and maintainer-declared null-on-invalid contract exclude independent recovery transfer."

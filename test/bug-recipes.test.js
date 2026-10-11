@@ -4,6 +4,8 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import crypto from 'node:crypto';
+import childProcess from 'node:child_process';
+import {syncBuiltinESMExports} from 'node:module';
 import {validateBugRecipe,readBugRecipe,captureBugProbeSource,executeBugProbe,qualifyBugRecipe,verifyBugRecipeQualification,verifyBugProbeReceipt} from '../src/bug-recipes.js';
 
 const sha=value=>crypto.createHash('sha256').update(typeof value==='string'?value:JSON.stringify(value)).digest('hex');
@@ -35,3 +37,16 @@ test('receipt verifier independently derives assertion outcomes from raw observa
 test('receipt verifier admits inconclusive timeout but rejects extra fields',async t=>{const root=fixture(t,'export default ()=>new Promise(()=>{})'),report=await execute(root,{timeoutMs:80});assert.equal(verifyBugProbeReceipt(report,recipe()).outcome,'inconclusive');report.extra='forged';const {integrity,...body}=report;report.integrity=sha(body);assert.throws(()=>verifyBugProbeReceipt(report,recipe()),/Invalid/);});
 test('child ignores injected NODE_OPTIONS and credentials',async t=>{const root=fixture(t),previous=process.env.NODE_OPTIONS;try{process.env.NODE_OPTIONS='--require /nonexistent/injected-secret-loader.js';assert.equal((await execute(root)).outcome,'passed');}finally{if(previous===undefined)delete process.env.NODE_OPTIONS;else process.env.NODE_OPTIONS=previous;}});
 test('VM and runtime restrictions cannot manufacture a defect in otherwise valid code',async t=>{for(const source of ['export default ()=>eval("true")','export default ()=>new Function("return true")()','export default ()=>Buffer.from("value").length','export default ()=>new TextEncoder().encode("value").length']){const root=fixture(t,source);assert.equal((await execute(root)).outcome,'inconclusive');}});
+test('stable Node permission launch allows declared reads and denies writes, outside reads and child processes',async t=>{
+ const root=fixture(t),outside=fixture(t),spawn=childProcess.spawn,launches=[];let report;
+ try{
+  childProcess.spawn=function(executable,args,options){launches.push({executable,args,options});return spawn.call(this,executable,args,options);};syncBuiltinESMExports();
+  report=await execute(root);
+ }finally{childProcess.spawn=spawn;syncBuiltinESMExports();}
+ assert.equal(report.outcome,'passed',JSON.stringify(report.rawRuns));assert.equal(launches.length,2);
+ for(const launch of launches){assert.equal(launch.executable,process.execPath);assert.equal(launch.args[0],'--permission');assert.equal(launch.options.shell,undefined);assert.equal(launch.args.filter(arg=>arg.startsWith('--allow-fs-read=')).length,2);assert.ok(!launch.args.some(arg=>/^--(?:permission-audit|allow-fs-write|allow-child-process|allow-worker|allow-addons)(?:=|$)/.test(arg)));}
+ const allowed=fs.realpathSync(root),outsideFile=path.join(fs.realpathSync(outside),'entry.mjs'),writeTarget=path.join(allowed,'new.txt');
+ const code=`const fs=require('node:fs'),cp=require('node:child_process');const denied=f=>{try{f();return 'allowed'}catch(error){return error.code}};console.log(JSON.stringify({read:fs.readFileSync(process.argv[1],'utf8').length>0,outside:denied(()=>fs.readFileSync(process.argv[2])),write:denied(()=>fs.writeFileSync(process.argv[3],'forbidden')),child:denied(()=>cp.spawnSync(process.execPath,['--version']))}));`;
+ const observed=childProcess.spawnSync(process.execPath,['--permission','--allow-fs-read='+allowed,'--no-warnings','-e',code,path.join(allowed,'entry.mjs'),outsideFile,writeTarget],{env:{PATH:process.env.PATH},encoding:'utf8',shell:false,timeout:5000});
+ assert.equal(observed.status,0,observed.stderr);assert.deepEqual(JSON.parse(observed.stdout),{read:true,outside:'ERR_ACCESS_DENIED',write:'ERR_ACCESS_DENIED',child:'ERR_ACCESS_DENIED'});assert.equal(fs.existsSync(writeTarget),false);
+});

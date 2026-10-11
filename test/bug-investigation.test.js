@@ -28,12 +28,12 @@ test('planning executes no modules and preserves whitespace-formatted recipe byt
 test('green original suite exposes a new independently approved failure and emits an executable review-only regression',async t=>{
  const {root}=await project(t),original=fs.readFileSync(path.join(root,'test/native.test.mjs'));
  const nativeEnv={...process.env};delete nativeEnv.NODE_TEST_CONTEXT;
- const originalRun=spawnSync(process.execPath,['--test','test/native.test.mjs'],{cwd:root,env:nativeEnv,encoding:'utf8'});assert.equal(originalRun.status,0);assert.match(originalRun.stdout,/# tests 1/);
+ const originalRun=spawnSync(process.execPath,['--test','--test-reporter=tap','test/native.test.mjs'],{cwd:root,env:nativeEnv,encoding:'utf8'});assert.equal(originalRun.status,0);assert.match(originalRun.stdout,/# tests 1/);
  const report=await investigateBugs(root,{execute:true});assert.equal(report.summary.reproduced,1);assert.equal(report.exitCode,1);
  const finding=report.findings[0],proposal=JSON.parse(fs.readFileSync(path.join(root,finding.regressionProposal.path)));
  assert.equal(proposal.authority.apply,false);assert.deepEqual(fs.readFileSync(path.join(root,'test/native.test.mjs')),original);
  for(const file of proposal.files)write(root,file.path,file.content);
- const native=spawnSync(process.execPath,['--test',proposal.files[0].path],{cwd:root,env:nativeEnv,encoding:'utf8'});assert.equal(native.status,1,native.stdout+native.stderr+'\n'+proposal.files[0].content);assert.match(native.stdout,/# tests 2/);
+ const native=spawnSync(process.execPath,['--test','--test-reporter=tap',proposal.files[0].path],{cwd:root,env:nativeEnv,encoding:'utf8'});assert.equal(native.status,1,native.stdout+native.stderr+'\n'+proposal.files[0].content);assert.match(native.stdout,/# tests 2/);
  const captured=readInvestigationReport(root,report.receipt);assert.equal(captured.stale,false);
  assert.equal((await immunityStatus(root)).observation.summary.reproduced,1);
 });
