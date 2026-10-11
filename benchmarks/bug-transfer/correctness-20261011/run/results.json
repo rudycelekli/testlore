@@ -1,0 +1,2333 @@
+[
+  {
+    "id": "historical-whitespace-classification",
+    "historicalQualified": true,
+    "original": {
+      "schemaVersion": 1,
+      "kind": "bug-probe-receipt",
+      "recipe": {
+        "schemaVersion": 1,
+        "kind": "bug-recipe",
+        "id": "historical-whitespace-classification",
+        "family": "input-validation",
+        "provenance": {
+          "repository": "https://github.com/jonschlinkert/is-number",
+          "baseRevision": "204c885659b8ee1946534c61db91603b9a16d661",
+          "fixedRevision": "12749e3c411750f754d50f093471234c7ab270b0",
+          "evidenceClass": "public-historical"
+        },
+        "contract": {
+          "text": "Whitespace-only and empty strings are not numbers, as specified by the maintainer issue #3 assertions.",
+          "sourceUrl": "https://github.com/jonschlinkert/is-number/blob/12749e3c411750f754d50f093471234c7ab270b0/test.js",
+          "sourceSha256": "acb5000f91ab6a43244a94fa01910bf635b39084f5d9fd5ea74354c46c19b139",
+          "independence": "maintainer-specification"
+        },
+        "probe": {
+          "exportName": "default",
+          "cases": [
+            {
+              "id": "spaces",
+              "args": [
+                "   "
+              ],
+              "expect": {
+                "kind": "equals",
+                "value": false
+              }
+            },
+            {
+              "id": "controls",
+              "args": [
+                "\r\n\t"
+              ],
+              "expect": {
+                "kind": "equals",
+                "value": false
+              }
+            },
+            {
+              "id": "empty",
+              "args": [
+                ""
+              ],
+              "expect": {
+                "kind": "equals",
+                "value": false
+              }
+            }
+          ]
+        },
+        "applicability": {
+          "requiredIdentifiers": []
+        }
+      },
+      "recipeId": "historical-whitespace-classification",
+      "recipeSha256": "8f69ec4a4b6ba8de97096999b74b71e916d3ff7044d46f6c20c2a502e365dcad",
+      "module": "runtime/numeric/original/subject.cjs",
+      "files": [
+        {
+          "path": "runtime/numeric/original/is-buffer.cjs",
+          "sha256": "2643f3d49ea3a63349997f7b8d9f0048a965e465cc248f44f6774232d52d883d",
+          "bytes": 717
+        },
+        {
+          "path": "runtime/numeric/original/kind-of.cjs",
+          "sha256": "d355c5771b3123b56032bfe7cf2ed9545d50c80ecdb77330c7402981a290841b",
+          "bytes": 2387
+        },
+        {
+          "path": "runtime/numeric/original/package.json",
+          "sha256": "1239d4d885dcad42201a27ed9324f8f0f760b78700d8db9ced39a511cffe7eae",
+          "bytes": 18
+        },
+        {
+          "path": "runtime/numeric/original/subject.cjs",
+          "sha256": "966cf46b260ca852508226d2c7c61ee269519fc34cf688913fce7a0782009ec5",
+          "bytes": 402
+        }
+      ],
+      "sourceSha256": "0c6459c43380e0982b142ce6cf500f7c9899b641c5b4bba788429554bc4c85d9",
+      "workerSha256": "de73222fb12a0455acb3431380a280311e33cbf55bab063e29ea0a84c5c120a8",
+      "repeat": 2,
+      "timeoutMs": 3000,
+      "outcome": "reproduced",
+      "reason": null,
+      "cases": [
+        {
+          "id": "spaces",
+          "status": "mismatch",
+          "observed": {
+            "kind": "value",
+            "value": true
+          },
+          "observedSha256": "36e0b2452504022f0cc99b3d1dab22ff01c0d070fe6843df271c06412d65f416"
+        },
+        {
+          "id": "controls",
+          "status": "mismatch",
+          "observed": {
+            "kind": "value",
+            "value": true
+          },
+          "observedSha256": "36e0b2452504022f0cc99b3d1dab22ff01c0d070fe6843df271c06412d65f416"
+        },
+        {
+          "id": "empty",
+          "status": "passed",
+          "observed": {
+            "kind": "value",
+            "value": false
+          },
+          "observedSha256": "f0d464dae11c9c1e424ef15aab74b2a9fa5dd7fd1df3aa7faabd3e77f852c37c"
+        }
+      ],
+      "rawRuns": [
+        {
+          "stdout": "{\"schemaVersion\":1,\"module\":\"runtime/numeric/original/subject.cjs\",\"sourceSha256\":\"0c6459c43380e0982b142ce6cf500f7c9899b641c5b4bba788429554bc4c85d9\",\"cases\":[{\"id\":\"spaces\",\"status\":\"mismatch\",\"observed\":{\"kind\":\"value\",\"value\":true},\"observedSha256\":\"36e0b2452504022f0cc99b3d1dab22ff01c0d070fe6843df271c06412d65f416\"},{\"id\":\"controls\",\"status\":\"mismatch\",\"observed\":{\"kind\":\"value\",\"value\":true},\"observedSha256\":\"36e0b2452504022f0cc99b3d1dab22ff01c0d070fe6843df271c06412d65f416\"},{\"id\":\"empty\",\"status\":\"passed\",\"observed\":{\"kind\":\"value\",\"value\":false},\"observedSha256\":\"f0d464dae11c9c1e424ef15aab74b2a9fa5dd7fd1df3aa7faabd3e77f852c37c\"}]}",
+          "stderr": "",
+          "exitCode": 0,
+          "signal": null,
+          "reason": null,
+          "durationMs": 59.496,
+          "result": {
+            "schemaVersion": 1,
+            "module": "runtime/numeric/original/subject.cjs",
+            "sourceSha256": "0c6459c43380e0982b142ce6cf500f7c9899b641c5b4bba788429554bc4c85d9",
+            "cases": [
+              {
+                "id": "spaces",
+                "status": "mismatch",
+                "observed": {
+                  "kind": "value",
+                  "value": true
+                },
+                "observedSha256": "36e0b2452504022f0cc99b3d1dab22ff01c0d070fe6843df271c06412d65f416"
+              },
+              {
+                "id": "controls",
+                "status": "mismatch",
+                "observed": {
+                  "kind": "value",
+                  "value": true
+                },
+                "observedSha256": "36e0b2452504022f0cc99b3d1dab22ff01c0d070fe6843df271c06412d65f416"
+              },
+              {
+                "id": "empty",
+                "status": "passed",
+                "observed": {
+                  "kind": "value",
+                  "value": false
+                },
+                "observedSha256": "f0d464dae11c9c1e424ef15aab74b2a9fa5dd7fd1df3aa7faabd3e77f852c37c"
+              }
+            ]
+          },
+          "stdoutSha256": "69b07d4e8dc4d5dcfcb867fd1ea64725da9945a3dd62c40a429a29bb75be9c43",
+          "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "stdout": "{\"schemaVersion\":1,\"module\":\"runtime/numeric/original/subject.cjs\",\"sourceSha256\":\"0c6459c43380e0982b142ce6cf500f7c9899b641c5b4bba788429554bc4c85d9\",\"cases\":[{\"id\":\"spaces\",\"status\":\"mismatch\",\"observed\":{\"kind\":\"value\",\"value\":true},\"observedSha256\":\"36e0b2452504022f0cc99b3d1dab22ff01c0d070fe6843df271c06412d65f416\"},{\"id\":\"controls\",\"status\":\"mismatch\",\"observed\":{\"kind\":\"value\",\"value\":true},\"observedSha256\":\"36e0b2452504022f0cc99b3d1dab22ff01c0d070fe6843df271c06412d65f416\"},{\"id\":\"empty\",\"status\":\"passed\",\"observed\":{\"kind\":\"value\",\"value\":false},\"observedSha256\":\"f0d464dae11c9c1e424ef15aab74b2a9fa5dd7fd1df3aa7faabd3e77f852c37c\"}]}",
+          "stderr": "",
+          "exitCode": 0,
+          "signal": null,
+          "reason": null,
+          "durationMs": 58.577,
+          "result": {
+            "schemaVersion": 1,
+            "module": "runtime/numeric/original/subject.cjs",
+            "sourceSha256": "0c6459c43380e0982b142ce6cf500f7c9899b641c5b4bba788429554bc4c85d9",
+            "cases": [
+              {
+                "id": "spaces",
+                "status": "mismatch",
+                "observed": {
+                  "kind": "value",
+                  "value": true
+                },
+                "observedSha256": "36e0b2452504022f0cc99b3d1dab22ff01c0d070fe6843df271c06412d65f416"
+              },
+              {
+                "id": "controls",
+                "status": "mismatch",
+                "observed": {
+                  "kind": "value",
+                  "value": true
+                },
+                "observedSha256": "36e0b2452504022f0cc99b3d1dab22ff01c0d070fe6843df271c06412d65f416"
+              },
+              {
+                "id": "empty",
+                "status": "passed",
+                "observed": {
+                  "kind": "value",
+                  "value": false
+                },
+                "observedSha256": "f0d464dae11c9c1e424ef15aab74b2a9fa5dd7fd1df3aa7faabd3e77f852c37c"
+              }
+            ]
+          },
+          "stdoutSha256": "69b07d4e8dc4d5dcfcb867fd1ea64725da9945a3dd62c40a429a29bb75be9c43",
+          "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ],
+      "durationMs": 125.997,
+      "providerCalls": 0,
+      "networkRequests": 0,
+      "authority": "module-replay-only",
+      "isolation": "disposable-copy-credential-scrubbed-vm-not-os-sandbox",
+      "integrity": "c9890774ac383829e912d675dcb045a7145450b0985babbdf846017146763ef0"
+    },
+    "fixed": {
+      "schemaVersion": 1,
+      "kind": "bug-probe-receipt",
+      "recipe": {
+        "schemaVersion": 1,
+        "kind": "bug-recipe",
+        "id": "historical-whitespace-classification",
+        "family": "input-validation",
+        "provenance": {
+          "repository": "https://github.com/jonschlinkert/is-number",
+          "baseRevision": "204c885659b8ee1946534c61db91603b9a16d661",
+          "fixedRevision": "12749e3c411750f754d50f093471234c7ab270b0",
+          "evidenceClass": "public-historical"
+        },
+        "contract": {
+          "text": "Whitespace-only and empty strings are not numbers, as specified by the maintainer issue #3 assertions.",
+          "sourceUrl": "https://github.com/jonschlinkert/is-number/blob/12749e3c411750f754d50f093471234c7ab270b0/test.js",
+          "sourceSha256": "acb5000f91ab6a43244a94fa01910bf635b39084f5d9fd5ea74354c46c19b139",
+          "independence": "maintainer-specification"
+        },
+        "probe": {
+          "exportName": "default",
+          "cases": [
+            {
+              "id": "spaces",
+              "args": [
+                "   "
+              ],
+              "expect": {
+                "kind": "equals",
+                "value": false
+              }
+            },
+            {
+              "id": "controls",
+              "args": [
+                "\r\n\t"
+              ],
+              "expect": {
+                "kind": "equals",
+                "value": false
+              }
+            },
+            {
+              "id": "empty",
+              "args": [
+                ""
+              ],
+              "expect": {
+                "kind": "equals",
+                "value": false
+              }
+            }
+          ]
+        },
+        "applicability": {
+          "requiredIdentifiers": []
+        }
+      },
+      "recipeId": "historical-whitespace-classification",
+      "recipeSha256": "8f69ec4a4b6ba8de97096999b74b71e916d3ff7044d46f6c20c2a502e365dcad",
+      "module": "runtime/numeric/fixed/subject.cjs",
+      "files": [
+        {
+          "path": "runtime/numeric/fixed/is-buffer.cjs",
+          "sha256": "2643f3d49ea3a63349997f7b8d9f0048a965e465cc248f44f6774232d52d883d",
+          "bytes": 717
+        },
+        {
+          "path": "runtime/numeric/fixed/kind-of.cjs",
+          "sha256": "d355c5771b3123b56032bfe7cf2ed9545d50c80ecdb77330c7402981a290841b",
+          "bytes": 2387
+        },
+        {
+          "path": "runtime/numeric/fixed/package.json",
+          "sha256": "1239d4d885dcad42201a27ed9324f8f0f760b78700d8db9ced39a511cffe7eae",
+          "bytes": 18
+        },
+        {
+          "path": "runtime/numeric/fixed/subject.cjs",
+          "sha256": "e569644cdc2eec72402d5ceb33d6a58ca701dcbb8136080e5514e73740228cec",
+          "bytes": 517
+        }
+      ],
+      "sourceSha256": "c6eb4ec5dd7768e10f986b6907076c1d49a8b72de850ac87008ddefee72ea995",
+      "workerSha256": "de73222fb12a0455acb3431380a280311e33cbf55bab063e29ea0a84c5c120a8",
+      "repeat": 2,
+      "timeoutMs": 3000,
+      "outcome": "passed",
+      "reason": null,
+      "cases": [
+        {
+          "id": "spaces",
+          "status": "passed",
+          "observed": {
+            "kind": "value",
+            "value": false
+          },
+          "observedSha256": "f0d464dae11c9c1e424ef15aab74b2a9fa5dd7fd1df3aa7faabd3e77f852c37c"
+        },
+        {
+          "id": "controls",
+          "status": "passed",
+          "observed": {
+            "kind": "value",
+            "value": false
+          },
+          "observedSha256": "f0d464dae11c9c1e424ef15aab74b2a9fa5dd7fd1df3aa7faabd3e77f852c37c"
+        },
+        {
+          "id": "empty",
+          "status": "passed",
+          "observed": {
+            "kind": "value",
+            "value": false
+          },
+          "observedSha256": "f0d464dae11c9c1e424ef15aab74b2a9fa5dd7fd1df3aa7faabd3e77f852c37c"
+        }
+      ],
+      "rawRuns": [
+        {
+          "stdout": "{\"schemaVersion\":1,\"module\":\"runtime/numeric/fixed/subject.cjs\",\"sourceSha256\":\"c6eb4ec5dd7768e10f986b6907076c1d49a8b72de850ac87008ddefee72ea995\",\"cases\":[{\"id\":\"spaces\",\"status\":\"passed\",\"observed\":{\"kind\":\"value\",\"value\":false},\"observedSha256\":\"f0d464dae11c9c1e424ef15aab74b2a9fa5dd7fd1df3aa7faabd3e77f852c37c\"},{\"id\":\"controls\",\"status\":\"passed\",\"observed\":{\"kind\":\"value\",\"value\":false},\"observedSha256\":\"f0d464dae11c9c1e424ef15aab74b2a9fa5dd7fd1df3aa7faabd3e77f852c37c\"},{\"id\":\"empty\",\"status\":\"passed\",\"observed\":{\"kind\":\"value\",\"value\":false},\"observedSha256\":\"f0d464dae11c9c1e424ef15aab74b2a9fa5dd7fd1df3aa7faabd3e77f852c37c\"}]}",
+          "stderr": "",
+          "exitCode": 0,
+          "signal": null,
+          "reason": null,
+          "durationMs": 61.256,
+          "result": {
+            "schemaVersion": 1,
+            "module": "runtime/numeric/fixed/subject.cjs",
+            "sourceSha256": "c6eb4ec5dd7768e10f986b6907076c1d49a8b72de850ac87008ddefee72ea995",
+            "cases": [
+              {
+                "id": "spaces",
+                "status": "passed",
+                "observed": {
+                  "kind": "value",
+                  "value": false
+                },
+                "observedSha256": "f0d464dae11c9c1e424ef15aab74b2a9fa5dd7fd1df3aa7faabd3e77f852c37c"
+              },
+              {
+                "id": "controls",
+                "status": "passed",
+                "observed": {
+                  "kind": "value",
+                  "value": false
+                },
+                "observedSha256": "f0d464dae11c9c1e424ef15aab74b2a9fa5dd7fd1df3aa7faabd3e77f852c37c"
+              },
+              {
+                "id": "empty",
+                "status": "passed",
+                "observed": {
+                  "kind": "value",
+                  "value": false
+                },
+                "observedSha256": "f0d464dae11c9c1e424ef15aab74b2a9fa5dd7fd1df3aa7faabd3e77f852c37c"
+              }
+            ]
+          },
+          "stdoutSha256": "aee6f2c9b8327c584e98ad8c0c03e5f617210c68bbc6ed5372d292c17d1fb7e0",
+          "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "stdout": "{\"schemaVersion\":1,\"module\":\"runtime/numeric/fixed/subject.cjs\",\"sourceSha256\":\"c6eb4ec5dd7768e10f986b6907076c1d49a8b72de850ac87008ddefee72ea995\",\"cases\":[{\"id\":\"spaces\",\"status\":\"passed\",\"observed\":{\"kind\":\"value\",\"value\":false},\"observedSha256\":\"f0d464dae11c9c1e424ef15aab74b2a9fa5dd7fd1df3aa7faabd3e77f852c37c\"},{\"id\":\"controls\",\"status\":\"passed\",\"observed\":{\"kind\":\"value\",\"value\":false},\"observedSha256\":\"f0d464dae11c9c1e424ef15aab74b2a9fa5dd7fd1df3aa7faabd3e77f852c37c\"},{\"id\":\"empty\",\"status\":\"passed\",\"observed\":{\"kind\":\"value\",\"value\":false},\"observedSha256\":\"f0d464dae11c9c1e424ef15aab74b2a9fa5dd7fd1df3aa7faabd3e77f852c37c\"}]}",
+          "stderr": "",
+          "exitCode": 0,
+          "signal": null,
+          "reason": null,
+          "durationMs": 56.97,
+          "result": {
+            "schemaVersion": 1,
+            "module": "runtime/numeric/fixed/subject.cjs",
+            "sourceSha256": "c6eb4ec5dd7768e10f986b6907076c1d49a8b72de850ac87008ddefee72ea995",
+            "cases": [
+              {
+                "id": "spaces",
+                "status": "passed",
+                "observed": {
+                  "kind": "value",
+                  "value": false
+                },
+                "observedSha256": "f0d464dae11c9c1e424ef15aab74b2a9fa5dd7fd1df3aa7faabd3e77f852c37c"
+              },
+              {
+                "id": "controls",
+                "status": "passed",
+                "observed": {
+                  "kind": "value",
+                  "value": false
+                },
+                "observedSha256": "f0d464dae11c9c1e424ef15aab74b2a9fa5dd7fd1df3aa7faabd3e77f852c37c"
+              },
+              {
+                "id": "empty",
+                "status": "passed",
+                "observed": {
+                  "kind": "value",
+                  "value": false
+                },
+                "observedSha256": "f0d464dae11c9c1e424ef15aab74b2a9fa5dd7fd1df3aa7faabd3e77f852c37c"
+              }
+            ]
+          },
+          "stdoutSha256": "aee6f2c9b8327c584e98ad8c0c03e5f617210c68bbc6ed5372d292c17d1fb7e0",
+          "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ],
+      "durationMs": 123.484,
+      "providerCalls": 0,
+      "networkRequests": 0,
+      "authority": "module-replay-only",
+      "isolation": "disposable-copy-credential-scrubbed-vm-not-os-sandbox",
+      "integrity": "cf0ee2a8119ce27ca3443860181f390a65089987f620b7751c4cfe1668a60814"
+    },
+    "targetRepository": "validatorjs/validator.js",
+    "targetRevision": "9ff342479591ca5a43cb30000195bcf55c1bbed9",
+    "eligibleIndependentTransfer": true,
+    "unguided": {
+      "schemaVersion": 1,
+      "kind": "bug-probe-receipt",
+      "recipe": {
+        "schemaVersion": 1,
+        "kind": "bug-recipe",
+        "id": "historical-whitespace-classification",
+        "family": "input-validation",
+        "provenance": {
+          "repository": "https://github.com/jonschlinkert/is-number",
+          "baseRevision": "204c885659b8ee1946534c61db91603b9a16d661",
+          "fixedRevision": "12749e3c411750f754d50f093471234c7ab270b0",
+          "evidenceClass": "public-historical"
+        },
+        "contract": {
+          "text": "Whitespace-only and empty strings are not numbers, as specified by the maintainer issue #3 assertions.",
+          "sourceUrl": "https://github.com/jonschlinkert/is-number/blob/12749e3c411750f754d50f093471234c7ab270b0/test.js",
+          "sourceSha256": "acb5000f91ab6a43244a94fa01910bf635b39084f5d9fd5ea74354c46c19b139",
+          "independence": "maintainer-specification"
+        },
+        "probe": {
+          "exportName": "default",
+          "cases": [
+            {
+              "id": "integer",
+              "args": [
+                "123"
+              ],
+              "expect": {
+                "kind": "equals",
+                "value": true
+              }
+            },
+            {
+              "id": "decimal",
+              "args": [
+                "-4.5"
+              ],
+              "expect": {
+                "kind": "equals",
+                "value": true
+              }
+            },
+            {
+              "id": "non-number",
+              "args": [
+                "abc"
+              ],
+              "expect": {
+                "kind": "equals",
+                "value": false
+              }
+            }
+          ]
+        },
+        "applicability": {
+          "requiredIdentifiers": []
+        }
+      },
+      "recipeId": "historical-whitespace-classification",
+      "recipeSha256": "b09af316b75eb5520733b03f39d655e0e8cc2007506c85f3cfd4e78a3e1818de",
+      "module": "runtime/targets/validator/isNumeric.js",
+      "files": [
+        {
+          "path": "runtime/targets/validator/alpha.js",
+          "sha256": "1809a6799b2f401b512bee356574f30f2e1211c6f7ca417bc33744233cc9fac2",
+          "bytes": 7267
+        },
+        {
+          "path": "runtime/targets/validator/isNumeric.js",
+          "sha256": "41c26668b3cd76a3a0a4d707c2807ca96410a1c873a9fd6ee2edaff672ec2adf",
+          "bytes": 395
+        },
+        {
+          "path": "runtime/targets/validator/package.json",
+          "sha256": "1239d4d885dcad42201a27ed9324f8f0f760b78700d8db9ced39a511cffe7eae",
+          "bytes": 18
+        },
+        {
+          "path": "runtime/targets/validator/util/assertString.js",
+          "sha256": "e54a2f8bfeeabf30427cad6ee5369a7786b4c3e1189bb914ae063d3ccb966bbb",
+          "bytes": 285
+        }
+      ],
+      "sourceSha256": "84615c4a0f18fa06c5f213b5cc4d2b224ce77279e42e8df45119637305e54f84",
+      "workerSha256": "de73222fb12a0455acb3431380a280311e33cbf55bab063e29ea0a84c5c120a8",
+      "repeat": 2,
+      "timeoutMs": 3000,
+      "outcome": "passed",
+      "reason": null,
+      "cases": [
+        {
+          "id": "integer",
+          "status": "passed",
+          "observed": {
+            "kind": "value",
+            "value": true
+          },
+          "observedSha256": "36e0b2452504022f0cc99b3d1dab22ff01c0d070fe6843df271c06412d65f416"
+        },
+        {
+          "id": "decimal",
+          "status": "passed",
+          "observed": {
+            "kind": "value",
+            "value": true
+          },
+          "observedSha256": "36e0b2452504022f0cc99b3d1dab22ff01c0d070fe6843df271c06412d65f416"
+        },
+        {
+          "id": "non-number",
+          "status": "passed",
+          "observed": {
+            "kind": "value",
+            "value": false
+          },
+          "observedSha256": "f0d464dae11c9c1e424ef15aab74b2a9fa5dd7fd1df3aa7faabd3e77f852c37c"
+        }
+      ],
+      "rawRuns": [
+        {
+          "stdout": "{\"schemaVersion\":1,\"module\":\"runtime/targets/validator/isNumeric.js\",\"sourceSha256\":\"84615c4a0f18fa06c5f213b5cc4d2b224ce77279e42e8df45119637305e54f84\",\"cases\":[{\"id\":\"integer\",\"status\":\"passed\",\"observed\":{\"kind\":\"value\",\"value\":true},\"observedSha256\":\"36e0b2452504022f0cc99b3d1dab22ff01c0d070fe6843df271c06412d65f416\"},{\"id\":\"decimal\",\"status\":\"passed\",\"observed\":{\"kind\":\"value\",\"value\":true},\"observedSha256\":\"36e0b2452504022f0cc99b3d1dab22ff01c0d070fe6843df271c06412d65f416\"},{\"id\":\"non-number\",\"status\":\"passed\",\"observed\":{\"kind\":\"value\",\"value\":false},\"observedSha256\":\"f0d464dae11c9c1e424ef15aab74b2a9fa5dd7fd1df3aa7faabd3e77f852c37c\"}]}",
+          "stderr": "",
+          "exitCode": 0,
+          "signal": null,
+          "reason": null,
+          "durationMs": 62.238,
+          "result": {
+            "schemaVersion": 1,
+            "module": "runtime/targets/validator/isNumeric.js",
+            "sourceSha256": "84615c4a0f18fa06c5f213b5cc4d2b224ce77279e42e8df45119637305e54f84",
+            "cases": [
+              {
+                "id": "integer",
+                "status": "passed",
+                "observed": {
+                  "kind": "value",
+                  "value": true
+                },
+                "observedSha256": "36e0b2452504022f0cc99b3d1dab22ff01c0d070fe6843df271c06412d65f416"
+              },
+              {
+                "id": "decimal",
+                "status": "passed",
+                "observed": {
+                  "kind": "value",
+                  "value": true
+                },
+                "observedSha256": "36e0b2452504022f0cc99b3d1dab22ff01c0d070fe6843df271c06412d65f416"
+              },
+              {
+                "id": "non-number",
+                "status": "passed",
+                "observed": {
+                  "kind": "value",
+                  "value": false
+                },
+                "observedSha256": "f0d464dae11c9c1e424ef15aab74b2a9fa5dd7fd1df3aa7faabd3e77f852c37c"
+              }
+            ]
+          },
+          "stdoutSha256": "0c1faee0632c80a8dbe92e9084c4efc5568bba9b294207c137864e6604ba17d8",
+          "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "stdout": "{\"schemaVersion\":1,\"module\":\"runtime/targets/validator/isNumeric.js\",\"sourceSha256\":\"84615c4a0f18fa06c5f213b5cc4d2b224ce77279e42e8df45119637305e54f84\",\"cases\":[{\"id\":\"integer\",\"status\":\"passed\",\"observed\":{\"kind\":\"value\",\"value\":true},\"observedSha256\":\"36e0b2452504022f0cc99b3d1dab22ff01c0d070fe6843df271c06412d65f416\"},{\"id\":\"decimal\",\"status\":\"passed\",\"observed\":{\"kind\":\"value\",\"value\":true},\"observedSha256\":\"36e0b2452504022f0cc99b3d1dab22ff01c0d070fe6843df271c06412d65f416\"},{\"id\":\"non-number\",\"status\":\"passed\",\"observed\":{\"kind\":\"value\",\"value\":false},\"observedSha256\":\"f0d464dae11c9c1e424ef15aab74b2a9fa5dd7fd1df3aa7faabd3e77f852c37c\"}]}",
+          "stderr": "",
+          "exitCode": 0,
+          "signal": null,
+          "reason": null,
+          "durationMs": 60.35,
+          "result": {
+            "schemaVersion": 1,
+            "module": "runtime/targets/validator/isNumeric.js",
+            "sourceSha256": "84615c4a0f18fa06c5f213b5cc4d2b224ce77279e42e8df45119637305e54f84",
+            "cases": [
+              {
+                "id": "integer",
+                "status": "passed",
+                "observed": {
+                  "kind": "value",
+                  "value": true
+                },
+                "observedSha256": "36e0b2452504022f0cc99b3d1dab22ff01c0d070fe6843df271c06412d65f416"
+              },
+              {
+                "id": "decimal",
+                "status": "passed",
+                "observed": {
+                  "kind": "value",
+                  "value": true
+                },
+                "observedSha256": "36e0b2452504022f0cc99b3d1dab22ff01c0d070fe6843df271c06412d65f416"
+              },
+              {
+                "id": "non-number",
+                "status": "passed",
+                "observed": {
+                  "kind": "value",
+                  "value": false
+                },
+                "observedSha256": "f0d464dae11c9c1e424ef15aab74b2a9fa5dd7fd1df3aa7faabd3e77f852c37c"
+              }
+            ]
+          },
+          "stdoutSha256": "0c1faee0632c80a8dbe92e9084c4efc5568bba9b294207c137864e6604ba17d8",
+          "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ],
+      "durationMs": 128.507,
+      "providerCalls": 0,
+      "networkRequests": 0,
+      "authority": "module-replay-only",
+      "isolation": "disposable-copy-credential-scrubbed-vm-not-os-sandbox",
+      "integrity": "ed2ba122f09bfc082b9171a3a873ef2e08bc650ee019d101c3363421f14e89c6"
+    },
+    "guided": {
+      "schemaVersion": 1,
+      "kind": "bug-probe-receipt",
+      "recipe": {
+        "schemaVersion": 1,
+        "kind": "bug-recipe",
+        "id": "historical-whitespace-classification",
+        "family": "input-validation",
+        "provenance": {
+          "repository": "https://github.com/jonschlinkert/is-number",
+          "baseRevision": "204c885659b8ee1946534c61db91603b9a16d661",
+          "fixedRevision": "12749e3c411750f754d50f093471234c7ab270b0",
+          "evidenceClass": "public-historical"
+        },
+        "contract": {
+          "text": "Whitespace-only and empty strings are not numbers, as specified by the maintainer issue #3 assertions.",
+          "sourceUrl": "https://github.com/jonschlinkert/is-number/blob/12749e3c411750f754d50f093471234c7ab270b0/test.js",
+          "sourceSha256": "acb5000f91ab6a43244a94fa01910bf635b39084f5d9fd5ea74354c46c19b139",
+          "independence": "maintainer-specification"
+        },
+        "probe": {
+          "exportName": "default",
+          "cases": [
+            {
+              "id": "spaces",
+              "args": [
+                "   "
+              ],
+              "expect": {
+                "kind": "equals",
+                "value": false
+              }
+            },
+            {
+              "id": "controls",
+              "args": [
+                "\r\n\t"
+              ],
+              "expect": {
+                "kind": "equals",
+                "value": false
+              }
+            },
+            {
+              "id": "empty",
+              "args": [
+                ""
+              ],
+              "expect": {
+                "kind": "equals",
+                "value": false
+              }
+            }
+          ]
+        },
+        "applicability": {
+          "requiredIdentifiers": []
+        }
+      },
+      "recipeId": "historical-whitespace-classification",
+      "recipeSha256": "8f69ec4a4b6ba8de97096999b74b71e916d3ff7044d46f6c20c2a502e365dcad",
+      "module": "runtime/targets/validator/isNumeric.js",
+      "files": [
+        {
+          "path": "runtime/targets/validator/alpha.js",
+          "sha256": "1809a6799b2f401b512bee356574f30f2e1211c6f7ca417bc33744233cc9fac2",
+          "bytes": 7267
+        },
+        {
+          "path": "runtime/targets/validator/isNumeric.js",
+          "sha256": "41c26668b3cd76a3a0a4d707c2807ca96410a1c873a9fd6ee2edaff672ec2adf",
+          "bytes": 395
+        },
+        {
+          "path": "runtime/targets/validator/package.json",
+          "sha256": "1239d4d885dcad42201a27ed9324f8f0f760b78700d8db9ced39a511cffe7eae",
+          "bytes": 18
+        },
+        {
+          "path": "runtime/targets/validator/util/assertString.js",
+          "sha256": "e54a2f8bfeeabf30427cad6ee5369a7786b4c3e1189bb914ae063d3ccb966bbb",
+          "bytes": 285
+        }
+      ],
+      "sourceSha256": "84615c4a0f18fa06c5f213b5cc4d2b224ce77279e42e8df45119637305e54f84",
+      "workerSha256": "de73222fb12a0455acb3431380a280311e33cbf55bab063e29ea0a84c5c120a8",
+      "repeat": 2,
+      "timeoutMs": 3000,
+      "outcome": "passed",
+      "reason": null,
+      "cases": [
+        {
+          "id": "spaces",
+          "status": "passed",
+          "observed": {
+            "kind": "value",
+            "value": false
+          },
+          "observedSha256": "f0d464dae11c9c1e424ef15aab74b2a9fa5dd7fd1df3aa7faabd3e77f852c37c"
+        },
+        {
+          "id": "controls",
+          "status": "passed",
+          "observed": {
+            "kind": "value",
+            "value": false
+          },
+          "observedSha256": "f0d464dae11c9c1e424ef15aab74b2a9fa5dd7fd1df3aa7faabd3e77f852c37c"
+        },
+        {
+          "id": "empty",
+          "status": "passed",
+          "observed": {
+            "kind": "value",
+            "value": false
+          },
+          "observedSha256": "f0d464dae11c9c1e424ef15aab74b2a9fa5dd7fd1df3aa7faabd3e77f852c37c"
+        }
+      ],
+      "rawRuns": [
+        {
+          "stdout": "{\"schemaVersion\":1,\"module\":\"runtime/targets/validator/isNumeric.js\",\"sourceSha256\":\"84615c4a0f18fa06c5f213b5cc4d2b224ce77279e42e8df45119637305e54f84\",\"cases\":[{\"id\":\"spaces\",\"status\":\"passed\",\"observed\":{\"kind\":\"value\",\"value\":false},\"observedSha256\":\"f0d464dae11c9c1e424ef15aab74b2a9fa5dd7fd1df3aa7faabd3e77f852c37c\"},{\"id\":\"controls\",\"status\":\"passed\",\"observed\":{\"kind\":\"value\",\"value\":false},\"observedSha256\":\"f0d464dae11c9c1e424ef15aab74b2a9fa5dd7fd1df3aa7faabd3e77f852c37c\"},{\"id\":\"empty\",\"status\":\"passed\",\"observed\":{\"kind\":\"value\",\"value\":false},\"observedSha256\":\"f0d464dae11c9c1e424ef15aab74b2a9fa5dd7fd1df3aa7faabd3e77f852c37c\"}]}",
+          "stderr": "",
+          "exitCode": 0,
+          "signal": null,
+          "reason": null,
+          "durationMs": 58.198,
+          "result": {
+            "schemaVersion": 1,
+            "module": "runtime/targets/validator/isNumeric.js",
+            "sourceSha256": "84615c4a0f18fa06c5f213b5cc4d2b224ce77279e42e8df45119637305e54f84",
+            "cases": [
+              {
+                "id": "spaces",
+                "status": "passed",
+                "observed": {
+                  "kind": "value",
+                  "value": false
+                },
+                "observedSha256": "f0d464dae11c9c1e424ef15aab74b2a9fa5dd7fd1df3aa7faabd3e77f852c37c"
+              },
+              {
+                "id": "controls",
+                "status": "passed",
+                "observed": {
+                  "kind": "value",
+                  "value": false
+                },
+                "observedSha256": "f0d464dae11c9c1e424ef15aab74b2a9fa5dd7fd1df3aa7faabd3e77f852c37c"
+              },
+              {
+                "id": "empty",
+                "status": "passed",
+                "observed": {
+                  "kind": "value",
+                  "value": false
+                },
+                "observedSha256": "f0d464dae11c9c1e424ef15aab74b2a9fa5dd7fd1df3aa7faabd3e77f852c37c"
+              }
+            ]
+          },
+          "stdoutSha256": "fe7a061b8ecc81083cbd43b830790c9021f6118a237c08e025162a3ff82891a1",
+          "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "stdout": "{\"schemaVersion\":1,\"module\":\"runtime/targets/validator/isNumeric.js\",\"sourceSha256\":\"84615c4a0f18fa06c5f213b5cc4d2b224ce77279e42e8df45119637305e54f84\",\"cases\":[{\"id\":\"spaces\",\"status\":\"passed\",\"observed\":{\"kind\":\"value\",\"value\":false},\"observedSha256\":\"f0d464dae11c9c1e424ef15aab74b2a9fa5dd7fd1df3aa7faabd3e77f852c37c\"},{\"id\":\"controls\",\"status\":\"passed\",\"observed\":{\"kind\":\"value\",\"value\":false},\"observedSha256\":\"f0d464dae11c9c1e424ef15aab74b2a9fa5dd7fd1df3aa7faabd3e77f852c37c\"},{\"id\":\"empty\",\"status\":\"passed\",\"observed\":{\"kind\":\"value\",\"value\":false},\"observedSha256\":\"f0d464dae11c9c1e424ef15aab74b2a9fa5dd7fd1df3aa7faabd3e77f852c37c\"}]}",
+          "stderr": "",
+          "exitCode": 0,
+          "signal": null,
+          "reason": null,
+          "durationMs": 59.332,
+          "result": {
+            "schemaVersion": 1,
+            "module": "runtime/targets/validator/isNumeric.js",
+            "sourceSha256": "84615c4a0f18fa06c5f213b5cc4d2b224ce77279e42e8df45119637305e54f84",
+            "cases": [
+              {
+                "id": "spaces",
+                "status": "passed",
+                "observed": {
+                  "kind": "value",
+                  "value": false
+                },
+                "observedSha256": "f0d464dae11c9c1e424ef15aab74b2a9fa5dd7fd1df3aa7faabd3e77f852c37c"
+              },
+              {
+                "id": "controls",
+                "status": "passed",
+                "observed": {
+                  "kind": "value",
+                  "value": false
+                },
+                "observedSha256": "f0d464dae11c9c1e424ef15aab74b2a9fa5dd7fd1df3aa7faabd3e77f852c37c"
+              },
+              {
+                "id": "empty",
+                "status": "passed",
+                "observed": {
+                  "kind": "value",
+                  "value": false
+                },
+                "observedSha256": "f0d464dae11c9c1e424ef15aab74b2a9fa5dd7fd1df3aa7faabd3e77f852c37c"
+              }
+            ]
+          },
+          "stdoutSha256": "fe7a061b8ecc81083cbd43b830790c9021f6118a237c08e025162a3ff82891a1",
+          "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ],
+      "durationMs": 123.443,
+      "providerCalls": 0,
+      "networkRequests": 0,
+      "authority": "module-replay-only",
+      "isolation": "disposable-copy-credential-scrubbed-vm-not-os-sandbox",
+      "integrity": "094c2bb27dd1430407944f1c36f81607cb99bfc6f69d1636d45b2cf7cfd79598"
+    },
+    "abstentionReason": null
+  },
+  {
+    "id": "historical-literal-plus-preservation",
+    "historicalQualified": true,
+    "original": {
+      "schemaVersion": 1,
+      "kind": "bug-probe-receipt",
+      "recipe": {
+        "schemaVersion": 1,
+        "kind": "bug-recipe",
+        "id": "historical-literal-plus-preservation",
+        "family": "protocol-validation",
+        "provenance": {
+          "repository": "https://github.com/SamVerschueren/decode-uri-component",
+          "baseRevision": "a0eea469d26eb0df668b081672cdb9581feb78eb",
+          "fixedRevision": "3bbc879717a58efa9d1173b3d701e6f731ec0de4",
+          "evidenceClass": "public-historical"
+        },
+        "contract": {
+          "text": "A URI component decoder preserves literal plus signs: a+b remains a+b. Query-form decoding is a different contract.",
+          "sourceUrl": "https://github.com/SamVerschueren/decode-uri-component/blob/3bbc879717a58efa9d1173b3d701e6f731ec0de4/test.js",
+          "sourceSha256": "a222362b47a453d62661869f9b9f4084ba4277aed692537df556906d112b2459",
+          "independence": "maintainer-specification"
+        },
+        "probe": {
+          "exportName": "default",
+          "cases": [
+            {
+              "id": "one-plus",
+              "args": [
+                "a+b"
+              ],
+              "expect": {
+                "kind": "equals",
+                "value": "a+b"
+              }
+            },
+            {
+              "id": "many-plus",
+              "args": [
+                "a+b+c+d"
+              ],
+              "expect": {
+                "kind": "equals",
+                "value": "a+b+c+d"
+              }
+            },
+            {
+              "id": "three-parts",
+              "args": [
+                "a+b+c"
+              ],
+              "expect": {
+                "kind": "equals",
+                "value": "a+b+c"
+              }
+            }
+          ]
+        },
+        "applicability": {
+          "requiredIdentifiers": []
+        }
+      },
+      "recipeId": "historical-literal-plus-preservation",
+      "recipeSha256": "fdf5cfa434340d174c7bcff32ce18e1c8686192e7d1cfb4bfb65b5395c5c7a5f",
+      "module": "runtime/plus/original/subject.cjs",
+      "files": [
+        {
+          "path": "runtime/plus/original/package.json",
+          "sha256": "1239d4d885dcad42201a27ed9324f8f0f760b78700d8db9ced39a511cffe7eae",
+          "bytes": 18
+        },
+        {
+          "path": "runtime/plus/original/subject.cjs",
+          "sha256": "3b8ba0a765e1089d11bba9a919d0d8789ecd9a6833ea078d8d9114e1db093863",
+          "bytes": 2261
+        }
+      ],
+      "sourceSha256": "0b173f9bde4dd6a4b236c4c9e0ae3aa2bfab9e9c1d9f2456f4879d67de60fa22",
+      "workerSha256": "de73222fb12a0455acb3431380a280311e33cbf55bab063e29ea0a84c5c120a8",
+      "repeat": 2,
+      "timeoutMs": 3000,
+      "outcome": "reproduced",
+      "reason": null,
+      "cases": [
+        {
+          "id": "one-plus",
+          "status": "mismatch",
+          "observed": {
+            "kind": "value",
+            "value": "a b"
+          },
+          "observedSha256": "19c10348a2fbbf48881533011a2a72153f9da9c643da4901be8aa365e9bd3138"
+        },
+        {
+          "id": "many-plus",
+          "status": "mismatch",
+          "observed": {
+            "kind": "value",
+            "value": "a b c d"
+          },
+          "observedSha256": "39fe07e6d12c118e2eec6eafc3bd24aa85957291b5cef594cb2dfd6b563a6e78"
+        },
+        {
+          "id": "three-parts",
+          "status": "mismatch",
+          "observed": {
+            "kind": "value",
+            "value": "a b c"
+          },
+          "observedSha256": "3051dbbfa50f349e2cfbff7e62cf8910061cbffacf7518fd20fb00b42ed4c0c6"
+        }
+      ],
+      "rawRuns": [
+        {
+          "stdout": "{\"schemaVersion\":1,\"module\":\"runtime/plus/original/subject.cjs\",\"sourceSha256\":\"0b173f9bde4dd6a4b236c4c9e0ae3aa2bfab9e9c1d9f2456f4879d67de60fa22\",\"cases\":[{\"id\":\"one-plus\",\"status\":\"mismatch\",\"observed\":{\"kind\":\"value\",\"value\":\"a b\"},\"observedSha256\":\"19c10348a2fbbf48881533011a2a72153f9da9c643da4901be8aa365e9bd3138\"},{\"id\":\"many-plus\",\"status\":\"mismatch\",\"observed\":{\"kind\":\"value\",\"value\":\"a b c d\"},\"observedSha256\":\"39fe07e6d12c118e2eec6eafc3bd24aa85957291b5cef594cb2dfd6b563a6e78\"},{\"id\":\"three-parts\",\"status\":\"mismatch\",\"observed\":{\"kind\":\"value\",\"value\":\"a b c\"},\"observedSha256\":\"3051dbbfa50f349e2cfbff7e62cf8910061cbffacf7518fd20fb00b42ed4c0c6\"}]}",
+          "stderr": "",
+          "exitCode": 0,
+          "signal": null,
+          "reason": null,
+          "durationMs": 71.861,
+          "result": {
+            "schemaVersion": 1,
+            "module": "runtime/plus/original/subject.cjs",
+            "sourceSha256": "0b173f9bde4dd6a4b236c4c9e0ae3aa2bfab9e9c1d9f2456f4879d67de60fa22",
+            "cases": [
+              {
+                "id": "one-plus",
+                "status": "mismatch",
+                "observed": {
+                  "kind": "value",
+                  "value": "a b"
+                },
+                "observedSha256": "19c10348a2fbbf48881533011a2a72153f9da9c643da4901be8aa365e9bd3138"
+              },
+              {
+                "id": "many-plus",
+                "status": "mismatch",
+                "observed": {
+                  "kind": "value",
+                  "value": "a b c d"
+                },
+                "observedSha256": "39fe07e6d12c118e2eec6eafc3bd24aa85957291b5cef594cb2dfd6b563a6e78"
+              },
+              {
+                "id": "three-parts",
+                "status": "mismatch",
+                "observed": {
+                  "kind": "value",
+                  "value": "a b c"
+                },
+                "observedSha256": "3051dbbfa50f349e2cfbff7e62cf8910061cbffacf7518fd20fb00b42ed4c0c6"
+              }
+            ]
+          },
+          "stdoutSha256": "8d44fed71b771245b9333deb383647e765aa7d1c88f0589416156992ef04b729",
+          "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "stdout": "{\"schemaVersion\":1,\"module\":\"runtime/plus/original/subject.cjs\",\"sourceSha256\":\"0b173f9bde4dd6a4b236c4c9e0ae3aa2bfab9e9c1d9f2456f4879d67de60fa22\",\"cases\":[{\"id\":\"one-plus\",\"status\":\"mismatch\",\"observed\":{\"kind\":\"value\",\"value\":\"a b\"},\"observedSha256\":\"19c10348a2fbbf48881533011a2a72153f9da9c643da4901be8aa365e9bd3138\"},{\"id\":\"many-plus\",\"status\":\"mismatch\",\"observed\":{\"kind\":\"value\",\"value\":\"a b c d\"},\"observedSha256\":\"39fe07e6d12c118e2eec6eafc3bd24aa85957291b5cef594cb2dfd6b563a6e78\"},{\"id\":\"three-parts\",\"status\":\"mismatch\",\"observed\":{\"kind\":\"value\",\"value\":\"a b c\"},\"observedSha256\":\"3051dbbfa50f349e2cfbff7e62cf8910061cbffacf7518fd20fb00b42ed4c0c6\"}]}",
+          "stderr": "",
+          "exitCode": 0,
+          "signal": null,
+          "reason": null,
+          "durationMs": 88.005,
+          "result": {
+            "schemaVersion": 1,
+            "module": "runtime/plus/original/subject.cjs",
+            "sourceSha256": "0b173f9bde4dd6a4b236c4c9e0ae3aa2bfab9e9c1d9f2456f4879d67de60fa22",
+            "cases": [
+              {
+                "id": "one-plus",
+                "status": "mismatch",
+                "observed": {
+                  "kind": "value",
+                  "value": "a b"
+                },
+                "observedSha256": "19c10348a2fbbf48881533011a2a72153f9da9c643da4901be8aa365e9bd3138"
+              },
+              {
+                "id": "many-plus",
+                "status": "mismatch",
+                "observed": {
+                  "kind": "value",
+                  "value": "a b c d"
+                },
+                "observedSha256": "39fe07e6d12c118e2eec6eafc3bd24aa85957291b5cef594cb2dfd6b563a6e78"
+              },
+              {
+                "id": "three-parts",
+                "status": "mismatch",
+                "observed": {
+                  "kind": "value",
+                  "value": "a b c"
+                },
+                "observedSha256": "3051dbbfa50f349e2cfbff7e62cf8910061cbffacf7518fd20fb00b42ed4c0c6"
+              }
+            ]
+          },
+          "stdoutSha256": "8d44fed71b771245b9333deb383647e765aa7d1c88f0589416156992ef04b729",
+          "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ],
+      "durationMs": 166.111,
+      "providerCalls": 0,
+      "networkRequests": 0,
+      "authority": "module-replay-only",
+      "isolation": "disposable-copy-credential-scrubbed-vm-not-os-sandbox",
+      "integrity": "cc1bbeb87c49622ffcb7178af16d22088f5e791478b0ecc702331b8e8cd0300c"
+    },
+    "fixed": {
+      "schemaVersion": 1,
+      "kind": "bug-probe-receipt",
+      "recipe": {
+        "schemaVersion": 1,
+        "kind": "bug-recipe",
+        "id": "historical-literal-plus-preservation",
+        "family": "protocol-validation",
+        "provenance": {
+          "repository": "https://github.com/SamVerschueren/decode-uri-component",
+          "baseRevision": "a0eea469d26eb0df668b081672cdb9581feb78eb",
+          "fixedRevision": "3bbc879717a58efa9d1173b3d701e6f731ec0de4",
+          "evidenceClass": "public-historical"
+        },
+        "contract": {
+          "text": "A URI component decoder preserves literal plus signs: a+b remains a+b. Query-form decoding is a different contract.",
+          "sourceUrl": "https://github.com/SamVerschueren/decode-uri-component/blob/3bbc879717a58efa9d1173b3d701e6f731ec0de4/test.js",
+          "sourceSha256": "a222362b47a453d62661869f9b9f4084ba4277aed692537df556906d112b2459",
+          "independence": "maintainer-specification"
+        },
+        "probe": {
+          "exportName": "default",
+          "cases": [
+            {
+              "id": "one-plus",
+              "args": [
+                "a+b"
+              ],
+              "expect": {
+                "kind": "equals",
+                "value": "a+b"
+              }
+            },
+            {
+              "id": "many-plus",
+              "args": [
+                "a+b+c+d"
+              ],
+              "expect": {
+                "kind": "equals",
+                "value": "a+b+c+d"
+              }
+            },
+            {
+              "id": "three-parts",
+              "args": [
+                "a+b+c"
+              ],
+              "expect": {
+                "kind": "equals",
+                "value": "a+b+c"
+              }
+            }
+          ]
+        },
+        "applicability": {
+          "requiredIdentifiers": []
+        }
+      },
+      "recipeId": "historical-literal-plus-preservation",
+      "recipeSha256": "fdf5cfa434340d174c7bcff32ce18e1c8686192e7d1cfb4bfb65b5395c5c7a5f",
+      "module": "runtime/plus/fixed/subject.cjs",
+      "files": [
+        {
+          "path": "runtime/plus/fixed/package.json",
+          "sha256": "1239d4d885dcad42201a27ed9324f8f0f760b78700d8db9ced39a511cffe7eae",
+          "bytes": 18
+        },
+        {
+          "path": "runtime/plus/fixed/subject.cjs",
+          "sha256": "c0debbac101b4e1f2366371374e08aa6712f092419687b6ccf3c619f76821a9b",
+          "bytes": 2213
+        }
+      ],
+      "sourceSha256": "2335847bec01751e1bdfbc3e173d0f96ad670916278e1386b0482c0ad0c5f411",
+      "workerSha256": "de73222fb12a0455acb3431380a280311e33cbf55bab063e29ea0a84c5c120a8",
+      "repeat": 2,
+      "timeoutMs": 3000,
+      "outcome": "passed",
+      "reason": null,
+      "cases": [
+        {
+          "id": "one-plus",
+          "status": "passed",
+          "observed": {
+            "kind": "value",
+            "value": "a+b"
+          },
+          "observedSha256": "768a922e2ed85080c05fddc75fbbbcbb7bbd66e796fb1545370afd11308db4d4"
+        },
+        {
+          "id": "many-plus",
+          "status": "passed",
+          "observed": {
+            "kind": "value",
+            "value": "a+b+c+d"
+          },
+          "observedSha256": "5596037ed8808cd056a0a1a4f324dd23d8dd1ad2a05ac6f45c0419c6f4a37399"
+        },
+        {
+          "id": "three-parts",
+          "status": "passed",
+          "observed": {
+            "kind": "value",
+            "value": "a+b+c"
+          },
+          "observedSha256": "23e7d976d45e6e984fa4454e7f1e1f9ed0c74c512da62475852ea670cd2787ba"
+        }
+      ],
+      "rawRuns": [
+        {
+          "stdout": "{\"schemaVersion\":1,\"module\":\"runtime/plus/fixed/subject.cjs\",\"sourceSha256\":\"2335847bec01751e1bdfbc3e173d0f96ad670916278e1386b0482c0ad0c5f411\",\"cases\":[{\"id\":\"one-plus\",\"status\":\"passed\",\"observed\":{\"kind\":\"value\",\"value\":\"a+b\"},\"observedSha256\":\"768a922e2ed85080c05fddc75fbbbcbb7bbd66e796fb1545370afd11308db4d4\"},{\"id\":\"many-plus\",\"status\":\"passed\",\"observed\":{\"kind\":\"value\",\"value\":\"a+b+c+d\"},\"observedSha256\":\"5596037ed8808cd056a0a1a4f324dd23d8dd1ad2a05ac6f45c0419c6f4a37399\"},{\"id\":\"three-parts\",\"status\":\"passed\",\"observed\":{\"kind\":\"value\",\"value\":\"a+b+c\"},\"observedSha256\":\"23e7d976d45e6e984fa4454e7f1e1f9ed0c74c512da62475852ea670cd2787ba\"}]}",
+          "stderr": "",
+          "exitCode": 0,
+          "signal": null,
+          "reason": null,
+          "durationMs": 104.052,
+          "result": {
+            "schemaVersion": 1,
+            "module": "runtime/plus/fixed/subject.cjs",
+            "sourceSha256": "2335847bec01751e1bdfbc3e173d0f96ad670916278e1386b0482c0ad0c5f411",
+            "cases": [
+              {
+                "id": "one-plus",
+                "status": "passed",
+                "observed": {
+                  "kind": "value",
+                  "value": "a+b"
+                },
+                "observedSha256": "768a922e2ed85080c05fddc75fbbbcbb7bbd66e796fb1545370afd11308db4d4"
+              },
+              {
+                "id": "many-plus",
+                "status": "passed",
+                "observed": {
+                  "kind": "value",
+                  "value": "a+b+c+d"
+                },
+                "observedSha256": "5596037ed8808cd056a0a1a4f324dd23d8dd1ad2a05ac6f45c0419c6f4a37399"
+              },
+              {
+                "id": "three-parts",
+                "status": "passed",
+                "observed": {
+                  "kind": "value",
+                  "value": "a+b+c"
+                },
+                "observedSha256": "23e7d976d45e6e984fa4454e7f1e1f9ed0c74c512da62475852ea670cd2787ba"
+              }
+            ]
+          },
+          "stdoutSha256": "66d64af3621ad9415a6f1969ae07ee69eaecaef797903b603f6b21995cdfd680",
+          "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "stdout": "{\"schemaVersion\":1,\"module\":\"runtime/plus/fixed/subject.cjs\",\"sourceSha256\":\"2335847bec01751e1bdfbc3e173d0f96ad670916278e1386b0482c0ad0c5f411\",\"cases\":[{\"id\":\"one-plus\",\"status\":\"passed\",\"observed\":{\"kind\":\"value\",\"value\":\"a+b\"},\"observedSha256\":\"768a922e2ed85080c05fddc75fbbbcbb7bbd66e796fb1545370afd11308db4d4\"},{\"id\":\"many-plus\",\"status\":\"passed\",\"observed\":{\"kind\":\"value\",\"value\":\"a+b+c+d\"},\"observedSha256\":\"5596037ed8808cd056a0a1a4f324dd23d8dd1ad2a05ac6f45c0419c6f4a37399\"},{\"id\":\"three-parts\",\"status\":\"passed\",\"observed\":{\"kind\":\"value\",\"value\":\"a+b+c\"},\"observedSha256\":\"23e7d976d45e6e984fa4454e7f1e1f9ed0c74c512da62475852ea670cd2787ba\"}]}",
+          "stderr": "",
+          "exitCode": 0,
+          "signal": null,
+          "reason": null,
+          "durationMs": 101.382,
+          "result": {
+            "schemaVersion": 1,
+            "module": "runtime/plus/fixed/subject.cjs",
+            "sourceSha256": "2335847bec01751e1bdfbc3e173d0f96ad670916278e1386b0482c0ad0c5f411",
+            "cases": [
+              {
+                "id": "one-plus",
+                "status": "passed",
+                "observed": {
+                  "kind": "value",
+                  "value": "a+b"
+                },
+                "observedSha256": "768a922e2ed85080c05fddc75fbbbcbb7bbd66e796fb1545370afd11308db4d4"
+              },
+              {
+                "id": "many-plus",
+                "status": "passed",
+                "observed": {
+                  "kind": "value",
+                  "value": "a+b+c+d"
+                },
+                "observedSha256": "5596037ed8808cd056a0a1a4f324dd23d8dd1ad2a05ac6f45c0419c6f4a37399"
+              },
+              {
+                "id": "three-parts",
+                "status": "passed",
+                "observed": {
+                  "kind": "value",
+                  "value": "a+b+c"
+                },
+                "observedSha256": "23e7d976d45e6e984fa4454e7f1e1f9ed0c74c512da62475852ea670cd2787ba"
+              }
+            ]
+          },
+          "stdoutSha256": "66d64af3621ad9415a6f1969ae07ee69eaecaef797903b603f6b21995cdfd680",
+          "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ],
+      "durationMs": 215.257,
+      "providerCalls": 0,
+      "networkRequests": 0,
+      "authority": "module-replay-only",
+      "isolation": "disposable-copy-credential-scrubbed-vm-not-os-sandbox",
+      "integrity": "674e5054ffb6d28f4b15c05b9c0ad4c9e2f1a364da1fbd71736e432ca536a10a"
+    },
+    "targetRepository": "pillarjs/encodeurl",
+    "targetRevision": "059977240f83b724c75b4f8f684d583dd4779c48",
+    "eligibleIndependentTransfer": true,
+    "unguided": {
+      "schemaVersion": 1,
+      "kind": "bug-probe-receipt",
+      "recipe": {
+        "schemaVersion": 1,
+        "kind": "bug-recipe",
+        "id": "historical-literal-plus-preservation",
+        "family": "protocol-validation",
+        "provenance": {
+          "repository": "https://github.com/SamVerschueren/decode-uri-component",
+          "baseRevision": "a0eea469d26eb0df668b081672cdb9581feb78eb",
+          "fixedRevision": "3bbc879717a58efa9d1173b3d701e6f731ec0de4",
+          "evidenceClass": "public-historical"
+        },
+        "contract": {
+          "text": "A URI component decoder preserves literal plus signs: a+b remains a+b. Query-form decoding is a different contract.",
+          "sourceUrl": "https://github.com/SamVerschueren/decode-uri-component/blob/3bbc879717a58efa9d1173b3d701e6f731ec0de4/test.js",
+          "sourceSha256": "a222362b47a453d62661869f9b9f4084ba4277aed692537df556906d112b2459",
+          "independence": "maintainer-specification"
+        },
+        "probe": {
+          "exportName": "default",
+          "cases": [
+            {
+              "id": "plain",
+              "args": [
+                "abc"
+              ],
+              "expect": {
+                "kind": "equals",
+                "value": "abc"
+              }
+            },
+            {
+              "id": "empty",
+              "args": [
+                ""
+              ],
+              "expect": {
+                "kind": "equals",
+                "value": ""
+              }
+            },
+            {
+              "id": "digits",
+              "args": [
+                "123"
+              ],
+              "expect": {
+                "kind": "equals",
+                "value": "123"
+              }
+            }
+          ]
+        },
+        "applicability": {
+          "requiredIdentifiers": []
+        }
+      },
+      "recipeId": "historical-literal-plus-preservation",
+      "recipeSha256": "083b51dc80ee8b2479360d1ee9b23941fa40a43ac590a26a499f39fb342cbbb9",
+      "module": "runtime/targets/encodeurl/subject.cjs",
+      "files": [
+        {
+          "path": "runtime/targets/encodeurl/package.json",
+          "sha256": "1239d4d885dcad42201a27ed9324f8f0f760b78700d8db9ced39a511cffe7eae",
+          "bytes": 18
+        },
+        {
+          "path": "runtime/targets/encodeurl/subject.cjs",
+          "sha256": "da79e42b4f04e0ce63e45525558f838b99500d2fe1a4fe0e28cb6c7ed7eae58c",
+          "bytes": 1578
+        }
+      ],
+      "sourceSha256": "9676f86178f0d43adf6ebb5cc8d4925690a70f4d19dfcc52c7f19cfc56a2cbc9",
+      "workerSha256": "de73222fb12a0455acb3431380a280311e33cbf55bab063e29ea0a84c5c120a8",
+      "repeat": 2,
+      "timeoutMs": 3000,
+      "outcome": "passed",
+      "reason": null,
+      "cases": [
+        {
+          "id": "plain",
+          "status": "passed",
+          "observed": {
+            "kind": "value",
+            "value": "abc"
+          },
+          "observedSha256": "40591c9af5b800e1d91b2cdef4dc377b3671a9628134981ca1f6392ebdbc1b4a"
+        },
+        {
+          "id": "empty",
+          "status": "passed",
+          "observed": {
+            "kind": "value",
+            "value": ""
+          },
+          "observedSha256": "2875016e6716d08ebc1d28e84755c8ba70a2aa02431f27bf04b044de7dc96d89"
+        },
+        {
+          "id": "digits",
+          "status": "passed",
+          "observed": {
+            "kind": "value",
+            "value": "123"
+          },
+          "observedSha256": "692c61b392fcaba72fc0c7daa37267a98706bf8796ced22ec4f71587ad410b90"
+        }
+      ],
+      "rawRuns": [
+        {
+          "stdout": "{\"schemaVersion\":1,\"module\":\"runtime/targets/encodeurl/subject.cjs\",\"sourceSha256\":\"9676f86178f0d43adf6ebb5cc8d4925690a70f4d19dfcc52c7f19cfc56a2cbc9\",\"cases\":[{\"id\":\"plain\",\"status\":\"passed\",\"observed\":{\"kind\":\"value\",\"value\":\"abc\"},\"observedSha256\":\"40591c9af5b800e1d91b2cdef4dc377b3671a9628134981ca1f6392ebdbc1b4a\"},{\"id\":\"empty\",\"status\":\"passed\",\"observed\":{\"kind\":\"value\",\"value\":\"\"},\"observedSha256\":\"2875016e6716d08ebc1d28e84755c8ba70a2aa02431f27bf04b044de7dc96d89\"},{\"id\":\"digits\",\"status\":\"passed\",\"observed\":{\"kind\":\"value\",\"value\":\"123\"},\"observedSha256\":\"692c61b392fcaba72fc0c7daa37267a98706bf8796ced22ec4f71587ad410b90\"}]}",
+          "stderr": "",
+          "exitCode": 0,
+          "signal": null,
+          "reason": null,
+          "durationMs": 89.19,
+          "result": {
+            "schemaVersion": 1,
+            "module": "runtime/targets/encodeurl/subject.cjs",
+            "sourceSha256": "9676f86178f0d43adf6ebb5cc8d4925690a70f4d19dfcc52c7f19cfc56a2cbc9",
+            "cases": [
+              {
+                "id": "plain",
+                "status": "passed",
+                "observed": {
+                  "kind": "value",
+                  "value": "abc"
+                },
+                "observedSha256": "40591c9af5b800e1d91b2cdef4dc377b3671a9628134981ca1f6392ebdbc1b4a"
+              },
+              {
+                "id": "empty",
+                "status": "passed",
+                "observed": {
+                  "kind": "value",
+                  "value": ""
+                },
+                "observedSha256": "2875016e6716d08ebc1d28e84755c8ba70a2aa02431f27bf04b044de7dc96d89"
+              },
+              {
+                "id": "digits",
+                "status": "passed",
+                "observed": {
+                  "kind": "value",
+                  "value": "123"
+                },
+                "observedSha256": "692c61b392fcaba72fc0c7daa37267a98706bf8796ced22ec4f71587ad410b90"
+              }
+            ]
+          },
+          "stdoutSha256": "bee3316a1d616c58a8381b463f71845be27957b44d5408b0dd41d58a89f88efe",
+          "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "stdout": "{\"schemaVersion\":1,\"module\":\"runtime/targets/encodeurl/subject.cjs\",\"sourceSha256\":\"9676f86178f0d43adf6ebb5cc8d4925690a70f4d19dfcc52c7f19cfc56a2cbc9\",\"cases\":[{\"id\":\"plain\",\"status\":\"passed\",\"observed\":{\"kind\":\"value\",\"value\":\"abc\"},\"observedSha256\":\"40591c9af5b800e1d91b2cdef4dc377b3671a9628134981ca1f6392ebdbc1b4a\"},{\"id\":\"empty\",\"status\":\"passed\",\"observed\":{\"kind\":\"value\",\"value\":\"\"},\"observedSha256\":\"2875016e6716d08ebc1d28e84755c8ba70a2aa02431f27bf04b044de7dc96d89\"},{\"id\":\"digits\",\"status\":\"passed\",\"observed\":{\"kind\":\"value\",\"value\":\"123\"},\"observedSha256\":\"692c61b392fcaba72fc0c7daa37267a98706bf8796ced22ec4f71587ad410b90\"}]}",
+          "stderr": "",
+          "exitCode": 0,
+          "signal": null,
+          "reason": null,
+          "durationMs": 84.856,
+          "result": {
+            "schemaVersion": 1,
+            "module": "runtime/targets/encodeurl/subject.cjs",
+            "sourceSha256": "9676f86178f0d43adf6ebb5cc8d4925690a70f4d19dfcc52c7f19cfc56a2cbc9",
+            "cases": [
+              {
+                "id": "plain",
+                "status": "passed",
+                "observed": {
+                  "kind": "value",
+                  "value": "abc"
+                },
+                "observedSha256": "40591c9af5b800e1d91b2cdef4dc377b3671a9628134981ca1f6392ebdbc1b4a"
+              },
+              {
+                "id": "empty",
+                "status": "passed",
+                "observed": {
+                  "kind": "value",
+                  "value": ""
+                },
+                "observedSha256": "2875016e6716d08ebc1d28e84755c8ba70a2aa02431f27bf04b044de7dc96d89"
+              },
+              {
+                "id": "digits",
+                "status": "passed",
+                "observed": {
+                  "kind": "value",
+                  "value": "123"
+                },
+                "observedSha256": "692c61b392fcaba72fc0c7daa37267a98706bf8796ced22ec4f71587ad410b90"
+              }
+            ]
+          },
+          "stdoutSha256": "bee3316a1d616c58a8381b463f71845be27957b44d5408b0dd41d58a89f88efe",
+          "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ],
+      "durationMs": 180.686,
+      "providerCalls": 0,
+      "networkRequests": 0,
+      "authority": "module-replay-only",
+      "isolation": "disposable-copy-credential-scrubbed-vm-not-os-sandbox",
+      "integrity": "34f05e811b55725dab868303ca2c155839f04718bc74d3d8cbc34095b241901e"
+    },
+    "guided": {
+      "schemaVersion": 1,
+      "kind": "bug-probe-receipt",
+      "recipe": {
+        "schemaVersion": 1,
+        "kind": "bug-recipe",
+        "id": "historical-literal-plus-preservation",
+        "family": "protocol-validation",
+        "provenance": {
+          "repository": "https://github.com/SamVerschueren/decode-uri-component",
+          "baseRevision": "a0eea469d26eb0df668b081672cdb9581feb78eb",
+          "fixedRevision": "3bbc879717a58efa9d1173b3d701e6f731ec0de4",
+          "evidenceClass": "public-historical"
+        },
+        "contract": {
+          "text": "A URI component decoder preserves literal plus signs: a+b remains a+b. Query-form decoding is a different contract.",
+          "sourceUrl": "https://github.com/SamVerschueren/decode-uri-component/blob/3bbc879717a58efa9d1173b3d701e6f731ec0de4/test.js",
+          "sourceSha256": "a222362b47a453d62661869f9b9f4084ba4277aed692537df556906d112b2459",
+          "independence": "maintainer-specification"
+        },
+        "probe": {
+          "exportName": "default",
+          "cases": [
+            {
+              "id": "one-plus",
+              "args": [
+                "a+b"
+              ],
+              "expect": {
+                "kind": "equals",
+                "value": "a+b"
+              }
+            },
+            {
+              "id": "many-plus",
+              "args": [
+                "a+b+c+d"
+              ],
+              "expect": {
+                "kind": "equals",
+                "value": "a+b+c+d"
+              }
+            },
+            {
+              "id": "three-parts",
+              "args": [
+                "a+b+c"
+              ],
+              "expect": {
+                "kind": "equals",
+                "value": "a+b+c"
+              }
+            }
+          ]
+        },
+        "applicability": {
+          "requiredIdentifiers": []
+        }
+      },
+      "recipeId": "historical-literal-plus-preservation",
+      "recipeSha256": "fdf5cfa434340d174c7bcff32ce18e1c8686192e7d1cfb4bfb65b5395c5c7a5f",
+      "module": "runtime/targets/encodeurl/subject.cjs",
+      "files": [
+        {
+          "path": "runtime/targets/encodeurl/package.json",
+          "sha256": "1239d4d885dcad42201a27ed9324f8f0f760b78700d8db9ced39a511cffe7eae",
+          "bytes": 18
+        },
+        {
+          "path": "runtime/targets/encodeurl/subject.cjs",
+          "sha256": "da79e42b4f04e0ce63e45525558f838b99500d2fe1a4fe0e28cb6c7ed7eae58c",
+          "bytes": 1578
+        }
+      ],
+      "sourceSha256": "9676f86178f0d43adf6ebb5cc8d4925690a70f4d19dfcc52c7f19cfc56a2cbc9",
+      "workerSha256": "de73222fb12a0455acb3431380a280311e33cbf55bab063e29ea0a84c5c120a8",
+      "repeat": 2,
+      "timeoutMs": 3000,
+      "outcome": "passed",
+      "reason": null,
+      "cases": [
+        {
+          "id": "one-plus",
+          "status": "passed",
+          "observed": {
+            "kind": "value",
+            "value": "a+b"
+          },
+          "observedSha256": "768a922e2ed85080c05fddc75fbbbcbb7bbd66e796fb1545370afd11308db4d4"
+        },
+        {
+          "id": "many-plus",
+          "status": "passed",
+          "observed": {
+            "kind": "value",
+            "value": "a+b+c+d"
+          },
+          "observedSha256": "5596037ed8808cd056a0a1a4f324dd23d8dd1ad2a05ac6f45c0419c6f4a37399"
+        },
+        {
+          "id": "three-parts",
+          "status": "passed",
+          "observed": {
+            "kind": "value",
+            "value": "a+b+c"
+          },
+          "observedSha256": "23e7d976d45e6e984fa4454e7f1e1f9ed0c74c512da62475852ea670cd2787ba"
+        }
+      ],
+      "rawRuns": [
+        {
+          "stdout": "{\"schemaVersion\":1,\"module\":\"runtime/targets/encodeurl/subject.cjs\",\"sourceSha256\":\"9676f86178f0d43adf6ebb5cc8d4925690a70f4d19dfcc52c7f19cfc56a2cbc9\",\"cases\":[{\"id\":\"one-plus\",\"status\":\"passed\",\"observed\":{\"kind\":\"value\",\"value\":\"a+b\"},\"observedSha256\":\"768a922e2ed85080c05fddc75fbbbcbb7bbd66e796fb1545370afd11308db4d4\"},{\"id\":\"many-plus\",\"status\":\"passed\",\"observed\":{\"kind\":\"value\",\"value\":\"a+b+c+d\"},\"observedSha256\":\"5596037ed8808cd056a0a1a4f324dd23d8dd1ad2a05ac6f45c0419c6f4a37399\"},{\"id\":\"three-parts\",\"status\":\"passed\",\"observed\":{\"kind\":\"value\",\"value\":\"a+b+c\"},\"observedSha256\":\"23e7d976d45e6e984fa4454e7f1e1f9ed0c74c512da62475852ea670cd2787ba\"}]}",
+          "stderr": "",
+          "exitCode": 0,
+          "signal": null,
+          "reason": null,
+          "durationMs": 72.519,
+          "result": {
+            "schemaVersion": 1,
+            "module": "runtime/targets/encodeurl/subject.cjs",
+            "sourceSha256": "9676f86178f0d43adf6ebb5cc8d4925690a70f4d19dfcc52c7f19cfc56a2cbc9",
+            "cases": [
+              {
+                "id": "one-plus",
+                "status": "passed",
+                "observed": {
+                  "kind": "value",
+                  "value": "a+b"
+                },
+                "observedSha256": "768a922e2ed85080c05fddc75fbbbcbb7bbd66e796fb1545370afd11308db4d4"
+              },
+              {
+                "id": "many-plus",
+                "status": "passed",
+                "observed": {
+                  "kind": "value",
+                  "value": "a+b+c+d"
+                },
+                "observedSha256": "5596037ed8808cd056a0a1a4f324dd23d8dd1ad2a05ac6f45c0419c6f4a37399"
+              },
+              {
+                "id": "three-parts",
+                "status": "passed",
+                "observed": {
+                  "kind": "value",
+                  "value": "a+b+c"
+                },
+                "observedSha256": "23e7d976d45e6e984fa4454e7f1e1f9ed0c74c512da62475852ea670cd2787ba"
+              }
+            ]
+          },
+          "stdoutSha256": "25594ad7e97f5a659ec38cdeeac5f890e8339befcd77b57c40ef6ddf39e3144a",
+          "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "stdout": "{\"schemaVersion\":1,\"module\":\"runtime/targets/encodeurl/subject.cjs\",\"sourceSha256\":\"9676f86178f0d43adf6ebb5cc8d4925690a70f4d19dfcc52c7f19cfc56a2cbc9\",\"cases\":[{\"id\":\"one-plus\",\"status\":\"passed\",\"observed\":{\"kind\":\"value\",\"value\":\"a+b\"},\"observedSha256\":\"768a922e2ed85080c05fddc75fbbbcbb7bbd66e796fb1545370afd11308db4d4\"},{\"id\":\"many-plus\",\"status\":\"passed\",\"observed\":{\"kind\":\"value\",\"value\":\"a+b+c+d\"},\"observedSha256\":\"5596037ed8808cd056a0a1a4f324dd23d8dd1ad2a05ac6f45c0419c6f4a37399\"},{\"id\":\"three-parts\",\"status\":\"passed\",\"observed\":{\"kind\":\"value\",\"value\":\"a+b+c\"},\"observedSha256\":\"23e7d976d45e6e984fa4454e7f1e1f9ed0c74c512da62475852ea670cd2787ba\"}]}",
+          "stderr": "",
+          "exitCode": 0,
+          "signal": null,
+          "reason": null,
+          "durationMs": 73.745,
+          "result": {
+            "schemaVersion": 1,
+            "module": "runtime/targets/encodeurl/subject.cjs",
+            "sourceSha256": "9676f86178f0d43adf6ebb5cc8d4925690a70f4d19dfcc52c7f19cfc56a2cbc9",
+            "cases": [
+              {
+                "id": "one-plus",
+                "status": "passed",
+                "observed": {
+                  "kind": "value",
+                  "value": "a+b"
+                },
+                "observedSha256": "768a922e2ed85080c05fddc75fbbbcbb7bbd66e796fb1545370afd11308db4d4"
+              },
+              {
+                "id": "many-plus",
+                "status": "passed",
+                "observed": {
+                  "kind": "value",
+                  "value": "a+b+c+d"
+                },
+                "observedSha256": "5596037ed8808cd056a0a1a4f324dd23d8dd1ad2a05ac6f45c0419c6f4a37399"
+              },
+              {
+                "id": "three-parts",
+                "status": "passed",
+                "observed": {
+                  "kind": "value",
+                  "value": "a+b+c"
+                },
+                "observedSha256": "23e7d976d45e6e984fa4454e7f1e1f9ed0c74c512da62475852ea670cd2787ba"
+              }
+            ]
+          },
+          "stdoutSha256": "25594ad7e97f5a659ec38cdeeac5f890e8339befcd77b57c40ef6ddf39e3144a",
+          "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ],
+      "durationMs": 151.605,
+      "providerCalls": 0,
+      "networkRequests": 0,
+      "authority": "module-replay-only",
+      "isolation": "disposable-copy-credential-scrubbed-vm-not-os-sandbox",
+      "integrity": "e4c9946bb13a84a17a53d39980a8323e71063a9d10bc04faa21fbbc24f3ff525"
+    },
+    "abstentionReason": null
+  },
+  {
+    "id": "historical-unicode-decoder-reset",
+    "historicalQualified": true,
+    "original": {
+      "schemaVersion": 1,
+      "kind": "bug-probe-receipt",
+      "recipe": {
+        "schemaVersion": 1,
+        "kind": "bug-recipe",
+        "id": "historical-unicode-decoder-reset",
+        "family": "unicode-boundary",
+        "provenance": {
+          "repository": "https://github.com/jridgewell/safe-decode-uri-component",
+          "baseRevision": "4e7d87e4cfd3942c30d0d264d058715a5e124809",
+          "fixedRevision": "641dec384f134062c0f85898569f4d4117e6350d",
+          "evidenceClass": "public-historical"
+        },
+        "contract": {
+          "text": "A safe URI component decoder leaves invalid escape sequences unchanged and independently decodes later valid Unicode and ASCII escapes.",
+          "sourceUrl": "https://github.com/jridgewell/safe-decode-uri-component/blob/6abe20a0835cf6aabb9219a9a453dd99d3d253f0/README.md",
+          "sourceSha256": "c7b83531509be288b0e0d5bb16432f564400cec105def28073cb4469261caa0e",
+          "independence": "maintainer-specification"
+        },
+        "probe": {
+          "exportName": "default",
+          "cases": [
+            {
+              "id": "truncated-before-valid",
+              "args": [
+                "%E2foo%C2%B5"
+              ],
+              "expect": {
+                "kind": "equals",
+                "value": "%E2fooµ"
+              }
+            },
+            {
+              "id": "truncated-before-space",
+              "args": [
+                "%C2x%20"
+              ],
+              "expect": {
+                "kind": "equals",
+                "value": "%C2x "
+              }
+            },
+            {
+              "id": "truncated-before-ascii",
+              "args": [
+                "%E2x%41"
+              ],
+              "expect": {
+                "kind": "equals",
+                "value": "%E2xA"
+              }
+            }
+          ]
+        },
+        "applicability": {
+          "requiredIdentifiers": []
+        }
+      },
+      "recipeId": "historical-unicode-decoder-reset",
+      "recipeSha256": "5d0c3c0d0e1e707e53e803d110f6648b5e6fc31bcc77ce2fccb01355f8ce46c6",
+      "module": "runtime/unicode/original/subject.cjs",
+      "files": [
+        {
+          "path": "runtime/unicode/original/package.json",
+          "sha256": "1239d4d885dcad42201a27ed9324f8f0f760b78700d8db9ced39a511cffe7eae",
+          "bytes": 18
+        },
+        {
+          "path": "runtime/unicode/original/subject.cjs",
+          "sha256": "dd6f06cfbcc0ef6240b8e7cc342144712f6766dd4c65d001ced542088e7ea629",
+          "bytes": 4364
+        }
+      ],
+      "sourceSha256": "dfdbfa6b16d6fce3774ada3bd19248420cd5429b2dd953f8c44eda51ea5ca857",
+      "workerSha256": "de73222fb12a0455acb3431380a280311e33cbf55bab063e29ea0a84c5c120a8",
+      "repeat": 2,
+      "timeoutMs": 3000,
+      "outcome": "reproduced",
+      "reason": null,
+      "cases": [
+        {
+          "id": "truncated-before-valid",
+          "status": "mismatch",
+          "observed": {
+            "kind": "value",
+            "value": "%E2foo₵"
+          },
+          "observedSha256": "7b01da97daa163ba90767c9a2adb6c31ed8972a89407c6b2175fec2f1249e942"
+        },
+        {
+          "id": "truncated-before-space",
+          "status": "mismatch",
+          "observed": {
+            "kind": "value",
+            "value": "%C2x "
+          },
+          "observedSha256": "db67e3dd57a4725729eae298cac6568838a401777ed35f59e397f77576fc4021"
+        },
+        {
+          "id": "truncated-before-ascii",
+          "status": "mismatch",
+          "observed": {
+            "kind": "value",
+            "value": "%E2xÁ"
+          },
+          "observedSha256": "d090691ff0fee5329ee30fef72ba0c85443d10f2f495bba61f65d0b403f7b23e"
+        }
+      ],
+      "rawRuns": [
+        {
+          "stdout": "{\"schemaVersion\":1,\"module\":\"runtime/unicode/original/subject.cjs\",\"sourceSha256\":\"dfdbfa6b16d6fce3774ada3bd19248420cd5429b2dd953f8c44eda51ea5ca857\",\"cases\":[{\"id\":\"truncated-before-valid\",\"status\":\"mismatch\",\"observed\":{\"kind\":\"value\",\"value\":\"%E2foo₵\"},\"observedSha256\":\"7b01da97daa163ba90767c9a2adb6c31ed8972a89407c6b2175fec2f1249e942\"},{\"id\":\"truncated-before-space\",\"status\":\"mismatch\",\"observed\":{\"kind\":\"value\",\"value\":\"%C2x \"},\"observedSha256\":\"db67e3dd57a4725729eae298cac6568838a401777ed35f59e397f77576fc4021\"},{\"id\":\"truncated-before-ascii\",\"status\":\"mismatch\",\"observed\":{\"kind\":\"value\",\"value\":\"%E2xÁ\"},\"observedSha256\":\"d090691ff0fee5329ee30fef72ba0c85443d10f2f495bba61f65d0b403f7b23e\"}]}",
+          "stderr": "",
+          "exitCode": 0,
+          "signal": null,
+          "reason": null,
+          "durationMs": 69.103,
+          "result": {
+            "schemaVersion": 1,
+            "module": "runtime/unicode/original/subject.cjs",
+            "sourceSha256": "dfdbfa6b16d6fce3774ada3bd19248420cd5429b2dd953f8c44eda51ea5ca857",
+            "cases": [
+              {
+                "id": "truncated-before-valid",
+                "status": "mismatch",
+                "observed": {
+                  "kind": "value",
+                  "value": "%E2foo₵"
+                },
+                "observedSha256": "7b01da97daa163ba90767c9a2adb6c31ed8972a89407c6b2175fec2f1249e942"
+              },
+              {
+                "id": "truncated-before-space",
+                "status": "mismatch",
+                "observed": {
+                  "kind": "value",
+                  "value": "%C2x "
+                },
+                "observedSha256": "db67e3dd57a4725729eae298cac6568838a401777ed35f59e397f77576fc4021"
+              },
+              {
+                "id": "truncated-before-ascii",
+                "status": "mismatch",
+                "observed": {
+                  "kind": "value",
+                  "value": "%E2xÁ"
+                },
+                "observedSha256": "d090691ff0fee5329ee30fef72ba0c85443d10f2f495bba61f65d0b403f7b23e"
+              }
+            ]
+          },
+          "stdoutSha256": "bbdb49efbd0143efd1679c3871cf69002a513c9c6b43749c1a1e26d9d190a33e",
+          "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "stdout": "{\"schemaVersion\":1,\"module\":\"runtime/unicode/original/subject.cjs\",\"sourceSha256\":\"dfdbfa6b16d6fce3774ada3bd19248420cd5429b2dd953f8c44eda51ea5ca857\",\"cases\":[{\"id\":\"truncated-before-valid\",\"status\":\"mismatch\",\"observed\":{\"kind\":\"value\",\"value\":\"%E2foo₵\"},\"observedSha256\":\"7b01da97daa163ba90767c9a2adb6c31ed8972a89407c6b2175fec2f1249e942\"},{\"id\":\"truncated-before-space\",\"status\":\"mismatch\",\"observed\":{\"kind\":\"value\",\"value\":\"%C2x \"},\"observedSha256\":\"db67e3dd57a4725729eae298cac6568838a401777ed35f59e397f77576fc4021\"},{\"id\":\"truncated-before-ascii\",\"status\":\"mismatch\",\"observed\":{\"kind\":\"value\",\"value\":\"%E2xÁ\"},\"observedSha256\":\"d090691ff0fee5329ee30fef72ba0c85443d10f2f495bba61f65d0b403f7b23e\"}]}",
+          "stderr": "",
+          "exitCode": 0,
+          "signal": null,
+          "reason": null,
+          "durationMs": 98.834,
+          "result": {
+            "schemaVersion": 1,
+            "module": "runtime/unicode/original/subject.cjs",
+            "sourceSha256": "dfdbfa6b16d6fce3774ada3bd19248420cd5429b2dd953f8c44eda51ea5ca857",
+            "cases": [
+              {
+                "id": "truncated-before-valid",
+                "status": "mismatch",
+                "observed": {
+                  "kind": "value",
+                  "value": "%E2foo₵"
+                },
+                "observedSha256": "7b01da97daa163ba90767c9a2adb6c31ed8972a89407c6b2175fec2f1249e942"
+              },
+              {
+                "id": "truncated-before-space",
+                "status": "mismatch",
+                "observed": {
+                  "kind": "value",
+                  "value": "%C2x "
+                },
+                "observedSha256": "db67e3dd57a4725729eae298cac6568838a401777ed35f59e397f77576fc4021"
+              },
+              {
+                "id": "truncated-before-ascii",
+                "status": "mismatch",
+                "observed": {
+                  "kind": "value",
+                  "value": "%E2xÁ"
+                },
+                "observedSha256": "d090691ff0fee5329ee30fef72ba0c85443d10f2f495bba61f65d0b403f7b23e"
+              }
+            ]
+          },
+          "stdoutSha256": "bbdb49efbd0143efd1679c3871cf69002a513c9c6b43749c1a1e26d9d190a33e",
+          "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ],
+      "durationMs": 173.316,
+      "providerCalls": 0,
+      "networkRequests": 0,
+      "authority": "module-replay-only",
+      "isolation": "disposable-copy-credential-scrubbed-vm-not-os-sandbox",
+      "integrity": "91e8c6a8dd8dd1fc19f046322a86bff8f819d9cbaca39b25c36896453e674035"
+    },
+    "fixed": {
+      "schemaVersion": 1,
+      "kind": "bug-probe-receipt",
+      "recipe": {
+        "schemaVersion": 1,
+        "kind": "bug-recipe",
+        "id": "historical-unicode-decoder-reset",
+        "family": "unicode-boundary",
+        "provenance": {
+          "repository": "https://github.com/jridgewell/safe-decode-uri-component",
+          "baseRevision": "4e7d87e4cfd3942c30d0d264d058715a5e124809",
+          "fixedRevision": "641dec384f134062c0f85898569f4d4117e6350d",
+          "evidenceClass": "public-historical"
+        },
+        "contract": {
+          "text": "A safe URI component decoder leaves invalid escape sequences unchanged and independently decodes later valid Unicode and ASCII escapes.",
+          "sourceUrl": "https://github.com/jridgewell/safe-decode-uri-component/blob/6abe20a0835cf6aabb9219a9a453dd99d3d253f0/README.md",
+          "sourceSha256": "c7b83531509be288b0e0d5bb16432f564400cec105def28073cb4469261caa0e",
+          "independence": "maintainer-specification"
+        },
+        "probe": {
+          "exportName": "default",
+          "cases": [
+            {
+              "id": "truncated-before-valid",
+              "args": [
+                "%E2foo%C2%B5"
+              ],
+              "expect": {
+                "kind": "equals",
+                "value": "%E2fooµ"
+              }
+            },
+            {
+              "id": "truncated-before-space",
+              "args": [
+                "%C2x%20"
+              ],
+              "expect": {
+                "kind": "equals",
+                "value": "%C2x "
+              }
+            },
+            {
+              "id": "truncated-before-ascii",
+              "args": [
+                "%E2x%41"
+              ],
+              "expect": {
+                "kind": "equals",
+                "value": "%E2xA"
+              }
+            }
+          ]
+        },
+        "applicability": {
+          "requiredIdentifiers": []
+        }
+      },
+      "recipeId": "historical-unicode-decoder-reset",
+      "recipeSha256": "5d0c3c0d0e1e707e53e803d110f6648b5e6fc31bcc77ce2fccb01355f8ce46c6",
+      "module": "runtime/unicode/fixed/subject.cjs",
+      "files": [
+        {
+          "path": "runtime/unicode/fixed/package.json",
+          "sha256": "1239d4d885dcad42201a27ed9324f8f0f760b78700d8db9ced39a511cffe7eae",
+          "bytes": 18
+        },
+        {
+          "path": "runtime/unicode/fixed/subject.cjs",
+          "sha256": "6adb190890de44e4d8c26b1f710d43f6cdc9fcfed194b7996bfabf2b3645925c",
+          "bytes": 4387
+        }
+      ],
+      "sourceSha256": "3db979d868d90e4bac6f7ee60cf4fd44d8eb1c0d58531e54f16e0ac37dbb8590",
+      "workerSha256": "de73222fb12a0455acb3431380a280311e33cbf55bab063e29ea0a84c5c120a8",
+      "repeat": 2,
+      "timeoutMs": 3000,
+      "outcome": "passed",
+      "reason": null,
+      "cases": [
+        {
+          "id": "truncated-before-valid",
+          "status": "passed",
+          "observed": {
+            "kind": "value",
+            "value": "%E2fooµ"
+          },
+          "observedSha256": "b10ba641a065e988288693d71f8f5c18486f707b2924cc8191e1d73d07616dc3"
+        },
+        {
+          "id": "truncated-before-space",
+          "status": "passed",
+          "observed": {
+            "kind": "value",
+            "value": "%C2x "
+          },
+          "observedSha256": "0243d83791ed6d5815eb278990b715ed8066fd8475f7009701fb6a407d413b86"
+        },
+        {
+          "id": "truncated-before-ascii",
+          "status": "passed",
+          "observed": {
+            "kind": "value",
+            "value": "%E2xA"
+          },
+          "observedSha256": "9f9c9a88e883ea106ae940a292ff560bb0ab461729b6e7c3b171b636d41012fe"
+        }
+      ],
+      "rawRuns": [
+        {
+          "stdout": "{\"schemaVersion\":1,\"module\":\"runtime/unicode/fixed/subject.cjs\",\"sourceSha256\":\"3db979d868d90e4bac6f7ee60cf4fd44d8eb1c0d58531e54f16e0ac37dbb8590\",\"cases\":[{\"id\":\"truncated-before-valid\",\"status\":\"passed\",\"observed\":{\"kind\":\"value\",\"value\":\"%E2fooµ\"},\"observedSha256\":\"b10ba641a065e988288693d71f8f5c18486f707b2924cc8191e1d73d07616dc3\"},{\"id\":\"truncated-before-space\",\"status\":\"passed\",\"observed\":{\"kind\":\"value\",\"value\":\"%C2x \"},\"observedSha256\":\"0243d83791ed6d5815eb278990b715ed8066fd8475f7009701fb6a407d413b86\"},{\"id\":\"truncated-before-ascii\",\"status\":\"passed\",\"observed\":{\"kind\":\"value\",\"value\":\"%E2xA\"},\"observedSha256\":\"9f9c9a88e883ea106ae940a292ff560bb0ab461729b6e7c3b171b636d41012fe\"}]}",
+          "stderr": "",
+          "exitCode": 0,
+          "signal": null,
+          "reason": null,
+          "durationMs": 74.669,
+          "result": {
+            "schemaVersion": 1,
+            "module": "runtime/unicode/fixed/subject.cjs",
+            "sourceSha256": "3db979d868d90e4bac6f7ee60cf4fd44d8eb1c0d58531e54f16e0ac37dbb8590",
+            "cases": [
+              {
+                "id": "truncated-before-valid",
+                "status": "passed",
+                "observed": {
+                  "kind": "value",
+                  "value": "%E2fooµ"
+                },
+                "observedSha256": "b10ba641a065e988288693d71f8f5c18486f707b2924cc8191e1d73d07616dc3"
+              },
+              {
+                "id": "truncated-before-space",
+                "status": "passed",
+                "observed": {
+                  "kind": "value",
+                  "value": "%C2x "
+                },
+                "observedSha256": "0243d83791ed6d5815eb278990b715ed8066fd8475f7009701fb6a407d413b86"
+              },
+              {
+                "id": "truncated-before-ascii",
+                "status": "passed",
+                "observed": {
+                  "kind": "value",
+                  "value": "%E2xA"
+                },
+                "observedSha256": "9f9c9a88e883ea106ae940a292ff560bb0ab461729b6e7c3b171b636d41012fe"
+              }
+            ]
+          },
+          "stdoutSha256": "3d386732c867e04c601c33ab6f7b053038c8b2e117df12238071d34fe557b0f3",
+          "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "stdout": "{\"schemaVersion\":1,\"module\":\"runtime/unicode/fixed/subject.cjs\",\"sourceSha256\":\"3db979d868d90e4bac6f7ee60cf4fd44d8eb1c0d58531e54f16e0ac37dbb8590\",\"cases\":[{\"id\":\"truncated-before-valid\",\"status\":\"passed\",\"observed\":{\"kind\":\"value\",\"value\":\"%E2fooµ\"},\"observedSha256\":\"b10ba641a065e988288693d71f8f5c18486f707b2924cc8191e1d73d07616dc3\"},{\"id\":\"truncated-before-space\",\"status\":\"passed\",\"observed\":{\"kind\":\"value\",\"value\":\"%C2x \"},\"observedSha256\":\"0243d83791ed6d5815eb278990b715ed8066fd8475f7009701fb6a407d413b86\"},{\"id\":\"truncated-before-ascii\",\"status\":\"passed\",\"observed\":{\"kind\":\"value\",\"value\":\"%E2xA\"},\"observedSha256\":\"9f9c9a88e883ea106ae940a292ff560bb0ab461729b6e7c3b171b636d41012fe\"}]}",
+          "stderr": "",
+          "exitCode": 0,
+          "signal": null,
+          "reason": null,
+          "durationMs": 55.411,
+          "result": {
+            "schemaVersion": 1,
+            "module": "runtime/unicode/fixed/subject.cjs",
+            "sourceSha256": "3db979d868d90e4bac6f7ee60cf4fd44d8eb1c0d58531e54f16e0ac37dbb8590",
+            "cases": [
+              {
+                "id": "truncated-before-valid",
+                "status": "passed",
+                "observed": {
+                  "kind": "value",
+                  "value": "%E2fooµ"
+                },
+                "observedSha256": "b10ba641a065e988288693d71f8f5c18486f707b2924cc8191e1d73d07616dc3"
+              },
+              {
+                "id": "truncated-before-space",
+                "status": "passed",
+                "observed": {
+                  "kind": "value",
+                  "value": "%C2x "
+                },
+                "observedSha256": "0243d83791ed6d5815eb278990b715ed8066fd8475f7009701fb6a407d413b86"
+              },
+              {
+                "id": "truncated-before-ascii",
+                "status": "passed",
+                "observed": {
+                  "kind": "value",
+                  "value": "%E2xA"
+                },
+                "observedSha256": "9f9c9a88e883ea106ae940a292ff560bb0ab461729b6e7c3b171b636d41012fe"
+              }
+            ]
+          },
+          "stdoutSha256": "3d386732c867e04c601c33ab6f7b053038c8b2e117df12238071d34fe557b0f3",
+          "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ],
+      "durationMs": 135.782,
+      "providerCalls": 0,
+      "networkRequests": 0,
+      "authority": "module-replay-only",
+      "isolation": "disposable-copy-credential-scrubbed-vm-not-os-sandbox",
+      "integrity": "6fe24954b9582657dd4d167bfdbd952bd13ce29b90b5c44c668fff54ef5e6f74"
+    },
+    "targetRepository": "delvedor/fast-decode-uri-component",
+    "targetRevision": "c124e25816434dcb25813a4a7b9c3898eec76922",
+    "eligibleIndependentTransfer": false,
+    "unguided": {
+      "schemaVersion": 1,
+      "kind": "bug-probe-receipt",
+      "recipe": {
+        "schemaVersion": 1,
+        "kind": "bug-recipe",
+        "id": "historical-unicode-decoder-reset",
+        "family": "unicode-boundary",
+        "provenance": {
+          "repository": "https://github.com/jridgewell/safe-decode-uri-component",
+          "baseRevision": "4e7d87e4cfd3942c30d0d264d058715a5e124809",
+          "fixedRevision": "641dec384f134062c0f85898569f4d4117e6350d",
+          "evidenceClass": "public-historical"
+        },
+        "contract": {
+          "text": "A safe URI component decoder leaves invalid escape sequences unchanged and independently decodes later valid Unicode and ASCII escapes.",
+          "sourceUrl": "https://github.com/jridgewell/safe-decode-uri-component/blob/6abe20a0835cf6aabb9219a9a453dd99d3d253f0/README.md",
+          "sourceSha256": "c7b83531509be288b0e0d5bb16432f564400cec105def28073cb4469261caa0e",
+          "independence": "maintainer-specification"
+        },
+        "probe": {
+          "exportName": "default",
+          "cases": [
+            {
+              "id": "plain",
+              "args": [
+                "test"
+              ],
+              "expect": {
+                "kind": "equals",
+                "value": "test"
+              }
+            },
+            {
+              "id": "two-byte",
+              "args": [
+                "%C2%B5"
+              ],
+              "expect": {
+                "kind": "equals",
+                "value": "µ"
+              }
+            },
+            {
+              "id": "three-byte",
+              "args": [
+                "%E2%9A%A1"
+              ],
+              "expect": {
+                "kind": "equals",
+                "value": "⚡"
+              }
+            }
+          ]
+        },
+        "applicability": {
+          "requiredIdentifiers": []
+        }
+      },
+      "recipeId": "historical-unicode-decoder-reset",
+      "recipeSha256": "fabc8c953b459b9d01aa6c0d16f791f50a749ed819160b269c047c57193f6831",
+      "module": "runtime/targets/fastdecode/subject.cjs",
+      "files": [
+        {
+          "path": "runtime/targets/fastdecode/package.json",
+          "sha256": "1239d4d885dcad42201a27ed9324f8f0f760b78700d8db9ced39a511cffe7eae",
+          "bytes": 18
+        },
+        {
+          "path": "runtime/targets/fastdecode/subject.cjs",
+          "sha256": "d49d2cc0b03ad25b6691feb3928f231bf78dfb1187a0ecd6f9a5246e610973e6",
+          "bytes": 3219
+        }
+      ],
+      "sourceSha256": "244e8f75c617dc1ec5d36e3f7e29202ae35490b4b95cb28fa4de306b4778c3a2",
+      "workerSha256": "de73222fb12a0455acb3431380a280311e33cbf55bab063e29ea0a84c5c120a8",
+      "repeat": 2,
+      "timeoutMs": 3000,
+      "outcome": "passed",
+      "reason": null,
+      "cases": [
+        {
+          "id": "plain",
+          "status": "passed",
+          "observed": {
+            "kind": "value",
+            "value": "test"
+          },
+          "observedSha256": "6684357951eaef7cbc6aa8ab69baf200d308e77c54584bec8f504bd85f58cc08"
+        },
+        {
+          "id": "two-byte",
+          "status": "passed",
+          "observed": {
+            "kind": "value",
+            "value": "µ"
+          },
+          "observedSha256": "e97c8dacbb437a90b1977b0b317b50271b1f885b953a376003d827a3be204ab6"
+        },
+        {
+          "id": "three-byte",
+          "status": "passed",
+          "observed": {
+            "kind": "value",
+            "value": "⚡"
+          },
+          "observedSha256": "96652a1f6201cc17db30ad1ae0c070bdd8651dbb5df768270ed09321a6d76cbc"
+        }
+      ],
+      "rawRuns": [
+        {
+          "stdout": "{\"schemaVersion\":1,\"module\":\"runtime/targets/fastdecode/subject.cjs\",\"sourceSha256\":\"244e8f75c617dc1ec5d36e3f7e29202ae35490b4b95cb28fa4de306b4778c3a2\",\"cases\":[{\"id\":\"plain\",\"status\":\"passed\",\"observed\":{\"kind\":\"value\",\"value\":\"test\"},\"observedSha256\":\"6684357951eaef7cbc6aa8ab69baf200d308e77c54584bec8f504bd85f58cc08\"},{\"id\":\"two-byte\",\"status\":\"passed\",\"observed\":{\"kind\":\"value\",\"value\":\"µ\"},\"observedSha256\":\"e97c8dacbb437a90b1977b0b317b50271b1f885b953a376003d827a3be204ab6\"},{\"id\":\"three-byte\",\"status\":\"passed\",\"observed\":{\"kind\":\"value\",\"value\":\"⚡\"},\"observedSha256\":\"96652a1f6201cc17db30ad1ae0c070bdd8651dbb5df768270ed09321a6d76cbc\"}]}",
+          "stderr": "",
+          "exitCode": 0,
+          "signal": null,
+          "reason": null,
+          "durationMs": 51.569,
+          "result": {
+            "schemaVersion": 1,
+            "module": "runtime/targets/fastdecode/subject.cjs",
+            "sourceSha256": "244e8f75c617dc1ec5d36e3f7e29202ae35490b4b95cb28fa4de306b4778c3a2",
+            "cases": [
+              {
+                "id": "plain",
+                "status": "passed",
+                "observed": {
+                  "kind": "value",
+                  "value": "test"
+                },
+                "observedSha256": "6684357951eaef7cbc6aa8ab69baf200d308e77c54584bec8f504bd85f58cc08"
+              },
+              {
+                "id": "two-byte",
+                "status": "passed",
+                "observed": {
+                  "kind": "value",
+                  "value": "µ"
+                },
+                "observedSha256": "e97c8dacbb437a90b1977b0b317b50271b1f885b953a376003d827a3be204ab6"
+              },
+              {
+                "id": "three-byte",
+                "status": "passed",
+                "observed": {
+                  "kind": "value",
+                  "value": "⚡"
+                },
+                "observedSha256": "96652a1f6201cc17db30ad1ae0c070bdd8651dbb5df768270ed09321a6d76cbc"
+              }
+            ]
+          },
+          "stdoutSha256": "ca89463c5d6a00dbc1b44637331860f4e083905cc0c30f9e659f6432c1f0b24f",
+          "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "stdout": "{\"schemaVersion\":1,\"module\":\"runtime/targets/fastdecode/subject.cjs\",\"sourceSha256\":\"244e8f75c617dc1ec5d36e3f7e29202ae35490b4b95cb28fa4de306b4778c3a2\",\"cases\":[{\"id\":\"plain\",\"status\":\"passed\",\"observed\":{\"kind\":\"value\",\"value\":\"test\"},\"observedSha256\":\"6684357951eaef7cbc6aa8ab69baf200d308e77c54584bec8f504bd85f58cc08\"},{\"id\":\"two-byte\",\"status\":\"passed\",\"observed\":{\"kind\":\"value\",\"value\":\"µ\"},\"observedSha256\":\"e97c8dacbb437a90b1977b0b317b50271b1f885b953a376003d827a3be204ab6\"},{\"id\":\"three-byte\",\"status\":\"passed\",\"observed\":{\"kind\":\"value\",\"value\":\"⚡\"},\"observedSha256\":\"96652a1f6201cc17db30ad1ae0c070bdd8651dbb5df768270ed09321a6d76cbc\"}]}",
+          "stderr": "",
+          "exitCode": 0,
+          "signal": null,
+          "reason": null,
+          "durationMs": 54.975,
+          "result": {
+            "schemaVersion": 1,
+            "module": "runtime/targets/fastdecode/subject.cjs",
+            "sourceSha256": "244e8f75c617dc1ec5d36e3f7e29202ae35490b4b95cb28fa4de306b4778c3a2",
+            "cases": [
+              {
+                "id": "plain",
+                "status": "passed",
+                "observed": {
+                  "kind": "value",
+                  "value": "test"
+                },
+                "observedSha256": "6684357951eaef7cbc6aa8ab69baf200d308e77c54584bec8f504bd85f58cc08"
+              },
+              {
+                "id": "two-byte",
+                "status": "passed",
+                "observed": {
+                  "kind": "value",
+                  "value": "µ"
+                },
+                "observedSha256": "e97c8dacbb437a90b1977b0b317b50271b1f885b953a376003d827a3be204ab6"
+              },
+              {
+                "id": "three-byte",
+                "status": "passed",
+                "observed": {
+                  "kind": "value",
+                  "value": "⚡"
+                },
+                "observedSha256": "96652a1f6201cc17db30ad1ae0c070bdd8651dbb5df768270ed09321a6d76cbc"
+              }
+            ]
+          },
+          "stdoutSha256": "ca89463c5d6a00dbc1b44637331860f4e083905cc0c30f9e659f6432c1f0b24f",
+          "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ],
+      "durationMs": 110.524,
+      "providerCalls": 0,
+      "networkRequests": 0,
+      "authority": "module-replay-only",
+      "isolation": "disposable-copy-credential-scrubbed-vm-not-os-sandbox",
+      "integrity": "3e8acddb617de4605fa95ee48c3685c64af7bdf87923b57f6e2c3db17717d92f"
+    },
+    "guided": null,
+    "abstentionReason": "Direct fork ancestry and maintainer-declared null-on-invalid contract exclude independent recovery transfer."
+  }
+]

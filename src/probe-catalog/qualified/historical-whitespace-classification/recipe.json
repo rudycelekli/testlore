@@ -1,0 +1,56 @@
+{
+  "schemaVersion": 1,
+  "kind": "bug-recipe",
+  "id": "historical-whitespace-classification",
+  "family": "input-validation",
+  "provenance": {
+    "repository": "https://github.com/jonschlinkert/is-number",
+    "baseRevision": "204c885659b8ee1946534c61db91603b9a16d661",
+    "fixedRevision": "12749e3c411750f754d50f093471234c7ab270b0",
+    "evidenceClass": "public-historical"
+  },
+  "contract": {
+    "text": "Whitespace-only and empty strings are not numbers, as specified by the maintainer issue #3 assertions.",
+    "sourceUrl": "https://github.com/jonschlinkert/is-number/blob/12749e3c411750f754d50f093471234c7ab270b0/test.js",
+    "sourceSha256": "acb5000f91ab6a43244a94fa01910bf635b39084f5d9fd5ea74354c46c19b139",
+    "independence": "maintainer-specification"
+  },
+  "probe": {
+    "exportName": "default",
+    "cases": [
+      {
+        "id": "spaces",
+        "args": [
+          "   "
+        ],
+        "expect": {
+          "kind": "equals",
+          "value": false
+        }
+      },
+      {
+        "id": "controls",
+        "args": [
+          "\r\n\t"
+        ],
+        "expect": {
+          "kind": "equals",
+          "value": false
+        }
+      },
+      {
+        "id": "empty",
+        "args": [
+          ""
+        ],
+        "expect": {
+          "kind": "equals",
+          "value": false
+        }
+      }
+    ]
+  },
+  "applicability": {
+    "requiredIdentifiers": []
+  }
+}

@@ -90,6 +90,7 @@ export function readConfig(root) {
 }
 export function validateConfig(raw) {
   const config = resolvePluginConfig(raw);
+  if(config.investigation!==undefined){const value=config.investigation;if(!value||typeof value!=='object'||Array.isArray(value)||Object.keys(value).some(key=>!['enabled','manifest'].includes(key))||value.enabled!==undefined&&typeof value.enabled!=='boolean'||value.manifest!==undefined&&(typeof value.manifest!=='string'||!value.manifest||value.manifest.length>512||path.isAbsolute(value.manifest)||value.manifest.includes('\\')||/[\x00-\x1f]/.test(value.manifest)||value.manifest.split('/').some(part=>['','.','..'].includes(part))))throw new Error('investigation requires enabled:boolean and an exact project-relative manifest');}
   validateConfigurationInputs(config.configurationInputs);
   if(config.executionMode !== undefined && !['shadow','selective'].includes(config.executionMode))throw new Error('executionMode must be shadow or selective');
   if(config.analysisCache!==undefined){

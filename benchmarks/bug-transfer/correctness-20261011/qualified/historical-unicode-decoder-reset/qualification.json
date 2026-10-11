@@ -1,0 +1,440 @@
+{
+  "schemaVersion": 1,
+  "kind": "bug-recipe-qualification",
+  "recipeId": "historical-unicode-decoder-reset",
+  "recipeSha256": "5d0c3c0d0e1e707e53e803d110f6648b5e6fc31bcc77ce2fccb01355f8ce46c6",
+  "qualified": true,
+  "original": {
+    "schemaVersion": 1,
+    "kind": "bug-probe-receipt",
+    "recipe": {
+      "schemaVersion": 1,
+      "kind": "bug-recipe",
+      "id": "historical-unicode-decoder-reset",
+      "family": "unicode-boundary",
+      "provenance": {
+        "repository": "https://github.com/jridgewell/safe-decode-uri-component",
+        "baseRevision": "4e7d87e4cfd3942c30d0d264d058715a5e124809",
+        "fixedRevision": "641dec384f134062c0f85898569f4d4117e6350d",
+        "evidenceClass": "public-historical"
+      },
+      "contract": {
+        "text": "A safe URI component decoder leaves invalid escape sequences unchanged and independently decodes later valid Unicode and ASCII escapes.",
+        "sourceUrl": "https://github.com/jridgewell/safe-decode-uri-component/blob/6abe20a0835cf6aabb9219a9a453dd99d3d253f0/README.md",
+        "sourceSha256": "c7b83531509be288b0e0d5bb16432f564400cec105def28073cb4469261caa0e",
+        "independence": "maintainer-specification"
+      },
+      "probe": {
+        "exportName": "default",
+        "cases": [
+          {
+            "id": "truncated-before-valid",
+            "args": [
+              "%E2foo%C2%B5"
+            ],
+            "expect": {
+              "kind": "equals",
+              "value": "%E2fooµ"
+            }
+          },
+          {
+            "id": "truncated-before-space",
+            "args": [
+              "%C2x%20"
+            ],
+            "expect": {
+              "kind": "equals",
+              "value": "%C2x "
+            }
+          },
+          {
+            "id": "truncated-before-ascii",
+            "args": [
+              "%E2x%41"
+            ],
+            "expect": {
+              "kind": "equals",
+              "value": "%E2xA"
+            }
+          }
+        ]
+      },
+      "applicability": {
+        "requiredIdentifiers": []
+      }
+    },
+    "recipeId": "historical-unicode-decoder-reset",
+    "recipeSha256": "5d0c3c0d0e1e707e53e803d110f6648b5e6fc31bcc77ce2fccb01355f8ce46c6",
+    "module": "runtime/unicode/original/subject.cjs",
+    "files": [
+      {
+        "path": "runtime/unicode/original/package.json",
+        "sha256": "1239d4d885dcad42201a27ed9324f8f0f760b78700d8db9ced39a511cffe7eae",
+        "bytes": 18
+      },
+      {
+        "path": "runtime/unicode/original/subject.cjs",
+        "sha256": "dd6f06cfbcc0ef6240b8e7cc342144712f6766dd4c65d001ced542088e7ea629",
+        "bytes": 4364
+      }
+    ],
+    "sourceSha256": "dfdbfa6b16d6fce3774ada3bd19248420cd5429b2dd953f8c44eda51ea5ca857",
+    "workerSha256": "de73222fb12a0455acb3431380a280311e33cbf55bab063e29ea0a84c5c120a8",
+    "repeat": 2,
+    "timeoutMs": 3000,
+    "outcome": "reproduced",
+    "reason": null,
+    "cases": [
+      {
+        "id": "truncated-before-valid",
+        "status": "mismatch",
+        "observed": {
+          "kind": "value",
+          "value": "%E2foo₵"
+        },
+        "observedSha256": "7b01da97daa163ba90767c9a2adb6c31ed8972a89407c6b2175fec2f1249e942"
+      },
+      {
+        "id": "truncated-before-space",
+        "status": "mismatch",
+        "observed": {
+          "kind": "value",
+          "value": "%C2x "
+        },
+        "observedSha256": "db67e3dd57a4725729eae298cac6568838a401777ed35f59e397f77576fc4021"
+      },
+      {
+        "id": "truncated-before-ascii",
+        "status": "mismatch",
+        "observed": {
+          "kind": "value",
+          "value": "%E2xÁ"
+        },
+        "observedSha256": "d090691ff0fee5329ee30fef72ba0c85443d10f2f495bba61f65d0b403f7b23e"
+      }
+    ],
+    "rawRuns": [
+      {
+        "stdout": "{\"schemaVersion\":1,\"module\":\"runtime/unicode/original/subject.cjs\",\"sourceSha256\":\"dfdbfa6b16d6fce3774ada3bd19248420cd5429b2dd953f8c44eda51ea5ca857\",\"cases\":[{\"id\":\"truncated-before-valid\",\"status\":\"mismatch\",\"observed\":{\"kind\":\"value\",\"value\":\"%E2foo₵\"},\"observedSha256\":\"7b01da97daa163ba90767c9a2adb6c31ed8972a89407c6b2175fec2f1249e942\"},{\"id\":\"truncated-before-space\",\"status\":\"mismatch\",\"observed\":{\"kind\":\"value\",\"value\":\"%C2x \"},\"observedSha256\":\"db67e3dd57a4725729eae298cac6568838a401777ed35f59e397f77576fc4021\"},{\"id\":\"truncated-before-ascii\",\"status\":\"mismatch\",\"observed\":{\"kind\":\"value\",\"value\":\"%E2xÁ\"},\"observedSha256\":\"d090691ff0fee5329ee30fef72ba0c85443d10f2f495bba61f65d0b403f7b23e\"}]}",
+        "stderr": "",
+        "exitCode": 0,
+        "signal": null,
+        "reason": null,
+        "durationMs": 53.841,
+        "result": {
+          "schemaVersion": 1,
+          "module": "runtime/unicode/original/subject.cjs",
+          "sourceSha256": "dfdbfa6b16d6fce3774ada3bd19248420cd5429b2dd953f8c44eda51ea5ca857",
+          "cases": [
+            {
+              "id": "truncated-before-valid",
+              "status": "mismatch",
+              "observed": {
+                "kind": "value",
+                "value": "%E2foo₵"
+              },
+              "observedSha256": "7b01da97daa163ba90767c9a2adb6c31ed8972a89407c6b2175fec2f1249e942"
+            },
+            {
+              "id": "truncated-before-space",
+              "status": "mismatch",
+              "observed": {
+                "kind": "value",
+                "value": "%C2x "
+              },
+              "observedSha256": "db67e3dd57a4725729eae298cac6568838a401777ed35f59e397f77576fc4021"
+            },
+            {
+              "id": "truncated-before-ascii",
+              "status": "mismatch",
+              "observed": {
+                "kind": "value",
+                "value": "%E2xÁ"
+              },
+              "observedSha256": "d090691ff0fee5329ee30fef72ba0c85443d10f2f495bba61f65d0b403f7b23e"
+            }
+          ]
+        },
+        "stdoutSha256": "bbdb49efbd0143efd1679c3871cf69002a513c9c6b43749c1a1e26d9d190a33e",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "stdout": "{\"schemaVersion\":1,\"module\":\"runtime/unicode/original/subject.cjs\",\"sourceSha256\":\"dfdbfa6b16d6fce3774ada3bd19248420cd5429b2dd953f8c44eda51ea5ca857\",\"cases\":[{\"id\":\"truncated-before-valid\",\"status\":\"mismatch\",\"observed\":{\"kind\":\"value\",\"value\":\"%E2foo₵\"},\"observedSha256\":\"7b01da97daa163ba90767c9a2adb6c31ed8972a89407c6b2175fec2f1249e942\"},{\"id\":\"truncated-before-space\",\"status\":\"mismatch\",\"observed\":{\"kind\":\"value\",\"value\":\"%C2x \"},\"observedSha256\":\"db67e3dd57a4725729eae298cac6568838a401777ed35f59e397f77576fc4021\"},{\"id\":\"truncated-before-ascii\",\"status\":\"mismatch\",\"observed\":{\"kind\":\"value\",\"value\":\"%E2xÁ\"},\"observedSha256\":\"d090691ff0fee5329ee30fef72ba0c85443d10f2f495bba61f65d0b403f7b23e\"}]}",
+        "stderr": "",
+        "exitCode": 0,
+        "signal": null,
+        "reason": null,
+        "durationMs": 54.888,
+        "result": {
+          "schemaVersion": 1,
+          "module": "runtime/unicode/original/subject.cjs",
+          "sourceSha256": "dfdbfa6b16d6fce3774ada3bd19248420cd5429b2dd953f8c44eda51ea5ca857",
+          "cases": [
+            {
+              "id": "truncated-before-valid",
+              "status": "mismatch",
+              "observed": {
+                "kind": "value",
+                "value": "%E2foo₵"
+              },
+              "observedSha256": "7b01da97daa163ba90767c9a2adb6c31ed8972a89407c6b2175fec2f1249e942"
+            },
+            {
+              "id": "truncated-before-space",
+              "status": "mismatch",
+              "observed": {
+                "kind": "value",
+                "value": "%C2x "
+              },
+              "observedSha256": "db67e3dd57a4725729eae298cac6568838a401777ed35f59e397f77576fc4021"
+            },
+            {
+              "id": "truncated-before-ascii",
+              "status": "mismatch",
+              "observed": {
+                "kind": "value",
+                "value": "%E2xÁ"
+              },
+              "observedSha256": "d090691ff0fee5329ee30fef72ba0c85443d10f2f495bba61f65d0b403f7b23e"
+            }
+          ]
+        },
+        "stdoutSha256": "bbdb49efbd0143efd1679c3871cf69002a513c9c6b43749c1a1e26d9d190a33e",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    ],
+    "durationMs": 112.473,
+    "providerCalls": 0,
+    "networkRequests": 0,
+    "authority": "module-replay-only",
+    "isolation": "disposable-copy-credential-scrubbed-vm-not-os-sandbox",
+    "integrity": "5ffb12fa193eb1cc5dbdf2723b0e2cbfa8868e4e7ae88e977fa7f725df18e9d8"
+  },
+  "fixed": {
+    "schemaVersion": 1,
+    "kind": "bug-probe-receipt",
+    "recipe": {
+      "schemaVersion": 1,
+      "kind": "bug-recipe",
+      "id": "historical-unicode-decoder-reset",
+      "family": "unicode-boundary",
+      "provenance": {
+        "repository": "https://github.com/jridgewell/safe-decode-uri-component",
+        "baseRevision": "4e7d87e4cfd3942c30d0d264d058715a5e124809",
+        "fixedRevision": "641dec384f134062c0f85898569f4d4117e6350d",
+        "evidenceClass": "public-historical"
+      },
+      "contract": {
+        "text": "A safe URI component decoder leaves invalid escape sequences unchanged and independently decodes later valid Unicode and ASCII escapes.",
+        "sourceUrl": "https://github.com/jridgewell/safe-decode-uri-component/blob/6abe20a0835cf6aabb9219a9a453dd99d3d253f0/README.md",
+        "sourceSha256": "c7b83531509be288b0e0d5bb16432f564400cec105def28073cb4469261caa0e",
+        "independence": "maintainer-specification"
+      },
+      "probe": {
+        "exportName": "default",
+        "cases": [
+          {
+            "id": "truncated-before-valid",
+            "args": [
+              "%E2foo%C2%B5"
+            ],
+            "expect": {
+              "kind": "equals",
+              "value": "%E2fooµ"
+            }
+          },
+          {
+            "id": "truncated-before-space",
+            "args": [
+              "%C2x%20"
+            ],
+            "expect": {
+              "kind": "equals",
+              "value": "%C2x "
+            }
+          },
+          {
+            "id": "truncated-before-ascii",
+            "args": [
+              "%E2x%41"
+            ],
+            "expect": {
+              "kind": "equals",
+              "value": "%E2xA"
+            }
+          }
+        ]
+      },
+      "applicability": {
+        "requiredIdentifiers": []
+      }
+    },
+    "recipeId": "historical-unicode-decoder-reset",
+    "recipeSha256": "5d0c3c0d0e1e707e53e803d110f6648b5e6fc31bcc77ce2fccb01355f8ce46c6",
+    "module": "runtime/unicode/fixed/subject.cjs",
+    "files": [
+      {
+        "path": "runtime/unicode/fixed/package.json",
+        "sha256": "1239d4d885dcad42201a27ed9324f8f0f760b78700d8db9ced39a511cffe7eae",
+        "bytes": 18
+      },
+      {
+        "path": "runtime/unicode/fixed/subject.cjs",
+        "sha256": "6adb190890de44e4d8c26b1f710d43f6cdc9fcfed194b7996bfabf2b3645925c",
+        "bytes": 4387
+      }
+    ],
+    "sourceSha256": "3db979d868d90e4bac6f7ee60cf4fd44d8eb1c0d58531e54f16e0ac37dbb8590",
+    "workerSha256": "de73222fb12a0455acb3431380a280311e33cbf55bab063e29ea0a84c5c120a8",
+    "repeat": 2,
+    "timeoutMs": 3000,
+    "outcome": "passed",
+    "reason": null,
+    "cases": [
+      {
+        "id": "truncated-before-valid",
+        "status": "passed",
+        "observed": {
+          "kind": "value",
+          "value": "%E2fooµ"
+        },
+        "observedSha256": "b10ba641a065e988288693d71f8f5c18486f707b2924cc8191e1d73d07616dc3"
+      },
+      {
+        "id": "truncated-before-space",
+        "status": "passed",
+        "observed": {
+          "kind": "value",
+          "value": "%C2x "
+        },
+        "observedSha256": "0243d83791ed6d5815eb278990b715ed8066fd8475f7009701fb6a407d413b86"
+      },
+      {
+        "id": "truncated-before-ascii",
+        "status": "passed",
+        "observed": {
+          "kind": "value",
+          "value": "%E2xA"
+        },
+        "observedSha256": "9f9c9a88e883ea106ae940a292ff560bb0ab461729b6e7c3b171b636d41012fe"
+      }
+    ],
+    "rawRuns": [
+      {
+        "stdout": "{\"schemaVersion\":1,\"module\":\"runtime/unicode/fixed/subject.cjs\",\"sourceSha256\":\"3db979d868d90e4bac6f7ee60cf4fd44d8eb1c0d58531e54f16e0ac37dbb8590\",\"cases\":[{\"id\":\"truncated-before-valid\",\"status\":\"passed\",\"observed\":{\"kind\":\"value\",\"value\":\"%E2fooµ\"},\"observedSha256\":\"b10ba641a065e988288693d71f8f5c18486f707b2924cc8191e1d73d07616dc3\"},{\"id\":\"truncated-before-space\",\"status\":\"passed\",\"observed\":{\"kind\":\"value\",\"value\":\"%C2x \"},\"observedSha256\":\"0243d83791ed6d5815eb278990b715ed8066fd8475f7009701fb6a407d413b86\"},{\"id\":\"truncated-before-ascii\",\"status\":\"passed\",\"observed\":{\"kind\":\"value\",\"value\":\"%E2xA\"},\"observedSha256\":\"9f9c9a88e883ea106ae940a292ff560bb0ab461729b6e7c3b171b636d41012fe\"}]}",
+        "stderr": "",
+        "exitCode": 0,
+        "signal": null,
+        "reason": null,
+        "durationMs": 53.493,
+        "result": {
+          "schemaVersion": 1,
+          "module": "runtime/unicode/fixed/subject.cjs",
+          "sourceSha256": "3db979d868d90e4bac6f7ee60cf4fd44d8eb1c0d58531e54f16e0ac37dbb8590",
+          "cases": [
+            {
+              "id": "truncated-before-valid",
+              "status": "passed",
+              "observed": {
+                "kind": "value",
+                "value": "%E2fooµ"
+              },
+              "observedSha256": "b10ba641a065e988288693d71f8f5c18486f707b2924cc8191e1d73d07616dc3"
+            },
+            {
+              "id": "truncated-before-space",
+              "status": "passed",
+              "observed": {
+                "kind": "value",
+                "value": "%C2x "
+              },
+              "observedSha256": "0243d83791ed6d5815eb278990b715ed8066fd8475f7009701fb6a407d413b86"
+            },
+            {
+              "id": "truncated-before-ascii",
+              "status": "passed",
+              "observed": {
+                "kind": "value",
+                "value": "%E2xA"
+              },
+              "observedSha256": "9f9c9a88e883ea106ae940a292ff560bb0ab461729b6e7c3b171b636d41012fe"
+            }
+          ]
+        },
+        "stdoutSha256": "3d386732c867e04c601c33ab6f7b053038c8b2e117df12238071d34fe557b0f3",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "stdout": "{\"schemaVersion\":1,\"module\":\"runtime/unicode/fixed/subject.cjs\",\"sourceSha256\":\"3db979d868d90e4bac6f7ee60cf4fd44d8eb1c0d58531e54f16e0ac37dbb8590\",\"cases\":[{\"id\":\"truncated-before-valid\",\"status\":\"passed\",\"observed\":{\"kind\":\"value\",\"value\":\"%E2fooµ\"},\"observedSha256\":\"b10ba641a065e988288693d71f8f5c18486f707b2924cc8191e1d73d07616dc3\"},{\"id\":\"truncated-before-space\",\"status\":\"passed\",\"observed\":{\"kind\":\"value\",\"value\":\"%C2x \"},\"observedSha256\":\"0243d83791ed6d5815eb278990b715ed8066fd8475f7009701fb6a407d413b86\"},{\"id\":\"truncated-before-ascii\",\"status\":\"passed\",\"observed\":{\"kind\":\"value\",\"value\":\"%E2xA\"},\"observedSha256\":\"9f9c9a88e883ea106ae940a292ff560bb0ab461729b6e7c3b171b636d41012fe\"}]}",
+        "stderr": "",
+        "exitCode": 0,
+        "signal": null,
+        "reason": null,
+        "durationMs": 52.86,
+        "result": {
+          "schemaVersion": 1,
+          "module": "runtime/unicode/fixed/subject.cjs",
+          "sourceSha256": "3db979d868d90e4bac6f7ee60cf4fd44d8eb1c0d58531e54f16e0ac37dbb8590",
+          "cases": [
+            {
+              "id": "truncated-before-valid",
+              "status": "passed",
+              "observed": {
+                "kind": "value",
+                "value": "%E2fooµ"
+              },
+              "observedSha256": "b10ba641a065e988288693d71f8f5c18486f707b2924cc8191e1d73d07616dc3"
+            },
+            {
+              "id": "truncated-before-space",
+              "status": "passed",
+              "observed": {
+                "kind": "value",
+                "value": "%C2x "
+              },
+              "observedSha256": "0243d83791ed6d5815eb278990b715ed8066fd8475f7009701fb6a407d413b86"
+            },
+            {
+              "id": "truncated-before-ascii",
+              "status": "passed",
+              "observed": {
+                "kind": "value",
+                "value": "%E2xA"
+              },
+              "observedSha256": "9f9c9a88e883ea106ae940a292ff560bb0ab461729b6e7c3b171b636d41012fe"
+            }
+          ]
+        },
+        "stdoutSha256": "3d386732c867e04c601c33ab6f7b053038c8b2e117df12238071d34fe557b0f3",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    ],
+    "durationMs": 109.894,
+    "providerCalls": 0,
+    "networkRequests": 0,
+    "authority": "module-replay-only",
+    "isolation": "disposable-copy-credential-scrubbed-vm-not-os-sandbox",
+    "integrity": "72a6a1943396e0ea10368716c09ad0dd9120ace6401697b4d877d6ac7f730203"
+  },
+  "evidence": {
+    "recipe": {
+      "file": "recipe.json",
+      "sha256": "2e726f007e06ae84636faaa2abe3eebf8a8999f91a3846853da414f0c966f060"
+    },
+    "original": {
+      "file": "original.json",
+      "sha256": "f7d1712126e0edb187a86a9342a926a910ea9bf1fe45f16674b96d0cfab098e5"
+    },
+    "fixed": {
+      "file": "fixed.json",
+      "sha256": "30937ee44bf43ac2cb099a556837ad2c120f7a2f431f3af36d88f12758695df2"
+    }
+  },
+  "scope": "pure-module-replay",
+  "provenanceAuthenticity": "declared-not-independently-verified",
+  "nativeSuiteValidated": false,
+  "repairAuthority": "none",
+  "providerCalls": 0,
+  "networkRequests": 0,
+  "integrity": "b1617a44bb35b09129cd98b350beb7c571a817d9e7dfb897f8409b82a2ee8259"
+}

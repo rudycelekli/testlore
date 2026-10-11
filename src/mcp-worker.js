@@ -111,7 +111,7 @@ export function boundedSummary(value, maxBytes = 65536) {
 if (process.send && process.argv[2] === '--internal-mcp-worker') {
   try {
     const request = JSON.parse(process.argv[3]);
-    if (!['plan', 'verify'].includes(request.operation) || fs.realpathSync(request.root) !== request.root)
+    if (!['plan', 'verify','investigate'].includes(request.operation) || fs.realpathSync(request.root) !== request.root)
       throw new Error('Invalid internal MCP worker request');
     const identity = fs.statSync(request.root);
     if (identity.dev !== request.rootIdentity?.dev || identity.ino !== request.rootIdentity?.ino)
@@ -119,7 +119,9 @@ if (process.send && process.argv[2] === '--internal-mcp-worker') {
     const options = request.base ? { base: request.base } : {};
     let result;
     if (request.operation === 'plan') result = { kind: 'agent-verification-plan', ...summarizePlan(plan(request.root, options)) };
-    else {
+    else if(request.operation==='investigate'){
+      const {investigateBugs}=await import('./bug-investigation.js');result=await investigateBugs(request.root,{execute:true});
+    }else {
       const report = run(request.root, { ...options, capture: true, ...(request.mode === 'full' ? { full: true } : { shadow: true }) });
       const receipts = report.executed && !report.delegated ? { json: '.tddswarm/last-run.json', markdown: '.tddswarm/last-run.md' } : null;
       result = summarizeRun(report, request.mode, receipts);

@@ -1,0 +1,56 @@
+{
+  "schemaVersion": 1,
+  "kind": "bug-recipe",
+  "id": "historical-unicode-decoder-reset",
+  "family": "unicode-boundary",
+  "provenance": {
+    "repository": "https://github.com/jridgewell/safe-decode-uri-component",
+    "baseRevision": "4e7d87e4cfd3942c30d0d264d058715a5e124809",
+    "fixedRevision": "641dec384f134062c0f85898569f4d4117e6350d",
+    "evidenceClass": "public-historical"
+  },
+  "contract": {
+    "text": "A safe URI component decoder leaves invalid escape sequences unchanged and independently decodes later valid Unicode and ASCII escapes.",
+    "sourceUrl": "https://github.com/jridgewell/safe-decode-uri-component/blob/6abe20a0835cf6aabb9219a9a453dd99d3d253f0/README.md",
+    "sourceSha256": "c7b83531509be288b0e0d5bb16432f564400cec105def28073cb4469261caa0e",
+    "independence": "maintainer-specification"
+  },
+  "probe": {
+    "exportName": "default",
+    "cases": [
+      {
+        "id": "truncated-before-valid",
+        "args": [
+          "%E2foo%C2%B5"
+        ],
+        "expect": {
+          "kind": "equals",
+          "value": "%E2fooµ"
+        }
+      },
+      {
+        "id": "truncated-before-space",
+        "args": [
+          "%C2x%20"
+        ],
+        "expect": {
+          "kind": "equals",
+          "value": "%C2x "
+        }
+      },
+      {
+        "id": "truncated-before-ascii",
+        "args": [
+          "%E2x%41"
+        ],
+        "expect": {
+          "kind": "equals",
+          "value": "%E2xA"
+        }
+      }
+    ]
+  },
+  "applicability": {
+    "requiredIdentifiers": []
+  }
+}

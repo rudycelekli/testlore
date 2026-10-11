@@ -1,0 +1,57 @@
+{
+  "schemaVersion": 1,
+  "kind": "read-only-public-repository-origin-observation",
+  "observedAt": "2026-10-11T17:28:30.695Z",
+  "repositories": [
+    {
+      "repository": "jonschlinkert/is-number",
+      "id": 24313173,
+      "private": false,
+      "fork": false,
+      "parentRepository": null,
+      "url": "https://github.com/jonschlinkert/is-number"
+    },
+    {
+      "repository": "SamVerschueren/decode-uri-component",
+      "id": 91837954,
+      "private": false,
+      "fork": false,
+      "parentRepository": null,
+      "url": "https://github.com/SamVerschueren/decode-uri-component"
+    },
+    {
+      "repository": "jridgewell/safe-decode-uri-component",
+      "id": 108074663,
+      "private": false,
+      "fork": false,
+      "parentRepository": null,
+      "url": "https://github.com/jridgewell/safe-decode-uri-component"
+    },
+    {
+      "repository": "validatorjs/validator.js",
+      "id": 965782,
+      "private": false,
+      "fork": false,
+      "parentRepository": null,
+      "url": "https://github.com/validatorjs/validator.js"
+    },
+    {
+      "repository": "pillarjs/encodeurl",
+      "id": 60721766,
+      "private": false,
+      "fork": false,
+      "parentRepository": null,
+      "url": "https://github.com/pillarjs/encodeurl"
+    },
+    {
+      "repository": "delvedor/fast-decode-uri-component",
+      "id": 125359061,
+      "private": false,
+      "fork": false,
+      "parentRepository": null,
+      "url": "https://github.com/delvedor/fast-decode-uri-component"
+    }
+  ],
+  "authority": "publicness-observation-only",
+  "limitation": "Repository metadata and hashes do not establish independence or correctness. README-declared ancestry is separately checked."
+}

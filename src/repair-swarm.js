@@ -64,12 +64,14 @@ function workerFailure(error){
 }
 
 /** One bounded source-repair proposal round. Acceptance here is review, never execution proof. */
-export async function proposeRepair(root,{agent,sourcePaths,requirements,baseline,timeoutMs=60000,deadlineMs=180000,maxTasks=3,maxOutputBytes=128*1024,contributionSourceRoot}={}){
+export async function proposeRepair(root,{agent,sourcePaths,requirements,baseline,timeoutMs=60000,deadlineMs=180000,maxTasks=3,maxOutputBytes=128*1024,contributionSourceRoot,assertInputsFresh}={}){
  const started=performance.now(),workerReceipts=[];
  let inputBindings=null,budgets=null,phase='admission',contributionRetrieval=null;
  const accounting=()=>({attemptedCalls:workerReceipts.length,completedCalls:workerReceipts.filter(receipt=>receipt.status==='completed').length,durationMs:Math.round(performance.now()-started),workerReceipts,budgets,...(contributionRetrieval?{contributionRetrieval}:{}),cost:{measurement:'not-measured',tokens:null,amount:null,currency:null}});
  try{
  root=fs.realpathSync(path.resolve(root));
+ if(assertInputsFresh!==undefined&&typeof assertInputsFresh!=='function')throw Error('Repair input guard must be a trusted callback');
+ assertInputsFresh?.();
  if(!Array.isArray(agent)||!agent.length||agent.length>64||agent.some(arg=>typeof arg!=='string'||!arg||arg.includes('\0')))throw Error('Repair agent must be an executable and argv array');
  if(!Number.isInteger(timeoutMs)||timeoutMs<1||timeoutMs>360000||!Number.isInteger(deadlineMs)||deadlineMs<1||deadlineMs>900000||!Number.isInteger(maxTasks)||maxTasks<1||maxTasks>3||!Number.isInteger(maxOutputBytes)||maxOutputBytes<1024||maxOutputBytes>256*1024)throw Error('Invalid repair worker budgets');
  budgets={timeoutMs,deadlineMs,maxTasks,maxCalls:maxTasks+2,maxOutputBytes,rounds:1};
@@ -105,6 +107,7 @@ export async function proposeRepair(root,{agent,sourcePaths,requirements,baselin
   if(sourceContributionBinding&&digest(contributionSnapshot(sourceContributionRoot))!==digest(sourceContributionBinding))throw Error('Repair contribution knowledge inputs changed during retrieval');
  }
  const immutable=()=>{
+  assertInputsFresh?.();
   let current;try{current=captureRepairState(root,{deadline:started+deadlineMs});}catch(error){if(performance.now()-started>=deadlineMs)throw Error('Repair round deadline exhausted');throw Error('Repair inputs changed while workers were running');}
   const state=freshness(provenance,current.provenance);
   if(!state.fresh||provenance.revision!==current.provenance.revision||inputState.scope.fingerprint!==current.scope.fingerprint||inputState.dependencies.fingerprint!==current.dependencies.fingerprint)throw Error('Repair inputs changed while workers were running: '+state.reasons.join(', '));
