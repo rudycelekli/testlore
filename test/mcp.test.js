@@ -24,6 +24,13 @@ async function connect(t, root, options = {}, workerEnv = {}) {
 }
 const call = (client, name, args = {}, options) => client.callTool({ name, arguments: args }, options);
 
+test('actual CLI file initializes configured read-only immunity tools without eval-host globals',async t=>{
+ const root=fixture(t,{'package.json':{type:'module'},'tddswarm.probes.json':'{}'});
+ const transport=new StdioClientTransport({command:process.execPath,args:[path.resolve('src/cli.js'),'mcp','--root',root],cwd:root,stderr:'pipe'}),client=new Client({name:'testlore-cli-immunity-host',version:'1'});t.after(()=>client.close());
+ await client.connect(transport);assert.deepEqual((await client.listTools()).tools.map(row=>row.name).sort(),['testlore_brief','testlore_immunity','testlore_status']);
+ const result=await client.callTool({name:'testlore_immunity',arguments:{}});assert.equal(result.isError,undefined);assert.equal(result.structuredContent.status,'awaiting-reviewed-probes');assert.equal(result.structuredContent.backgroundServiceRunning,false);assert.equal(fs.existsSync(path.join(root,'.tddswarm')),false);
+});
+
 test('real MCP SDK handshake defaults to strict read-only tools and never runs project code', async t => {
   const root = fixture(t, { ...twoModules,
     'probe.cjs': "require('node:fs').writeFileSync('executed-marker','executed'); console.log('v1');",

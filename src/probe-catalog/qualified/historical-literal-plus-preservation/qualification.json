@@ -1,0 +1,440 @@
+{
+  "schemaVersion": 1,
+  "kind": "bug-recipe-qualification",
+  "recipeId": "historical-literal-plus-preservation",
+  "recipeSha256": "fdf5cfa434340d174c7bcff32ce18e1c8686192e7d1cfb4bfb65b5395c5c7a5f",
+  "qualified": true,
+  "original": {
+    "schemaVersion": 1,
+    "kind": "bug-probe-receipt",
+    "recipe": {
+      "schemaVersion": 1,
+      "kind": "bug-recipe",
+      "id": "historical-literal-plus-preservation",
+      "family": "protocol-validation",
+      "provenance": {
+        "repository": "https://github.com/SamVerschueren/decode-uri-component",
+        "baseRevision": "a0eea469d26eb0df668b081672cdb9581feb78eb",
+        "fixedRevision": "3bbc879717a58efa9d1173b3d701e6f731ec0de4",
+        "evidenceClass": "public-historical"
+      },
+      "contract": {
+        "text": "A URI component decoder preserves literal plus signs: a+b remains a+b. Query-form decoding is a different contract.",
+        "sourceUrl": "https://github.com/SamVerschueren/decode-uri-component/blob/3bbc879717a58efa9d1173b3d701e6f731ec0de4/test.js",
+        "sourceSha256": "a222362b47a453d62661869f9b9f4084ba4277aed692537df556906d112b2459",
+        "independence": "maintainer-specification"
+      },
+      "probe": {
+        "exportName": "default",
+        "cases": [
+          {
+            "id": "one-plus",
+            "args": [
+              "a+b"
+            ],
+            "expect": {
+              "kind": "equals",
+              "value": "a+b"
+            }
+          },
+          {
+            "id": "many-plus",
+            "args": [
+              "a+b+c+d"
+            ],
+            "expect": {
+              "kind": "equals",
+              "value": "a+b+c+d"
+            }
+          },
+          {
+            "id": "three-parts",
+            "args": [
+              "a+b+c"
+            ],
+            "expect": {
+              "kind": "equals",
+              "value": "a+b+c"
+            }
+          }
+        ]
+      },
+      "applicability": {
+        "requiredIdentifiers": []
+      }
+    },
+    "recipeId": "historical-literal-plus-preservation",
+    "recipeSha256": "fdf5cfa434340d174c7bcff32ce18e1c8686192e7d1cfb4bfb65b5395c5c7a5f",
+    "module": "runtime/plus/original/subject.cjs",
+    "files": [
+      {
+        "path": "runtime/plus/original/package.json",
+        "sha256": "1239d4d885dcad42201a27ed9324f8f0f760b78700d8db9ced39a511cffe7eae",
+        "bytes": 18
+      },
+      {
+        "path": "runtime/plus/original/subject.cjs",
+        "sha256": "3b8ba0a765e1089d11bba9a919d0d8789ecd9a6833ea078d8d9114e1db093863",
+        "bytes": 2261
+      }
+    ],
+    "sourceSha256": "0b173f9bde4dd6a4b236c4c9e0ae3aa2bfab9e9c1d9f2456f4879d67de60fa22",
+    "workerSha256": "de73222fb12a0455acb3431380a280311e33cbf55bab063e29ea0a84c5c120a8",
+    "repeat": 2,
+    "timeoutMs": 3000,
+    "outcome": "reproduced",
+    "reason": null,
+    "cases": [
+      {
+        "id": "one-plus",
+        "status": "mismatch",
+        "observed": {
+          "kind": "value",
+          "value": "a b"
+        },
+        "observedSha256": "19c10348a2fbbf48881533011a2a72153f9da9c643da4901be8aa365e9bd3138"
+      },
+      {
+        "id": "many-plus",
+        "status": "mismatch",
+        "observed": {
+          "kind": "value",
+          "value": "a b c d"
+        },
+        "observedSha256": "39fe07e6d12c118e2eec6eafc3bd24aa85957291b5cef594cb2dfd6b563a6e78"
+      },
+      {
+        "id": "three-parts",
+        "status": "mismatch",
+        "observed": {
+          "kind": "value",
+          "value": "a b c"
+        },
+        "observedSha256": "3051dbbfa50f349e2cfbff7e62cf8910061cbffacf7518fd20fb00b42ed4c0c6"
+      }
+    ],
+    "rawRuns": [
+      {
+        "stdout": "{\"schemaVersion\":1,\"module\":\"runtime/plus/original/subject.cjs\",\"sourceSha256\":\"0b173f9bde4dd6a4b236c4c9e0ae3aa2bfab9e9c1d9f2456f4879d67de60fa22\",\"cases\":[{\"id\":\"one-plus\",\"status\":\"mismatch\",\"observed\":{\"kind\":\"value\",\"value\":\"a b\"},\"observedSha256\":\"19c10348a2fbbf48881533011a2a72153f9da9c643da4901be8aa365e9bd3138\"},{\"id\":\"many-plus\",\"status\":\"mismatch\",\"observed\":{\"kind\":\"value\",\"value\":\"a b c d\"},\"observedSha256\":\"39fe07e6d12c118e2eec6eafc3bd24aa85957291b5cef594cb2dfd6b563a6e78\"},{\"id\":\"three-parts\",\"status\":\"mismatch\",\"observed\":{\"kind\":\"value\",\"value\":\"a b c\"},\"observedSha256\":\"3051dbbfa50f349e2cfbff7e62cf8910061cbffacf7518fd20fb00b42ed4c0c6\"}]}",
+        "stderr": "",
+        "exitCode": 0,
+        "signal": null,
+        "reason": null,
+        "durationMs": 51.714,
+        "result": {
+          "schemaVersion": 1,
+          "module": "runtime/plus/original/subject.cjs",
+          "sourceSha256": "0b173f9bde4dd6a4b236c4c9e0ae3aa2bfab9e9c1d9f2456f4879d67de60fa22",
+          "cases": [
+            {
+              "id": "one-plus",
+              "status": "mismatch",
+              "observed": {
+                "kind": "value",
+                "value": "a b"
+              },
+              "observedSha256": "19c10348a2fbbf48881533011a2a72153f9da9c643da4901be8aa365e9bd3138"
+            },
+            {
+              "id": "many-plus",
+              "status": "mismatch",
+              "observed": {
+                "kind": "value",
+                "value": "a b c d"
+              },
+              "observedSha256": "39fe07e6d12c118e2eec6eafc3bd24aa85957291b5cef594cb2dfd6b563a6e78"
+            },
+            {
+              "id": "three-parts",
+              "status": "mismatch",
+              "observed": {
+                "kind": "value",
+                "value": "a b c"
+              },
+              "observedSha256": "3051dbbfa50f349e2cfbff7e62cf8910061cbffacf7518fd20fb00b42ed4c0c6"
+            }
+          ]
+        },
+        "stdoutSha256": "8d44fed71b771245b9333deb383647e765aa7d1c88f0589416156992ef04b729",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "stdout": "{\"schemaVersion\":1,\"module\":\"runtime/plus/original/subject.cjs\",\"sourceSha256\":\"0b173f9bde4dd6a4b236c4c9e0ae3aa2bfab9e9c1d9f2456f4879d67de60fa22\",\"cases\":[{\"id\":\"one-plus\",\"status\":\"mismatch\",\"observed\":{\"kind\":\"value\",\"value\":\"a b\"},\"observedSha256\":\"19c10348a2fbbf48881533011a2a72153f9da9c643da4901be8aa365e9bd3138\"},{\"id\":\"many-plus\",\"status\":\"mismatch\",\"observed\":{\"kind\":\"value\",\"value\":\"a b c d\"},\"observedSha256\":\"39fe07e6d12c118e2eec6eafc3bd24aa85957291b5cef594cb2dfd6b563a6e78\"},{\"id\":\"three-parts\",\"status\":\"mismatch\",\"observed\":{\"kind\":\"value\",\"value\":\"a b c\"},\"observedSha256\":\"3051dbbfa50f349e2cfbff7e62cf8910061cbffacf7518fd20fb00b42ed4c0c6\"}]}",
+        "stderr": "",
+        "exitCode": 0,
+        "signal": null,
+        "reason": null,
+        "durationMs": 49.287,
+        "result": {
+          "schemaVersion": 1,
+          "module": "runtime/plus/original/subject.cjs",
+          "sourceSha256": "0b173f9bde4dd6a4b236c4c9e0ae3aa2bfab9e9c1d9f2456f4879d67de60fa22",
+          "cases": [
+            {
+              "id": "one-plus",
+              "status": "mismatch",
+              "observed": {
+                "kind": "value",
+                "value": "a b"
+              },
+              "observedSha256": "19c10348a2fbbf48881533011a2a72153f9da9c643da4901be8aa365e9bd3138"
+            },
+            {
+              "id": "many-plus",
+              "status": "mismatch",
+              "observed": {
+                "kind": "value",
+                "value": "a b c d"
+              },
+              "observedSha256": "39fe07e6d12c118e2eec6eafc3bd24aa85957291b5cef594cb2dfd6b563a6e78"
+            },
+            {
+              "id": "three-parts",
+              "status": "mismatch",
+              "observed": {
+                "kind": "value",
+                "value": "a b c"
+              },
+              "observedSha256": "3051dbbfa50f349e2cfbff7e62cf8910061cbffacf7518fd20fb00b42ed4c0c6"
+            }
+          ]
+        },
+        "stdoutSha256": "8d44fed71b771245b9333deb383647e765aa7d1c88f0589416156992ef04b729",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    ],
+    "durationMs": 104.643,
+    "providerCalls": 0,
+    "networkRequests": 0,
+    "authority": "module-replay-only",
+    "isolation": "disposable-copy-credential-scrubbed-vm-not-os-sandbox",
+    "integrity": "ac493cf75b2f25fa6aee6ad382096de71dfd83b7bc891f773a953229f55d295c"
+  },
+  "fixed": {
+    "schemaVersion": 1,
+    "kind": "bug-probe-receipt",
+    "recipe": {
+      "schemaVersion": 1,
+      "kind": "bug-recipe",
+      "id": "historical-literal-plus-preservation",
+      "family": "protocol-validation",
+      "provenance": {
+        "repository": "https://github.com/SamVerschueren/decode-uri-component",
+        "baseRevision": "a0eea469d26eb0df668b081672cdb9581feb78eb",
+        "fixedRevision": "3bbc879717a58efa9d1173b3d701e6f731ec0de4",
+        "evidenceClass": "public-historical"
+      },
+      "contract": {
+        "text": "A URI component decoder preserves literal plus signs: a+b remains a+b. Query-form decoding is a different contract.",
+        "sourceUrl": "https://github.com/SamVerschueren/decode-uri-component/blob/3bbc879717a58efa9d1173b3d701e6f731ec0de4/test.js",
+        "sourceSha256": "a222362b47a453d62661869f9b9f4084ba4277aed692537df556906d112b2459",
+        "independence": "maintainer-specification"
+      },
+      "probe": {
+        "exportName": "default",
+        "cases": [
+          {
+            "id": "one-plus",
+            "args": [
+              "a+b"
+            ],
+            "expect": {
+              "kind": "equals",
+              "value": "a+b"
+            }
+          },
+          {
+            "id": "many-plus",
+            "args": [
+              "a+b+c+d"
+            ],
+            "expect": {
+              "kind": "equals",
+              "value": "a+b+c+d"
+            }
+          },
+          {
+            "id": "three-parts",
+            "args": [
+              "a+b+c"
+            ],
+            "expect": {
+              "kind": "equals",
+              "value": "a+b+c"
+            }
+          }
+        ]
+      },
+      "applicability": {
+        "requiredIdentifiers": []
+      }
+    },
+    "recipeId": "historical-literal-plus-preservation",
+    "recipeSha256": "fdf5cfa434340d174c7bcff32ce18e1c8686192e7d1cfb4bfb65b5395c5c7a5f",
+    "module": "runtime/plus/fixed/subject.cjs",
+    "files": [
+      {
+        "path": "runtime/plus/fixed/package.json",
+        "sha256": "1239d4d885dcad42201a27ed9324f8f0f760b78700d8db9ced39a511cffe7eae",
+        "bytes": 18
+      },
+      {
+        "path": "runtime/plus/fixed/subject.cjs",
+        "sha256": "c0debbac101b4e1f2366371374e08aa6712f092419687b6ccf3c619f76821a9b",
+        "bytes": 2213
+      }
+    ],
+    "sourceSha256": "2335847bec01751e1bdfbc3e173d0f96ad670916278e1386b0482c0ad0c5f411",
+    "workerSha256": "de73222fb12a0455acb3431380a280311e33cbf55bab063e29ea0a84c5c120a8",
+    "repeat": 2,
+    "timeoutMs": 3000,
+    "outcome": "passed",
+    "reason": null,
+    "cases": [
+      {
+        "id": "one-plus",
+        "status": "passed",
+        "observed": {
+          "kind": "value",
+          "value": "a+b"
+        },
+        "observedSha256": "768a922e2ed85080c05fddc75fbbbcbb7bbd66e796fb1545370afd11308db4d4"
+      },
+      {
+        "id": "many-plus",
+        "status": "passed",
+        "observed": {
+          "kind": "value",
+          "value": "a+b+c+d"
+        },
+        "observedSha256": "5596037ed8808cd056a0a1a4f324dd23d8dd1ad2a05ac6f45c0419c6f4a37399"
+      },
+      {
+        "id": "three-parts",
+        "status": "passed",
+        "observed": {
+          "kind": "value",
+          "value": "a+b+c"
+        },
+        "observedSha256": "23e7d976d45e6e984fa4454e7f1e1f9ed0c74c512da62475852ea670cd2787ba"
+      }
+    ],
+    "rawRuns": [
+      {
+        "stdout": "{\"schemaVersion\":1,\"module\":\"runtime/plus/fixed/subject.cjs\",\"sourceSha256\":\"2335847bec01751e1bdfbc3e173d0f96ad670916278e1386b0482c0ad0c5f411\",\"cases\":[{\"id\":\"one-plus\",\"status\":\"passed\",\"observed\":{\"kind\":\"value\",\"value\":\"a+b\"},\"observedSha256\":\"768a922e2ed85080c05fddc75fbbbcbb7bbd66e796fb1545370afd11308db4d4\"},{\"id\":\"many-plus\",\"status\":\"passed\",\"observed\":{\"kind\":\"value\",\"value\":\"a+b+c+d\"},\"observedSha256\":\"5596037ed8808cd056a0a1a4f324dd23d8dd1ad2a05ac6f45c0419c6f4a37399\"},{\"id\":\"three-parts\",\"status\":\"passed\",\"observed\":{\"kind\":\"value\",\"value\":\"a+b+c\"},\"observedSha256\":\"23e7d976d45e6e984fa4454e7f1e1f9ed0c74c512da62475852ea670cd2787ba\"}]}",
+        "stderr": "",
+        "exitCode": 0,
+        "signal": null,
+        "reason": null,
+        "durationMs": 49.683,
+        "result": {
+          "schemaVersion": 1,
+          "module": "runtime/plus/fixed/subject.cjs",
+          "sourceSha256": "2335847bec01751e1bdfbc3e173d0f96ad670916278e1386b0482c0ad0c5f411",
+          "cases": [
+            {
+              "id": "one-plus",
+              "status": "passed",
+              "observed": {
+                "kind": "value",
+                "value": "a+b"
+              },
+              "observedSha256": "768a922e2ed85080c05fddc75fbbbcbb7bbd66e796fb1545370afd11308db4d4"
+            },
+            {
+              "id": "many-plus",
+              "status": "passed",
+              "observed": {
+                "kind": "value",
+                "value": "a+b+c+d"
+              },
+              "observedSha256": "5596037ed8808cd056a0a1a4f324dd23d8dd1ad2a05ac6f45c0419c6f4a37399"
+            },
+            {
+              "id": "three-parts",
+              "status": "passed",
+              "observed": {
+                "kind": "value",
+                "value": "a+b+c"
+              },
+              "observedSha256": "23e7d976d45e6e984fa4454e7f1e1f9ed0c74c512da62475852ea670cd2787ba"
+            }
+          ]
+        },
+        "stdoutSha256": "66d64af3621ad9415a6f1969ae07ee69eaecaef797903b603f6b21995cdfd680",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "stdout": "{\"schemaVersion\":1,\"module\":\"runtime/plus/fixed/subject.cjs\",\"sourceSha256\":\"2335847bec01751e1bdfbc3e173d0f96ad670916278e1386b0482c0ad0c5f411\",\"cases\":[{\"id\":\"one-plus\",\"status\":\"passed\",\"observed\":{\"kind\":\"value\",\"value\":\"a+b\"},\"observedSha256\":\"768a922e2ed85080c05fddc75fbbbcbb7bbd66e796fb1545370afd11308db4d4\"},{\"id\":\"many-plus\",\"status\":\"passed\",\"observed\":{\"kind\":\"value\",\"value\":\"a+b+c+d\"},\"observedSha256\":\"5596037ed8808cd056a0a1a4f324dd23d8dd1ad2a05ac6f45c0419c6f4a37399\"},{\"id\":\"three-parts\",\"status\":\"passed\",\"observed\":{\"kind\":\"value\",\"value\":\"a+b+c\"},\"observedSha256\":\"23e7d976d45e6e984fa4454e7f1e1f9ed0c74c512da62475852ea670cd2787ba\"}]}",
+        "stderr": "",
+        "exitCode": 0,
+        "signal": null,
+        "reason": null,
+        "durationMs": 57.469,
+        "result": {
+          "schemaVersion": 1,
+          "module": "runtime/plus/fixed/subject.cjs",
+          "sourceSha256": "2335847bec01751e1bdfbc3e173d0f96ad670916278e1386b0482c0ad0c5f411",
+          "cases": [
+            {
+              "id": "one-plus",
+              "status": "passed",
+              "observed": {
+                "kind": "value",
+                "value": "a+b"
+              },
+              "observedSha256": "768a922e2ed85080c05fddc75fbbbcbb7bbd66e796fb1545370afd11308db4d4"
+            },
+            {
+              "id": "many-plus",
+              "status": "passed",
+              "observed": {
+                "kind": "value",
+                "value": "a+b+c+d"
+              },
+              "observedSha256": "5596037ed8808cd056a0a1a4f324dd23d8dd1ad2a05ac6f45c0419c6f4a37399"
+            },
+            {
+              "id": "three-parts",
+              "status": "passed",
+              "observed": {
+                "kind": "value",
+                "value": "a+b+c"
+              },
+              "observedSha256": "23e7d976d45e6e984fa4454e7f1e1f9ed0c74c512da62475852ea670cd2787ba"
+            }
+          ]
+        },
+        "stdoutSha256": "66d64af3621ad9415a6f1969ae07ee69eaecaef797903b603f6b21995cdfd680",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    ],
+    "durationMs": 110.936,
+    "providerCalls": 0,
+    "networkRequests": 0,
+    "authority": "module-replay-only",
+    "isolation": "disposable-copy-credential-scrubbed-vm-not-os-sandbox",
+    "integrity": "90f8c5716a073324633280d69457648bbba994fda0f95a991dab816427d1453d"
+  },
+  "evidence": {
+    "recipe": {
+      "file": "recipe.json",
+      "sha256": "579c3e2886e07ac1858f18ec5dcefa584926620e3f30d852af80a180ed330828"
+    },
+    "original": {
+      "file": "original.json",
+      "sha256": "c8fa61f978e5f4028d8619997b10a7abb878d64aff94f9acc917e0859d63123e"
+    },
+    "fixed": {
+      "file": "fixed.json",
+      "sha256": "0f904fb9b111899da7e9bdd43bdec341d71d9ae0288cce74441da1fa962374bb"
+    }
+  },
+  "scope": "pure-module-replay",
+  "provenanceAuthenticity": "declared-not-independently-verified",
+  "nativeSuiteValidated": false,
+  "repairAuthority": "none",
+  "providerCalls": 0,
+  "networkRequests": 0,
+  "integrity": "29f76874354b77b3dac829962272dafc1c1935a72bf89080c17ca8aa5b973a0d"
+}

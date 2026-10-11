@@ -1,0 +1,71 @@
+{
+  "schemaVersion": 1,
+  "kind": "historical-correctness-transfer-proof",
+  "manifestSha256": "5c7dfe39051cc12609caaf518ea77fee9cdd079a1e699994742851fb4c49b086",
+  "specificationsSha256": "e211f2279175b4cba22e40879e2ad3f71195b54fe7bdf2d712f35dd344f683f0",
+  "evaluatorSha256": "49e7221dedb683af8140501f215c47e39c1f7e36b44842d13475b97d898f6ac5",
+  "recipeModuleSha256": "4844920dec7a6f95f1ece00bfc1afa9bacf4f7b9a7737a74c2f42023a968f190",
+  "workerSha256": "de73222fb12a0455acb3431380a280311e33cbf55bab063e29ea0a84c5c120a8",
+  "producerIdentities": {
+    "evaluator": "49e7221dedb683af8140501f215c47e39c1f7e36b44842d13475b97d898f6ac5",
+    "recipeModule": "4844920dec7a6f95f1ece00bfc1afa9bacf4f7b9a7737a74c2f42023a968f190",
+    "worker": "de73222fb12a0455acb3431380a280311e33cbf55bab063e29ea0a84c5c120a8",
+    "strictJsonParser": "456f467f6005879986fdf8cd9ada99e57361bd696c7956625068264a4b22803d",
+    "executionEnvironment": "7bfc25c35aa8e8799f25512ed8f555e7226d1385714c69289d1a6860456a3368"
+  },
+  "environment": {
+    "node": "v22.19.0",
+    "platform": "darwin",
+    "architecture": "arm64"
+  },
+  "budgets": {
+    "casesPerArm": 3,
+    "repeat": 2,
+    "timeoutMs": 3000,
+    "providerCalls": 0,
+    "networkRequestsDuringReplay": 0
+  },
+  "summary": {
+    "historicalRecipes": 3,
+    "historicalQualified": 3,
+    "eligibleIndependentTargets": 2,
+    "excludedTargets": 1,
+    "blockedTransfers": 0,
+    "guidedCandidateMismatches": 0,
+    "unguidedCandidateMismatches": 0,
+    "inconclusiveProbes": 0,
+    "guidedCaseExecutions": 12,
+    "unguidedCaseExecutions": 12,
+    "excludedControlCaseExecutions": 6,
+    "historicalExecutionMs": 661.973,
+    "guidedExecutionMs": 217.105,
+    "unguidedExecutionMs": 212.461,
+    "excludedControlExecutionMs": 102.55,
+    "totalExecutionMs": 1194.089,
+    "newUpstreamDefectsConfirmed": 0,
+    "agentEffectivenessMeasured": false,
+    "learningPromoted": false
+  },
+  "durationMs": 1236.049,
+  "rawEvidence": {
+    "file": "results.json",
+    "sha256": "b78fc848afd4f5b81f25dca4b390d6d7434f1f3ed8a12ef9cd0ea9497349343b",
+    "bytes": 96893
+  },
+  "providerCalls": 0,
+  "networkRequests": 0,
+  "sourceBytes": 444057,
+  "scope": "pinned-module-correctness-replay",
+  "nativeSuiteValidated": false,
+  "agentEffectivenessMeasured": false,
+  "learningPromoted": false,
+  "newUpstreamDefectClaim": false,
+  "limitations": [
+    "Three constructed correctness probes per arm, two repeats; not untouched maintainer suites.",
+    "Historical qualification is failure-before/fix-after module replay using pinned public bytes and explicit format/import adapters.",
+    "The unguided arm is deterministic ordinary-input testing, not an AI agent baseline.",
+    "Current target mismatches require independent maintainer confirmation before any defect or repair claim.",
+    "A direct fork with intentionally different invalid-input semantics is excluded from independent transfer.",
+    "No provider calls, model token cost, real repairs, accepted PRs, native full suites or causal learning improvement are measured."
+  ]
+}

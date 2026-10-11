@@ -1,0 +1,900 @@
+{
+  "schemaVersion": 1,
+  "kind": "historical-correctness-transfer",
+  "specifications": {
+    "file": "specifications.json",
+    "sha256": "e211f2279175b4cba22e40879e2ad3f71195b54fe7bdf2d712f35dd344f683f0",
+    "bytes": 3123
+  },
+  "createdAt": "2026-10-11T17:11:25.277339+00:00",
+  "budgets": {
+    "casesPerArm": 3,
+    "repeat": 2,
+    "timeoutMs": 3000,
+    "providerCalls": 0,
+    "networkRequestsDuringReplay": 0
+  },
+  "sources": [
+    {
+      "file": "upstream/jonschlinkert--is-number/204c885659b8ee1946534c61db91603b9a16d661/index.js",
+      "sha256": "1b572fa10d2a238af614189c499ceff034ab2549f4795cffaa85e5976a3f87a6",
+      "bytes": 396,
+      "repository": "jonschlinkert/is-number",
+      "revision": "204c885659b8ee1946534c61db91603b9a16d661",
+      "upstreamPath": "index.js",
+      "gitBlob": "96ec66d5e2fc1f1cbfa60bc2b97b8d6938e3fd9e",
+      "url": "https://github.com/jonschlinkert/is-number/blob/204c885659b8ee1946534c61db91603b9a16d661/index.js",
+      "kind": "github-source"
+    },
+    {
+      "file": "upstream/jonschlinkert--is-number/204c885659b8ee1946534c61db91603b9a16d661/LICENSE",
+      "sha256": "daca23d50b0f54d36d6da1b16c82dfea6461e2ae20de0e869957e44cc6d34781",
+      "bytes": 1088,
+      "repository": "jonschlinkert/is-number",
+      "revision": "204c885659b8ee1946534c61db91603b9a16d661",
+      "upstreamPath": "LICENSE",
+      "gitBlob": "fa30c4cb3e4c1584e29f19325c587b6f6a2f5627",
+      "url": "https://github.com/jonschlinkert/is-number/blob/204c885659b8ee1946534c61db91603b9a16d661/LICENSE",
+      "kind": "github-source"
+    },
+    {
+      "file": "upstream/jonschlinkert--is-number/12749e3c411750f754d50f093471234c7ab270b0/index.js",
+      "sha256": "76f4e8f626040311330e6ee10f2f428d350217d668082dce81c2ab0e0768212f",
+      "bytes": 511,
+      "repository": "jonschlinkert/is-number",
+      "revision": "12749e3c411750f754d50f093471234c7ab270b0",
+      "upstreamPath": "index.js",
+      "gitBlob": "f17e7dcb6e3a5bcf6be7cf20b63bead5aabb77a6",
+      "url": "https://github.com/jonschlinkert/is-number/blob/12749e3c411750f754d50f093471234c7ab270b0/index.js",
+      "kind": "github-source"
+    },
+    {
+      "file": "upstream/jonschlinkert--is-number/12749e3c411750f754d50f093471234c7ab270b0/LICENSE",
+      "sha256": "daca23d50b0f54d36d6da1b16c82dfea6461e2ae20de0e869957e44cc6d34781",
+      "bytes": 1088,
+      "repository": "jonschlinkert/is-number",
+      "revision": "12749e3c411750f754d50f093471234c7ab270b0",
+      "upstreamPath": "LICENSE",
+      "gitBlob": "fa30c4cb3e4c1584e29f19325c587b6f6a2f5627",
+      "url": "https://github.com/jonschlinkert/is-number/blob/12749e3c411750f754d50f093471234c7ab270b0/LICENSE",
+      "kind": "github-source"
+    },
+    {
+      "file": "upstream/jonschlinkert--is-number/12749e3c411750f754d50f093471234c7ab270b0/test.js",
+      "sha256": "acb5000f91ab6a43244a94fa01910bf635b39084f5d9fd5ea74354c46c19b139",
+      "bytes": 2675,
+      "repository": "jonschlinkert/is-number",
+      "revision": "12749e3c411750f754d50f093471234c7ab270b0",
+      "upstreamPath": "test.js",
+      "gitBlob": "3cbbc56007ea4460b8cc8a0f471d4adc58011354",
+      "url": "https://github.com/jonschlinkert/is-number/blob/12749e3c411750f754d50f093471234c7ab270b0/test.js",
+      "kind": "github-source"
+    },
+    {
+      "file": "upstream/npm/kind-of/3.0.2/index.js",
+      "sha256": "d0387c144a14241e091e9e76cb4ea78ed0820835511968e7b273938be17f4d10",
+      "bytes": 2381,
+      "kind": "npm-source",
+      "package": "kind-of",
+      "version": "3.0.2",
+      "url": "https://registry.npmjs.org/kind-of/-/kind-of-3.0.2.tgz",
+      "archiveSha256": "48404c9edcfdaba7297a560bfe94645f685928e8d37fa50284be414f68f5f53a",
+      "archiveSha1": "187db427046e7e90945692e6768668bd6900dea0"
+    },
+    {
+      "file": "upstream/npm/kind-of/3.0.2/LICENSE",
+      "sha256": "daca23d50b0f54d36d6da1b16c82dfea6461e2ae20de0e869957e44cc6d34781",
+      "bytes": 1088,
+      "kind": "npm-source",
+      "package": "kind-of",
+      "version": "3.0.2",
+      "url": "https://registry.npmjs.org/kind-of/-/kind-of-3.0.2.tgz",
+      "archiveSha256": "48404c9edcfdaba7297a560bfe94645f685928e8d37fa50284be414f68f5f53a",
+      "archiveSha1": "187db427046e7e90945692e6768668bd6900dea0"
+    },
+    {
+      "file": "upstream/npm/is-buffer/1.1.4/index.js",
+      "sha256": "2643f3d49ea3a63349997f7b8d9f0048a965e465cc248f44f6774232d52d883d",
+      "bytes": 717,
+      "kind": "npm-source",
+      "package": "is-buffer",
+      "version": "1.1.4",
+      "url": "https://registry.npmjs.org/is-buffer/-/is-buffer-1.1.4.tgz",
+      "archiveSha256": "15eaa7416bce46eb704e0980d2fdaf802f62540f292eb10a6c0409396c6b0fa8",
+      "archiveSha1": "cfc86ccd5dc5a52fa80489111c6920c457e2d98b"
+    },
+    {
+      "file": "upstream/npm/is-buffer/1.1.4/LICENSE",
+      "sha256": "c7cc929b57080f4b9d0c6cf57669f0463fc5b39906344dfc8d3bc43426b30eac",
+      "bytes": 1081,
+      "kind": "npm-source",
+      "package": "is-buffer",
+      "version": "1.1.4",
+      "url": "https://registry.npmjs.org/is-buffer/-/is-buffer-1.1.4.tgz",
+      "archiveSha256": "15eaa7416bce46eb704e0980d2fdaf802f62540f292eb10a6c0409396c6b0fa8",
+      "archiveSha1": "cfc86ccd5dc5a52fa80489111c6920c457e2d98b"
+    },
+    {
+      "file": "upstream/SamVerschueren--decode-uri-component/a0eea469d26eb0df668b081672cdb9581feb78eb/index.js",
+      "sha256": "3b8ba0a765e1089d11bba9a919d0d8789ecd9a6833ea078d8d9114e1db093863",
+      "bytes": 2261,
+      "repository": "SamVerschueren/decode-uri-component",
+      "revision": "a0eea469d26eb0df668b081672cdb9581feb78eb",
+      "upstreamPath": "index.js",
+      "gitBlob": "24e7db0cc55aa22d0f98358b73298067deb33b52",
+      "url": "https://github.com/SamVerschueren/decode-uri-component/blob/a0eea469d26eb0df668b081672cdb9581feb78eb/index.js",
+      "kind": "github-source"
+    },
+    {
+      "file": "upstream/SamVerschueren--decode-uri-component/a0eea469d26eb0df668b081672cdb9581feb78eb/license",
+      "sha256": "ed7a9a0f74e43951b2520efe1a4349cb9ed5f3dff0b0f268e2e51a4d38df7ea4",
+      "bytes": 1139,
+      "repository": "SamVerschueren/decode-uri-component",
+      "revision": "a0eea469d26eb0df668b081672cdb9581feb78eb",
+      "upstreamPath": "license",
+      "gitBlob": "8dbcd5316fa58e19e4ce1b736f0357c9a81d5279",
+      "url": "https://github.com/SamVerschueren/decode-uri-component/blob/a0eea469d26eb0df668b081672cdb9581feb78eb/license",
+      "kind": "github-source"
+    },
+    {
+      "file": "upstream/SamVerschueren--decode-uri-component/3bbc879717a58efa9d1173b3d701e6f731ec0de4/index.js",
+      "sha256": "c0debbac101b4e1f2366371374e08aa6712f092419687b6ccf3c619f76821a9b",
+      "bytes": 2213,
+      "repository": "SamVerschueren/decode-uri-component",
+      "revision": "3bbc879717a58efa9d1173b3d701e6f731ec0de4",
+      "upstreamPath": "index.js",
+      "gitBlob": "773ae6a5a7e4acac5fb347aa20d63d5bfc83bd40",
+      "url": "https://github.com/SamVerschueren/decode-uri-component/blob/3bbc879717a58efa9d1173b3d701e6f731ec0de4/index.js",
+      "kind": "github-source"
+    },
+    {
+      "file": "upstream/SamVerschueren--decode-uri-component/3bbc879717a58efa9d1173b3d701e6f731ec0de4/license",
+      "sha256": "ed7a9a0f74e43951b2520efe1a4349cb9ed5f3dff0b0f268e2e51a4d38df7ea4",
+      "bytes": 1139,
+      "repository": "SamVerschueren/decode-uri-component",
+      "revision": "3bbc879717a58efa9d1173b3d701e6f731ec0de4",
+      "upstreamPath": "license",
+      "gitBlob": "8dbcd5316fa58e19e4ce1b736f0357c9a81d5279",
+      "url": "https://github.com/SamVerschueren/decode-uri-component/blob/3bbc879717a58efa9d1173b3d701e6f731ec0de4/license",
+      "kind": "github-source"
+    },
+    {
+      "file": "upstream/SamVerschueren--decode-uri-component/3bbc879717a58efa9d1173b3d701e6f731ec0de4/test.js",
+      "sha256": "a222362b47a453d62661869f9b9f4084ba4277aed692537df556906d112b2459",
+      "bytes": 1229,
+      "repository": "SamVerschueren/decode-uri-component",
+      "revision": "3bbc879717a58efa9d1173b3d701e6f731ec0de4",
+      "upstreamPath": "test.js",
+      "gitBlob": "04244933dfb950d8fb2b3259200cdda01627fda2",
+      "url": "https://github.com/SamVerschueren/decode-uri-component/blob/3bbc879717a58efa9d1173b3d701e6f731ec0de4/test.js",
+      "kind": "github-source"
+    },
+    {
+      "file": "upstream/jridgewell--safe-decode-uri-component/4e7d87e4cfd3942c30d0d264d058715a5e124809/src/index.js",
+      "sha256": "dd6f06cfbcc0ef6240b8e7cc342144712f6766dd4c65d001ced542088e7ea629",
+      "bytes": 4364,
+      "repository": "jridgewell/safe-decode-uri-component",
+      "revision": "4e7d87e4cfd3942c30d0d264d058715a5e124809",
+      "upstreamPath": "src/index.js",
+      "gitBlob": "6137d30e442b9ffbf47f657833a6bcd49616b8de",
+      "url": "https://github.com/jridgewell/safe-decode-uri-component/blob/4e7d87e4cfd3942c30d0d264d058715a5e124809/src/index.js",
+      "kind": "github-source"
+    },
+    {
+      "file": "upstream/jridgewell--safe-decode-uri-component/4e7d87e4cfd3942c30d0d264d058715a5e124809/LICENSE",
+      "sha256": "b3573e15a241d4e25ae425b5a431b6ce825e873c19cd2ce58bd2127c7be9256c",
+      "bytes": 1073,
+      "repository": "jridgewell/safe-decode-uri-component",
+      "revision": "4e7d87e4cfd3942c30d0d264d058715a5e124809",
+      "upstreamPath": "LICENSE",
+      "gitBlob": "2a97381affaab7426bfccfc9260d63f0a3759c2a",
+      "url": "https://github.com/jridgewell/safe-decode-uri-component/blob/4e7d87e4cfd3942c30d0d264d058715a5e124809/LICENSE",
+      "kind": "github-source"
+    },
+    {
+      "file": "upstream/jridgewell--safe-decode-uri-component/641dec384f134062c0f85898569f4d4117e6350d/src/index.js",
+      "sha256": "6adb190890de44e4d8c26b1f710d43f6cdc9fcfed194b7996bfabf2b3645925c",
+      "bytes": 4387,
+      "repository": "jridgewell/safe-decode-uri-component",
+      "revision": "641dec384f134062c0f85898569f4d4117e6350d",
+      "upstreamPath": "src/index.js",
+      "gitBlob": "a1a37c3b039f5ebad67f90037b5a2d8cd82bef67",
+      "url": "https://github.com/jridgewell/safe-decode-uri-component/blob/641dec384f134062c0f85898569f4d4117e6350d/src/index.js",
+      "kind": "github-source"
+    },
+    {
+      "file": "upstream/jridgewell--safe-decode-uri-component/641dec384f134062c0f85898569f4d4117e6350d/LICENSE",
+      "sha256": "b3573e15a241d4e25ae425b5a431b6ce825e873c19cd2ce58bd2127c7be9256c",
+      "bytes": 1073,
+      "repository": "jridgewell/safe-decode-uri-component",
+      "revision": "641dec384f134062c0f85898569f4d4117e6350d",
+      "upstreamPath": "LICENSE",
+      "gitBlob": "2a97381affaab7426bfccfc9260d63f0a3759c2a",
+      "url": "https://github.com/jridgewell/safe-decode-uri-component/blob/641dec384f134062c0f85898569f4d4117e6350d/LICENSE",
+      "kind": "github-source"
+    },
+    {
+      "file": "upstream/jridgewell--safe-decode-uri-component/6abe20a0835cf6aabb9219a9a453dd99d3d253f0/README.md",
+      "sha256": "c7b83531509be288b0e0d5bb16432f564400cec105def28073cb4469261caa0e",
+      "bytes": 2742,
+      "repository": "jridgewell/safe-decode-uri-component",
+      "revision": "6abe20a0835cf6aabb9219a9a453dd99d3d253f0",
+      "upstreamPath": "README.md",
+      "gitBlob": "6775ef33664a9b188a055b95914512dd772c18bf",
+      "url": "https://github.com/jridgewell/safe-decode-uri-component/blob/6abe20a0835cf6aabb9219a9a453dd99d3d253f0/README.md",
+      "kind": "github-source"
+    },
+    {
+      "file": "upstream/validatorjs--validator.js/9ff342479591ca5a43cb30000195bcf55c1bbed9/src/lib/isNumeric.js",
+      "sha256": "41c26668b3cd76a3a0a4d707c2807ca96410a1c873a9fd6ee2edaff672ec2adf",
+      "bytes": 395,
+      "repository": "validatorjs/validator.js",
+      "revision": "9ff342479591ca5a43cb30000195bcf55c1bbed9",
+      "upstreamPath": "src/lib/isNumeric.js",
+      "gitBlob": "4cc7ea5b3786d03787a79029da2cb422e94519ca",
+      "url": "https://github.com/validatorjs/validator.js/blob/9ff342479591ca5a43cb30000195bcf55c1bbed9/src/lib/isNumeric.js",
+      "kind": "github-source"
+    },
+    {
+      "file": "upstream/validatorjs--validator.js/9ff342479591ca5a43cb30000195bcf55c1bbed9/src/lib/alpha.js",
+      "sha256": "1809a6799b2f401b512bee356574f30f2e1211c6f7ca417bc33744233cc9fac2",
+      "bytes": 7267,
+      "repository": "validatorjs/validator.js",
+      "revision": "9ff342479591ca5a43cb30000195bcf55c1bbed9",
+      "upstreamPath": "src/lib/alpha.js",
+      "gitBlob": "6f58c9aee3102edb5963227aa80ca59c06b8d3ec",
+      "url": "https://github.com/validatorjs/validator.js/blob/9ff342479591ca5a43cb30000195bcf55c1bbed9/src/lib/alpha.js",
+      "kind": "github-source"
+    },
+    {
+      "file": "upstream/validatorjs--validator.js/9ff342479591ca5a43cb30000195bcf55c1bbed9/src/lib/util/assertString.js",
+      "sha256": "e54a2f8bfeeabf30427cad6ee5369a7786b4c3e1189bb914ae063d3ccb966bbb",
+      "bytes": 285,
+      "repository": "validatorjs/validator.js",
+      "revision": "9ff342479591ca5a43cb30000195bcf55c1bbed9",
+      "upstreamPath": "src/lib/util/assertString.js",
+      "gitBlob": "3baa4452f02145b9d0c44fd10a1211a14e8cb86b",
+      "url": "https://github.com/validatorjs/validator.js/blob/9ff342479591ca5a43cb30000195bcf55c1bbed9/src/lib/util/assertString.js",
+      "kind": "github-source"
+    },
+    {
+      "file": "upstream/validatorjs--validator.js/9ff342479591ca5a43cb30000195bcf55c1bbed9/LICENSE",
+      "sha256": "683b3c34623e01daad41cb2a3d0a93578c590f8d0206cbd8b0b579fb7def2603",
+      "bytes": 1077,
+      "repository": "validatorjs/validator.js",
+      "revision": "9ff342479591ca5a43cb30000195bcf55c1bbed9",
+      "upstreamPath": "LICENSE",
+      "gitBlob": "4e49a3840858e4b125558b2feb00f0fe601e32d0",
+      "url": "https://github.com/validatorjs/validator.js/blob/9ff342479591ca5a43cb30000195bcf55c1bbed9/LICENSE",
+      "kind": "github-source"
+    },
+    {
+      "file": "upstream/validatorjs--validator.js/9ff342479591ca5a43cb30000195bcf55c1bbed9/test/validators.test.js",
+      "sha256": "3c8dee37839b28341ef92085348e400fb4c9abc72860bc960c533e504a61a313",
+      "bytes": 356908,
+      "repository": "validatorjs/validator.js",
+      "revision": "9ff342479591ca5a43cb30000195bcf55c1bbed9",
+      "upstreamPath": "test/validators.test.js",
+      "gitBlob": "98d2a12ff2625075cb549651fd6ba00c19630182",
+      "url": "https://github.com/validatorjs/validator.js/blob/9ff342479591ca5a43cb30000195bcf55c1bbed9/test/validators.test.js",
+      "kind": "github-source"
+    },
+    {
+      "file": "upstream/pillarjs--encodeurl/059977240f83b724c75b4f8f684d583dd4779c48/index.js",
+      "sha256": "da79e42b4f04e0ce63e45525558f838b99500d2fe1a4fe0e28cb6c7ed7eae58c",
+      "bytes": 1578,
+      "repository": "pillarjs/encodeurl",
+      "revision": "059977240f83b724c75b4f8f684d583dd4779c48",
+      "upstreamPath": "index.js",
+      "gitBlob": "a49ee5a0b62136da6524703314e88b4199c4c208",
+      "url": "https://github.com/pillarjs/encodeurl/blob/059977240f83b724c75b4f8f684d583dd4779c48/index.js",
+      "kind": "github-source"
+    },
+    {
+      "file": "upstream/pillarjs--encodeurl/059977240f83b724c75b4f8f684d583dd4779c48/LICENSE",
+      "sha256": "7585ea7bba616ccbbe43cb54ecb67956688c3c5641bb84f3099a652a73193afe",
+      "bytes": 1089,
+      "repository": "pillarjs/encodeurl",
+      "revision": "059977240f83b724c75b4f8f684d583dd4779c48",
+      "upstreamPath": "LICENSE",
+      "gitBlob": "8812229bc59b5f365549fb3c799b32a4d4acdabc",
+      "url": "https://github.com/pillarjs/encodeurl/blob/059977240f83b724c75b4f8f684d583dd4779c48/LICENSE",
+      "kind": "github-source"
+    },
+    {
+      "file": "upstream/pillarjs--encodeurl/059977240f83b724c75b4f8f684d583dd4779c48/README.md",
+      "sha256": "c94f2967cafee3fc1df2798a43014e9742b76d89de116ec01f7c6b903caebea5",
+      "bytes": 3221,
+      "repository": "pillarjs/encodeurl",
+      "revision": "059977240f83b724c75b4f8f684d583dd4779c48",
+      "upstreamPath": "README.md",
+      "gitBlob": "3842493ec68e8eb5a5377fa4c3a33e454be4e882",
+      "url": "https://github.com/pillarjs/encodeurl/blob/059977240f83b724c75b4f8f684d583dd4779c48/README.md",
+      "kind": "github-source"
+    },
+    {
+      "file": "upstream/delvedor--fast-decode-uri-component/c124e25816434dcb25813a4a7b9c3898eec76922/index.js",
+      "sha256": "d49d2cc0b03ad25b6691feb3928f231bf78dfb1187a0ecd6f9a5246e610973e6",
+      "bytes": 3219,
+      "repository": "delvedor/fast-decode-uri-component",
+      "revision": "c124e25816434dcb25813a4a7b9c3898eec76922",
+      "upstreamPath": "index.js",
+      "gitBlob": "a92e606841ab39203b9563c543c5ee2dd88c274a",
+      "url": "https://github.com/delvedor/fast-decode-uri-component/blob/c124e25816434dcb25813a4a7b9c3898eec76922/index.js",
+      "kind": "github-source"
+    },
+    {
+      "file": "upstream/delvedor--fast-decode-uri-component/c124e25816434dcb25813a4a7b9c3898eec76922/LICENSE",
+      "sha256": "27384b39baee4b476fb876670a75f282286fa55658bf0db14639621dd3801c9a",
+      "bytes": 1174,
+      "repository": "delvedor/fast-decode-uri-component",
+      "revision": "c124e25816434dcb25813a4a7b9c3898eec76922",
+      "upstreamPath": "LICENSE",
+      "gitBlob": "d6c46b36c0868686230dd98542898626fa625420",
+      "url": "https://github.com/delvedor/fast-decode-uri-component/blob/c124e25816434dcb25813a4a7b9c3898eec76922/LICENSE",
+      "kind": "github-source"
+    },
+    {
+      "file": "upstream/delvedor--fast-decode-uri-component/c124e25816434dcb25813a4a7b9c3898eec76922/README.md",
+      "sha256": "0eccf9b0921453a587dc0526c9b9f7198b467d61e4f70f452dbbf418ee9083df",
+      "bytes": 1941,
+      "repository": "delvedor/fast-decode-uri-component",
+      "revision": "c124e25816434dcb25813a4a7b9c3898eec76922",
+      "upstreamPath": "README.md",
+      "gitBlob": "11804477d12bf49b92cb1ef571e55dda0d0a0b67",
+      "url": "https://github.com/delvedor/fast-decode-uri-component/blob/c124e25816434dcb25813a4a7b9c3898eec76922/README.md",
+      "kind": "github-source"
+    },
+    {
+      "file": "runtime/numeric/original/package.json",
+      "sha256": "1239d4d885dcad42201a27ed9324f8f0f760b78700d8db9ced39a511cffe7eae",
+      "bytes": 18,
+      "kind": "runtime-adapter",
+      "derivedFrom": [],
+      "transformation": "explicit-module-format-manifest"
+    },
+    {
+      "file": "runtime/numeric/original/subject.cjs",
+      "sha256": "966cf46b260ca852508226d2c7c61ee269519fc34cf688913fce7a0782009ec5",
+      "bytes": 402,
+      "kind": "runtime-adapter",
+      "derivedFrom": [
+        "upstream/jonschlinkert--is-number/204c885659b8ee1946534c61db91603b9a16d661/index.js"
+      ],
+      "transformation": "exact-import-rewrite:require('kind-of')=>require('./kind-of.cjs')"
+    },
+    {
+      "file": "runtime/numeric/original/kind-of.cjs",
+      "sha256": "d355c5771b3123b56032bfe7cf2ed9545d50c80ecdb77330c7402981a290841b",
+      "bytes": 2387,
+      "kind": "runtime-adapter",
+      "derivedFrom": [
+        "upstream/npm/kind-of/3.0.2/index.js"
+      ],
+      "transformation": "exact-import-rewrite:require('is-buffer')=>require('./is-buffer.cjs')"
+    },
+    {
+      "file": "runtime/numeric/original/is-buffer.cjs",
+      "sha256": "2643f3d49ea3a63349997f7b8d9f0048a965e465cc248f44f6774232d52d883d",
+      "bytes": 717,
+      "kind": "runtime-adapter",
+      "derivedFrom": [
+        "upstream/npm/is-buffer/1.1.4/index.js"
+      ],
+      "transformation": "exact-bytes-runtime-rename"
+    },
+    {
+      "file": "runtime/plus/original/package.json",
+      "sha256": "1239d4d885dcad42201a27ed9324f8f0f760b78700d8db9ced39a511cffe7eae",
+      "bytes": 18,
+      "kind": "runtime-adapter",
+      "derivedFrom": [],
+      "transformation": "explicit-module-format-manifest"
+    },
+    {
+      "file": "runtime/plus/original/subject.cjs",
+      "sha256": "3b8ba0a765e1089d11bba9a919d0d8789ecd9a6833ea078d8d9114e1db093863",
+      "bytes": 2261,
+      "kind": "runtime-adapter",
+      "derivedFrom": [
+        "upstream/SamVerschueren--decode-uri-component/a0eea469d26eb0df668b081672cdb9581feb78eb/index.js"
+      ],
+      "transformation": "exact-bytes-runtime-rename"
+    },
+    {
+      "file": "runtime/unicode/original/package.json",
+      "sha256": "1239d4d885dcad42201a27ed9324f8f0f760b78700d8db9ced39a511cffe7eae",
+      "bytes": 18,
+      "kind": "runtime-adapter",
+      "derivedFrom": [],
+      "transformation": "explicit-module-format-manifest"
+    },
+    {
+      "file": "runtime/unicode/original/subject.cjs",
+      "sha256": "dd6f06cfbcc0ef6240b8e7cc342144712f6766dd4c65d001ced542088e7ea629",
+      "bytes": 4364,
+      "kind": "runtime-adapter",
+      "derivedFrom": [
+        "upstream/jridgewell--safe-decode-uri-component/4e7d87e4cfd3942c30d0d264d058715a5e124809/src/index.js"
+      ],
+      "transformation": "exact-bytes-runtime-rename"
+    },
+    {
+      "file": "runtime/numeric/fixed/package.json",
+      "sha256": "1239d4d885dcad42201a27ed9324f8f0f760b78700d8db9ced39a511cffe7eae",
+      "bytes": 18,
+      "kind": "runtime-adapter",
+      "derivedFrom": [],
+      "transformation": "explicit-module-format-manifest"
+    },
+    {
+      "file": "runtime/numeric/fixed/subject.cjs",
+      "sha256": "e569644cdc2eec72402d5ceb33d6a58ca701dcbb8136080e5514e73740228cec",
+      "bytes": 517,
+      "kind": "runtime-adapter",
+      "derivedFrom": [
+        "upstream/jonschlinkert--is-number/12749e3c411750f754d50f093471234c7ab270b0/index.js"
+      ],
+      "transformation": "exact-import-rewrite:require('kind-of')=>require('./kind-of.cjs')"
+    },
+    {
+      "file": "runtime/numeric/fixed/kind-of.cjs",
+      "sha256": "d355c5771b3123b56032bfe7cf2ed9545d50c80ecdb77330c7402981a290841b",
+      "bytes": 2387,
+      "kind": "runtime-adapter",
+      "derivedFrom": [
+        "upstream/npm/kind-of/3.0.2/index.js"
+      ],
+      "transformation": "exact-import-rewrite:require('is-buffer')=>require('./is-buffer.cjs')"
+    },
+    {
+      "file": "runtime/numeric/fixed/is-buffer.cjs",
+      "sha256": "2643f3d49ea3a63349997f7b8d9f0048a965e465cc248f44f6774232d52d883d",
+      "bytes": 717,
+      "kind": "runtime-adapter",
+      "derivedFrom": [
+        "upstream/npm/is-buffer/1.1.4/index.js"
+      ],
+      "transformation": "exact-bytes-runtime-rename"
+    },
+    {
+      "file": "runtime/plus/fixed/package.json",
+      "sha256": "1239d4d885dcad42201a27ed9324f8f0f760b78700d8db9ced39a511cffe7eae",
+      "bytes": 18,
+      "kind": "runtime-adapter",
+      "derivedFrom": [],
+      "transformation": "explicit-module-format-manifest"
+    },
+    {
+      "file": "runtime/plus/fixed/subject.cjs",
+      "sha256": "c0debbac101b4e1f2366371374e08aa6712f092419687b6ccf3c619f76821a9b",
+      "bytes": 2213,
+      "kind": "runtime-adapter",
+      "derivedFrom": [
+        "upstream/SamVerschueren--decode-uri-component/3bbc879717a58efa9d1173b3d701e6f731ec0de4/index.js"
+      ],
+      "transformation": "exact-bytes-runtime-rename"
+    },
+    {
+      "file": "runtime/unicode/fixed/package.json",
+      "sha256": "1239d4d885dcad42201a27ed9324f8f0f760b78700d8db9ced39a511cffe7eae",
+      "bytes": 18,
+      "kind": "runtime-adapter",
+      "derivedFrom": [],
+      "transformation": "explicit-module-format-manifest"
+    },
+    {
+      "file": "runtime/unicode/fixed/subject.cjs",
+      "sha256": "6adb190890de44e4d8c26b1f710d43f6cdc9fcfed194b7996bfabf2b3645925c",
+      "bytes": 4387,
+      "kind": "runtime-adapter",
+      "derivedFrom": [
+        "upstream/jridgewell--safe-decode-uri-component/641dec384f134062c0f85898569f4d4117e6350d/src/index.js"
+      ],
+      "transformation": "exact-bytes-runtime-rename"
+    },
+    {
+      "file": "runtime/targets/validator/package.json",
+      "sha256": "1239d4d885dcad42201a27ed9324f8f0f760b78700d8db9ced39a511cffe7eae",
+      "bytes": 18,
+      "kind": "runtime-adapter",
+      "derivedFrom": [],
+      "transformation": "explicit-module-format-manifest"
+    },
+    {
+      "file": "runtime/targets/validator/isNumeric.js",
+      "sha256": "41c26668b3cd76a3a0a4d707c2807ca96410a1c873a9fd6ee2edaff672ec2adf",
+      "bytes": 395,
+      "kind": "runtime-adapter",
+      "derivedFrom": [
+        "upstream/validatorjs--validator.js/9ff342479591ca5a43cb30000195bcf55c1bbed9/src/lib/isNumeric.js"
+      ],
+      "transformation": "exact-bytes-runtime-rename"
+    },
+    {
+      "file": "runtime/targets/validator/alpha.js",
+      "sha256": "1809a6799b2f401b512bee356574f30f2e1211c6f7ca417bc33744233cc9fac2",
+      "bytes": 7267,
+      "kind": "runtime-adapter",
+      "derivedFrom": [
+        "upstream/validatorjs--validator.js/9ff342479591ca5a43cb30000195bcf55c1bbed9/src/lib/alpha.js"
+      ],
+      "transformation": "exact-bytes-runtime-rename"
+    },
+    {
+      "file": "runtime/targets/validator/util/assertString.js",
+      "sha256": "e54a2f8bfeeabf30427cad6ee5369a7786b4c3e1189bb914ae063d3ccb966bbb",
+      "bytes": 285,
+      "kind": "runtime-adapter",
+      "derivedFrom": [
+        "upstream/validatorjs--validator.js/9ff342479591ca5a43cb30000195bcf55c1bbed9/src/lib/util/assertString.js"
+      ],
+      "transformation": "exact-bytes-runtime-rename"
+    },
+    {
+      "file": "runtime/targets/encodeurl/package.json",
+      "sha256": "1239d4d885dcad42201a27ed9324f8f0f760b78700d8db9ced39a511cffe7eae",
+      "bytes": 18,
+      "kind": "runtime-adapter",
+      "derivedFrom": [],
+      "transformation": "explicit-module-format-manifest"
+    },
+    {
+      "file": "runtime/targets/encodeurl/subject.cjs",
+      "sha256": "da79e42b4f04e0ce63e45525558f838b99500d2fe1a4fe0e28cb6c7ed7eae58c",
+      "bytes": 1578,
+      "kind": "runtime-adapter",
+      "derivedFrom": [
+        "upstream/pillarjs--encodeurl/059977240f83b724c75b4f8f684d583dd4779c48/index.js"
+      ],
+      "transformation": "exact-bytes-runtime-rename"
+    },
+    {
+      "file": "runtime/targets/fastdecode/package.json",
+      "sha256": "1239d4d885dcad42201a27ed9324f8f0f760b78700d8db9ced39a511cffe7eae",
+      "bytes": 18,
+      "kind": "runtime-adapter",
+      "derivedFrom": [],
+      "transformation": "explicit-module-format-manifest"
+    },
+    {
+      "file": "runtime/targets/fastdecode/subject.cjs",
+      "sha256": "d49d2cc0b03ad25b6691feb3928f231bf78dfb1187a0ecd6f9a5246e610973e6",
+      "bytes": 3219,
+      "kind": "runtime-adapter",
+      "derivedFrom": [
+        "upstream/delvedor--fast-decode-uri-component/c124e25816434dcb25813a4a7b9c3898eec76922/index.js"
+      ],
+      "transformation": "exact-bytes-runtime-rename"
+    }
+  ],
+  "recipes": [
+    {
+      "id": "historical-whitespace-classification",
+      "family": "input-validation",
+      "recipe": {
+        "file": "recipes/numeric.json",
+        "sha256": "a46cac178a5fb05a57d5745cd76942fda94f7cb4af848c6c1c149ee3bf520b80",
+        "bytes": 1408
+      },
+      "contractSource": "upstream/jonschlinkert--is-number/12749e3c411750f754d50f093471234c7ab270b0/test.js",
+      "original": {
+        "module": "runtime/numeric/original/subject.cjs",
+        "files": [
+          "runtime/numeric/original/package.json",
+          "runtime/numeric/original/subject.cjs",
+          "runtime/numeric/original/kind-of.cjs",
+          "runtime/numeric/original/is-buffer.cjs"
+        ]
+      },
+      "fixed": {
+        "module": "runtime/numeric/fixed/subject.cjs",
+        "files": [
+          "runtime/numeric/fixed/package.json",
+          "runtime/numeric/fixed/subject.cjs",
+          "runtime/numeric/fixed/kind-of.cjs",
+          "runtime/numeric/fixed/is-buffer.cjs"
+        ]
+      },
+      "target": {
+        "repository": "validatorjs/validator.js",
+        "revision": "9ff342479591ca5a43cb30000195bcf55c1bbed9",
+        "module": "runtime/targets/validator/isNumeric.js",
+        "files": [
+          "runtime/targets/validator/package.json",
+          "runtime/targets/validator/isNumeric.js",
+          "runtime/targets/validator/alpha.js",
+          "runtime/targets/validator/util/assertString.js"
+        ],
+        "contractSource": "upstream/validatorjs--validator.js/9ff342479591ca5a43cb30000195bcf55c1bbed9/test/validators.test.js",
+        "eligibleIndependentTransfer": true,
+        "reason": "Only the shared string-classification contract is probed.",
+        "guided": {
+          "exportName": "default",
+          "cases": [
+            {
+              "id": "spaces",
+              "args": [
+                "   "
+              ],
+              "expect": {
+                "kind": "equals",
+                "value": false
+              }
+            },
+            {
+              "id": "controls",
+              "args": [
+                "\r\n\t"
+              ],
+              "expect": {
+                "kind": "equals",
+                "value": false
+              }
+            },
+            {
+              "id": "empty",
+              "args": [
+                ""
+              ],
+              "expect": {
+                "kind": "equals",
+                "value": false
+              }
+            }
+          ]
+        },
+        "unguided": {
+          "exportName": "default",
+          "cases": [
+            {
+              "id": "integer",
+              "args": [
+                "123"
+              ],
+              "expect": {
+                "kind": "equals",
+                "value": true
+              }
+            },
+            {
+              "id": "decimal",
+              "args": [
+                "-4.5"
+              ],
+              "expect": {
+                "kind": "equals",
+                "value": true
+              }
+            },
+            {
+              "id": "non-number",
+              "args": [
+                "abc"
+              ],
+              "expect": {
+                "kind": "equals",
+                "value": false
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "historical-literal-plus-preservation",
+      "family": "protocol-validation",
+      "recipe": {
+        "file": "recipes/plus.json",
+        "sha256": "579c3e2886e07ac1858f18ec5dcefa584926620e3f30d852af80a180ed330828",
+        "bytes": 1469
+      },
+      "contractSource": "upstream/SamVerschueren--decode-uri-component/3bbc879717a58efa9d1173b3d701e6f731ec0de4/test.js",
+      "original": {
+        "module": "runtime/plus/original/subject.cjs",
+        "files": [
+          "runtime/plus/original/package.json",
+          "runtime/plus/original/subject.cjs"
+        ]
+      },
+      "fixed": {
+        "module": "runtime/plus/fixed/subject.cjs",
+        "files": [
+          "runtime/plus/fixed/package.json",
+          "runtime/plus/fixed/subject.cjs"
+        ]
+      },
+      "target": {
+        "repository": "pillarjs/encodeurl",
+        "revision": "059977240f83b724c75b4f8f684d583dd4779c48",
+        "module": "runtime/targets/encodeurl/subject.cjs",
+        "files": [
+          "runtime/targets/encodeurl/package.json",
+          "runtime/targets/encodeurl/subject.cjs"
+        ],
+        "contractSource": "upstream/pillarjs--encodeurl/059977240f83b724c75b4f8f684d583dd4779c48/README.md",
+        "eligibleIndependentTransfer": true,
+        "reason": "Only literal safe ASCII plus preservation overlaps; encoder and decoder general contracts differ.",
+        "guided": {
+          "exportName": "default",
+          "cases": [
+            {
+              "id": "one-plus",
+              "args": [
+                "a+b"
+              ],
+              "expect": {
+                "kind": "equals",
+                "value": "a+b"
+              }
+            },
+            {
+              "id": "many-plus",
+              "args": [
+                "a+b+c+d"
+              ],
+              "expect": {
+                "kind": "equals",
+                "value": "a+b+c+d"
+              }
+            },
+            {
+              "id": "three-parts",
+              "args": [
+                "a+b+c"
+              ],
+              "expect": {
+                "kind": "equals",
+                "value": "a+b+c"
+              }
+            }
+          ]
+        },
+        "unguided": {
+          "exportName": "default",
+          "cases": [
+            {
+              "id": "plain",
+              "args": [
+                "abc"
+              ],
+              "expect": {
+                "kind": "equals",
+                "value": "abc"
+              }
+            },
+            {
+              "id": "empty",
+              "args": [
+                ""
+              ],
+              "expect": {
+                "kind": "equals",
+                "value": ""
+              }
+            },
+            {
+              "id": "digits",
+              "args": [
+                "123"
+              ],
+              "expect": {
+                "kind": "equals",
+                "value": "123"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "historical-unicode-decoder-reset",
+      "family": "unicode-boundary",
+      "recipe": {
+        "file": "recipes/unicode.json",
+        "sha256": "2e726f007e06ae84636faaa2abe3eebf8a8999f91a3846853da414f0c966f060",
+        "bytes": 1538
+      },
+      "contractSource": "upstream/jridgewell--safe-decode-uri-component/6abe20a0835cf6aabb9219a9a453dd99d3d253f0/README.md",
+      "original": {
+        "module": "runtime/unicode/original/subject.cjs",
+        "files": [
+          "runtime/unicode/original/package.json",
+          "runtime/unicode/original/subject.cjs"
+        ]
+      },
+      "fixed": {
+        "module": "runtime/unicode/fixed/subject.cjs",
+        "files": [
+          "runtime/unicode/fixed/package.json",
+          "runtime/unicode/fixed/subject.cjs"
+        ]
+      },
+      "target": {
+        "repository": "delvedor/fast-decode-uri-component",
+        "revision": "c124e25816434dcb25813a4a7b9c3898eec76922",
+        "module": "runtime/targets/fastdecode/subject.cjs",
+        "files": [
+          "runtime/targets/fastdecode/package.json",
+          "runtime/targets/fastdecode/subject.cjs"
+        ],
+        "contractSource": "upstream/delvedor--fast-decode-uri-component/c124e25816434dcb25813a4a7b9c3898eec76922/README.md",
+        "eligibleIndependentTransfer": false,
+        "reason": "Direct fork ancestry and maintainer-declared null-on-invalid contract exclude independent recovery transfer.",
+        "guided": {
+          "exportName": "default",
+          "cases": [
+            {
+              "id": "truncated-before-valid",
+              "args": [
+                "%E2foo%C2%B5"
+              ],
+              "expect": {
+                "kind": "equals",
+                "value": "%E2fooµ"
+              }
+            },
+            {
+              "id": "truncated-before-space",
+              "args": [
+                "%C2x%20"
+              ],
+              "expect": {
+                "kind": "equals",
+                "value": "%C2x "
+              }
+            },
+            {
+              "id": "truncated-before-ascii",
+              "args": [
+                "%E2x%41"
+              ],
+              "expect": {
+                "kind": "equals",
+                "value": "%E2xA"
+              }
+            }
+          ]
+        },
+        "unguided": {
+          "exportName": "default",
+          "cases": [
+            {
+              "id": "plain",
+              "args": [
+                "test"
+              ],
+              "expect": {
+                "kind": "equals",
+                "value": "test"
+              }
+            },
+            {
+              "id": "two-byte",
+              "args": [
+                "%C2%B5"
+              ],
+              "expect": {
+                "kind": "equals",
+                "value": "µ"
+              }
+            },
+            {
+              "id": "three-byte",
+              "args": [
+                "%E2%9A%A1"
+              ],
+              "expect": {
+                "kind": "equals",
+                "value": "⚡"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "modelComparison": false,
+  "nativeSuiteValidated": false,
+  "limitation": "Frozen public source byte replay plus explicit import/format adapters. No new upstream defect or agent effectiveness claim."
+}

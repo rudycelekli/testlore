@@ -49,6 +49,7 @@ export async function repair(root,options={}){
  root=fs.realpathSync(path.resolve(root));
  if(options.worktree!==undefined||options.branch!==undefined)throw new Error('Repair branches and worktree paths are generated');
  const config=readConfig(root);
+ if(options.assertInputsFresh!==undefined&&typeof options.assertInputsFresh!=='function')throw new Error('Repair input guard must be a trusted callback');
  const contributionsEnabled=config.learning?.enabled!==false&&config.learning?.contributions?.enabled===true;
  if(config.integration||adapterFor(config)!=='node')return {kind:'source-repair',status:'unsupported-repair-evidence',published:false,merged:false,next:['Source repair currently requires Node named assertion evidence. Keep native framework verification enabled.']};
  const deadlineMs=boundInteger(options.deadlineMs,900000,900000,'deadlineMs'),timeoutMs=boundInteger(options.timeoutMs,120000,120000,'timeoutMs');
@@ -67,6 +68,7 @@ export async function repair(root,options={}){
  const originalContribution=contributionsEnabled?contributionState(root):null;
  let branchContributionBinding=null;
  const assertContributionFresh=()=>{
+  options.assertInputsFresh?.();
   if(originalContribution&&digest(contributionState(root).binding)!==digest(originalContribution.binding))throw new Error('Original contribution knowledge inputs changed during repair');
   if(branchContributionBinding&&digest(contributionState(worktree).binding)!==digest(branchContributionBinding))throw new Error('Branch contribution knowledge inputs changed during repair');
  };
@@ -94,7 +96,7 @@ export async function repair(root,options={}){
   if(!baseline.complete||baseline.exitCode!==1||!baseline.tests.some(test=>test.status==='failed')){result.status=baseline.complete&&baseline.exitCode===0?'no-failures':'baseline-incomplete';return receipt();}
   const agent=options.agent??config.agent;
   if(!options.patch&&!agent){result.status='awaiting-agent';result.next=['Configure a bounded JSON worker in agent argv, or install and authenticate the supported Codex CLI.'];return receipt();}
-  const proposal=options.patch??await proposeRepair(worktree,{agent,sourcePaths,requirements,baseline,timeoutMs:Math.min(timeoutMs,remaining()),deadlineMs:remaining(),maxTasks:3,...(contributionsEnabled?{contributionSourceRoot:root}:{})});assertContributionFresh();
+  const proposal=options.patch??await proposeRepair(worktree,{agent,sourcePaths,requirements,baseline,timeoutMs:Math.min(timeoutMs,remaining()),deadlineMs:remaining(),maxTasks:3,assertInputsFresh:options.assertInputsFresh,...(contributionsEnabled?{contributionSourceRoot:root}:{})});assertContributionFresh();
   result.workers=options.patch?{mode:'supplied-reviewed-patch',realAgentExecution:false}:proposal;
   if(!proposal.review?.accepted||!options.patch&&proposal.accepted!==true){result.status='review-rejected';return receipt();}
   // The caller-owned requirements and scope cannot be replaced by worker output.
@@ -114,7 +116,7 @@ export async function repair(root,options={}){
   if(changes(worktreeRoot).some(row=>!metadata(row,prefix)&&!allowed.has(row.file)))throw new Error('Changes outside reviewed source repair');
   git(worktreeRoot,['add','--',...allowed]);
   const intendedTree=git(worktreeRoot,['write-tree']).trim();
-  git(worktreeRoot,['commit','-m','fix: repair demonstrated assertions with TestLore evidence']);
+  git(worktreeRoot,[...(options.disableCommitHooks===true?['-c','core.hooksPath=/dev/null','-c','commit.gpgSign=false']:[]),'commit','-m','fix: repair demonstrated assertions with TestLore evidence']);
   result.sha=git(worktreeRoot,['rev-parse','HEAD']).trim();
   const committedState=captureRepairState(worktree,{deadline:performance.now()+remaining()});
   assertContributionFresh();

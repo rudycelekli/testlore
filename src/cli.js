@@ -23,6 +23,12 @@ const commandModules = {
   agent: ['agent-profile'], learn: ['learning'], recall: ['learning'], 'learning-export': ['learning'],
   'knowledge-import': ['contribution-knowledge'], knowledge: ['contribution-knowledge', 'files'],
   'knowledge-reflect': ['contribution-knowledge'],
+  'probe-qualify': ['bug-recipes','bug-investigation','files'],
+  investigate: ['bug-investigation'], immunity: ['bug-investigation'],
+  'investigation-outcome': ['investigation-outcomes'], 'investigation-links': ['investigation-outcomes'],
+  'investigation-learn': ['investigation-outcomes'],
+  'investigation-repair': ['investigation-repair','files','pull-request'],
+  'probe-catalog': ['bug-catalog'],
   snapshot: ['files', 'provenance'], evidence: ['evidence'],
   mutation: ['files', 'quality-measurement', 'evidence'], effectiveness: ['files', 'quality-measurement'],
   stability: ['evidence'], capture: ['evidence'], modularize: ['candidates'],
@@ -82,6 +88,14 @@ Usage: testlore <command> [options]
   knowledge-import Import a hash-bound public PR snapshot (--report, --sha256)
   knowledge   Retrieve advisory contribution hypotheses (--query, --contract local.md)
   knowledge-reflect Inspect public contribution outcomes and pattern hypotheses
+  probe-qualify Replay a declared historical fault/fix (--manifest local.json --execute)
+  probe-catalog Inspect bundled historical recipes; --execute copies them for review
+  investigate Plan historical bug probes; --execute runs approved module hypotheses
+  immunity    Inspect repository observation, unresolved probes and advisory learning
+  investigation-outcome Record a reviewed finding (--report --sha256 --id --verdict --reviewer)
+  investigation-links Propose source/test associations (--report --sha256), no omissions
+  investigation-learn Inspect useful findings, false positives, duplicates and costs
+  investigation-repair Verify a new regression, delegate repair and open a reviewed PR
   pilot       Inspect local repository pilots (--manifest file); --execute runs isolated copies
   pilot-export Export fixed aggregate pilot metrics (--report local-summary.json)
   witness-init Export a recorder public key (--output path; never overwrite)
@@ -105,6 +119,7 @@ Options:
   --sources <paths>  Comma-separated existing production source scope for repair
   --provider <name>  Generation author choice: auto (default), json-worker, agentic-qe
   --autofix          setup: add an opt-in trusted self-hosted agent workflow
+  --immunity         setup: add reviewed probes to trusted change-driven investigation
   --no-ci            Do not add a project quality workflow
   --action-ref <ref>  Pin the installed quality action to a reviewed Git ref
   --json             Machine-readable output
@@ -117,7 +132,7 @@ export function parseArgs(args) {
   const options = {};
   let command = 'help';
   const values = new Set(['root','base','changed','output','report','type','provenance','repeat','id','patch','target','framework','head','action-ref','base-branch','query','name','enable','disable','select','plugin','settings','manifest','mutate','defects','revision','deadline-ms','trusted-key','checkpoint','claim','verdict','reviewer','sources','provider','sha256','contract','exclude-repositories']);
-  const flags = new Set(['json', 'full', 'shadow', 'execute', 'help', 'version', 'local', 'no-ci','check','recommend','auto','selective','allow-execution','unified-native','verify','autofix']);
+  const flags = new Set(['json', 'full', 'shadow', 'execute', 'help', 'version', 'local', 'no-ci','check','recommend','auto','selective','allow-execution','unified-native','verify','autofix','immunity']);
   if (args[0] && !args[0].startsWith('-')) command = args.shift();
   for (let i = 0; i < args.length; i++) {
     const key = args[i].replace(/^--/, '');
@@ -140,6 +155,7 @@ const loopOptions = {
   'outcome-lessons': ['query', 'trusted-key', 'checkpoint']
 };
 function validateLoopOptions(command, options) {
+  if(['investigation-outcome','investigation-repair'].includes(command))return;
   if (!Object.hasOwn(loopOptions, command)) {
     if(['repair','autopilot'].includes(command)){
       if(options['deadline-ms']!==undefined&&(!/^\d+$/.test(options['deadline-ms'])||Number(options['deadline-ms'])<1||Number(options['deadline-ms'])>900000))throw new Error('--deadline-ms must be 1–900000');
@@ -199,7 +215,9 @@ function human(command, result, implementations = {}) {
   if (command === 'init') return `${result.created ? 'Created' : 'Kept'} ${result.config}\n${human('audit', result.report)}\nNext: ${result.next.join(' → ')}`;
   if (command === 'audit') return `${result.testFiles} test files · static triage grade ${result.grade}${result.score === null ? '' : ` (${result.score}/100)`}\n${Object.entries(result.measured).map(([key,value])=>`${key}: ${value?'measured (see JSON scope)':'not measured'}`).join(' · ')}\n${result.files.flatMap(f => f.findings.map(x => `  ${f.file}:${x.line} — ${x.message}`)).join('\n')}\n${result.sourcesWithoutImportingTests.length} source files have no importing tests (not a coverage result).`;
   if (command === 'plan') return `${result.mode.toUpperCase()} · ${result.selected.length}/${result.total} test files selected\n${result.reasons.length ? `Reasons: ${result.reasons.join(', ')}\n` : ''}${result.decisions.map(d => `${d.selected ? 'RUN ' : 'SKIP'} ${d.test} — ${d.reasons.join(', ')}${d.paths.length ? `\n     ${d.paths.map(p => p.join(' → ')).join('\n     ')}` : ''}`).join('\n')}\nStatic evidence; runtime dependencies require declarations.`;
-  if(['improve','repair','autopilot'].includes(command))return `${result.status} · ${result.branch||result.kind||command}\n${result.worktree||''}\n${result.pullRequest||result.publicationError||result.error||result.next?.join('\n')||'Review the retained improvement receipt.'}`;
+  if(['improve','repair','autopilot','investigation-repair'].includes(command))return `${result.status} · ${result.branch||result.kind||command}\n${result.worktree||''}\n${result.pullRequest||result.publicationError||result.error||result.next?.join('\n')||'Review the retained improvement receipt.'}`;
+  if(command==='probe-catalog')return `${result.entries.length} qualified historical recipes · ${result.directory||'read-only catalog'}\n${result.entries.map(row=>`${row.id} — ${row.contract}`).join('\n')}\n${result.nextAction}`;
+  if(command==='investigate'||command==='immunity')return `${result.kind} · ${result.status||'observation'}\n${result.summary?Object.entries(result.summary).map(([key,value])=>`${key}: ${value}`).join(' · '):result.coverage?`${result.coverage.approvedInvestigations} approved probes · ${result.coverage.unresolvedInvestigations} unresolved`:result.candidates?`${result.candidates.filter(row=>row.applicable).length}/${result.candidates.length} approved probes`:'No reviewed probe scope yet.'}\n${result.receipt||''}\n${result.nextAction}\nNo universal coverage or automatic learning improvement is established.`;
   if (command === 'modules') return `${result.groups.map(g => `${g.name}: ${g.tests.join(', ')}`).join('\n')}\nProposal only; no tests rewritten.`;
   if (command === 'generate') return result.executed ? `${result.status}: ${result.files.length} files staged in ${result.directory}\n${result.review.findings.join('\n')}\nExecution and mutation effectiveness: not measured. Review candidates before copying.` : `${result.purpose}: ${result.subjects.length} subjects\nRoles: ${result.roles.join(' → ')}\nNo agent invoked. Configure an agent and requirements, then use generate --execute.\nUse --json to export the complete work order.`;
   return JSON.stringify(result, null, 2);
@@ -210,12 +228,19 @@ export async function main(args = process.argv.slice(2)) {
   if (options.version) { console.log(JSON.parse(fs.readFileSync(new URL('../package.json',import.meta.url),'utf8')).version); return 0; }
   if (command === 'help' || options.help) { console.log(help); return 0; }
   validateLoopOptions(command, options);
+  const investigationOptions={'probe-catalog':['output','execute'],'probe-qualify':['manifest','execute'],investigate:['manifest','execute'],immunity:['manifest','execute'],'investigation-outcome':['report','sha256','id','verdict','reviewer'],'investigation-links':['report','sha256'],'investigation-learn':[],'investigation-repair':['report','sha256','id','local','patch','deadline-ms','base-branch']};
+  if(Object.hasOwn(investigationOptions,command)){
+    const allowed=new Set(['root','json',...investigationOptions[command]]);
+    for(const key of Object.keys(options))if(!allowed.has(key))throw new Error(`--${key} does not apply to ${command}`);
+    const required={'probe-qualify':['manifest','execute'],'investigation-outcome':['report','sha256','id','verdict','reviewer'],'investigation-links':['report','sha256'],'investigation-repair':['report','sha256','id']}[command]||[];
+    for(const key of required)if(!options[key])throw new Error(`--${key} is required`);
+  }
   const knowledgeOptions={'knowledge-import':['report','sha256'],knowledge:['query','contract','exclude-repositories'],'knowledge-reflect':[]};
   if(Object.hasOwn(knowledgeOptions,command)){
     const allowed=new Set(['root','json',...knowledgeOptions[command]]);
     for(const key of Object.keys(options))if(!allowed.has(key))throw new Error(`--${key} does not apply to ${command}`);
     for(const key of command==='knowledge-import'?['report','sha256']:command==='knowledge'?['query','contract']:[])if(!options[key]?.trim())throw new Error(`--${key} is required`);
-  }else for(const key of ['sha256','contract','exclude-repositories'])if(key in options)throw new Error(`--${key} requires a knowledge command`);
+  }else for(const key of ['sha256','contract','exclude-repositories'])if(key in options&&!Object.hasOwn(investigationOptions,command))throw new Error(`--${key} requires a knowledge command`);
   const root = path.resolve(options.root || '.');
   if (command === 'mcp') {
     if (Object.keys(options).some(key => !['root','allow-execution'].includes(key))) throw new Error('mcp accepts only --root and --allow-execution');
@@ -226,6 +251,7 @@ export async function main(args = process.argv.slice(2)) {
   if (options['unified-native'] && !['run','pilot'].includes(command)) throw new Error('--unified-native applies only to run or pilot');
   if(options.verify&&command!=='setup')throw new Error('--verify applies only to setup');
   if(options.autofix&&command!=='setup')throw new Error('--autofix applies only to setup');
+  if(options.immunity&&command!=='setup')throw new Error('--immunity applies only to setup');
   if(options.sources&&!['repair','autopilot'].includes(command))throw new Error('--sources applies only to repair or autopilot');
   if(options.provider!==undefined){if(!['generate','improve','autopilot'].includes(command))throw new Error('--provider applies only to generation, improvement or autopilot');if(!['auto','json-worker','agentic-qe'].includes(options.provider))throw new Error('--provider must be auto, json-worker or agentic-qe');if(options.plugin)throw new Error('Choose --provider or --plugin, not both');}
   if(options.verify&&options.selective)throw new Error('setup --verify always uses full shadow verification');
@@ -246,6 +272,27 @@ export async function main(args = process.argv.slice(2)) {
     pilot, exportPilot, verificationBrief, qualifyRoutingMappings, adoptionReadiness, importAssessments, assessCommunityCampaignFile} = implementations;
   let result;
   switch (command) {
+    case 'probe-catalog': result=options.execute?implementations.installBundledBugRecipes(root,{directory:options.output}):implementations.listBundledBugRecipes();break;
+    case 'probe-qualify': {
+      const profile=implementations.readInvestigationInput(root,options.manifest).value;
+      if(!profile||Object.keys(profile).some(key=>!['recipe','original','fixed','output'].includes(key))||!profile.recipe||Object.keys(profile.recipe).some(key=>!['path','sha256'].includes(key))||!/[a-f0-9]{64}/.test(profile.recipe.sha256)||profile.recipe.sha256.length!==64||!profile.output)throw new Error('Invalid recipe replay profile');
+      const loaded=implementations.readBugRecipe(root,profile.recipe.path,profile.recipe.sha256);
+      const scope=value=>{if(!value||Object.keys(value).some(key=>!['root','module','files'].includes(key))||typeof value.root!=='string')throw new Error('Invalid recipe replay source scope');return {...value,root:value.root==='.'?root:implementations.safePath(root,value.root)};};
+      result=await implementations.qualifyBugRecipe({recipe:loaded.recipe,original:scope(profile.original),fixed:scope(profile.fixed),outputRoot:implementations.safePath(root,profile.output)});break;
+    }
+    case 'investigate': result=await implementations.investigateBugs(root,{manifest:options.manifest,execute:options.execute===true});break;
+    case 'immunity': result=await implementations.immunityStatus(root,{manifest:options.manifest,execute:options.execute===true});break;
+    case 'investigation-outcome': result=implementations.recordInvestigationOutcome(root,{report:options.report,reportSha256:options.sha256,findingId:options.id,verdict:options.verdict,reviewer:options.reviewer});break;
+    case 'investigation-links': result=implementations.investigationDependencyLinks(root,options.report,{expectedSha256:options.sha256});break;
+    case 'investigation-learn': result=implementations.inspectInvestigationLearning(root);break;
+    case 'investigation-repair': {
+      const {spawnSync}=await import('node:child_process');let agent=implementations.readConfig(root).agent;
+      if(!agent&&!options.patch){const probe=spawnSync('codex',['--version'],{encoding:'utf8',timeout:5000,shell:false});if(!probe.error&&probe.status===0)agent=[process.execPath,fileURLToPath(new URL('./adapters/codex.js',import.meta.url))];}
+      let patch;if(options.patch){const {readInvestigationInput}=await import('./bug-investigation.js');patch=readInvestigationInput(root,options.patch,{maxBytes:131072}).value;}
+      result=await implementations.repairInvestigation(root,{report:options.report,reportSha256:options.sha256,findingId:options.id,agent,patch,deadlineMs:options['deadline-ms']===undefined?undefined:Number(options['deadline-ms'])});
+      if(result.status==='ready-for-review'&&!options.local){try{result=implementations.publishImprovement(root,result,{baseBranch:options['base-branch']});}catch(error){result={...result,published:false,publicationError:error.message};}}
+      if(result.receipt)fs.writeFileSync(result.receipt,JSON.stringify(result,null,2));break;
+    }
     case 'knowledge-import': result=implementations.importContributionKnowledge(root,options.report,{expectedSha256:options.sha256});break;
     case 'knowledge-reflect': result=implementations.reflectContributionKnowledge(root);break;
     case 'knowledge': {
@@ -289,7 +336,7 @@ export async function main(args = process.argv.slice(2)) {
       result=adoptionReadiness(root);break;
     }
     case 'setup': {
-      if(options.autofix&&options['no-ci'])throw new Error('setup --autofix requires CI');
+      if((options.autofix||options.immunity)&&options['no-ci'])throw new Error('setup --autofix or --immunity requires CI');
       // Validate agent prerequisites before mutating setup files.
       if(options.autofix)assertAutofixPrerequisites(root,readConfig(root),{actionRef:options['action-ref']});
       const written=installQualityLayer(root,{ci:!options['no-ci'],actionRef:options['action-ref']});
@@ -299,6 +346,7 @@ export async function main(args = process.argv.slice(2)) {
       const plugins=recommendation.blocked?{...recommendation,applied:[],changed:false}:configurePluginsAutomatically(root,recommendation);
       if(plugins.changed&&!written.includes('tddswarm.config.json'))written.push('tddswarm.config.json');
       result={written,agent,executionMode:readConfig(root).executionMode||'existing-policy',readiness:adoptionReadiness(root),plugins,next:['testlore doctor --json','testlore run --shadow --base HEAD --json','testlore report','testlore mappings --json']};
+      if(options.immunity){const {installInvestigationWorkflow}=await import('./bug-investigation.js');result.written.push(...installInvestigationWorkflow(root,{actionRef:options['action-ref'],manifest:options.manifest}));const config=readConfig(root);config.investigation={enabled:true,manifest:options.manifest||'tddswarm.probes.json'};fs.writeFileSync(safePath(root,'tddswarm.config.json'),JSON.stringify(config,null,2)+'\n');if(!result.written.includes('tddswarm.config.json'))result.written.push('tddswarm.config.json');}
       if(options.verify){
         const {run:verify}=await import('./runner.js');
         result.verification=verify(root,{base:options.base||'HEAD',shadow:true,capture:true});
@@ -317,10 +365,20 @@ export async function main(args = process.argv.slice(2)) {
       const patchFile=options.patch?safePath(root,options.patch):null;
       if(patchFile&&fs.statSync(patchFile).size>128*1024)throw new Error('Repair patch exceeds 128 KiB');
       const repairOptions={agent,sourcePaths:options.sources?.split(',').filter(Boolean),deadlineMs:options['deadline-ms']===undefined?undefined:Number(options['deadline-ms']),patch:patchFile?JSON.parse(fs.readFileSync(patchFile,'utf8')):undefined};
+      const pipelineStarted=performance.now(),pipelineBudget=repairOptions.deadlineMs??900000,remainingPipeline=()=>Math.max(0,Math.floor(pipelineBudget-(performance.now()-pipelineStarted)));
       result=await repair(root,repairOptions);
       if(command==='autopilot'&&!patchFile&&(result.status==='no-failures'||result.status==='unsupported-repair-evidence'||result.status==='baseline-incomplete'&&result.detection?.discovery?.complete&&!result.detection.discovery.files.length)){
         const detection={status:result.status,receipt:result.receipt,sourceRepairSupported:result.status!=='unsupported-repair-evidence'};
-        result=await improve(root,{agent,provider:options.provider});result.autopilotDetection=detection;
+        const config=readConfig(root);
+        if(config.investigation?.enabled===true){
+          if(remainingPipeline()<100)result={kind:'repository-immunity',status:'investigation-incomplete',published:false,merged:false,next:['The shared autopilot deadline is exhausted; no new probe or model work started.']};
+          else{
+            const {investigateBugs,readInvestigationInput}=await import('./bug-investigation.js'),investigation=await investigateBugs(root,{manifest:config.investigation.manifest,execute:true,deadlineMs:remainingPipeline()}),ownership=repairOptions.sourcePaths??config.repair?.sourcePaths,finding=investigation.findings.find(item=>item.outcome==='reproduced'&&(!ownership||ownership.includes(item.module))),outsideOwnership=investigation.findings.some(item=>item.outcome==='reproduced')&&!finding;
+            if(finding&&remainingPipeline()>=100){const {repairInvestigation}=await import('./investigation-repair.js');result=await repairInvestigation(root,{report:investigation.receipt,reportSha256:readInvestigationInput(root,investigation.receipt).sha256,findingId:finding.id,agent,deadlineMs:remainingPipeline()});}
+            else result={kind:'repository-immunity',status:outsideOwnership?'awaiting-repair-ownership':investigation.exitCode===2||finding?'investigation-incomplete':'no-reproduced-bug',published:false,merged:false,investigation,next:[outsideOwnership?'Reproduced findings are outside the approved repair.sourcePaths or --sources; review production ownership before repair.':finding?'The shared autopilot deadline is exhausted; preserve the finding and retry its bounded repair.':investigation.nextAction]};
+          }
+        }else result=await improve(root,{agent,provider:options.provider});
+        result.autopilotDetection=detection;
       }
       if(options.provider&&result.kind==='source-repair')result.generationProviderRequest={provider:options.provider,applied:false,reason:'Author-provider selection applies to test generation. Source repair retains dedicated JSON-worker roles.'};
       if(result.status==='ready-for-review'&&!options.local){try{result=publishImprovement(root,result,{baseBranch:options['base-branch']});}catch(error){result={...result,published:false,publicationError:error.message};}}
@@ -436,11 +494,15 @@ export async function main(args = process.argv.slice(2)) {
   }
   console.log(options.json ? JSON.stringify(result, null, 2) : human(command, result, implementations));
   if(command==='knowledge-import')return result.imported?0:2;
+  if(command==='probe-qualify')return result.qualified?0:2;
+  if(['investigate','immunity'].includes(command))return result.exitCode??0;
+  if(command==='investigation-outcome')return result.recorded?0:2;
+  if(['investigation-links','investigation-learn'].includes(command))return result.reason?2:0;
   if(['knowledge','knowledge-reflect'].includes(command))return result.reason?.startsWith('invalid-')?2:0;
   if(command==='observe')return result.exitCode ?? 2;
   if(command==='loop-status')return result.valid && result.complete ? 0 : 2;
   if(command==='challenge')return result.supported ? 0 : 1;
-  if(['improve','repair','autopilot'].includes(command))return result.status==='ready-for-review'&&(options.local||result.published)?0:2;
+  if(['improve','repair','autopilot','investigation-repair'].includes(command))return result.status==='no-reproduced-bug'?0:result.status==='ready-for-review'&&(options.local||result.published)?0:2;
   if(command==='plugins' && options.check)return result.exitCode || 0;
   if(command==='assess')return result.exitCode;
   if(command==='campaign')return result.attempts.some(item=>!item.regressionQualified)?2:0;

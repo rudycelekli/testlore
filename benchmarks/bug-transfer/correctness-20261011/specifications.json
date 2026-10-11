@@ -1,0 +1,166 @@
+{
+  "schemaVersion": 1,
+  "kind": "prospective-correctness-transfer-specifications",
+  "frozenAt": "2026-10-11T17:08:51.124980+00:00",
+  "author": "independent-evaluator-owner",
+  "casesInspectedBeforeExecution": true,
+  "historical": {
+    "numeric": [
+      [
+        "spaces",
+        [
+          "   "
+        ],
+        false
+      ],
+      [
+        "controls",
+        [
+          "\r\n\t"
+        ],
+        false
+      ],
+      [
+        "empty",
+        [
+          ""
+        ],
+        false
+      ]
+    ],
+    "plus": [
+      [
+        "one-plus",
+        [
+          "a+b"
+        ],
+        "a+b"
+      ],
+      [
+        "many-plus",
+        [
+          "a+b+c+d"
+        ],
+        "a+b+c+d"
+      ],
+      [
+        "three-parts",
+        [
+          "a+b+c"
+        ],
+        "a+b+c"
+      ]
+    ],
+    "unicode": [
+      [
+        "truncated-before-valid",
+        [
+          "%E2foo%C2%B5"
+        ],
+        "%E2fooµ"
+      ],
+      [
+        "truncated-before-space",
+        [
+          "%C2x%20"
+        ],
+        "%C2x "
+      ],
+      [
+        "truncated-before-ascii",
+        [
+          "%E2x%41"
+        ],
+        "%E2xA"
+      ]
+    ]
+  },
+  "unguided": {
+    "numeric": [
+      [
+        "integer",
+        [
+          "123"
+        ],
+        true
+      ],
+      [
+        "decimal",
+        [
+          "-4.5"
+        ],
+        true
+      ],
+      [
+        "non-number",
+        [
+          "abc"
+        ],
+        false
+      ]
+    ],
+    "plus": [
+      [
+        "plain",
+        [
+          "abc"
+        ],
+        "abc"
+      ],
+      [
+        "empty",
+        [
+          ""
+        ],
+        ""
+      ],
+      [
+        "digits",
+        [
+          "123"
+        ],
+        "123"
+      ]
+    ],
+    "unicode": [
+      [
+        "plain",
+        [
+          "test"
+        ],
+        "test"
+      ],
+      [
+        "two-byte",
+        [
+          "%C2%B5"
+        ],
+        "µ"
+      ],
+      [
+        "three-byte",
+        [
+          "%E2%9A%A1"
+        ],
+        "⚡"
+      ]
+    ]
+  },
+  "targetContractNotes": {
+    "validatorjs/validator.js": "String numeric classifier returns false for empty and whitespace-only strings; independent source grammar plus maintainer README supports numeric classification. Both arms use strings only.",
+    "pillarjs/encodeurl": "URL encoder preserves safe ASCII plus signs; only literal-plus subset transfers. It does not share general decoder semantics.",
+    "delvedor/fast-decode-uri-component": "Maintainer README explicitly says invalid escapes return null; also direct fork ancestry from Unicode training source. Excluded from independent transfer; negative contract/ancestry control only."
+  },
+  "budget": {
+    "casesPerArm": 3,
+    "repeat": 2,
+    "timeoutMs": 3000,
+    "providerCalls": 0,
+    "networkRequestsDuringReplay": 0
+  },
+  "limitations": [
+    "Constructed prospective probes drawn from maintainer contracts; not untouched maintainer test suites.",
+    "Deterministic unguided probes, not ordinary AI review.",
+    "Targets have no prospectively asserted new defect; empty result is retained."
+  ]
+}

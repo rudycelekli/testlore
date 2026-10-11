@@ -1,0 +1,56 @@
+{
+  "schemaVersion": 1,
+  "kind": "verified-historical-correctness-replay-catalog",
+  "manifestSha256": "5c7dfe39051cc12609caaf518ea77fee9cdd079a1e699994742851fb4c49b086",
+  "specificationsSha256": "e211f2279175b4cba22e40879e2ad3f71195b54fe7bdf2d712f35dd344f683f0",
+  "producerIdentities": {
+    "recipeModule": "4844920dec7a6f95f1ece00bfc1afa9bacf4f7b9a7737a74c2f42023a968f190",
+    "worker": "de73222fb12a0455acb3431380a280311e33cbf55bab063e29ea0a84c5c120a8"
+  },
+  "entries": [
+    {
+      "id": "historical-whitespace-classification",
+      "family": "input-validation",
+      "recipeFile": "qualified/historical-whitespace-classification/recipe.json",
+      "recipeFileSha256": "a46cac178a5fb05a57d5745cd76942fda94f7cb4af848c6c1c149ee3bf520b80",
+      "recipeSha256": "8f69ec4a4b6ba8de97096999b74b71e916d3ff7044d46f6c20c2a502e365dcad",
+      "qualificationFile": "qualified/historical-whitespace-classification/qualification.json",
+      "qualificationSha256": "45fffc8e896f1b740ceeaeb5edf728893a2b4b49b717e35c87621aa36b3b641d",
+      "scope": "pure-module-replay",
+      "originalRevision": "204c885659b8ee1946534c61db91603b9a16d661",
+      "fixedRevision": "12749e3c411750f754d50f093471234c7ab270b0",
+      "sourceRepository": "https://github.com/jonschlinkert/is-number"
+    },
+    {
+      "id": "historical-literal-plus-preservation",
+      "family": "protocol-validation",
+      "recipeFile": "qualified/historical-literal-plus-preservation/recipe.json",
+      "recipeFileSha256": "579c3e2886e07ac1858f18ec5dcefa584926620e3f30d852af80a180ed330828",
+      "recipeSha256": "fdf5cfa434340d174c7bcff32ce18e1c8686192e7d1cfb4bfb65b5395c5c7a5f",
+      "qualificationFile": "qualified/historical-literal-plus-preservation/qualification.json",
+      "qualificationSha256": "cddcb0060977d26f3b6359d071686eadd153357fe749469ba96acade8348e5e4",
+      "scope": "pure-module-replay",
+      "originalRevision": "a0eea469d26eb0df668b081672cdb9581feb78eb",
+      "fixedRevision": "3bbc879717a58efa9d1173b3d701e6f731ec0de4",
+      "sourceRepository": "https://github.com/SamVerschueren/decode-uri-component"
+    },
+    {
+      "id": "historical-unicode-decoder-reset",
+      "family": "unicode-boundary",
+      "recipeFile": "qualified/historical-unicode-decoder-reset/recipe.json",
+      "recipeFileSha256": "2e726f007e06ae84636faaa2abe3eebf8a8999f91a3846853da414f0c966f060",
+      "recipeSha256": "5d0c3c0d0e1e707e53e803d110f6648b5e6fc31bcc77ce2fccb01355f8ce46c6",
+      "qualificationFile": "qualified/historical-unicode-decoder-reset/qualification.json",
+      "qualificationSha256": "06e4dedb0f6d74b7468e288cc97af4ec983f5247d90558f8949663dc5276563a",
+      "scope": "pure-module-replay",
+      "originalRevision": "4e7d87e4cfd3942c30d0d264d058715a5e124809",
+      "fixedRevision": "641dec384f134062c0f85898569f4d4117e6350d",
+      "sourceRepository": "https://github.com/jridgewell/safe-decode-uri-component"
+    }
+  ],
+  "automaticExecution": false,
+  "requiresCurrentMaintainerContract": true,
+  "nativeSuiteValidated": false,
+  "repairAuthority": "none",
+  "learningPromoted": false
+}

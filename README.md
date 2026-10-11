@@ -188,6 +188,8 @@ Inspired by Hindsight's retain/recall/reflect cycle, implemented around testing 
 
 **Learn from your public contributions.** Import a hash-bound upstream PR inventory, inspect recurring boundary patterns, and retrieve contract-relevant references for opt-in repair architects and authors. Your independent reviewer stays separate. Merged, open and closed PRs remain distinct observations; copied solutions and private repositories stay out of the corpus. This is local advisory retrieval, with no demonstrated repair-quality improvement yet. [Public contribution knowledge and commands →](docs/contribution-knowledge.md)
 
+**Investigate beyond a green suite.** Review historical bug recipes against your current behavior contracts, challenge them in bounded module copies, and retain clean or incomplete results honestly. A reproduced probe can become a new native regression before a source-only agent repair; original assertions stay unchanged. Trusted change workflows and agent autofix are separate opt-ins. The public replay found no new target bugs or speed advantage. [Repository immunity: contracts, commands and evidence →](docs/repository-immunity.md)
+
 ## Grow with optional tools
 
 TestLore is a complementary coordination layer. Bring your specialist tools into one quality workflow: their engines supply expertise, and TestLore connects modularity, routing, independent validation, and retained lessons. Enable capabilities as your project grows.

@@ -1,0 +1,56 @@
+{
+  "schemaVersion": 1,
+  "kind": "bug-recipe",
+  "id": "historical-literal-plus-preservation",
+  "family": "protocol-validation",
+  "provenance": {
+    "repository": "https://github.com/SamVerschueren/decode-uri-component",
+    "baseRevision": "a0eea469d26eb0df668b081672cdb9581feb78eb",
+    "fixedRevision": "3bbc879717a58efa9d1173b3d701e6f731ec0de4",
+    "evidenceClass": "public-historical"
+  },
+  "contract": {
+    "text": "A URI component decoder preserves literal plus signs: a+b remains a+b. Query-form decoding is a different contract.",
+    "sourceUrl": "https://github.com/SamVerschueren/decode-uri-component/blob/3bbc879717a58efa9d1173b3d701e6f731ec0de4/test.js",
+    "sourceSha256": "a222362b47a453d62661869f9b9f4084ba4277aed692537df556906d112b2459",
+    "independence": "maintainer-specification"
+  },
+  "probe": {
+    "exportName": "default",
+    "cases": [
+      {
+        "id": "one-plus",
+        "args": [
+          "a+b"
+        ],
+        "expect": {
+          "kind": "equals",
+          "value": "a+b"
+        }
+      },
+      {
+        "id": "many-plus",
+        "args": [
+          "a+b+c+d"
+        ],
+        "expect": {
+          "kind": "equals",
+          "value": "a+b+c+d"
+        }
+      },
+      {
+        "id": "three-parts",
+        "args": [
+          "a+b+c"
+        ],
+        "expect": {
+          "kind": "equals",
+          "value": "a+b+c"
+        }
+      }
+    ]
+  },
+  "applicability": {
+    "requiredIdentifiers": []
+  }
+}

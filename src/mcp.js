@@ -1,4 +1,5 @@
 import fs from 'node:fs';
+import path from 'node:path';
 import { fork } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { McpServer } from '@modelcontextprotocol/server';
@@ -7,6 +8,7 @@ import { z } from 'zod';
 import { verificationBrief, inspectVerificationStatus } from './agent-contract.js';
 import { boundedSummary } from './mcp-worker.js';
 import {briefInputSchema,statusInputSchema} from './mcp-inputs.js';
+import {immunityStatus} from './bug-investigation.js';
 
 const workerPath = fileURLToPath(new URL('./mcp-worker.js', import.meta.url));
 const packageVersion = JSON.parse(fs.readFileSync(new URL('../package.json', import.meta.url), 'utf8')).version;
@@ -100,6 +102,10 @@ export async function serveMcp(options = {}) {
       args => verificationBrief(root, args));
     register('testlore_status', 'Inspect historical verification receipts without freshness checks, native discovery, runners, or service probes.',
       statusInputSchema, readOnly, () => inspectVerificationStatus(root));
+    if(fs.existsSync(path.join(root,'tddswarm.probes.json'))){
+      register('testlore_immunity','Inspect declared bug probes, source freshness, unexplored expectations and advisory outcomes without running project modules.',z.strictObject({}),readOnly,()=>immunityStatus(root));
+      if(allowExecution)register('testlore_investigate','Challenge independently approved historical bug probes in bounded disposable module copies; emits review-only regression proposals, never merges or omits tests.',z.strictObject({}),execution,(args,context)=>execute('investigate',args,context.signal));
+    }
     if (allowExecution) {
       register('testlore_plan', 'Execute configured discovery/resolvers and service probes to propose routing. Requires trusted project execution enabled at startup.',
         z.strictObject({ base: baseSchema }), execution, (args, context) => execute('plan', args, context.signal));

@@ -38,6 +38,12 @@ try{
  const installedPackage=JSON.parse(fs.readFileSync(path.join(tools,'node_modules/testlore/package.json'),'utf8'));assert.equal(installedPackage.name,'testlore');pack.version=installedPackage.version;
  const cli=path.join(tools,'node_modules/testlore/src/cli.js');
  const command=(args,exit=0)=>JSON.parse(invoke(project,[process.execPath,cli,...args,'--json'],exit));
+ const immunityRoot=path.join(workspace,'immunity-inspection');fs.mkdirSync(immunityRoot);
+ const immunity=command(['immunity','--root',immunityRoot]);assert.equal(immunity.backgroundServiceRunning,false);assert.equal(immunity.status,'awaiting-reviewed-probes');assert.equal(immunity.catalog.entries.length,3);
+ const probeCatalog=command(['probe-catalog','--root',immunityRoot,'--execute']);assert.equal(probeCatalog.projectCodeExecuted,false);assert.equal(probeCatalog.providerCalls,0);
+ const {readBugRecipe,verifyBugRecipeQualification}=await import(path.join(tools,'node_modules/testlore/src/bug-recipes.js'));
+ for(const reference of probeCatalog.recipes){const recipe=readBugRecipe(immunityRoot,reference.path,reference.sha256);assert.equal(verifyBugRecipeQualification(immunityRoot,reference.qualification.path,{expectedSha256:reference.qualification.sha256,recipeSha256:recipe.recipeSha256}).qualified,true);}
+ assert.equal(fs.existsSync(path.join(immunityRoot,'tddswarm.probes.json')),false);assert.equal(fs.existsSync(path.join(immunityRoot,'.tddswarm')),false);
  write('package.json',{type:'module'});write('.gitignore','.tddswarm/\n');
  for(const name of ['a','b']){write(`src/${name}.js`,`export const ${name}=1;`);write(`test/${name}.test.js`,`import test from 'node:test';import assert from 'node:assert/strict';import {${name}} from '../src/${name}.js';test('${name}',()=>assert.equal(${name},1));`);}
  for(const args of [['init','-b','main'],['config','user.name','Packed Proof'],['config','user.email','proof@example.invalid'],['add','.'],['commit','-m','baseline']])invoke(project,['git',...args]);

@@ -51,3 +51,7 @@ The initial taxonomy covers filesystem boundaries, Unicode, asynchronous lifecyc
 Refresh snapshots explicitly and re-import a reviewed digest to update history. This feature registers no background collection, remote memory, telemetry or automatic publishing. RuVector can be evaluated later as a derived relevance index after lexical retrieval has a measured baseline; it must never become evidence or acceptance authority.
 
 The [initial real-inventory lookup qualification](../benchmarks/contribution-knowledge/README.md) retains a noisy development result and a separately frozen constructed-query evaluation. Neither measures agent repair improvement.
+
+## From metadata to executable investigations
+
+[Repository immunity](repository-immunity.md) adds a separate qualified-recipe and reviewed-current-contract workflow. It can challenge a historical pattern when the native suite is green, retain a reproduced module observation, demonstrate an exact new native regression, and prepare a verified source-only repair. Historical PR metadata is not automatically converted into an approved recipe or expectation. Reviewed useful/false-positive/intentional/duplicate/inconclusive outcomes drive transparent advisory priorities; declared test associations remain unvalidated mapping proposals. The [public transfer replay](../benchmarks/bug-transfer/README.md) demonstrated three historical fault/fix pairs and no new target bugs, runtime advantage, or AI learning improvement.
