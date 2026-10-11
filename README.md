@@ -24,6 +24,8 @@
   <a href="CONTRIBUTING.md">Contribute</a>
 </p>
 
+Community value is measured through independent regressions, native comparisons and maintainer outcomes. See the [community campaign](docs/community-campaign.md) and [Gradia integration review](docs/gradia-ecosystem-review.md) for current evidence and limits.
+
 ## A quality engineer inside your repository
 
 Every change deserves an understandable test plan.

@@ -32,3 +32,4 @@ export {initializeWitness,observeQuality,inspectEvidenceLoop,challengeEvidence,r
 export {qualifyRoutingMappings} from './mapping-qualification.js';
 export {adoptionReadiness} from './adoption-readiness.js';
 export {diagnoseFallbackSelection,fallbackDiagnostics,validateFallbackDiagnostics,qualifyFallbackHypotheses} from './fallback-diagnostics.js';
+export {assessCommunityCampaign,assessCommunityCampaignFile,inspectCampaignProcess} from './community-campaign.js';
