@@ -23,7 +23,7 @@ if(options['--verify']){
  if(JSON.parse(fs.readFileSync(path.join(root,'package.json'),'utf8')).version!==receipt.version)throw new Error('Release version differs from checked-out source');
  const directory=path.dirname(file),archive=path.join(directory,receipt.archive),proof=path.join(directory,'packed-proof.json');
  if(hash(archive)!==receipt.archiveSha256||hash(proof)!==receipt.proofSha256)throw new Error('Sealed archive or packed proof changed');
- const evidence=JSON.parse(fs.readFileSync(proof,'utf8'));if(!packedEvidenceComplete(receipt,evidence,{proofScriptSha256:hash(path.join(root,'scripts/packed-proof.js')),sourceManifestSha256:hash(path.join(root,'package.json')),installedRepairProofSha256:hash(path.join(root,'scripts/installed-repair-proof.js')),oneCommandProofSha256:hash(path.join(root,'scripts/one-command-proof.js'))}))throw new Error('Packed artifact evidence incomplete');
+ const evidence=JSON.parse(fs.readFileSync(proof,'utf8'));if(!packedEvidenceComplete(receipt,evidence,{proofScriptSha256:hash(path.join(root,'scripts/packed-proof.js')),sourceManifestSha256:hash(path.join(root,'package.json')),installedRepairProofSha256:hash(path.join(root,'scripts/installed-repair-proof.js')),oneCommandProofSha256:hash(path.join(root,'scripts/one-command-proof.js')),assessmentImportProofSha256:hash(path.join(root,'scripts/assessment-import-proof.js'))}))throw new Error('Packed artifact evidence incomplete');
  verifyInstalledRepairRawEvidence(path.join(directory,'installed-repair-raw'),evidence.installedRepair);
  verifyOneCommandRawEvidence(path.join(directory,'one-command-raw'),evidence.oneCommand);
  verifyAssessmentImportRawEvidence(path.join(directory,'assessment-import-raw'),evidence.assessmentImports);

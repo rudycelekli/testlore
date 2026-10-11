@@ -61,7 +61,7 @@ try{
  command(['plugins','--enable','ruvector']);
  const missingVectorSdk=command(['plugins','--check','--plugin','ruvector'],2);
  assert.equal(missingVectorSdk.plugins[0].available,false);
- const assessmentImports=assessmentImportProof({project,cli,evidenceDirectory:path.join(path.dirname(output),'assessment-import-raw')});
+ const assessmentImports=assessmentImportProof({project,cli,evidenceDirectory:path.join(path.dirname(output),'assessment-import-raw'),archiveSha256:sha256,installedManifestSha256:createHash('sha256').update(fs.readFileSync(path.join(tools,'node_modules/testlore/package.json'))).digest('hex'),sourceRevision:expectedSource||installedPackage.gitHead});
  invoke(project,['git','add','.']);invoke(project,['git','commit','-m','native configuration']);
  const initial=invoke(project,['git','rev-parse','HEAD']).trim();
  const trustedKey=path.join(workspace,'recorder.pem'),loopCheckpoint=path.join(workspace,'loop-checkpoint.json');

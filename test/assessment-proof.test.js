@@ -12,13 +12,14 @@ test('raw installed-transport verifier rejects changed exit evidence and inflate
   const directory = path.join(root, 'raw');
   // This unit exercises the verifier with the source CLI; packed-proof runs it
   // separately against the actual production-only installed sealed archive.
-  const proof = assessmentImportProof({ project: root, cli: fileURLToPath(new URL('../src/cli.js',import.meta.url)), evidenceDirectory: directory });
+  const proof = assessmentImportProof({ project: root, cli: fileURLToPath(new URL('../src/cli.js',import.meta.url)), evidenceDirectory: directory,archiveSha256:'a'.repeat(64),installedManifestSha256:'b'.repeat(64),sourceRevision:'c'.repeat(40) });
   assert.equal(verifyAssessmentImportRawEvidence(directory, proof), true);
   for (const [file, mutate] of [
     ['guardana.process.json', value => { value.exitCode = 2; }],
     ['guardana.stdout.json', value => { value.assessments[0].authority.routingOmissions = true; }],
     ['ifixai.stdout.json', value => { value.assessments[0].outcome = 'reported-clean'; }],
-    ['unsupported.stdout.json', value => { value.assessments[0].importComplete = true; }]
+    ['unsupported.stdout.json', value => { value.assessments[0].importComplete = true; }],
+    ['guardana.receipt.json', value => { value.nativeVerificationExecuted = true; }]
   ]) {
     const target = path.join(directory, file), before = fs.readFileSync(target);
     const candidate = structuredClone(proof), value = JSON.parse(before); mutate(value);
