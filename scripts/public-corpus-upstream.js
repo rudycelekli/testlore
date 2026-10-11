@@ -101,12 +101,19 @@ export function assertInstallGrowthBinding(input,policy='default'){
  const revisions={'unjs-defu-11ba02213d4b':['11ba02213d4b1c6b02dd686041f75edc479c98e9','3942bfbbcaa72084bd4284846c83bd61ed7c8b29'],'unjs-defu-3942bfbbcaa7':['3942bfbbcaa72084bd4284846c83bd61ed7c8b29','d3ef16dabe861713192ba8679c5db8e0ac143f9b']},expected=revisions[input.candidateId];
  if(!expected||input.repository!=='https://github.com/unjs/defu'||input.fixRevision!==expected[0]||input.parentRevision!==expected[1]||input.packageManager!=='pnpm@10.33.0'||input.inputs?.find(x=>x.logicalPath==='package.json')?.sha256!=='0ee5010fb716a695cb591b6b33d0a7287117f47344fcd8ae1b9dfe7f623054d2'||input.inputs?.find(x=>x.logicalPath==='pnpm-lock.yaml')?.sha256!=='8e25a8381354e1002b339db2196f23c243aebe2c91afc11219528fba6df07a36')throw Error('Extended installation growth requires the reviewed original defu revisions, manager and manifest/lock bytes');
 }
+// Reusable preflight for explicit diagnostics as well as the sealed installer.
+// Resolve ancestors physically so a symlinked output cannot bypass workspace isolation.
+export function assertNoInheritedWorkspace(directory){
+ let ancestor=fs.realpathSync(directory);
+ while(true){if(fs.existsSync(path.join(ancestor,'pnpm-workspace.yaml')))throw Error('Installation output inherits an unrelated pnpm workspace; use a fresh directory outside that workspace');const parent=path.dirname(ancestor);if(parent===ancestor)break;ancestor=parent;}
+ return fs.realpathSync(directory);
+}
 export async function installUpstreamCandidate({selection,id,checkout,directory,timeoutMs=180000,reserveBytes=1024**3,maxGrowthBytes=450*1024**2,storeDirectory=null,growthPolicy='default'}){
  const growth=upstreamInstallGrowthBudget(growthPolicy);
  if(!Number.isInteger(timeoutMs)||timeoutMs<1000||timeoutMs>180000||!Number.isSafeInteger(reserveBytes)||reserveBytes<growth.minReserveBytes||!Number.isSafeInteger(maxGrowthBytes)||maxGrowthBytes<1||maxGrowthBytes>growth.maxGrowthBytes)throw Error('Require bounded install deadline, growth and the reviewed disk reserve');
  const input=upstreamInputs(selection,id,checkout);assertInstallGrowthBinding(input,growthPolicy);directory=path.resolve(directory);fs.mkdirSync(directory,{mode:0o700});save(path.join(directory,'input.json'),input);const start=performance.now();const implementation=fileIdentity(fileURLToPath(import.meta.url));let result;
  try{
-  const project=path.join(directory,'project');let ancestor=directory;while(true){if(fs.existsSync(path.join(ancestor,'pnpm-workspace.yaml')))throw Error('Installation output inherits an unrelated pnpm workspace; use a fresh directory outside that workspace');const parent=path.dirname(ancestor);if(parent===ancestor)break;ancestor=parent;}git(directory,'clone','--local','--no-hardlinks',fs.realpathSync(checkout),project);git(project,'checkout','--detach',input.fixRevision);git(project,'remote','set-url','origin',input.repository);
+  const project=path.join(directory,'project');assertNoInheritedWorkspace(directory);git(directory,'clone','--local','--no-hardlinks',fs.realpathSync(checkout),project);git(project,'checkout','--detach',input.fixRevision);git(project,'remote','set-url','origin',input.repository);
   // Bootstrap exactly the upstream-declared manager into a private npm cache; no project file edits.
   const cache=path.join(directory,'npm-cache'),npm=path.join(path.dirname(process.execPath),'..','lib','node_modules','npm','bin','npm-cli.js');const {env,configurationIsolation}=isolatedManagerEnvironment(directory,cache);
   const bootstrapDir=path.join(directory,'bootstrap');fs.mkdirSync(bootstrapDir);const bootstrap=await boundedInstallProcess(process.execPath,[npm,'exec','--yes','--package='+input.packageManager,'--','pnpm','--version'],{cwd:directory,directory:bootstrapDir,timeoutMs,reserveBytes,maxGrowthBytes,env});save(path.join(directory,'bootstrap.json'),bootstrap);if(bootstrap.exitCode!==0||bootstrap.reason||!bootstrap.stdoutSha256||!bootstrap.stderrSha256)throw Error('Pinned package-manager bootstrap failed');

@@ -16,7 +16,7 @@ const commandModules = {
   'browser-capture': ['browser-evidence'], 'browser-mappings': ['files', 'browser-evidence'],
   pilot: ['pilot'], 'pilot-export': ['pilot'],
   plugins: ['files', 'plugins', 'plugin-recommendations'],
-  assess: ['assessments'],
+  assess: ['assessments'], campaign: ['community-campaign'],
   improve: ['files', 'agent-profile', 'improvement', 'quality-layer', 'pull-request'],
   repair: ['files', 'repair', 'pull-request'],
   autopilot: ['files', 'repair', 'improvement', 'pull-request'],
@@ -52,6 +52,7 @@ Usage: testlore <command> [options]
   browser-instrument Propose an opt-in fixture patch (review only)
   agent       Create or inspect your project quality agent (--name optional)
   plugins     Choose project-fit tools with --recommend/--auto; enable, disable, select, check
+  campaign    Replay bounded community contribution captures (--manifest local.json)
   assess      Import advisory Guardana/iFixAi reports (--plugin name --report local.json)
   improve     New branch, reviewed tests, full validation, automatic GitHub PR
   repair      Bounded source repair of repeated Node assertion failures, automatic PR
@@ -176,6 +177,7 @@ function init(root, {safePath, defaultNativeAdapter, defaultNativeRunner, audit}
   return { config: file, created, report, next: report.testFiles ? ['tddswarm plan --base HEAD', 'tddswarm run --shadow'] : ['tddswarm generate', 'Add tddswarm.requirements.md and configure an agent for generation.'] };
 }
 function human(command, result) {
+  if (command === 'campaign') return `${result.summary.retainedAttempts} retained attempts; ${result.summary.qualifiedRegressions} scoped regressions, ${result.summary.qualifiedRouting} routing comparisons, ${result.summary.measuredSpeedAdvantages} measured speed advantages.\n${result.attempts.map(item => `${item.id}: ${item.status} — ${item.reasons.join('; ') || 'review captured scope and provenance'}`).join('\n')}\nSubmitted: ${result.summary.submitted}; captured accepted: ${result.summary.accepted}. Historical captures; source independence and current GitHub status need review.`;
   if (command === 'assess') return result.assessments.map(item => `${item.plugin} · ${item.outcome} · historical report (current binding unverified)\n${item.nextAction}`).join('\n') + `\n${result.nextAction}\nReceipt: ${result.receipt}`;
   if (command === 'doctor') return `${result.state}\n${result.checks.map(row => `${row.id}: ${row.status} — ${row.reason}`).join('\n')}\nNext: ${result.nextAction}\nStatic prerequisites only; native execution and routing remain unqualified.`;
   if ((command === 'plan' || command === 'run') && (result.delegated || result.targets !== undefined || result.plan?.targets !== undefined)) {
@@ -225,7 +227,7 @@ export async function main(args = process.argv.slice(2)) {
     checkPlugins, configurePluginsAutomatically, recommendPlugins, measureMutation,
     measureTestEffectiveness, renderRunReport, routingProposals, captureBrowserEvidence,
     proposeBrowserMappings, proposeBrowserInstrumentation, inspectBrowserBuildArtifacts,
-    pilot, exportPilot, verificationBrief, qualifyRoutingMappings, adoptionReadiness, importAssessments} = implementations;
+    pilot, exportPilot, verificationBrief, qualifyRoutingMappings, adoptionReadiness, importAssessments, assessCommunityCampaignFile} = implementations;
   let result;
   switch (command) {
     case 'assess': {
@@ -303,6 +305,11 @@ export async function main(args = process.argv.slice(2)) {
     case 'browser-instrument': result=await proposeBrowserInstrumentation(root);break;
     case 'browser-capture': result=await captureBrowserEvidence(root,options);break;
     case 'browser-mappings': {if(!options.report||!options.settings)throw new Error('--report and --settings are required');result=proposeBrowserMappings(root,JSON.parse(fs.readFileSync(safePath(root,options.report),'utf8')),JSON.parse(fs.readFileSync(safePath(root,options.settings),'utf8')));break;}
+    case 'campaign': {
+      if(Object.keys(options).some(key=>!['root','manifest','json'].includes(key)))throw new Error('campaign accepts only --root, --manifest and --json; it replays existing captures');
+      if(!options.manifest)throw new Error('--manifest is required');
+      result=assessCommunityCampaignFile(root,options.manifest);break;
+    }
     case 'pilot': if(!options.manifest)throw new Error('--manifest is required');result=pilot(root,JSON.parse(fs.readFileSync(path.resolve(root,options.manifest),'utf8')),{...options,unifiedNative:options['unified-native']===true});break;
     case 'pilot-export': if(!options.report)throw new Error('--report is required');result=exportPilot(JSON.parse(fs.readFileSync(path.resolve(root,options.report),'utf8')));break;
     case 'plugins': {
@@ -400,6 +407,7 @@ export async function main(args = process.argv.slice(2)) {
   if(['improve','repair','autopilot'].includes(command))return result.status==='ready-for-review'&&(options.local||result.published)?0:2;
   if(command==='plugins' && options.check)return result.exitCode || 0;
   if(command==='assess')return result.exitCode;
+  if(command==='campaign')return result.attempts.some(item=>!item.regressionQualified)?2:0;
   if(command==='doctor')return result.blocked.length?1:0;
   if(command==='pilot' && result.executed)return result.valid?0:1;
   if(['plan','run','external-run','external-plan','aqe'].includes(command))return result.exitCode||0;
