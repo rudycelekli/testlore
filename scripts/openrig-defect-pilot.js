@@ -123,13 +123,16 @@ async function main(argv) {
     const stderrPath = path.join(directory, 'stderr.log');
     const at = Date.now();
     let actual = command;
+    let childEnv = env;
     if (nativeSandbox) {
       if (process.platform !== 'darwin') throw new Error('Native package parity requires macOS');
       const profile = '(version 1)(allow default)(deny network-outbound)(allow network-outbound (remote ip "localhost:*"))(allow network-outbound (subpath (param "IPC_ROOT")))';
       actual = ['sandbox-exec', '-D', `IPC_ROOT=${scratch}`, '-p', profile, ...command];
+      // Upstream package suites use env -i without this Docker-admission marker.
+      childEnv = { ...env }; delete childEnv.GITHUB_ACTIONS;
     }
     const result = await boundedInstallProcess(actual[0], actual.slice(1), {
-      cwd: upstream, directory, env, timeoutMs: Math.max(1, deadline - Date.now()),
+      cwd: upstream, directory, env: childEnv, timeoutMs: Math.max(1, deadline - Date.now()),
       maxLogBytes: 2 * 1024 ** 2, reserveBytes: 1024 ** 3, maxGrowthBytes: 1024 ** 3,
       terminateDescendants: true,
     });
