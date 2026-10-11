@@ -88,7 +88,9 @@ export function summarizeFirstRun(input = {}) {
    (!delegated && (filesWithoutNamedOutcomes.length>0 || caseFilesOutsideExecuted.length>0)) ||
    (!delegated && missingRequested.length>0) || (!delegated && observedNamedCases.length===0);
  const verdict=incomplete?'incomplete':omittedFailures.length?'omitted-failures-observed':(report.exitCode!==0||failures.length)?'failed':delegated?'native-result-reported':'passed-in-observed-scope';
- const nextAction=verdict==='incomplete'?nextVerificationAction({executed:false}):
+ const nextAction=verdict==='incomplete'&&report.executed!==true&&!delegated&&declaredTotal===0&&selection.discovery?.complete!==false?
+   'No native test files were discovered. Run testlore doctor --json to confirm your runner; if the project has no tests, add independent behavioral requirements in tddswarm.requirements.md before requesting generation.':
+   verdict==='incomplete'?nextVerificationAction({executed:false}):
    verdict==='omitted-failures-observed'?nextVerificationAction({...report,comparison:{omittedFailures}}):
    verdict==='failed'?nextVerificationAction({...report,exitCode:1}):nextVerificationAction({...report,delegated});
  const failedCases=failures.slice(0,10).map(entry=>({id:label(entry.id),file:label(entry.file),name:label(entry.name),status:'failed'}));

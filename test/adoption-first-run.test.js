@@ -44,3 +44,11 @@ test('setup without verification plainly discloses that no tests executed and le
  assert.match(attempt.stdout,/No tests executed/);assert.match(attempt.stdout,/setup --verify/);
  assert.equal(fs.existsSync(path.join(root,'.tddswarm/last-run.json')),false);
 });
+test('first verification without a native suite reports the gap without claiming receipt files exist',t=>{
+ const root=fixture(t,{'package.json':{type:'module'},'src/a.js':'export const a=1;'});commit(root);
+ const attempt=invoke(root,'setup','--verify','--no-ci');assert.equal(attempt.status,2,attempt.stderr);
+ assert.match(attempt.stdout,/Result: \*\*incomplete\*\*/);assert.match(attempt.stdout,/No new per-case receipt/);
+ assert.match(attempt.stdout,/No native test files were discovered/);assert.match(attempt.stdout,/tddswarm\.requirements\.md/);
+ assert.doesNotMatch(attempt.stdout,/Receipts: \.tddswarm\/last-run/);
+ assert.equal(fs.existsSync(path.join(root,'.tddswarm/last-run.json')),false);assert.equal(fs.existsSync(path.join(root,'.tddswarm/last-run.md')),false);
+});
