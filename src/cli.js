@@ -21,6 +21,8 @@ const commandModules = {
   repair: ['files', 'repair', 'pull-request'],
   autopilot: ['files', 'repair', 'improvement', 'pull-request'],
   agent: ['agent-profile'], learn: ['learning'], recall: ['learning'], 'learning-export': ['learning'],
+  'knowledge-import': ['contribution-knowledge'], knowledge: ['contribution-knowledge', 'files'],
+  'knowledge-reflect': ['contribution-knowledge'],
   snapshot: ['files', 'provenance'], evidence: ['evidence'],
   mutation: ['files', 'quality-measurement', 'evidence'], effectiveness: ['files', 'quality-measurement'],
   stability: ['evidence'], capture: ['evidence'], modularize: ['candidates'],
@@ -77,6 +79,9 @@ Usage: testlore <command> [options]
   learn       Reflect on validated local outcomes and supported lessons
   recall      Retrieve advisory historical test patterns (--query text)
   learning-export   Export aggregate metadata without source or identifiers
+  knowledge-import Import a hash-bound public PR snapshot (--report, --sha256)
+  knowledge   Retrieve advisory contribution hypotheses (--query, --contract local.md)
+  knowledge-reflect Inspect public contribution outcomes and pattern hypotheses
   pilot       Inspect local repository pilots (--manifest file); --execute runs isolated copies
   pilot-export Export fixed aggregate pilot metrics (--report local-summary.json)
   witness-init Export a recorder public key (--output path; never overwrite)
@@ -111,7 +116,7 @@ need explicit declarations. No AI account required for audit, plan, or run.
 export function parseArgs(args) {
   const options = {};
   let command = 'help';
-  const values = new Set(['root','base','changed','output','report','type','provenance','repeat','id','patch','target','framework','head','action-ref','base-branch','query','name','enable','disable','select','plugin','settings','manifest','mutate','defects','revision','deadline-ms','trusted-key','checkpoint','claim','verdict','reviewer','sources','provider']);
+  const values = new Set(['root','base','changed','output','report','type','provenance','repeat','id','patch','target','framework','head','action-ref','base-branch','query','name','enable','disable','select','plugin','settings','manifest','mutate','defects','revision','deadline-ms','trusted-key','checkpoint','claim','verdict','reviewer','sources','provider','sha256','contract','exclude-repositories']);
   const flags = new Set(['json', 'full', 'shadow', 'execute', 'help', 'version', 'local', 'no-ci','check','recommend','auto','selective','allow-execution','unified-native','verify','autofix']);
   if (args[0] && !args[0].startsWith('-')) command = args.shift();
   for (let i = 0; i < args.length; i++) {
@@ -177,6 +182,9 @@ function init(root, {safePath, defaultNativeAdapter, defaultNativeRunner, audit}
   return { config: file, created, report, next: report.testFiles ? ['tddswarm plan --base HEAD', 'tddswarm run --shadow'] : ['tddswarm generate', 'Add tddswarm.requirements.md and configure an agent for generation.'] };
 }
 function human(command, result, implementations = {}) {
+  if(command==='knowledge-import')return result.imported?`Imported ${result.records} public upstream contribution records. Inventory coverage: ${result.coverage.complete?'complete for captured scope':'incomplete'}\nLocal advisory index: ${result.path}\n${result.patterns.length} pattern hypotheses; defect-fix verification and learning improvement remain unproven.`:`Import declined: ${result.reason}`;
+  if(command==='knowledge')return `${result.records.length} relevant public contribution references; advisory only.\n${result.records.map(row=>`${row.url} · ${row.outcome} · contract anchors: ${row.contractMatches.join(', ')}`).join('\n')}\n${result.patterns?.map(row=>`${row.id}: ${row.nextCheck}`).join('\n')||result.reason||''}\nOriginal requirements, unchanged tests and independent review determine acceptance.`;
+  if(command==='knowledge-reflect')return result.reason?`Knowledge unavailable: ${result.reason}`:`${result.coverage.retainedCount} public upstream contribution records; ${result.outcomes.merged} merged, ${result.outcomes.open} open, ${result.outcomes.draft} drafts, ${result.outcomes.closed} closed without merge.\n${result.patterns.map(row=>`${row.id}: ${row.records} records across ${row.distinctRepositories} repositories (${row.outcomes.merged} merged). ${row.nextCheck}`).join('\n')}\nPattern correlations are hypotheses. Verified defect fixes: unknown. Learning improvement: unproven.`;
   if(command==='setup'&&result.verification)return `${implementations.renderFirstRunSummary(result.verification)}\n${result.verification.executed===true&&!result.verification.delegated?'Receipts: .tddswarm/last-run.md and .tddswarm/last-run.json':'No new per-case receipt is confirmed; inspect the native result and rerun full verification.'}\nSetup files: ${result.written.join(', ')||'existing configuration preserved'}\nUse testlore report for the full decisions and uncertainty.`;
   if(command==='setup')return `TestLore setup: ${result.readiness.state}\n${result.written.length} setup files written; execution mode ${result.executionMode}.\nNo tests executed.\nNext: ${result.readiness.nextAction}\nUse testlore setup --verify to collect full shadow evidence.`;
   if(command==='run')return `${implementations.renderFirstRunSummary(result)}\n${result.executed===true&&!result.delegated?'Receipts: .tddswarm/last-run.md and .tddswarm/last-run.json':'No new per-case receipt is confirmed; inspect the native result and rerun full verification.'}\nUse testlore report for the full decisions and uncertainty.`;
@@ -202,6 +210,12 @@ export async function main(args = process.argv.slice(2)) {
   if (options.version) { console.log(JSON.parse(fs.readFileSync(new URL('../package.json',import.meta.url),'utf8')).version); return 0; }
   if (command === 'help' || options.help) { console.log(help); return 0; }
   validateLoopOptions(command, options);
+  const knowledgeOptions={'knowledge-import':['report','sha256'],knowledge:['query','contract','exclude-repositories'],'knowledge-reflect':[]};
+  if(Object.hasOwn(knowledgeOptions,command)){
+    const allowed=new Set(['root','json',...knowledgeOptions[command]]);
+    for(const key of Object.keys(options))if(!allowed.has(key))throw new Error(`--${key} does not apply to ${command}`);
+    for(const key of command==='knowledge-import'?['report','sha256']:command==='knowledge'?['query','contract']:[])if(!options[key]?.trim())throw new Error(`--${key} is required`);
+  }else for(const key of ['sha256','contract','exclude-repositories'])if(key in options)throw new Error(`--${key} requires a knowledge command`);
   const root = path.resolve(options.root || '.');
   if (command === 'mcp') {
     if (Object.keys(options).some(key => !['root','allow-execution'].includes(key))) throw new Error('mcp accepts only --root and --allow-execution');
@@ -232,6 +246,23 @@ export async function main(args = process.argv.slice(2)) {
     pilot, exportPilot, verificationBrief, qualifyRoutingMappings, adoptionReadiness, importAssessments, assessCommunityCampaignFile} = implementations;
   let result;
   switch (command) {
+    case 'knowledge-import': result=implementations.importContributionKnowledge(root,options.report,{expectedSha256:options.sha256});break;
+    case 'knowledge-reflect': result=implementations.reflectContributionKnowledge(root);break;
+    case 'knowledge': {
+      const file=safePath(root,options.contract);
+      const fd=fs.openSync(file,fs.constants.O_RDONLY|fs.constants.O_NOFOLLOW|fs.constants.O_NONBLOCK);
+      let contract;
+      try{
+        const stat=fs.fstatSync(fd);
+        if(!stat.isFile()||stat.size>16000)throw new Error('Contract must be a regular file of at most 16000 UTF-8 bytes');
+        const bytes=Buffer.alloc(stat.size+1);let length=0;
+        for(let count;length<bytes.length&&(count=fs.readSync(fd,bytes,length,bytes.length-length,null));)length+=count;
+        const after=fs.fstatSync(fd),named=fs.lstatSync(safePath(root,options.contract));
+        if(length!==stat.size||after.size!==stat.size||after.mtimeMs!==stat.mtimeMs||after.ctimeMs!==stat.ctimeMs||named.isSymbolicLink()||named.dev!==stat.dev||named.ino!==stat.ino)throw new Error('Contract changed during bounded admission');
+        contract=new TextDecoder('utf-8',{fatal:true}).decode(bytes.subarray(0,length));
+      }finally{fs.closeSync(fd);}
+      result=implementations.recallContributionKnowledge(root,options.query,{contract,excludeRepositories:options['exclude-repositories']?.split(',')||[]});break;
+    }
     case 'assess': {
       if (Object.keys(options).some(key => !['root','json','plugin','report','output'].includes(key))) throw new Error('assess accepts only --root, --json, --plugin, --report and --output; it never executes providers');
       result = importAssessments(root, { plugin: options.plugin, report: options.report, output: options.output }); break;
@@ -404,6 +435,8 @@ export async function main(args = process.argv.slice(2)) {
     default: throw new Error(`Unknown command: ${command}`);
   }
   console.log(options.json ? JSON.stringify(result, null, 2) : human(command, result, implementations));
+  if(command==='knowledge-import')return result.imported?0:2;
+  if(['knowledge','knowledge-reflect'].includes(command))return result.reason?.startsWith('invalid-')?2:0;
   if(command==='observe')return result.exitCode ?? 2;
   if(command==='loop-status')return result.valid && result.complete ? 0 : 2;
   if(command==='challenge')return result.supported ? 0 : 1;

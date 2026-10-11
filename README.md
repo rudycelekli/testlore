@@ -186,6 +186,8 @@ The default learning loop uses deterministic lexical retrieval and evidence-back
 
 Inspired by Hindsight's retain/recall/reflect cycle, implemented around testing evidence. [Learning →](docs/learning.md) · [Hindsight research →](docs/hindsight-research.md)
 
+**Learn from your public contributions.** Import a hash-bound upstream PR inventory, inspect recurring boundary patterns, and retrieve contract-relevant references for opt-in repair architects and authors. Your independent reviewer stays separate. Merged, open and closed PRs remain distinct observations; copied solutions and private repositories stay out of the corpus. This is local advisory retrieval, with no demonstrated repair-quality improvement yet. [Public contribution knowledge and commands →](docs/contribution-knowledge.md)
+
 ## Grow with optional tools
 
 TestLore is a complementary coordination layer. Bring your specialist tools into one quality workflow: their engines supply expertise, and TestLore connects modularity, routing, independent validation, and retained lessons. Enable capabilities as your project grows.
@@ -326,6 +328,7 @@ Source/service changes, incomplete reports, and altered receipts invalidate evid
 | `snapshot`, `evidence`, `stability`, `capture` | Bind and collect measured quality and runtime evidence. |
 | `generate`, `modularize`, `validate`, `apply` | Stage and validate generated or modular patches. |
 | `learn`, `recall`, `learning-export` | Inspect lessons, retrieve history, explicitly export aggregates. |
+| `knowledge-import`, `knowledge`, `knowledge-reflect` | Index public upstream contributions locally; retrieve contract-relevant advisory hypotheses. |
 | `witness-init`, `observe`, `loop-status` | Establish recorder trust, run native shadow observations and inspect separate recorder health. |
 | `challenge`, `outcome`, `outcome-lessons` | Assess scoped claims, record attributed reviews and retrieve advisory outcomes. |
 | `external-plan`, `external-run`, `aqe` | Native ecosystem and Agentic QE integration. |

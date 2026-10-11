@@ -1,5 +1,7 @@
 # TestLore local episodic learning
 
+Public contribution history has a separate opt-in index and repair retrieval contract. It does not become a validated local episode merely because a PR merged. [Public contribution knowledge →](contribution-knowledge.md)
+
 TestLore retains validated test patterns and observed rejection signals in a bounded, repository-local episodic memory. Later generation can retrieve relevant historical examples, including examples from earlier source revisions. Default retrieval is deterministic lexical matching. The optional [RuVector plugin](ruvector.md) adds a local native vector index; feature vectors are its default, and semantic embeddings require an explicitly configured model provider. Neither backend trains model weights, reproduces Hindsight's implementation, or guarantees that generated tests improve.
 
 The store remains `.tddswarm/learning/index.json` for compatibility with existing project metadata. There is no global memory, telemetry, automatic upload, remote dependency, or configurable arbitrary storage path. Add `.tddswarm/` to the repository ignore policy. `learning.enabled: false` in `tddswarm.config.json` disables capture, retrieval, reflection, export, and transfer.
