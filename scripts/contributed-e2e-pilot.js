@@ -11,6 +11,11 @@ export const E2E_LOCK_SHA='8fc2fe6cf6b13b501483f30854e7fe56a957cfce04ac41c8ce2a7
 const ORACLE='tests/unit/globs.test.ts',SOURCES=['src/internal/globs.ts','src/internal/regexp.ts'];
 const digest=value=>createHash('sha256').update(value).digest('hex');
 const same=(a,b)=>JSON.stringify(a)===JSON.stringify(b);
+/** A new candidate must match this controller's declared source version. */
+export function verifyE2ECandidateManifest(candidate,expectedVersion){
+ if(typeof expectedVersion!=='string'||!/^\d+\.\d+\.\d+(?:-[a-z0-9.-]+)?$/.test(expectedVersion)||candidate?.name!=='testlore'||candidate.version!==expectedVersion||!/^[a-f0-9]{40}$/.test(candidate.gitHead||''))throw Error('Sealed installed TestLore candidate provenance missing');
+ return {version:candidate.version,sourceRevision:candidate.gitHead};
+}
 /** Vitest resolves relative --config from --root, while process.cwd stays unchanged. */
 export function e2eNativeFlags(root,profile){
  if(!path.isAbsolute(root)||!['package','workspace'].includes(profile))throw Error('Invalid e2e native flags');
@@ -209,7 +214,8 @@ export async function contributedE2EPilot({directory,output,candidateRoot,profil
   await checked('pnpm-version',upstream,[...pnpm,'--version']);if(stdout('pnpm-version')!=='12.3.4')throw Error('pnpm version mismatch');
   await checked('original-install',upstream,[...pnpm,'install','--frozen-lockfile'],600000);await checked('original-build',upstream,[...pnpm,'run','build'],600000);
   const vitest=path.join(root,'node_modules/vitest/vitest.mjs'),cli=path.join(candidateRoot,'src/cli.js');
-  const candidatePackage=JSON.parse(fs.readFileSync(path.join(candidateRoot,'package.json')));if(candidatePackage.name!=='testlore'||candidatePackage.version!=='0.1.0'||!/^[a-f0-9]{40}$/.test(candidatePackage.gitHead||''))throw Error('Sealed installed TestLore candidate provenance missing');
+  const candidatePackage=JSON.parse(fs.readFileSync(path.join(candidateRoot,'package.json')));
+  verifyE2ECandidateManifest(candidatePackage,JSON.parse(fs.readFileSync(new URL('../package.json',import.meta.url),'utf8')).version);
   if(!fs.existsSync(vitest)||!fs.existsSync(cli))throw Error('Original Vitest or candidate CLI unavailable');
   // This controller starts before the source checkout has dependencies. Load
   // diagnostics from the sealed installed candidate, whose production runtime
