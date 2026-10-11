@@ -13,6 +13,7 @@ import {bunCommand,bunResults,readBunReport} from './bun-results.js';
 import {captureVitestWorkspaceRoot,assertVitestWorkspaceRoot} from './native-workspace-root.js';
 import {captureNativeVitestCases,assertNativeVitestCases,assertNativeCaseConfiguration} from './native-vitest-cases.js';
 import {validateVitestCaseCapture} from './reporters/vitest-cases.js';
+import {captureReaObservation,assertReaObservation,validateReaObservationEvidence} from './rea-observation.js';
 
 const reporter = fileURLToPath(new URL('./reporters/node.js', import.meta.url));
 const playwrightReporter = fileURLToPath(new URL('./reporters/playwright.cjs', import.meta.url));
@@ -510,6 +511,11 @@ export function normalizeUnifiedExecution(root, files, value, details) {
   const exitCode=complete?(tests.some(test=>test.status==='failed')?1:details.nativeExitCode):2;
   const observation=value.nativeCaseEvidence;
   let caseSidecar={};
+  if(value.reaObservationBinding)try{
+    const binding=value.reaObservationBinding;
+    assertReaObservation(binding,captureReaObservation(root,{reaObservation:binding.profile,executionMode:'shadow'},details.nativeInvocation||[]));
+    caseSidecar.reaObservation=validateReaObservationEvidence(binding,value.reaObservationReceipt,value);
+  }catch{caseSidecar.reaObservationError='Optional REA observation is incomplete or differs from source/runtime/native outcome binding';}
   if(observation)try{
     if(!validateVitestCaseCapture(observation).valid)throw Error();
     const binding=value.nativeCaseEvidenceBinding,profile=binding?.profile;

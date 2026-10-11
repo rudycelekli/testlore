@@ -18,6 +18,8 @@ The [hosted workflow](../../.github/workflows/openrig-defect-pilot.yml) installs
 
 The five declared legs cover build/lint/repository/package inventories/installed scenarios on Linux and daemon/CLI/TUI/UI package suites under the upstream macOS fixture sandbox. Native skips and todos remain unexercised; the selected Node 22 profile does not qualify every upstream runtime or platform. Commands have bounded deadlines, output, disk growth and reserve; observed descendant cleanup is best effort, not an adversarial execution sandbox.
 
+The pinned TUI suite has one repeated raw parameter title for two passing delayed-owner cases, without reported locations. Strict individual identity validation still rejects duplicates. A separate observation admits only this reviewed group for full-suite validation and requires unchanged raw naming and exact status cardinality before/after. Individual parameter identities remain unqualified; this observation grants no routing or omission authority. Every other ambiguity rejects the pilot.
+
 `assessment.json` starts with `qualified:false`. Individual successful legs set `legQualified:true`; the aggregate and upstream acceptance require independent inspection of every leg, unchanged inputs and the final patch. Failures, infrastructure gaps and timeouts are retained. A green TestLore source test or evaluator control is not an upstream native result.
 
 Reproduce on a disposable complete checkout of the pinned revision with the upstream prerequisites installed:

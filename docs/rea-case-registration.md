@@ -20,6 +20,14 @@ The overlay never authorizes an omission. All other named outcomes retain strict
 
 The local tests validate transformations and rejection rules using controlled registration objects. They do not claim that Vitest collected metadata successfully; an actual native run must supply that evidence separately. The archived maintainer test fixture retains its source license.
 
+## Internal full-shadow observer
+
+The current source adds an explicit `reaObservation` profile for the original `3dcb732da33f6ceef597506b14a4536f1c9aff96` source and lock, with Vitest 5.0.3. It constructs the observer inside one fresh native context, admits only that exact plugin instance, and retains ordinary rejection of unknown project plugins. This profile requires `executionMode: "shadow"` and `run --unified-native`; selective execution, omitted discovered files, source/runtime drift and silent legacy fallback are rejected.
+
+The profile declaration is `{"profile":"rea-skipped-registration-shadow-v1","upstreamRevision":"3dcb732da33f6ceef597506b14a4536f1c9aff96"}`. It is a bounded experiment for the original three-project scope, not a general plugin allowance. The optional result sidecar preserves raw names and the three actual registration receipts without rewriting native test identities. Observer failure remains a visible incomplete sidecar; it cannot change a native test result into a pass.
+
+The hosted registration workflow now also attempts the original 261-file full shadow run under a separately bounded, credential-scrubbed process and retains its raw result and process receipt. Implementation tests and prepared workflow checks do not qualify that fresh native run. This stage grants no safe omissions, cross-run property-input equivalence, campaign qualification or runtime advantage.
+
 ## Retained actual failures
 
 The first hosted producer attempt under source `7532ad0` never reached REA task collection: its original installation exceeded 450 MiB growth. The [immutable installation rejection](../benchmarks/rea-case-registration/installation-blocked-20261009/README.md) retains the artifact and raw receipts. A separately reviewed 768 MiB cap applies prospectively to REA only, with the same deadline/reserve and original dependencies.

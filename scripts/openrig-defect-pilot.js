@@ -38,6 +38,34 @@ export function preservesCases(original, candidate) {
   return true;
 }
 
+// Full native runs can establish repeated raw groups without identifying their
+// individual parameter inputs. This observation grants no selective authority.
+export function fullSuiteGroupObservation(json) {
+  if (!json || !Array.isArray(json.testResults) || json.success !== true || json.numFailedTests !== 0 || json.numFailedTestSuites !== 0 || (json.numRuntimeErrorTestSuites !== undefined && json.numRuntimeErrorTestSuites !== 0)) throw new Error('Native group JSON is missing or unsuccessful');
+  const groups = new Map();
+  let total = 0; let passed = 0;
+  for (const file of json.testResults) {
+    if (typeof file.name !== 'string' || file.status !== 'passed' || !Array.isArray(file.assertionResults)) throw new Error('Missing or failed native group assertions');
+    for (const item of file.assertionResults) {
+      if (!Array.isArray(item.ancestorTitles) || typeof item.title !== 'string' || typeof item.fullName !== 'string' || !['passed', 'pending', 'todo', 'skipped'].includes(item.status)) throw new Error('Incomplete or failed raw group outcome');
+      const identity = JSON.stringify([file.name, item.ancestorTitles, item.title, item.fullName, { reported: Object.hasOwn(item, 'location'), value: item.location ?? null }]);
+      const statuses = groups.get(identity) || {};
+      statuses[item.status] = (statuses[item.status] || 0) + 1; groups.set(identity, statuses);
+      total++; if (item.status === 'passed') passed++;
+    }
+  }
+  if (!total || total !== json.numTotalTests || passed !== json.numPassedTests) throw new Error('Incomplete native group cardinalities');
+  const duplicates = [...groups].filter(([, statuses]) => Object.values(statuses).reduce((a, b) => a + b, 0) > 1).map(([identity, statuses]) => ({ rawIdentity: JSON.parse(identity), statuses }));
+  return { groups, duplicates, total, passed, individualIdentitiesQualified: false, omissionAuthority: false, scope: 'Nonselective original/fixed full native suite only; repeated parameter/input identities are unqualified' };
+}
+
+export function preservesFullSuiteGroups(original, candidate, allowedAdditionalFile = null) {
+  const same = (a, b) => ['passed', 'pending', 'todo', 'skipped'].every(status => (a[status] || 0) === (b[status] || 0));
+  for (const [identity, statuses] of original.groups) if (!candidate.groups.has(identity) || !same(statuses, candidate.groups.get(identity))) throw new Error('Original raw full-suite group dropped or changed');
+  for (const identity of candidate.groups.keys()) if (!original.groups.has(identity) && JSON.parse(identity)[0] !== allowedAdditionalFile) throw new Error('Unexpected new raw full-suite group');
+  return true;
+}
+
 export function assertOracleCounts(text, expectedPass, expectedFail, total) {
   const names = [];
   for (const reader of ['daemon', 'shipped']) for (const marker of ['```', '~~~']) for (const ending of ['\n', '\r\n']) {
@@ -73,6 +101,14 @@ export function pilotEnvironment(createdScratch, upstream, ambient = process.env
   return { scratch, env };
 }
 
+export function createPilotScratch(ambient = process.env, platform = process.platform) {
+  // Upstream tests.yml uses RUNNER_TEMP/opr-test.XXXXXX, then pwd -P.
+  // macOS os.tmpdir() is substantially longer and breaks genuine Unix sockets.
+  const parent = ambient.GITHUB_ACTIONS === 'true' && ambient.RUNNER_TEMP
+    ? ambient.RUNNER_TEMP : platform === 'darwin' ? '/tmp' : os.tmpdir();
+  return fs.realpathSync(fs.mkdtempSync(path.join(parent, 'opr-test.')));
+}
+
 export function assertNewRegression(cases, filename, expectedNames) {
   const entries = [...cases].map(([identity, status]) => ({ parts: JSON.parse(identity), status })).filter(item => item.parts[0] === filename);
   const expected = expectedNames.map(name => name.replaceAll('\\\\', '\\'));
@@ -102,7 +138,7 @@ async function main(argv) {
   const manifest = JSON.parse(fs.readFileSync(path.join(corpus, 'manifest.json')));
   const started = Date.now();
   const deadline = started + 17 * 60_000;
-  const { scratch, env } = pilotEnvironment(fs.mkdtempSync(path.join(os.tmpdir(), 'testlore-openrig-')), upstream);
+  const { scratch, env } = pilotEnvironment(createPilotScratch(), upstream);
   fs.mkdirSync(env.HOME);
   const receipt = { schemaVersion: 1, phase: args.phase, suite: args.suite, repository: manifest.repository, revision: manifest.revision, manifestSha256: hash(fs.readFileSync(path.join(corpus, 'manifest.json'))), attribution: manifest.attribution, executions: [], qualified: false, status: 'running', physicalScratch: scratch, hostedGitHubMarker: env.GITHUB_ACTIONS === 'true', limitations: manifest.limitations };
   const write = () => fs.writeFileSync(path.join(output, 'assessment.json'), JSON.stringify(receipt, null, 2) + '\n');
@@ -154,12 +190,27 @@ async function main(argv) {
     await execute(prefix + '-native', ['npm', 'run', 'test', '-w', `packages/${args.suite}`, '--', '--reporter=default', '--reporter=json', `--outputFile=${jsonPath}`], 0, true);
     if (fs.statSync(jsonPath).size > 32 * 1024 ** 2) throw new Error('Native JSON evidence exceeds the declared 32 MiB bound');
     const raw = fs.readFileSync(jsonPath);
-    const cases = inventory(JSON.parse(raw));
     const parsed = JSON.parse(raw);
-    receipt[prefix + 'Inventory'] = { sha256: hash(raw), total: cases.size, passed: [...cases.values()].filter(s => s === 'passed').length, unexercised: [...cases.values()].filter(s => s !== 'passed').length, runtimeErrorCounter: parsed.numRuntimeErrorTestSuites ?? null };
+    let cases;
+    let groups;
+    try { cases = inventory(parsed); }
+    catch (error) {
+      if (args.suite !== 'tui' || error.message !== 'Ambiguous native case identity') throw error;
+      groups = fullSuiteGroupObservation(parsed);
+      // The pinned TUI suite exposes this one repeated parameter title without
+      // input values or locations. Do not generalize that omission of identity.
+      const duplicate = groups.duplicates[0];
+      const expectedTitle = 'recovers after a killed reservation owner without removing a concurrent replacement (delayed=$delayed)';
+      if (groups.duplicates.length !== 1 || duplicate.rawIdentity[0] !== path.join(upstream, 'packages/tui/test/socket-concurrency.test.ts') || duplicate.rawIdentity[1].length !== 0 || duplicate.rawIdentity[2] !== expectedTitle || duplicate.rawIdentity[3] !== expectedTitle || duplicate.rawIdentity[4].reported || duplicate.statuses.passed !== 2 || Object.keys(duplicate.statuses).length !== 1) throw new Error('Unreviewed native parameter identity ambiguity');
+      receipt[prefix + 'GroupObservation'] = { ...groups, groups: undefined };
+      receipt.limitations.push(`${prefix}: two TUI delayed-parameter inputs share a raw title and have no reported location; individual input identities remain unqualified, group cardinality/status preservation is full-suite evidence only and grants no routing or omission authority`);
+    }
+    const total = cases?.size ?? groups.total;
+    const passed = cases ? [...cases.values()].filter(s => s === 'passed').length : groups.passed;
+    receipt[prefix + 'Inventory'] = { sha256: hash(raw), total, passed, unexercised: total - passed, runtimeErrorCounter: parsed.numRuntimeErrorTestSuites ?? null, identityQualification: cases ? 'unique-native-named-cases' : 'raw-full-suite-groups-only' };
     if (parsed.numRuntimeErrorTestSuites === undefined) receipt.limitations.push(`${prefix}: native JSON does not report a runtime-error-suite counter; actual successful exit, success flag, complete named assertions and passing file statuses are checked`);
     write();
-    return cases;
+    return { cases, groups };
   };
   try {
     if (git('rev-parse', 'HEAD') !== manifest.revision || git('status', '--porcelain')) throw new Error('Original public checkout is not clean at the pinned revision');
@@ -217,8 +268,13 @@ async function main(argv) {
     if (fs.existsSync(frozenTest)) throw new Error('Frozen regression destination already exists');
     fs.copyFileSync(path.join(corpus, 'markdown-address-tab-fence.test.ts'), frozenTest);
     const fixedCases = await native('fixed');
-    if (originalCases) preservesCases(originalCases, fixedCases);
-    if (args.suite === 'daemon') receipt.frozenNativeAssertions = assertNewRegression(fixedCases, frozenTest, receipt.fixedOracle.names);
+    if (originalCases?.cases) {
+      if (!fixedCases.cases) throw new Error('Candidate lost individual native identity qualification');
+      preservesCases(originalCases.cases, fixedCases.cases);
+    } else if (originalCases?.groups) {
+      preservesFullSuiteGroups(originalCases.groups, fixedCases.groups || fullSuiteGroupObservation(JSON.parse(fs.readFileSync(path.join(output, 'fixed-native.json')))));
+    }
+    if (args.suite === 'daemon') receipt.frozenNativeAssertions = assertNewRegression(fixedCases.cases, frozenTest, receipt.fixedOracle.names);
     verifyProtected();
     if (hash(fs.readFileSync(frozenTest)) !== manifest.protectedArtifacts['markdown-address-tab-fence.test.ts']) throw new Error('Protected native regression altered');
     for (const [relative, digest] of Object.entries(fixedSourceHashes)) if (hash(fs.readFileSync(path.join(upstream, relative))) !== digest) throw new Error('Native checks changed candidate source bytes');

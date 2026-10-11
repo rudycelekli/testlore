@@ -63,6 +63,12 @@ export function verifyRegistrySetupRaw(directory,evidence,expected={}){
   const capture=read(`${name}-stdout.json`),process=read(`${name}-process.json`),config=read(`${name}-config.json`);
   assert.deepEqual(capture,evidence[name]);assert.equal(registrySetupCaptureComplete(capture,name==='negative'),true);
   assert.equal(process.exitCode,name==='negative'?1:0);assert.equal(process.signal,null);assert.equal(process.reason,null);
+  assert.ok(!process.error);assert.ok(Number.isFinite(process.durationMs)&&process.durationMs>=0&&process.durationMs<=60000);
+  for(const stream of ['stdout','stderr']){
+   const filename=`${name}-${stream}.${stream==='stdout'?'json':'log'}`,actual=fileIdentity(path.join(directory,filename),2*1024**2);
+   assert.equal(process[`${stream}Sha256`],actual.sha256,'Process receipt must bind its retained native output');
+   assert.equal(process.finalResources?.[`${stream}Bytes`],actual.bytes);
+  }
   assert.equal(config.adapter,'node');assert.equal(config.executionMode,'shadow');
   if(name==='disabled')for(const id of ['c8','agentic-qe']){assert.deepEqual(config.plugins[id],{enabled:false});assert.equal(capture.plugins.decisions.find(row=>row.id===id)?.action,'retain');}
  }

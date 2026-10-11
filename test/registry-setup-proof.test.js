@@ -62,11 +62,19 @@ test('registry raw verification refuses substituted versions, missing negative l
  raw['registry-proof.json']=JSON.stringify({exactBytes:true,version:evidence.version,sourceRevision:evidence.sourceRevision,archiveSha256:evidence.archiveSha256});
  raw['preregistration.json']=JSON.stringify({...evidence,command:['npm','exec','--yes',`--package=testlore@${evidence.version}`,'--','testlore','setup','--verify','--json']});
  for(const name of ['default','disabled','negative']){
-  raw[`${name}-stdout.json`]=JSON.stringify(observed[name]);raw[`${name}-stderr.log`]='';raw[`${name}-process.json`]=JSON.stringify({exitCode:name==='negative'?1:0,signal:null,reason:null});
+  raw[`${name}-stdout.json`]=JSON.stringify(observed[name]);raw[`${name}-stderr.log`]='';raw[`${name}-process.json`]=JSON.stringify({exitCode:name==='negative'?1:0,signal:null,reason:null,durationMs:10,stdoutSha256:digest(raw[`${name}-stdout.json`]),stderrSha256:digest(''),finalResources:{stdoutBytes:Buffer.byteLength(raw[`${name}-stdout.json`]),stderrBytes:0}});
   raw[`${name}-config.json`]=JSON.stringify({adapter:'node',executionMode:'shadow',plugins:{c8:{enabled:false},'agentic-qe':{enabled:false}}});
  }
  evidence.rawEvidence=Object.entries(raw).map(([file,content])=>{fs.writeFileSync(path.join(directory,file),content);return{file,bytes:Buffer.byteLength(content),sha256:digest(content)};});
  assert.equal(verifyRegistrySetupRaw(directory,evidence),true);
+ // Rebinding an outer raw index cannot conceal an inconsistent process receipt.
+ for(const changed of [{stdoutSha256:'0'.repeat(64)},{finalResources:{stdoutBytes:0,stderrBytes:0}},{durationMs:60001}]){
+  const forged=structuredClone(evidence),file='default-process.json',content=JSON.stringify({...JSON.parse(raw[file]),...changed});
+  fs.writeFileSync(path.join(directory,file),content);
+  Object.assign(forged.rawEvidence.find(row=>row.file===file),{sha256:digest(content),bytes:Buffer.byteLength(content)});
+  assert.throws(()=>verifyRegistrySetupRaw(directory,forged));
+  fs.writeFileSync(path.join(directory,file),raw[file]);
+ }
  assert.throws(()=>verifyRegistrySetupRaw(directory,evidence,{producerSha256:'0'.repeat(64)}));
  assert.throws(()=>verifyRegistrySetupRaw(directory,evidence,{archiveSha256:'0'.repeat(64)}));
  fs.writeFileSync(path.join(directory,'installed-cli.js'),'// substituted CLI\n');assert.throws(()=>verifyRegistrySetupRaw(directory,evidence));fs.writeFileSync(path.join(directory,'installed-cli.js'),raw['installed-cli.js']);

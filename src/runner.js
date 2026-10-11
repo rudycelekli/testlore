@@ -10,6 +10,7 @@ import { openNativeSession, unifiedNativeEligibility } from './native-session.js
 import { externalRun } from './integrations.js';
 import { captureVitestWorkspaceRoot } from './native-workspace-root.js';
 import { captureNativeVitestCases } from './native-vitest-cases.js';
+import {captureReaObservation} from './rea-observation.js';
 
 export function compareShadow(selection, execution) {
   const proposed = new Set(selection.selected);
@@ -45,6 +46,7 @@ export async function runUnifiedNative(root,options={}) {
  if(options.changed)throw new Error('--changed is diagnostic only. Unified execution requires Git change discovery.');
  if(options.shadow&&options.selective)throw new Error('Choose shadow or selective execution');
  if(options.signal?.aborted)return {exitCode:2,executed:false,complete:false,error:'Unified execution cancelled'};
+ if(config.reaObservation!==undefined)try{captureReaObservation(root,config,config.runner||[]);if(options.selective)throw Error('REA observation is shadow-only; selective execution is not admitted');}catch(error){return {exitCode:2,executed:false,complete:false,tests:[],requestedFiles:[],error:error.message,unifiedNative:{prototype:true,used:false,reason:'Explicit REA shadow observation rejected before native startup'}};}
  // An explicit workspace profile cannot escape rejection through legacy fallback.
  if(adapterFor(config)==='vitest')try{captureVitestWorkspaceRoot(root,config.runner||[],{nativeCwd:config.nativeCwd});captureNativeVitestCases(root,config,config.runner||[]);}catch(error){return {exitCode:2,executed:false,complete:false,tests:[],requestedFiles:[],error:error.message,unifiedNative:{prototype:true,used:false,reason:'Explicit workspace/case profile rejected before native startup'}};}
  const unsupported=unifiedNativeEligibility(root,config);
@@ -69,7 +71,8 @@ export async function runUnifiedNative(root,options={}) {
 }
 
 function prepareRun(root, options = {}, nativeSession, started = performance.now(), startupPhase) {
-  const config = readConfig(root);
+ const config = readConfig(root);
+ if(config.reaObservation!==undefined&&!nativeSession)return {terminal:{exitCode:2,executed:false,complete:false,error:'REA observation requires --unified-native and full shadow execution; legacy execution cannot silently ignore this profile'}};
   if(options.shadow && options.selective)throw new Error('Choose shadow or selective execution');
   options = {...options, shadow: Boolean(options.shadow || (config.executionMode === 'shadow' && !options.selective && !options.full))};
   if (config.integration) {
