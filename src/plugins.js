@@ -5,6 +5,7 @@ import { createRequire } from 'node:module';
 import { spawnSync } from 'node:child_process';
 import { safePath, validateConfig } from './files.js';
 import { BUILTIN_PLUGINS, validatePluginId } from './plugin-config.js';
+import { ASSESSMENT_PLUGINS, inspectAssessmentReport } from './assessments.js';
 
 function rawConfig(root) {
   const file = safePath(root, 'tddswarm.config.json');
@@ -94,6 +95,13 @@ function executablePath(root, executable) {
   return candidates.find(candidate => { try { fs.accessSync(candidate, process.platform === 'win32' ? fs.constants.F_OK : fs.constants.X_OK); return fs.statSync(candidate).isFile(); } catch { return false; } }) || null;
 }
 function probe(root, id, entry) {
+  if (ASSESSMENT_PLUGINS.includes(id)) {
+    if (!entry.report) return { available: false, probe: 'local-assessment-report', measured: false, error: 'Configure a project-relative report path; this adapter never invokes an upstream executable.' };
+    try {
+      const assessment = inspectAssessmentReport(root, { plugin: id, report: entry.report });
+      return { available: true, probe: 'local-assessment-report', measured: false, importComplete: true, assessmentOutcome: assessment.outcome, currentBinding: assessment.currentBinding, reportHash: assessment.source.sha256, limitation: 'Supported report format only; historical assessment is advisory and does not establish current verification.' };
+    } catch { return { available: false, probe: 'local-assessment-report', measured: false, importComplete: false, error: 'Local assessment report is unreadable, unsafe, oversized or unsupported; inspect the documented format.' }; }
+  }
   if (id === 'ruvector') {
     try {
       if (!fs.existsSync(path.join(root, 'node_modules', '@ruvector', 'core', 'package.json'))) throw new Error('Missing project-local SDK');

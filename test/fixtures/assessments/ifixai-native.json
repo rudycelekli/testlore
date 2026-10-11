@@ -1,0 +1,173 @@
+{
+  "metadata": {
+    "system_name": "Synthetic owned fixture",
+    "system_version": "1.0",
+    "provider": "mock",
+    "fixture_name": "synthetic",
+    "evaluation_date": "2026-10-10T00:00:00+00:00",
+    "specification_version": "3.0",
+    "run_mode": "full",
+    "self_judged": false
+  },
+  "partial": false,
+  "abort_reason": null,
+  "not_run_test_ids": [],
+  "resumed_run_id": null,
+  "reused_result_count": 0,
+  "overall": {
+    "score": 1.0,
+    "score_pct": "100.0%",
+    "grade": "A",
+    "strategic_score": 1.0,
+    "strategic_score_pct": "100.0%",
+    "passed": true,
+    "verdict": "pass",
+    "mandatory_minimums_passed": true,
+    "mandatory_minimums_inconclusive": []
+  },
+  "warnings": [],
+  "validation_warnings": [],
+  "sensitivity_note": "Synthetic fixture follows the inspected native exporter; it is not a live iFixAi evaluation.",
+  "category_scores": [
+    {
+      "category": "FABRICATION",
+      "score": 1.0,
+      "score_pct": "100.0%",
+      "weight": 1.0,
+      "test_count": 3,
+      "test_ids": [
+        "B01",
+        "B08",
+        "P01"
+      ]
+    }
+  ],
+  "mandatory_minimums": {
+    "all_passed": true,
+    "evaluated": true,
+    "any_inconclusive": false,
+    "per_test": {
+      "B01": "pass",
+      "B08": "pass",
+      "P01": "pass"
+    },
+    "violations": [],
+    "inconclusive": [],
+    "not_run": []
+  },
+  "test_results": [
+    {
+      "test_id": "B01",
+      "name": "Synthetic inspection",
+      "category": "FABRICATION",
+      "score": 1.0,
+      "score_pct": "100.0%",
+      "threshold": 0.85,
+      "passing": true,
+      "status": "pass",
+      "evidence_count": 1,
+      "evidence": [
+        {
+          "test_case_id": "B01-owned",
+          "description": "Synthetic observation",
+          "prompt_sent": "fixture prompt",
+          "expected": "fixture expectation",
+          "actual": "fixture response",
+          "evaluation_result": "Synthetic success",
+          "passed": true,
+          "inspection_method": "structural",
+          "evaluation_method": "structural",
+          "details": {},
+          "extraction_error": null,
+          "is_diagnostic": false
+        }
+      ],
+      "duration_ms": 1.0,
+      "error": null,
+      "regulatory_mappings": [],
+      "evaluation_path": "structural"
+    },
+    {
+      "test_id": "B08",
+      "name": "Synthetic inspection",
+      "category": "FABRICATION",
+      "score": 1.0,
+      "score_pct": "100.0%",
+      "threshold": 0.85,
+      "passing": true,
+      "status": "pass",
+      "evidence_count": 1,
+      "evidence": [
+        {
+          "test_case_id": "B08-owned",
+          "description": "Synthetic observation",
+          "prompt_sent": "fixture prompt",
+          "expected": "fixture expectation",
+          "actual": "fixture response",
+          "evaluation_result": "Synthetic success",
+          "passed": true,
+          "inspection_method": "structural",
+          "evaluation_method": "structural",
+          "details": {},
+          "extraction_error": null,
+          "is_diagnostic": false
+        }
+      ],
+      "duration_ms": 1.0,
+      "error": null,
+      "regulatory_mappings": [],
+      "evaluation_path": "structural"
+    },
+    {
+      "test_id": "P01",
+      "name": "Synthetic inspection",
+      "category": "FABRICATION",
+      "score": 1.0,
+      "score_pct": "100.0%",
+      "threshold": 0.85,
+      "passing": true,
+      "status": "pass",
+      "evidence_count": 1,
+      "evidence": [
+        {
+          "test_case_id": "P01-owned",
+          "description": "Synthetic observation",
+          "prompt_sent": "fixture prompt",
+          "expected": "fixture expectation",
+          "actual": "fixture response",
+          "evaluation_result": "Synthetic success",
+          "passed": true,
+          "inspection_method": "structural",
+          "evaluation_method": "structural",
+          "details": {},
+          "extraction_error": null,
+          "is_diagnostic": false
+        }
+      ],
+      "duration_ms": 1.0,
+      "error": null,
+      "regulatory_mappings": [],
+      "evaluation_path": "structural"
+    }
+  ],
+  "regulatory": {},
+  "insights": {
+    "self_judged": false,
+    "status_counts": {
+      "pass": 3,
+      "fail": 0,
+      "inconclusive": 0,
+      "error": 0
+    },
+    "total_tests": 3,
+    "weakest_pillars": [],
+    "scored_categories": 1,
+    "total_categories": 1,
+    "exploratory": [],
+    "overall_score": 1.0,
+    "strategic_score": 1.0,
+    "grade": "A",
+    "strategic_overall_delta": 0.0,
+    "passed": true
+  }
+}

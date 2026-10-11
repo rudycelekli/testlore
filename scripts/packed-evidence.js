@@ -1,5 +1,6 @@
 import {installedRepairEvidenceComplete} from './installed-repair-proof.js';
 import {oneCommandEvidenceComplete} from './one-command-proof.js';
+import {assessmentImportEvidenceComplete} from './assessment-import-proof.js';
 /** Validate the independently produced installed-archive proof, without truthy attestations. */
 export function packedEvidenceComplete(receipt, evidence, {proofScriptSha256, sourceManifestSha256, installedRepairProofSha256,oneCommandProofSha256}) {
   const hex = value => typeof value === 'string' && /^[a-f0-9]{64}$/.test(value);
@@ -26,5 +27,5 @@ export function packedEvidenceComplete(receipt, evidence, {proofScriptSha256, so
     evidence.oneCommand.proofScriptSha256 === oneCommandProofSha256 &&
     evidence.oneCommand.archiveSha256 === receipt.archiveSha256 &&
     evidence.oneCommand.installedManifestSha256 === receipt.packedManifestSha256 &&
-    evidence.oneCommand.sourceRevision === receipt.sourceRevision;
+    evidence.oneCommand.sourceRevision === receipt.sourceRevision && assessmentImportEvidenceComplete(evidence.assessmentImports);
 }

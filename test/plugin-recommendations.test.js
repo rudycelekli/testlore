@@ -124,7 +124,7 @@ test('RuVector requires intact nonempty local learning and preserves disabled le
 });
 
 test('all enabled builtin entries and custom worker remain retained without competing generation', t => {
-  const plugins = Object.fromEntries(['nx','bazel','pytest-testmon','agentic-qe','c8','stryker','ruvector'].map(id => [id, { enabled: true }]));
+  const plugins = Object.fromEntries(['nx','bazel','pytest-testmon','agentic-qe','c8','stryker','ruvector','guardana','ifixai'].map(id => [id, { enabled: true }]));
   plugins['my-worker'] = { enabled: true, kind: 'worker', protocolVersion: 1, command: ['manual-worker'] };
   const root = fixture(t, { 'package.json': { name: 'sample' }, 'tddswarm.config.json': { executionPlugin: 'bazel', plugins, agent: ['manual-worker'] }, 'nx.json': {}, 'MODULE.bazel': 'module(name="sample")' });
   const report = recommendPlugins(root);

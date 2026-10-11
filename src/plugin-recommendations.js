@@ -4,6 +4,7 @@ import { createHash } from 'node:crypto';
 import { safePath, validateConfig } from './files.js';
 import { BUILTIN_PLUGINS } from './plugin-config.js';
 import { exportLearning } from './learning.js';
+import { ASSESSMENT_PLUGINS, inspectAssessmentReport } from './assessments.js';
 
 const hash = value => createHash('sha256').update(typeof value === 'string' || Buffer.isBuffer(value) ? value : JSON.stringify(value)).digest('hex');
 const object = value => value !== null && typeof value === 'object' && !Array.isArray(value);
@@ -131,8 +132,18 @@ export function recommendPlugins(projectRoot) {
     if (learning !== null) { const aggregate = exportLearning(root); learningReady = aggregate.exported && aggregate.episodes > 0; if (!aggregate.exported) warnings.push('Local learning store is not intact; vector activation is blocked.'); }
   }
   const configured = raw.plugins && object(raw.plugins) ? raw.plugins : {};
+  const assessmentFiles = {};
+  for (const id of ASSESSMENT_PLUGINS) {
+    installed[id] = false;
+    if (configured[id]?.enabled !== true || !configured[id].report) continue;
+    try {
+      const assessment = inspectAssessmentReport(root, { plugin: id, report: configured[id].report });
+      installed[id] = true; assessmentFiles[id] = configured[id].report;
+      evidence.push({ path: configured[id].report, state: 'supported-historical-assessment', hash: assessment.source.sha256 });
+    } catch { evidence.push({ path: configured[id].report, state: 'unsupported-assessment' }); warnings.push(`Configured ${id} report is unavailable or unsupported; live evaluation is never invoked.`); }
+  }
   const nodeProject = own(pkg, 'name') || Object.keys(deps).length > 0 || ['node','jest','vitest'].includes(config.adapter);
-  const fit = { nx: nx !== null || own(deps, 'nx'), bazel: bazelFiles.length > 0, 'pytest-testmon': python.length > 0, c8: nodeProject && own(deps, 'c8'), stryker: nodeProject && own(deps, '@stryker-mutator/core'), ruvector: learningReady && config.learning?.enabled !== false, 'agentic-qe': nodeProject || python.length > 0 };
+  const fit = { nx: nx !== null || own(deps, 'nx'), bazel: bazelFiles.length > 0, 'pytest-testmon': python.length > 0, c8: nodeProject && own(deps, 'c8'), stryker: nodeProject && own(deps, '@stryker-mutator/core'), ruvector: learningReady && config.learning?.enabled !== false, 'agentic-qe': nodeProject || python.length > 0, guardana: Boolean(assessmentFiles.guardana), ifixai: Boolean(assessmentFiles.ifixai) };
   const evidenceFor = {
     nx: [...(nx ? ['nx.json'] : []), ...(own(deps, 'nx') ? ['package.json'] : []), ...(installed.nx ? ['node_modules/.bin/nx'] : [])],
     bazel: [...bazelFiles, ...(bazelExecutable ? [bazelExecutable] : []), ...(bazelisk ? ['node_modules/@bazel/bazelisk/package.json'] : [])],
@@ -140,21 +151,24 @@ export function recommendPlugins(projectRoot) {
     c8: ['package.json', ...(installed.c8 ? ['node_modules/.bin/c8'] : [])],
     stryker: ['package.json', ...(installed.stryker ? ['node_modules/.bin/stryker'] : [])],
     ruvector: [...(ruvector ? [ruvector.file] : []), ...(learningReady ? [learningFile] : [])],
-    'agentic-qe': [...(nodeProject ? ['package.json'] : python.map(item => item.file)), ...(installed['agentic-qe'] ? ['node_modules/.bin/aqe'] : [])]
+    'agentic-qe': [...(nodeProject ? ['package.json'] : python.map(item => item.file)), ...(installed['agentic-qe'] ? ['node_modules/.bin/aqe'] : [])],
+    guardana: assessmentFiles.guardana ? [assessmentFiles.guardana] : [],
+    ifixai: assessmentFiles.ifixai ? [assessmentFiles.ifixai] : []
   };
   const recommendations = BUILTIN_PLUGINS.map(plugin => {
     const retained = own(configured, plugin.id), ready = installed[plugin.id] && fit[plugin.id];
     const reasons = [];
-    if (fit[plugin.id]) reasons.push(({nx:'Nx workspace or dependency detected.',bazel:'Bazel workspace detected.','pytest-testmon':'Python project configuration detected.',c8:'Declared c8 dependency complements execution with coverage evidence.',stryker:'Declared Stryker dependency complements coverage with mutation evidence.',ruvector:'Intact persisted learning can support indexed recall.','agentic-qe':'Test generation can complement this project when bounded routing prerequisites are satisfied.'})[plugin.id]);
+    if (fit[plugin.id]) reasons.push(({nx:'Nx workspace or dependency detected.',bazel:'Bazel workspace detected.','pytest-testmon':'Python project configuration detected.',c8:'Declared c8 dependency complements execution with coverage evidence.',stryker:'Declared Stryker dependency complements coverage with mutation evidence.',ruvector:'Intact persisted learning can support indexed recall.','agentic-qe':'Test generation can complement this project when bounded routing prerequisites are satisfied.',guardana:'Configured security assessment report has a supported native format.',ifixai:'Configured agent behavior assessment report has a supported native format.'})[plugin.id]);
     if (retained) reasons.push('Existing explicit plugin entry is preserved, including disabled settings.');
     if (!fit[plugin.id]) reasons.push('No matching project evidence for automatic activation.');
-    if (!installed[plugin.id]) reasons.push('Matching project-local installation is missing or cannot be safely inspected.');
+    if (!installed[plugin.id]) reasons.push(plugin.kind === 'assessment-import' ? 'No enabled supported local report is configured; upstream installation is not required for import.' : 'Matching project-local installation is missing or cannot be safely inspected.');
+    if (plugin.kind === 'assessment-import') reasons.push('Explicit report paths are required. Setup preserves choices and never invokes paid probes, upstream telemetry, or live assessments automatically. Imported reports remain advisory historical evidence.');
     if (plugin.id === 'agentic-qe') reasons.push('Setup never persists automatic AQE activation. Generation routing evaluates installed worker/provider prerequisites per bounded round and respects explicit choices.');
     if (plugin.id === 'ruvector') reasons.push('Requires enabled local learning with intact persisted episodes; SDK presence is not native compatibility certification.');
     if (plugin.id === 'bazel' && bazelisk && !installed.bazel) reasons.push('Bazelisk can download tools; configure an installed native Bazel binary explicitly.');
     if (plugin.id === 'pytest-testmon' && !pythonTestmon) reasons.push('No declared pytest-testmon dependency found; local extension metadata is required.');
     if (['c8','stryker'].includes(plugin.id)) reasons.push('Enabling report import does not execute measurement or certify test quality.');
-    return { id: plugin.id, role: ({ 'native-backend':'execution','measured-import':plugin.id === 'c8' ? 'coverage' : 'mutation','learning-retrieval':'learning','generation':'generation' })[plugin.kind], status: retained ? 'retained' : ready ? 'recommended' : installed[plugin.id] ? 'available' : 'missing', configured: retained, installed: installed[plugin.id], ready: Boolean(ready), projectFit: Boolean(fit[plugin.id]), evidence: evidenceFor[plugin.id], reasons };
+    return { id: plugin.id, role: ({ 'native-backend':'execution','measured-import':plugin.id === 'c8' ? 'coverage' : 'mutation','learning-retrieval':'learning','generation':'generation','assessment-import':plugin.id === 'guardana' ? 'security-assessment' : 'behavior-assessment' })[plugin.kind], status: retained ? 'retained' : ready ? 'recommended' : installed[plugin.id] ? 'available' : 'missing', configured: retained, ...(plugin.kind === 'assessment-import' ? { reportAvailable: installed[plugin.id] } : { installed: installed[plugin.id] }), ready: Boolean(ready), projectFit: Boolean(fit[plugin.id]), evidence: evidenceFor[plugin.id], reasons };
   });
   for (const id of Object.keys(configured).filter(id => !BUILTIN_PLUGINS.some(plugin => plugin.id === id))) recommendations.push({ id, role: configured[id]?.kind === 'worker' ? 'generation' : 'custom', status: 'retained', configured: true, ready: false, evidence: ['tddswarm.config.json'], reasons: ['Explicit custom plugin is preserved; automatic configuration never adds competing workers.'] });
   const explicitCore = own(raw, 'runner') || own(raw, 'adapter');

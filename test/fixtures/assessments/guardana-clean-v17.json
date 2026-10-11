@@ -1,0 +1,140 @@
+{
+  "schema_version": 17,
+  "run": {
+    "run_id": "testlore-synthetic-guardana-clean",
+    "created_at": "2026-10-10T00:00:00Z",
+    "started_at": "2026-10-10T00:00:00Z",
+    "completed_at": "2026-10-10T00:00:00Z",
+    "migrated_from": null,
+    "source": {
+      "kind": "imported_trace",
+      "provider": null,
+      "run_url": null
+    },
+    "guardana": {
+      "version": "1.0.0rc1",
+      "commit": "b6fe4fd2bb45c12107a64dd695e86b3ae4c0829c",
+      "distribution_versions": {}
+    },
+    "target": {
+      "type": "artifact",
+      "ref": "fixture",
+      "fingerprint": null,
+      "fingerprint_inputs": [],
+      "capabilities": [],
+      "document": null
+    },
+    "deployment": {
+      "ai_system": null,
+      "environment": null,
+      "deployment_id": null,
+      "commit_sha": null,
+      "image_digest": null,
+      "model_digest": null,
+      "model_name": null,
+      "model_revision": null
+    },
+    "configuration": {
+      "profile_name": "fixture",
+      "profile_digest": null,
+      "system_prompt_digest": null,
+      "tool_manifest_digest": null,
+      "retriever_digest": null,
+      "dataset_digest": null,
+      "adapter_digest": null,
+      "provider": null,
+      "plugins": null
+    },
+    "execution": {
+      "concurrency": 1,
+      "timeout_seconds": 30,
+      "seed": null,
+      "temperature": null,
+      "max_requests": null,
+      "max_input_tokens": null,
+      "max_output_tokens": null,
+      "max_duration_seconds": null,
+      "max_requests_per_minute": null,
+      "trials": 1
+    },
+    "usage": {
+      "requests": null,
+      "input_tokens": null,
+      "output_tokens": null,
+      "requests_missing_token_counts": null,
+      "estimated_cost": null,
+      "wall_time_seconds": null,
+      "judge": null
+    },
+    "rules": [
+      {
+        "id": "contract.fixture",
+        "digest": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "version": null,
+        "maturity": null,
+        "declared_requests": null,
+        "origin": null,
+        "trial_summary": null,
+        "suite": null
+      }
+    ],
+    "evaluators": [],
+    "coverage": {
+      "digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "taxonomies": [],
+      "protocols": {},
+      "shortfall": []
+    },
+    "result_summary": {
+      "findings": 0,
+      "unverified": 0,
+      "waived": 0,
+      "errors": 0,
+      "observations": 0,
+      "rules_run": [
+        "contract.fixture"
+      ],
+      "rules_skipped": [],
+      "max_severity": null,
+      "gate": "pass",
+      "stopped_by": null,
+      "assessments": 1,
+      "measured": 1
+    },
+    "privacy": {
+      "evidence_mode": "metadata_only",
+      "redaction_policy_digest": null
+    },
+    "exchanges": null,
+    "recording": null,
+    "recipe": null,
+    "fixtures": null
+  },
+  "findings": [],
+  "unverified": [],
+  "waived": [],
+  "errors": [],
+  "observations": [],
+  "assessments": [
+    {
+      "case_id": "fixture-approval",
+      "assessor": "deterministic-fixture",
+      "subject_ref": "synthetic-trace",
+      "status": "measured",
+      "reason": null,
+      "rule_id": "contract.fixture",
+      "passed": true,
+      "value": null,
+      "unit": null,
+      "direction": null,
+      "threshold": null,
+      "confidence": 1,
+      "dataset": null,
+      "rationale": "Synthetic fixture; no live provider evaluated.",
+      "tags": [],
+      "trial": null
+    }
+  ],
+  "scope": null,
+  "$schema": "https://guardana.dev/schemas/run/v17.schema.json"
+}
