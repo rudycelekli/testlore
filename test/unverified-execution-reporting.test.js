@@ -45,8 +45,15 @@ test('unverified file reporting and failure identities survive strict UTF-8 agen
  const again=boundedSummary({...summary,error:'界'.repeat(20000)},4096);assert.equal(again.requestedFileCount,300);assert.equal(again.executedFileCount,1);assert.equal(again.actualExecutedFilesUnverified,true);
 });
 test('regular verified human and agent receipts preserve confirmed file and omission reporting',()=>{
- const report=interrupted();delete report.actualExecutedFilesUnverified;report.complete=true;report.exitCode=0;report.shadow=false;report.executedTests=['test/a.test.js'];report.tests=[{id:'pass',file:'test/a.test.js',name:'pass',status:'passed'}];
+ const report=interrupted();delete report.actualExecutedFilesUnverified;delete report.error;report.complete=true;report.exitCode=0;report.shadow=false;report.requestedFiles=['test/a.test.js'];report.executedFiles=['test/a.test.js'];report.executedTests=['test/a.test.js'];report.tests=[{id:'pass',file:'test/a.test.js',name:'pass',status:'passed'}];
  const markdown=renderRunReport(report),summary=summarizeRun(report,'full',null);
  assert.match(markdown,/Executed 1 files/);assert.match(markdown,/Actually omitted: 1/);assert.match(markdown,/test\/a\.test\.js \| yes/);
  assert.equal(summary.verdict,'passed-in-observed-scope');assert.equal(summary.complete,true);assert.deepEqual(summary.executedFiles,['test/a.test.js']);assert.equal(Object.hasOwn(summary,'actualExecutedFilesUnverified'),false);assert.equal(Object.hasOwn(summary,'requestedFiles'),false);
+});
+test('agent top-level result agrees with incomplete first-run identity evidence',()=>{
+ const report=interrupted();delete report.actualExecutedFilesUnverified;delete report.error;report.complete=true;report.exitCode=0;
+ report.tests=[{id:'pass',file:'test/a.test.js',name:'pass',status:'passed'}];
+ const missing=summarizeRun(report,'shadow',null);assert.equal(missing.verdict,'incomplete');assert.equal(missing.complete,false);assert.equal(missing.summary.verdict,missing.verdict);assert.match(missing.nextAction,/repair the prerequisites/);
+ report.executedFiles=report.executedTests=report.requestedFiles=['test/a.test.js'];report.tests.push({...report.tests[0]});
+ const duplicate=summarizeRun(report,'shadow',null);assert.equal(duplicate.complete,false);assert.equal(duplicate.summary.cases.identityComplete,false);
 });

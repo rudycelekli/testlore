@@ -49,10 +49,11 @@ test('delegated native reports describe targets without inventing individual cas
 test('human and agent results prioritize repair and shadow routing misses over passing claims',()=>{
  const incomplete={executed:true,complete:false,exitCode:0};
  assert.match(renderRunReport(incomplete),/Next action: .*repair the prerequisites/);
- const missed={executed:true,complete:true,exitCode:1,shadow:true,comparison:{complete:true,omittedFailures:[{id:'independent-fault'}]}};
+ const fault={id:'independent-fault',file:'test/a.test.js',name:'independent defect',status:'failed'};
+ const missed={executed:true,complete:true,exitCode:1,shadow:true,requestedFiles:['test/a.test.js'],executedTests:['test/a.test.js'],tests:[fault],comparison:{complete:true,omittedFailures:[fault]}};
  assert.match(renderRunReport(missed),/Keep shadow mode enabled/);
  assert.match(summarizeRun(missed,'shadow',null).nextAction,/omitted failing case identities/);
- const passed={executed:true,complete:true,exitCode:0,tests:[{id:'ok',status:'passed'}]};
+ const passed={executed:true,complete:true,exitCode:0,requestedFiles:['test/a.test.js'],executedTests:['test/a.test.js'],tests:[{id:'ok',file:'test/a.test.js',name:'independent contract',status:'passed'}]};
  assert.match(renderRunReport(passed),/rerun verification after changes/);
  assert.equal(summarizeRun(passed,'shadow',null).deploymentSafety,'not-established');
 });

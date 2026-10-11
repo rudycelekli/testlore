@@ -4,10 +4,10 @@ An agent starts by reading the independent quality contract and the evidence it 
 
 ## Start immediately
 
-The package is currently available from GitHub. npm publication is pending; this command does not claim a published npm release:
+Use current Git source for the current agent interface. npm `0.1.0` was published and verified earlier; source candidate `0.2.0-alpha.1` is pending publication and exact registry-byte verification. This command uses Git rather than claiming the candidate is available from npm:
 
 ```sh
-npx --yes github:rudycelekli/testlore mcp --root /absolute/path/to/project
+npm exec --yes --package=github:rudycelekli/testlore#main -- testlore mcp --root /absolute/path/to/project
 ```
 
 For a local checkout:
@@ -16,7 +16,7 @@ For a local checkout:
 node /absolute/path/to/testlore/src/cli.js mcp --root /absolute/path/to/project
 ```
 
-Configure your agent's MCP host with `command: "npx"` and `args: ["--yes", "github:rudycelekli/testlore", "mcp", "--root", "/absolute/path/to/project"]`. Install from a reviewed immutable Git revision when reproducibility matters. The GitHub install downloads TestLore and its dependencies; connecting the server does not install a project's tools or run its tests.
+Configure your agent's MCP host with `command: "npm"` and `args: ["exec", "--yes", "--package=github:rudycelekli/testlore#main", "--", "testlore", "mcp", "--root", "/absolute/path/to/project"]`. Replace `#main` with a reviewed full SHA when reproducibility matters; [adoption](adoption.md) records the immutable fallback and its scope. [Candidate release gates](releases/0.2.0-alpha.1.md) keep source and registry qualification separate. The GitHub install downloads TestLore and its dependencies; connecting the server does not install a project's tools or run its tests.
 
 ## Default tools
 
@@ -36,7 +36,7 @@ The root is resolved to its real path once at startup. Tool calls cannot change 
 For a trusted project, opt in at startup:
 
 ```sh
-npx --yes github:rudycelekli/testlore mcp --root /absolute/path/to/project --allow-execution
+npm exec --yes --package=github:rudycelekli/testlore#main -- testlore mcp --root /absolute/path/to/project --allow-execution
 ```
 
 This exposes two additional tools:
@@ -51,6 +51,8 @@ This flag authorizes arbitrary code already configured in the project, including
 One execution request is active per server. A second receives a busy error. Workers use fixed executable arguments and a separate IPC channel; their stdout never becomes MCP protocol data. The default deadline is five minutes, captured worker output is bounded to one MiB, and returned summaries are bounded to 64 KiB. Cancellation, timeout, output overflow, absent worker results and late completion produce errors with `complete: false`; they never certify success. POSIX supervision kills the detached process group, including descendants. Windows supervision terminates the immediate worker and does not claim the same process-tree guarantee. A host suspended beyond a deadline rejects late success when it resumes; timer delivery cannot impose a hard realtime guarantee during suspension.
 
 Native per-file run receipts remain `.tddswarm/last-run.json` and `.tddswarm/last-run.md`. The MCP response returns their relative paths and explicitly reports summary truncation. Delegated Nx, Bazel and pytest-testmon execution keeps its native scope authority, exposes target information and limitations, and returns `receipts: null` and null case counts when per-case reporting is unavailable. A verdict is `incomplete`, `failed` or `passed-in-observed-scope`. Those receipt files can be historical after an aborted run: inspect the status limitations and rerun to obtain current evidence.
+
+The current source candidate also returns `verify.result.summary`, the same advisory summary used by setup and CLI runs: observed verdict/completeness, proposed versus executed files, named failures, grouped fallback causes with actions, native reported slow-case durations, scoped timings and a concrete next action. Delegated case counts remain null when unavailable. It grants no omission or deployment authority.
 
 Run summaries include failed case IDs, file paths, names and a concrete next action. If the complete presentation exceeds its byte budget, the compact response keeps up to ten failed identities, outcome and scope counts, verdict, receipt paths and next action. It sets `complete: false` for the incomplete presentation and separately retains `observedComplete`; truncation never establishes additional execution or deployment authority.
 

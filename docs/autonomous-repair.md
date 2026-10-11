@@ -1,11 +1,12 @@
 # An installed quality agent that can propose fixes
 
-TestLore's source workflow includes `autopilot` and `repair`. These commands are not in the older npm 0.1.0 release. Use a reviewed Git revision until the next npm release is published.
+TestLore's source workflow includes `autopilot` and `repair`. These commands are not in the older npm 0.1.0 release. The source candidate is `0.2.0-alpha.1`; use a reviewed Git revision until its sealed registry archive and installed commands are independently verified. [Release gates](releases/0.2.0-alpha.1.md).
 
 ```sh
-npm install --save-dev 'git+https://github.com/rudycelekli/testlore.git#main'
-npx --no-install testlore autopilot --json
+npm exec --yes --package=github:rudycelekli/testlore#main -- testlore autopilot --json
 ```
+
+The command above uses moving Git source; replace `#main` with a reviewed full SHA for reproducibility. Run `testlore setup --verify` first as described in [adoption](adoption.md), then review and commit its changes. For subsequent `npx --no-install` commands, install that same reviewed revision as a local development dependency.
 
 Run from a clean, committed project with independent `tddswarm.requirements.md`. A configured JSON worker or an installed, authenticated Codex CLI supplies agent proposals; authenticated `gh` supplies PR publication. The original checkout is preserved. `--local` keeps the tested branch without publication. Default configuration continues using shadow routing.
 

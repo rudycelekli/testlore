@@ -23,7 +23,7 @@ export {recommendPlugins} from './plugin-recommendations.js';
 export {importAssessments,inspectAssessmentReport} from './assessments.js';
 export {planGeneration} from './generation-routing.js';
 export {pilot,validatePilotManifest,exportPilot} from './pilot.js';
-export {renderRunReport} from './run-report.js';
+export {renderRunReport,summarizeFirstRun,renderFirstRunSummary} from './run-report.js';
 export {routingProposals,validateRoutingProposals} from './routing-proposals.js';
 export {captureBrowserEvidence,proposeBrowserMappings,proposeBrowserInstrumentation,inspectBrowserBuildArtifacts,validateBrowserBuildArtifacts} from './browser-evidence.js';
 export {measureMutation,measureTestEffectiveness} from './quality-measurement.js';

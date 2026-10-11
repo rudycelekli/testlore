@@ -5,7 +5,7 @@ import { readConfig, safePath } from './files.js';
 import { execute, adapterFor } from './execution.js';
 import { rememberServices, serviceInputs } from './inputs.js';
 import { runnerIdentity, snapshot, freshness, digest } from './provenance.js';
-import { renderRunReport } from './run-report.js';
+import { renderRunReport, summarizeFirstRun } from './run-report.js';
 import { openNativeSession, unifiedNativeEligibility } from './native-session.js';
 import { externalRun } from './integrations.js';
 import { captureVitestWorkspaceRoot } from './native-workspace-root.js';
@@ -127,6 +127,7 @@ function finishRun({root,options,config,selection,before,serviceBefore,executedT
   // report sealing cannot include its own write; pilots measure an outer span.
   report.timings={planningMs,executionMs:execution.durationMs||0,totalMs:Math.round(performance.now()-started),finalReportSealingExcluded:true};
   report.timings.otherMs=Math.max(0,report.timings.totalMs-planningMs-report.timings.executionMs);
+  report.summary=summarizeFirstRun(report);
   fs.writeFileSync(path.join(directory, 'last-run.md'), renderRunReport(report));
   fs.writeFileSync(path.join(directory, 'last-run.json'), JSON.stringify(report, null, 2));
   return report;

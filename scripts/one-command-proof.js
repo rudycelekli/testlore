@@ -5,6 +5,7 @@ import {createHash} from 'node:crypto';
 import {fileURLToPath} from 'node:url';
 import assert from 'node:assert/strict';
 import {fileIdentity} from './worker-identity.js';
+import {summarizeFirstRun} from '../src/run-report.js';
 
 const hash=value=>createHash('sha256').update(value).digest('hex');
 const hex=value=>typeof value==='string'&&/^[a-f0-9]{64}$/.test(value);
@@ -16,6 +17,12 @@ function decisions(value,disabled){
  return value?.blocked===false&&value.execution?.selected==='core'&&Array.isArray(value.decisions)&&value.decisions.length>=8&&value.decisions.every(item=>item&&['retain','enable','skip'].includes(item.action)&&Array.isArray(item.reasons)&&item.reasons.length>0)&&value.decisions.some(item=>item.id==='core'&&item.action==='retain')&&value.decisions.some(item=>item.id==='c8'&&item.action===(disabled?'retain':'skip'))&&(!disabled||value.decisions.some(item=>item.id==='agentic-qe'&&item.action==='retain'))&&Array.isArray(value.applied)&&value.applied.length===0;
 }
 export function oneCommandEvidenceComplete(value){
+ // Historical immutable receipts predate summaries. New receipts must bind the
+ // summary to the actual run; absence does not retroactively qualify that UI.
+ if(value?.firstRunSummaryVerified!==undefined && (value.firstRunSummaryVerified!==true || !names.every(name=>{
+  const result=value[name],summary=result?.summary;
+  return summary?.advisory===true&&summary.complete===true&&summary.verdict===(name==='negative'?'failed':'passed-in-observed-scope')&&summary.cases?.failed===(name==='negative'?1:0)&&summary.files?.observed===2&&JSON.stringify(summary)===JSON.stringify(result.verification?.summary)&&JSON.stringify(summary)===JSON.stringify(summarizeFirstRun(result.verification));
+ })))return false;
  return value?.qualified===true&&value.kind==='sealed-local-archive-npm-exec'&&value.isolatedProfiles===true&&value.isolatedCache===true&&value.cacheReusedWithinProof===true&&value.coldTimingClaim===false&&value.registryPublicationVerified===false&&value.liveProviders===false&&value.liveGitHub===false&&value.modelCost===null&&hex(value.archiveSha256)&&hex(value.installedManifestSha256)&&hex(value.installedCliSha256)&&hex(value.proofScriptSha256)&&/^[a-f0-9]{40}$/.test(value.sourceRevision||'')&&value.automaticNativeAdapter==='node'&&value.default?.executionMode==='shadow'&&value.disabled?.executionMode==='shadow'&&cases(value.default.verification,false)&&cases(value.disabled.verification,false)&&cases(value.negative?.verification,true)&&decisions(value.default.plugins,false)&&decisions(value.disabled.plugins,true)&&value.explicitDisabledPreserved===true&&value.originalAssertionsPreserved===true&&value.installedCacheBindingVerified===true&&value.negative.exitCode===1&&rawComplete(value.rawEvidence);
 }
 export function verifyOneCommandRawEvidence(directory,evidence){
@@ -66,6 +73,10 @@ export async function oneCommandProof({workspace,archive,archiveSha256,sourceRev
   assert.equal(measured.reason,null,'Actual npm exec rejected: '+measured.reason);assert.equal(measured.signal,null);assert.equal(measured.exitCode,name==='negative'?1:0);
   const result=JSON.parse(fs.readFileSync(path.join(log,'stdout.log'),'utf8'));results[name]=result;const config=JSON.parse(fs.readFileSync(path.join(project,'tddswarm.config.json'),'utf8'));configs[name]=config;save(name+'-config.json',config);
   assert.equal(config.adapter,'node');assert.equal(config.executionMode,'shadow');assert.equal(result.executionMode,'shadow');assert.equal(result.agent.executed,false);assert.equal(cases(result.verification,name==='negative'),true);
+  assert.equal(result.summary?.advisory,true);assert.equal(result.summary?.complete,true);
+  assert.equal(result.summary.verdict,name==='negative'?'failed':'passed-in-observed-scope');
+  assert.equal(result.summary.cases.failed,name==='negative'?1:0);assert.equal(result.summary.files.observed,2);
+  assert.deepEqual(result.summary,result.verification.summary,'Installed setup and durable verification summaries differ');
   if(name!=='negative')assert.equal(decisions(result.plugins,name==='disabled'),true);
   if(name==='disabled'){assert.deepEqual(config.plugins.c8,{enabled:false});assert.deepEqual(config.plugins['agentic-qe'],{enabled:false});}
   assert.equal(git(project,'rev-parse','HEAD'),head);for(const file of ['test/a.test.js','test/b.test.js'])assert.equal(fs.readFileSync(path.join(project,file),'utf8'),files[file]);
@@ -79,6 +90,6 @@ export async function oneCommandProof({workspace,archive,archiveSha256,sourceRev
  fs.writeFileSync(path.join(evidenceDirectory,'installed-manifest.json'),manifest,{flag:'wx'});
  save('installation.json',{archiveSha256,sourceRevision,installedManifestSha256,installedCliSha256,cacheInstallations:packages.length,npmExecCacheInstallationObserved:true,processes,environmentCredentialsPassed:false});
  assert.equal(fileIdentity(archive,20*1024*1024).sha256,archiveSha256);
- const evidence={schemaVersion:1,qualified:true,kind:'sealed-local-archive-npm-exec',archiveSha256,sourceRevision,installedManifestSha256,installedCliSha256,proofScriptSha256:hash(fs.readFileSync(fileURLToPath(import.meta.url))),isolatedProfiles:true,isolatedCache:true,cacheReusedWithinProof:true,coldTimingClaim:false,registryPublicationVerified:false,liveProviders:false,liveGitHub:false,modelCost:null,automaticNativeAdapter:configs.default.adapter,default:results.default,disabled:results.disabled,negative:{...results.negative,exitCode:processes.negative.exitCode},explicitDisabledPreserved:true,originalAssertionsPreserved:true,installedCacheBindingVerified:true,durationMs:Math.round(performance.now()-started),rawEvidence:rawNames.map(file=>{const binding=fileIdentity(path.join(evidenceDirectory,file),2*1024*1024);return{file,bytes:binding.bytes,sha256:binding.sha256};}),limitations:['Actual npm exec from an exact sealed local tar; no public registry publication or release identity established.','Controlled Node fixtures and retained negative case; no real plugin/provider compatibility or general quality/speed claim.','Isolated cache reused across three invocations; these timings are not a cold-start benchmark.']};
+ const evidence={schemaVersion:1,qualified:true,kind:'sealed-local-archive-npm-exec',archiveSha256,sourceRevision,installedManifestSha256,installedCliSha256,proofScriptSha256:hash(fs.readFileSync(fileURLToPath(import.meta.url))),isolatedProfiles:true,isolatedCache:true,cacheReusedWithinProof:true,coldTimingClaim:false,registryPublicationVerified:false,liveProviders:false,liveGitHub:false,modelCost:null,firstRunSummaryVerified:true,automaticNativeAdapter:configs.default.adapter,default:results.default,disabled:results.disabled,negative:{...results.negative,exitCode:processes.negative.exitCode},explicitDisabledPreserved:true,originalAssertionsPreserved:true,installedCacheBindingVerified:true,durationMs:Math.round(performance.now()-started),rawEvidence:rawNames.map(file=>{const binding=fileIdentity(path.join(evidenceDirectory,file),2*1024*1024);return{file,bytes:binding.bytes,sha256:binding.sha256};}),limitations:['Actual npm exec from an exact sealed local tar; no public registry publication or release identity established.','Controlled Node fixtures and retained negative case; no real plugin/provider compatibility or general quality/speed claim.','Isolated cache reused across three invocations; these timings are not a cold-start benchmark.']};
  assert.equal(oneCommandEvidenceComplete(evidence),true);verifyOneCommandRawEvidence(evidenceDirectory,evidence);return evidence;
 }

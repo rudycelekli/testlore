@@ -30,6 +30,7 @@ test('real MCP SDK handshake defaults to strict read-only tools and never runs p
     'tddswarm.config.json': { runner: ['node', 'probe.cjs', '{files}'], services: { api: { probe: ['node', 'probe.cjs'] } } } });
   const { client, stderr } = await connect(t, root);
   assert.equal(client.getServerVersion().name, 'testlore');
+  assert.equal(client.getServerVersion().version,JSON.parse(fs.readFileSync(new URL('../package.json',import.meta.url),'utf8')).version);
   const tools = (await client.listTools()).tools;
   assert.deepEqual(tools.map(tool => tool.name).sort(), ['testlore_brief', 'testlore_status']);
   const withoutDialect=value=>{const result=structuredClone(value);delete result.$schema;return result;};
@@ -64,6 +65,12 @@ test('opted-in MCP verification catches an actual planted fault in default shado
   assert.equal(evidence.deploymentSafety, 'not-established');
   const raw = JSON.parse(fs.readFileSync(path.join(root, evidence.receipts.json), 'utf8'));
   assert.equal(raw.shadow, true); assert.equal(raw.tests.length, 2);
+  assert.equal(evidence.summary.advisory,true);
+  assert.equal(evidence.summary.verdict,'failed');
+  assert.equal(evidence.summary.files.observed,2);
+  assert.equal(evidence.summary.cases.failed,1);
+  assert.deepEqual(evidence.summary,raw.summary);
+  assert.match(evidence.summary.nextAction,/repair.*full suite/);
   assert.ok(fs.readFileSync(path.join(root, evidence.receipts.markdown), 'utf8').includes('test/b.test.js'));
   for (const args of [{ mode: 'selective' }, { root }, { command: ['echo', 'pass'] }, { selective: true }, { base: '--help' }])
     assert.equal((await call(client, 'testlore_verify', args)).isError, true);
