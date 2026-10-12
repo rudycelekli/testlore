@@ -6,9 +6,10 @@ import {spawnSync} from 'node:child_process';
 import {fileURLToPath} from 'node:url';
 import {repair,repairFullSuite} from '../src/repair.js';
 import {fixture,commit,git,twoModules,write} from './helpers.js';
+import {challengeFiles} from './repair-challenge-fixtures.js';
 const requirements='Module a must export the integer 1. Module b must continue exporting 2. Preserve all public behavior and unchanged tests.';
 const review={accepted:true,findings:[],oracle:{independent:true,basis:[requirements]}};
-function project(t,files={}){const root=fixture(t,{...twoModules,'src/a.js':'export const a=9;','tddswarm.requirements.md':requirements,...files});commit(root);return root;}
+function project(t,files={}){const root=fixture(t,{...twoModules,...challengeFiles,'src/a.js':'export const a=9;','tddswarm.requirements.md':requirements,...files,'tddswarm.config.json':{...files['tddswarm.config.json'],repair:{...files['tddswarm.config.json']?.repair,challenges:'quality/challenges.json'}}});commit(root);return root;}
 function cleanup(t,root,result){if(!result.worktreeRoot)return;t.after(()=>{try{git(root,'worktree','remove','--force',result.worktreeRoot);}catch{};try{git(root,'branch','-D',result.branch);}catch{};fs.rmSync(result.worktreeRoot,{force:true,recursive:true});});}
 const patch=content=>({files:[{path:'src/a.js',content}],review});
 test('full native discovery and execution share one phase timeout rather than separate allowances',t=>{

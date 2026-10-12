@@ -14,6 +14,8 @@ import {captureConfigurationInputs,assertConfigurationInputFreshness} from './co
 import {captureVitestWorkspaceRoot,assertVitestWorkspaceRoot} from './native-workspace-root.js';
 import {captureNativeVitestCases,assertNativeVitestCases,assertNativeCaseConfiguration} from './native-vitest-cases.js';
 import {captureReaObservation,assertReaObservation} from './rea-observation.js';
+import {captureUnimportRuntimeEvidence,assertFreshUnimportRuntimeEvidence} from './unimport-runtime-evidence.js';
+import {validateUnimportRuntimeContract} from './native-runtime-contract.js';
 
 // Authority is minted only from a live, canonical worker, never public options.
 const sessions=new WeakMap();
@@ -21,6 +23,15 @@ export function sessionPlanning(token,root) {
  const record=sessions.get(token);
  if(!record||record.root!==fs.realpathSync(root)||record.closed)throw new Error('Unbound unified native session');
  return record.batch;
+}
+// Only this live canonical session can expose runtime uncertainty authority.
+// The corresponding JSON projection is evidence, never a reusable capability.
+export function sessionRuntimeContract(token,root) {
+ const record=sessions.get(token);
+ if(!record||record.root!==fs.realpathSync(root)||record.closed)throw new Error('Unbound unified native runtime session');
+ if(!record.runtimeContract)return null;
+ assertFreshUnimportRuntimeEvidence(record.runtimeInventory);
+ return record.runtimeContract;
 }
 function local(root,file){const result=path.relative(root,path.resolve(root,file)).split(path.sep).join('/');safePath(root,result);return result;}
 function normalize(root,value){
@@ -76,6 +87,12 @@ export async function openNativeSession(root,config,options={},startupInventory)
   const configurationInputObservations=captureConfigurationInputs(root,config);
   const workspaceRoot=captureVitestWorkspaceRoot(root,command,{nativeCwd:config.nativeCwd});
   const vitestCases=captureNativeVitestCases(root,config,command);
+  let runtimeInventory=null;
+  if(vitestCases?.profile?.profile==='unimport-detect-factory-runtime-v1'&&command.includes('--cache=false')){
+   // Unsupported installations/configurations do not acquire authority. Normal
+   // native observation continues through the existing conservative path.
+   try{runtimeInventory=captureUnimportRuntimeEvidence(root,command,vitestCases);}catch{}
+  }
   // The fresh worker expands native-discovered tests, project setup and config
   // transitively. Unreachable repository files still receive parent syntax and
   // uncertainty analysis, but do not require every project's native resolver.
@@ -98,6 +115,11 @@ export async function openNativeSession(root,config,options={},startupInventory)
   timer=setTimeout(()=>rejectAll(new Error('Unified native deadline exceeded')),Math.max(1,deadline-Date.now()));options.signal?.addEventListener('abort',cancel,{once:true});
   const planned=await planning;plannedReceived=performance.now();if(Date.now()>=deadline)throw new Error('Unified native-session deadline exceeded');
   const batch=normalize(root,planned);
+  let runtimeContract=null;
+  if(runtimeInventory&&batch.runtimeContract){
+   assertFreshUnimportRuntimeEvidence(runtimeInventory);
+   runtimeContract=validateUnimportRuntimeContract(batch.runtimeContract,runtimeInventory);
+  }
   assertReaObservation(reaObservation,batch.reaObservation??null);
   if(reaObservation)assertReaObservation(reaObservation,captureReaObservation(root,config,command));
   assertVitestWorkspaceRoot(workspaceRoot,batch.workspaceRoot);
@@ -109,16 +131,22 @@ export async function openNativeSession(root,config,options={},startupInventory)
   if(!Array.isArray(batch.resolutions)||batch.resolutions.length!==imports.length)throw new Error('Invalid unified baseline resolution count');
   batch.additionalResolutions.push(...imports.map((item,i)=>({...item,resolution:{...batch.resolutions[i],paths:batch.resolutions[i].paths.map(file=>local(root,file))}})));
   const freeze=value=>{if(value&&typeof value==='object'){Object.values(value).forEach(freeze);Object.freeze(value);}return value;};
-  sessions.set(token,{root,batch:freeze(batch),closed:false});
+  sessions.set(token,{root,batch:freeze(batch),runtimeContract:freeze(runtimeContract),runtimeInventory,command,vitestCases,closed:false});
   return {token,close,failureEvidence:()=>({stdout,stderr}),remaining:()=>deadline-Date.now(),execute:async files=>{
    if(failure)throw failure;if(Date.now()>=deadline)throw new Error('Unified native deadline exceeded');if(options.signal?.aborted)throw new Error('Unified execution cancelled');
    assertConfigurationInputFreshness(configurationInputObservations,captureConfigurationInputs(root,config));
+   sessionRuntimeContract(token,root);
    assertVitestWorkspaceRoot(workspaceRoot,captureVitestWorkspaceRoot(root,command,{nativeCwd:config.nativeCwd}));
    if(vitestCases){assertNativeVitestCases(vitestCases,captureNativeVitestCases(root,config,command));assertNativeCaseConfiguration(root,batch.nativeCaseConfigurationInputs);}
    files=[...new Set(files)].sort();files.forEach(file=>safePath(root,file));
    if(reaObservation){assertReaObservation(reaObservation,captureReaObservation(root,config,command));if(JSON.stringify(files)!==JSON.stringify(batch.discovery.files))throw Error('REA observation cannot omit a discovered test file');}
    const started=performance.now(),execution=wait('executed');child.stdio[3].end(encodeNativeFrame({phase:'execute',files}));
    const value=await execution,executedReceived=performance.now();
+   if(runtimeContract){
+    sessionRuntimeContract(token,root);
+    const finalContract=validateUnimportRuntimeContract(value.runtimeContract,runtimeInventory);
+    if(!finalContract||digest(finalContract)!==digest(runtimeContract))throw Error('Qualified native runtime contract changed during execution');
+   }
    if(reaObservation){assertReaObservation(reaObservation,captureReaObservation(root,config,command));assertReaObservation(reaObservation,value.reaObservationBinding);}
    assertVitestWorkspaceRoot(workspaceRoot,captureVitestWorkspaceRoot(root,command,{nativeCwd:config.nativeCwd}));
    if(vitestCases){assertNativeVitestCases(vitestCases,captureNativeVitestCases(root,config,command));assertNativeCaseConfiguration(root,batch.nativeCaseConfigurationInputs);assertNativeVitestCases({profile:vitestCases,configurationInputs:batch.nativeCaseConfigurationInputs},value.nativeCaseEvidenceBinding);}

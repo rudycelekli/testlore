@@ -5,6 +5,7 @@ import path from 'node:path';
 import {createRequire} from 'node:module';
 import {run,runUnifiedNative,compareSubsetCases} from '../src/runner.js';
 import {execute} from '../src/execution.js';
+import {openNativeSession,sessionRuntimeContract} from '../src/native-session.js';
 import {fixture,write,commit,git} from './helpers.js';
 const vitest=process.env.TDDSWARM_VITEST_BIN||path.join(path.dirname(createRequire(import.meta.url).resolve('vitest/package.json')),'vitest.mjs');
 function project(t,extra={}) {
@@ -16,6 +17,16 @@ function project(t,extra={}) {
  'checks/b.check.js':`import {test,expect} from 'vitest';import value from '../src/b.js';test('other subject',()=>expect(value).toBe(1));`,...extra});
  fs.symlinkSync(path.dirname(path.dirname(vitest)),path.join(root,'node_modules'),'dir');commit(root);return {root,config};
 }
+test('runtime omission capability is bound to a live original session, never copied tokens or other roots',async t=>{
+ const {root,config}=project(t),other=fixture(t,{});
+ const session=await openNativeSession(root,config,{});
+ try {
+  assert.equal(sessionRuntimeContract(session.token,root),null);
+  assert.throws(()=>sessionRuntimeContract({...session.token,runtimeContract:{qualified:true}},root),/Unbound/);
+  assert.throws(()=>sessionRuntimeContract(session.token,other),/Unbound/);
+ } finally {await session.close();}
+ assert.throws(()=>sessionRuntimeContract(session.token,root),/Unbound/);
+});
 test('unified native executes precise failing subset with one config load and legacy identities',async t=>{
  const {root,config}=project(t);write(root,'src/a.js','export default 2;');
  const report=await runUnifiedNative(root,{selective:true,capture:true});

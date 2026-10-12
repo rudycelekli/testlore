@@ -1,0 +1,57 @@
+# Runtime admission and repair counterexamples
+
+Status: Qualification in progress
+Date: 2026-10-12
+Related: [ADR 005](005-precise-routing-and-prospective-qualification.md), [parameter/type/repair evidence](../parameter-type-repair-qualification.md)
+
+## Problem
+
+The original unimport experiment preserved two fixture regressions that native
+related-test selection missed, but selected all 28 files and took longer than
+the full suite. Type-only imports propagated runtime uncertainty through modules
+that utility tests did not execute. An exact observation wrapper also retained
+a global dynamic-import warning.
+
+Separately, the historical klona repair pilot produced identical patches with
+inconsistent review decisions. Two review-accepted patches passed all 137
+original assertions but failed an independently reproduced read-only-property
+case. Passing existing assertions and receiving an advisory review were
+insufficient grounds for broader repair promotion.
+
+## Ownership and authority
+
+Native-session admission owns the effective execution contract and its lifetime.
+The graph retains complete impact dependencies and uses runtime evidence only
+to refine uncertainty under an admitted fresh contract. A serialized report,
+plugin name, static syntax hint or successful canary cannot mint that authority.
+Unsupported installations, configuration, environments or transforms retain
+conservative behavior.
+
+The repair controller owns executable regression challenges, separate from
+agent proposals and review prose. Maintainer-authored challenge bytes are
+immutable throughout the repair. A valid challenge must pass against unchanged
+source; a candidate must repeatedly pass it, preserve the original assertions,
+and remain bound to the exact tested inputs before readiness or PR creation.
+
+## Qualification
+
+Use independent original full, selected and native-related executions on healthy,
+faulted and restored source. Preserve source-bound parser identities, both
+fixture failure identities, raw native outcomes and every rejected attempt.
+Challenge stale, fabricated and missing admission; positive dependencies must
+include both directory scanning and declaration generation. Measure complete
+outer runs, including admission and reporting, and retain slower results.
+
+Replay the historical read-only-property failure independently as development
+evidence. Do not alter the frozen original-suite score or advertise the newly
+inspected counterexample as an untouched holdout. New learning comparisons need
+fresh independent defects and equal budgets; retrieval remains advisory.
+
+## Promotion
+
+Focused adversarial tests, complete source qualification, exact packed
+installation and repair proofs, independent review and fresh candidate CI
+precede the authorized main merge. Main receives fresh verification afterward.
+Registry authentication, trusted publication and registry-byte verification are
+separate gates. No routing speedup, general repair effectiveness or learning
+gain is inferred from engineering checks alone.

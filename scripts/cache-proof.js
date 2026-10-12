@@ -29,7 +29,7 @@ try {
   const uncachedInitial = run(); // Includes the first parser/compiler initialization.
   write('tddswarm.config.json', { analysisCache: { enabled: true } });
   const cold = run(); assert.deepEqual(routing(cold.result), routing(uncachedInitial.result));
-  const warmStats = buildGraph(root).analysisCache; assert.equal(warmStats.diskHits, moduleCount * 2); assert.equal(warmStats.parses, 0);
+  const warmStats = buildGraph(root).analysisCache; assert.equal(warmStats.diskHits, moduleCount * 2); assert.equal(warmStats.parses, moduleCount * 2);
   const warm = [], noCache = [];
   for (let index = 0; index < repeats; index++) {
     // Alternate order to limit a one-sided JIT/filesystem-cache advantage.
@@ -57,7 +57,7 @@ try {
     timingsMs: { uncachedInitial: uncachedInitial.ms, cold: cold.ms, warm, noCache, warmMedian: median(warm), noCacheMedian: median(noCache) },
     observedWarmToNoCacheRatio: median(warm) / median(noCache), warmStats,
     checks: { coldWarmDisabledRoutingEqual: true, changedSourceRerouted: true, corruptedCacheRoutingEqual: true, nativeCollectionFresh: true }, sourceHashes,
-    limitations: ['Constructed parser-heavy static Node fixture; no cross-project or native framework speedup implied.', 'Cold persisted caching adds writes; small projects or native resolution/collection can dominate total time.', 'Cache is rebuildable local optimization, never execution or deployment evidence.'] };
+    limitations: ['Constructed parser-heavy static Node fixture; no cross-project or native framework speedup implied.', 'Cold persisted caching adds writes; small projects or native resolution/collection can dominate total time.', 'Persisted summaries now require fresh safety parsing; historical parse-skipping measurements do not describe the current implementation.', 'Cache is rebuildable corroborating data; only private in-process fresh analysis can be reused without parsing.'] };
   fs.mkdirSync(path.dirname(output), { recursive: true }); fs.writeFileSync(output, JSON.stringify(receipt, null, 2) + '\n');
   console.log(JSON.stringify({ verified: true, output, warmMedianMs: receipt.timingsMs.warmMedian, noCacheMedianMs: receipt.timingsMs.noCacheMedian, coldMs: cold.ms, ratio: receipt.observedWarmToNoCacheRatio, checks: receipt.checks }));
 } finally { fs.rmSync(root, { recursive: true, force: true }); }

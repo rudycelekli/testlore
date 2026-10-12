@@ -8,7 +8,7 @@ npm exec --yes --package=github:rudycelekli/testlore#main -- testlore autopilot 
 
 The command above uses moving Git source; replace `#main` with a reviewed full SHA for reproducibility. Run `testlore setup --verify` first as described in [adoption](adoption.md), then review and commit its changes. For subsequent `npx --no-install` commands, install that same reviewed revision as a local development dependency.
 
-Run from a clean, committed project with independent `tddswarm.requirements.md`. A configured JSON worker or an installed, authenticated Codex CLI supplies agent proposals; authenticated `gh` supplies PR publication. The original checkout is preserved. `--local` keeps the tested branch without publication. Default configuration continues using shadow routing.
+Run from a clean, committed project with independent `tddswarm.requirements.md` and maintainer-owned behavioral challenges. A configured JSON worker or an installed, authenticated Codex CLI supplies agent proposals; authenticated `gh` supplies PR publication. The original checkout is preserved. `--local` keeps the tested branch without publication. Default configuration continues using shadow routing. Missing challenges return `awaiting-challenges` before requesting any worker.
 
 `autopilot` detects failures on an isolated branch. A failing supported Node suite enters source repair; a green suite enters the existing reviewed test-improvement flow. Other frameworks retain the existing test-improvement path. Missing requirements, incomplete native discovery, unsupported assertion evidence, uncertain case identities, rejected proposals and timeouts produce retained reasons and no successful publication.
 
@@ -26,7 +26,7 @@ The source paths must already exist. The controller can discover production path
   "discovery": "native",
   "runner": ["node", "--test", "{files}"],
   "agent": ["node", "scripts/quality-worker.cjs"],
-  "repair": {"sourcePaths": ["src/parser.js", "src/validator.js"]}
+  "repair": {"sourcePaths": ["src/parser.js", "src/validator.js"], "challenges": "quality/challenges.json"}
 }
 ```
 
@@ -36,6 +36,7 @@ Acceptance requires:
 
 - Two complete baseline runs with the same named failures, plus independent Node reporter probes confirming actual assertion errors.
 - Two fresh candidate full runs preserving the exact existing case inventory and skip states, with every previously passing case and demonstrated failure passing.
+- Independently maintained behavioral challenges passing twice on unchanged source and twice on the candidate, plus a fresh final branch challenge. Any reproduced challenge regression vetoes application, commit and PR readiness, regardless of the reviewer or original suite.
 - Immutable tests, ignored oracle inputs, requirements, configuration, file modes and installed dependency bytes.
 - A final full run on the proposed branch and the exact tested/staged/committed tree, including checks for Git-hook mutation and caller drift.
 - A pushed remote SHA and GitHub PR metadata matching the tested commit, repository, head/base branches and open state.
@@ -43,6 +44,44 @@ Acceptance requires:
 Native repair checks use fresh temporary HOME, XDG, npm and Git profiles, and mask inherited or configured authentication variables. Each baseline, assertion probe, candidate repetition and final run receives fresh profiles. Agent-provider and PR-publication authentication stay outside those checks. This is standard environment isolation, not an OS sandbox: project code can still access arbitrary filesystem paths and the network. Environment-dependent suites may reject rather than establish comparable results.
 
 Repair currently qualifies Node assertions only. Configured native discovery determines the suite scope. Full validation does not establish unasserted behavior or production safety. Skipped assertions cannot become new proof. Learning remains advisory. Rejected evidence and unknown token/dollar costs are reported rather than turned into success metrics. No automatic merge is performed.
+
+The validated native repair profile resolves the configured executable to the current Node binary and binds its bytes and native reporter/adapter producers. It permits `--test`, the file placeholder, bounded `--test-concurrency`/`--test-timeout` values, and strict unhandled rejection handling. Foreign executable wrappers, external preload flags, `NODE_OPTIONS`/`NODE_PATH` injection and unsupported options cannot qualify. Runtime bindings are checked around native execution, before application and at publication boundaries; replacing an external alias of the admitted Node also invalidates the receipt.
+
+## Executable regression vetoes
+
+Commit the following manifest and `.cjs` challenge before starting workers. Challenges test behavior that already works on the faulty baseline and must survive its repair. A challenge for the defect being repaired belongs in the failing native suite instead.
+
+```json
+{
+  "schemaVersion": 1,
+  "independent": true,
+  "basis": "Maintainer contract: cloning preserves readonly constructor properties.",
+  "cases": [{"id": "readonly-constructor", "script": "quality/readonly.cjs"}]
+}
+```
+
+```js
+module.exports = ({assert, root}) => {
+  const {klona} = require(require('path').join(root, 'src/index.js'));
+  class Value {
+    constructor() {
+      Object.defineProperty(this, 'value', {
+        value: 1, enumerable: true, writable: false
+      });
+    }
+  }
+  const input = new Value(), output = klona(input);
+  assert.notStrictEqual(output, input);
+  assert.deepStrictEqual(Object.getOwnPropertyDescriptor(output, 'value'),
+    Object.getOwnPropertyDescriptor(input, 'value'));
+};
+```
+
+Use dynamic `import()` inside an async challenge for ESM source. The portable harness supplies tracked native Node assertions; returning without an assertion, filtered/missing output, stderr diagnostics, timeout, nonzero exit, or changed oracle/source/runtime rejects evidence. It uses fresh isolated native profiles and a bare environment. Manifest/script bytes, owned source hashes, actual Node executable and harness bytes are captured; production additionally seals the complete project and installed dependencies around execution. A maintainer independence declaration is an attestation, not proof of authorship. Proposals cannot edit challenges, configuration or requirements. At most 32 challenges run, bounded by the existing campaign deadline and per-process limits.
+
+`challenge-baseline-rejected` requires correcting independently invalid baseline evidence. `regression-challenge-rejected` identifies a candidate or final-branch behavioral failure; preserve the challenge and repair the source. A stale manifest, source, runtime or dependency tree requires a fresh validation. Low-level `validateRepair()` retains backward-compatible suite-only validation when no challenges exist, explicitly marked `original-suite-only`; the production `repair` workflow does not promote that result to PR readiness.
+
+The readonly control was developed after a historical klona pilot: all four author outputs had identical source bytes, two reviewers accepted and two rejected, and accepted trials passed all 137 original cases while breaking this behavior. It is development evidence, not an untouched holdout or learning improvement. Portable challenge support does not add general UVU repair support; an isolated Node 12/esm replay of klona is separately qualified.
 
 ## Ongoing opt-in operation
 

@@ -26,7 +26,7 @@ test('cold, warm, disabled and corrupt caches produce identical routing includin
   write(root, 'src/b.js', 'export const b=require(process.env.MODULE);');
   const cold = plan(root, { changed: ['src/a.js'] });
   const warm = plan(root, { changed: ['src/a.js'] }); assert.deepEqual(routing(warm), routing(cold));
-  const graph = buildGraph(root); assert.equal(graph.analysisCache.diskHits, 4); assert.equal(graph.analysisCache.parses, 0);
+  const graph = buildGraph(root); assert.equal(graph.analysisCache.diskHits, 4); assert.equal(graph.analysisCache.parses, 4);
   for (const name of entries(root)) fs.writeFileSync(path.join(directory(root), name), '{invalid');
   const corrupt = plan(root, { changed: ['src/a.js'] }); assert.deepEqual(routing(corrupt), routing(cold));
   assert.ok(corrupt.warnings.some(item => item.reason === 'dynamic-dependency'));
@@ -100,7 +100,7 @@ test('configured bounds shrink an existing warm cache and parser changes never s
   assert.equal(entries(root).length, 3);
   const smaller = createAnalysisCache(root, { enabled: true, maxEntries: 1 }, engine); smaller.analyze('c.js', 'source', compute); smaller.flush(); assert.equal(entries(root).length, 1);
   const changed = createAnalysisCache(root, { enabled: true }, 'b'.repeat(64)); changed.analyze('c.js', 'source', compute); changed.flush(); assert.equal(changed.stats.parses, 1);
-  assert.equal(computations, 4);
+  assert.equal(computations, 5);
   for (const value of [{ enabled: 'yes' }, { maxEntries: 0 }, { maxBytes: 4095 }, { directory: '../escape' }]) assert.throws(() => analysisCacheSettings(value));
 });
 
@@ -123,4 +123,23 @@ test('concurrent process writers leave bounded complete entries and no partial a
   const names = fs.readdirSync(directory(root)); assert.ok(names.length <= 8); assert.ok(names.every(name => /^[a-f0-9]{64}\.json$/.test(name)));
   assert.ok(names.reduce((sum, name) => sum + fs.statSync(path.join(directory(root), name)).size, 0) <= 4096);
   for (const name of names) { const record = JSON.parse(fs.readFileSync(path.join(directory(root), name))); assert.deepEqual(record.result, { imports: [], runtimeImports: [], warnings: [] }); }
+});
+
+
+test('recomputed public checksums cannot erase runtime warnings or imports from warm routing',t=>{
+ const root=fixture(t,{'package.json':{type:'module'},'tddswarm.config.json':config,'src/uncertain.js':"import fs from 'node:fs';export const value=fs.readFileSync('input','utf8');",'src/other.js':'export const other=1;','test/uncertain.test.js':"import {value} from '../src/uncertain.js';",'test/other.test.js':"import {other} from '../src/other.js';"});
+ const cold=plan(root,{changed:['src/other.js']}),warm=plan(root,{changed:['src/other.js']});
+ assert.ok(cold.selected.includes('test/uncertain.test.js'));assert.deepEqual(routing(warm),routing(cold));
+ assert.ok(warm.analysisCache.diskHits>0);assert.equal(warm.analysisCache.parses,4);
+ for(const mutation of [record=>record.result.warnings=[],record=>{record.result.imports=[];record.result.runtimeImports=[];record.result.warnings=[];}]){
+  let forged=0;for(const name of entries(root)){const file=path.join(directory(root),name),record=JSON.parse(fs.readFileSync(file));if(!['src/uncertain.js','test/uncertain.test.js'].includes(record.file))continue;mutation(record);const{integrity,...body}=record;record.integrity=createHash('sha256').update(JSON.stringify(body)).digest('hex');fs.writeFileSync(file,JSON.stringify(record));forged++;}
+  assert.equal(forged,2);const challenged=plan(root,{changed:['src/other.js']});assert.deepEqual(routing(challenged),routing(cold));assert.ok(challenged.selected.includes('test/uncertain.test.js'));assert.ok(challenged.analysisCache.corruptions>0);assert.equal(challenged.analysisCache.parses,4);
+ }
+});
+
+test('forged declaration-only runtime hints cannot remove true runtime edges from fresh graphs',t=>{
+ const root=fixture(t,{'tddswarm.config.json':config,'src/types.ts':'export const value=1;','src/consumer.ts':"import { value } from './types';export const actual=value;",'test/consumer.test.ts':"import {actual} from '../src/consumer';"});
+ const cold=buildGraph(root);assert.deepEqual(cold.runtimeEdges['src/consumer.ts'],['src/types.ts']);
+ for(const name of entries(root)){const file=path.join(directory(root),name),record=JSON.parse(fs.readFileSync(file));record.result.runtimeImports=[];const{integrity,...body}=record;record.integrity=createHash('sha256').update(JSON.stringify(body)).digest('hex');fs.writeFileSync(file,JSON.stringify(record));}
+ const forged=buildGraph(root);assert.deepEqual(forged.edges,cold.edges);assert.deepEqual(forged.runtimeEdges,cold.runtimeEdges);assert.deepEqual(forged.warnings,cold.warnings);assert.ok(forged.analysisCache.corruptions>0);assert.equal(forged.analysisCache.parses,3);
 });

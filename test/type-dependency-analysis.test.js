@@ -36,6 +36,16 @@ test('syntax runtime edges cannot suppress type consumers or uncertainty with un
  // a purported exact version, standard plugin name or successful canary.
  graph.runtimeEdges={};graph.typeErasure={qualified:true,vitest:'5.0.2',plugins:['vite:oxc'],canary:true};classifyWarnings(graph);
  assert.equal(uncertainty.scope,'test-closure');assert.deepEqual(uncertainty.tests,['test/consumer.test.ts']);
+ // Serialized worker evidence or copied graph diagnostics do not carry the
+ // private live session identity that alone admits runtime refinements.
+ graph.runtimeContract={schemaVersion:1,profile:'original-unimport-node22-oxc-runtime-v1',digest:'a'.repeat(64),observerConfiguration:{file:'src/uncertain.ts',sha256:createHash('sha256').update(graph.sources['src/uncertain.ts']).digest('hex')}};
+ graph.configFiles.add('src/uncertain.ts');graph.warnings.push({file:'src/uncertain.ts',reason:'dynamic-dependency'});
+ classifyWarnings(graph);
+ assert.equal(graph.warnings.at(-1).scope,'global');
+ assert.equal(graph.warnings.at(-1).runtimeContractDigest,undefined);
+ graph.configFiles.delete('src/uncertain.ts');classifyWarnings({...graph});
+ assert.equal(uncertainty.scope,'test-closure');assert.deepEqual(uncertainty.tests,['test/consumer.test.ts']);
+ assert.ok(dependencies(graph,'test/consumer.test.ts').includes('src/uncertain.ts'));
 });
 
 test('runtime hints preserve old value edges and alternative runtime paths',t=>{

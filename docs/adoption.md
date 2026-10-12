@@ -41,6 +41,8 @@ Shadow mode executes the full suite and compares the proposed file selection aga
 
 To evaluate improved tests, commit independent behavior in `tddswarm.requirements.md`, configure an installed worker, then use `testlore improve --local` for the first proposal. Examine candidate review, collection preservation, full branch execution, and independent fault expectations before merging. A high static grade or upstream estimate does not prove assertion quality.
 
+For source repairs, also commit a [behavioral challenge manifest and scripts](autonomous-repair.md#executable-regression-vetoes) under `repair.challenges`. They must exercise independently maintained behavior that already passes on unchanged source. `awaiting-challenges` returns a concrete setup action before any repair worker starts. A proposed patch must pass the original assertions and repeated challenges; publication rechecks the authenticated receipt, source, oracle, runtime and installed dependencies. Challenges establish their observed behavior, not complete correctness or a security sandbox.
+
 ## Pilot participation
 
 We are seeking independently maintained Node, Jest and Vitest repositories with real tests and reviewable change history, including projects where selection overhead may dominate. Python/Nx/Bazel pilots can assess native delegation separately. Participation is voluntary; no pilot is claimed merely because a public benchmark used a repository.

@@ -128,11 +128,12 @@ function planPhase(root, options = {}, nativeSession, phase) {
     if(retainedWith)for(const file of project.files){const decision=decisionByTest.get(file);if(!decision.selected){decision.selected=true;decision.reasons=['shared-project-isolation'];decision.project=project.name;decision.retainedWith=retainedWith;}}
   }
   const selected = decisions.filter(d => d.selected).map(d => d.test);
-  const fingerprint = createHash('sha256').update(JSON.stringify({ config, sources: graph.sources, edges: graph.edges, nativeProjects:graph.nativeProjects, changed, baseSha })).digest('hex');
+  const fingerprint = createHash('sha256').update(JSON.stringify({ config, sources: graph.sources, edges: graph.edges, nativeProjects:graph.nativeProjects, ...(graph.runtimeContract?{runtimeContractDigest:graph.runtimeContract.digest}:{}), changed, baseSha })).digest('hex');
   timing.mark('decisionsAndFingerprint');
   return {
     schemaVersion: 1, timings: { ...timing.finish(), graph: graph.timings }, analysisCache:graph.analysisCache, provenance, serviceTokens: services.values, configurationFiles: [...graph.configFiles].sort(), mode: mode === 'none' && selected.length ? 'policy' : mode, base: baseSha, changed, ignored, selected,
     configurationInputs:graph.configurationInputs, total: graph.tests.length, omitted: graph.tests.length - selected.length, ...(graph.nativeProjects?{nativeProjects:graph.nativeProjects}:{}),
+    ...(graph.runtimeContract?{runtimeContract:{profile:graph.runtimeContract.profile,digest:graph.runtimeContract.digest,effectiveSha256:graph.runtimeContract.effectiveSha256,authority:'fresh-internal-native-session-only',scope:'Runtime uncertainty propagation only; complete impact paths remain.'}}:{}),
     uncertainty: { global: globalWarnings.length, retainedTests: [...uncertainTests].sort(), unreachableSources: [...new Set(unresolvedWarnings.filter(w=>w.scope==='unreachable-source').map(w=>w.file))].sort() },
     selectionReduction: graph.tests.length ? 1 - selected.length / graph.tests.length : 0,
     reasons: [...new Set(reasons)], warnings: graph.warnings, decisions, fingerprint, discovery: graph.discovery,

@@ -22,7 +22,9 @@ async function fixture(t,configuration = {}) {
   const put=(file,content)=>{fs.mkdirSync(path.dirname(path.join(root,file)),{recursive:true});fs.writeFileSync(path.join(root,file),typeof content==='string'?content:JSON.stringify(content));};
   put('package.json',{type:'module'});put('.gitignore','.tddswarm/\nnode_modules/\n');put('src/encode.mjs',original);put('src/unrelated.mjs','export const unchanged=1;\n');put('tddswarm.requirements.md',requirements);
   put('test/original.test.mjs',"import test from 'node:test';import assert from 'node:assert/strict';import {encode} from '../src/encode.mjs';test('original ASCII contract',()=>assert.equal(encode('hello'),5));\n");
-  if(Object.keys(configuration).length)put('tddswarm.config.json',{adapter:'node',...configuration});
+  put('tddswarm.config.json',{adapter:'node',...configuration,repair:{...configuration.repair,challenges:'quality/challenges.json'}});
+  put('quality/challenges.json',{schemaVersion:1,independent:true,basis:'Unchanged independent ASCII behavior contract.',cases:[{id:'preserved-ascii',script:'quality/ascii.cjs'}]});
+  put('quality/ascii.cjs',"module.exports=async ({assert,root})=>{const {pathToFileURL}=require('url');const {encode}=await import(pathToFileURL(require('path').join(root,'src/encode.mjs')).href);assert.strictEqual(encode('hello'),5);};");
   put('contract.md','encode returns Unicode code point count and retains ASCII results.\n');
   put('.tddswarm/before/src/encode.mjs',original);put('.tddswarm/after/src/encode.mjs',fixed);
   const recipe={schemaVersion:1,kind:'bug-recipe',id:'unicode-length',family:'unicode-boundary',provenance:{repository:'https://github.com/example/constructed',baseRevision:'a'.repeat(40),fixedRevision:'b'.repeat(40),evidenceClass:'constructed'},contract:{text:'Count Unicode code points.',sourceUrl:'https://example.test/specification',sourceSha256:hash('independent specification'),independence:'independent-specification'},probe:{exportName:'encode',cases:[{id:'astral-count',args:['😀'],expect:{kind:'equals',value:1}},{id:'ascii-count',args:['hello'],expect:{kind:'equals',value:5}}]},applicability:{requiredIdentifiers:['encode']}};

@@ -9,12 +9,17 @@ import {installedRepairEvidenceComplete,verifyInstalledRepairRawEvidence} from '
 const run=failed=>({complete:true,exitCode:failed?1:0,files:['test/a.test.js','test/b.test.js'],cases:[{file:'test/a.test.js',name:'independent required a value',status:failed?'failed':'passed'},{file:'test/b.test.js',name:'unchanged required b value',status:'passed'}]});
 const receipt={qualified:true,mode:'installed-cli-deterministic-worker',productionInstalled:true,realModelProvider:false,liveGitHub:false,modelCost:null,status:'ready-for-review',published:false,merged:false,omitted:0,originalCallerUnchanged:true,originalAssertionsUnchanged:true,exactCommitVerified:true,sourceHead:'a'.repeat(40),sha:'b'.repeat(40),branch:'tddswarm/repair-proof',installedManifestSha256:'a'.repeat(64),archiveSha256:'b'.repeat(64),proofScriptSha256:'c'.repeat(64),workers:{completedCalls:3,executionValidated:false},baseline:[run(true),run(true)],candidateRuns:[run(false),run(false)],assertionRuns:2,finalRun:run(false),wrongSource:{rejected:true,sha:null,published:false},oracleEdit:{rejected:true,sha:null,published:false}};
 receipt.rawEvidence=['oracle-edit.json','oracle-edit.requests.jsonl','successful.json','successful.requests.jsonl','wrong-source.json','wrong-source.requests.jsonl'].map(file=>({file,bytes:3,sha256:createHash('sha256').update('{}\n').digest('hex')}));
+receipt.challenges={accepted:true,identity:'a'.repeat(64),runtimeSha256:'b'.repeat(64),preflightRuns:2,baselineRuns:2,candidateRuns:2,finalPassed:true,caseIds:['preserved-b-value']};
 
 test('installed repair verifier distinguishes deterministic transport from live provider/PR proof',()=>{
  assert.equal(installedRepairEvidenceComplete(receipt),true);
  for(const field of ['realModelProvider','liveGitHub','published','merged'])assert.equal(installedRepairEvidenceComplete({...receipt,[field]:true}),false,field);
  for(const field of ['qualified','productionInstalled','originalCallerUnchanged','originalAssertionsUnchanged','exactCommitVerified'])for(const value of [undefined,false,'true'])assert.equal(installedRepairEvidenceComplete({...receipt,[field]:value}),false,field);
  for(const value of [null,undefined,{},true])assert.equal(installedRepairEvidenceComplete(value),false);
+});
+
+test('installed repair verifier requires repeated actual independent challenge qualification',()=>{
+ for(const changes of [undefined,{}, {...receipt.challenges,accepted:false},{...receipt.challenges,baselineRuns:1},{...receipt.challenges,candidateRuns:1},{...receipt.challenges,finalPassed:false},{...receipt.challenges,caseIds:[]},{...receipt.challenges,runtimeSha256:undefined}])assert.equal(installedRepairEvidenceComplete({...receipt,challenges:changes}),false);
 });
 
 test('installed repair verifier rejects incomplete, renamed, duplicated or omitted original assertions',()=>{

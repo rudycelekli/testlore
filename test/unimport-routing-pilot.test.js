@@ -2,7 +2,12 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import vm from 'node:vm';
 import {createHash} from 'node:crypto';
-import {nativeCases,testLoreCases,assessUnimportRuns,selectPnpmManager,NATIVE_ERROR_OBSERVER_SOURCE,NATIVE_ERROR_OBSERVER_SHA256} from '../scripts/unimport-routing-pilot.js';
+import {nativeCases,testLoreCases,assessUnimportRuns,assessUnimportWrongSubset,unimportFilesystemContracts,selectPnpmManager,NATIVE_ERROR_OBSERVER_SOURCE,NATIVE_ERROR_OBSERVER_SHA256} from '../scripts/unimport-routing-pilot.js';
+test('reviewed filesystem contracts include dts and scanner consumers, nested members and override scope',()=>{
+ const files=['test/dts.test.ts','test/scan-dirs.test.ts','src/node/scan-dirs.ts','playground/composables/comma-separated.ts','playground/composables/nested/foo.ts','playground/composables-override/foo.ts'],bindings=Object.fromEntries(files.map(file=>[file,'a'.repeat(64)])),result=unimportFilesystemContracts(files,bindings);
+ assert.deepEqual(result.dependencies['test/dts.test.ts'],['playground/composables/comma-separated.ts','playground/composables/nested/foo.ts']);assert.equal(result.dependencies['test/scan-dirs.test.ts'].length,3);assert.equal(result.domains[0].consumers.length,2);assert.equal(result.consumerInputs.length,3);
+ for(const [paths,hashes]of [[files.slice(1),bindings],[files,{...bindings,'src/node/scan-dirs.ts':'unbound'}],[files.filter(file=>!file.startsWith('playground/composables-override/')),bindings],[[...files,files[0]],bindings]])assert.throws(()=>unimportFilesystemContracts(paths,hashes));
+});
 test('manager selection follows exact native pnpm12 manifest and refuses ambiguity or unsafe bins',()=>{
  const row={cacheEntry:'a1b2c3',manifest:{name:'pnpm',version:'12.3.4',bin:{pnpm:'pnpm'}}};
  assert.deepEqual(selectPnpmManager([row]),{cacheEntry:'a1b2c3',entrypoint:'pnpm'});
@@ -43,12 +48,12 @@ test('missing or invalid independent arms cannot manufacture routing qualificati
  const runs=[];for(const phase of ['clean','fault','restored'])for(let repeat=0;repeat<2;repeat++)for(const arm of ['full','native','testlore'])runs.push({phase,repeat,arm,raw:native(phase==='fault'),event:{exitCode:phase==='fault'?1:0,reason:null,signal:null,stdoutSha256:'x',stderrSha256:'y'},outerMs:1});
  assert.equal(assessUnimportRuns(runs,'/up',['test/scan-dirs.test.ts']).complete,false);
 });
-function captures(){
- const files=['test/scan-dirs.test.ts','test/dedupe.test.ts','test/to-imports.test.ts'],runs=[];
+function captures({includeDts=false,unified=false}={}){
+ const files=['test/scan-dirs.test.ts',...(includeDts?['test/dts.test.ts']:[]),'test/dedupe.test.ts','test/to-imports.test.ts'],runs=[];
  for(const phase of ['clean','fault','restored'])for(let repeat=0;repeat<2;repeat++)for(const arm of ['full','native','testlore']){
-  const fail=phase==='fault',selected=arm==='native'?[]:arm==='full'?files:[files[0]];
-  const tests=selected.map(file=>({file,name:file==='test/scan-dirs.test.ts'?'scan-dirs scanDirExports':'unchanged original case',status:fail&&file===files[0]?'failed':'passed'}));
-  const raw=arm==='testlore'?{complete:true,exitCode:tests.some(t=>t.status==='failed')?1:0,executedFiles:selected,collectionFiles:selected,tests,plan:{total:3,selected,mode:'affected',decisions:files.map(file=>({test:file,selected:selected.includes(file),reasons:[selected.includes(file)?'mapped-dependency':'unchanged-unrelated']}))}}:{numPassedTests:tests.filter(t=>t.status==='passed').length,numFailedTests:tests.filter(t=>t.status==='failed').length,numPendingTests:0,numTodoTests:0,numTotalTests:tests.length,success:!tests.some(t=>t.status==='failed'),testResults:selected.map(file=>({name:'/up/'+file,status:tests.some(t=>t.file===file&&t.status==='failed')?'failed':'passed',message:'',assertionResults:tests.filter(t=>t.file===file).map(t=>({fullName:t.name,status:t.status}))}))};
+  const fail=phase==='fault',selected=arm==='native'?[]:arm==='full'?files:files.filter(file=>['test/scan-dirs.test.ts','test/dts.test.ts'].includes(file));
+  const tests=selected.map(file=>({file,name:file==='test/scan-dirs.test.ts'?'scan-dirs scanDirExports':file==='test/dts.test.ts'?'dts':'unchanged original case',status:fail&&['test/scan-dirs.test.ts','test/dts.test.ts'].includes(file)?'failed':'passed'}));
+  const raw=arm==='testlore'?{complete:true,exitCode:tests.some(t=>t.status==='failed')?1:0,executedFiles:selected,collectionFiles:selected,tests,...(unified?{unifiedNative:{used:true,contexts:1}}:{}),plan:{total:files.length,selected,mode:'affected',decisions:files.map(file=>({test:file,selected:selected.includes(file),reasons:[selected.includes(file)?'mapped-dependency':'unchanged-unrelated']}))}}:{numPassedTests:tests.filter(t=>t.status==='passed').length,numFailedTests:tests.filter(t=>t.status==='failed').length,numPendingTests:0,numTodoTests:0,numTotalTests:tests.length,success:!tests.some(t=>t.status==='failed'),testResults:selected.map(file=>({name:'/up/'+file,status:tests.some(t=>t.file===file&&t.status==='failed')?'failed':'passed',message:'',assertionResults:tests.filter(t=>t.file===file).map(t=>({fullName:t.name,status:t.status}))}))};
   runs.push({phase,repeat,arm,raw,...(arm==='testlore'?{}:{nativeErrors:observation(raw),nativeObserverPath:observerPath}),event:{exitCode:tests.some(t=>t.status==='failed')?1:0,reason:null,signal:null,stdoutSha256:'a'.repeat(64),stderrSha256:'b'.repeat(64),durationMs:1,finalResources:{availableBytes:2*1024**3,growthBytes:0,stdoutBytes:128,stderrBytes:0},descendantCleanup:{scope:'Observed process-tree/start identity best effort; unobserved/reparented children and arbitrary subprocesses are not contained',observed:1,survivingAtClose:0,observationFailed:false,requested:false}},outerMs:2});
  }
  return {files,runs};
@@ -57,6 +62,17 @@ test('complete three-arm evaluator distinguishes seeded routing value from speed
  const {files,runs}=captures(),result=assessUnimportRuns(runs,'/up',files);
  assert.equal(result.qualified,true);assert.equal(result.historicalUpstreamBug,false);assert.equal(result.speedAdvantageClaim,false);
  assert.equal(result.rows.length,6);assert.ok(result.rows.filter(r=>r.phase==='fault').every(r=>r.native.missedFailures===1&&r.testlore.missedFailures===0&&r.omitted===2));
+});
+test('new original challenge requires actual single context and both fixture failures',()=>{
+ const options={requireUnified:true,requiredFailureFiles:['test/dts.test.ts','test/scan-dirs.test.ts']};let current=captures({includeDts:true,unified:true});assert.equal(assessUnimportRuns(current.runs,'/up',current.files,options).qualified,true);
+ for(const mutate of [raw=>delete raw.unifiedNative,raw=>raw.unifiedNative.used=false,raw=>raw.unifiedNative.contexts=2,raw=>raw.unifiedNative.partial=true]){current=captures({includeDts:true,unified:true});mutate(current.runs.find(run=>run.arm==='testlore').raw);assert.equal(assessUnimportRuns(current.runs,'/up',current.files,options).complete,false);}
+ current=captures({unified:true});assert.equal(assessUnimportRuns(current.runs,'/up',current.files,options).complete,false);
+});
+test('independent wrong subset is rejected for omitted original dts failure, not claimed as a win',()=>{
+ const {runs}=captures({includeDts:true,unified:true}),full=runs.find(run=>run.phase==='fault'&&run.arm==='full'),wrong=structuredClone(full);wrong.raw.testResults=wrong.raw.testResults.filter(suite=>suite.name==='/up/test/scan-dirs.test.ts');wrong.raw.numPassedTests=0;wrong.raw.numFailedTests=1;wrong.raw.numTotalTests=1;wrong.nativeErrors=observation(wrong.raw);
+ const result=assessUnimportWrongSubset(full,wrong,'/up');assert.equal(result.complete,true);assert.equal(result.accepted,false);assert.equal(result.missedFailures.length,1);assert.equal(result.missedFailures[0].file,'test/dts.test.ts');
+ const invalid=structuredClone(wrong);invalid.event.exitCode=0;assert.throws(()=>assessUnimportWrongSubset(full,invalid,'/up'));
+ assert.throws(()=>assessUnimportWrongSubset(full,full,'/up'));
 });
 test('absent, nonfinite and over-limit resource or cleanup receipts cannot qualify',()=>{
  for(const change of [e=>delete e.finalResources,e=>e.durationMs=NaN,e=>e.durationMs=120001,e=>e.finalResources.availableBytes=2*1024**3-1,e=>e.finalResources.growthBytes=128*1024**2+1,e=>e.finalResources.stdoutBytes=4*1024**2+1,e=>e.finalResources.stderrBytes=-1,e=>delete e.descendantCleanup,e=>e.descendantCleanup.survivingAtClose=1,e=>e.descendantCleanup.observationFailed=true,e=>e.descendantCleanup.requested=true]){

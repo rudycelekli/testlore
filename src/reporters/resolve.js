@@ -13,6 +13,7 @@ import {captureVitestWorkspaceRoot,assertVitestWorkspaceRoot} from '../native-wo
 import {captureNativeVitestCases,assertNativeVitestCases,captureNativeCaseConfiguration,assertNativeCaseConfiguration} from '../native-vitest-cases.js';
 import {createVitestRegistrationPlugin,isReviewedUnimportFactoryPlugin,vitestCaseHash} from '../vitest-case-contracts.js';
 import TestLoreVitestCaseReporter from './vitest-cases.js';
+import {createObservedRuntimeContext,captureObservedRuntimeContract,assertObservedRuntimeContract} from '../native-runtime-contract.js';
 import {captureReaObservation,assertReaObservation,createReaObservationPlugin,createReaObservationReporter} from '../rea-observation.js';
 const workerTiming=phaseTimings();
 const argvSome=Array.prototype.some,argvStartsWith=String.prototype.startsWith,argvApply=Reflect.apply;
@@ -131,7 +132,7 @@ try {
   output.reaObservation=reaObservation;
   let reaReporter;
   const freshReaObservation=()=>{if(reaObservation)assertReaObservation(reaObservation,captureReaObservation(root,reaPolicy,command));};
-  let caseReporter,nativeCaseConfigurationInputs,caseRuntime;
+  let caseReporter,nativeCaseConfigurationInputs,caseRuntime,runtimeContract;
   const trustedCasePlugins=new Set();
   function freshNativeCases(){if(vitestCases){
     assertNativeVitestCases(vitestCases,captureNativeVitestCases(root,casePolicy,command));
@@ -141,7 +142,7 @@ try {
       const globalConfig=workspaceClosed?caseRuntime.globalConfig:workspaceContext.config;
       if(projects.length!==1||projects[0].config.name!==(vitestCases.profile.profile==='unimport-detect-factory-runtime-v1'?'':'unit')||projects[0].config.root!==vitestCases.projectRoot||(projects[0].config.includeTaskLocation??globalConfig.includeTaskLocation)!==true)throw Error('Native case effective unit context changed');
     }
-  }freshReaObservation();}
+  }if(runtimeContract&&!workspaceClosed)assertObservedRuntimeContract(workspaceContext,runtimeContract);freshReaObservation();}
   freshNativeCases();
   let workspaceContext,workspaceEffective,workspaceClosed=false,nativeArgvReflected=false;
   const boundNativeArgv=Array.isArray(request.invocation)?[...request.invocation]:null;
@@ -226,7 +227,9 @@ try {
       if(vitestCases&&request.unified)caseReporter=new TestLoreVitestCaseReporter({schemaVersion:1,root:vitestCases.projectRoot,expectedFiles:vitestCases.expectedFiles,inputs:vitestCases.inputs,vitestVersion:version,reportFile:null,registrationContracts:vitestCases.registrationContracts,scope:'deferred'});
       const options={...parsed.options,...(workspaceRoot?{root:workspaceRoot.nativeRoot}:{}),run:true,watch:false,...(vitestCases||reaObservation?{includeTaskLocation:true}:{}),...(request.unified?{reporters:caseReporter?['json',caseReporter]:reaReporter?['json',reaReporter]:['json'],outputFile:request.reportFile}: {})};
       const overrides={logLevel:'silent',...(casePlugins.length?{plugins:casePlugins}:{})};
-      if(/^4\.1\./.test(version))context=await vitest.createVitest('test',options,overrides);
+      if(request.unified&&vitestCases)context=await createObservedRuntimeContext(root,command,vitestCases,vitest,options,overrides);
+      if(context)runtimeContract=captureObservedRuntimeContract(context);
+      else if(/^4\.1\./.test(version))context=await vitest.createVitest('test',options,overrides);
       else if(/^5\./.test(version))context=await vitest.createVitest(options,overrides);
       else throw new Error('Unsupported shared native planning API version');
       workspaceContext=context;
@@ -323,6 +326,7 @@ try {
     if(request.unified) {
       freshWorkspaceRoot();
       freshNativeCases();
+      output.runtimeContract=runtimeContract??null;
       const plannedTiming=workerTiming.finish();
       await sendBounded({phase:'planned',value:output,timings:plannedTiming});
       const selectedInstruction=await instruction;
@@ -350,6 +354,7 @@ try {
       freshNativeCases();
       if(result.unhandledErrors?.length)throw new Error('Unified native execution has unhandled errors');
       const value=readNativeJson(request.reportFile);
+      value.runtimeContract=runtimeContract??null;
       if(caseReporter){value.nativeCaseEvidence=caseReporter.capture();value.nativeCaseEvidenceBinding={profile:vitestCases,configurationInputs:nativeCaseConfigurationInputs};}
       if(reaReporter){value.reaObservationReceipt=reaReporter.receipt;value.reaObservationBinding=reaObservation;}
       value.configurationInputs=freshInputs();
