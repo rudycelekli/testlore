@@ -30,14 +30,40 @@ export function selectPnpmManager(records){
 // This profile admits only the native JSON forms understood by both captures.
 // Todo/disabled/alternate skip spellings are rejected, never silently collapsed.
 const statuses=new Map([['passed','passed'],['failed','failed'],['pending','skipped']]);
+// Vitest5 JSON deliberately omits unhandledErrors. Observe that actual callback
+// separately; do not convert an absent reporter field to an invented zero.
+export const NATIVE_ERROR_OBSERVER_SOURCE=`import fs from 'node:fs';
+import {fileURLToPath} from 'node:url';
+import {createHash} from 'node:crypto';
+const hash=value=>createHash('sha256').update(value).digest('hex');
+const error=value=>({name:String(value?.name??'').slice(0,512),message:String(value?.message??'').slice(0,512)});
+export default class NativeErrorObserver {
+ onTestRunEnd(modules,errors,reason){
+  if(!Array.isArray(modules)||modules.length>4096||!Array.isArray(errors)||errors.length>512)throw Error('Native error observer callback unavailable');
+  let nodes=0,errorCount=errors.length;
+  const captureErrors=value=>{if(!Array.isArray(value??[]))throw Error('Native module errors unavailable');errorCount+=(value??[]).length;if(errorCount>512)throw Error('Native error count exceeds bound');return (value??[]).map(error);};
+  const files=modules.map(module=>{const task=module.task,result=task?.result;if(!task||!result)throw Error('Native module result unavailable');const suiteErrors=[];const walk=value=>{if(++nodes>20000)throw Error('Native module work exceeds bound');if(value!==task&&value.type==='suite'){const found=captureErrors(value.result?.errors);if(found.length)suiteErrors.push({name:String(value.name??'').slice(0,512),errors:found});}if(value.tasks!==undefined){if(!Array.isArray(value.tasks)||value.tasks.length>20000)throw Error('Native module children unavailable');for(const child of value.tasks)walk(child);}};walk(task);return {name:task.filepath,state:result.state,errors:captureErrors(result.errors),suiteErrors};});
+  const record={schemaVersion:1,observerPath:fileURLToPath(import.meta.url),sourceSha256:hash(fs.readFileSync(fileURLToPath(import.meta.url))),reason,errors:errors.map(error),files};
+  const text=JSON.stringify(record);if(Buffer.byteLength(text)>65536)throw Error('Native error observer output exceeds bound');
+  fs.writeFileSync(new URL('native-errors.json',import.meta.url),text,{flag:'wx',mode:0o600});
+ }
+}
+`;
+export const NATIVE_ERROR_OBSERVER_SHA256=h(NATIVE_ERROR_OBSERVER_SOURCE);
+
+function observedNativeErrors(raw,observation,observerPath){
+ if(!path.isAbsolute(observerPath||'')||!observation||observation.schemaVersion!==1||observation.observerPath!==observerPath||observation.sourceSha256!==NATIVE_ERROR_OBSERVER_SHA256||observation.reason!==(raw.success?'passed':'failed')||!Array.isArray(observation.errors)||observation.errors.length||!Array.isArray(observation.files)||observation.files.length!==raw.testResults.length||Buffer.byteLength(JSON.stringify(observation))>65536)throw Error('Native observed runtime errors unavailable');
+ const seen=new Set();for(const file of observation.files){const suite=raw.testResults.find(suite=>suite.name===file.name);if(!suite||seen.has(file.name)||file.state!==(suite.status==='passed'?'pass':'fail')||!Array.isArray(file.errors)||file.errors.length||!Array.isArray(file.suiteErrors)||file.suiteErrors.length)throw Error('Native observed module errors/status differ');seen.add(file.name);}
+}
 
 /** Strict native names; ambiguous duplicates are refused rather than assigned ordinals. */
-export function nativeCases(raw,root){
- if(!raw||!Array.isArray(raw.testResults)||raw.numRuntimeErrorTestSuites!==0)throw Error('Native report runtime/error inventory unavailable');
+export function nativeCases(raw,root,observation,observerPath){
+ if(!raw||!Array.isArray(raw.testResults)||(raw.numRuntimeErrorTestSuites!==undefined&&raw.numRuntimeErrorTestSuites!==0)||raw.numTodoTests!==0||raw.numPendingTests!==0)throw Error('Native report runtime/error inventory unavailable');
+ observedNativeErrors(raw,observation,observerPath);
  const files=[],cases=[],keys=new Set();
  for(const suite of raw.testResults){
   const file=path.isAbsolute(suite.name||'')?path.relative(root,suite.name):suite.name;
-  if(!safe(file)||files.includes(file)||!Array.isArray(suite.assertionResults)||suite.assertionResults.length===0)throw Error('Native file inventory invalid');
+  if(!safe(file)||files.includes(file)||!Array.isArray(suite.assertionResults)||suite.assertionResults.length===0||!['passed','failed'].includes(suite.status)||suite.message!==''||suite.status!==(suite.assertionResults.some(test=>test.status==='failed')?'failed':'passed'))throw Error('Native file inventory invalid');
   files.push(file);
   for(const test of suite.assertionResults){
    if(typeof test.fullName!=='string'||!test.fullName||!statuses.has(test.status))throw Error('Native named case unavailable');
@@ -67,7 +93,7 @@ export function assessUnimportRuns(runs,root,expectedFiles){
   const batch=runs.filter(run=>run.phase===phase&&run.repeat===repeat);
   try{
    if(batch.length!==3||!eq(batch.map(run=>run.arm).sort(),['full','native','testlore']))throw Error('Missing/duplicate/unknown arm');
-   const normalized=new Map(batch.map(run=>[run.arm,run.arm==='testlore'?testLoreCases(run.raw):nativeCases(run.raw,root)]));
+   const normalized=new Map(batch.map(run=>[run.arm,run.arm==='testlore'?testLoreCases(run.raw):nativeCases(run.raw,root,run.nativeErrors,run.nativeObserverPath)]));
    const full=normalized.get('full');if(!full||!eq(full.files,[...expectedFiles].sort()))throw Error('Original full native scope differs');
    const inventory=full.cases.map(({status,...test})=>test);
    if(!baseline){baseline=inventory;baselineStatuses=full.cases;}else if(!eq(inventory,baseline))throw Error('Full case identity drift');
@@ -127,13 +153,14 @@ export async function unimportRoutingPilot({upstream,output,sourceSha}){
  const manifest=JSON.parse(fs.readFileSync(path.join(upstream,'package.json'))),original=fs.readFileSync(path.join(upstream,ASSET),'utf8');
  if(manifest.packageManager!=='pnpm@12.3.4'||manifest.engines?.node!=='>=18.12.0'||process.version!=='v22.19.0'||original!=="export const FOO='foo',BAR='bar'\n")throw Error('Pinned source/runtime profile changed');
  const fault=original.replace("BAR='bar'","BAZ='bar'"),inert=original+'// TestLore setup baseline only; original bytes restored before all arms.\n';
- save(path.join(output,'manifest.json'),{sourceSha,upstreamRevision:UNIMPORT_PIN,sourceBindings,expectedFiles,seed:{kind:'declared-seeded-asset-regression-not-historical-bug',asset:ASSET,originalSha256:h(original),faultSha256:h(fault),setupBaselineSha256:h(inert)},runtime:{node:process.version,platform:process.platform,arch:process.arch,executableSha256:h(fs.readFileSync(process.execPath))}});
+ save(path.join(output,'manifest.json'),{sourceSha,upstreamRevision:UNIMPORT_PIN,sourceBindings,expectedFiles,nativeErrorObserver:{sourceSha256:NATIVE_ERROR_OBSERVER_SHA256,scope:'Same additional passive onTestRunEnd observer in every native full/related arm; original JSON reporter/config/assertions retained. Native baseline includes observer overhead.'},seed:{kind:'declared-seeded-asset-regression-not-historical-bug',asset:ASSET,originalSha256:h(original),faultSha256:h(fault),setupBaselineSha256:h(inert)},runtime:{node:process.version,platform:process.platform,arch:process.arch,executableSha256:h(fs.readFileSync(process.execPath))}});
  const isolated=path.join(output,'isolated');fs.mkdirSync(isolated);for(const name of ['home','tmp','cache'])fs.mkdirSync(path.join(isolated,name));
  const env={PATH:path.dirname(process.execPath)+':/usr/local/bin:/usr/bin:/bin',HOME:path.join(isolated,'home'),TMPDIR:path.join(isolated,'tmp'),CI:'true',LANG:'C.UTF-8',npm_config_cache:path.join(isolated,'cache')};
  for(const name of ['npm-user','npm-global'])fs.writeFileSync(path.join(isolated,name),'',{flag:'wx',mode:0o600});
  env.npm_config_userconfig=path.join(isolated,'npm-user');env.npm_config_globalconfig=path.join(isolated,'npm-global');
- const execute=async(name,command,args,cwd,{timeoutMs=120000,maxGrowthBytes=128*1024**2}={})=>{
+ const execute=async(name,command,args,cwd,{timeoutMs=120000,maxGrowthBytes=128*1024**2,nativeObserver=false}={})=>{
   const remaining=deadline(),directory=path.join(output,name);fs.mkdirSync(directory);const begin=performance.now();
+  if(nativeObserver)fs.writeFileSync(path.join(directory,'native-error-observer.mjs'),NATIVE_ERROR_OBSERVER_SOURCE,{flag:'wx',mode:0o600});
   const event=await boundedInstallProcess(command,args,{cwd,directory,env,timeoutMs:Math.max(1,Math.min(timeoutMs,Math.floor(remaining))),maxGrowthBytes,reserveBytes:2*1024**3,maxLogBytes:4*1024**2,terminateDescendants:true});save(path.join(directory,'process.json'),{command,args,event});deadline();return {directory,event,begin};
  };
  const npm=path.resolve(path.dirname(process.execPath),'../lib/node_modules/npm/bin/npm-cli.js');
@@ -163,13 +190,13 @@ export async function unimportRoutingPilot({upstream,output,sourceSha}){
    for(let repeat=0;repeat<2;repeat++)for(const arm of repeat===0?['full','testlore','native']:['native','full','testlore']){
     const preflight=performance.now();sourceCheck(phase);if(installed(upstream).sha256!==dependencyInventory.sha256)throw Error('Installed dependency bytes/links changed');
     const preflightMs=performance.now()-preflight,name=`${phase}-${repeat}-${arm}`,rawPath=path.join(output,name,'native.json');
-    const args=arm==='testlore'?[path.join(producer,'src/cli.js'),'run','--root',upstream,'--base',base,'--selective','--json']:[cli,...(arm==='native'?['related',ASSET]:['run']),'--cache=false','--reporter=json','--outputFile',rawPath,'--passWithNoTests'];
-    const executed=await execute(name,process.execPath,args,upstream),{event,directory,begin}=executed;
+    const args=arm==='testlore'?[path.join(producer,'src/cli.js'),'run','--root',upstream,'--base',base,'--selective','--json']:[cli,...(arm==='native'?['related',ASSET]:['run']),'--cache=false','--reporter=json','--reporter',path.join(output,name,'native-error-observer.mjs'),'--outputFile',rawPath,'--passWithNoTests'];
+    const executed=await execute(name,process.execPath,args,upstream,{nativeObserver:arm!=='testlore'}),{event,directory,begin}=executed;
     if(event.reason||event.signal||![0,1].includes(event.exitCode))throw Error('Fresh arm execution incomplete: '+name);
     const text=fs.readFileSync(arm==='testlore'?path.join(directory,'stdout.log'):rawPath,'utf8');if(Buffer.byteLength(text)>4*1024**2)throw Error('Raw report exceeds bound');
-    const raw=JSON.parse(text);save(path.join(directory,'raw.json'),raw);const cliAndRawReportMs=performance.now()-begin;
+    const raw=JSON.parse(text);save(path.join(directory,'raw.json'),raw);let nativeErrors=null;if(arm!=='testlore'){const file=path.join(directory,'native-errors.json');if(fs.statSync(file).size>65536||h(fs.readFileSync(path.join(directory,'native-error-observer.mjs')))!==NATIVE_ERROR_OBSERVER_SHA256)throw Error('Native observer bytes/output differ');nativeErrors=JSON.parse(fs.readFileSync(file,'utf8'));}const cliAndRawReportMs=performance.now()-begin;
     const validationStart=performance.now();sourceCheck(phase);if(installed(upstream).sha256!==dependencyInventory.sha256)throw Error('Installed dependency bytes/links changed after arm');
-    const record={phase,repeat,arm,event,cliAndRawReportMs,preflightMs,postflightMs:performance.now()-validationStart,raw};save(path.join(directory,'capture.json'),record);
+    const record={phase,repeat,arm,event,cliAndRawReportMs,preflightMs,postflightMs:performance.now()-validationStart,raw,...(nativeErrors?{nativeErrors,nativeObserverPath:path.join(directory,'native-error-observer.mjs')}:{})};save(path.join(directory,'capture.json'),record);
     record.outerMs=performance.now()-begin;save(path.join(directory,'timing.json'),{outerMs:record.outerMs,cliAndRawReportMs,preflightMs,postflightMs:record.postflightMs,scope:'Through capture.json and raw.json writes; this final timing metadata write excluded.'});runs.push(record);deadline();
    }
   }
