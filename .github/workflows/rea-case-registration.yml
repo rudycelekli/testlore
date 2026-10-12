@@ -9,6 +9,11 @@ on:
       - src/reporters/resolve.js
       - src/execution.js
       - src/runner.js
+      - src/process-registration-proposals.js
+      - src/routing-proposals.js
+      - scripts/rea-process-diagnostics.js
+      - test/process-registration-proposals.test.js
+      - test/process-mappings-cli.test.js
       - scripts/rea-case-registration.js
       - test/rea-observation.test.js
       - test/rea-case-registration.test.js
@@ -105,6 +110,18 @@ jobs:
             git(upstream,'diff','--exit-code','HEAD');
             if(shadow.exitCode!==0||shadow.complete!==true||shadow.shadow!==true||shadow.unifiedNative?.contexts!==1||shadow.unifiedNative?.fresh!==true||shadow.executedFiles?.length!==261||shadow.plan.total!==261||shadow.reaObservation?.complete!==true||shadow.reaObservation.omissionAuthority!==false)throw Error('Internal original REA full shadow observation incomplete');
             save('internal-shadow-assessment.json',{producerRevision,upstreamRevision,complete:true,observedFiles:shadow.executedFiles.length,namedCases:shadow.tests.length,actualSkippedRegistrations:shadow.reaObservation.receipt.observations.length,originalRunnerConfigPreserved:true,fullShadowOnly:true,omissionAuthority:false,inputEquivalenceClaim:false,speedAdvantageClaim:false,scope:'One fresh original-lock full three-project native context with internally constructed source-bound metadata observer. Every discovered file ran; this is not selective-campaign qualification.'});
+            // Separately qualify source-bound process diagnosis. Its own fresh
+            // discovery is not part of the preceding single test context and
+            // provides no evidence of omissions or effective child execution.
+            const diagnosisDir=path.join(evidence,'process-diagnosis-process');fs.mkdirSync(diagnosisDir);
+            let diagnosisConfigCreated=false;try{
+              fs.writeFileSync(configPath,JSON.stringify(shadowConfig),{flag:'wx',mode:0o600});diagnosisConfigCreated=true;
+              const command=[path.resolve('scripts/rea-process-diagnostics.js'),'--root',upstream,'--output',path.join(evidence,'process-diagnosis')];
+              const event=await boundedInstallProcess(process.execPath,command,{cwd:process.cwd(),directory:diagnosisDir,env,timeoutMs:30000,reserveBytes:2*1024**3,maxGrowthBytes:128*1024**2,maxLogBytes:1024**2,terminateDescendants:true});
+              save('process-diagnosis-process.json',{command,event});
+              if(event.exitCode!==0||event.signal||event.reason||!event.stdoutSha256||!event.stderrSha256)throw Error('Pinned process diagnosis incomplete');
+            }finally{if(diagnosisConfigCreated)fs.rmSync(configPath,{force:true});}
+            git(upstream,'diff','--exit-code','HEAD');
           }catch(error){save('failure.json',{complete:false,error:String(error.message).slice(0,1000),omissionAuthority:false});console.error(error.message);process.exitCode=1;}
           JS
       - name: Preserve native registrations and rejections

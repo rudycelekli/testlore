@@ -162,6 +162,8 @@ SKIP  test/checkout.test.js
 
 Copy, styles, templates, localization, schemas, fixtures, and services can all affect behavior. Declare their relationships or capture runtime reads. TestLore combines these with static dependencies and explains its choices. Unresolved source dependencies retain every consuming test on every active change. Configuration, registration, discovery, unknown changed inputs and stale authority retain full fallback. Tooling outside test closures is reported separately. [Precision contract →](docs/precise-routing.md)
 
+`testlore mappings` explains child-process registration gaps: fixture URLs, argument carriers, imported implementations, test candidates and unresolved launch inputs. Static candidates remain advisory; existing uncertainty stays active. [Process dependency diagnostics →](docs/process-dependencies.md)
+
 Run `npm run demo` for a selective copy edit, a shared dependency, and an uncertain change. Selection works at **test-file granularity**; native execution reports individual cases. New installations default to shadow mode; `--selective` explicitly opts into the proposed subset. Shadow mode runs the full suite while checking the proposed selection against observed failures. [Routing configuration →](docs/configuration.md)
 
 ## Learning that stays with your project
