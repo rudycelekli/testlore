@@ -208,7 +208,7 @@ export async function unimportRoutingPilot({upstream,output,sourceSha}){
  const dependencyInventory=installed(upstream);save(path.join(output,'installed-inventory.json'),dependencyInventory);
  const observerConfig='testlore.observation.config.mjs',observerSource=unimportFactoryObserverConfigSource(upstream);
  const filesystemContracts=unimportFilesystemContracts(paths,sourceBindings);
- const config={adapter:'vitest',discovery:'native',executionMode:'selective',runner:[process.execPath,cli,'run','--config',observerConfig,'--cache=false','--passWithNoTests','{files}'],vitestCases:{profile:'unimport-detect-factory-runtime-v1',projectRoot:'.',upstreamRevision:UNIMPORT_PIN},runnerTimeoutMs:120000,dependencies:filesystemContracts.dependencies};
+ const config={adapter:'vitest',discovery:'native',executionMode:'selective',runner:[process.execPath,cli,'run','--config',observerConfig,'--cache=false','{files}'],vitestCases:{profile:'unimport-detect-factory-runtime-v1',projectRoot:'.',upstreamRevision:UNIMPORT_PIN},runnerTimeoutMs:120000,dependencies:filesystemContracts.dependencies};
  const sourceCheck=phase=>{for(const file of paths){const current=h(fs.readFileSync(path.join(upstream,file))),expected=file===ASSET?h(phase==='fault'?fault:original):sourceBindings[file];if(current!==expected)throw Error('Original source/lock/assertion bytes changed: '+file);}if(h(fs.readFileSync(path.join(upstream,observerConfig)))!==h(observerSource))throw Error('Native observer overlay changed');if(h(fs.readFileSync(path.join(upstream,'tddswarm.config.json')))!==h(JSON.stringify(config)))throw Error('Pilot configuration changed');};
  const runs=[];let base=null,wrongSubsetControl=null;
  try{
