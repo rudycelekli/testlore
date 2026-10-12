@@ -128,8 +128,69 @@ test('zero registration skips AST diagnosis even for invalid large source',()=>{
 
 test('multiple individually small sources exhaust one shared aggregate AST budget',()=>{
  const g=graph();
- for(let i=0;i<4;i++)g.sources[`candidate${i}.ts`]='// fileURLToPath candidate\n'+Array.from({length:6000},(_,n)=>`const value${n}=0;`).join('\n');
+ for(let i=0;i<8;i++)g.sources[`candidate${i}.ts`]='// fileURLToPath arguments: candidate\n'+Array.from({length:6000},(_,n)=>`const value${n}=0;`).join('\n');
  assert.throws(()=>processRegistrationProposals(g),/aggregate syntax traversal budget/);
+});
+
+test('irrelevant registration sources retain uncertainty without spending AST work on owner declarations',()=>{
+ const g=graph();
+ for(let i=0;i<20;i++){
+  const file=`src/unrelated-registry${i}.ts`;
+  g.sources[file]=Array.from({length:4000},(_,n)=>`const value${n}=/\\d+/;`).join('\n');
+  g.warnings.push({file,reason:'runtime-registration',scope:'global'});
+ }
+ const result=processRegistrationProposals(g);
+ assert.equal(result.proposals.find(item=>item.fixture==='tests/fixtures/mcp.mjs').launches.length,1);
+ assert.deepEqual(result.existingUncertainties,g.warnings);
+ for(const item of result.proposals.filter(item=>item.fixture.startsWith('src/unrelated'))){
+  assert.deepEqual(item.stateOwners,[]);assert.deepEqual(item.consumers,[]);
+  assert.ok(item.uncertainties.includes('registration-state-not-analyzed-without-static-launch'));
+  assert.equal(result.sourceBindings[item.fixture],digest(g.sources[item.fixture]));
+ }
+});
+
+test('comment-separated, quoted and escaped argv names preserve the same static candidate',()=>{
+ for(const property of ['arguments /* source-owned comment */ :', '"arguments":', '\\u0061rguments:', '"arg\\u0075ments":']){
+  const g=graph();g.sources['tests/fixtures/launcher.ts']=launcher.replace('arguments:',property);
+  assert.equal(processRegistrationProposals(g).proposals[0].launches.length,1,property);
+ }
+ const escaped=graph();escaped.sources['tests/fixtures/launcher.ts']=launcher.replaceAll('fileURLToPath','\\u0066ileURLToPath');
+ assert.equal(processRegistrationProposals(escaped).proposals[0].launches.length,1);
+ const g=graph();g.sources['tests/fixtures/launcher.ts']=launcher.replace('arguments:','["arguments"]:');
+ const result=processRegistrationProposals(g);
+ assert.equal(result.proposals[0].launches.length,0);
+ assert.ok(result.diagnostics.some(item=>item.reason==='computed-process-options-not-indexed'));
+ assert.ok(result.proposals[0].uncertainties.includes('fixture-launch-consumers-unresolved'));
+});
+
+test('repeated lexical-state arrays refuse before expanded owner serialization',()=>{
+ const g=graph();
+ g.sources['tests/fixtures/mcp.mjs']=`import {McpServer} from '@modelcontextprotocol/server'; const server=new McpServer({});`+Array.from({length:120},(_,n)=>`const helper${n}=()=>server.registerTool('tool',{},()=>0);`).join('\n');
+ assert.throws(()=>processRegistrationProposals(g),/output budget exceeded/);
+});
+
+test('multi-fixture launch expansion refuses before repeated proposals are serialized',()=>{
+ const g=graph(),file='tests/fixtures/launcher.ts',references=[];
+ for(let i=0;i<31;i++){
+  const fixture=`tests/fixtures/${'fixture'.repeat(100)}${i}.mjs`;
+  g.sources[fixture]=producer;g.warnings.push({file:fixture,reason:'runtime-registration',scope:'global'});
+  const name=`fixture${i}`;references.push(name);
+  g.sources[file]+=`\nconst ${name}=fileURLToPath(new URL('./${fixture.split('/').at(-1)}',import.meta.url));`;
+ }
+ g.sources[file]+='\n'+`spawnOwnedProviderProcess({command:process.execPath,arguments:[fixture,${references.join(',')}]});`.repeat(20);
+ assert.throws(()=>processRegistrationProposals(g),/output budget exceeded/);
+});
+
+test('memoized paths still charge every emitted chain against shared consumer work',()=>{
+ const g=graph(),file='tests/fixtures/launcher.ts';
+ // Each distinct candidate call reaches the same cached long chain. Its output
+ // still costs work; cache reuse must not hide serialization expansion.
+ g.sources[file]=launcher.replace('export const launch=async(mode,options)=>','export const launch=async(mode,options)=>');
+ const call="spawnOwnedProviderProcess({command:process.execPath,arguments:[fixture]});";
+ g.sources[file]+='\n'+call.repeat(200);
+ let previous='tests/actual.test.ts';g.edges[previous]=['chain0.ts'];
+ for(let i=0;i<600;i++){const item=`chain${i}.ts`;g.sources[item]='export const value=0;';g.edges[item]=[i===599?file:`chain${i+1}.ts`];}
+ assert.throws(()=>processRegistrationProposals(g),/aggregate consumer traversal budget/);
 });
 
 test('repeated consumer graph walks share one global work cap rather than per-walk limits',()=>{

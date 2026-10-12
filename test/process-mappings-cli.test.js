@@ -10,6 +10,7 @@ const cli=fileURLToPath(new URL('../src/cli.js',import.meta.url));
 const sources={
   'package.json':{type:'module'},
   'src/fixture.mjs':`import {McpServer} from 'example-sdk';const server=new McpServer({});const register=(name,handler)=>server.registerTool(name,{},handler);register('status',()=>0);`,
+  'src/a-unlaunched.mjs':`import {McpServer} from 'example-sdk';const server=new McpServer({});const register=(name,handler)=>server.registerTool(name,{},handler);register('status',()=>0);`,
   'src/bridge.js':`import {fileURLToPath} from 'node:url';import {launch} from './process.js';const fixture=fileURLToPath(new URL('./fixture.mjs',import.meta.url));export const start=()=>launch({command:process.execPath,arguments:[fixture],env:{...process.env}});`,
   'src/process.js':`throw Error('project code must not execute during static inspection');export const launch=options=>options;`,
   'test/actual.test.js':`import {start} from '../src/bridge.js';throw Error('tests must not execute during inspection');`,
@@ -26,6 +27,8 @@ test('mappings CLI exposes process gaps without executing project code or claimi
   assert.ok(report.warnings.some(row=>row.reason==='runtime-registration'&&row.scope==='global'));
   const human=execFileSync(process.execPath,[cli,'mappings','--root',root],{encoding:'utf8'});
   assert.match(human,/src\/fixture\.mjs/);assert.match(human,/Next:/);assert.match(human,/No omissions authorized/);
+  assert.match(human,/Mapping candidates:/);assert.match(human,/literal-module-url/);
+  assert.ok(human.indexOf('\nsrc/fixture.mjs\n')<human.indexOf('\nsrc/a-unlaunched.mjs\n'),'Launch candidates should be visible before unresolved registration rows');
   assert.equal(validateRoutingProposals(root,report).valid,true);
 });
 

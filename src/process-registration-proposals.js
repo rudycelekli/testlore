@@ -7,7 +7,7 @@ import {typescript as ts, assertCurrentEngine, loadedIdentity} from './syntax-en
 const hash = value => createHash('sha256').update(typeof value === 'string' ? value : JSON.stringify(value)).digest('hex');
 const implementationSha256=hash(fs.readFileSync(fileURLToPath(import.meta.url),'utf8'));
 function currentImplementation(){if(hash(fs.readFileSync(fileURLToPath(import.meta.url),'utf8'))!==implementationSha256)throw Error('Loaded process proposal implementation changed');return implementationSha256;}
-const LIMITS = Object.freeze({sources:4096, sourceBytes:524288, totalSourceBytes:16777216, edges:25000, tests:1000, proposals:32, launches:256, visits:200000, consumerWork:100000, outputBytes:4194304});
+const LIMITS = Object.freeze({sources:4096, sourceBytes:524288, totalSourceBytes:16777216, edges:25000, tests:1000, proposals:32, launches:256, visits:200000, consumerWork:100000, stateRecords:8192, outputBytes:4194304});
 const safe = value => typeof value === 'string' && value.length > 0 && value.length < 4096 && !/[\\\x00-\x1f\x7f:%?#*]/.test(value) && !value.startsWith('/') && !value.split('/').some(part => !part || part === '.' || part === '..' || ['.git','node_modules','.tddswarm'].includes(part));
 const sha = value => typeof value === 'string' && /^[a-f0-9]{64}$/.test(value);
 const plain = value => value && typeof value === 'object' && !Array.isArray(value) && Object.getPrototypeOf(value) === Object.prototype;
@@ -37,13 +37,18 @@ function index(graph) {
   return files;
 }
 function consumerCharge(budget){if(++budget.consumerWork>LIMITS.consumerWork)throw Error('Process aggregate consumer traversal budget exceeded');}
+function emitted(budget,bytes){budget.outputCost+=bytes;if(budget.outputCost>LIMITS.outputBytes)throw Error('Process proposal output budget exceeded');}
+function emittedChain(budget,chain){
+  if(chain){for(const file of chain){consumerCharge(budget);emitted(budget,Buffer.byteLength(JSON.stringify(file))+1);}emitted(budget,2);}
+  return chain;
+}
 function closure(graph,start,target,budget) {
   consumerCharge(budget);
-  const key=JSON.stringify([start,target]);if(budget.reachability.has(key))return budget.reachability.get(key);
+  const key=JSON.stringify([start,target]);if(budget.reachability.has(key))return emittedChain(budget,budget.reachability.get(key));
   const parents=new Map([[start,null]]),queue=[start];
   for(let i=0;i<queue.length;i++) {
     consumerCharge(budget);const file=queue[i];
-    if(file===target){const chain=[];for(let item=file;item!==null;item=parents.get(item))chain.push(item);chain.reverse();budget.reachability.set(key,chain);return chain;}
+    if(file===target){const chain=[];for(let item=file;item!==null;item=parents.get(item))chain.push(item);chain.reverse();budget.reachability.set(key,chain);return emittedChain(budget,chain);}
     for(const dep of graph.edges[file]||[]){consumerCharge(budget);if(!parents.has(dep)){parents.set(dep,file);queue.push(dep);}}
     if(queue.length>LIMITS.edges+LIMITS.sources)throw Error('Process consumer traversal budget exceeded');
   }
@@ -57,10 +62,15 @@ function resolve(file,spec,sources) {
 }
 function charge(budget){if(++budget.visits>LIMITS.visits)throw Error('Process aggregate syntax traversal budget exceeded');}
 function parse(file,text,budget) {
-  const ast=ts.createSourceFile(file,text,ts.ScriptTarget.Latest,true), imports=new Map(),decls=new Map(),top=new Map();let intrinsicMutation=false;
+  const ast=ts.createSourceFile(file,text,ts.ScriptTarget.Latest,true), imports=new Map(),decls=new Map(),top=new Map(),calls=[],escapingIdentifiers=new Set();let intrinsicMutation=false;
   const add=name=>decls.set(name,(decls.get(name)||0)+1);
   function visit(node) {
     charge(budget);
+    if(ts.isCallExpression(node))calls.push(node);
+    if(ts.isIdentifier(node)){
+      const p=node.parent;
+      if(!(ts.isVariableDeclaration(p)&&p.name===node)&&!(ts.isCallExpression(p)&&p.expression===node)&&!(ts.isPropertyAccessExpression(p)&&p.expression===node))escapingIdentifiers.add(node.text);
+    }
     if(ts.isBinaryExpression(node)&&node.operatorToken.kind>=ts.SyntaxKind.FirstAssignment&&node.operatorToken.kind<=ts.SyntaxKind.LastAssignment&&/^(?:(?:globalThis\.)?(?:URL|process)|process\.execPath)$/.test(node.left.getText(ast)))intrinsicMutation=true;
     if(ts.isCallExpression(node)&&['eval','Function','Object.defineProperty','Object.defineProperties','Reflect.set'].includes(node.expression.getText(ast)))intrinsicMutation=true;
     if((ts.isVariableDeclaration(node)||ts.isParameter(node)||ts.isFunctionDeclaration(node)||ts.isClassDeclaration(node))&&node.name) {
@@ -78,32 +88,28 @@ function parse(file,text,budget) {
     }
     if(ts.isVariableStatement(statement)&&(statement.declarationList.flags&ts.NodeFlags.Const))for(const d of statement.declarationList.declarations)if(ts.isIdentifier(d.name))top.set(d.name.text,d);
   }
-  return {ast,imports,decls,top,intrinsicMutation};
+  return {ast,imports,decls,top,intrinsicMutation,calls,escapingIdentifiers};
 }
 const span=(node,ast,text)=>({start:node.getStart(ast),end:node.end,line:ast.getLineAndCharacterOfPosition(node.getStart(ast)).line+1,sha256:hash(text.slice(node.getStart(ast),node.end))});
 function lexicalOwners(parsed,text,budget) {
   const owners=[],unknown=[];const {ast,top,imports,decls}=parsed;
+  const lexicalStateCandidates=[...top].map(([binding,node])=>{charge(budget);return {binding,...span(node,ast,text)};});
+  const lexicalStateBytes=Buffer.byteLength(JSON.stringify(lexicalStateCandidates));
   for(const [name,d] of top) {
+    charge(budget);
     if(!d.initializer || !ts.isArrowFunction(d.initializer) || !ts.isCallExpression(d.initializer.body))continue;
     const call=d.initializer.body,e=call.expression;
     if(!ts.isPropertyAccessExpression(e)||!ts.isIdentifier(e.expression)||!/^register/.test(e.name.text))continue;
     const receiver=e.expression.text,owner=top.get(receiver),constructor=owner?.initializer;
     if(decls.get(name)!==1||decls.get(receiver)!==1||!constructor||!ts.isNewExpression(constructor)||!ts.isIdentifier(constructor.expression)){unknown.push('ambiguous-registration-state-owner');continue;}
     const imported=imports.get(constructor.expression.text);
-    owners.push({helper:name,receiver,method:e.name.text,helperDeclaration:span(d,ast,text),stateDeclaration:span(owner,ast,text),constructor:{name:constructor.expression.text,import:imported||null},lexicalStateCandidates:[...top].map(([binding,node])=>({binding,...span(node,ast,text)}))});
+    budget.stateRecords+=lexicalStateCandidates.length;
+    if(budget.stateRecords>LIMITS.stateRecords)throw Error('Process proposal output budget exceeded');
+    emitted(budget,lexicalStateBytes+256);
+    owners.push({helper:name,receiver,method:e.name.text,helperDeclaration:span(d,ast,text),stateDeclaration:span(owner,ast,text),constructor:{name:constructor.expression.text,import:imported||null},lexicalStateCandidates});
     if(!imported||imported.alias)unknown.push('unknown-or-aliased-state-constructor');
-    function escapes(node) {
-      charge(budget);
-      if(ts.isIdentifier(node)&&[name,receiver].includes(node.text)) {
-        const p=node.parent;
-        const declaration=ts.isVariableDeclaration(p)&&p.name===node;
-        const directCall=ts.isCallExpression(p)&&p.expression===node;
-        const receiverAccess=ts.isPropertyAccessExpression(p)&&p.expression===node;
-        if(!declaration&&!directCall&&!receiverAccess)unknown.push(node.text===name?'registration-helper-alias-or-escape':'state-owner-alias-or-escape');
-      }
-      ts.forEachChild(node,escapes);
-    }
-    escapes(ast);
+    if(parsed.escapingIdentifiers.has(name))unknown.push('registration-helper-alias-or-escape');
+    if(parsed.escapingIdentifiers.has(receiver))unknown.push('state-owner-alias-or-escape');
   }
   return {owners,unknown};
 }
@@ -121,11 +127,11 @@ function bridges(file,text,parsed,fixtures,graph,budget) {
     if(fixtures.has(target))references.set(name,{fixture:target,declaration:span(d,ast,text)});
   }
   
-  function visit(node) {
+  for(const node of parsed.calls) {
     charge(budget);
-    if(ts.isCallExpression(node)&&node.arguments.length===1&&ts.isObjectLiteralExpression(node.arguments[0])) {
+    if(node.arguments.length===1&&ts.isObjectLiteralExpression(node.arguments[0])) {
       const object=node.arguments[0],fields=new Map(),spreads=object.properties.filter(ts.isSpreadAssignment);
-      for(const prop of object.properties)if(ts.isPropertyAssignment(prop)&&ts.isIdentifier(prop.name))fields.set(prop.name.text,prop.initializer);
+      for(const prop of object.properties)if(ts.isPropertyAssignment(prop)&&(ts.isIdentifier(prop.name)||ts.isStringLiteralLike(prop.name)))fields.set(prop.name.text,prop.initializer);
       const argv=fields.get('arguments')||fields.get('args');
       if(argv&&ts.isArrayLiteralExpression(argv)&&argv.elements.some(el=>ts.isIdentifier(el)&&references.has(el.text))) {
         const uncertainties=new Set(['independent-process-input-and-regression-challenge-required','effective-launch-not-established-by-static-source']);
@@ -145,41 +151,55 @@ function bridges(file,text,parsed,fixtures,graph,budget) {
           else if(ts.isPropertyAssignment(prop)&&ts.isIdentifier(prop.name)){envKeys.push({name:prop.name.text,valueExpressionSha256:hash(prop.initializer.getText(ast))});if(!ts.isStringLiteral(prop.initializer))uncertainties.add('dynamic-environment-value');}
           else uncertainties.add('dynamic-environment-key');
         }
-        if(object.properties.some(prop=>!ts.isPropertyAssignment(prop)&&!ts.isSpreadAssignment(prop))||object.properties.some(prop=>ts.isPropertyAssignment(prop)&&!ts.isIdentifier(prop.name)))uncertainties.add('computed-or-unknown-launch-option');
-        const names=object.properties.filter(ts.isPropertyAssignment).map(prop=>prop.name.getText(ast));
+        if(object.properties.some(prop=>!ts.isPropertyAssignment(prop)&&!ts.isSpreadAssignment(prop))||object.properties.some(prop=>ts.isPropertyAssignment(prop)&&!ts.isIdentifier(prop.name)&&!ts.isStringLiteralLike(prop.name)))uncertainties.add('computed-or-unknown-launch-option');
+        const names=object.properties.filter(ts.isPropertyAssignment).map(prop=>(ts.isIdentifier(prop.name)||ts.isStringLiteralLike(prop.name))?prop.name.text:prop.name.getText(ast));
         if(new Set(names).size!==names.length)uncertainties.add('duplicate-launch-option');
-        launches.push({kind:'imported-call-with-fixture-argv-candidate',executionObserved:false,source:file,sourceSha256:hash(text),call:span(node,ast,text),fixtureBindings:argv.elements.filter(el=>ts.isIdentifier(el)&&references.has(el.text)).map(el=>({name:el.text,...references.get(el.text)})),sink:{callee:name,import:sink||null,file:sinkFile,sourceSha256:sinkFile?hash(graph.sources[sinkFile]):null},environmentKeys:envKeys.sort((a,b)=>a.name.localeCompare(b.name)),uncertainties:[...uncertainties].sort()});
+        const launch={kind:'imported-call-with-fixture-argv-candidate',executionObserved:false,source:file,sourceSha256:hash(text),call:span(node,ast,text),fixtureBindings:argv.elements.filter(el=>ts.isIdentifier(el)&&references.has(el.text)).map(el=>({name:el.text,...references.get(el.text)})),sink:{callee:name,import:sink||null,file:sinkFile,sourceSha256:sinkFile?hash(graph.sources[sinkFile]):null},environmentKeys:envKeys.sort((a,b)=>a.name.localeCompare(b.name)),uncertainties:[...uncertainties].sort()};
+        emitted(budget,Buffer.byteLength(JSON.stringify(launch)));launches.push(launch);
         if(launches.length>LIMITS.launches)throw Error('Process launch proposal budget exceeded');
       } else if(argv&&!ts.isArrayLiteralExpression(argv))unknown.add('dynamic-process-argv');
+      else if(object.properties.some(prop=>ts.isPropertyAssignment(prop)&&ts.isComputedPropertyName(prop.name)))unknown.add('computed-process-options-not-indexed');
     }
-    ts.forEachChild(node,visit);
   }
-  visit(ast);return {launches,unknown:[...unknown].sort()};
+  return {launches,unknown:[...unknown].sort()};
 }
 
 /** Static, source-bound diagnosis only. No subprocess, probe, mapping patch or omission permission. */
 export function processRegistrationProposals(graph,currentBindings={}) {
   assertCurrentEngine();
-  const files=index(graph),bound=bindings(currentBindings),parsed=new Map(),diagnostics=[],budget={visits:0,consumerWork:0,reachability:new Map()};
+  const files=index(graph),bound=bindings(currentBindings),parsed=new Map(),diagnostics=[],budget={visits:0,consumerWork:0,stateRecords:0,outputCost:0,reachability:new Map()};
   const fixtureFiles=[...new Set(graph.warnings.filter(w=>w?.reason==='runtime-registration'&&safe(w.file)).map(w=>w.file))].sort();
   if(fixtureFiles.length>LIMITS.proposals)throw Error('Process registration proposal budget exceeded');
   const fixtures=new Set(fixtureFiles),bridgeIndex=new Map(fixtureFiles.map(file=>[file,[]]));
   if(fixtureFiles.length)for(const file of files) {
     const text=graph.sources[file];
-    if(!fixtures.has(file)&&!text.includes('fileURLToPath'))continue;
+    // Bounded text relevance filter is only a gate to AST inspection, never evidence.
+    // Unknown/aliased/dynamic launch forms remain unresolved registration warnings.
+    // Comments between tokens, quoted names and Unicode escapes must not make
+    // an otherwise supported argv property disappear from candidate parsing.
+    const unicodeEscape=/\\u(?:[0-9a-fA-F]{4}|\{[0-9a-fA-F]{1,6}\})/.test(text);
+    if(!text.includes('fileURLToPath')&&!(text.includes('node:url')&&unicodeEscape))continue;
+    if(!/\b(?:arguments|args)\b/.test(text)&&!unicodeEscape)continue;
     const result=parse(file,text,budget);parsed.set(file,result);
     if(result.ast.parseDiagnostics.length){diagnostics.push({file,reason:'source-parse-incomplete'});continue;}
     const bridge=bridges(file,text,result,fixtures,graph,budget);
     for(const reason of bridge.unknown)diagnostics.push({file,reason});
     for(const launch of bridge.launches)for(const target of new Set(launch.fixtureBindings.map(binding=>binding.fixture))) {
+      emitted(budget,Buffer.byteLength(JSON.stringify(launch)));
       bridgeIndex.get(target).push(launch);
       if(bridgeIndex.get(target).length>LIMITS.launches)throw Error('Process launch proposal budget exceeded');
     }
   }
   const proposals=[];
   for(const fixture of fixtureFiles) {
-    if(!parsed.has(fixture)){diagnostics.push({file:fixture,reason:'registration-source-unavailable'});continue;}
-    const local=parsed.get(fixture).ast.parseDiagnostics.length ? {owners:[],unknown:['registration-source-parse-incomplete']} : lexicalOwners(parsed.get(fixture),graph.sources[fixture],budget),launches=bridgeIndex.get(fixture),uncertainties=new Set(local.unknown);
+    if(!Object.hasOwn(graph.sources,fixture)){diagnostics.push({file:fixture,reason:'registration-source-unavailable'});continue;}
+    const launches=bridgeIndex.get(fixture);
+    if(launches.length&&!parsed.has(fixture)){
+      const source=parse(fixture,graph.sources[fixture],budget);parsed.set(fixture,source);
+      if(source.ast.parseDiagnostics.length)diagnostics.push({file:fixture,reason:'source-parse-incomplete'});
+    }
+    if(!launches.length)diagnostics.push({file:fixture,reason:'registration-state-not-analyzed-without-static-launch'});
+    const local=!launches.length ? {owners:[],unknown:['registration-state-not-analyzed-without-static-launch']} : parsed.get(fixture).ast.parseDiagnostics.length ? {owners:[],unknown:['registration-source-parse-incomplete']} : lexicalOwners(parsed.get(fixture),graph.sources[fixture],budget),uncertainties=new Set(local.unknown);
     if(!local.owners.length)uncertainties.add('registration-state-owner-unresolved');
     if(!launches.length)uncertainties.add('fixture-launch-consumers-unresolved');
     const discoveredConsumerCandidates=[],excludedConsumerCandidates=[];
