@@ -33,6 +33,16 @@ immutable throughout the repair. A valid challenge must pass against unchanged
 source; a candidate must repeatedly pass it, preserve the original assertions,
 and remain bound to the exact tested inputs before readiness or PR creation.
 
+Installed implementation admission pins every executable, native binary, link,
+directory mode and dependency implementation. Two canonical pnpm 12 metadata
+files normalize only installation date/time, store location and the exact
+workspace root spelling. Every other metadata field remains pinned. Their full
+raw bytes and filesystem identities remain frozen during each live context;
+normalization never permits a mid-run change. Noncanonical JSON, extra projects,
+changed settings or changed implementation bytes refuse admission. This narrow
+profile was reviewed against the original installation and actual native
+transform canaries; it does not admit arbitrary package versions.
+
 ## Qualification
 
 Use independent original full, selected and native-related executions on healthy,

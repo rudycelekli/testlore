@@ -36,6 +36,28 @@ export function captureInstalledUnimportInputs(root,{maxEntries=100000,maxBytes=
  for(const directory of ['node_modules','playground/node_modules','dist','playground/dist'])if(fs.existsSync(path.join(root,directory)))walk(directory);
  const sort=(a,b)=>a.file<b.file?-1:a.file>b.file?1:0;rows.sort(sort);directories.sort(sort);if(!rows.length||Buffer.byteLength(JSON.stringify(rows))>32*1024**2)throw Error('Installed runtime closure unavailable');freeze(rows);freeze(directories);installedSeals.set(rows,{root,states,directories});return rows;
 }
+/** Normalize only reviewed pnpm bookkeeping fields for implementation admission.
+ * Raw metadata remains in installedInputs and the private freshness seal. */
+export function captureUnimportInstallationContract(root,rows){
+ root=fs.realpathSync(root);if(installedSeals.get(rows)?.root!==root)throw Error('Installation contract requires privately captured inputs');
+ const files=['node_modules/.modules.yaml','node_modules/.pnpm-workspace-state-v1.json'],normalized=[];
+ for(const file of files){
+  const row=rows.find(row=>row.file===file&&row.kind==='file');if(!row)throw Error('Required pnpm metadata unavailable');
+  const raw=read(root,file,{maxBytes:1024*1024}),text=raw.toString('utf8');if(hash(raw)!==row.sha256)throw Error('Installer metadata changed during capture');
+  const value=JSON.parse(text),suffix=file.endsWith('.json')?'\n':'';
+  if(JSON.stringify(value,null,2)+suffix!==text)throw Error('Noncanonical installer metadata');
+  if(file.endsWith('.yaml')){
+   if(value.packageManager!=='pnpm@12.3.4'||typeof value.prunedAt!=='string'||!Number.isFinite(Date.parse(value.prunedAt))||new Date(value.prunedAt).toUTCString()!==value.prunedAt||typeof value.storeDir!=='string'||!path.isAbsolute(value.storeDir)||/[\\\0\r\n]/.test(value.storeDir)||path.normalize(value.storeDir)!==value.storeDir||!value.storeDir.endsWith('/pnpm/store/v11'))throw Error('Unsupported installer bookkeeping');
+   value.prunedAt='<install-date>';value.storeDir='<pnpm-store-v11>';
+  }else{
+   if(!Number.isSafeInteger(value.lastValidatedTimestamp)||value.lastValidatedTimestamp<=0||!value.projects||Object.keys(value.projects).sort().join('\n')!==[root,root+'/playground'].sort().join('\n'))throw Error('Unsupported workspace bookkeeping');
+   value.lastValidatedTimestamp='<install-time>';value.projects={'<project>':value.projects[root],'<project>/playground':value.projects[root+'/playground']};
+  }
+  normalized.push({file,kind:'file',mode:row.mode,sha256:hash(JSON.stringify(value,null,2)+suffix)});
+ }
+ const implementationRows=rows.map(row=>normalized.find(input=>input.file===row.file)??row);
+ return freeze({schemaVersion:1,profile:'original-unimport-pnpm12-bookkeeping-v1',metadata:normalized,implementationSha256:hash(implementationRows)});
+}
 function originalSources(root){
  const names=git(root,['ls-tree','-r','-z','--name-only',UNIMPORT_FACTORY_REVISION]).toString('utf8').split('\0').filter(Boolean).sort();
  if(names.length!==224||names.some(file=>!safe(file)))throw Error('Original unimport source inventory differs');
@@ -72,7 +94,7 @@ export function captureUnimportRuntimeEvidence(root,command,caseProfile){
  const installedInputs=captureInstalledUnimportInputs(root),stat=fs.lstatSync(root),node=fs.realpathSync(process.execPath);
  const producerInputs=producerFiles.map(file=>({file,sha256:hash(fs.readFileSync(file))}));
  const configurationInputs=['vitest.config.ts',wrapper].map(file=>({file,sha256:hash(read(root,file))}));
- const value={schemaVersion:1,profile:'original-unimport-runtime-facts-v1',root,inventoryIdentity:{dev:String(stat.dev),ino:String(stat.ino)},upstreamRevision:UNIMPORT_FACTORY_REVISION,command:[node,cli,...command.slice(2)],nodeIdentity:{executable:node,version:process.version,sha256:hash(fs.readFileSync(node))},sourceInputs,configurationInputs,installedInputs,installedDirectories:installedSeals.get(installedInputs).directories,testFiles:[...caseProfile.expectedFiles],observerConfiguration:{file:wrapper,sha256:hash(observerBytes)},producerInputs};
+ const value={schemaVersion:1,profile:'original-unimport-runtime-facts-v1',root,inventoryIdentity:{dev:String(stat.dev),ino:String(stat.ino)},upstreamRevision:UNIMPORT_FACTORY_REVISION,command:[node,cli,...command.slice(2)],nodeIdentity:{executable:node,version:process.version,sha256:hash(fs.readFileSync(node))},sourceInputs,configurationInputs,installedInputs,installationContract:captureUnimportInstallationContract(root,installedInputs),installedDirectories:installedSeals.get(installedInputs).directories,testFiles:[...caseProfile.expectedFiles],observerConfiguration:{file:wrapper,sha256:hash(observerBytes)},producerInputs};
  value.digest=hash(value);freeze(value);const state=installedSeals.get(installedInputs);evidenceSeals.set(value,{state,command:[...command],caseProfile:structuredClone(caseProfile),nodeFingerprint:fingerprint(fs.lstatSync(node,{bigint:true})),digest:value.digest});return value;
 }
 export function assertUnimportRuntimeEvidence(expected,current){if(JSON.stringify(expected)!==JSON.stringify(current))throw Error('Original runtime source/configuration/installation evidence changed');}
