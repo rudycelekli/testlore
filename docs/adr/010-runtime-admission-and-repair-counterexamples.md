@@ -1,6 +1,6 @@
 # Runtime admission and repair counterexamples
 
-Status: Qualification in progress
+Status: Bounded original runtime and repair mechanisms qualified; publication pending
 Date: 2026-10-12
 Related: [ADR 005](005-precise-routing-and-prospective-qualification.md), [parameter/type/repair evidence](../parameter-type-repair-qualification.md)
 

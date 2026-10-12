@@ -34,7 +34,7 @@ TestLore brings **test creation, intelligent routing and reviewed learning** int
 
 **Keep your best tools.** Your native engines supply the expertise. TestLore adds the shared quality contract: modular dependencies, independent validation, reasons for every proposed omission, and a memory of reviewed outcomes.
 
-[How TestLore complements Agentic QE →](docs/agentic-qe-comparison.md) · [Fresh project routing and controlled replay →](docs/project-aware-routing.md)
+[How TestLore complements Agentic QE →](docs/agentic-qe-comparison.md) · [Fresh project routing and controlled replay →](docs/project-aware-routing.md) · [Qualified omissions and repair vetoes, including timing losses →](docs/qualified-routing-repair-gates.md)
 
 | Your starting point | What TestLore does |
 | --- | --- |
