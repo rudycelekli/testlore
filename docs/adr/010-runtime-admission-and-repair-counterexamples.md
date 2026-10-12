@@ -41,7 +41,11 @@ raw bytes and filesystem identities remain frozen during each live context;
 normalization never permits a mid-run change. Noncanonical JSON, extra projects,
 changed settings or changed implementation bytes refuse admission. This narrow
 profile was reviewed against the original installation and actual native
-transform canaries; it does not admit arbitrary package versions.
+transform canaries; it does not admit arbitrary package versions. Two exact
+effective option projections cover an absent CI flag and `CI=true`. They differ
+only in three inactive browser defaults; browser execution remains disabled.
+Other CI spellings retain fallback, and changing CI during a live context
+invalidates its facts.
 
 ## Qualification
 

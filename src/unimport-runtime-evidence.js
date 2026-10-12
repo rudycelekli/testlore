@@ -94,7 +94,7 @@ export function captureUnimportRuntimeEvidence(root,command,caseProfile){
  const installedInputs=captureInstalledUnimportInputs(root),stat=fs.lstatSync(root),node=fs.realpathSync(process.execPath);
  const producerInputs=producerFiles.map(file=>({file,sha256:hash(fs.readFileSync(file))}));
  const configurationInputs=['vitest.config.ts',wrapper].map(file=>({file,sha256:hash(read(root,file))}));
- const value={schemaVersion:1,profile:'original-unimport-runtime-facts-v1',root,inventoryIdentity:{dev:String(stat.dev),ino:String(stat.ino)},upstreamRevision:UNIMPORT_FACTORY_REVISION,command:[node,cli,...command.slice(2)],nodeIdentity:{executable:node,version:process.version,sha256:hash(fs.readFileSync(node))},sourceInputs,configurationInputs,installedInputs,installationContract:captureUnimportInstallationContract(root,installedInputs),installedDirectories:installedSeals.get(installedInputs).directories,testFiles:[...caseProfile.expectedFiles],observerConfiguration:{file:wrapper,sha256:hash(observerBytes)},producerInputs};
+ const value={schemaVersion:1,profile:'original-unimport-runtime-facts-v1',root,environment:{CI:process.env.CI??null},inventoryIdentity:{dev:String(stat.dev),ino:String(stat.ino)},upstreamRevision:UNIMPORT_FACTORY_REVISION,command:[node,cli,...command.slice(2)],nodeIdentity:{executable:node,version:process.version,sha256:hash(fs.readFileSync(node))},sourceInputs,configurationInputs,installedInputs,installationContract:captureUnimportInstallationContract(root,installedInputs),installedDirectories:installedSeals.get(installedInputs).directories,testFiles:[...caseProfile.expectedFiles],observerConfiguration:{file:wrapper,sha256:hash(observerBytes)},producerInputs};
  value.digest=hash(value);freeze(value);const state=installedSeals.get(installedInputs);evidenceSeals.set(value,{state,command:[...command],caseProfile:structuredClone(caseProfile),nodeFingerprint:fingerprint(fs.lstatSync(node,{bigint:true})),digest:value.digest});return value;
 }
 export function assertUnimportRuntimeEvidence(expected,current){if(JSON.stringify(expected)!==JSON.stringify(current))throw Error('Original runtime source/configuration/installation evidence changed');}
@@ -104,6 +104,7 @@ export function assertUnimportRuntimeEvidence(expected,current){if(JSON.stringif
 export function assertFreshUnimportRuntimeEvidence(evidence){
  const seal=evidenceSeals.get(evidence);if(!seal||evidence.digest!==seal.digest)throw Error('Unminted or changed live runtime evidence seal');
  const {digest,...body}=evidence;if(hash(body)!==digest)throw Error('Live runtime evidence object changed');
+ if(evidence.environment.CI!==(process.env.CI??null))throw Error('Native CI environment changed');
  const root=evidence.root,state=seal.state,observed=new Set();
  function walk(relative){const full=path.join(root,relative),stat=fs.lstatSync(full,{bigint:true}),expected=state.states.get(relative);if(!expected||!same(expected.kind==='directory'?directoryFingerprint(stat):fingerprint(stat),expected.fingerprint))throw Error('Installed runtime membership or filesystem identity changed');observed.add(relative);
   if(expected.kind==='directory'){if(!stat.isDirectory())throw Error('Installed directory type changed');for(const name of fs.readdirSync(full).sort())walk(relative+'/'+name);return;}
