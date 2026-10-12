@@ -41,9 +41,13 @@ raw bytes and filesystem identities remain frozen during each live context;
 normalization never permits a mid-run change. Noncanonical JSON, extra projects,
 changed settings or changed implementation bytes refuse admission. This narrow
 profile was reviewed against the original installation and actual native
-transform canaries; it does not admit arbitrary package versions. Two exact
-effective option projections cover an absent CI flag and `CI=true`. They differ
-only in three inactive browser defaults; browser execution remains disabled.
+transform canaries; it does not admit arbitrary package versions. Three exact
+effective option projections cover the observed agent host and isolated CI
+environments. CI changes three inactive browser defaults; isolated execution
+also omits Vite’s original console-forwarding plugin because agent detection is
+absent. All other option and plugin fields match, installed Vite implementation
+bytes stay pinned, and every admitted context checks its own native canaries
+and live plugin identities. Browser execution remains disabled.
 Other CI spellings retain fallback, and changing CI during a live context
 invalidates its facts.
 

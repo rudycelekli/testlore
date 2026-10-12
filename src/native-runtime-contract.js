@@ -18,7 +18,8 @@ const IMPLEMENTATION_SHA='7058ed2febd3328c9022201e2fe590ab075d70e0ff568c39a2b7db
 const DIRECTORIES_SHA='ab1ecbdb5a451319309c9f954873c3bc6357bc27b1b8a10f7094f42148896350';
 const EFFECTIVE_SHA='62fb647f439e4619005f176d3754fd584531c84790eab7f8e098eeef1abc3a13';
 const EFFECTIVE_CI_SHA='efc600c8089d7be224b7e05c8c82161d8aaae0496f0ddf1ec3436004a3c6b3ea';
-const effectivePin=inventory=>inventory.environment?.CI==='true'?EFFECTIVE_CI_SHA:inventory.environment?.CI===null?EFFECTIVE_SHA:null;
+const EFFECTIVE_ISOLATED_CI_SHA='d4261caf5195cb1219eb5fde4ff31f0386ee23089563a526debbf557ebce0294';
+const effectivePins=inventory=>inventory.environment?.CI==='true'?[EFFECTIVE_CI_SHA,EFFECTIVE_ISOLATED_CI_SHA]:inventory.environment?.CI===null?[EFFECTIVE_SHA]:[];
 const CANARIES_SHA='07e216395b1ae6f50be2afc3887e818e2d63b6fdc287906bceff69d9741db590';
 const PROFILE='original-unimport-node22-oxc-runtime-v1';
 const environments=['__vitest__','client','ssr'];
@@ -30,7 +31,7 @@ function nativeBindings(root,command,inventory){
  return bindingFiles.map(file=>{const row=inventory.installedInputs.find(input=>input.file===file&&input.kind==='file');if(!row||hash(fs.readFileSync(path.join(root,file)))!==row.sha256)throw Error('Loaded native binding bytes changed');return {file,sha256:row.sha256};});
 }
 const canarySources={declaration:"import type { Stats } from 'node:fs'; export const value=1;",inline:"import {type Stats} from 'node:fs'; export const value=1;",mixed:"import {type Stats,readFileSync} from 'node:fs'; export const value=readFileSync;",sideeffect:"import 'node:fs'; export const value=1;",exporttype:"export type { Stats } from 'node:fs'; export const value=1;"};
-function supportedInventory(value){return value?.schemaVersion===1&&value.profile==='original-unimport-runtime-facts-v1'&&effectivePin(value)!==null&&value.nodeIdentity?.version==='v22.19.0'&&value.nodeIdentity.sha256===NODE_SHA&&Array.isArray(value.installedInputs)&&value.installedInputs.length<=100000&&value.installationContract?.profile==='original-unimport-pnpm12-bookkeeping-v1'&&value.installationContract.implementationSha256===IMPLEMENTATION_SHA&&hash(value.installedInputs.map(row=>value.installationContract.metadata?.find(input=>input.file===row.file)??row))===IMPLEMENTATION_SHA&&Array.isArray(value.installedDirectories)&&value.installedDirectories.length<=100000&&hash(value.installedDirectories)===DIRECTORIES_SHA&&Array.isArray(value.configurationInputs)&&value.configurationInputs.find(row=>row.file==='vitest.config.ts')?.sha256==='4c2858817158e50b11f7d60a0c658ce54cfba14d707dea42f31b1477fca9a4ac';}
+function supportedInventory(value){return value?.schemaVersion===1&&value.profile==='original-unimport-runtime-facts-v1'&&effectivePins(value).length>0&&value.nodeIdentity?.version==='v22.19.0'&&value.nodeIdentity.sha256===NODE_SHA&&Array.isArray(value.installedInputs)&&value.installedInputs.length<=100000&&value.installationContract?.profile==='original-unimport-pnpm12-bookkeeping-v1'&&value.installationContract.implementationSha256===IMPLEMENTATION_SHA&&hash(value.installedInputs.map(row=>value.installationContract.metadata?.find(input=>input.file===row.file)??row))===IMPLEMENTATION_SHA&&Array.isArray(value.installedDirectories)&&value.installedDirectories.length<=100000&&hash(value.installedDirectories)===DIRECTORIES_SHA&&Array.isArray(value.configurationInputs)&&value.configurationInputs.find(row=>row.file==='vitest.config.ts')?.sha256==='4c2858817158e50b11f7d60a0c658ce54cfba14d707dea42f31b1477fca9a4ac';}
 function constructorOptions(root,profile,options,overrides){
  const allowed=new Set(['--','color','config','c','root','run','watch','includeTaskLocation','reporters','outputFile','cache']);
  if(Object.keys(options).some(key=>!allowed.has(key))||Object.keys(overrides).sort().join(',')!=='logLevel,plugins'||overrides.logLevel!=='silent'||options.cache!==false||options.run!==true||options.watch!==false||options.includeTaskLocation!==true||options.root!==undefined&&options.root!==root||options['--']!==undefined&&(!Array.isArray(options['--'])||options['--'].length)||options.color!==undefined&&typeof options.color!=='boolean')return false;
@@ -85,7 +86,7 @@ export async function createObservedRuntimeContext(root,command,caseProfile,vite
  const context=await canonical.createVitest(options,overrides);
  try{
   const projection=observeUnimportRuntimeOptions(context,root,caseProfile),checkPlugins=pluginSnapshot(context),bindings=nativeBindings(root,command,inventory);
-  if(hash(projection)!==effectivePin(inventory))throw Error('Unreviewed effective transform profile');
+  if(!effectivePins(inventory).includes(hash(projection)))throw Error('Unreviewed effective transform profile');
   const canaries=await transformCanaries(context,root);checkPlugins();
   if(hash(canaries)!==CANARIES_SHA)throw Error('Unreviewed native transform canary outputs');
   assertFreshUnimportRuntimeEvidence(inventory);
@@ -111,7 +112,7 @@ export function assertObservedRuntimeContract(context,prior){const current=captu
  * parent's freshly captured facts. Calling it with public JSON grants nothing. */
 export function validateUnimportRuntimeContract(value,inventory){
  try{
- if(!supportedInventory(inventory)||!value||value.schemaVersion!==1||value.profile!==PROFILE||value.inventoryDigest!==inventory.digest||value.installedSha256!==hash(inventory.installedInputs)||value.implementationSha256!==IMPLEMENTATION_SHA||value.installedDirectoriesSha256!==DIRECTORIES_SHA||value.nodeSha256!==NODE_SHA||value.effectiveSha256!==effectivePin(inventory)||hash(value.effective)!==effectivePin(inventory)||JSON.stringify(value.files)!==JSON.stringify(inventory.testFiles)||JSON.stringify(value.closedConfigurationInputs)!==JSON.stringify(inventory.configurationInputs)||JSON.stringify(value.observerConfiguration)!==JSON.stringify(inventory.observerConfiguration))return null;
+ if(!supportedInventory(inventory)||!value||value.schemaVersion!==1||value.profile!==PROFILE||value.inventoryDigest!==inventory.digest||value.installedSha256!==hash(inventory.installedInputs)||value.implementationSha256!==IMPLEMENTATION_SHA||value.installedDirectoriesSha256!==DIRECTORIES_SHA||value.nodeSha256!==NODE_SHA||!effectivePins(inventory).includes(value.effectiveSha256)||hash(value.effective)!==value.effectiveSha256||JSON.stringify(value.files)!==JSON.stringify(inventory.testFiles)||JSON.stringify(value.closedConfigurationInputs)!==JSON.stringify(inventory.configurationInputs)||JSON.stringify(value.observerConfiguration)!==JSON.stringify(inventory.observerConfiguration))return null;
  if(JSON.stringify(value.nativeBindings)!==JSON.stringify(bindingFiles.map(file=>({file,sha256:inventory.installedInputs.find(input=>input.file===file)?.sha256}))))return null;
  assertFreshUnimportRuntimeEvidence(inventory);
  const {digest,...body}=value;if(Object.keys(value).sort().join(',')!=='canaries,closedConfigurationInputs,digest,effective,effectiveSha256,files,implementationSha256,installedDirectoriesSha256,installedSha256,inventoryDigest,nativeBindings,nodeSha256,observerConfiguration,profile,schemaVersion'||hash(body)!==digest||!Array.isArray(value.canaries)||value.canaries.length!==15||hash(value.canaries)!==CANARIES_SHA)return null;
