@@ -2,7 +2,7 @@ name: Original unimport fixture routing challenge
 on:
   push:
     branches: [codex/frontier-qualification]
-    paths: [scripts/unimport-routing-pilot.js, .github/workflows/unimport-routing-pilot.yml]
+    paths: [scripts/unimport-routing-pilot.js, src/unimport-runtime-evidence.js, src/native-runtime-contract.js, src/native-session.js, src/reporters/resolve.js, .github/workflows/unimport-routing-pilot.yml]
   workflow_dispatch:
     inputs:
       source_sha:
@@ -43,7 +43,7 @@ jobs:
           [[ "$SOURCE_SHA" =~ ^[0-9a-f]{40}$ ]]
           test "$(git rev-parse HEAD)" = "$SOURCE_SHA"
           npm ci --ignore-scripts
-      - name: Bounded original-lock full/subset/native challenge
+      - name: Bounded original-lock unified/full/native and wrong-subset challenge
         working-directory: producer
         env:
           SOURCE_SHA: ${{ inputs.source_sha || github.sha }}

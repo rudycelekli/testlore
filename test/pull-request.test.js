@@ -4,6 +4,7 @@ import path from 'node:path';
 import fs from 'node:fs';
 import {improve} from '../src/improvement.js';
 import {publishImprovement,verifyPullRequestMetadata} from '../src/pull-request.js';
+import {repair} from '../src/repair.js';
 import {fixture,write,commit,git,twoModules} from './helpers.js';
 test('publication requires the exact clean tested branch commit',t=>{
  const root=fixture(t,twoModules);commit(root);
@@ -72,12 +73,27 @@ test('explicit existing PR reuses only verified open metadata and never calls cr
  assert.throws(()=>publishImprovement(root,result,{command:[process.execPath,cli],pullRequest:'https://github.com/other-owner/project/pull/321'}),/Existing pull request URL/);
 });
 
-test('repair PR title and rationale describe source changes with unchanged assertions',t=>{
- const {root,result}=publicationFixture(t);git(root,'branch','-m','tddswarm/repair-bound');Object.assign(result,{kind:'source-repair',branch:'tddswarm/repair-bound',files:['src/a.js'],validation:{accepted:true,baselineRuns:[{},{}],candidateRuns:[{},{}]}});
- const published=publishImprovement(root,result,{command:[process.execPath,fakeGithub(root,result)]});assert.equal(published.published,true);
- const body=fs.readFileSync(path.join(root,'.tddswarm/pull-request.md'),'utf8');assert.match(body,/original assertions were retained unchanged/);assert.match(body,/Source changes: src\/a.js/);assert.match(body,/Baseline runs: 2; candidate runs: 2/);
+test('repair PR publication requires actual repeated challenges and rechecks their unchanged oracle',async t=>{
+ const root=fixture(t,{...twoModules,'src/a.js':'export const a=9;',
+  'tddswarm.requirements.md':'a is one and b remains two',
+  'tddswarm.config.json':{repair:{sourcePaths:['src/a.js'],challenges:'contracts/challenges.json'}},
+  'contracts/challenges.json':{schemaVersion:1,independent:true,basis:'Independent preservation of the unchanged b behavior',cases:[{id:'b-preserved',script:'contracts/preserve-b.cjs'}]},
+  'contracts/preserve-b.cjs':"module.exports=async({assert,root})=>{const {pathToFileURL}=require('node:url');const {b}=await import(pathToFileURL(root+'/src/b.js').href);assert.equal(b,2);};"});
+ commit(root);const bare=fixture(t);git(bare,'init','--bare');git(root,'remote','add','origin','https://github.com/test-owner/project.git');git(root,'config',`url.${bare}.pushInsteadOf`,'https://github.com/test-owner/project.git');
+ const result=await repair(root,{patch:{files:[{path:'src/a.js',content:'export const a=1;'}],review:{accepted:true,findings:[],oracle:{independent:true,basis:['a is one']}}}});
+ t.after(()=>fs.rmSync(result.worktreeRoot,{recursive:true,force:true}));assert.equal(result.status,'ready-for-review',JSON.stringify(result));
+ const cli=fakeGithub(result.worktree,result);
+ for(const change of [{validation:{...result.validation,challenges:undefined}},{finalChallenges:{...result.finalChallenges,accepted:false}},{challengePreflight:[]}])
+  assert.throws(()=>publishImprovement(root,{...result,...change},{command:[process.execPath,cli]}),/regression challenges/);
+ assert.throws(()=>git(bare,'rev-parse',`refs/heads/${result.branch}`),'Rejected evidence must not publish a branch');
+ const script=path.join(result.worktree,'contracts/preserve-b.cjs'),original=fs.readFileSync(script);
+ fs.writeFileSync(script,'module.exports=({assert})=>assert.ok(true);');
+ assert.throws(()=>publishImprovement(root,result,{command:[process.execPath,cli]}),/oracle or runtime changed/);
+ fs.writeFileSync(script,original);
+ const published=publishImprovement(root,result,{command:[process.execPath,cli]});assert.equal(published.published,true);
+ const body=fs.readFileSync(path.join(result.worktree,'.tddswarm/pull-request.md'),'utf8');assert.match(body,/original assertions were retained unchanged/);assert.match(body,/Source changes: src\/a.js/);assert.match(body,/Baseline runs: 2; candidate runs: 2/);assert.match(body,/Challenges: b-preserved/);
  assert.ok(body.startsWith(`<!-- testlore-source-head:${result.sourceHead} -->`));
- const requests=fs.readFileSync(path.join(root,'.tddswarm/requests.jsonl'),'utf8').trim().split('\n').map(JSON.parse),created=requests.find(a=>a[1]==='create');assert.equal(created[created.indexOf('--title')+1],'Repair the verified source failure with TestLore');
+ const requests=fs.readFileSync(path.join(result.worktree,'.tddswarm/requests.jsonl'),'utf8').trim().split('\n').map(JSON.parse),created=requests.find(a=>a[1]==='create');assert.equal(created[created.indexOf('--title')+1],'Repair the verified source failure with TestLore');
 });
 
 test('metadata lookup cannot silently mutate the locally tested commit',t=>{

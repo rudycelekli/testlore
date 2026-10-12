@@ -8,6 +8,7 @@ import {discover,execute,adapterFor} from './execution.js';
 import {stageRepair,validateRepair,applyRepair,isRepairSourcePath,captureRepairState} from './repair-candidates.js';
 import {proposeRepair} from './repair-swarm.js';
 import {withRepairEnvironment} from './repair-environment.js';
+import {captureRepairChallenges,runRepairChallenges,captureChallengeRuntime} from './repair-challenges.js';
 
 function changes(root){
  const entries=git(root,['status','--porcelain=v1','-z','--untracked-files=all']).split('\0').filter(Boolean),result=[];
@@ -61,10 +62,14 @@ export async function repair(root,options={}){
  if(!fs.existsSync(requirementsFile)||fs.statSync(requirementsFile).size>65536)return {kind:'source-repair',status:'awaiting-requirements',published:false,merged:false,next:['Commit independent behavior requirements in tddswarm.requirements.md (at most 64 KiB).']};
  const requirements=fs.readFileSync(requirementsFile,'utf8');
  if(!requirements.trim())throw new Error('Independent requirements must be nonempty');
+ let challenges;
+ try {challenges=captureRepairChallenges(root,config);}catch(error){return {kind:'source-repair',status:'invalid-challenges',published:false,merged:false,error:error.message,next:['Correct and commit the independently maintained challenge manifest before starting workers.']};}
  const sourcePaths=options.sourcePaths??config.repair?.sourcePaths??listFiles(root).filter(file=>/^(?:src|lib|app)\//.test(file)&&isRepairSourcePath(file));
  if(!Array.isArray(sourcePaths)||!sourcePaths.length||sourcePaths.length>32||new Set(sourcePaths).size!==sourcePaths.length||sourcePaths.some(file=>!isRepairSourcePath(file)))throw new Error('Repair requires 1–32 distinct existing production source paths; configure repair.sourcePaths or --sources');
+ if(challenges.status==='configured'&&(sourcePaths.includes(challenges.file)||challenges.cases.some(item=>sourcePaths.includes(item.script))))throw Error('Production repair source ownership cannot include challenge assertions');
  for(const file of sourcePaths){const stat=fs.statSync(safePath(root,file));if(!stat.isFile()||stat.size>65536)throw new Error(`Unbounded repair source: ${file}`);}
  const before=snapshot(root,config),originalState=captureRepairState(root,{deadline:performance.now()+remaining()}),base=git(repository,['rev-parse','--verify','HEAD^{commit}']).trim();
+ if(originalState.nativeRuntime?.status!=='qualified')return {kind:'source-repair',status:'unsupported-repair-evidence',published:false,merged:false,runtime:originalState.nativeRuntime,next:['Use the current Node executable with the supported plain --test runner. External wrappers, preloads and unbound native options cannot qualify automatic repair.']};
  const originalContribution=contributionsEnabled?contributionState(root):null;
  let branchContributionBinding=null;
  const assertContributionFresh=()=>{
@@ -91,10 +96,21 @@ export async function repair(root,options={}){
   const dependencies=path.join(root,'node_modules');if(fs.existsSync(dependencies)&&!fs.existsSync(path.join(worktree,'node_modules')))fs.symlinkSync(fs.realpathSync(dependencies),path.join(worktree,'node_modules'),'dir');
   if(!freshness(before,snapshot(worktree,readConfig(worktree))).fresh)throw new Error('Repair branch inputs differ from caller inputs');
   const branchState=captureRepairState(worktree,{deadline:performance.now()+remaining()});
-  if(branchState.scope.fingerprint!==originalState.scope.fingerprint||branchState.dependencies.fingerprint!==originalState.dependencies.fingerprint)throw new Error('Repair branch does not contain the caller’s exact runtime inputs, including ignored files');
+  if(branchState.scope.fingerprint!==originalState.scope.fingerprint||branchState.dependencies.fingerprint!==originalState.dependencies.fingerprint||digest(branchState.nativeRuntime)!==digest(originalState.nativeRuntime))throw new Error('Repair branch does not contain the caller’s exact runtime inputs, including ignored files');
   const baseline=repairFullSuite(worktree,{timeoutMs:Math.min(timeoutMs,remaining())});result.detection=baseline;assertContributionFresh();
   if(!baseline.complete||baseline.exitCode!==1||!baseline.tests.some(test=>test.status==='failed')){result.status=baseline.complete&&baseline.exitCode===0?'no-failures':'baseline-incomplete';return receipt();}
+  // Observe green native suites without manufacturing a repair. Challenge
+  // governance becomes mandatory when an actual failing repair needs workers.
+  if(challenges.status!=='configured'){result.status='awaiting-challenges';result.challenges=challenges;result.next=challenges.next;return receipt();}
   const agent=options.agent??config.agent;
+  result.challengePreflight=[];
+  const challengeRuntime=captureChallengeRuntime();
+  for(let repetition=0;repetition<2;repetition++){
+   const observation=runRepairChallenges(worktree,challenges,{sourcePaths,runtime:challengeRuntime,timeoutMs:Math.min(timeoutMs,remaining()),deadline,assertFresh:()=>{
+    const current=captureRepairState(worktree,{deadline});if(current.scope.fingerprint!==branchState.scope.fingerprint||current.dependencies.fingerprint!==branchState.dependencies.fingerprint||digest(current.nativeRuntime)!==digest(branchState.nativeRuntime))throw Error('repair-challenge-preflight-input-drift');assertContributionFresh();
+   }});result.challengePreflight.push(observation);
+   if(!observation.accepted){result.status='challenge-baseline-rejected';result.next=['Inspect the named challenge failure on unchanged source. A repair cannot weaken or replace the independent regression oracle.'];return receipt();}
+  }
   if(!options.patch&&!agent){result.status='awaiting-agent';result.next=['Configure a bounded JSON worker in agent argv, or install and authenticate the supported Codex CLI.'];return receipt();}
   const proposal=options.patch??await proposeRepair(worktree,{agent,sourcePaths,requirements,baseline,timeoutMs:Math.min(timeoutMs,remaining()),deadlineMs:remaining(),maxTasks:3,assertInputsFresh:options.assertInputsFresh,...(contributionsEnabled?{contributionSourceRoot:root}:{})});assertContributionFresh();
   result.workers=options.patch?{mode:'supplied-reviewed-patch',realAgentExecution:false}:proposal;
@@ -103,15 +119,19 @@ export async function repair(root,options={}){
   const staged=stageRepair(worktree,{files:proposal.files,requirements,sourcePaths,review:proposal.review});result.candidate=staged;result.files=proposal.files.map(file=>file.path);
   result.validation=validateRepair(worktree,staged.candidatePath,{timeoutMs:Math.min(timeoutMs,remaining()),totalTimeoutMs:Math.min(600000,remaining())});
   assertContributionFresh();
-  if(!result.validation.accepted){result.status='validation-rejected';return receipt();}
+  if(!result.validation.accepted||result.validation.challenges?.accepted!==true){result.status=result.validation.reasons.some(reason=>reason==='independent-challenge-candidate-regression')?'regression-challenge-rejected':'validation-rejected';result.next=result.validation.challenges?.next??['Inspect retained native validation reasons.'];return receipt();}
   result.application=applyRepair(worktree,staged.candidatePath);
   const tested=snapshot(worktree,readConfig(worktree)),testedInputs=inputs(worktreeRoot),testedState=captureRepairState(worktree,{deadline:performance.now()+remaining()});
   result.fullRun=repairFullSuite(worktree,{timeoutMs:Math.min(timeoutMs,remaining())});assertContributionFresh();
   const final=result.fullRun,expected=result.validation.candidate?.tests;
   if(!final.complete||final.exitCode!==0||!final.tests.some(test=>test.status==='passed')||!expected||JSON.stringify(inventory(expected))!==JSON.stringify(inventory(final.tests))){result.status='full-run-failed';result.error='Final native execution must preserve the validated case identities and pass/skip outcomes';result.next=['Inspect final native evidence for missing, failed or newly skipped assertions.','Resolve unstable outcomes before starting another bounded repair round.'];return receipt();}
+  result.finalChallenges=runRepairChallenges(worktree,challenges,{sourcePaths,runtime:challengeRuntime,timeoutMs:Math.min(timeoutMs,remaining()),deadline,assertFresh:()=>{
+   const current=captureRepairState(worktree,{deadline});if(current.scope.fingerprint!==testedState.scope.fingerprint||current.dependencies.fingerprint!==testedState.dependencies.fingerprint||digest(current.nativeRuntime)!==digest(testedState.nativeRuntime))throw Error('repair-final-challenge-input-drift');assertContributionFresh();
+  }});
+  if(!result.finalChallenges.accepted){result.status='regression-challenge-rejected';result.next=['Inspect the retained final challenge failure; no repair commit or PR was produced.'];return receipt();}
   const afterRun=captureRepairState(worktree,{deadline:performance.now()+remaining()}),callerState=captureRepairState(root,{deadline:performance.now()+remaining()});
-  if(inputs(worktreeRoot)!==testedInputs||!freshness(tested,snapshot(worktree,readConfig(worktree))).fresh||afterRun.scope.fingerprint!==testedState.scope.fingerprint||afterRun.dependencies.fingerprint!==testedState.dependencies.fingerprint)throw new Error('Repository or dependencies changed during final repair validation');
-  if(git(repository,['rev-parse','HEAD']).trim()!==base||clean(repository,prefix).length||!freshness(before,snapshot(root,readConfig(root))).fresh||callerState.scope.fingerprint!==originalState.scope.fingerprint||callerState.dependencies.fingerprint!==originalState.dependencies.fingerprint)throw new Error('Original checkout changed during repair');
+  if(inputs(worktreeRoot)!==testedInputs||!freshness(tested,snapshot(worktree,readConfig(worktree))).fresh||afterRun.scope.fingerprint!==testedState.scope.fingerprint||afterRun.dependencies.fingerprint!==testedState.dependencies.fingerprint||digest(afterRun.nativeRuntime)!==digest(testedState.nativeRuntime))throw new Error('Repository or dependencies changed during final repair validation');
+  if(git(repository,['rev-parse','HEAD']).trim()!==base||clean(repository,prefix).length||!freshness(before,snapshot(root,readConfig(root))).fresh||callerState.scope.fingerprint!==originalState.scope.fingerprint||callerState.dependencies.fingerprint!==originalState.dependencies.fingerprint||digest(callerState.nativeRuntime)!==digest(originalState.nativeRuntime))throw new Error('Original checkout changed during repair');
   const allowed=new Set(proposal.files.map(file=>prefix?`${prefix}/${file.path}`:file.path));
   if(changes(worktreeRoot).some(row=>!metadata(row,prefix)&&!allowed.has(row.file)))throw new Error('Changes outside reviewed source repair');
   git(worktreeRoot,['add','--',...allowed]);
@@ -120,7 +140,7 @@ export async function repair(root,options={}){
   result.sha=git(worktreeRoot,['rev-parse','HEAD']).trim();
   const committedState=captureRepairState(worktree,{deadline:performance.now()+remaining()});
   assertContributionFresh();
-  const matches=git(worktreeRoot,['rev-parse','HEAD^{tree}']).trim()===intendedTree&&inputs(worktreeRoot)===testedInputs&&!clean(worktreeRoot,prefix).length&&freshness(tested,snapshot(worktree,readConfig(worktree))).fresh&&committedState.scope.fingerprint===testedState.scope.fingerprint&&committedState.dependencies.fingerprint===testedState.dependencies.fingerprint;
+  const matches=git(worktreeRoot,['rev-parse','HEAD^{tree}']).trim()===intendedTree&&inputs(worktreeRoot)===testedInputs&&!clean(worktreeRoot,prefix).length&&freshness(tested,snapshot(worktree,readConfig(worktree))).fresh&&committedState.scope.fingerprint===testedState.scope.fingerprint&&committedState.dependencies.fingerprint===testedState.dependencies.fingerprint&&digest(committedState.nativeRuntime)===digest(testedState.nativeRuntime);
   result.status=matches?'ready-for-review':'commit-requires-review';
   if(!matches)result.error='Committed tree differs from exact tested source inputs';
   result.next=['Review the source diff and repeated unchanged assertion outcomes.','The CLI opens a verified GitHub PR unless --local is supplied. No automatic merge.'];

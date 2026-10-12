@@ -33,7 +33,9 @@ function readBounded(target, maximum) {
 
 function copy(value) { return { imports: [...value.imports], runtimeImports: [...(value.runtimeImports ?? value.imports)], warnings: [...value.warnings] }; }
 
-/** Cache summaries, never ASTs, resolved edges, discovery, or uncertainty decisions. */
+/** Persisted summaries are untrusted corroboration only. Every disk candidate
+ * receives fresh canonical safety parsing before imports, type hints or warnings
+ * can enter the private in-process cache. Public checksums authenticate nothing. */
 export function createAnalysisCache(root, value, engine) {
   const settings = analysisCacheSettings(value);
   if (typeof engine !== 'string' || !/^[a-f0-9]{64}$/.test(engine)) throw new Error('Invalid analysis cache engine identity');
@@ -49,7 +51,7 @@ export function createAnalysisCache(root, value, engine) {
     const sourceHash = digest(text), key = digest({ schemaVersion: SCHEMA_VERSION, engine, file, sourceHash });
     const cached = memory.get(key);
     if (cached) { stats.memoryHits++; return copy(cached.result); }
-    let cacheable = Buffer.byteLength(text) <= MAX_SOURCE_BYTES;
+    let cacheable = Buffer.byteLength(text) <= MAX_SOURCE_BYTES, diskCandidate = null;
     try { if (root) safePath(root, file); } catch { cacheable = false; }
     if (settings.enabled && root && cacheable) {
       try {
@@ -58,15 +60,18 @@ export function createAnalysisCache(root, value, engine) {
           const bytes = readBounded(target, MAX_ENTRY_BYTES);
           const record = JSON.parse(bytes), { integrity, ...payload } = record;
           if (Object.keys(record).some(field => !['schemaVersion','engine','key','file','sourceHash','result','integrity'].includes(field)) || integrity !== digest(payload) || record.schemaVersion !== SCHEMA_VERSION || record.engine !== engine || record.key !== key || record.file !== file || record.sourceHash !== sourceHash || !validResult(record.result)) throw new Error('Invalid cache summary');
-          remember(key, record.result); stats.diskHits++; return copy(record.result);
+          diskCandidate = copy(record.result);
         }
       } catch { stats.corruptions++; }
     }
     const result = compute(file, text); stats.parses++;
     const summary = copy(result);
     if (validResult(summary)) {
+      const corroborated = diskCandidate !== null && JSON.stringify(diskCandidate) === JSON.stringify(summary);
+      if (corroborated) stats.diskHits++;
+      else if (diskCandidate !== null) stats.corruptions++;
       remember(key, summary);
-      if (settings.enabled && root && cacheable) {
+      if (settings.enabled && root && cacheable && !corroborated) {
         const payload = { schemaVersion: SCHEMA_VERSION, engine, key, file, sourceHash, result: summary };
         const bytes = Buffer.from(JSON.stringify({ ...payload, integrity: digest(payload) }));
         if (bytes.length <= Math.min(MAX_ENTRY_BYTES, settings.maxBytes) && pending.size < settings.maxEntries && pendingBytes + bytes.length <= settings.maxBytes) { pending.set(key, bytes); pendingBytes += bytes.length; }

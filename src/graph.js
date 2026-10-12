@@ -5,7 +5,7 @@ import { createHash } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import { createAnalysisCache, ANALYSIS_CACHE_IMPLEMENTATION } from './graph-cache.js';
 import { adapterFor, discover as nativeDiscovery, resolveNativeBatch, combinedNativePlanningSupported } from './execution.js';
-import { sessionPlanning } from './native-session.js';
+import { sessionPlanning, sessionRuntimeContract } from './native-session.js';
 import { declaredInputs } from './inputs.js';
 import {captureConfigurationInputs,admitsCanonicalTempDirectory} from './configuration-inputs.js';
 import { phaseTimings } from './timing.js';
@@ -17,6 +17,7 @@ export {analyze};
 const ANALYSIS_ENGINE = createHash('sha256').update(JSON.stringify({ schemaVersion: 1, typescript: ts.version, node: process.version, graph: createHash('sha256').update(fs.readFileSync(fileURLToPath(import.meta.url))).digest('hex'), syntaxEngine: loadedIdentity, cache: ANALYSIS_CACHE_IMPLEMENTATION })).digest('hex');
 const SUMMARY_CACHE = Symbol('sourceAnalysisCache');
 const RESOLUTION_CACHE = Symbol('planningModuleResolutionCache');
+const runtimeAuthorities = new WeakMap();
 function summaries(graph) {
   assertCurrentEngine();
   if (!graph[SUMMARY_CACHE]) {
@@ -54,6 +55,8 @@ function build(root, nativeSession, planningInputs) {
     let combined, sharedAttempt;
     if(nativeSession) {
       combined=sessionPlanning(nativeSession,root);
+      const runtimeContract=sessionRuntimeContract(nativeSession,root);
+      if(runtimeContract)graph.runtimeContract=runtimeContract;
       graph.nativeProjects=combined.projectContracts;
       graph.nativePlanning={method:'fresh-unified-native-context',complete:true};
       graph.nativeResolutions=new Map(combined.additionalResolutions.map(item=>[JSON.stringify([item.file,item.specifier]),item.resolution]));
@@ -134,6 +137,7 @@ function build(root, nativeSession, planningInputs) {
     else graph.warnings=graph.warnings.filter(w=>!(w.file===input.file&&w.reason==='runtime-dependency'));
   }
   for(const warning of graph.configurationInputs.warnings)graph.warnings.push({...warning,scope:'global'});
+  if(nativeSession&&graph.runtimeContract)runtimeAuthorities.set(graph,{token:nativeSession,root,graphDigest:runtimeGraphDigest(graph)});
   classifyWarnings(graph);
   timing.mark('warningClassification');
   graph.timings = timing.finish();
@@ -186,10 +190,11 @@ export function addSource(graph, file, text, files = new Set(graph.files)) {
   graph.runtimeEdges[file] = [...new Set(runtimeEdges)].sort();
 }
 
-export function dependencies(graph, start) {
+export function dependencies(graph, start) { return dependencyClosure(graph.edges,start); }
+function dependencyClosure(edges, start) {
   const seen = new Set();
   function visit(file) {
-    for (const dep of graph.edges[file] || []) {
+    for (const dep of edges[file] || []) {
       if (seen.has(dep) || dep === start) continue;
       seen.add(dep); visit(dep);
     }
@@ -281,18 +286,34 @@ function resolveGraphImport(graph,file,spec,files) {
 }
 
 /** Unknown source edges retain their consumers on every change; global context is never scoped away. */
+function runtimeGraphDigest(graph) {
+  return createHash('sha256').update(JSON.stringify({tests:graph.tests,edges:graph.edges,runtimeEdges:graph.runtimeEdges,sources:graph.sources,configFiles:[...graph.configFiles].sort(),warnings:graph.warnings.map(({file,reason})=>({file,reason}))})).digest('hex');
+}
 export function classifyWarnings(graph) {
+  const admission=runtimeAuthorities.get(graph);
+  if(admission&&runtimeGraphDigest(graph)!==admission.graphDigest)throw new Error('Qualified runtime graph metadata changed after fresh construction');
+  const runtimeContract=admission?sessionRuntimeContract(admission.token,admission.root):null;
   const globalReasons = new Set(['runtime-registration','incomplete-native-discovery','discovered-file-outside-graph','external-resolution-config','incomplete-native-resolution','invalid-tsconfig','invalid-tsconfig-resolution','invalid-package-json','unknown-mapped-test','missing-mapped-dependency','resolution-config-outside-graph']);
   const consumersBySource = new Map();
+  const runtimeConsumersBySource = new Map();
   for(const test of graph.tests)for(const file of [test,...dependencies(graph,test)]){
     const consumers=consumersBySource.get(file) || []; consumers.push(test);consumersBySource.set(file,consumers);
   }
+  if(runtimeContract)for(const test of graph.tests)for(const file of [test,...dependencyClosure(graph.runtimeEdges,test)]){
+    const consumers=runtimeConsumersBySource.get(file)||[];consumers.push(test);runtimeConsumersBySource.set(file,consumers);
+  }
   for(const warning of graph.warnings) {
-    const consumers = consumersBySource.get(warning.file) || [];
+    const refined=runtimeContract&&['runtime-dependency','dynamic-dependency'].includes(warning.reason);
+    const consumers = (refined?runtimeConsumersBySource:consumersBySource).get(warning.file) || [];
     const configContext = graph.configFiles?.has(warning.file);
     const sourceContext = Object.hasOwn(graph.sources || {}, warning.file);
+    if(runtimeContract&&warning.reason==='dynamic-dependency'&&warning.file===runtimeContract.observerConfiguration.file&&
+      createHash('sha256').update(graph.sources[warning.file]||'').digest('hex')===runtimeContract.observerConfiguration.sha256){
+      warning.scope='qualified-observer-configuration';warning.tests=[];warning.runtimeContractDigest=runtimeContract.digest;continue;
+    }
     warning.scope = globalReasons.has(warning.reason) || configContext || !sourceContext ? 'global' : consumers.length ? 'test-closure' : 'unreachable-source';
     warning.tests = warning.scope==='test-closure' ? consumers : [];
+    if(refined)warning.runtimeContractDigest=runtimeContract.digest;
   }
   return graph.warnings;
 }

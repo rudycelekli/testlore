@@ -7,6 +7,7 @@ import {SOURCE, TEST, safePath, readConfig} from './files.js';
 import {digest, freshness, snapshot} from './provenance.js';
 import {adapterFor, discover, execute, nativeEnvironment} from './execution.js';
 import {withRepairEnvironment} from './repair-environment.js';
+import {captureRepairChallenges,captureChallengeRuntime,captureNativeRepairRuntime,runRepairChallenges,assessRepairChallenges} from './repair-challenges.js';
 
 const MAX_TEXT = 65536, MAX_REPORT = 2 * 1024 * 1024;
 const canonical = file => typeof file === 'string' && !file.includes('\\') && !file.includes('\0') && !path.isAbsolute(file) && file.split('/').every(part => part && part !== '.' && part !== '..');
@@ -61,14 +62,14 @@ function tree(root, {dependencies = false, deadline = Infinity} = {}) {
 function state(root, deadline) {
   const scope = tree(root, {deadline}), dependencies = tree(root, {dependencies:true, deadline}), config = readConfig(root);
   if(Object.keys(config.services||{}).length)throw new Error('External service repair evidence is unsupported');
-  const result={scope, dependencies, provenance:snapshot(root,config)};
+  const result={scope, dependencies, provenance:snapshot(root,config),nativeRuntime:captureNativeRepairRuntime(root,config)};
   if(performance.now()>deadline)throw new Error('repair-total-time-budget-exceeded');
   return result;
 }
 export function captureRepairState(root,{deadline=performance.now()+30000}={}) {return state(root,deadline);}
 function assertFresh(manifest, current) {
   const check = freshness(manifest.state.provenance, current.provenance);
-  if (!check.fresh || manifest.state.provenance.revision !== current.provenance.revision || manifest.state.scope.fingerprint !== current.scope.fingerprint || manifest.state.dependencies.fingerprint !== current.dependencies.fingerprint) throw new Error('Repair inputs are stale: '+ check.reasons.join(', '));
+  if (!check.fresh || manifest.state.provenance.revision !== current.provenance.revision || manifest.state.scope.fingerprint !== current.scope.fingerprint || manifest.state.dependencies.fingerprint !== current.dependencies.fingerprint || digest(manifest.state.nativeRuntime)!==digest(current.nativeRuntime)) throw new Error('Repair inputs are stale: '+ check.reasons.join(', '));
 }
 function locate(root, candidatePath) {
   if (typeof candidatePath !== 'string' || !/^\.tddswarm\/repairs\/[a-f0-9-]{36}$/.test(candidatePath)) throw new Error('Invalid repair candidate path');
@@ -101,7 +102,9 @@ export function stageRepair(root, {files, requirements, sourcePaths, review} = {
   const id = randomUUID(), candidatePath = `.tddswarm/repairs/${id}`, directory = safePath(root,candidatePath);
   fs.mkdirSync(directory,{recursive:true});
   for (const file of files) { const target = safePath(directory,`files/${file.path}`); fs.mkdirSync(path.dirname(target),{recursive:true}); fs.writeFileSync(target,file.content,{flag:'wx'}); }
-  const manifest = {schemaVersion:1,kind:'source-repair',id,state:before,sourcePaths,files:files.map(file=>({path:file.path,hash:digest(file.content),beforeHash:before.scope.files[file.path].hash})),requirementsPath:'tddswarm.requirements.md',requirements,requirementsHash:digest(requirements),review};
+  const challenges=captureRepairChallenges(root);
+  if(challenges.status==='configured'&&challenges.cases.some(item=>sourcePaths.includes(item.script)))throw Error('Repair source cannot own challenge assertions');
+  const manifest = {schemaVersion:1,kind:'source-repair',id,state:before,sourcePaths,files:files.map(file=>({path:file.path,hash:digest(file.content),beforeHash:before.scope.files[file.path].hash})),requirementsPath:'tddswarm.requirements.md',requirements,requirementsHash:digest(requirements),review,challenges,...(challenges.status==='configured'?{challengeRuntime:captureChallengeRuntime()}:{})};
   const serialized=JSON.stringify(manifest,null,2);if(Buffer.byteLength(serialized)>MAX_REPORT){fs.rmSync(directory,{recursive:true,force:true});throw new Error('Repair manifest evidence exceeds bound');}
   fs.writeFileSync(path.join(directory,'manifest.json'),serialized);
   return {id,directory,candidatePath,kind:'source-repair',status:review.accepted?'reviewed-repair':'rejected-repair',applied:false};
@@ -169,48 +172,66 @@ function copied(root, scope, action) {
 export function validateRepair(root, candidatePath, options={}) {
   const started=performance.now(),total=options.totalTimeoutMs??120000,perRun=options.timeoutMs??20000;
   if(!Number.isInteger(total)||total<1||total>600000||!Number.isInteger(perRun)||perRun<1||perRun>120000)throw new Error('Invalid bounded repair runtime budget');
-  const deadline=started+total,{directory,manifest,hash}=locate(root,candidatePath),baseline=[],candidateRuns=[],assertionRuns=[],reasons=[];
+  const deadline=started+total,{directory,manifest,hash}=locate(root,candidatePath),baseline=[],candidateRuns=[],assertionRuns=[],challengeBaseline=[],challengeCandidate=[],reasons=[];
   const remaining=()=>{const value=Math.floor(Math.min(perRun,deadline-performance.now()));if(value<1)throw new Error('repair-total-time-budget-exceeded');return value;};
+  const nativeFresh=()=>{if(manifest.state.nativeRuntime?.status!=='qualified'||digest(captureNativeRepairRuntime(root))!==digest(manifest.state.nativeRuntime))throw Error('native-execution-mutated-runtime');};
   try {
     assertFresh(manifest,state(root,deadline));
+    if(manifest.state.nativeRuntime?.status!=='qualified')throw new Error('assertion-evidence-unsupported: '+(manifest.state.nativeRuntime?.reason||'repair-native-runtime-binding-required'));
     if(!manifest.review.accepted||!manifest.review.oracle?.independent||!Array.isArray(manifest.review.oracle.basis)||!manifest.review.oracle.basis.length||manifest.review.oracle.basis.some(x=>typeof x!=='string'||!x.trim()||x.length>4096))throw new Error('independent-repair-review-required');
     const config=readConfig(root);
     const argv=config.runner||['node','--test','{files}'];
     if(adapterFor(config)!=='node'||config.integration||Array.isArray(config.discovery)||!/(?:^|[\/\\])node(?:\.exe)?$/.test(argv[0])||!argv.includes('--test')||argv.slice(1).some(arg=>arg!=='{files}'&&!arg.startsWith('-'))||argv.some(arg=>/^--test-(?:name-pattern|skip-pattern|only|force-exit)(?:=|$)/.test(arg)))throw new Error('assertion-evidence-unsupported');
     for(const candidate of [false,false,true,true]) {
+      nativeFresh();
       const result=copied(root,manifest.state.scope,temp=>{
         if(candidate)for(const file of manifest.files)fs.writeFileSync(regular(temp,file.path),fs.readFileSync(regular(directory,`files/${file.path}`)));
         const before=tree(temp,{deadline}),localConfig=readConfig(temp);
         return withRepairEnvironment(localConfig,isolatedConfig=>{
         const discovery=discover(temp,{...isolatedConfig,discovery:'native',runnerTimeoutMs:remaining()});
+        nativeFresh();
         if(!discovery.complete||!discovery.files.length)throw new Error('full-native-discovery-incomplete-or-empty');
         if(discovery.files.some(file=>manifest.sourcePaths.includes(file)))throw new Error('repair-source-is-native-test-file');
         const report={...execute(temp,discovery.files,isolatedConfig,{capture:true,timeoutMs:remaining()}),discovery};
+        nativeFresh();
         if(Buffer.byteLength(JSON.stringify(report))>MAX_REPORT)throw new Error('repair-report-output-budget-exceeded');
         (candidate?candidateRuns:baseline).push(report);
         const cases=inventory(report);
         if(discovery.files.some(file=>!report.collectionFiles?.includes(file))||report.collectionFiles?.some(file=>!discovery.files.includes(file)))throw new Error('native-full-scope-mismatch');
         if(candidate){if(report.exitCode!==0||cases.some(([,status])=>status==='failed'))throw new Error('candidate-suite-not-all-green');}
-        else {if(report.exitCode===0||!cases.some(([,status])=>status==='failed'))throw new Error('repeatable-assertion-baseline-required');assertionRuns.push(withRepairEnvironment(localConfig,probeConfig=>assertionProbe(temp,report,probeConfig,remaining())));}
+        else {if(report.exitCode===0||!cases.some(([,status])=>status==='failed'))throw new Error('repeatable-assertion-baseline-required');assertionRuns.push(withRepairEnvironment(localConfig,probeConfig=>assertionProbe(temp,report,probeConfig,remaining())));nativeFresh();}
         if(tree(temp,{deadline}).fingerprint!==before.fingerprint)throw new Error('native-execution-mutated-project-inputs');
+        if(manifest.challenges?.status==='configured') {
+          const challenge=runRepairChallenges(temp,manifest.challenges,{sourcePaths:manifest.sourcePaths,runtime:manifest.challengeRuntime,timeoutMs:remaining(),deadline,assertFresh:()=>{
+            nativeFresh();
+            if(tree(temp,{deadline}).fingerprint!==before.fingerprint||tree(root,{dependencies:true,deadline}).fingerprint!==manifest.state.dependencies.fingerprint)throw Error('repair-challenge-project-or-dependency-drift');
+          }});
+          (candidate?challengeCandidate:challengeBaseline).push(challenge);
+          if(!challenge.accepted)throw Error(candidate?'independent-challenge-candidate-regression':'independent-challenge-baseline-not-passing');
+        }
         return report;
         });
       });
       if(tree(root,{dependencies:true,deadline}).fingerprint!==manifest.state.dependencies.fingerprint)throw new Error('native-execution-mutated-dependencies');
+      if(digest(captureNativeRepairRuntime(root))!==digest(manifest.state.nativeRuntime))throw Error('native-execution-mutated-runtime');
       if(baseline.length===2&&digest(inventory(baseline[0]))!==digest(inventory(baseline[1])))throw new Error('baseline-case-outcomes-not-repeatable');
       if(candidate){const expected=inventory(baseline[0]).map(([key,status])=>[key,status==='skipped'?'skipped':'passed']);if(digest(expected)!==digest(inventory(result)))throw new Error('original-case-inventory-or-skip-status-changed');}
     }
     assertFresh(manifest,state(root,deadline));
     if(digest(locate(root,candidatePath).manifest)!==hash)throw new Error('repair-manifest-changed-during-validation');
   }catch(error){reasons.push(error.message.slice(0,1000));}
-  const result={schemaVersion:1,kind:'source-repair',accepted:!reasons.length&&baseline.length===2&&candidateRuns.length===2&&assertionRuns.length===2,reasons,manifestHash:hash,inputFingerprint:digest(manifest.state),baseline,candidateRuns,assertionRuns,original:baseline[0]??null,candidate:candidateRuns[0]??null,durationMs:Math.round(performance.now()-started),bounds:{totalTimeoutMs:total,perNativeTimeoutMs:perRun,retainedReportBytes:MAX_REPORT,nativeTransportMaxBufferBytes:64*1024*1024},cost:null};
-  if(Buffer.byteLength(JSON.stringify(result,null,2))>MAX_REPORT-512){result.accepted=false;result.reasons.push('repair-total-evidence-output-budget-exceeded');result.baseline=[];result.candidateRuns=[];result.assertionRuns=[];result.original=null;result.candidate=null;}
+  const challenges=manifest.challenges?.status==='configured'?assessRepairChallenges(challengeBaseline,challengeCandidate):{status:'not-configured',accepted:false,next:['Suite-only validation does not qualify production repair readiness; configure independent behavioral challenges.']};
+  if(manifest.challenges?.status==='configured'&&!challenges.accepted)reasons.push(...challenges.reasons);
+  const result={schemaVersion:1,kind:'source-repair',accepted:!reasons.length&&baseline.length===2&&candidateRuns.length===2&&assertionRuns.length===2,reasons,manifestHash:hash,inputFingerprint:digest(manifest.state),baseline,candidateRuns,assertionRuns,challenges,qualification:challenges.accepted?'suite-and-independent-challenges':'original-suite-only',original:baseline[0]??null,candidate:candidateRuns[0]??null,durationMs:Math.round(performance.now()-started),bounds:{totalTimeoutMs:total,perNativeTimeoutMs:perRun,retainedReportBytes:MAX_REPORT,nativeTransportMaxBufferBytes:64*1024*1024},cost:null};
+  if(Buffer.byteLength(JSON.stringify(result,null,2))>MAX_REPORT-512){result.accepted=false;result.reasons.push('repair-total-evidence-output-budget-exceeded');result.baseline=[];result.candidateRuns=[];result.assertionRuns=[];result.challenges={status:'rejected',accepted:false,reasons:['repair-total-evidence-output-budget-exceeded']};result.original=null;result.candidate=null;}
   result.integrity=seal(root,result,{create:true});fs.writeFileSync(safePath(directory,'validation.json'),JSON.stringify(result,null,2));return result;
 }
 /** Apply only an accepted, fresh source repair. No tests or requirements are touched. */
 export function applyRepair(root,candidatePath) {
   const {directory,manifest,hash}=locate(root,candidatePath),receipt=readJson(regular(directory,'validation.json')),{integrity,...body}=receipt;
   if(integrity!==seal(root,body)||!receipt.accepted||receipt.kind!=='source-repair'||receipt.manifestHash!==hash||receipt.inputFingerprint!==digest(manifest.state)||receipt.baseline?.length!==2||receipt.candidateRuns?.length!==2||receipt.assertionRuns?.length!==2)throw new Error('Accepted intact repair validation required');
+  if(manifest.challenges?.status==='configured'&&!receipt.challenges?.accepted)throw Error('Accepted independent regression challenges required');
+  if(manifest.challengeRuntime&&digest(captureChallengeRuntime())!==digest(manifest.challengeRuntime))throw Error('Repair challenge runtime changed before apply');
   assertFresh(manifest,state(root,performance.now()+30000));
   const originals=manifest.files.map(file=>({path:file.path,bytes:fs.readFileSync(regular(root,file.path)),mode:fs.statSync(regular(root,file.path)).mode&0o777})),prepared=[];let applied=0;
   try {
@@ -219,4 +240,31 @@ export function applyRepair(root,candidatePath) {
   }catch(error){for(let index=0;index<applied;index++){const file=originals[index];if(digest(fs.readFileSync(regular(root,file.path)))===manifest.files[index].hash){fs.writeFileSync(regular(root,file.path),file.bytes);fs.chmodSync(regular(root,file.path),file.mode);}}throw error;}
   finally {for(const file of prepared)fs.rmSync(file.temp,{force:true});}
   const result={kind:'source-repair',applied:true,files:manifest.files.map(file=>file.path),validationIntegrity:integrity};fs.writeFileSync(safePath(directory,'applied.json'),JSON.stringify(result,null,2));return result;
+}
+
+/** Reconcile local authenticated evidence with the exact post-apply bytes.
+ * A new fix commit may change HEAD; the publication controller independently
+ * binds its exact SHA. Local authentication is not an OS security boundary. */
+export function verifyAppliedRepairValidation(root,candidatePath,{deadline=performance.now()+30000}={}) {
+ if(!Number.isFinite(deadline)||deadline<=performance.now())throw Error('Repair publication freshness deadline exhausted');
+ const {directory,manifest,hash}=locate(root,candidatePath),receipt=readJson(regular(directory,'validation.json')),{integrity,...body}=receipt;
+ if(typeof integrity!=='string'||integrity!==seal(root,body)||receipt.kind!=='source-repair'||receipt.accepted!==true||receipt.manifestHash!==hash||receipt.inputFingerprint!==digest(manifest.state)||receipt.baseline?.length!==2||receipt.candidateRuns?.length!==2||receipt.assertionRuns?.length!==2)throw Error('Authenticated accepted repair validation required for publication');
+ if(manifest.challenges?.status!=='configured'||receipt.challenges?.accepted!==true||!assessRepairChallenges(receipt.challenges.baseline,receipt.challenges.candidate).accepted)throw Error('Authenticated independent repair challenges required for publication');
+ if(digest(captureRepairChallenges(root))!==digest(manifest.challenges)||digest(captureChallengeRuntime())!==digest(manifest.challengeRuntime))throw Error('Repair challenge oracle or runtime changed before publication');
+ const source=applied=>manifest.sourcePaths.map(file=>({file,sha256:applied?(manifest.files.find(item=>item.path===file)?.hash??manifest.state.scope.files[file].hash):manifest.state.scope.files[file].hash,bytes:fs.statSync(regular(root,file)).size}));
+ // Baseline byte lengths can differ from the applied file. Bind their hashes
+ // and owned paths; exact candidate lengths are reconciled with current bytes.
+ const expectedBaseline=source(false).map(({file,sha256})=>({file,sha256})),expectedCandidate=source(true);
+ for(const [runs,expected,baseline] of [[receipt.challenges.baseline,expectedBaseline,true],[receipt.challenges.candidate,expectedCandidate,false]])for(const run of runs){
+  const actual=baseline?run.source.map(({file,sha256})=>({file,sha256})):run.source;
+  if(digest(actual)!==digest(expected)||run.identity!==manifest.challenges.identity||digest(run.runtime)!==digest(manifest.challengeRuntime))throw Error('Repair challenge source bindings differ from authenticated manifest');
+ }
+ const applied=readJson(regular(directory,'applied.json'));
+ if(applied.kind!=='source-repair'||applied.applied!==true||applied.validationIntegrity!==integrity||digest(applied.files)!==digest(manifest.files.map(item=>item.path)))throw Error('Applied repair record differs from authenticated validation');
+ const current=state(root,deadline),expectedFiles=structuredClone(manifest.state.scope.files);
+ for(const file of manifest.files)expectedFiles[file.path]={...expectedFiles[file.path],hash:file.hash};
+ if(current.dependencies.fingerprint!==manifest.state.dependencies.fingerprint)throw Error('Repair installed dependencies changed before publication');
+ if(manifest.state.nativeRuntime?.status!=='qualified'||digest(current.nativeRuntime)!==digest(manifest.state.nativeRuntime))throw Error('Repair native runtime changed before publication');
+ if(current.scope.fingerprint!==digest(expectedFiles)||current.provenance.runner!==manifest.state.provenance.runner||digest(current.provenance.services)!==digest(manifest.state.provenance.services))throw Error('Repair protected project inputs changed before publication');
+ return {receipt,manifest,manifestHash:hash,currentInputFingerprint:digest({scope:current.scope,dependencies:current.dependencies})};
 }

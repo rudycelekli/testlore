@@ -13,6 +13,7 @@ import {boundedInstallProcess} from './public-corpus-upstream.js';
 export const UNIMPORT_PIN='bbd07768ddb4919205bcb5a3cbc06c3a2791981a';
 export const ASSET='playground/composables/comma-separated.ts';
 const ORACLE='test/scan-dirs.test.ts';
+const DTS_ORACLE='test/dts.test.ts';
 const h=value=>createHash('sha256').update(typeof value==='string'||Buffer.isBuffer(value)?value:JSON.stringify(value)).digest('hex');
 const eq=(a,b)=>JSON.stringify(a)===JSON.stringify(b);
 const hashValue=value=>typeof value==='string'&&/^[a-f0-9]{64}$/.test(value);
@@ -23,6 +24,15 @@ function boundedArm(event){
 const save=(file,value)=>fs.writeFileSync(file,JSON.stringify(value,null,2)+'\n',{flag:'wx',mode:0o600});
 const git=(root,...args)=>execFileSync('git',['-C',root,...args],{encoding:'utf8',timeout:15000,maxBuffer:8*1024**2}).trim();
 const safe=file=>typeof file==='string'&&file.length>0&&!path.isAbsolute(file)&&!/[\\\0]/.test(file)&&file.split('/').every(part=>part&&part!=='.'&&part!=='..');
+/** Positive reviewed filesystem edges, not a claim that other consumers are absent. */
+export function unimportFilesystemContracts(paths,sourceBindings){
+ const consumers=[DTS_ORACLE,ORACLE],scanner='src/node/scan-dirs.ts';
+ if(!Array.isArray(paths)||new Set(paths).size!==paths.length||paths.some(file=>!safe(file)||!hashValue(sourceBindings[file]))||[...consumers,scanner].some(file=>!paths.includes(file)))throw Error('Original filesystem source bindings incomplete');
+ const domains=[{directory:'playground/composables',consumers},{directory:'playground/composables-override',consumers:[ORACLE]}].map(domain=>({...domain,members:paths.filter(file=>file.startsWith(domain.directory+'/')).sort().map(file=>({file,sha256:sourceBindings[file]}))}));
+ if(domains.some(domain=>!domain.members.length)||!domains[0].members.some(member=>member.file===ASSET))throw Error('Reviewed filesystem domain membership incomplete');
+ const dependencies=Object.fromEntries(consumers.map(consumer=>[consumer,domains.filter(domain=>domain.consumers.includes(consumer)).flatMap(domain=>domain.members.map(member=>member.file)).sort()]));
+ return {schemaVersion:1,upstreamRevision:UNIMPORT_PIN,domains,consumerInputs:[...consumers,scanner].map(file=>({file,sha256:sourceBindings[file]})),dependencies,scope:'Positive fixture scanner edges only. Current membership and original consumer/scanner bytes must remain bound; no cleared uncertainty or completeness claim for other filesystem/runtime consumers.'};
+}
 /** The pnpm12 archive declares a native package-root launcher, not pnpm.cjs. */
 export function selectPnpmManager(records){
  if(!Array.isArray(records)||records.length!==1)throw Error('Pinned package manager ambiguous');
@@ -96,7 +106,7 @@ export function testLoreCases(raw){
  return raw.nativeCaseEvidence?semanticCases(cases,files,raw.nativeCaseEvidence):{files,cases:cases.sort((a,b)=>a.id.localeCompare(b.id))};
 }
 /** Replay raw per-arm reports; aggregate claims cannot substitute for complete cases. */
-export function assessUnimportRuns(runs,root,expectedFiles){
+export function assessUnimportRuns(runs,root,expectedFiles,{requireUnified=false,requiredFailureFiles=[ORACLE]}={}){
  const reasons=[],rows=[];let baseline=null,baselineStatuses=null,expectedFailures=null;
  for(const phase of ['clean','fault','restored'])for(let repeat=0;repeat<2;repeat++){
   const batch=runs.filter(run=>run.phase===phase&&run.repeat===repeat);
@@ -108,7 +118,7 @@ export function assessUnimportRuns(runs,root,expectedFiles){
    if(!baseline){baseline=inventory;baselineStatuses=full.cases;}else if(!eq(inventory,baseline))throw Error('Full case identity drift');
    const failures=full.cases.filter(test=>test.status==='failed').map(test=>test.id);
    if(phase==='fault'){
-    if(!failures.length||!full.cases.some(test=>test.status==='failed'&&test.file===ORACLE))throw Error('Original oracle did not demonstrate fixture regression');
+    if(!failures.length||requiredFailureFiles.some(file=>!full.cases.some(test=>test.status==='failed'&&test.file===file)))throw Error('Original oracle did not demonstrate every required fixture regression');
     if(expectedFailures&&!eq(failures,expectedFailures))throw Error('Independent regression outcomes unstable');expectedFailures=failures;
     if(full.cases.some(test=>(test.status==='skipped')!==(baselineStatuses.find(original=>original.id===test.id).status==='skipped')))throw Error('Original skipped outcomes drift');
    }else if(failures.length||!full.cases.some(test=>test.status==='passed')||!eq(full.cases,baselineStatuses))throw Error('Original healthy full suite not green/stable');
@@ -119,6 +129,7 @@ export function assessUnimportRuns(runs,root,expectedFiles){
     if(!boundedArm(run.event)||run.event.reason||run.event.signal||run.event.exitCode!==(current.cases.some(test=>test.status==='failed')?1:0)||(run.arm==='testlore'&&run.raw.exitCode!==run.event.exitCode)||!hashValue(run.event.stdoutSha256)||!hashValue(run.event.stderrSha256)||!Number.isFinite(run.outerMs)||run.outerMs<0||run.outerMs<run.event.durationMs)throw Error(run.arm+' lifecycle/resource/timing unavailable');
     row[run.arm]={files:current.files.length,outerMs:run.outerMs,missedFailures:failures.filter(id=>!current.cases.some(test=>test.id===id&&test.status==='failed')).length};
     if(run.arm==='testlore'){
+     if(requireUnified&&(run.raw.unifiedNative?.used!==true||run.raw.unifiedNative.contexts!==1||run.raw.unifiedNative.partial))throw Error('Requested single fresh unified context unavailable');
      const plan=run.raw.plan;if(!plan||plan.total!==full.files.length||!eq([...plan.selected].sort(),current.files)||!Array.isArray(plan.decisions)||plan.decisions.length!==full.files.length)throw Error('Selected execution/decision inventory differs');
      if(new Set(plan.decisions.map(decision=>decision.test)).size!==full.files.length||plan.decisions.some(decision=>!full.files.includes(decision.test)||decision.selected!==current.files.includes(decision.test)||!Array.isArray(decision.reasons)||!decision.reasons.length))throw Error('Unexplained selected/omitted case');
      row.omitted=full.files.length-current.files.length;row.mode=plan.mode;row.omissionReasons=plan.decisions.filter(decision=>!decision.selected).map(decision=>({test:decision.test,reasons:decision.reasons}));
@@ -131,7 +142,14 @@ export function assessUnimportRuns(runs,root,expectedFiles){
  if(runs.length!==18)reasons.push({reason:'Expected exactly18 independent arm invocations'});
  const complete=reasons.length===0&&rows.length===6;
  const routingValue=complete&&rows.filter(row=>row.phase==='fault').every(row=>row.omitted>0&&row.testlore.missedFailures===0&&row.native.missedFailures>0&&['test/dedupe.test.ts','test/to-imports.test.ts'].every(file=>row.omissionReasons.some(decision=>decision.test===file)));
- return {kind:'unimport-seeded-fixture-routing-assessment',complete,routingValue,qualified:routingValue,rows,reasons,historicalUpstreamBug:false,speedAdvantageClaim:false,scope:'Original upstream Vitest runtime suite and required original build in one Node22/Linux environment; lint, typecheck, coverage and other CI environments unqualified.',timingScope:'Each arm from fresh outer CLI startup through raw/capture report writes and postflight revalidation; exact CLI/raw span and revalidation separately retained. Total controller span through assessment/restoration separately retained. Final timing metadata writes excluded; native caches disabled equally, OS caches uncontrolled.'};
+ return {kind:'unimport-seeded-fixture-routing-assessment',complete,routingValue,qualified:routingValue,rows,reasons,historicalUpstreamBug:false,speedAdvantageClaim:false,requiredFailureFiles,requireUnified,scope:'Original upstream Vitest runtime suite and required original build in one Node22 environment; lint, typecheck, coverage and other CI environments unqualified.',timingScope:'Each arm from fresh outer CLI startup through raw/capture report writes and postflight revalidation; exact CLI/raw span and revalidation separately retained. Total controller span through assessment/restoration separately retained. Final timing metadata writes excluded; native caches disabled equally, OS caches uncontrolled. Repetitions are fresh processes with uncontrolled OS warmth, not cold/warm cache qualification.'};
+}
+export function assessUnimportWrongSubset(full,wrong,root){
+ const baseline=nativeCases(full.raw,root,full.nativeErrors,full.nativeObserverPath,full.nativeCaseEvidence),subset=nativeCases(wrong.raw,root,wrong.nativeErrors,wrong.nativeObserverPath,wrong.nativeCaseEvidence);
+ if([full,wrong].some(run=>!boundedArm(run.event)||run.event.reason||run.event.signal||run.event.exitCode!==1||!hashValue(run.event.stdoutSha256)||!hashValue(run.event.stderrSha256))||!eq(subset.files,[ORACLE])||!eq(subset.cases,baseline.cases.filter(test=>subset.files.includes(test.file))))throw Error('Independent wrong-subset lifecycle/outcomes incomplete');
+ const failures=baseline.cases.filter(test=>test.status==='failed'),missed=failures.filter(test=>!subset.cases.some(current=>current.id===test.id&&current.status==='failed'));
+ if(!failures.some(test=>test.file===ORACLE)||!failures.some(test=>test.file===DTS_ORACLE)||!missed.some(test=>test.file===DTS_ORACLE)||missed.some(test=>test.file!==DTS_ORACLE))throw Error('Wrong-subset did not independently demonstrate omitted dts failure');
+ return {kind:'independent-wrong-subset-control',complete:true,accepted:false,rejection:'Subset omitted independently demonstrated dts failure',executedFiles:subset.files,fullFailures:failures.length,missedFailures:missed.map(test=>({id:test.id,file:test.file,name:test.name})),seededFixtureOnly:true,omissionAuthority:false};
 }
 
 function installed(root){
@@ -189,19 +207,20 @@ export async function unimportRoutingPilot({upstream,output,sourceSha}){
  const cli=path.join(upstream,'node_modules/vitest/vitest.mjs');if(JSON.parse(fs.readFileSync(path.join(upstream,'node_modules/vitest/package.json'))).version!=='5.0.0')throw Error('Original frozen Vitest version differs');
  const dependencyInventory=installed(upstream);save(path.join(output,'installed-inventory.json'),dependencyInventory);
  const observerConfig='testlore.observation.config.mjs',observerSource=unimportFactoryObserverConfigSource(upstream);
- const config={adapter:'vitest',discovery:'native',executionMode:'selective',runner:[process.execPath,cli,'run','--config',observerConfig,'--cache=false','--passWithNoTests','{files}'],vitestCases:{profile:'unimport-detect-factory-runtime-v1',projectRoot:'.',upstreamRevision:UNIMPORT_PIN},runnerTimeoutMs:120000,dependencies:{[ORACLE]:[ASSET]}};
- const sourceCheck=phase=>{for(const file of paths){const current=h(fs.readFileSync(path.join(upstream,file))),expected=file===ASSET?h(phase==='fault'?fault:original):sourceBindings[file];if(current!==expected)throw Error('Original source/lock/assertion bytes changed: '+file);}if(h(fs.readFileSync(path.join(upstream,observerConfig)))!==h(observerSource))throw Error('Native observer overlay changed');if(h(fs.readFileSync(path.join(upstream,'tddswarm.config.json')))!==h(JSON.stringify(config)))throw Error('Pilot configuration changed');};
- const runs=[];let base=null;
+ const filesystemContracts=unimportFilesystemContracts(paths,sourceBindings);
+ const config={adapter:'vitest',discovery:'native',executionMode:'selective',runner:[process.execPath,cli,'run','--config',observerConfig,'--cache=false','{files}'],vitestCases:{profile:'unimport-detect-factory-runtime-v1',projectRoot:'.',upstreamRevision:UNIMPORT_PIN},runnerTimeoutMs:120000,dependencies:filesystemContracts.dependencies};
+ const sourceCheck=phase=>{if(git(producer,'rev-parse','HEAD')!==sourceSha||git(producer,'status','--porcelain'))throw Error('Producer revision or tracked bytes changed during pilot');for(const file of paths){const current=h(fs.readFileSync(path.join(upstream,file))),expected=file===ASSET?h(phase==='fault'?fault:original):sourceBindings[file];if(current!==expected)throw Error('Original source/lock/assertion bytes changed: '+file);}if(h(fs.readFileSync(path.join(upstream,observerConfig)))!==h(observerSource))throw Error('Native observer overlay changed');if(h(fs.readFileSync(path.join(upstream,'tddswarm.config.json')))!==h(JSON.stringify(config)))throw Error('Pilot configuration changed');};
+ const runs=[];let base=null,wrongSubsetControl=null;
  try{
  fs.writeFileSync(path.join(upstream,observerConfig),observerSource,{flag:'wx',mode:0o600});fs.writeFileSync(path.join(upstream,'tddswarm.config.json'),JSON.stringify(config),{flag:'wx',mode:0o600});fs.writeFileSync(path.join(upstream,ASSET),inert);
  git(upstream,'add','--','tddswarm.config.json',observerConfig,ASSET);git(upstream,'-c','user.name=TestLore bounded pilot','-c','user.email=testlore-pilot@users.noreply.github.com','commit','-m','Isolated original-suite pilot setup (not upstream publication)');
- base=git(upstream,'rev-parse','HEAD');const nativeProfile=captureNativeVitestCases(upstream,config,config.runner);save(path.join(output,'native-case-profile.json'),nativeProfile);save(path.join(output,'setup.json'),{base,configuration:config,configurationSha256:h(fs.readFileSync(path.join(upstream,'tddswarm.config.json'))),inertAssetSha256:h(inert),upstreamRevision:UNIMPORT_PIN,reviewedAddedEdge:{oracle:ORACLE,oracleSha256:sourceBindings[ORACLE],fixture:ASSET,fixtureSha256:sourceBindings[ASSET],scanner:'src/node/scan-dirs.ts',scannerSha256:sourceBindings['src/node/scan-dirs.ts'],scope:'Explicit reviewed fixture-to-original-oracle edge; no automatic completeness or cleared runtime uncertainty.'}});
+ base=git(upstream,'rev-parse','HEAD');const nativeProfile=captureNativeVitestCases(upstream,config,config.runner);save(path.join(output,'native-case-profile.json'),nativeProfile);save(path.join(output,'setup.json'),{base,configuration:config,configurationSha256:h(fs.readFileSync(path.join(upstream,'tddswarm.config.json'))),inertAssetSha256:h(inert),upstreamRevision:UNIMPORT_PIN,filesystemContracts,primaryTestLorePath:'single fresh unified native context, required by assessment'});
   for(const phase of ['clean','fault','restored']){
    fs.writeFileSync(path.join(upstream,ASSET),phase==='fault'?fault:original);
    for(let repeat=0;repeat<2;repeat++)for(const arm of repeat===0?['full','testlore','native']:['native','full','testlore']){
     const preflight=performance.now();sourceCheck(phase);if(installed(upstream).sha256!==dependencyInventory.sha256)throw Error('Installed dependency bytes/links changed');
     const preflightMs=performance.now()-preflight,name=`${phase}-${repeat}-${arm}`,rawPath=path.join(output,name,'native.json');
-    const args=arm==='testlore'?[path.join(producer,'src/cli.js'),'run','--root',upstream,'--base',base,'--selective','--json']:[cli,...(arm==='native'?['related',ASSET]:['run']),'--config',observerConfig,'--includeTaskLocation','--cache=false','--reporter=json','--reporter',path.join(producer,'src/reporters/vitest-cases.js'),'--reporter',path.join(output,name,'native-error-observer.mjs'),'--outputFile',rawPath,'--passWithNoTests'];
+    const args=arm==='testlore'?[path.join(producer,'src/cli.js'),'run','--root',upstream,'--base',base,'--selective','--unified-native','--json']:[cli,...(arm==='native'?['related',ASSET]:['run']),'--config',observerConfig,'--includeTaskLocation','--cache=false','--reporter=json','--reporter',path.join(producer,'src/reporters/vitest-cases.js'),'--reporter',path.join(output,name,'native-error-observer.mjs'),'--outputFile',rawPath,'--passWithNoTests'];
     const executed=await execute(name,process.execPath,args,upstream,{nativeObserver:arm!=='testlore',nativeCaseRequest:arm==='testlore'?null:{schemaVersion:1,root:upstream,expectedFiles:nativeProfile.expectedFiles,inputs:nativeProfile.inputs,vitestVersion:nativeProfile.vitestVersion,registrationContracts:nativeProfile.registrationContracts,scope:arm==='native'?'native-related':'full'}}),{event,directory,begin}=executed;
     if(event.reason||event.signal||![0,1].includes(event.exitCode))throw Error('Fresh arm execution incomplete: '+name);
     const text=fs.readFileSync(arm==='testlore'?path.join(directory,'stdout.log'):rawPath,'utf8');if(Buffer.byteLength(text)>4*1024**2)throw Error('Raw report exceeds bound');
@@ -209,9 +228,15 @@ export async function unimportRoutingPilot({upstream,output,sourceSha}){
     const validationStart=performance.now();sourceCheck(phase);if(installed(upstream).sha256!==dependencyInventory.sha256)throw Error('Installed dependency bytes/links changed after arm');
     const record={phase,repeat,arm,event,cliAndRawReportMs,preflightMs,postflightMs:performance.now()-validationStart,raw,...(nativeErrors?{nativeErrors,nativeObserverPath:path.join(directory,'native-error-observer.mjs'),nativeCaseEvidence}:{})};save(path.join(directory,'capture.json'),record);
     record.outerMs=performance.now()-begin;save(path.join(directory,'timing.json'),{outerMs:record.outerMs,cliAndRawReportMs,preflightMs,postflightMs:record.postflightMs,scope:'Through capture.json and raw.json writes; this final timing metadata write excluded.'});runs.push(record);deadline();
+    if(phase==='fault'&&repeat===0&&arm==='full'){
+     const wrongName='fault-wrong-subset',wrongPath=path.join(output,wrongName,'native.json'),wrongArgs=[cli,'run',ORACLE,'--config',observerConfig,'--includeTaskLocation','--cache=false','--reporter=json','--reporter',path.join(producer,'src/reporters/vitest-cases.js'),'--reporter',path.join(output,wrongName,'native-error-observer.mjs'),'--outputFile',wrongPath,'--passWithNoTests'];
+     sourceCheck(phase);const executedWrong=await execute(wrongName,process.execPath,wrongArgs,upstream,{nativeObserver:true,nativeCaseRequest:{schemaVersion:1,root:upstream,expectedFiles:nativeProfile.expectedFiles,inputs:nativeProfile.inputs,vitestVersion:nativeProfile.vitestVersion,registrationContracts:nativeProfile.registrationContracts,scope:'deferred',executionFiles:[ORACLE]}});
+     const wrong={raw:JSON.parse(fs.readFileSync(wrongPath,'utf8')),event:executedWrong.event,nativeErrors:JSON.parse(fs.readFileSync(path.join(executedWrong.directory,'native-errors.json'),'utf8')),nativeObserverPath:path.join(executedWrong.directory,'native-error-observer.mjs'),nativeCaseEvidence:JSON.parse(fs.readFileSync(path.join(executedWrong.directory,'cases.json'),'utf8'))};
+     sourceCheck(phase);if(installed(upstream).sha256!==dependencyInventory.sha256)throw Error('Installed inputs changed during wrong-subset challenge');save(path.join(executedWrong.directory,'capture.json'),wrong);wrongSubsetControl=assessUnimportWrongSubset(record,wrong,upstream);save(path.join(output,'wrong-subset-assessment.json'),wrongSubsetControl);
+    }
    }
   }
-  deadline();const assessment=assessUnimportRuns(runs,upstream,expectedFiles);save(path.join(output,'assessment.json'),assessment);deadline();return assessment;
+  deadline();const assessment=assessUnimportRuns(runs,upstream,expectedFiles,{requireUnified:true,requiredFailureFiles:[DTS_ORACLE,ORACLE]});assessment.wrongSubsetControl=wrongSubsetControl;if(!wrongSubsetControl?.complete){assessment.complete=false;assessment.qualified=false;assessment.routingValue=false;assessment.reasons.push({reason:'Independent wrong-subset rejection control unavailable'});}save(path.join(output,'assessment.json'),assessment);deadline();return assessment;
  }finally{fs.writeFileSync(path.join(upstream,ASSET),original);sourceCheck('restored');save(path.join(output,'restoration.json'),{originalFixtureSha256:h(original),allProtectedOriginalSourcesRestored:true,setupCommit:base,upstreamRevision:UNIMPORT_PIN,partialArmCount:runs.length});save(path.join(output,'pipeline-timing.json'),{controllerThroughAssessmentAndRestorationMs:performance.now()-started,scope:'Includes source capture, install/build, setup, all arm invocations, revalidation, retained raw/capture/assessment and restoration writes. Final timing metadata write excluded.'});deadline();}
 }
 if(process.argv[1]&&path.resolve(process.argv[1])===fileURLToPath(import.meta.url)){

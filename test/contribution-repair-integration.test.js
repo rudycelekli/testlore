@@ -1,4 +1,5 @@
 import test from 'node:test';
+import {challengeFiles} from './repair-challenge-fixtures.js';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -20,7 +21,7 @@ const out=p.role==='repair-architect'?{tasks:[{subject:'src/a.js',instructions:'
 process.stdout.write(JSON.stringify(out));});`;
 function project(t,config={},index,mode='valid'){
  const workers=fixture(t,{'worker.cjs':worker});
- const root=fixture(t,{...twoModules,'src/a.js':'export const a=9;','tddswarm.requirements.md':requirements,'tddswarm.config.json':{adapter:'node',learning:config}});
+ const root=fixture(t,{...twoModules,...challengeFiles,'src/a.js':'export const a=9;','tddswarm.requirements.md':requirements,'tddswarm.config.json':{adapter:'node',learning:config,repair:{challenges:'quality/challenges.json'}}});
  if(index!==undefined)write(root,indexPath,index);
  return {root,options:{agent:[process.execPath,path.join(workers,'worker.cjs'),mode],sourcePaths:['src/a.js'],requirements,baseline:{complete:true,exitCode:1,tests:[{file:'test/a.test.js',name:'a',status:'failed'}]}}};
 }

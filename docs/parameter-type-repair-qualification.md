@@ -31,8 +31,11 @@ uninstrumented complete result. Conservative routing remains unchanged.
 The final frozen local profile ran all 254 original `unimport` cases, including
 36 source-bound factory registrations. Native and TestLore captures agreed on
 healthy runs and both seeded failures. A smaller manually chosen subset was
-rejected because it omitted the `dts` failure. These are pinned observational
-checks, not automatic routing or performance qualification.
+rejected because it omitted the `dts` failure. Those earlier observations did not qualify omissions. The newer bounded
+[original application comparison](qualified-routing-repair-gates.md) executes
+200 cases across23files, omits5files, and preserves both seeded failures across
+healthy/fault/restored repetitions. It is substantially slower than full/native
+execution; only the exact reviewed environment and fixture states qualify.
 
 ## Type-dependency precision
 
@@ -42,8 +45,10 @@ analysis records whole-declaration type hints. Inline type specifiers, mixed
 imports, runtime alternatives, prior runtime edges, declared inputs and observed
 dependencies remain conservative.
 
-The hints are **not omission authority**. Warning classification continues to use
-the complete impact graph. Native canaries are necessary evidence about a
+The hints are **not omission authority**. Without private live admission, warning classification uses
+the complete impact graph. The separately qualified original unimport runtime
+uses native type erasure to refine runtime uncertainty while retaining every
+impact edge. Native canaries are necessary evidence about a
 particular transform, but cannot certify arbitrary plugins or typechecker reads.
 An admitted precision profile still needs fresh internal bindings for effective
 configuration, runtime implementations, transforms, project membership and

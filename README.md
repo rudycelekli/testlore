@@ -34,7 +34,7 @@ TestLore brings **test creation, intelligent routing and reviewed learning** int
 
 **Keep your best tools.** Your native engines supply the expertise. TestLore adds the shared quality contract: modular dependencies, independent validation, reasons for every proposed omission, and a memory of reviewed outcomes.
 
-[How TestLore complements Agentic QE →](docs/agentic-qe-comparison.md) · [Fresh project routing and controlled replay →](docs/project-aware-routing.md)
+[How TestLore complements Agentic QE →](docs/agentic-qe-comparison.md) · [Fresh project routing and controlled replay →](docs/project-aware-routing.md) · [Qualified omissions and repair vetoes, including timing losses →](docs/qualified-routing-repair-gates.md)
 
 | Your starting point | What TestLore does |
 | --- | --- |
@@ -89,7 +89,7 @@ Audit + shadow validation on PRs · full tests on default-branch pushes
 
 Failed validation retains the proposal and its evidence for inspection. Missing requirements or a worker produces a concrete work order. Merging remains your decision. [Full workflow →](docs/improvement.md)
 
-**Source workflow: find → delegate → repair → review.** The next-release source adds `testlore autopilot` and `testlore repair`: bounded agent tasks, unchanged original assertions, repeated native validation, an isolated source-fix branch, and a PR bound to the tested commit. Node assertion repair is the first supported profile. A green suite uses the existing test-improvement flow. These commands are not in npm 0.1.0 yet. [Installed workflow, limits and opt-in ongoing operation →](docs/autonomous-repair.md)
+**Source workflow: find → delegate → repair → challenge → review.** The next-release source adds `testlore autopilot` and `testlore repair`: bounded agent tasks, unchanged original assertions, repeated native validation, an isolated source-fix branch, and a PR bound to the tested commit. Source repairs also require committed, independently maintained behavioral challenges that pass on unchanged source and repeatedly pass on the candidate. Without them, `awaiting-challenges` explains the next action before workers start. Node assertion repair is the first supported profile. A green suite uses the existing test-improvement flow. These commands are not in npm 0.1.0 yet. [Challenge setup and installed workflow →](docs/autonomous-repair.md)
 
 Personalize your project agent:
 
@@ -265,7 +265,7 @@ On **12 controlled changes across four Node fixtures**, TestLore caught all 63 o
 | **Native ecosystem adapters** | Actual pytest-testmon, Nx, Bazel and AQE executions, with completeness and upstream-estimate boundaries. | [Integration receipts](docs/integrations.md) |
 | **Optional vector recall** | Real RuVector core 0.1.32: native build/reopen, bounded CLI recall, corrupt-cache fallback, and unchanged canonical memory. | [Native receipt](benchmarks/ruvector-verification.json) · [Method](docs/ruvector.md) |
 | **Real browser composition** | Chromium: one of two declared route files selected; the same heading defect fails in full and subset runs; candidate validation preserves and adds passing cases. | [Raw browser proof](benchmarks/playwright-verification.json) · [Scope](docs/playwright.md) |
-| **Routing cache** | Controlled parser-heavy fixture: 178 ms warm, 240 ms uncached, 433 ms cold. No general project speed claim. | [Samples and checks](benchmarks/cache-verification.json) · [Method](docs/performance.md) |
+| **Routing cache** | Persisted summaries now require fresh semantic safety parsing. Earlier 178/240/433 ms measurements predate that correction and do not establish current performance. | [Samples and checks](benchmarks/cache-verification.json) · [Method](docs/performance.md) |
 | **Repeated live learning** | Two specifications × two repetitions: no memory 12/12 defects; memory 9/12 with one timeout. Inconclusive; no improvement claim. | [Raw paired run](benchmarks/learning/2026-09-30-paired-native/README.md) |
 | **Complementary property library** | Real fast-check 4.10.2: complete base validation; 4/4 scoped defects caught and replayed from seed/path. | [Receipt](benchmarks/property-verification.json) · [Method](docs/ecosystem.md) |
 | **Independent AQE gate** | Actual template author reported score 100; independent review rejected the output. No live LLM claim. | [Composition receipt](benchmarks/aqe-composition-verification.json) |
@@ -298,7 +298,7 @@ The [parameter, type-dependency and repair qualification contracts](docs/paramet
 
 Local repository pilots independently run proposed subsets and full suites in detached copies, rotate full/TestLore/native-selector order and include discovery, planning, execution, freshness checks and receipt retention in TestLore total time. Native related selection is measured through real Vitest/Jest CLIs; frameworks without it use a clearly labeled native full baseline. Raw receipts remain local; aggregate export is explicit. [Run your own pilots →](docs/pilots.md)
 
-An opt-in bounded cache reuses source parsing while native discovery and resolution stay fresh. Initialization enables it for new configurations; existing configurations retain their settings. Controlled warm/cold evidence and its limits are in the [performance guide](docs/performance.md).
+An opt-in bounded cache reuses validated summaries within each process. Persisted records require fresh canonical parsing before reuse; their public checksums cannot grant routing authority. Native discovery and resolution stay fresh. Initialization enables it for new configurations; existing configurations retain their settings. Controlled warm/cold evidence and its limits are in the [performance guide](docs/performance.md).
 
 These are scoped experiments. The memory comparison confirms that historical recall reaches real agent generation; it does not establish a general quality gain. Native related selectors can be faster on imported-source changes. TestLore adds declared/runtime input reasoning, retained uncertainty, independent validation and explainable evidence; it earns speed claims only where whole-run measurements show savings. Tiny suites can run slower after discovery and planning. There is no universal safety, production speedup, or “best overall” claim. Misses, overhead, and counterexamples belong in the results. [Benchmark methodology →](docs/comparison.md)
 
