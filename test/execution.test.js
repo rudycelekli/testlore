@@ -109,3 +109,11 @@ test('missing files and aborted executions cannot certify completeness', t=>{
   const report=execute(root,['slow.test.cjs'],{}, {capture:true,timeoutMs:150});
   assert.equal(report.complete,false);assert.notEqual(report.exitCode,0);assert.ok(report.error);
 });
+
+test('ordinary execution cannot silently discard a requested native case profile',t=>{
+  const root=fixture(t,{'example.test.js':"export {};"});
+  const report=execute(root,['example.test.js'],{adapter:'vitest',runner:[process.execPath,'noop.js','{files}'],vitestCases:{profile:'unimport-detect-factory-runtime-v1',projectRoot:'.',upstreamRevision:'bbd07768ddb4919205bcb5a3cbc06c3a2791981a'}},{capture:true});
+  assert.equal(report.complete,false);assert.equal(report.exitCode,2);assert.match(report.nativeCaseEvidenceError,/bound Node and Vitest CLI/);assert.deepEqual(report.executedFiles,[]);
+  const empty=execute(root,[],{adapter:'vitest',vitestCases:{profile:'unimport-detect-factory-runtime-v1'}},{capture:true});assert.equal(empty.complete,false);assert.equal(empty.exitCode,2);assert.match(empty.nativeCaseEvidenceError,/nonempty bound scope/);
+  write(root,'node.test.cjs',"const {test}=require('node:test');test('must not run',()=>require('node:fs').writeFileSync('unexpected-spawn','ran'));");const incompatible=execute(root,['node.test.cjs'],{adapter:'node',vitestCases:{profile:'unimport-detect-factory-runtime-v1'}},{capture:true});assert.equal(incompatible.complete,false);assert.equal(incompatible.exitCode,2);assert.match(incompatible.nativeCaseEvidenceError,/Vitest adapter/);assert.equal(fs.existsSync(path.join(root,'unexpected-spawn')),false);
+});

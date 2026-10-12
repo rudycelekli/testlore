@@ -25,6 +25,9 @@ export default class TestLoreVitestCaseReporter{
   for(const input of request.inputs){if(!input||typeof input.file!=='string'||!/^[a-f0-9]{64}$/.test(input.sha256)||this.sources.has(input.file))throw Error('Invalid bound native case input');const bytes=readVitestCaseSource(this.root,input.file);if(vitestCaseHash(bytes)!==input.sha256)throw Error('Native case source binding differs');this.sources.set(input.file,input.sha256);}
   for(const file of request.expectedFiles)if(!this.sources.has(file))throw Error('Expected native case file lacks source binding');
   const require=createRequire(path.join(this.root,'package.json'));this.runtimeFile=require.resolve('vitest/package.json');const runtime=fs.readFileSync(this.runtimeFile);if(JSON.parse(runtime).version!==request.vitestVersion)throw Error('Native Vitest version differs from bound request');this.runtimeSha256=vitestCaseHash(runtime);this.report.runtimeManifestSha256=this.runtimeSha256;
+  // A standalone CLI cannot call a reporter instance before native startup.
+  // Its controller supplies the same exact scope once through the bounded request.
+  if(request.executionFiles!==undefined)this.bindExecutionScope(request.executionFiles);
  }
  checkFresh(fileOnly){
   if(JSON.stringify(hashProducers())!==JSON.stringify(this.producers)||vitestCaseHash(fs.readFileSync(this.runtimeFile))!==this.runtimeSha256)throw Error('Native case producer/runtime drift');

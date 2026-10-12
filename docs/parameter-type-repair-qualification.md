@@ -22,6 +22,12 @@ errors. Independent raw JSON outcome multiplicities must agree with the native
 capture. Missing, stale or ambiguous evidence rejects the comparison. These
 identities do not authorize any test omission or establish parser equivalence.
 
+Ordinary execution also requires the exact reviewed standalone observer
+configuration when this profile is requested. It binds the selected native
+scope and checks raw outcome multiplicities against the case capture. An
+unsupported explicit profile fails closed instead of silently returning an
+uninstrumented complete result. Conservative routing remains unchanged.
+
 The final frozen local profile ran all 254 original `unimport` cases, including
 36 source-bound factory registrations. Native and TestLore captures agreed on
 healthy runs and both seeded failures. A smaller manually chosen subset was
@@ -76,6 +82,30 @@ twice. This historical source-only intervention is narrower than the complete
 parent tree. Its generated installation lock is not an original upstream lock.
 Two repetitions of one defect remain a clustered pilot, not independent
 evidence of general repair quality or learning improvement.
+
+The October 12 pilot completed four counterbalanced attempts and 12 audited
+subscription role calls, with no retries or tool attempts. Each arm produced one
+review-accepted repair and one review rejection. Both accepted repairs passed
+all 137 original cases twice. All four authors produced identical source bytes;
+blinded reviewers received identical semantic inputs but returned different
+decisions. This is evidence of review variability, not a memory-assisted repair
+improvement. Memory retrieved generic assertion metadata whose relevance to
+this cloning defect remains unestablished.
+
+Worker-reported usage was 234,613 input and 5,405 output tokens; billing and
+provider model identity were unavailable. The retained evidence includes actual
+worker inputs, outputs and transport audits, plus native stdout, stderr and
+passive outcome receipts. Full provider event streams were not retained.
+Learning remains advisory, and passing the original suite alone does not
+establish that a repair preserves every undocumented behavior.
+
+A separately recorded post-evaluation native probe reproduced a regression
+identified by two reviewers: a constructor with an enumerable, non-writable
+property clones successfully under both historical sources, but the shared
+candidate throws a `TypeError`. Neither accepted candidate is eligible for
+promotion as a regression-free repair. The frozen original-suite scores remain
+recorded separately; this additional case is development evidence for future
+evaluation, not a retrospectively added holdout or a learning gain.
 
 The native lifecycle used by the identity reporter is described in
 [Vitest's reporter API](https://vitest.dev/api/advanced/reporters.html).
