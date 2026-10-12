@@ -1,0 +1,63 @@
+name: Original unimport fixture routing challenge
+on:
+  push:
+    branches: [codex/frontier-qualification]
+    paths: [scripts/unimport-routing-pilot.js, .github/workflows/unimport-routing-pilot.yml]
+  workflow_dispatch:
+    inputs:
+      source_sha:
+        description: Reviewed immutable TestLore source revision
+        required: true
+        type: string
+permissions:
+  contents: read
+concurrency:
+  group: unimport-fixture-routing-pilot
+  cancel-in-progress: false
+jobs:
+  challenge:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          ref: ${{ inputs.source_sha || github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+          path: producer
+      - uses: actions/checkout@v7.0.1
+        with:
+          repository: unjs/unimport
+          ref: bbd07768ddb4919205bcb5a3cbc06c3a2791981a
+          path: upstream
+          fetch-depth: 1
+          persist-credentials: false
+      - uses: actions/setup-node@v7.0.0
+        with:
+          node-version: '22.19.0'
+      - name: Require exact source and install producer dependencies
+        working-directory: producer
+        env:
+          SOURCE_SHA: ${{ inputs.source_sha || github.sha }}
+        run: |
+          [[ "$SOURCE_SHA" =~ ^[0-9a-f]{40}$ ]]
+          test "$(git rev-parse HEAD)" = "$SOURCE_SHA"
+          npm ci --ignore-scripts
+      - name: Bounded original-lock full/subset/native challenge
+        working-directory: producer
+        env:
+          SOURCE_SHA: ${{ inputs.source_sha || github.sha }}
+        run: node scripts/unimport-routing-pilot.js --upstream ../upstream --output .tddswarm/unimport-routing-pilot --source-sha "$SOURCE_SHA"
+      - name: Retain every success, timing loss and rejection
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: unimport-routing-pilot-${{ inputs.source_sha || github.sha }}
+          path: |
+            producer/.tddswarm/unimport-routing-pilot/
+            !**/isolated/**
+            !**/node_modules/**
+            !**/.git/**
+          include-hidden-files: true
+          if-no-files-found: warn
+          retention-days: 14

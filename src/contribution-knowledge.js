@@ -46,6 +46,45 @@ function anchors(text) {
   const identifiers = [...words].filter(word => !WORDS.has(word) && validAnchor(word)).sort();
   return [...controlled, ...identifiers].slice(0, 96).sort();
 }
+// These presentation/navigation terms can look rare because most historical
+// records lack detailed README text. Rarity alone does not make them a behavior
+// contract. Filter only retrieval inputs: stored anchors and seals stay valid.
+const RETRIEVAL_BOILERPLATE = new Set('also every one open example examples related github gitlab http https www com org net master main branch branches build builds package packages install installation badge badges documentation reference references'.split(' '));
+function withoutInlineDestinations(text) {
+  let visible='';
+  for(let index=0;index<text.length;index++){
+    visible+=text[index];
+    if(text[index]!==']'||text[index+1]!=='(')continue;
+    let depth=1;index+=2;
+    for(;index<text.length&&depth;index++){
+      if(text[index]==='\\'&&index+1<text.length){
+        index++;
+        if(text[index]==='\n'||text[index]==='\r')break;
+        continue;
+      }
+      if(text[index]==='(')depth++;
+      else if(text[index]===')')depth--;
+      else if(text[index]==='\n'||text[index]==='\r')break;
+    }
+    visible+=' ';index--;
+  }
+  return visible;
+}
+function retrievalAnchors(text) {
+  // Keep visible Markdown link labels, but never infer semantics from the URL
+  // destination, including a technical word occurring only in its path/query.
+  const visible = withoutInlineDestinations(text)
+    .replace(/^[ \t]{0,3}\[[^\]\r\n]{1,1000}\]:[^\r\n]*$/gm, ' ')
+    .replace(/(?:https?|ftp):\/\/[^\s<>]+/gi, ' ');
+  // Frequency in a partially detailed corpus can make ordinary prose appear
+  // rare. Custom API matches therefore need explicit code identifiers or
+  // distinctive camelCase/snake_case spelling, not merely two uncommon words.
+  const explicit = new Set([
+    ...Array.from(visible.matchAll(/`([a-zA-Z][a-zA-Z0-9_]{2,47})`/g), match => match[1].toLowerCase()),
+    ...Array.from(visible.matchAll(/\b(?:[a-z][a-zA-Z0-9]*[A-Z][a-zA-Z0-9]*|[a-z][a-z0-9]*_[a-z0-9_]+)\b/g), match => match[0].toLowerCase())
+  ]);
+  return anchors(visible).filter(word => !RETRIEVAL_BOILERPLATE.has(word) && (WORDS.has(word) || explicit.has(word)));
+}
 function patterns(records) {
   return TAXONOMY.flatMap(item => {
     const support = records.filter(record => record.patternIds.includes(item.id));
@@ -199,7 +238,7 @@ export function recallContributionKnowledge(root, query, options = {}) {
   try {
     const limit = options.limit ?? 3;
     if (typeof query !== 'string' || Buffer.byteLength(query) > 4096 || typeof options.contract !== 'string' || Buffer.byteLength(options.contract) > 16000 || !Number.isInteger(limit) || limit < 1 || limit > 20 || !Number.isInteger(maxChars) || maxChars < 256 || maxChars > 20000 || !Array.isArray(options.excludeRepositories ?? []) || (options.excludeRepositories ?? []).length > 100 || (options.excludeRepositories ?? []).some(repo => typeof repo !== 'string' || !REPO.test(repo))) fail('invalid-contribution-retrieval');
-    const contract = anchors(options.contract);
+    const contract = retrievalAnchors(options.contract);
     if (!contract.length) { output.reason = 'no-current-contract-anchor'; return output; }
     const corpus = load(root);
     if (!corpus) { output.reason = 'no-contribution-knowledge'; return output; }
@@ -209,7 +248,7 @@ export function recallContributionKnowledge(root, query, options = {}) {
     // single-capture metadata is historical and cannot attest current behavior.
     output.observationMode = corpus.coverage.observationMode || 'legacy-unclassified-observation';
     const excluded = new Set((options.excludeRepositories || []).map(repo => repo.toLowerCase()));
-    const requested = new Set(anchors(query));
+    const requested = new Set(retrievalAnchors(query));
     const available = corpus.records.filter(record => !excluded.has(record.repository.toLowerCase()));
     const technicalContract = new Set(contract.filter(word => WORDS.has(word)));
     const documentFrequency = new Map();

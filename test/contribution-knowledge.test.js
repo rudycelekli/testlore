@@ -245,3 +245,39 @@ test('custom API retrieval needs two rare identifiers shared with query and curr
   assert.equal(recallContributionKnowledge(root, 'frobnicateFrame', { contract: 'frobnicateFrame must maintain widgetStamp.' }).records.length, 0);
   assert.equal(recallContributionKnowledge(root, 'preserve sequences', { contract: 'Preserve the Fibonacci output sequences.' }).records.length, 0);
 });
+
+test('README links and boilerplate cannot supply behavioral relevance, even when rare in the corpus', t => {
+  const rows = Array.from({length:99},(_,i)=>pr(i+1,`owner/ordinary${i}`,{title:'Routine maintenance',body:'',files:undefined,detailsComplete:false}));
+  rows.push(pr(100,'owner/documentation',{title:'github https com master branch build package related example',body:'',files:undefined,detailsComplete:false}));
+  const {root}=fixture(t,rows),before=fs.readFileSync(path.join(root,STORE));
+  const contract='Indent nonempty lines. Also build package documentation on github https com master branch; related example.';
+  const recalled=recallContributionKnowledge(root,contract,{contract});
+  assert.equal(recalled.records.length,0);
+  assert.equal(recalled.authority,'none');
+  assert.deepEqual(fs.readFileSync(path.join(root,STORE)),before,'Existing historical index bytes must stay valid and unchanged');
+});
+
+test('URL destinations do not become technical contract anchors; visible link labels still do', t => {
+  const {root}=fixture(t);
+  for(const destination of ['https://example.invalid/unicode/normalization?cache=1','/unicode/normalization?cache=1','//example.invalid/unicode/normalization','../unicode/(normalization)/cache']){
+    const contract=`Indent nonempty lines. See [reference](${destination}).`;
+    assert.equal(recallContributionKnowledge(root,contract,{contract}).records.length,0,destination);
+  }
+  const labeled='Preserve [Unicode](https://example.invalid/reference) boundaries.';
+  const positive=recallContributionKnowledge(root,labeled,{contract:labeled});
+  assert.equal(positive.records.length,1);
+  assert.deepEqual(positive.records[0].contractMatches,['unicode']);
+  const reference='Indent nonempty lines.\n[reference]: /unicode/normalization?cache=1';
+  assert.equal(recallContributionKnowledge(root,reference,{contract:reference}).records.length,0);
+  for(const ending of ['\n','\r\n']){
+    const unfinished=`See [reference](../documentation\\${ending}Unicode boundaries must survive.`;
+    assert.equal(recallContributionKnowledge(root,unfinished,{contract:unfinished}).records.length,1,'An incomplete link must not hide the next behavioral line');
+  }
+});
+
+test('rare prose words cannot impersonate distinctive API identifiers', t => {
+  const rows=Array.from({length:99},(_,i)=>pr(i+1,`owner/prose${i}`,{title:'Maintenance',body:'',files:undefined,detailsComplete:false}));
+  rows.push(pr(100,'owner/irrelevant',{title:'dependencies while lines module each',body:'',files:undefined,detailsComplete:false}));
+  const {root}=fixture(t,rows),contract='Indent lines while keeping dependencies unchanged in each module.';
+  assert.equal(recallContributionKnowledge(root,contract,{contract}).records.length,0);
+});
