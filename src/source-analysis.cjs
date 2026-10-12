@@ -3,11 +3,14 @@ const ts = require('typescript');
 function analyze(file, text) {
   const ast = ts.createSourceFile(file, text, ts.ScriptTarget.Latest, true);
   const imports = new Set();
+  // Syntax hints only. A transform can read or rewrite even a declaration-level
+  // type import, so callers must not use these hints as omission authority.
+  const runtimeImports = new Set();
   const warnings = [];
   const registrationCalls = [];
   if (ast.parseDiagnostics.length) warnings.push('parse-error');
-  const add = node => {
-    if (node && ts.isStringLiteralLike(node)) imports.add(node.text);
+  const add = (node, runtime = true) => {
+    if (node && ts.isStringLiteralLike(node)) { imports.add(node.text); if(runtime)runtimeImports.add(node.text); }
     else warnings.push('dynamic-dependency');
   };
   function visit(node) {
@@ -16,7 +19,10 @@ function analyze(file, text) {
     const referencedProperty=ts.isPropertyAccessExpression(node)?node.name.text:ts.isElementAccessExpression(node)&&node.argumentExpression&&ts.isStringLiteralLike(node.argumentExpression)?node.argumentExpression.text:null;
     if(['register','registerHooks'].includes(referencedProperty))warnings.push('runtime-registration');
     if (ts.isImportDeclaration(node) || ts.isExportDeclaration(node)) {
-      if (node.moduleSpecifier) add(node.moduleSpecifier);
+      // Inline `import { type X }` can retain an empty side-effect import under
+      // verbatimModuleSyntax; only the whole declaration supplies a type hint.
+      const typeOnly=ts.isImportDeclaration(node)?node.importClause?.isTypeOnly===true:node.isTypeOnly===true;
+      if (node.moduleSpecifier) add(node.moduleSpecifier,!typeOnly);
       // A loader capability can escape through aliases, callbacks or reexports.
       // Named imports of unrelated module helpers do not grant that capability.
       if (node.moduleSpecifier && ts.isStringLiteralLike(node.moduleSpecifier) && /^(?:node:)?module$/.test(node.moduleSpecifier.text)) {
@@ -26,7 +32,7 @@ function analyze(file, text) {
       }
     }
     if (ts.isImportEqualsDeclaration(node) && ts.isExternalModuleReference(node.moduleReference)) {
-      add(node.moduleReference.expression);
+      add(node.moduleReference.expression,node.isTypeOnly!==true);
       if(node.moduleReference.expression&&ts.isStringLiteralLike(node.moduleReference.expression)&&/^(?:node:)?module$/.test(node.moduleReference.expression.text))warnings.push('runtime-registration');
     }
     if (ts.isCallExpression(node)) {
@@ -58,7 +64,7 @@ function analyze(file, text) {
   for (const spec of imports) {
     if (/^(?:node:)?(?:fs|fs\/promises|vm|child_process|module|worker_threads|http|https|http2|net|tls|dns|dns\/promises|dgram|wasi)$/.test(spec)) warnings.push('runtime-dependency');
   }
-  return { ast, imports: [...imports], warnings: [...new Set(warnings)], registrationCalls };
+  return { ast, imports: [...imports], runtimeImports: [...runtimeImports], warnings: [...new Set(warnings)], registrationCalls };
 }
 
 function configurationFlags(ast) {

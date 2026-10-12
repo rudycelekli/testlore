@@ -9,7 +9,7 @@ import { spawn } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { createAnalysisCache, analysisCacheSettings } from '../src/graph-cache.js';
 
-const directory = root => path.join(root, '.tddswarm/analysis-cache/v1');
+const directory = root => path.join(root, '.tddswarm/analysis-cache/v2');
 const entries = root => fs.readdirSync(directory(root)).filter(file => file.endsWith('.json'));
 const config = { analysisCache: { enabled: true } };
 const routing = result => ({ mode: result.mode, selected: result.selected, reasons: result.reasons, warnings: result.warnings, decisions: result.decisions, configurationFiles: result.configurationFiles });
@@ -122,5 +122,5 @@ test('concurrent process writers leave bounded complete entries and no partial a
   })));
   const names = fs.readdirSync(directory(root)); assert.ok(names.length <= 8); assert.ok(names.every(name => /^[a-f0-9]{64}\.json$/.test(name)));
   assert.ok(names.reduce((sum, name) => sum + fs.statSync(path.join(directory(root), name)).size, 0) <= 4096);
-  for (const name of names) { const record = JSON.parse(fs.readFileSync(path.join(directory(root), name))); assert.deepEqual(record.result, { imports: [], warnings: [] }); }
+  for (const name of names) { const record = JSON.parse(fs.readFileSync(path.join(directory(root), name))); assert.deepEqual(record.result, { imports: [], runtimeImports: [], warnings: [] }); }
 });

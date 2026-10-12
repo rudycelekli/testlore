@@ -23,7 +23,7 @@ export function prepareNativeSourceSummaries(root,files){
   const bytes=fs.readFileSync(full);sourceBytes+=bytes.length;
   if(bytes.length>8*1024*1024||sourceBytes>32*1024*1024)return {used:false,reason:'source-byte-budget'};
   const result=analyze(file,bytes.toString('utf8'));
-  const record={sourceSha256:hash(bytes),imports:result.imports,...configurationFlags(result.ast)};
+  const record={sourceSha256:hash(bytes),imports:result.imports,runtimeImports:result.runtimeImports,...configurationFlags(result.ast)};
   imports+=result.imports.length;recordBytes+=Buffer.byteLength(JSON.stringify(record))+Buffer.byteLength(file)+8;
   if(imports>50000||recordBytes>8*1024*1024)return {used:false,reason:'syntax-summary-budget'};
   records[file]=record;
@@ -40,7 +40,11 @@ export function nativeSourceSummaryReader(root,provided,{requireBoundEngine=true
   assertEngineUnchanged(binding);
   const record=stats.identityMatched&&provided.records&&Object.hasOwn(provided.records,file)?provided.records[file]:undefined;
   if(record && /^[a-f0-9]{64}$/.test(record.sourceSha256) && Array.isArray(record.imports) && record.imports.length<=50000 && record.imports.every(value=>typeof value==='string') && typeof record.argvDependent==='boolean' && typeof record.projectPlugins==='boolean' && typeof record.argvIntrinsicMutation==='boolean' && Array.isArray(record.argvPrefixChecks) && record.argvPrefixChecks.length<=50000 && record.argvPrefixChecks.every(value=>typeof value==='string'&&/^--[A-Za-z][A-Za-z0-9-]*(?:=)?$/.test(value))){
-   if(record.sourceSha256===hash(bytes)){assertEngineUnchanged(binding);stats.validatedHits++;return {...record,imports:[...record.imports],argvPrefixChecks:[...record.argvPrefixChecks]};}
+   // Runtime hints are observations, never erasure or omission authority. Old
+   // summaries conservatively retain every import; malformed hints freshly parse.
+   const runtime=record.runtimeImports===undefined?record.imports:record.runtimeImports;
+   const runtimeValid=Array.isArray(runtime)&&runtime.length<=record.imports.length&&new Set(runtime).size===runtime.length&&runtime.every(value=>typeof value==='string'&&record.imports.includes(value));
+   if(runtimeValid&&record.sourceSha256===hash(bytes)){assertEngineUnchanged(binding);stats.validatedHits++;return {...record,imports:[...record.imports],runtimeImports:[...runtime],argvPrefixChecks:[...record.argvPrefixChecks]};}
    stats.mismatches++;
   }
   const {analyze,configurationFlags,assertCurrentEngine,optimizationAvailable}=require(parser);
@@ -48,7 +52,7 @@ export function nativeSourceSummaryReader(root,provided,{requireBoundEngine=true
   if(!optimizationAvailable)stats.unboundLegacyParses++;
   assertCurrentEngine();const parsed=analyze(file,bytes.toString('utf8'));
   assertEngineUnchanged(binding);
-  stats.freshParses++;return {imports:parsed.imports,...configurationFlags(parsed.ast)};
+  stats.freshParses++;return {imports:parsed.imports,runtimeImports:parsed.runtimeImports,...configurationFlags(parsed.ast)};
  }
  return {read,stats};
 }

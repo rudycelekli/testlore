@@ -60,7 +60,10 @@ function planPhase(root, options = {}, nativeSession, phase) {
   changed = [...new Set([...changed,...services.changed])].sort();
   graph.warnings.push(...services.warnings);
   const runtime = runtimeEvidence(root,graph,changed,config);
-  if(runtime.usable) for(const [test,observation] of Object.entries(runtime.record.observations)) graph.edges[test] = [...new Set([...(graph.edges[test]||[]),...observation.dependencies])];
+  if(runtime.usable) for(const [test,observation] of Object.entries(runtime.record.observations)) {
+    graph.edges[test] = [...new Set([...(graph.edges[test]||[]),...observation.dependencies])];
+    graph.runtimeEdges[test] = [...new Set([...(graph.runtimeEdges[test]||[]),...observation.dependencies])].sort();
+  }
   timing.mark('runtimeAndServices');
   const reasons = [];
   if(services.warnings.length)reasons.push('external-service-evidence-unavailable');

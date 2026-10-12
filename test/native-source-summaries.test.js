@@ -39,3 +39,27 @@ test('source and count budgets disable observations while retaining fresh fallba
  const reader=nativeSourceSummaryReader(root,prepared);assert.deepEqual(reader.read('src/a.js',Buffer.from(`import './fresh.js';`)).imports,['./fresh.js']);assert.equal(reader.stats.freshParses,1);
  assert.equal(prepareNativeSourceSummaries(root,Array(10001).fill('src/a.js')).reason,'source-count-budget');
 });
+
+test('native summaries distinguish whole type declarations and retain inline side-effect imports',t=>{
+ const text=`import type { A } from './types'; export type { B } from './other'; import { type C } from './side-effect'; import './value';`;
+ const root=fixture(t,{'src/a.ts':text}),prepared=prepareNativeSourceSummaries(root,['src/a.ts']);
+ const reader=nativeSourceSummaryReader(root,prepared),result=reader.read('src/a.ts',Buffer.from(text));
+ assert.deepEqual(result.imports,['./types','./other','./side-effect','./value']);
+ assert.deepEqual(result.runtimeImports,['./side-effect','./value']);
+ assert.equal(reader.stats.validatedHits,1);
+ const legacy=structuredClone(prepared);delete legacy.records['src/a.ts'].runtimeImports;
+ const oldReader=nativeSourceSummaryReader(root,legacy),old=oldReader.read('src/a.ts',Buffer.from(text));
+ assert.deepEqual(old.runtimeImports,old.imports);assert.equal(oldReader.stats.validatedHits,1);
+});
+
+test('invalid runtime summary subsets and changed sources freshly parse without trusting hints',t=>{
+ const text=`import type { A } from './types'; import './value';`;
+ const root=fixture(t,{'src/a.ts':text}),prepared=prepareNativeSourceSummaries(root,['src/a.ts']);
+ for(const runtimeImports of [['./foreign'],['./value','./value'],[1],null]){
+  const invalid=structuredClone(prepared);invalid.records['src/a.ts'].runtimeImports=runtimeImports;
+  const reader=nativeSourceSummaryReader(root,invalid),result=reader.read('src/a.ts',Buffer.from(text));
+  assert.deepEqual(result.runtimeImports,['./value']);assert.equal(reader.stats.freshParses,1);assert.equal(reader.stats.validatedHits,0);
+ }
+ const changed=nativeSourceSummaryReader(root,prepared),result=changed.read('src/a.ts',Buffer.from(`import { A } from './types'; import './value';`));
+ assert.deepEqual(result.runtimeImports,['./types','./value']);assert.equal(changed.stats.freshParses,1);
+});
