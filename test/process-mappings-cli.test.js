@@ -45,6 +45,7 @@ test('exhausted advisory inventory budget preserves ordinary mappings and fallba
   assert.ok(report.proposals.some(row=>row.input==='settings.json'));
   assert.equal(report.processRegistrations,null);
   assert.equal(report.processRegistrationDiagnostic.status,'unavailable');
+  assert.equal(report.processRegistrationDiagnostic.refusal,'inventory-budget');
   assert.equal(report.processRegistrationDiagnostic.omissionAuthority,false);
   assert.equal(report.unmappedChangesPolicy,'full-suite');
   assert.equal(validateRoutingProposals(root,report).valid,true);

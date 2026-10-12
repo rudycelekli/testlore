@@ -8,6 +8,20 @@ import {safePath, readConfig, TEST} from './files.js';
 import {processRegistrationProposals,inspectProcessRegistrationProposalEnvelope} from './process-registration-proposals.js';
 
 const MAX_PROPOSALS=1000, MAX_INPUTS=1000, MAX_TESTS=1000, MAX_EDGES=25000, MAX_REFERENCE_BYTES=512*1024;
+// Only fixed implementation messages become public refusal codes. Never echo
+// arbitrary parser/native errors, source text or environment values.
+const PROCESS_REFUSALS=new Map([
+  ['Process proposal inventory budget exceeded','inventory-budget'],
+  ['Unsafe or oversized process source','source-input-bound'],
+  ['Unsafe process graph edges','graph-input-bound'],
+  ['Process proposal edge budget exceeded','edge-budget'],
+  ['Process registration proposal budget exceeded','registration-budget'],
+  ['Process aggregate syntax traversal budget exceeded','syntax-work-budget'],
+  ['Process aggregate consumer traversal budget exceeded','consumer-work-budget'],
+  ['Process consumer traversal budget exceeded','consumer-inventory-budget'],
+  ['Process launch proposal budget exceeded','launch-budget'],
+  ['Process proposal output budget exceeded','output-budget']
+]);
 const implementation=()=>({module:'routing-proposals.js',sha256:digest(fs.readFileSync(fileURLToPath(import.meta.url))),processRegistrationSha256:digest(fs.readFileSync(new URL('./process-registration-proposals.js',import.meta.url)))});
 const LIMITATIONS=[
   'Suggestions add dependency edges for review; they never remove graph uncertainty or establish complete inputs.',
@@ -149,8 +163,8 @@ export function routingProposals(root){
   // suggestions when its smaller advisory-analysis budget is unavailable.
   let processRegistrations=null,processRegistrationDiagnostic=null;
   try {processRegistrations=processRegistrationProposals(graph);}
-  catch {
-    processRegistrationDiagnostic={status:'unavailable',reason:'process-diagnostic-input-or-budget-unavailable',omissionAuthority:false,closedWorld:false,nextAction:'Review process launch inputs and native scope manually; all existing uncertainty remains active.'};
+  catch(error) {
+    processRegistrationDiagnostic={status:'unavailable',reason:'process-diagnostic-input-or-budget-unavailable',refusal:PROCESS_REFUSALS.get(error?.message)||'unclassified-input-or-engine-refusal',omissionAuthority:false,closedWorld:false,nextAction:'Review process launch inputs and native scope manually; all existing uncertainty remains active.'};
   }
   const after=snapshot(root,config),stable=freshness(before,after).fresh&&digest(producer)===digest(implementation());
   return seal({schemaVersion:1,type:'routing-mapping-proposal',applied:false,reviewRequired:true,closedWorld:false,provenance:before,configurationHash:digest(config),producer,stable,proposals,truncated,serviceSuggestions,processRegistrations,processRegistrationDiagnostic,unresolved,warnings,unmappedChangesPolicy:'full-suite',limits:{proposals:MAX_PROPOSALS,inputsPerProposal:MAX_INPUTS,testsPerProposal:MAX_TESTS,dependencyEdges:MAX_EDGES,referenceSourceBytes:MAX_REFERENCE_BYTES},limitations:LIMITATIONS});
