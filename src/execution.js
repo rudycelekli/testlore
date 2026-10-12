@@ -11,12 +11,13 @@ import {normalizeNativeProjects} from './native-project-contracts.js';
 import {readNativeJson} from './native-protocol.js';
 import {bunCommand,bunResults,readBunReport} from './bun-results.js';
 import {captureVitestWorkspaceRoot,assertVitestWorkspaceRoot} from './native-workspace-root.js';
-import {captureNativeVitestCases,assertNativeVitestCases,assertNativeCaseConfiguration} from './native-vitest-cases.js';
+import {captureNativeVitestCases,assertNativeVitestCases,captureNativeCaseConfiguration,assertNativeCaseConfiguration} from './native-vitest-cases.js';
 import {validateVitestCaseCapture} from './reporters/vitest-cases.js';
 import {captureReaObservation,assertReaObservation,validateReaObservationEvidence} from './rea-observation.js';
 
 const reporter = fileURLToPath(new URL('./reporters/node.js', import.meta.url));
 const playwrightReporter = fileURLToPath(new URL('./reporters/playwright.cjs', import.meta.url));
+const vitestCaseReporter=fileURLToPath(new URL('./reporters/vitest-cases.js',import.meta.url));
 export function adapterFor(config = {}) {
   if (config.adapter) return config.adapter;
   const argv = config.runner || ['node', '--test', '{files}'];
@@ -216,39 +217,68 @@ function identities(tests) {
 
 /** Execute exact requested files. Unsupported runners never certify report completeness. */
 export function execute(root, files, config = {}, options = {}) {
+  const start = performance.now();
   root = path.resolve(root);
   files = [...new Set(files.map(file => localFile(root, file)))].sort();
   const adapter = adapterFor(config);
+  if(config.vitestCases!==undefined&&adapter!=='vitest')return {adapter,exitCode:2,complete:false,tests:[],collectionFiles:[],requestedFiles:files,executedFiles:[],error:'Explicit native case profile requires the Vitest adapter',nativeCaseEvidenceError:'Explicit native case profile requires the Vitest adapter'};
   if(config.nativeCwd!==undefined)return {adapter,exitCode:2,complete:false,tests:[],collectionFiles:[],requestedFiles:files,executedFiles:[],error:'Explicit native cwd requires fresh unified execution; legacy execution cannot ignore it'};
-  if (!files.length) return { adapter, exitCode: adapter==='playwright'?2:0, tests: [], collectionFiles: [], requestedFiles: [], executedFiles: [], complete: adapter!=='playwright', durationMs: 0, command: [], stdout: '', stderr: '' };
+  if (!files.length) return { adapter, exitCode: adapter==='playwright'||config.vitestCases!==undefined?2:0, tests: [], collectionFiles: [], requestedFiles: [], executedFiles: [], complete: adapter!=='playwright'&&config.vitestCases===undefined, durationMs: 0, command: [], stdout: '', stderr: '',...(config.vitestCases!==undefined?{nativeCaseEvidenceError:'Explicit native case execution requires a nonempty bound scope'}:{}) };
   const temporary = fs.mkdtempSync(path.join(os.tmpdir(), 'tddswarm-report-'));
   const reportFile = path.join(temporary, 'results.json');
   let base;
   try {base=commandBase(config, adapter, root);}catch(error){fs.rmSync(temporary,{recursive:true,force:true});return {adapter,exitCode:2,complete:false,tests:[],collectionFiles:[],requestedFiles:files,executedFiles:[],error:error.message};}
-  let command;
+  let command,caseProfile,caseConfiguration,caseReportFile,caseRuntime,executionConfig=config;
   if (adapter === 'node') command = nodeCommand(base, reportFile, files);
   else if(adapter==='bun') {
     try{command=bunCommand(base,reportFile,files);}
     catch(error){fs.rmSync(temporary,{recursive:true,force:true});return {adapter,exitCode:2,complete:false,tests:[],collectionFiles:[],requestedFiles:files,executedFiles:[],error:error.message};}
   }
   else if (adapter === 'jest') command = [...frameworkBase(base, adapter), '--runTestsByPath', '--watch=false', '--json', `--outputFile=${reportFile}`, ...files.map(f => './' + f)];
-  else if (adapter === 'vitest') command = [...frameworkBase(base, adapter), 'run', '--reporter=json', `--outputFile=${reportFile}`, ...files.map(f => './' + f)];
+  else if (adapter === 'vitest') {
+    command = [...frameworkBase(base, adapter), 'run', '--reporter=json', `--outputFile=${reportFile}`, ...files.map(f => './' + f)];
+    if(config.vitestCases!==undefined)try{
+      const boundCommand=sharedVitestCommand(root,config);
+      if(!boundCommand)throw Error('Explicit native case profile requires a bound Node and Vitest CLI');
+      caseProfile=captureNativeVitestCases(root,config,boundCommand);
+      caseRuntime=canonicalVitestCLI(root,boundCommand[1]);
+      const runtimeFile=fs.realpathSync(createRequire(path.join(caseProfile.projectRoot,'package.json')).resolve('vitest/package.json'));
+      if(caseRuntime?.runtimeFile!==runtimeFile||caseRuntime.runtimeManifestSha256!==caseProfile.runtimeManifestSha256||caseRuntime.version!==caseProfile.vitestVersion)throw Error('Selected Vitest CLI differs from the bound native case runtime');
+      if(caseProfile.profile.profile!=='unimport-detect-factory-runtime-v1'||!caseProfile.observerConfiguration)throw Error('Explicit native case profile requires its exact reviewed standalone observer configuration');
+      caseConfiguration=captureNativeCaseConfiguration(root,[path.join(caseProfile.projectRoot,'vitest.config.ts'),path.join(caseProfile.projectRoot,caseProfile.observerConfiguration.file)]);
+      caseReportFile=path.join(temporary,'native-cases.json');const requestFile=path.join(temporary,'native-case-request.json');
+      fs.writeFileSync(requestFile,JSON.stringify({schemaVersion:1,root:caseProfile.projectRoot,expectedFiles:caseProfile.expectedFiles,inputs:caseProfile.inputs,vitestVersion:caseProfile.vitestVersion,registrationContracts:caseProfile.registrationContracts,scope:'deferred',executionFiles:files.map(file=>normalize(path.relative(caseProfile.projectRoot,path.resolve(root,file)))),reportFile:caseReportFile}),{flag:'wx',mode:0o600});
+      command.push('--includeTaskLocation',`--reporter=${vitestCaseReporter}`);
+      executionConfig={...config,env:{...config.env,TESTLORE_VITEST_CASE_REQUEST:requestFile}};
+    }catch(error){fs.rmSync(temporary,{recursive:true,force:true});return {adapter,exitCode:2,complete:false,tests:[],collectionFiles:[],requestedFiles:files,executedFiles:[],error:error.message,nativeCaseEvidenceError:error.message};}
+  }
   else if (adapter === 'playwright') {
     try { command=playwrightCommand(base,reportFile,files.map(file=>({root,path:file}))); }
     catch(error){fs.rmSync(temporary,{recursive:true,force:true});return {adapter,exitCode:2,complete:false,tests:[],collectionFiles:[],requestedFiles:files,executedFiles:[],error:error.message};}
   }
   else command = base.flatMap(x => x === '{files}' ? files.map(f => './' + f) : [x]);
-  const start = performance.now();
-  const result = spawn(root, command, adapter==='playwright'?{...config,env:{...config.env,TESTLORE_PLAYWRIGHT_REPORT:reportFile}}:config, options);
+  const result = spawn(root, command, adapter==='playwright'?{...config,env:{...config.env,TESTLORE_PLAYWRIGHT_REPORT:reportFile}}:executionConfig, options);
   let normalized = { tests: [], collectionFiles: [], valid: false, errors: [] };
-  let reportError;
+  let reportError,caseSidecar={};
   try {
     if (adapter === 'node') normalized = nodeEvents(root, fs.readFileSync(reportFile, 'utf8'));
     else if(adapter==='bun')normalized=bunResults(root,readBunReport(reportFile),{exitCode:result.status});
     else if (['jest', 'vitest'].includes(adapter)) normalized = frameworkResults(root, JSON.parse(fs.readFileSync(reportFile, 'utf8')));
     else if (adapter==='playwright')normalized=playwrightResults(root,JSON.parse(fs.readFileSync(reportFile,'utf8')));
+    if(caseProfile){
+      const observation=readNativeJson(caseReportFile,32*1024*1024);
+      assertNativeVitestCases(caseProfile,captureNativeVitestCases(root,config,sharedVitestCommand(root,config)));
+      if(JSON.stringify(caseRuntime)!==JSON.stringify(canonicalVitestCLI(root,command[1])))throw Error('Selected native case CLI runtime changed');
+      assertNativeCaseConfiguration(root,caseConfiguration);
+      if(!validateVitestCaseCapture(observation).valid||observation.scope!=='deferred'||observation.runtimeManifestSha256!==caseProfile.runtimeManifestSha256||JSON.stringify(observation.producerSha256)!==JSON.stringify(caseProfile.producerSha256)||JSON.stringify(observation.inputs)!==JSON.stringify(caseProfile.inputs)||JSON.stringify(observation.registrationContracts)!==JSON.stringify(caseProfile.registrationContracts))throw Error('Explicit native case capture differs from its bound profile');
+      const actual=observation.actualFiles.map(file=>normalize(path.relative(root,path.resolve(caseProfile.projectRoot,file)))).sort();
+      const named=test=>JSON.stringify([normalize(path.relative(root,path.resolve(caseProfile.projectRoot,test.file))),test.rawName,test.status]);
+      const rawNamed=test=>JSON.stringify([test.file,test.name,test.status]);
+      if(JSON.stringify(actual)!==JSON.stringify(files)||JSON.stringify(observation.tests.map(named).sort())!==JSON.stringify(normalized.tests.map(rawNamed).sort()))throw Error('Explicit native case capture scope or raw outcome multiplicities differ');
+      caseSidecar={nativeCaseEvidence:observation,nativeCaseEvidenceBinding:{profile:caseProfile,configurationInputs:caseConfiguration}};
+    }
 
-  } catch (error) { reportError = error.message; }
+  } catch (error) { reportError = error.message;if(caseProfile)caseSidecar={nativeCaseEvidenceError:error.message}; }
   finally { fs.rmSync(temporary, { recursive: true, force: true }); }
   const missingFiles = files.filter(f => !normalized.collectionFiles.includes(f));
   const unknownFiles = normalized.collectionFiles.filter(f => !files.includes(f));
@@ -256,7 +286,7 @@ export function execute(root, files, config = {}, options = {}) {
   // projects. They are measured and reported, not silently filtered away.
   const dependencyFiles = adapter==='playwright'?unknownFiles.filter(file=>normalized.tests.filter(test=>test.file===file).every(test=>normalized.projects.some(project=>project.dependencies?.includes(test.project)||project.teardown===test.project))):[];
   const unexpectedFiles=unknownFiles.filter(file=>!dependencyFiles.includes(file));
-  const complete = normalized.valid && !result.error && !result.signal && !missingFiles.length && !unexpectedFiles.length && !normalized.errors.length;
+  const complete = normalized.valid && !result.error && !result.signal && !missingFiles.length && !unexpectedFiles.length && !normalized.errors.length && !caseSidecar.nativeCaseEvidenceError;
   const tests = identities(normalized.tests);
   // A success exit without a valid supported report is an execution failure.
   const unreportedSuccess = result.status === 0 && adapter !== 'custom' && !complete;
@@ -267,7 +297,7 @@ export function execute(root, files, config = {}, options = {}) {
     if (stdout) process.stdout.write(stdout);
     if (stderr) process.stderr.write(stderr);
   }
-  return { adapter, exitCode, durationMs: Math.round(performance.now() - start), tests, collectionFiles: normalized.collectionFiles,
+  return { adapter, ...caseSidecar, exitCode, durationMs: Math.round(performance.now() - start), tests, collectionFiles: normalized.collectionFiles,
     requestedFiles: files, executedFiles: adapter==='playwright'?normalized.collectionFiles:files, missingFiles, unknownFiles, dependencyFiles, complete,
     ...(adapter==='playwright'?{projects:normalized.projects,nativeStatus:normalized.nativeStatus,nativeExitCode:result.status}:{}),
     command, stdout, stderr, signal: result.signal,
@@ -447,10 +477,10 @@ function canonicalVitestCLI(root,requested) {
     for(const directory of createRequire(cli).resolve.paths('vitest/package.json')||[]) {
       const metadata=path.join(directory,'vitest/package.json');
       try{fs.lstatSync(metadata);}catch(error){if(error.code==='ENOENT')continue;return null;}
-      const pkg=JSON.parse(readNativeIdentityFile(metadata).toString('utf8'));
+      const runtimeBytes=readNativeIdentityFile(metadata),pkg=JSON.parse(runtimeBytes.toString('utf8'));
       const target=typeof pkg.bin==='object'&&pkg.bin?.vitest;
       if(pkg.name!=='vitest'||typeof target!=='string'||pkg.exports?.['./package.json']!=='./package.json'||fs.realpathSync(path.resolve(path.dirname(metadata),target))!==cli)return null;
-      return {cli,version:pkg.version};
+      return {cli,version:pkg.version,runtimeFile:fs.realpathSync(metadata),runtimeManifestSha256:createHash('sha256').update(runtimeBytes).digest('hex')};
     }
     return null;
   }catch{return null;}

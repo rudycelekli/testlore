@@ -42,7 +42,7 @@ try {
   write('src/module-0.js', "export{value}from'./module-1.js';");
   const changed = plan(root, { changed: ['src/module-1.js'] });
   assert.deepEqual(changed.selected, ['test/module-0.test.js','test/module-1.test.js']);
-  const directory = path.join(root, '.tddswarm/analysis-cache/v1');
+  const directory = path.join(root, '.tddswarm/analysis-cache/v2');
   for (const name of fs.readdirSync(directory).filter(name => name.endsWith('.json'))) fs.writeFileSync(path.join(directory, name), '{corrupt');
   assert.deepEqual(routing(plan(root, { changed: ['src/module-1.js'] })), routing(changed));
   // Native collection is deliberately exercised afresh, including a newly added test.

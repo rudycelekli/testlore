@@ -6,7 +6,7 @@ import { safePath } from './files.js';
 
 const digest = value => createHash('sha256').update(typeof value === 'string' || Buffer.isBuffer(value) ? value : JSON.stringify(value)).digest('hex');
 export const ANALYSIS_CACHE_IMPLEMENTATION = digest(fs.readFileSync(fileURLToPath(import.meta.url)));
-const DIRECTORY = '.tddswarm/analysis-cache/v1', MAX_SOURCE_BYTES = 4 * 1024 * 1024, MAX_ENTRY_BYTES = 128 * 1024;
+const SCHEMA_VERSION = 2, DIRECTORY = '.tddswarm/analysis-cache/v2', MAX_SOURCE_BYTES = 4 * 1024 * 1024, MAX_ENTRY_BYTES = 128 * 1024;
 const WARNING_KINDS = new Set(['parse-error','dynamic-dependency','runtime-registration','runtime-dependency']);
 
 export function analysisCacheSettings(value = {}) {
@@ -16,7 +16,7 @@ export function analysisCacheSettings(value = {}) {
   return { enabled, maxEntries, maxBytes };
 }
 function validResult(value) {
-  return value && typeof value === 'object' && Object.keys(value).length === 2 && Array.isArray(value.imports) && value.imports.length <= 4096 && value.imports.every(spec => typeof spec === 'string' && spec.length <= 4096) && new Set(value.imports).size === value.imports.length && Array.isArray(value.warnings) && value.warnings.every(reason => WARNING_KINDS.has(reason)) && new Set(value.warnings).size === value.warnings.length;
+  return value && typeof value === 'object' && Object.keys(value).length === 3 && ['imports','runtimeImports','warnings'].every(key=>Object.hasOwn(value,key)) && Array.isArray(value.imports) && value.imports.length <= 4096 && value.imports.every(spec => typeof spec === 'string' && spec.length <= 4096) && new Set(value.imports).size === value.imports.length && Array.isArray(value.runtimeImports) && value.runtimeImports.every(spec=>value.imports.includes(spec)) && new Set(value.runtimeImports).size===value.runtimeImports.length && Array.isArray(value.warnings) && value.warnings.every(reason => WARNING_KINDS.has(reason)) && new Set(value.warnings).size === value.warnings.length;
 }
 
 function readBounded(target, maximum) {
@@ -31,7 +31,7 @@ function readBounded(target, maximum) {
   } finally { fs.closeSync(fd); }
 }
 
-function copy(value) { return { imports: [...value.imports], warnings: [...value.warnings] }; }
+function copy(value) { return { imports: [...value.imports], runtimeImports: [...(value.runtimeImports ?? value.imports)], warnings: [...value.warnings] }; }
 
 /** Cache summaries, never ASTs, resolved edges, discovery, or uncertainty decisions. */
 export function createAnalysisCache(root, value, engine) {
@@ -46,7 +46,7 @@ export function createAnalysisCache(root, value, engine) {
     memory.set(key, { result: copy(result), size }); memoryBytes += size;
   }
   function analyze(file, text, compute) {
-    const sourceHash = digest(text), key = digest({ schemaVersion: 1, engine, file, sourceHash });
+    const sourceHash = digest(text), key = digest({ schemaVersion: SCHEMA_VERSION, engine, file, sourceHash });
     const cached = memory.get(key);
     if (cached) { stats.memoryHits++; return copy(cached.result); }
     let cacheable = Buffer.byteLength(text) <= MAX_SOURCE_BYTES;
@@ -57,7 +57,7 @@ export function createAnalysisCache(root, value, engine) {
         if (fs.existsSync(target)) {
           const bytes = readBounded(target, MAX_ENTRY_BYTES);
           const record = JSON.parse(bytes), { integrity, ...payload } = record;
-          if (Object.keys(record).some(field => !['schemaVersion','engine','key','file','sourceHash','result','integrity'].includes(field)) || integrity !== digest(payload) || record.schemaVersion !== 1 || record.engine !== engine || record.key !== key || record.file !== file || record.sourceHash !== sourceHash || !validResult(record.result)) throw new Error('Invalid cache summary');
+          if (Object.keys(record).some(field => !['schemaVersion','engine','key','file','sourceHash','result','integrity'].includes(field)) || integrity !== digest(payload) || record.schemaVersion !== SCHEMA_VERSION || record.engine !== engine || record.key !== key || record.file !== file || record.sourceHash !== sourceHash || !validResult(record.result)) throw new Error('Invalid cache summary');
           remember(key, record.result); stats.diskHits++; return copy(record.result);
         }
       } catch { stats.corruptions++; }
@@ -67,7 +67,7 @@ export function createAnalysisCache(root, value, engine) {
     if (validResult(summary)) {
       remember(key, summary);
       if (settings.enabled && root && cacheable) {
-        const payload = { schemaVersion: 1, engine, key, file, sourceHash, result: summary };
+        const payload = { schemaVersion: SCHEMA_VERSION, engine, key, file, sourceHash, result: summary };
         const bytes = Buffer.from(JSON.stringify({ ...payload, integrity: digest(payload) }));
         if (bytes.length <= Math.min(MAX_ENTRY_BYTES, settings.maxBytes) && pending.size < settings.maxEntries && pendingBytes + bytes.length <= settings.maxBytes) { pending.set(key, bytes); pendingBytes += bytes.length; }
         else stats.skipped++;

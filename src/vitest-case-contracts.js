@@ -99,6 +99,81 @@ export function createE2ELocatorRegistrationPlugin(root,contract){
 }
 
 export function validateVitestRegistration(record,contract){
- validateContract(contract);const expected=contract.rows.find(row=>row.registrationId===record?.registrationId);
+ if(contract?.kind==='reviewed-unimport-parser-factory-registration')validateFactoryContract(contract);else validateContract(contract);const expected=contract.rows.find(row=>row.registrationId===record?.registrationId);
  return !!expected&&record.valid===true&&record.error===null&&record.contractHash===vitestCaseHash(contract)&&record.sourceSha256===contract.sourceSha256&&record.inputSha256===expected.inputSha256;
+}
+
+export const UNIMPORT_FACTORY_FILE='test/detect-estree.test.ts';
+export const UNIMPORT_FACTORY_REVISION='bbd07768ddb4919205bcb5a3cbc06c3a2791981a';
+export const UNIMPORT_FACTORY_SOURCE_SHA256='33472e809f8eb76ed160ce4805027dfc7de4c26aea732cc3d0c61b0c26f28ee4';
+const factoryCalls=[
+ "testWith('acorn', code => parseWithAcorn(code, {\n  sourceType: 'module',\n  ecmaVersion: 'latest',\n  locations: true,\n}) as Program)",
+ "testWith('oxc', code => parseWithOxc('', code, {\n  sourceType: 'module',\n}).program as Program)",
+ "testWith('oxc', code => parseWithRolldownOxc('', code, {\n  sourceType: 'module',\n}).program as Program)",
+];
+const factoryNames=['acorn','oxc','oxc'];
+const factoryTitles=['scopes','references in statements and patterns','declarations from patterns and params','params and catch bindings do not leak to the enclosing scope','re-exports are not references','matchedImports','function params are declared in their own scope','inject','virtual imports only','non-exist','comment false-positive','side-effects'];
+const childDeclaration=title=>"it('"+title+"', async () => {";
+function expectedFactoryContract(vitestVersion){
+ const factories=factoryCalls.map((call,index)=>({declarationSha256:vitestCaseHash(call),inputSha256:vitestParameterDigest([factoryNames[index]])}));
+ const rows=factories.flatMap(factory=>factoryTitles.map(title=>{const row={...factory,declarationRowSha256:vitestCaseHash(childDeclaration(title))};return {...row,registrationId:vitestCaseHash({file:UNIMPORT_FACTORY_FILE,sourceSha256:UNIMPORT_FACTORY_SOURCE_SHA256,...row})};}));
+ return {schemaVersion:1,kind:'reviewed-unimport-parser-factory-registration',file:UNIMPORT_FACTORY_FILE,sourceSha256:UNIMPORT_FACTORY_SOURCE_SHA256,upstreamRevision:UNIMPORT_FACTORY_REVISION,vitestVersion,factories,rows,omissionAuthority:false,inputEquivalenceClaim:false};
+}
+function validateFactoryContract(contract){
+ if(!['5.0.0','5.0.2'].includes(contract?.vitestVersion)||JSON.stringify(contract)!==JSON.stringify(expectedFactoryContract(contract.vitestVersion)))throw Error('Invalid reviewed parser factory contract');
+}
+/** Identity of original source-declared parser closures, not parser equivalence. */
+export function unimportFactoryRegistrationContract(root,{upstreamRevision,vitestVersion}={}){
+ if(upstreamRevision!==UNIMPORT_FACTORY_REVISION||!['5.0.0','5.0.2'].includes(vitestVersion))throw Error('Pinned reviewed unimport/Vitest profile required');
+ const source=readVitestCaseSource(root,UNIMPORT_FACTORY_FILE).toString('utf8');
+ if(vitestCaseHash(source)!==UNIMPORT_FACTORY_SOURCE_SHA256||factoryCalls.some(call=>source.split(call).length!==2)||factoryTitles.some(title=>source.split(childDeclaration(title)).length!==2))throw Error('Reviewed exact unimport factory source changed');
+ return expectedFactoryContract(vitestVersion);
+}
+// A source-injected context holds the actual callback reference. Neither public
+// registration order nor Function.toString is used to identify opaque closures.
+const factoryContexts=new WeakMap(),factoryPlugins=new WeakMap();
+export function invokeReviewedUnimportFactory(factory,name,parse,declarationSha256,contract){
+ validateFactoryContract(contract);const expected=contract.factories.find(item=>item.declarationSha256===declarationSha256);
+ if(typeof factory!=='function'||typeof parse!=='function'||!expected||vitestParameterDigest([name])!==expected.inputSha256)throw Error('Actual reviewed factory invocation differs');
+ const context=Object.freeze({});factoryContexts.set(context,{name,parse,declarationSha256,contractHash:vitestCaseHash(contract)});
+ return factory(name,parse,context);
+}
+/** Register unchanged callback/title with observational metadata and a guard. */
+export function reviewedUnimportFactoryIt(it,name,parse,context,childSha256,contract){
+ validateFactoryContract(contract);
+ return (title,callback)=>{
+  if(typeof it!=='function'||typeof callback!=='function')throw Error('Actual reviewed factory test unavailable');
+  const captured=context&&typeof context==='object'?factoryContexts.get(context):undefined,expected=contract.rows.find(row=>row.declarationSha256===captured?.declarationSha256&&row.declarationRowSha256===childSha256);let error=null,inputSha256=null;
+  try{inputSha256=vitestParameterDigest([name]);if(!captured||captured.name!==name||captured.parse!==parse||captured.contractHash!==vitestCaseHash(contract)||!expected||inputSha256!==expected.inputSha256||childSha256!==vitestCaseHash(childDeclaration(title)))throw Error('Actual factory closure/name/declaration changed');}catch(cause){error=cause.message;}
+  const registration={contractHash:vitestCaseHash(contract),registrationId:expected?.registrationId||null,inputSha256,sourceSha256:contract.sourceSha256,valid:error===null,error};
+  return it(title,{meta:{testloreVitestRegistration:registration}},(...args)=>{if(error)throw Error('TestLore factory registration evidence rejected: '+error);return callback(...args);});
+ };
+}
+/** Explicit exact-source overlay; original disk bytes and assertions survive. */
+export function createUnimportFactoryRegistrationPlugin(root,contract){
+ validateFactoryContract(contract);const logicalRoot=path.resolve(root);root=fs.realpathSync(root);const target=safePath(root,contract.file).replaceAll('\\','/'),logicalTarget=path.join(logicalRoot,contract.file).replaceAll('\\','/'),helper=fileURLToPath(import.meta.url).replaceAll('\\','/');
+ const original=readVitestCaseSource(root,contract.file).toString('utf8');if(vitestCaseHash(original)!==contract.sourceSha256)throw Error('Reviewed factory registration source drift');
+ function transformed(source){let code=source;
+  for(const call of factoryCalls){const argumentsSource=call.slice('testWith('.length,-1);code=code.replace(call,'__testloreFactory(testWith,'+argumentsSource+','+JSON.stringify(vitestCaseHash(call))+','+JSON.stringify(contract)+')');}
+  const signature="function testWith(name: InjectImportsOptions['parser'], parse: (code: string) => Program)";
+  code=code.replace(signature,signature.slice(0,-1)+', __testloreContext?: object)');
+  for(const title of factoryTitles){const declaration=childDeclaration(title);code=code.replace(declaration,'__testloreFactoryIt(it,name,parse,__testloreContext,'+JSON.stringify(vitestCaseHash(declaration))+','+JSON.stringify(contract)+')'+declaration.slice(2));}
+  return 'import {invokeReviewedUnimportFactory as __testloreFactory,reviewedUnimportFactoryIt as __testloreFactoryIt} from '+JSON.stringify(helper)+';\n'+code;
+ }
+ const expected=transformed(original);
+ const plugin={name:'testlore-reviewed-unimport-factory-registration',enforce:'pre',transform(source,id){
+  const name=id.split('?')[0].replaceAll('\\','/');if(name!==target&&name!==logicalTarget)return;
+  // A controller overlay and native resolver may retain two exact instances.
+  // Accept only the exact locally generated observational output as a no-op.
+  if(source===expected)return;
+  if(vitestCaseHash(source)!==contract.sourceSha256)throw Error('Reviewed factory registration source drift');
+  return {code:expected,map:null};
+ }};Object.freeze(plugin);factoryPlugins.set(plugin,{root,contractHash:vitestCaseHash(contract)});return plugin;
+}
+export function createVitestRegistrationPlugin(root,contract){return contract?.kind==='reviewed-unimport-parser-factory-registration'?createUnimportFactoryRegistrationPlugin(root,contract):createE2ELocatorRegistrationPlugin(root,contract);}
+
+export function isReviewedUnimportFactoryPlugin(plugin,root,contract){const record=factoryPlugins.get(plugin);return !!record&&record.root===fs.realpathSync(root)&&record.contractHash===vitestCaseHash(contract);}
+export function unimportFactoryObserverConfigSource(root){
+ root=fs.realpathSync(root);
+ return "import {mergeConfig} from 'vitest/config';import original from './vitest.config.ts';const helper=await import(String("+JSON.stringify(import.meta.url)+"));const root="+JSON.stringify(root)+";const contract=helper.unimportFactoryRegistrationContract(root,{upstreamRevision:"+JSON.stringify(UNIMPORT_FACTORY_REVISION)+",vitestVersion:'5.0.0'});export default mergeConfig(original,{plugins:[helper.createUnimportFactoryRegistrationPlugin(root,contract)],test:{includeTaskLocation:true}});\n";
 }

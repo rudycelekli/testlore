@@ -5,6 +5,9 @@ import path from 'node:path';
 import {execFileSync} from 'node:child_process';
 import {fileURLToPath} from 'node:url';
 import {createHash} from 'node:crypto';
+import {unimportFactoryObserverConfigSource} from '../src/vitest-case-contracts.js';
+import {captureNativeVitestCases} from '../src/native-vitest-cases.js';
+import {validateVitestCaseCapture} from '../src/reporters/vitest-cases.js';
 import {boundedInstallProcess} from './public-corpus-upstream.js';
 
 export const UNIMPORT_PIN='bbd07768ddb4919205bcb5a3cbc06c3a2791981a';
@@ -57,7 +60,7 @@ function observedNativeErrors(raw,observation,observerPath){
 }
 
 /** Strict native names; ambiguous duplicates are refused rather than assigned ordinals. */
-export function nativeCases(raw,root,observation,observerPath){
+export function nativeCases(raw,root,observation,observerPath,caseCapture){
  if(!raw||!Array.isArray(raw.testResults)||(raw.numRuntimeErrorTestSuites!==undefined&&raw.numRuntimeErrorTestSuites!==0)||raw.numTodoTests!==0||raw.numPendingTests!==0)throw Error('Native report runtime/error inventory unavailable');
  observedNativeErrors(raw,observation,observerPath);
  const files=[],cases=[],keys=new Set();
@@ -67,13 +70,19 @@ export function nativeCases(raw,root,observation,observerPath){
   files.push(file);
   for(const test of suite.assertionResults){
    if(typeof test.fullName!=='string'||!test.fullName||!statuses.has(test.status))throw Error('Native named case unavailable');
-   const id=JSON.stringify([file,test.fullName]);if(keys.has(id))throw Error('Ambiguous native named case');keys.add(id);
+   const id=JSON.stringify([file,test.fullName]);if(keys.has(id)&&!caseCapture)throw Error('Ambiguous native named case');keys.add(id);
    cases.push({id,file,name:test.fullName,status:statuses.get(test.status)});
   }
  }
  for(const [field,status]of [['numPassedTests','passed'],['numFailedTests','failed'],['numPendingTests','skipped']])if(raw[field]!==cases.filter(test=>test.status===status).length)throw Error('Native summary differs from raw outcomes');
  if(raw.numTotalTests!==cases.length||raw.success!==(cases.every(test=>test.status!=='failed')))throw Error('Native total/success differs from raw outcomes');
- return {files:files.sort(),cases:cases.sort((a,b)=>a.id.localeCompare(b.id))};
+ return caseCapture?semanticCases(cases,files,caseCapture):{files:files.sort(),cases:cases.sort((a,b)=>a.id.localeCompare(b.id))};
+}
+function semanticCases(cases,files,capture){
+ if(!validateVitestCaseCapture(capture).valid||!eq([...capture.actualFiles].sort(),[...files].sort()))throw Error('Native semantic case capture incomplete');
+ const named=value=>JSON.stringify([value.file,value.name??value.rawName,value.status]);
+ if(!eq(cases.map(named).sort(),capture.tests.map(named).sort()))throw Error('Native raw/semantic case multiplicities or outcomes differ');
+ return {files:[...files].sort(),cases:capture.tests.map(test=>({id:JSON.stringify([test.file,test.semanticId]),file:test.file,name:test.rawName,status:test.status})).sort((a,b)=>a.id.localeCompare(b.id))};
 }
 export function testLoreCases(raw){
  if(raw?.complete!==true||!Array.isArray(raw.tests)||!Array.isArray(raw.executedFiles)||!Array.isArray(raw.collectionFiles)||!eq([...raw.executedFiles].sort(),[...raw.collectionFiles].sort())||raw.reportErrors?.length||raw.missingFiles?.length||raw.unknownFiles?.length||raw.signal||raw.error)throw Error('TestLore complete execution unavailable');
@@ -81,10 +90,10 @@ export function testLoreCases(raw){
  if(new Set(files).size!==files.length||files.some(file=>!safe(file)))throw Error('TestLore file inventory invalid');
  for(const test of raw.tests){
   if(!files.includes(test.file)||typeof test.name!=='string'||!test.name||test.name==='<file-load>'||!['passed','failed','skipped'].includes(test.status))throw Error('TestLore named case unavailable');
-  const id=JSON.stringify([test.file,test.name]);if(keys.has(id))throw Error('Ambiguous TestLore named case');keys.add(id);cases.push({id,file:test.file,name:test.name,status:test.status});
+  const id=JSON.stringify([test.file,test.name]);if(keys.has(id)&&!raw.nativeCaseEvidence)throw Error('Ambiguous TestLore named case');keys.add(id);cases.push({id,file:test.file,name:test.name,status:test.status});
  }
  if(files.some(file=>!cases.some(test=>test.file===file)))throw Error('TestLore named file outcomes unavailable');
- return {files,cases:cases.sort((a,b)=>a.id.localeCompare(b.id))};
+ return raw.nativeCaseEvidence?semanticCases(cases,files,raw.nativeCaseEvidence):{files,cases:cases.sort((a,b)=>a.id.localeCompare(b.id))};
 }
 /** Replay raw per-arm reports; aggregate claims cannot substitute for complete cases. */
 export function assessUnimportRuns(runs,root,expectedFiles){
@@ -93,7 +102,7 @@ export function assessUnimportRuns(runs,root,expectedFiles){
   const batch=runs.filter(run=>run.phase===phase&&run.repeat===repeat);
   try{
    if(batch.length!==3||!eq(batch.map(run=>run.arm).sort(),['full','native','testlore']))throw Error('Missing/duplicate/unknown arm');
-   const normalized=new Map(batch.map(run=>[run.arm,run.arm==='testlore'?testLoreCases(run.raw):nativeCases(run.raw,root,run.nativeErrors,run.nativeObserverPath)]));
+   const normalized=new Map(batch.map(run=>[run.arm,run.arm==='testlore'?testLoreCases(run.raw):nativeCases(run.raw,root,run.nativeErrors,run.nativeObserverPath,run.nativeCaseEvidence)]));
    const full=normalized.get('full');if(!full||!eq(full.files,[...expectedFiles].sort()))throw Error('Original full native scope differs');
    const inventory=full.cases.map(({status,...test})=>test);
    if(!baseline){baseline=inventory;baselineStatuses=full.cases;}else if(!eq(inventory,baseline))throw Error('Full case identity drift');
@@ -158,10 +167,11 @@ export async function unimportRoutingPilot({upstream,output,sourceSha}){
  const env={PATH:path.dirname(process.execPath)+':/usr/local/bin:/usr/bin:/bin',HOME:path.join(isolated,'home'),TMPDIR:path.join(isolated,'tmp'),CI:'true',LANG:'C.UTF-8',npm_config_cache:path.join(isolated,'cache')};
  for(const name of ['npm-user','npm-global'])fs.writeFileSync(path.join(isolated,name),'',{flag:'wx',mode:0o600});
  env.npm_config_userconfig=path.join(isolated,'npm-user');env.npm_config_globalconfig=path.join(isolated,'npm-global');
- const execute=async(name,command,args,cwd,{timeoutMs=120000,maxGrowthBytes=128*1024**2,nativeObserver=false}={})=>{
+ const execute=async(name,command,args,cwd,{timeoutMs=120000,maxGrowthBytes=128*1024**2,nativeObserver=false,nativeCaseRequest=null}={})=>{
   const remaining=deadline(),directory=path.join(output,name);fs.mkdirSync(directory);const begin=performance.now();
   if(nativeObserver)fs.writeFileSync(path.join(directory,'native-error-observer.mjs'),NATIVE_ERROR_OBSERVER_SOURCE,{flag:'wx',mode:0o600});
-  const event=await boundedInstallProcess(command,args,{cwd,directory,env,timeoutMs:Math.max(1,Math.min(timeoutMs,Math.floor(remaining))),maxGrowthBytes,reserveBytes:2*1024**3,maxLogBytes:4*1024**2,terminateDescendants:true});save(path.join(directory,'process.json'),{command,args,event});deadline();return {directory,event,begin};
+  let armEnv=env;if(nativeCaseRequest){const requestFile=path.join(directory,'case-request.json');save(requestFile,{...nativeCaseRequest,reportFile:path.join(directory,'cases.json')});armEnv={...env,TESTLORE_VITEST_CASE_REQUEST:requestFile};}
+  const event=await boundedInstallProcess(command,args,{cwd,directory,env:armEnv,timeoutMs:Math.max(1,Math.min(timeoutMs,Math.floor(remaining))),maxGrowthBytes,reserveBytes:2*1024**3,maxLogBytes:4*1024**2,terminateDescendants:true});save(path.join(directory,'process.json'),{command,args,event});deadline();return {directory,event,begin};
  };
  const npm=path.resolve(path.dirname(process.execPath),'../lib/node_modules/npm/bin/npm-cli.js');
  const bootstrap=await execute('manager-bootstrap',process.execPath,[npm,'exec','--yes','--package=pnpm@12.3.4','--','pnpm','--version'],producer,{timeoutMs:120000,maxGrowthBytes:128*1024**2});
@@ -178,25 +188,26 @@ export async function unimportRoutingPilot({upstream,output,sourceSha}){
  if(build.event.exitCode!==0||build.event.reason)throw Error('Original upstream build unavailable');
  const cli=path.join(upstream,'node_modules/vitest/vitest.mjs');if(JSON.parse(fs.readFileSync(path.join(upstream,'node_modules/vitest/package.json'))).version!=='5.0.0')throw Error('Original frozen Vitest version differs');
  const dependencyInventory=installed(upstream);save(path.join(output,'installed-inventory.json'),dependencyInventory);
- const config={adapter:'vitest',discovery:'native',executionMode:'selective',runner:[process.execPath,cli,'run','--cache=false','--passWithNoTests','{files}'],runnerTimeoutMs:120000,dependencies:{[ORACLE]:[ASSET]}};
- const sourceCheck=phase=>{for(const file of paths){const current=h(fs.readFileSync(path.join(upstream,file))),expected=file===ASSET?h(phase==='fault'?fault:original):sourceBindings[file];if(current!==expected)throw Error('Original source/lock/assertion bytes changed: '+file);}if(h(fs.readFileSync(path.join(upstream,'tddswarm.config.json')))!==h(JSON.stringify(config)))throw Error('Pilot configuration changed');};
+ const observerConfig='testlore.observation.config.mjs',observerSource=unimportFactoryObserverConfigSource(upstream);
+ const config={adapter:'vitest',discovery:'native',executionMode:'selective',runner:[process.execPath,cli,'run','--config',observerConfig,'--cache=false','--passWithNoTests','{files}'],vitestCases:{profile:'unimport-detect-factory-runtime-v1',projectRoot:'.',upstreamRevision:UNIMPORT_PIN},runnerTimeoutMs:120000,dependencies:{[ORACLE]:[ASSET]}};
+ const sourceCheck=phase=>{for(const file of paths){const current=h(fs.readFileSync(path.join(upstream,file))),expected=file===ASSET?h(phase==='fault'?fault:original):sourceBindings[file];if(current!==expected)throw Error('Original source/lock/assertion bytes changed: '+file);}if(h(fs.readFileSync(path.join(upstream,observerConfig)))!==h(observerSource))throw Error('Native observer overlay changed');if(h(fs.readFileSync(path.join(upstream,'tddswarm.config.json')))!==h(JSON.stringify(config)))throw Error('Pilot configuration changed');};
  const runs=[];let base=null;
  try{
- fs.writeFileSync(path.join(upstream,'tddswarm.config.json'),JSON.stringify(config),{flag:'wx',mode:0o600});fs.writeFileSync(path.join(upstream,ASSET),inert);
- git(upstream,'add','--','tddswarm.config.json',ASSET);git(upstream,'-c','user.name=TestLore bounded pilot','-c','user.email=testlore-pilot@users.noreply.github.com','commit','-m','Isolated original-suite pilot setup (not upstream publication)');
- base=git(upstream,'rev-parse','HEAD');save(path.join(output,'setup.json'),{base,configuration:config,configurationSha256:h(fs.readFileSync(path.join(upstream,'tddswarm.config.json'))),inertAssetSha256:h(inert),upstreamRevision:UNIMPORT_PIN,reviewedAddedEdge:{oracle:ORACLE,oracleSha256:sourceBindings[ORACLE],fixture:ASSET,fixtureSha256:sourceBindings[ASSET],scanner:'src/node/scan-dirs.ts',scannerSha256:sourceBindings['src/node/scan-dirs.ts'],scope:'Explicit reviewed fixture-to-original-oracle edge; no automatic completeness or cleared runtime uncertainty.'}});
+ fs.writeFileSync(path.join(upstream,observerConfig),observerSource,{flag:'wx',mode:0o600});fs.writeFileSync(path.join(upstream,'tddswarm.config.json'),JSON.stringify(config),{flag:'wx',mode:0o600});fs.writeFileSync(path.join(upstream,ASSET),inert);
+ git(upstream,'add','--','tddswarm.config.json',observerConfig,ASSET);git(upstream,'-c','user.name=TestLore bounded pilot','-c','user.email=testlore-pilot@users.noreply.github.com','commit','-m','Isolated original-suite pilot setup (not upstream publication)');
+ base=git(upstream,'rev-parse','HEAD');const nativeProfile=captureNativeVitestCases(upstream,config,config.runner);save(path.join(output,'native-case-profile.json'),nativeProfile);save(path.join(output,'setup.json'),{base,configuration:config,configurationSha256:h(fs.readFileSync(path.join(upstream,'tddswarm.config.json'))),inertAssetSha256:h(inert),upstreamRevision:UNIMPORT_PIN,reviewedAddedEdge:{oracle:ORACLE,oracleSha256:sourceBindings[ORACLE],fixture:ASSET,fixtureSha256:sourceBindings[ASSET],scanner:'src/node/scan-dirs.ts',scannerSha256:sourceBindings['src/node/scan-dirs.ts'],scope:'Explicit reviewed fixture-to-original-oracle edge; no automatic completeness or cleared runtime uncertainty.'}});
   for(const phase of ['clean','fault','restored']){
    fs.writeFileSync(path.join(upstream,ASSET),phase==='fault'?fault:original);
    for(let repeat=0;repeat<2;repeat++)for(const arm of repeat===0?['full','testlore','native']:['native','full','testlore']){
     const preflight=performance.now();sourceCheck(phase);if(installed(upstream).sha256!==dependencyInventory.sha256)throw Error('Installed dependency bytes/links changed');
     const preflightMs=performance.now()-preflight,name=`${phase}-${repeat}-${arm}`,rawPath=path.join(output,name,'native.json');
-    const args=arm==='testlore'?[path.join(producer,'src/cli.js'),'run','--root',upstream,'--base',base,'--selective','--json']:[cli,...(arm==='native'?['related',ASSET]:['run']),'--cache=false','--reporter=json','--reporter',path.join(output,name,'native-error-observer.mjs'),'--outputFile',rawPath,'--passWithNoTests'];
-    const executed=await execute(name,process.execPath,args,upstream,{nativeObserver:arm!=='testlore'}),{event,directory,begin}=executed;
+    const args=arm==='testlore'?[path.join(producer,'src/cli.js'),'run','--root',upstream,'--base',base,'--selective','--json']:[cli,...(arm==='native'?['related',ASSET]:['run']),'--config',observerConfig,'--includeTaskLocation','--cache=false','--reporter=json','--reporter',path.join(producer,'src/reporters/vitest-cases.js'),'--reporter',path.join(output,name,'native-error-observer.mjs'),'--outputFile',rawPath,'--passWithNoTests'];
+    const executed=await execute(name,process.execPath,args,upstream,{nativeObserver:arm!=='testlore',nativeCaseRequest:arm==='testlore'?null:{schemaVersion:1,root:upstream,expectedFiles:nativeProfile.expectedFiles,inputs:nativeProfile.inputs,vitestVersion:nativeProfile.vitestVersion,registrationContracts:nativeProfile.registrationContracts,scope:arm==='native'?'native-related':'full'}}),{event,directory,begin}=executed;
     if(event.reason||event.signal||![0,1].includes(event.exitCode))throw Error('Fresh arm execution incomplete: '+name);
     const text=fs.readFileSync(arm==='testlore'?path.join(directory,'stdout.log'):rawPath,'utf8');if(Buffer.byteLength(text)>4*1024**2)throw Error('Raw report exceeds bound');
-    const raw=JSON.parse(text);save(path.join(directory,'raw.json'),raw);let nativeErrors=null;if(arm!=='testlore'){const file=path.join(directory,'native-errors.json');if(fs.statSync(file).size>65536||h(fs.readFileSync(path.join(directory,'native-error-observer.mjs')))!==NATIVE_ERROR_OBSERVER_SHA256)throw Error('Native observer bytes/output differ');nativeErrors=JSON.parse(fs.readFileSync(file,'utf8'));}const cliAndRawReportMs=performance.now()-begin;
+    const raw=JSON.parse(text);save(path.join(directory,'raw.json'),raw);let nativeErrors=null;if(arm!=='testlore'){const file=path.join(directory,'native-errors.json');if(fs.statSync(file).size>65536||h(fs.readFileSync(path.join(directory,'native-error-observer.mjs')))!==NATIVE_ERROR_OBSERVER_SHA256)throw Error('Native observer bytes/output differ');nativeErrors=JSON.parse(fs.readFileSync(file,'utf8'));}const nativeCaseEvidence=arm==='testlore'?null:JSON.parse(fs.readFileSync(path.join(directory,'cases.json'),'utf8'));const cliAndRawReportMs=performance.now()-begin;
     const validationStart=performance.now();sourceCheck(phase);if(installed(upstream).sha256!==dependencyInventory.sha256)throw Error('Installed dependency bytes/links changed after arm');
-    const record={phase,repeat,arm,event,cliAndRawReportMs,preflightMs,postflightMs:performance.now()-validationStart,raw,...(nativeErrors?{nativeErrors,nativeObserverPath:path.join(directory,'native-error-observer.mjs')}:{})};save(path.join(directory,'capture.json'),record);
+    const record={phase,repeat,arm,event,cliAndRawReportMs,preflightMs,postflightMs:performance.now()-validationStart,raw,...(nativeErrors?{nativeErrors,nativeObserverPath:path.join(directory,'native-error-observer.mjs'),nativeCaseEvidence}:{})};save(path.join(directory,'capture.json'),record);
     record.outerMs=performance.now()-begin;save(path.join(directory,'timing.json'),{outerMs:record.outerMs,cliAndRawReportMs,preflightMs,postflightMs:record.postflightMs,scope:'Through capture.json and raw.json writes; this final timing metadata write excluded.'});runs.push(record);deadline();
    }
   }

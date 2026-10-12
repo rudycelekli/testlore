@@ -46,7 +46,7 @@ function build(root, nativeSession, planningInputs) {
   const config = planningInputs?.config ?? readConfig(root);
   const files = planningInputs?.files ?? listFiles(root);
   const selected = files.filter(f => (config.testMatch ? config.testMatch.some(pattern => path.matchesGlob(f,pattern)) : TEST.test(f)) && !(config.testExclude || []).some(pattern => path.matchesGlob(f,pattern)));
-  const graph = { files, tests: selected, edges: {}, warnings: [], sources: {}, root, config, discovery: {complete:true,method:'configured-static-conventions'} };
+  const graph = { files, tests: selected, edges: {}, runtimeEdges: {}, warnings: [], sources: {}, root, config, discovery: {complete:true,method:'configured-static-conventions'} };
   graph.configFiles = new Set();
   if(adapterFor(config)==='bun')graph.warnings.push({file:'configuration',reason:'incomplete-native-resolution',detail:'Bun shared-global isolation, preload and runtime dependency contracts remain unqualified'});
   timing.mark('inventory');
@@ -110,6 +110,7 @@ function build(root, nativeSession, planningInputs) {
   // shared-isolation membership in a linear contract pass, not an O(n²) graph.
   for(const project of graph.nativeProjects||[])for(const test of project.files) {
     graph.edges[test]=[...new Set([...(graph.edges[test]||[]),...project.setupFiles])].sort();
+    graph.runtimeEdges[test]=[...new Set([...(graph.runtimeEdges[test]||[]),...project.setupFiles])].sort();
     for(const setup of project.setupFiles)if(!set.has(setup))graph.warnings.push({file:setup,reason:'resolution-config-outside-graph'});
   }
   timing.mark('sourceAnalysisAndResolution');
@@ -120,6 +121,7 @@ function build(root, nativeSession, planningInputs) {
     for (const dep of deps) {
       if (!dep.startsWith('service:') && !set.has(dep)) graph.warnings.push({ file: dep, reason: 'missing-mapped-dependency' });
       graph.edges[test] = [...new Set([...(graph.edges[test] || []), dep])];
+      graph.runtimeEdges[test] = [...new Set([...(graph.runtimeEdges[test] || []), dep])].sort();
     }
   }
   for(const file of [...graph.configFiles]) for(const dep of dependencies(graph,file)) graph.configFiles.add(dep);
@@ -167,13 +169,21 @@ export function addSources(graph, entries, files = new Set(graph.files), options
 export function addSource(graph, file, text, files = new Set(graph.files)) {
   const info = sourceSummary(graph, file, text);
   const edges = graph.edges[file] || [];
+  graph.runtimeEdges ||= {};
+  // A legacy graph without hints retains every pre-existing impact edge. Both
+  // graphs are monotonic across baseline/current passes, including value -> type.
+  const runtimeEdges = graph.runtimeEdges[file] || [...edges];
+  const runtimeImports = new Set(info.runtimeImports ?? info.imports);
   for (const reason of info.warnings) graph.warnings.push({ file, reason });
   for (const spec of info.imports) {
     const resolved = resolveGraphImport(graph,file,spec,files);
-    edges.push(...(resolved.paths || (resolved.path ? [resolved.path] : [])));
+    const paths=resolved.paths || (resolved.path ? [resolved.path] : []);
+    edges.push(...paths);
+    if(runtimeImports.has(spec))runtimeEdges.push(...paths);
     if (resolved.unresolved) graph.warnings.push({ file, reason: `unresolved-import:${spec}` });
   }
   graph.edges[file] = [...new Set(edges)].sort();
+  graph.runtimeEdges[file] = [...new Set(runtimeEdges)].sort();
 }
 
 export function dependencies(graph, start) {

@@ -29,7 +29,8 @@ function application(t,nested=true,runtimeCLI=cli){
 test('optional native observer preserves original CLI config and independently failing selected outcomes',async t=>{
  for(const nested of [true,false]){
   const {root,project,prefix,config}=application(t,nested),file=prefix+'tests/unit/case-000.test.ts',before=fs.readFileSync(path.join(project,'vitest.config.ts'));
-  const baseline=execute(root,[file],config,{capture:true});assert.equal(baseline.complete,true,JSON.stringify(baseline));assert.equal(baseline.exitCode,1);
+  const baseline=execute(root,[file],{...config,vitestCases:undefined},{capture:true});assert.equal(baseline.complete,true,JSON.stringify(baseline));assert.equal(baseline.exitCode,1);
+  const unsupported=execute(root,[file],config,{capture:true});assert.equal(unsupported.complete,false);assert.equal(unsupported.exitCode,2);assert.match(unsupported.nativeCaseEvidenceError,/exact reviewed standalone observer/);
   const session=await openNativeSession(root,config);assert.ok(session.token,session.unsupported);
   try{
    const batch=sessionPlanning(session.token,root);assert.equal(batch.discovery.files.length,174);assert.equal(batch.vitestCases.expectedFiles.length,174);
@@ -55,9 +56,16 @@ test('optional native observer preserves original CLI config and independently f
 test('native observer verifies omitted extends with its controller-selected runtime',async t=>{
  const supplied=process.env.TESTLORE_PINNED_VITEST_CLI||cli;
  const {root,config,prefix}=application(t,true,supplied),file=prefix+'tests/unit/case-000.test.ts';
- const native=execute(root,[file],config,{capture:true});assert.equal(native.complete,true);assert.equal(native.exitCode,1);
+ const native=execute(root,[file],{...config,vitestCases:undefined},{capture:true});assert.equal(native.complete,true);assert.equal(native.exitCode,1);
  const session=await openNativeSession(root,config);
  try{const observed=await session.execute([file]);assert.equal(observed.complete,true);assert.equal(observed.exitCode,1);assert.equal(validateVitestCaseCapture(observed.nativeCaseEvidence).valid,true);assert.deepEqual(observed.tests.map(row=>[row.id,row.status]),native.tests.map(row=>[row.id,row.status]));}finally{await session.close();}
+});
+
+test('standalone profile refuses an identical manifest at a different CLI installation origin',t=>{
+ const {root,config,prefix}=application(t,false),installation=path.join(root,'other/node_modules/vitest');fs.mkdirSync(installation,{recursive:true});
+ fs.copyFileSync(path.join(path.dirname(cli),'package.json'),path.join(installation,'package.json'));fs.copyFileSync(cli,path.join(installation,'vitest.mjs'));
+ const report=execute(root,[prefix+'tests/unit/case-000.test.ts'],{...config,runner:[process.execPath,path.join(installation,'vitest.mjs'),'run','--config',path.join(root,'vitest.config.ts'),'{files}']},{capture:true});
+ assert.equal(report.complete,false);assert.equal(report.exitCode,2);assert.match(report.nativeCaseEvidenceError,/differs from the bound native case runtime/);assert.deepEqual(report.executedFiles,[]);
 });
 
 test('reviewed observer rejects changed source, extra profile keys, roots and incorrect unit counts before startup',async t=>{

@@ -294,6 +294,8 @@ On **12 controlled changes across four Node fixtures**, TestLore caught all 63 o
 
 A [paired repeated learning evaluation](docs/learning-evaluation.md) now controls worker budgets and execution order across independent specifications; no quality gain is established merely by shipping the evaluator.
 
+The [parameter, type-dependency and repair qualification contracts](docs/parameter-type-repair-qualification.md) explain the next evidence gates: actual registration inputs, qualified transforms, and independent paired repairs. Type-dependency hints remain advisory to analysis and preserve existing routing fallback.
+
 Local repository pilots independently run proposed subsets and full suites in detached copies, rotate full/TestLore/native-selector order and include discovery, planning, execution, freshness checks and receipt retention in TestLore total time. Native related selection is measured through real Vitest/Jest CLIs; frameworks without it use a clearly labeled native full baseline. Raw receipts remain local; aggregate export is explicit. [Run your own pilots →](docs/pilots.md)
 
 An opt-in bounded cache reuses source parsing while native discovery and resolution stay fresh. Initialization enables it for new configurations; existing configurations retain their settings. Controlled warm/cold evidence and its limits are in the [performance guide](docs/performance.md).
