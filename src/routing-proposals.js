@@ -5,9 +5,24 @@ import {typescript as ts} from './syntax-engine.cjs';
 import {buildGraph, evidencePath} from './graph.js';
 import {snapshot, digest, freshness} from './provenance.js';
 import {safePath, readConfig, TEST} from './files.js';
+import {processRegistrationProposals,inspectProcessRegistrationProposalEnvelope} from './process-registration-proposals.js';
 
 const MAX_PROPOSALS=1000, MAX_INPUTS=1000, MAX_TESTS=1000, MAX_EDGES=25000, MAX_REFERENCE_BYTES=512*1024;
-const implementation=()=>({module:'routing-proposals.js',sha256:digest(fs.readFileSync(fileURLToPath(import.meta.url)))});
+// Only fixed implementation messages become public refusal codes. Never echo
+// arbitrary parser/native errors, source text or environment values.
+const PROCESS_REFUSALS=new Map([
+  ['Process proposal inventory budget exceeded','inventory-budget'],
+  ['Unsafe or oversized process source','source-input-bound'],
+  ['Unsafe process graph edges','graph-input-bound'],
+  ['Process proposal edge budget exceeded','edge-budget'],
+  ['Process registration proposal budget exceeded','registration-budget'],
+  ['Process aggregate syntax traversal budget exceeded','syntax-work-budget'],
+  ['Process aggregate consumer traversal budget exceeded','consumer-work-budget'],
+  ['Process consumer traversal budget exceeded','consumer-inventory-budget'],
+  ['Process launch proposal budget exceeded','launch-budget'],
+  ['Process proposal output budget exceeded','output-budget']
+]);
+const implementation=()=>({module:'routing-proposals.js',sha256:digest(fs.readFileSync(fileURLToPath(import.meta.url))),processRegistrationSha256:digest(fs.readFileSync(new URL('./process-registration-proposals.js',import.meta.url)))});
 const LIMITATIONS=[
   'Suggestions add dependency edges for review; they never remove graph uncertainty or establish complete inputs.',
   'Static literals and package declarations may be unreachable, shadowed, or resolved differently by native runtime configuration.',
@@ -144,8 +159,15 @@ export function routingProposals(root){
     add(file,[input],Object.keys(consumerPaths),'literal-style-resource',{referenceOffset:offset,consumerPaths}, {limitations:[...LIMITATIONS,'Consumer paths may include other suggested CSS edges; they remain review evidence only. CSS literals can occur in comments or depend on bundler/served URL semantics.']});
   }
   if(styleQueue.length>1000){truncated=true;warnings.push({file:'styles',reason:'proposal-style-reference-count-over-bound'});}
+  // This diagnostic cannot remove uncertainty or prevent ordinary mapping
+  // suggestions when its smaller advisory-analysis budget is unavailable.
+  let processRegistrations=null,processRegistrationDiagnostic=null;
+  try {processRegistrations=processRegistrationProposals(graph);}
+  catch(error) {
+    processRegistrationDiagnostic={status:'unavailable',reason:'process-diagnostic-input-or-budget-unavailable',refusal:PROCESS_REFUSALS.get(error?.message)||'unclassified-input-or-engine-refusal',omissionAuthority:false,closedWorld:false,nextAction:'Review process launch inputs and native scope manually; all existing uncertainty remains active.'};
+  }
   const after=snapshot(root,config),stable=freshness(before,after).fresh&&digest(producer)===digest(implementation());
-  return seal({schemaVersion:1,type:'routing-mapping-proposal',applied:false,reviewRequired:true,closedWorld:false,provenance:before,configurationHash:digest(config),producer,stable,proposals,truncated,serviceSuggestions,unresolved,warnings,unmappedChangesPolicy:'full-suite',limits:{proposals:MAX_PROPOSALS,inputsPerProposal:MAX_INPUTS,testsPerProposal:MAX_TESTS,dependencyEdges:MAX_EDGES,referenceSourceBytes:MAX_REFERENCE_BYTES},limitations:LIMITATIONS});
+  return seal({schemaVersion:1,type:'routing-mapping-proposal',applied:false,reviewRequired:true,closedWorld:false,provenance:before,configurationHash:digest(config),producer,stable,proposals,truncated,serviceSuggestions,processRegistrations,processRegistrationDiagnostic,unresolved,warnings,unmappedChangesPolicy:'full-suite',limits:{proposals:MAX_PROPOSALS,inputsPerProposal:MAX_INPUTS,testsPerProposal:MAX_TESTS,dependencyEdges:MAX_EDGES,referenceSourceBytes:MAX_REFERENCE_BYTES},limitations:LIMITATIONS});
 }
 
 /** Revalidate an automatically generated proposal before qualification/review. */
@@ -155,7 +177,9 @@ export function validateRoutingProposals(root,proposal){
   const {integrity,...payload}=proposal;
   if(integrity!==digest(payload)||proposal.configurationHash!==digest(config)||digest(proposal.producer)!==digest(implementation()))throw new Error('Routing proposal integrity, configuration or producer changed');
   if(proposal.applied!==false||proposal.reviewRequired!==true||proposal.closedWorld!==false||proposal.stable!==true)throw new Error('Routing proposal authority or stability is invalid');
-  const check=freshness(proposal.provenance,snapshot(root,config));if(!check.fresh)throw new Error(`Routing proposal is stale: ${check.reasons.join(', ')}`);
+  const current=snapshot(root,config),check=freshness(proposal.provenance,current);if(!check.fresh)throw new Error(`Routing proposal is stale: ${check.reasons.join(', ')}`);
+  if(proposal.processRegistrations!==null)inspectProcessRegistrationProposalEnvelope(proposal.processRegistrations,current.files);
+  else if(proposal.processRegistrationDiagnostic?.status!=='unavailable'||proposal.processRegistrationDiagnostic.omissionAuthority!==false||proposal.processRegistrationDiagnostic.closedWorld!==false)throw new Error('Invalid process diagnostic authority');
   if(!Array.isArray(proposal.proposals)||proposal.proposals.length>MAX_PROPOSALS)throw new Error('Routing proposal count exceeded');
   let edges=0;
   for(const entry of proposal.proposals){
@@ -172,5 +196,5 @@ export function validateRoutingProposals(root,proposal){
     }
     if(digest(entry.patch.dependencies)!==digest(Object.fromEntries(entry.tests.map(test=>[test,entry.inputs]))))throw new Error('Routing mapping patch does not match retained evidence');
   }
-  return {valid:true,reviewRequired:true,closedWorld:false,applied:false,integrity:proposal.integrity,limitations:LIMITATIONS};
+  return {valid:true,reviewRequired:true,closedWorld:false,applied:false,integrity:proposal.integrity,processRegistrations:{qualified:false,omissionAuthority:false,requiresFreshGraphAndLaunchInputs:true},limitations:LIMITATIONS};
 }

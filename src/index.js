@@ -40,3 +40,4 @@ export {adoptionReadiness} from './adoption-readiness.js';
 export {diagnoseFallbackSelection,fallbackDiagnostics,validateFallbackDiagnostics,qualifyFallbackHypotheses} from './fallback-diagnostics.js';
 export {assessCommunityCampaign,assessCommunityCampaignFile,inspectCampaignProcess} from './community-campaign.js';
 export {proposeRegistrationContracts,validateRegistrationContracts} from './registration-contracts.js';
+export {processRegistrationProposals,validateProcessRegistrationProposals,inspectProcessRegistrationProposalEnvelope} from './process-registration-proposals.js';
