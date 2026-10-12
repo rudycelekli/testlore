@@ -20,6 +20,13 @@ function boundedArm(event){
 const save=(file,value)=>fs.writeFileSync(file,JSON.stringify(value,null,2)+'\n',{flag:'wx',mode:0o600});
 const git=(root,...args)=>execFileSync('git',['-C',root,...args],{encoding:'utf8',timeout:15000,maxBuffer:8*1024**2}).trim();
 const safe=file=>typeof file==='string'&&file.length>0&&!path.isAbsolute(file)&&!/[\\\0]/.test(file)&&file.split('/').every(part=>part&&part!=='.'&&part!=='..');
+/** The pnpm12 archive declares a native package-root launcher, not pnpm.cjs. */
+export function selectPnpmManager(records){
+ if(!Array.isArray(records)||records.length!==1)throw Error('Pinned package manager ambiguous');
+ const record=records[0],manifest=record?.manifest;
+ if(typeof record?.cacheEntry!=='string'||!/^[a-f0-9]{1,128}$/.test(record.cacheEntry)||manifest?.name!=='pnpm'||manifest.version!=='12.3.4'||manifest.bin?.pnpm!=='pnpm')throw Error('Pinned package manager manifest/entrypoint differs');
+ return {cacheEntry:record.cacheEntry,entrypoint:'pnpm'};
+}
 // This profile admits only the native JSON forms understood by both captures.
 // Todo/disabled/alternate skip spellings are rejected, never silently collapsed.
 const statuses=new Map([['passed','passed'],['failed','failed'],['pending','skipped']]);
@@ -132,10 +139,15 @@ export async function unimportRoutingPilot({upstream,output,sourceSha}){
  const npm=path.resolve(path.dirname(process.execPath),'../lib/node_modules/npm/bin/npm-cli.js');
  const bootstrap=await execute('manager-bootstrap',process.execPath,[npm,'exec','--yes','--package=pnpm@12.3.4','--','pnpm','--version'],producer,{timeoutMs:120000,maxGrowthBytes:128*1024**2});
  if(bootstrap.event.exitCode!==0||bootstrap.event.reason||fs.readFileSync(path.join(bootstrap.directory,'stdout.log'),'utf8').trim()!=='12.3.4')throw Error('Original package-manager bootstrap unavailable');
- const managerCandidates=fs.readdirSync(path.join(isolated,'cache/_npx')).map(name=>path.join(isolated,'cache/_npx',name,'node_modules/pnpm/bin/pnpm.cjs')).filter(file=>fs.existsSync(file));if(managerCandidates.length!==1)throw Error('Pinned package manager ambiguous');
- const manager=managerCandidates[0],installation=await execute('original-install',process.execPath,[manager,'install','--frozen-lockfile','--package-import-method=copy'],upstream,{timeoutMs:240000,maxGrowthBytes:1536*1024**2});
+ const managerCache=path.join(isolated,'cache/_npx'),cacheEntries=fs.readdirSync(managerCache);if(cacheEntries.length>64)throw Error('Pinned package manager inventory exceeds bound');
+ const records=cacheEntries.map(cacheEntry=>{const metadata=path.join(managerCache,cacheEntry,'node_modules/pnpm/package.json'),stat=fs.lstatSync(metadata);if(!stat.isFile()||stat.size>65536)throw Error('Pinned package manager manifest exceeds bound');return {cacheEntry,manifest:JSON.parse(fs.readFileSync(metadata,'utf8'))};});
+ const selected=selectPnpmManager(records),managerRoot=fs.realpathSync(path.join(managerCache,selected.cacheEntry,'node_modules/pnpm')),manager=path.join(managerRoot,selected.entrypoint),managerStat=fs.lstatSync(manager);
+ if(!managerRoot.startsWith(fs.realpathSync(managerCache)+path.sep)||!managerStat.isFile()||!(managerStat.mode&0o111)||managerStat.size<1||managerStat.size>128*1024**2)throw Error('Pinned package manager launcher unavailable');
+ save(path.join(output,'manager-binding.json'),{name:'pnpm',version:'12.3.4',declaredBin:selected.entrypoint,manifestSha256:h(fs.readFileSync(path.join(managerRoot,'package.json'))),launcherBytes:managerStat.size,launcherSha256:h(fs.readFileSync(manager)),invocation:'Direct installed declared executable; no assumed Node interpreter.'});
+ const managerIdentity=await execute('manager-identity',manager,['--version'],producer);if(managerIdentity.event.exitCode!==0||managerIdentity.event.reason||fs.readFileSync(path.join(managerIdentity.directory,'stdout.log'),'utf8').trim()!=='12.3.4')throw Error('Declared package manager executable version differs');
+ const installation=await execute('original-install',manager,['install','--frozen-lockfile','--package-import-method=copy'],upstream,{timeoutMs:240000,maxGrowthBytes:1536*1024**2});
  if(installation.event.exitCode!==0||installation.event.reason)throw Error('Original full workspace installation unavailable');
- const build=await execute('original-build',process.execPath,[manager,'run','build'],upstream,{timeoutMs:120000,maxGrowthBytes:256*1024**2});
+ const build=await execute('original-build',manager,['run','build'],upstream,{timeoutMs:120000,maxGrowthBytes:256*1024**2});
  if(build.event.exitCode!==0||build.event.reason)throw Error('Original upstream build unavailable');
  const cli=path.join(upstream,'node_modules/vitest/vitest.mjs');if(JSON.parse(fs.readFileSync(path.join(upstream,'node_modules/vitest/package.json'))).version!=='5.0.0')throw Error('Original frozen Vitest version differs');
  const dependencyInventory=installed(upstream);save(path.join(output,'installed-inventory.json'),dependencyInventory);

@@ -1,6 +1,12 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {nativeCases,testLoreCases,assessUnimportRuns} from '../scripts/unimport-routing-pilot.js';
+import {nativeCases,testLoreCases,assessUnimportRuns,selectPnpmManager} from '../scripts/unimport-routing-pilot.js';
+test('manager selection follows exact native pnpm12 manifest and refuses ambiguity or unsafe bins',()=>{
+ const row={cacheEntry:'a1b2c3',manifest:{name:'pnpm',version:'12.3.4',bin:{pnpm:'pnpm'}}};
+ assert.deepEqual(selectPnpmManager([row]),{cacheEntry:'a1b2c3',entrypoint:'pnpm'});
+ for(const records of [[],[row,row],null])assert.throws(()=>selectPnpmManager(records));
+ for(const change of [r=>r.cacheEntry='../escape',r=>r.manifest.name='fake',r=>r.manifest.version='12.3.5',r=>r.manifest.bin.pnpm='bin/pnpm.cjs',r=>r.manifest.bin.pnpm='../escape',r=>r.manifest.bin.pnpm='/bin/pnpm',r=>delete r.manifest.bin]){const altered=structuredClone(row);change(altered);assert.throws(()=>selectPnpmManager([altered]));}
+});
 const native=(failed=false)=>({numRuntimeErrorTestSuites:0,numPassedTests:failed?0:1,numFailedTests:failed?1:0,numPendingTests:0,numTotalTests:1,success:!failed,testResults:[{name:'/up/test/scan-dirs.test.ts',assertionResults:[{fullName:'scan-dirs scanDirExports',status:failed?'failed':'passed'}]}]});
 test('native inventories reject duplicates, malformed summaries, errors and unknown statuses',()=>{
  assert.equal(nativeCases(native(),'/up').cases.length,1);
