@@ -193,11 +193,41 @@ test('memoized paths still charge every emitted chain against shared consumer wo
  assert.throws(()=>processRegistrationProposals(g),/aggregate consumer traversal budget/);
 });
 
-test('repeated consumer graph walks share one global work cap rather than per-walk limits',()=>{
+test('shared wide graph is indexed once per launch source without exhausting the work cap',()=>{
  const g=graph();g.sources['wide.ts']='export const wide=true;';g.edges['wide.ts']=[];
  for(let i=0;i<500;i++){const file=`module${i}.ts`;g.sources[file]='export const value=0;';g.edges['wide.ts'].push(file);}
  for(let i=0;i<200;i++){const file=`tests/wide${i}.test.ts`;g.sources[file]=`import '../wide.js';`;g.edges[file]=['wide.ts'];g.tests.push(file);}
+ g.edges['module499.ts']=['tests/fixtures/launcher.ts'];
+ const result=processRegistrationProposals(g),p=result.proposals[0];
+ assert.equal(p.discoveredConsumerCandidates.length,201);
+ assert.deepEqual(p.discoveredConsumerCandidates.find(item=>item.file==='tests/wide0.test.ts').paths[0].chain,['tests/wide0.test.ts','wide.ts','module499.ts','tests/fixtures/launcher.ts']);
+ assert.deepEqual(p.consumers,[]);assert.deepEqual(result.existingUncertainties,g.warnings);
+ assert.equal(result.omissionAuthority,false);
+});
+
+test('many distinct launch sources retain one shared traversal budget',()=>{
+ const g=graph(),targets=['tests/fixtures/launcher.ts'];
+ for(let i=0;i<24;i++){
+  const file=`tests/fixtures/launcher${i}.ts`;g.sources[file]=launcher;g.edges[file]=['src/process/Owned.ts'];targets.push(file);
+ }
+ for(let i=0;i<3000;i++){
+  const file=`wide${i}.ts`;g.sources[file]='export const value=0;';g.edges[file]=i===0?targets:[`wide${i-1}.ts`];
+ }
+ g.edges['tests/actual.test.ts']=['wide2999.ts'];
  assert.throws(()=>processRegistrationProposals(g),/aggregate consumer traversal budget/);
+});
+
+test('reverse next-hop paths are deterministic, cycle-safe and bound to actual edges',()=>{
+ const g=graph(),source='tests/fixtures/launcher.ts';
+ for(const file of ['path-a.ts','path-b.ts','cycle.ts'])g.sources[file]='export const value=0;';
+ g.edges['tests/actual.test.ts']=['path-b.ts','path-a.ts'];
+ g.edges['path-a.ts']=[source,'cycle.ts'];g.edges['path-b.ts']=[source];g.edges['cycle.ts']=['path-a.ts'];
+ const result=processRegistrationProposals(g),chain=result.proposals[0].discoveredConsumerCandidates[0].paths[0].chain;
+ assert.deepEqual(chain,['tests/actual.test.ts','path-a.ts',source]);
+ for(let i=0;i<chain.length-1;i++)assert.ok(g.edges[chain[i]].includes(chain[i+1]));
+ const changed=graph();changed.sources=g.sources;changed.edges={...g.edges,'path-a.ts':['cycle.ts']};
+ assert.throws(()=>validateProcessRegistrationProposals(result,changed),/source, producer, graph/);
+ assert.deepEqual(processRegistrationProposals(changed).proposals[0].discoveredConsumerCandidates[0].paths[0].chain,['tests/actual.test.ts','path-b.ts',source]);
 });
 
 test('offline envelope inspection checks seal, producer, authority and sources without semantic execution',()=>{

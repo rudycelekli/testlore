@@ -42,17 +42,44 @@ function emittedChain(budget,chain){
   if(chain){for(const file of chain){consumerCharge(budget);emitted(budget,Buffer.byteLength(JSON.stringify(file))+1);}emitted(budget,2);}
   return chain;
 }
-function closure(graph,start,target,budget) {
-  consumerCharge(budget);
-  const key=JSON.stringify([start,target]);if(budget.reachability.has(key))return emittedChain(budget,budget.reachability.get(key));
-  const parents=new Map([[start,null]]),queue=[start];
+function reverseEdges(graph,budget) {
+  if(budget.reverseEdges)return budget.reverseEdges;
+  const reverse=new Map();
+  // Sorted source keys provide a deterministic predecessor order. Every edge,
+  // including duplicates and edges to unavailable sources, remains charged.
+  for(const file of Object.keys(graph.edges).sort()){
+    consumerCharge(budget);
+    for(const dependency of graph.edges[file]){
+      consumerCharge(budget);
+      if(!reverse.has(dependency))reverse.set(dependency,[]);
+      reverse.get(dependency).push(file);
+    }
+  }
+  budget.reverseEdges=reverse;return reverse;
+}
+function targetReachability(graph,target,budget) {
+  if(budget.reachability.has(target))return budget.reachability.get(target);
+  const reverse=reverseEdges(graph,budget),nextHop=new Map([[target,null]]),queue=[target];
   for(let i=0;i<queue.length;i++) {
     consumerCharge(budget);const file=queue[i];
-    if(file===target){const chain=[];for(let item=file;item!==null;item=parents.get(item))chain.push(item);chain.reverse();budget.reachability.set(key,chain);return emittedChain(budget,chain);}
-    for(const dep of graph.edges[file]||[]){consumerCharge(budget);if(!parents.has(dep)){parents.set(dep,file);queue.push(dep);}}
+    for(const predecessor of reverse.get(file)||[]){
+      consumerCharge(budget);
+      if(!nextHop.has(predecessor)){nextHop.set(predecessor,file);queue.push(predecessor);}
+    }
     if(queue.length>LIMITS.edges+LIMITS.sources)throw Error('Process consumer traversal budget exceeded');
   }
-  budget.reachability.set(key,null);return null;
+  budget.reachability.set(target,nextHop);return nextHop;
+}
+function closure(graph,start,target,budget) {
+  consumerCharge(budget);
+  const nextHop=targetReachability(graph,target,budget);
+  if(!nextHop.has(start))return null;
+  const chain=[];
+  for(let item=start;item!==null;item=nextHop.get(item)){
+    consumerCharge(budget);chain.push(item);
+  }
+  // Cache reuse never hides the work or output cost of repeated emitted paths.
+  return emittedChain(budget,chain);
 }
 function resolve(file,spec,sources) {
   if(!spec.startsWith('.'))return null;
