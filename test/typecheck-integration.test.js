@@ -64,7 +64,7 @@ test('ignored source changed by a passing runtime test cannot mix with fresh com
   'ignored/subject.ts':'export const value: number = 42;\n',
   'test/runtime.test.mjs':"import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';import {value} from '../ignored/subject.ts';test('original ignored runtime value',()=>{assert.equal(value,42);fs.writeFileSync('ignored/subject.ts','export const value: number = 99;\\n');});"});
  const result=run(root,{full:true,capture:true});assert.equal(result.nativeExitCode,0);assert.equal(result.tests[0].status,'passed');assert.equal(result.exitCode,2);assert.equal(result.typecheck.status,'incomplete');assert.notEqual(result.summary.verdict,'passed-in-observed-scope');
- const native=spawnSync(process.execPath,['--experimental-strip-types','--no-warnings','--test','test/runtime.test.mjs'],{cwd:root,encoding:'utf8',env:{PATH:process.env.PATH,HOME:root}});assert.equal(native.status,1);assert.match(native.stdout,/# fail 1/);
+ const native=spawnSync(process.execPath,['--experimental-strip-types','--no-warnings','--test','--test-reporter=tap','test/runtime.test.mjs'],{cwd:root,encoding:'utf8',env:{PATH:process.env.PATH,HOME:root}});assert.equal(native.status,1);assert.match(native.stdout,/# fail 1/);
 });
 test('native execution cannot erase the requested checker by disabling ignored configuration',t=>{
  const root=project(t,{
