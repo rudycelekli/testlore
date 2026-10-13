@@ -9,6 +9,26 @@ concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
 jobs:
+  upstream-managers:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - uses: actions/setup-node@v7.0.0
+        with:
+          node-version: '24'
+      - run: npm ci --ignore-scripts
+      - name: Execute pinned Node and native manager installations
+        run: node scripts/upstream-manager-proof.js --output .tddswarm/ci-upstream-managers
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: upstream-managers-${{ github.event.pull_request.head.sha || github.sha }}
+          path: .tddswarm/ci-upstream-managers/
+          include-hidden-files: true
+          if-no-files-found: error
   type-detection:
     runs-on: ubuntu-latest
     timeout-minutes: 6

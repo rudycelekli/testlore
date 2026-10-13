@@ -102,3 +102,21 @@ test('diagnostic and sealed install outputs refuse ancestor workspaces before sp
  const project=path.join(isolated,'project');fs.mkdirSync(project);fs.writeFileSync(path.join(project,'pnpm-workspace.yaml'),'packages:\n  - packages/*\n');
  assert.equal(assertNoInheritedWorkspace(isolated),fs.realpathSync(isolated));
 });
+
+test('manager bootstrap resolves the pinned package entry for legacy Node and native pnpm layouts',async t=>{
+ const {resolveBootstrappedManager}=await import('../scripts/public-corpus-upstream.js');const root=fixture(t,{}),cache=path.join(root,'cache'),pkg=path.join(cache,'_npx','one','node_modules','pnpm');fs.mkdirSync(path.join(pkg,'bin'),{recursive:true});
+ const manifest=path.join(pkg,'package.json'),write=(version,bin)=>fs.writeFileSync(manifest,JSON.stringify({name:'pnpm',version,bin}));
+ write('10.33.0',{pnpm:'bin/pnpm.cjs'});fs.writeFileSync(path.join(pkg,'bin/pnpm.cjs'),'process.stdout.write("10.33.0\\n")');let r=resolveBootstrappedManager(cache,'pnpm@10.33.0');assert.equal(r.execution,'node');assert.equal(r.command,process.execPath);assert.deepEqual(r.args,[fs.realpathSync(path.join(pkg,'bin/pnpm.cjs'))]);assert.equal(execFileSync(r.command,[...r.args,'--version'],{encoding:'utf8'}),'10.33.0\n');
+ write('12.3.4',{pnpm:'pnpm'});fs.writeFileSync(path.join(pkg,'pnpm'),Buffer.from([0x7f,0x45,0x4c,0x46,0]));fs.chmodSync(path.join(pkg,'pnpm'),0o755);r=resolveBootstrappedManager(cache,'pnpm@12.3.4');assert.equal(r.execution,'native');assert.equal(r.command,fs.realpathSync(path.join(pkg,'pnpm')));assert.deepEqual(r.args,[]);assert.equal(r.managerMetadata.sha256,fileIdentity(manifest).sha256);
+ // Format admission is not successful execution: installation always runs the entry's actual version.
+ const prior=r.manager.sha256;fs.appendFileSync(path.join(pkg,'pnpm'),'changed');assert.notEqual(resolveBootstrappedManager(cache,'pnpm@12.3.4').manager.sha256,prior);
+});
+
+test('manager bootstrap refuses ambiguous pins, escaping entries, linked leaves and unknown executables',async t=>{
+ const {resolveBootstrappedManager}=await import('../scripts/public-corpus-upstream.js');const root=fixture(t,{}),cache=path.join(root,'cache'),pkg=path.join(cache,'_npx','one','node_modules','pnpm');fs.mkdirSync(pkg,{recursive:true});const manifest=path.join(pkg,'package.json'),write=(entry,version='12.3.4')=>fs.writeFileSync(manifest,JSON.stringify({name:'pnpm',version,bin:{pnpm:entry}}));
+ for(const entry of ['../outside','/tmp/pnpm','bin/../../outside','bin\\pnpm','bad\nentry']){write(entry);assert.throws(()=>resolveBootstrappedManager(cache,'pnpm@12.3.4'),/Invalid declared/);}
+ write('pnpm');fs.writeFileSync(path.join(pkg,'pnpm'),'#!/bin/sh\necho 12.3.4\n');fs.chmodSync(path.join(pkg,'pnpm'),0o755);assert.throws(()=>resolveBootstrappedManager(cache,'pnpm@12.3.4'),/Unsupported/);fs.unlinkSync(path.join(pkg,'pnpm'));fs.writeFileSync(path.join(root,'outside.cjs'),'process.exit(0)');fs.symlinkSync(path.join(root,'outside.cjs'),path.join(pkg,'pnpm'));assert.throws(()=>resolveBootstrappedManager(cache,'pnpm@12.3.4'),/local regular/);
+ fs.unlinkSync(path.join(pkg,'pnpm'));write('entry.cjs');fs.writeFileSync(path.join(pkg,'entry.cjs'),'process.exit(0)');assert.throws(()=>resolveBootstrappedManager(cache,'pnpm@99.0.0'),/ambiguous/);
+ const other=path.join(cache,'_npx','two','node_modules','pnpm');fs.mkdirSync(other,{recursive:true});fs.cpSync(pkg,other,{recursive:true});assert.throws(()=>resolveBootstrappedManager(cache,'pnpm@12.3.4'),/ambiguous/);assert.throws(()=>resolveBootstrappedManager(cache,'pnpm@latest'),/exact pinned/);
+ fs.rmSync(other,{recursive:true});fs.rmSync(pkg,{recursive:true});fs.symlinkSync(root,pkg);fs.writeFileSync(path.join(root,'package.json'),JSON.stringify({name:'pnpm',version:'12.3.4',bin:{pnpm:'outside.cjs'}}));assert.throws(()=>resolveBootstrappedManager(cache,'pnpm@12.3.4'),/escapes private/);
+});
