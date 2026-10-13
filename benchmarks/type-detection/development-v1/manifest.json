@@ -1,0 +1,583 @@
+{
+  "schemaVersion": 1,
+  "kind": "derived-public-development-type-contract-fixtures",
+  "originManifestSha256": "16b34a7b750805b6c1b2b8b0988a7e2fd204ae5ce285c630f149111bd2b7b09c",
+  "derivedDisplayAndReproductionOnly": true,
+  "admissionAuthority": false,
+  "priorUnseenClaim": false,
+  "untouchedMaintainerBugClaim": false,
+  "upstreamHistoricalGateComplete": false,
+  "nodeRequirement": {
+    "version": "v22.19.0",
+    "runtime": "Native Node22 type stripping; top-level node:assert/strict probes, no assertion-free test wrappers."
+  },
+  "compilerRequirement": {
+    "package": "typescript",
+    "version": "6.0.3",
+    "installation": "Use the pinned TestLore npm lock installation; independently capture actual local SDK bytes before and after verification. No SDK bundled in these fixtures.",
+    "originClosureSha256": "06d5172989ccb41ed11d848c0dab4adb749905146a472bd38f7c1276ee1a05ca",
+    "originClosureHashScope": "SHA256 of JSON sorted original package rows {file,sha256,bytes}; this digest is reproduction evidence, never executable trust/admission."
+  },
+  "uniqueScoredDevelopmentDefects": 5,
+  "separateUnqualifiedReferenceDefects": 1,
+  "nativePositiveAssertionsOrdinary": 6,
+  "specs": [
+    {
+      "id": "nullable-branch",
+      "category": "unsafe-nullable-return",
+      "uniqueSeededDefects": 1,
+      "diagnosticCodes": [
+        2322
+      ],
+      "qualificationTier": "ordinary-project",
+      "nativePositiveAssertions": 1,
+      "states": {
+        "healthy": {
+          "directory": "fixtures/nullable-branch/healthy",
+          "sourceInputs": [
+            {
+              "file": "module.ts",
+              "sha256": "c234cd1c5486c707c906780659ef331cd1ed8bc49190ef90352eddb64b66508f",
+              "bytes": 126
+            },
+            {
+              "file": "package.json",
+              "sha256": "62c9ee3336a5a38c92ec171ea5fcedb621eaf7693c0729a77aefd4b2d68f6ec1",
+              "bytes": 80
+            },
+            {
+              "file": "probe.mjs",
+              "sha256": "e4b98e1e4d0101f13440ce46bbf0a52b7607c063900bb5389571235582a34405",
+              "bytes": 164
+            },
+            {
+              "file": "tsconfig.json",
+              "sha256": "b5f075e72b83f9ecb7578d945a13aa955ef98dec6ed5d5e74605d40e6a9950a1",
+              "bytes": 306
+            }
+          ],
+          "inputsSha256": "fd2576027f281140a7b3252f697dcab3cdc8e934b7c1b3c849c94f74a9f7278a",
+          "expectedNativeExit": 0,
+          "originalCheckerArgs": [
+            "--project",
+            "tsconfig.json",
+            "--pretty",
+            "false"
+          ],
+          "expectedOriginalCheckerExit": 0
+        },
+        "fault": {
+          "directory": "fixtures/nullable-branch/fault",
+          "sourceInputs": [
+            {
+              "file": "module.ts",
+              "sha256": "a256bfc805e68a1ea59f1126ff36fa4e417687b6885fcd056836a4b59053f6f6",
+              "bytes": 122
+            },
+            {
+              "file": "package.json",
+              "sha256": "62c9ee3336a5a38c92ec171ea5fcedb621eaf7693c0729a77aefd4b2d68f6ec1",
+              "bytes": 80
+            },
+            {
+              "file": "probe.mjs",
+              "sha256": "e4b98e1e4d0101f13440ce46bbf0a52b7607c063900bb5389571235582a34405",
+              "bytes": 164
+            },
+            {
+              "file": "tsconfig.json",
+              "sha256": "b5f075e72b83f9ecb7578d945a13aa955ef98dec6ed5d5e74605d40e6a9950a1",
+              "bytes": 306
+            }
+          ],
+          "inputsSha256": "e3d3171b58578be51cdac2cc2656d605c8f085cdb3e2442004a1a0521c0ea154",
+          "expectedNativeExit": 0,
+          "originalCheckerArgs": [
+            "--project",
+            "tsconfig.json",
+            "--pretty",
+            "false"
+          ],
+          "expectedOriginalCheckerExit": 2
+        }
+      },
+      "qualification": {
+        "scope": "Independent development example only; original runtime assertions pass both states, original checker and frozen component detect the faulty type contract."
+      }
+    },
+    {
+      "id": "return-contract",
+      "category": "declared-return-type-mismatch",
+      "uniqueSeededDefects": 1,
+      "diagnosticCodes": [
+        2322
+      ],
+      "qualificationTier": "ordinary-project",
+      "nativePositiveAssertions": 1,
+      "states": {
+        "healthy": {
+          "directory": "fixtures/return-contract/healthy",
+          "sourceInputs": [
+            {
+              "file": "module.ts",
+              "sha256": "b4951787a55719ecc15d23e9d6e7c49053417937201fc4601748b7e02f7fcd94",
+              "bytes": 98
+            },
+            {
+              "file": "package.json",
+              "sha256": "62c9ee3336a5a38c92ec171ea5fcedb621eaf7693c0729a77aefd4b2d68f6ec1",
+              "bytes": 80
+            },
+            {
+              "file": "probe.mjs",
+              "sha256": "fe9fcd354082c89cf02ae7a9fa2c83ffe6689903e9e2600f1bfce60798e9550a",
+              "bytes": 152
+            },
+            {
+              "file": "tsconfig.json",
+              "sha256": "b5f075e72b83f9ecb7578d945a13aa955ef98dec6ed5d5e74605d40e6a9950a1",
+              "bytes": 306
+            }
+          ],
+          "inputsSha256": "b2fc5e2a494052b062d06dd3d2ee9c8ad1154e82764e884d1fc993bc3b12b830",
+          "expectedNativeExit": 0,
+          "originalCheckerArgs": [
+            "--project",
+            "tsconfig.json",
+            "--pretty",
+            "false"
+          ],
+          "expectedOriginalCheckerExit": 0
+        },
+        "fault": {
+          "directory": "fixtures/return-contract/fault",
+          "sourceInputs": [
+            {
+              "file": "module.ts",
+              "sha256": "1d25125a671e45524ebb06654c6257ed72af4faaef58ac910d9fa3bbe4529ad8",
+              "bytes": 106
+            },
+            {
+              "file": "package.json",
+              "sha256": "62c9ee3336a5a38c92ec171ea5fcedb621eaf7693c0729a77aefd4b2d68f6ec1",
+              "bytes": 80
+            },
+            {
+              "file": "probe.mjs",
+              "sha256": "fe9fcd354082c89cf02ae7a9fa2c83ffe6689903e9e2600f1bfce60798e9550a",
+              "bytes": 152
+            },
+            {
+              "file": "tsconfig.json",
+              "sha256": "b5f075e72b83f9ecb7578d945a13aa955ef98dec6ed5d5e74605d40e6a9950a1",
+              "bytes": 306
+            }
+          ],
+          "inputsSha256": "ef5b3de2e7271d7ebd25678a473e54aafd31c0e3f46c16e90d9459aa2da6631c",
+          "expectedNativeExit": 0,
+          "originalCheckerArgs": [
+            "--project",
+            "tsconfig.json",
+            "--pretty",
+            "false"
+          ],
+          "expectedOriginalCheckerExit": 2
+        }
+      },
+      "qualification": {
+        "scope": "Independent development example only; original runtime assertions pass both states, original checker and frozen component detect the faulty type contract."
+      }
+    },
+    {
+      "id": "cross-module-contract",
+      "category": "type-only-cross-module-contract-mismatch",
+      "uniqueSeededDefects": 1,
+      "diagnosticCodes": [
+        2322
+      ],
+      "qualificationTier": "ordinary-project",
+      "nativePositiveAssertions": 1,
+      "states": {
+        "healthy": {
+          "directory": "fixtures/cross-module-contract/healthy",
+          "sourceInputs": [
+            {
+              "file": "package.json",
+              "sha256": "62c9ee3336a5a38c92ec171ea5fcedb621eaf7693c0729a77aefd4b2d68f6ec1",
+              "bytes": 80
+            },
+            {
+              "file": "packages/app/module.ts",
+              "sha256": "9a4c573f3fb1eb6667d9bf33ee519969a4910da7d6a966ba5440f87a42ed1de8",
+              "bytes": 120
+            },
+            {
+              "file": "packages/contracts/types.ts",
+              "sha256": "a408c3f43d24fca3dbe78779ee7991ade6142c718547cc964cf884ebc6ca34b9",
+              "bytes": 56
+            },
+            {
+              "file": "probe.mjs",
+              "sha256": "46d17f10c397140d2dc6d4e3c7ebc4a81e9dc260429da6e9454ce1e712decdf0",
+              "bytes": 173
+            },
+            {
+              "file": "tsconfig.json",
+              "sha256": "b5f075e72b83f9ecb7578d945a13aa955ef98dec6ed5d5e74605d40e6a9950a1",
+              "bytes": 306
+            }
+          ],
+          "inputsSha256": "54b779193e3485fc1e49d4a165db74152325a47366d2c0c2b114a966f5e75c58",
+          "expectedNativeExit": 0,
+          "originalCheckerArgs": [
+            "--project",
+            "tsconfig.json",
+            "--pretty",
+            "false"
+          ],
+          "expectedOriginalCheckerExit": 0
+        },
+        "fault": {
+          "directory": "fixtures/cross-module-contract/fault",
+          "sourceInputs": [
+            {
+              "file": "package.json",
+              "sha256": "62c9ee3336a5a38c92ec171ea5fcedb621eaf7693c0729a77aefd4b2d68f6ec1",
+              "bytes": 80
+            },
+            {
+              "file": "packages/app/module.ts",
+              "sha256": "6f9f5d848af89f4c7b5613f55896695c81e36912dc260a4753bafc35d5524551",
+              "bytes": 122
+            },
+            {
+              "file": "packages/contracts/types.ts",
+              "sha256": "a408c3f43d24fca3dbe78779ee7991ade6142c718547cc964cf884ebc6ca34b9",
+              "bytes": 56
+            },
+            {
+              "file": "probe.mjs",
+              "sha256": "46d17f10c397140d2dc6d4e3c7ebc4a81e9dc260429da6e9454ce1e712decdf0",
+              "bytes": 173
+            },
+            {
+              "file": "tsconfig.json",
+              "sha256": "b5f075e72b83f9ecb7578d945a13aa955ef98dec6ed5d5e74605d40e6a9950a1",
+              "bytes": 306
+            }
+          ],
+          "inputsSha256": "84703fb567feb839379d685c34f4f3a75f7f31ec1fd4180eb5b647c21e2bc3cc",
+          "expectedNativeExit": 0,
+          "originalCheckerArgs": [
+            "--project",
+            "tsconfig.json",
+            "--pretty",
+            "false"
+          ],
+          "expectedOriginalCheckerExit": 2
+        }
+      },
+      "qualification": {
+        "scope": "Independent development example only; original runtime assertions pass both states, original checker and frozen component detect the faulty type contract."
+      }
+    },
+    {
+      "id": "api-consumer",
+      "category": "invalid-api-boundary-consumer",
+      "uniqueSeededDefects": 1,
+      "diagnosticCodes": [
+        2345
+      ],
+      "qualificationTier": "ordinary-project",
+      "nativePositiveAssertions": 1,
+      "states": {
+        "healthy": {
+          "directory": "fixtures/api-consumer/healthy",
+          "sourceInputs": [
+            {
+              "file": "api.ts",
+              "sha256": "5e252647d3a6ca057b5d8f61fd8a9ba973e2ec4e4aec8d83905cb2fb74cf2aa4",
+              "bytes": 76
+            },
+            {
+              "file": "consumer.ts",
+              "sha256": "49a7afe7ac455286221f881afad87e11bad64a596c669fa701509a7ec4776622",
+              "bytes": 108
+            },
+            {
+              "file": "package.json",
+              "sha256": "62c9ee3336a5a38c92ec171ea5fcedb621eaf7693c0729a77aefd4b2d68f6ec1",
+              "bytes": 80
+            },
+            {
+              "file": "probe.mjs",
+              "sha256": "aec0331ee134be5906375f84a8bff0dd1ef06b8ce7b3e8d2c4180520109ab9d3",
+              "bytes": 174
+            },
+            {
+              "file": "tsconfig.json",
+              "sha256": "b5f075e72b83f9ecb7578d945a13aa955ef98dec6ed5d5e74605d40e6a9950a1",
+              "bytes": 306
+            }
+          ],
+          "inputsSha256": "5247708012109b88d1f5921d322bc7e50529e6e0437a8b59eb79f72009ebe3d8",
+          "expectedNativeExit": 0,
+          "originalCheckerArgs": [
+            "--project",
+            "tsconfig.json",
+            "--pretty",
+            "false"
+          ],
+          "expectedOriginalCheckerExit": 0
+        },
+        "fault": {
+          "directory": "fixtures/api-consumer/fault",
+          "sourceInputs": [
+            {
+              "file": "api.ts",
+              "sha256": "5e252647d3a6ca057b5d8f61fd8a9ba973e2ec4e4aec8d83905cb2fb74cf2aa4",
+              "bytes": 76
+            },
+            {
+              "file": "consumer.ts",
+              "sha256": "b604d8d5186eab787db59af0c7b8e9bcb09dcc644c3f8eaac67438c947cf6c92",
+              "bytes": 106
+            },
+            {
+              "file": "package.json",
+              "sha256": "62c9ee3336a5a38c92ec171ea5fcedb621eaf7693c0729a77aefd4b2d68f6ec1",
+              "bytes": 80
+            },
+            {
+              "file": "probe.mjs",
+              "sha256": "aec0331ee134be5906375f84a8bff0dd1ef06b8ce7b3e8d2c4180520109ab9d3",
+              "bytes": 174
+            },
+            {
+              "file": "tsconfig.json",
+              "sha256": "b5f075e72b83f9ecb7578d945a13aa955ef98dec6ed5d5e74605d40e6a9950a1",
+              "bytes": 306
+            }
+          ],
+          "inputsSha256": "2edc051d9d14d2f7f22db256a9fb97fff478deabf27a2d4d5a5c2687e8be4806",
+          "expectedNativeExit": 0,
+          "originalCheckerArgs": [
+            "--project",
+            "tsconfig.json",
+            "--pretty",
+            "false"
+          ],
+          "expectedOriginalCheckerExit": 2
+        }
+      },
+      "qualification": {
+        "scope": "Independent development example only; original runtime assertions pass both states, original checker and frozen component detect the faulty type contract."
+      }
+    },
+    {
+      "id": "readonly-mutation",
+      "category": "readonly-contract-mutation",
+      "uniqueSeededDefects": 1,
+      "diagnosticCodes": [
+        2540
+      ],
+      "qualificationTier": "ordinary-project",
+      "nativePositiveAssertions": 2,
+      "states": {
+        "healthy": {
+          "directory": "fixtures/readonly-mutation/healthy",
+          "sourceInputs": [
+            {
+              "file": "module.ts",
+              "sha256": "2d8f629a7a359b2a4626c20926a552ded833f6f96a1825cc23cc9871c56e84b7",
+              "bytes": 127
+            },
+            {
+              "file": "package.json",
+              "sha256": "62c9ee3336a5a38c92ec171ea5fcedb621eaf7693c0729a77aefd4b2d68f6ec1",
+              "bytes": 80
+            },
+            {
+              "file": "probe.mjs",
+              "sha256": "44c28952651e88bb9f548a7dbe14cfba17b6e63df643230d8782ba6ba5fa992a",
+              "bytes": 222
+            },
+            {
+              "file": "tsconfig.json",
+              "sha256": "b5f075e72b83f9ecb7578d945a13aa955ef98dec6ed5d5e74605d40e6a9950a1",
+              "bytes": 306
+            }
+          ],
+          "inputsSha256": "d002d71fe1e22fa025311fa8e0a5f318f95091dc415da377dd8f6e685df6525f",
+          "expectedNativeExit": 0,
+          "originalCheckerArgs": [
+            "--project",
+            "tsconfig.json",
+            "--pretty",
+            "false"
+          ],
+          "expectedOriginalCheckerExit": 0
+        },
+        "fault": {
+          "directory": "fixtures/readonly-mutation/fault",
+          "sourceInputs": [
+            {
+              "file": "module.ts",
+              "sha256": "eb88f6428794ade5c98055c4866dddb91604d7906f8fa5f660923919f40b0b44",
+              "bytes": 131
+            },
+            {
+              "file": "package.json",
+              "sha256": "62c9ee3336a5a38c92ec171ea5fcedb621eaf7693c0729a77aefd4b2d68f6ec1",
+              "bytes": 80
+            },
+            {
+              "file": "probe.mjs",
+              "sha256": "44c28952651e88bb9f548a7dbe14cfba17b6e63df643230d8782ba6ba5fa992a",
+              "bytes": 222
+            },
+            {
+              "file": "tsconfig.json",
+              "sha256": "b5f075e72b83f9ecb7578d945a13aa955ef98dec6ed5d5e74605d40e6a9950a1",
+              "bytes": 306
+            }
+          ],
+          "inputsSha256": "fa85beadacf2332c34fa5f09021cf745326cf53b3c3b8c17273e5b2bb5b4834c",
+          "expectedNativeExit": 0,
+          "originalCheckerArgs": [
+            "--project",
+            "tsconfig.json",
+            "--pretty",
+            "false"
+          ],
+          "expectedOriginalCheckerExit": 2
+        }
+      },
+      "qualification": {
+        "scope": "Independent development example only; original runtime assertions pass both states, original checker and frozen component detect the faulty type contract."
+      }
+    },
+    {
+      "id": "referenced-workspace",
+      "category": "project-reference-type-contract-mismatch",
+      "uniqueSeededDefects": 1,
+      "diagnosticCodes": [
+        2322
+      ],
+      "qualificationTier": "reference-build-required",
+      "nativePositiveAssertions": 1,
+      "states": {
+        "healthy": {
+          "directory": "fixtures/referenced-workspace/healthy",
+          "sourceInputs": [
+            {
+              "file": "package.json",
+              "sha256": "62c9ee3336a5a38c92ec171ea5fcedb621eaf7693c0729a77aefd4b2d68f6ec1",
+              "bytes": 80
+            },
+            {
+              "file": "packages/app/module.ts",
+              "sha256": "b015373b9ef0bf6e109173b283affe6b7bd087c3f70a7f2e8bf2f1ec92da0ddd",
+              "bytes": 170
+            },
+            {
+              "file": "packages/app/tsconfig.json",
+              "sha256": "0bb5617b75e11c43113bba576df10745487f288b2cf4a540038b23c06dd7ed70",
+              "bytes": 464
+            },
+            {
+              "file": "packages/contracts/tsconfig.json",
+              "sha256": "896bdf7669e53048d4ede4a9abe01d29cc50b7db431ad203f55fb64614479008",
+              "bytes": 399
+            },
+            {
+              "file": "packages/contracts/types.ts",
+              "sha256": "47331a1e4727b3293ffe0fff1f7473fd7659849192b922dcb499a6b15420f69d",
+              "bytes": 42
+            },
+            {
+              "file": "probe.mjs",
+              "sha256": "d49c59985d9b7a86fb9b4def1e124bef9a830a3cb183b786ba1e34ec0ab1faac",
+              "bytes": 181
+            },
+            {
+              "file": "tsconfig.json",
+              "sha256": "16f9bcc58e4259fc3f0ec63a9c045381e6ed7ce5bf9f2632111fd60b609d4383",
+              "bytes": 134
+            }
+          ],
+          "inputsSha256": "4632ea938374b46a3e4150a734a6012d189e63feab6259787539a2bb2a9961f2",
+          "expectedNativeExit": 0,
+          "originalCheckerArgs": [
+            "--build",
+            "tsconfig.json",
+            "--pretty",
+            "false"
+          ],
+          "expectedOriginalCheckerExit": 0
+        },
+        "fault": {
+          "directory": "fixtures/referenced-workspace/fault",
+          "sourceInputs": [
+            {
+              "file": "package.json",
+              "sha256": "62c9ee3336a5a38c92ec171ea5fcedb621eaf7693c0729a77aefd4b2d68f6ec1",
+              "bytes": 80
+            },
+            {
+              "file": "packages/app/module.ts",
+              "sha256": "c452dc22f83efd9abdf5223fe781261821e82617bc7954d99539f52c7866f33d",
+              "bytes": 172
+            },
+            {
+              "file": "packages/app/tsconfig.json",
+              "sha256": "0bb5617b75e11c43113bba576df10745487f288b2cf4a540038b23c06dd7ed70",
+              "bytes": 464
+            },
+            {
+              "file": "packages/contracts/tsconfig.json",
+              "sha256": "896bdf7669e53048d4ede4a9abe01d29cc50b7db431ad203f55fb64614479008",
+              "bytes": 399
+            },
+            {
+              "file": "packages/contracts/types.ts",
+              "sha256": "47331a1e4727b3293ffe0fff1f7473fd7659849192b922dcb499a6b15420f69d",
+              "bytes": 42
+            },
+            {
+              "file": "probe.mjs",
+              "sha256": "d49c59985d9b7a86fb9b4def1e124bef9a830a3cb183b786ba1e34ec0ab1faac",
+              "bytes": 181
+            },
+            {
+              "file": "tsconfig.json",
+              "sha256": "16f9bcc58e4259fc3f0ec63a9c045381e6ed7ce5bf9f2632111fd60b609d4383",
+              "bytes": 134
+            }
+          ],
+          "inputsSha256": "993ba722b23602900b249c93245c8cad77cee151376e93b95c4383a2f7b329c2",
+          "expectedNativeExit": 0,
+          "originalCheckerArgs": [
+            "--build",
+            "tsconfig.json",
+            "--pretty",
+            "false"
+          ],
+          "expectedOriginalCheckerExit": 2
+        }
+      },
+      "qualification": {
+        "complete": false,
+        "scoredForDetection": false,
+        "scoredForSpeed": false,
+        "reason": "Original reference build repeats produce the expected diagnostic but exits2 then1 versus frozen expected2. The component explicitly refuses project references. Keep this fixture as an unsupported/incomplete boundary, never a green or zero-time win."
+      }
+    }
+  ],
+  "limits": [
+    "Intentionally partial ordinary-input native probes; green execution does not validate every type contract or branch.",
+    "These sources were independently frozen before the evaluated checker component, but are DEVELOPMENT examples. Once exported they are openly inspectable, not future holdouts.",
+    "No SDK, private inventory, credentials, user identifiers, machine paths or original private run artifacts included.",
+    "No speed, learning, upstream acceptance or complete product integration claim."
+  ]
+}

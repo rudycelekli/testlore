@@ -12,6 +12,7 @@ const commandModules = {
   setup: ['quality-layer', 'agent-profile', 'files', 'adoption-readiness', 'plugin-recommendations', 'plugins', 'run-report'],
   report: ['files', 'run-report'], mappings: ['routing-proposals'],
   contracts: ['behavioral-contracts'],
+  typecheck: ['typecheck'],
   'mapping-qualify': ['files', 'mapping-qualification'],
   'browser-build': ['files', 'browser-evidence'], 'browser-instrument': ['browser-evidence'],
   'browser-capture': ['browser-evidence'], 'browser-mappings': ['files', 'browser-evidence'],
@@ -71,6 +72,7 @@ Usage: testlore <command> [options]
   plan        Explain which tests a Git change can affect
   run         Execute the planned tests and preserve the runner's exit code
   contracts   Execute explicitly configured independent behavioral challenges
+  typecheck   Run the project's installed TypeScript checker without emitting files
   modules     Propose test groups and flag broad dependencies
   generate    Produce an agent work order; --execute stages reviewed candidates
   snapshot    Save source/runner/environment provenance before measurement
@@ -133,7 +135,7 @@ need explicit declarations. No AI account required for audit, plan, or run.
 export function parseArgs(args) {
   const options = {};
   let command = 'help';
-  const values = new Set(['root','base','changed','output','report','type','provenance','repeat','id','patch','target','framework','head','action-ref','base-branch','query','name','enable','disable','select','plugin','settings','manifest','mutate','defects','revision','deadline-ms','trusted-key','checkpoint','claim','verdict','reviewer','sources','provider','sha256','contract','exclude-repositories']);
+  const values = new Set(['root','base','changed','output','report','type','provenance','repeat','id','patch','target','framework','head','action-ref','base-branch','query','name','enable','disable','select','plugin','settings','manifest','mutate','defects','revision','deadline-ms','trusted-key','checkpoint','claim','verdict','reviewer','sources','provider','sha256','contract','exclude-repositories','project']);
   const flags = new Set(['json', 'full', 'shadow', 'execute', 'help', 'version', 'local', 'no-ci','check','recommend','auto','selective','allow-execution','unified-native','verify','autofix','immunity']);
   if (args[0] && !args[0].startsWith('-')) command = args.shift();
   for (let i = 0; i < args.length; i++) {
@@ -200,6 +202,10 @@ function init(root, {safePath, defaultNativeAdapter, defaultNativeRunner, audit}
   return { config: file, created, report, next: report.testFiles ? ['tddswarm plan --base HEAD', 'tddswarm run --shadow'] : ['tddswarm generate', 'Add tddswarm.requirements.md and configure an agent for generation.'] };
 }
 function human(command, result, implementations = {}) {
+  if(command==='typecheck'){
+    const location=value=>String(value??'').replace(/[\x00-\x1f\x7f]/g,' ').slice(0,512);
+    return `Type checking: ${result.status}; ${result.files.length} declared source files.\n${result.diagnostics.slice(0,10).map(row=>`TS${row.code}: ${location(row.file||'configuration')}${row.line?':'+row.line:''}${row.column?':'+row.column:''}`).join('\n')}\n${result.nextAction}\nDeclared compiler scope only; no routing omissions or universal correctness authority.`;
+  }
   if(command==='contracts')return `Behavioral challenges: ${result.status}; ${result.runs.length} observed.\n${result.runs.filter(row=>!row.passed).map(row=>`Did not pass: ${row.id} (${row.script})`).join('\n')}\n${result.nextAction}\nReceipt: ${result.receipt}`;
   if(command==='mappings') {
     const diagnostics=result.processRegistrations,rows=[...(diagnostics?.proposals||[])].sort((a,b)=>Number(b.launches.length>0)-Number(a.launches.length>0)||a.fixture.localeCompare(b.fixture));
@@ -235,6 +241,7 @@ function human(command, result, implementations = {}) {
 export async function main(args = process.argv.slice(2)) {
   const { command, options } = parseArgs([...args]);
   if (options.version) { console.log(JSON.parse(fs.readFileSync(new URL('../package.json',import.meta.url),'utf8')).version); return 0; }
+  if(options.project!==undefined&&command!=='typecheck')throw Error('--project applies only to typecheck');
   if (command === 'help' || options.help) { console.log(help); return 0; }
   validateLoopOptions(command, options);
   const investigationOptions={'probe-catalog':['output','execute'],'probe-qualify':['manifest','execute'],investigate:['manifest','execute'],immunity:['manifest','execute'],'investigation-outcome':['report','sha256','id','verdict','reviewer'],'investigation-links':['report','sha256'],'investigation-learn':[],'investigation-repair':['report','sha256','id','local','patch','deadline-ms','base-branch']};
@@ -281,6 +288,10 @@ export async function main(args = process.argv.slice(2)) {
     pilot, exportPilot, verificationBrief, qualifyRoutingMappings, adoptionReadiness, importAssessments, assessCommunityCampaignFile} = implementations;
   let result;
   switch (command) {
+    case 'typecheck': {
+      if(Object.keys(options).some(key=>!['root','json','project'].includes(key)))throw Error('typecheck accepts only --root, --json and --project');
+      result=implementations.verifyTypecheck(root,{project:options.project||'tsconfig.json'});break;
+    }
     case 'contracts': {
       if(Object.keys(options).some(key=>!['root','json'].includes(key)))throw Error('contracts accepts only --root and --json');
       result=implementations.saveBehavioralContractReport(root,implementations.verifyBehavioralContracts(root));break;
@@ -508,6 +519,7 @@ export async function main(args = process.argv.slice(2)) {
   console.log(options.json ? JSON.stringify(result, null, 2) : human(command, result, implementations));
   if(command==='knowledge-import')return result.imported?0:2;
   if(command==='contracts')return result.exitCode;
+  if(command==='typecheck')return result.exitCode;
   if(command==='probe-qualify')return result.qualified?0:2;
   if(['investigate','immunity'].includes(command))return result.exitCode??0;
   if(command==='investigation-outcome')return result.recorded?0:2;

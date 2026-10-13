@@ -1,4 +1,5 @@
 // Render bounded, escaped decision evidence; test output is retained only in JSON.
+import {summarizeTypecheck} from './typecheck-report.js';
 const escape = value => String(value ?? '').replace(/[\\`*_{}[\]<>|]/g, '\\$&').replace(/[\r\n]+/g, ' ').slice(0, 1000);
 const array = value => Array.isArray(value) ? value : [];
 const object = value => value && typeof value === 'object' && !Array.isArray(value) ? value : {};
@@ -103,8 +104,11 @@ export function summarizeFirstRun(input = {}) {
  const contractPassed=contractShape&&contracts.status==='passed'&&contracts.complete===true&&contracts.exitCode===0&&Array.isArray(contracts.reasons)&&contracts.reasons.length===0&&contractRows.every(row=>row.passed);
  const contractFailed=contractShape&&contracts.status==='failed'&&contracts.complete===true&&contracts.exitCode===1&&Array.isArray(contracts.reasons)&&contracts.reasons.length>0&&contracts.reasons.every(reason=>typeof reason==='string'&&contractRows.some(row=>!row.passed&&reason===`repair-challenge-failed:${row.id}`))&&contractRows.some(row=>!row.passed);
  const contractIncomplete=contractsRequested&&!contractPassed&&!contractFailed;
- const verdict=incomplete||contractIncomplete?'incomplete':omittedFailures.length?'omitted-failures-observed':(report.exitCode!==0||failures.length||contractFailed)?'failed':delegated?'native-result-reported':'passed-in-observed-scope';
- const nextAction=contractIncomplete?'Inspect incomplete behavioral contract evidence, preserve its independent assertions, and rerun verification. Native case outcomes remain separate.':
+ const typecheck=summarizeTypecheck(report.typecheck,{expectedProvenance:report.provenance||report.plan?.provenance}),typeIncomplete=typecheck.requested&&!typecheck.complete,typeFailed=typecheck.status==='failed';
+ const verdict=incomplete||contractIncomplete||typeIncomplete?'incomplete':omittedFailures.length?'omitted-failures-observed':(report.exitCode!==0||failures.length||contractFailed||typeFailed)?'failed':delegated?'native-result-reported':'passed-in-observed-scope';
+ const nextAction=typeIncomplete?'Inspect incomplete TypeScript scope or compiler evidence and rerun typecheck. Native case outcomes remain separate.':
+   typeFailed?'Inspect the type diagnostic codes and locations, repair the declared contract, and rerun both type checking and native tests.':
+   contractIncomplete?'Inspect incomplete behavioral contract evidence, preserve its independent assertions, and rerun verification. Native case outcomes remain separate.':
    contractFailed?'Inspect the named behavioral challenge failures, even when native tests passed. Repair independently established defects and preserve the challenge assertions.':
    verdict==='incomplete'&&report.executed!==true&&!delegated&&declaredTotal===0&&selection.discovery?.complete!==false?
    'No native test files were discovered. Run testlore doctor --json to confirm your runner; if the project has no tests, add independent behavioral requirements in tddswarm.requirements.md before requesting generation.':
@@ -123,7 +127,7 @@ export function summarizeFirstRun(input = {}) {
  const fallback=fallbackCauses(selection);
  const timing=object(report.timings),validTiming=value=>typeof value==='number'&&Number.isFinite(value)&&value>=0?value:null;
  return {
-   schemaVersion:1,advisory:true,verdict,complete:!incomplete&&!contractIncomplete,delegated,
+   schemaVersion:1,advisory:true,verdict,complete:!incomplete&&!contractIncomplete&&!typeIncomplete,delegated,typecheck,
    behavioralContracts:{requested:contractsRequested,status:contractsRequested?contractPassed?'passed':contractFailed?'failed':'incomplete':'not-configured',
     nativeExitCode:contractsRequested?(Number.isInteger(report.nativeExitCode)?report.nativeExitCode:null):report.exitCode,
     observed:array(contracts.runs).length,failed:array(contracts.runs).filter(row=>row?.passed===false).slice(0,32).map(row=>({id:label(row.id),script:label(row.script)})),
@@ -171,6 +175,9 @@ export function renderFirstRunSummary(report = {}) {
  text.push('',`Additional behavioral challenges: ${escape(behavioral.status)}; ${behavioral.observed} observed. ${escape(behavioral.scope)}`);
  if(behavioral.requested)text.push(`Native runner exit: ${behavioral.nativeExitCode??'unknown'}. Overall exit: ${Number.isInteger(report.exitCode)?report.exitCode:'unknown'}. Contract span: ${behavioral.durationMs===null?'unknown':behavioral.durationMs+' ms'}.`);
  for(const failure of behavioral.failed)text.push(`- Behavioral check did not pass: ${escape(failure.id)} (${escape(failure.script)}). Preserve its assertions; inspect the JSON receipt.`);
+ const typecheck=summary.typecheck;
+ text.push('',`TypeScript checking: ${escape(typecheck.status)}; ${typecheck.implementationCount??'unknown'} checked implementation inputs. ${escape(typecheck.scope)}`);
+ if(typecheck.requested){text.push(`Native runner exit: ${Number.isInteger(report.nativeExitCode)?report.nativeExitCode:'unknown'}. Overall exit: ${Number.isInteger(report.exitCode)?report.exitCode:'unknown'}. Compiler: ${escape(typecheck.compilerVersion||'unavailable')}. Suppression directives: ${typecheck.suppressionCount??'unknown'}.`);for(const row of typecheck.diagnostics)text.push(`- TS${row.code}: ${escape(row.file||'configuration')}${row.line?':'+row.line:''}${row.column?':'+row.column:''}.`);}
  if(summary.failedCasesTruncated)text.push(`Showing ${summary.failedCases.length}/${summary.failedCaseCount} failures; remaining identities are in the JSON receipt.`);
  if(summary.omittedFailureCount)text.push('',`Shadow detected ${summary.omittedFailureCount} failing case records that the proposed selection would omit. Keep shadow mode enabled.`,'');
  for(const failure of summary.omittedFailures)text.push(`- Proposed omission failure: ${escape(failure.file||'file unavailable')} — ${escape(failure.name||'name unavailable')} (identity: ${escape(failure.id||'unavailable')}).`);
@@ -215,7 +222,7 @@ export function renderRunReport(input = {}) {
    if(report.error)rows.push('',`Execution issue: ${escape(report.error)}`);
    rows.push('','Omitted targets and their dependency decisions are owned by the native engine; inspect the JSON command and native report. This report makes no individual-case safety claim.','',`Next action: ${firstSummary.nextAction}`);return renderFirstRunSummary(report)+'\n'+rows.join('\n')+'\n';
  }
- const nativeSummary=report.contracts===undefined?firstSummary:summarizeFirstRun({...report,exitCode:report.nativeExitCode,contracts:undefined});
+ const nativeSummary=report.contracts===undefined&&report.typecheck===undefined?firstSummary:summarizeFirstRun({...report,exitCode:report.nativeExitCode,contracts:undefined,typecheck:undefined});
  const unverified=report.actualExecutedFilesUnverified===true||!nativeSummary.complete;
  const fileEvidence=executionFileEvidence(unverified?{...report,actualExecutedFilesUnverified:true}:report);
  const ran = new Set(fileEvidence.executedFiles),requested=new Set(fileEvidence.requestedFiles);

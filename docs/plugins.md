@@ -2,7 +2,7 @@
 
 TestLore is a complementary coordination layer for independently maintained specialist tools. Users access their capabilities through a consistent workflow while those tools retain their native scope and TestLore retains its acceptance rules. Plugins are explicit project configuration, not automatic downloads. Listing plugins does not invoke them. Enabling a tool does not establish that it is installed, compatible, or produces effective tests.
 
-The built-in catalog covers Agentic QE generation, pytest-testmon/Nx/Bazel selection and execution, c8/Stryker measured-report tooling, optional RuVector learning retrieval, and Guardana/iFixAi assessment report imports. Their implementations remain independent upstream projects. Updating one does not automatically qualify a new version: check its contract and run the project's validation after upgrades.
+The built-in catalog covers installed TypeScript verification, Agentic QE generation, pytest-testmon/Nx/Bazel selection and execution, c8/Stryker measured-report tooling, optional RuVector learning retrieval, and Guardana/iFixAi assessment report imports. Their implementations remain independent upstream projects. Updating one does not automatically qualify a new version: check its contract and run the project's validation after upgrades.
 
 ## Let your project choose its setup
 
@@ -14,6 +14,8 @@ npx --no-install testlore plugins --auto --json
 Inspection reads bounded project manifests and local installation evidence without executing tools. Recommendations explain each role, the supporting files, and missing prerequisites. Ordinary `setup` applies suitable installed complementary choices by default and records `decisions` and actual `applied` entries. `plugins --auto` remains available separately. Automatic setup retains manually enabled or disabled plugins and existing execution settings. It never downloads optional tools, invokes a provider, changes tests, or resolves competing execution engines by arbitrary precedence. An explicit runner is retained; switch to a native alternative with `plugins --select`.
 
 This is a deterministic project-fit policy, not a performance ranking. Installation evidence does not certify a tool's runtime contract or measured quality: validate the actual operation. RuVector becomes applicable when local learning contains usable history and its optional SDK is present. AQE is chosen separately during generation rather than persistently enabled by setup.
+
+For a root `tsconfig.json` and installed project-local TypeScript SDK, setup enables the complementary `typescript` native check. Runtime tests keep their native engine. Configure a different bounded project path or explicitly disable the check; unsupported references or incomplete compiler scope remain visible. Enabled checking also gates supported source repairs. [Compiler profile and public reproduction](native-typecheck.md).
 
 ## Automatic generation composition
 

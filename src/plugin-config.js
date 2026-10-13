@@ -1,5 +1,6 @@
 // Pure configuration resolution: listing/configuration never loads plugin code.
 export const BUILTIN_PLUGINS = Object.freeze([
+  { id: 'typescript', kind: 'native-check', capabilities: ['fresh-project-type-verification'], limitation: 'Declared compiler scope only; no routing omission or universal correctness authority.' },
   { id: 'agentic-qe', kind: 'generation', capabilities: ['direct-unreviewed-candidate-generation'], limitation: 'AQE is not the architect/author/reviewer worker protocol.' },
   { id: 'pytest-testmon', kind: 'native-backend', capabilities: ['native-selection', 'native-execution'] },
   { id: 'nx', kind: 'native-backend', capabilities: ['native-selection', 'native-execution'] },
@@ -37,7 +38,11 @@ function validateEnabled(id, entry) {
     if (entry.kind !== 'worker' || entry.protocolVersion !== 1) throw new Error(`Unknown enabled plugin ${id}; register kind worker with protocolVersion 1`);
     argv(entry.command, `${id}.command`); return 'worker';
   }
-  if (builtin.kind === 'native-backend') {
+  if (id === 'typescript') {
+    keys(entry, ['enabled','project','timeoutMs'],id);
+    if(entry.project!==undefined&&(typeof entry.project!=='string'||entry.project.length>512||!entry.project.endsWith('.json')||entry.project.includes('\\')||/[\x00-\x1f\x7f]/.test(entry.project)||entry.project.split('/').some(part=>!part||part==='.'||part==='..'||part.startsWith('.'))))throw Error('typescript.project must be a canonical project-relative JSON path');
+    if(entry.timeoutMs!==undefined)integer(entry.timeoutMs,'typescript.timeoutMs',100,120000);
+  } else if (builtin.kind === 'native-backend') {
     keys(entry, ['enabled', 'executable', 'args', 'options', 'queryOptions', 'targets', 'fileLabels', 'timeoutMs'], id);
     if (entry.executable !== undefined && (typeof entry.executable !== 'string' || !entry.executable || entry.executable.startsWith('-'))) throw new Error(`${id}.executable must be a program path`);
     for (const key of ['args', 'options', 'queryOptions']) if (entry[key] !== undefined) argv(entry[key], `${id}.${key}`, { empty: true });

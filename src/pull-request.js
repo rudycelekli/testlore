@@ -6,6 +6,7 @@ import {git,safePath} from './files.js';
 import {digest} from './provenance.js';
 import {captureRepairChallenges,captureChallengeRuntime,assessRepairChallenges} from './repair-challenges.js';
 import {verifyAppliedRepairValidation} from './repair-candidates.js';
+import {summarizeTypecheck} from './typecheck-report.js';
 
 // Advisory reviewer approval and suite-only receipts cannot qualify source
 // repair publication. Reconcile actual controller observations, then rebind the
@@ -19,6 +20,21 @@ function repairPublicationGuard(worktree,result) {
   const verified=verifyAppliedRepairValidation(worktree,result.candidate?.candidatePath);
   if(digest(result.validation)!==digest(verified.receipt))
     throw new Error('Public repair validation differs from the authenticated local receipt');
+  if(verified.manifest.typecheck){
+    const final=summarizeTypecheck(result.fullRun?.typecheck);
+    if(final.status!=='passed'||!final.complete)throw Error('Source repair publication requires completed final TypeScript verification');
+    const typed=result.fullRun.typecheck,source=typed.binding?.source?.files;
+    if(!Array.isArray(source))throw Error('Final TypeScript source binding required');
+    for(const [file,value]of Object.entries(verified.manifest.state.scope.files)){
+      const expected=verified.manifest.files.find(item=>item.path===file)?.hash??value.hash;
+      if(source.find(item=>item.file===file&&item.kind==='file')?.sha256!==expected)throw Error('Final TypeScript source differs from validated repair');
+    }
+    if(digest(typed.compiler)!==digest(verified.receipt.typecheck.candidate[0].compiler)||
+      digest(typed.binding.node)!==digest(verified.receipt.typecheck.candidate[0].binding.node)||
+      digest(typed.binding.producers)!==digest(verified.receipt.typecheck.candidate[0].binding.producers)||
+      typed.binding.dependencies.sha256!==verified.receipt.typecheck.candidate[0].binding.dependencies.sha256)
+      throw Error('Final TypeScript compiler identities differ from validated repair');
+  }
   const expected=result.finalChallenges;
   const definition=captureRepairChallenges(worktree);
   if(definition.status!=='configured'||definition.identity!==expected.identity||

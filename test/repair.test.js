@@ -7,6 +7,7 @@ import {fileURLToPath} from 'node:url';
 import {repair,repairFullSuite} from '../src/repair.js';
 import {fixture,commit,git,twoModules,write} from './helpers.js';
 import {challengeFiles} from './repair-challenge-fixtures.js';
+import {publishImprovement} from '../src/pull-request.js';
 const requirements='Module a must export the integer 1. Module b must continue exporting 2. Preserve all public behavior and unchanged tests.';
 const review={accepted:true,findings:[],oracle:{independent:true,basis:[requirements]}};
 function project(t,files={}){const root=fixture(t,{...twoModules,...challengeFiles,'src/a.js':'export const a=9;','tddswarm.requirements.md':requirements,...files,'tddswarm.config.json':{...files['tddswarm.config.json'],repair:{...files['tddswarm.config.json']?.repair,challenges:'quality/challenges.json'}}});commit(root);return root;}
@@ -28,6 +29,27 @@ test('source repair validates repeated unchanged assertions and commits an isola
  assert.equal(result.kind,'source-repair');assert.equal(result.merged,false);assert.equal(result.published,false);assert.equal(result.sourceHead,head);assert.notEqual(result.sha,head);
  assert.equal(git(root,'rev-parse','HEAD').trim(),head);assert.equal(git(root,'status','--porcelain').trim(),'');assert.equal(fs.readFileSync(path.join(root,'src/a.js'),'utf8'),'export const a=9;');assert.equal(fs.readFileSync(path.join(root,'test/a.test.js'),'utf8'),fs.readFileSync(path.join(result.worktree,'test/a.test.js'),'utf8'));
  assert.equal(git(result.worktreeRoot,'show','--format=','--name-only','HEAD').trim(),'src/a.js');
+});
+test('enabled native compiler vetoes a runtime-green repair and qualifies the corrected complete branch',async t=>{
+ const root=project(t,{
+  '.gitignore':'node_modules/\n.tddswarm/\n',
+  'src/a.js':'/** @type {number} */ export const a=9;',
+  'test/a.test.js':"import test from 'node:test';import assert from 'node:assert/strict';import {a} from '../src/a.js';test('numeric value',()=>assert.equal(Number(a),1));",
+  'tsconfig.json':{compilerOptions:{allowJs:true,checkJs:true,noEmit:true,strict:true,module:'NodeNext',moduleResolution:'NodeNext',target:'ES2022'},include:['src/*.js']},
+  'tddswarm.config.json':{adapter:'node',runner:[process.execPath,'--test','{files}'],plugins:{typescript:{enabled:true,timeoutMs:20000}}}
+ });
+ fs.mkdirSync(path.join(root,'node_modules'));fs.cpSync(path.resolve('node_modules/typescript'),path.join(root,'node_modules/typescript'),{recursive:true});
+ const bad=await repair(root,{patch:patch("/** @type {number} */ export const a='1';"),sourcePaths:['src/a.js'],deadlineMs:120000});cleanup(t,root,bad);
+ assert.equal(bad.status,'validation-rejected',JSON.stringify(bad));assert.equal(bad.sha,null);assert.equal(bad.validation.candidate.exitCode,0);
+ assert.equal(bad.validation.typecheck.candidate[0].status,'failed');assert.ok(bad.validation.typecheck.candidate[0].diagnostics.some(row=>row.code===2322));
+ assert.equal(fs.readFileSync(path.join(root,'src/a.js'),'utf8'),'/** @type {number} */ export const a=9;');
+ const good=await repair(root,{patch:patch('/** @type {number} */ export const a=1;'),sourcePaths:['src/a.js'],deadlineMs:120000});cleanup(t,root,good);
+ assert.equal(good.status,'ready-for-review',JSON.stringify(good));assert.equal(good.fullRun.typecheck.status,'passed');assert.equal(good.validation.typecheck.accepted,true);
+ assert.equal(fs.lstatSync(path.join(good.worktree,'node_modules')).isSymbolicLink(),false);
+ const missing=structuredClone(good);delete missing.fullRun.typecheck;
+ assert.throws(()=>publishImprovement(root,missing),/final TypeScript verification/);
+ const corrupt=structuredClone(good);corrupt.fullRun.typecheck.compiler.sha256='0'.repeat(64);
+ assert.throws(()=>publishImprovement(root,corrupt),/compiler identities differ/);
 });
 test('wrong source repair never commits, and test edits cannot replace a repair',async t=>{
  const root=project(t),wrong=await repair(root,{patch:patch('export const a=99;'),sourcePaths:['src/a.js']});cleanup(t,root,wrong);assert.equal(wrong.status,'validation-rejected');assert.equal(wrong.sha,null);

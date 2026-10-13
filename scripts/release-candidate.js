@@ -2,7 +2,7 @@
 // Seal once, qualify that exact archive, and verify it again before a protected publish.
 import fs from 'node:fs';
 import {sealSourceArchive} from './archive-source.js';
-import {packedEvidenceComplete} from './packed-evidence.js';
+import {packedEvidenceComplete,verifyInstalledTypecheckRawEvidence} from './packed-evidence.js';
 import {verifyInstalledRepairRawEvidence} from './installed-repair-proof.js';
 import {verifyOneCommandRawEvidence} from './one-command-proof.js';
 import {verifyAssessmentImportRawEvidence} from './assessment-import-proof.js';
@@ -27,6 +27,7 @@ if(options['--verify']){
  verifyInstalledRepairRawEvidence(path.join(directory,'installed-repair-raw'),evidence.installedRepair);
  verifyOneCommandRawEvidence(path.join(directory,'one-command-raw'),evidence.oneCommand);
  verifyAssessmentImportRawEvidence(path.join(directory,'assessment-import-raw'),evidence.assessmentImports);
+ if(!verifyInstalledTypecheckRawEvidence(evidence.installedTypecheck,path.join(directory,'installed-typecheck-raw')))throw Error('Installed TypeScript raw evidence incomplete or changed');
  if(options.publish&&(!/^\d+\.\d+\.\d+(?:-alpha\.\d+)?$/.test(receipt.version)||process.env.NODE_AUTH_TOKEN||process.env.NPM_TOKEN))throw new Error('Publish requires a valid scoped alpha candidate version and token-free trusted OIDC');
  if(options.publish&&(process.env.GITHUB_ACTIONS!=='true'||!process.env.ACTIONS_ID_TOKEN_REQUEST_URL||!process.env.ACTIONS_ID_TOKEN_REQUEST_TOKEN))throw new Error('Publish check requires a GitHub Actions OIDC-enabled job; publisher mapping is still an external gate');
  console.log(JSON.stringify({...receipt,verified:true,alphaVersionEligible:/^\d+\.\d+\.\d+(?:-alpha\.\d+)?$/.test(receipt.version)},null,2));

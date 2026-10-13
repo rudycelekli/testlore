@@ -7,7 +7,7 @@ import {captureRepairChallenges,runRepairChallenges} from './repair-challenges.j
 
 /** Explicit repository oracles supplement native tests. They never authorize
  * omissions, prove authorship, or establish universal defect coverage. */
-export function verifyBehavioralContracts(root,{timeoutMs=20000,totalTimeoutMs=120000,expectedProvenance}={}) {
+export function verifyBehavioralContracts(root,{timeoutMs=20000,totalTimeoutMs=120000,expectedProvenance,requestedRepair}={}) {
  root=path.resolve(root);const started=performance.now();
  if(!Number.isSafeInteger(timeoutMs)||timeoutMs<1||timeoutMs>120000||!Number.isSafeInteger(totalTimeoutMs)||totalTimeoutMs<1||totalTimeoutMs>120000)throw Error('behavioral-contract-budget-invalid');
  const deadline=started+totalTimeoutMs;
@@ -18,7 +18,9 @@ export function verifyBehavioralContracts(root,{timeoutMs=20000,totalTimeoutMs=1
   nextAction:'Inspect incomplete contract evidence; preserve the independent assertions and rerun verification.'};
  const finish=()=>({...report,durationMs:Math.round(performance.now()-started)});
  try {
-  const config=readConfig(root),definition=captureRepairChallenges(root,config);
+  const config=readConfig(root);
+  if(requestedRepair!==undefined&&digest(config.repair)!==digest(requestedRepair))throw Error('behavioral-contract-requested-policy-drift');
+  const definition=captureRepairChallenges(root,config);
   if(definition.status==='not-configured')return {...finish(),status:'not-configured',exitCode:2,reasons:['behavioral-contracts-not-configured'],nextAction:'Commit independently maintained behavioral challenges and configure repair.challenges and repair.sourcePaths. No additional behavioral check ran.'};
   const sourcePaths=config.repair?.sourcePaths;
   if(!Array.isArray(sourcePaths)||!sourcePaths.length||sourcePaths.length>32||new Set(sourcePaths).size!==sourcePaths.length||sourcePaths.some(file=>!isRepairSourcePath(file)))throw Error('behavioral-contract-source-scope-invalid');
@@ -49,10 +51,10 @@ export function verifyBehavioralContracts(root,{timeoutMs=20000,totalTimeoutMs=1
 
 /** Native cases/history retain their meaning; the overall exit includes the
  * additional dimension. Missing configuration remains an explicit coverage gap. */
-export function supplementWithBehavioralContracts(root,report) {
+export function supplementWithBehavioralContracts(root,report,{requestedRepair}={}) {
  const config=readConfig(root);
- if(config.repair?.challenges===undefined)return report;
- const contracts=verifyBehavioralContracts(root,{expectedProvenance:report.provenance||report.plan?.provenance});
+ if((requestedRepair||config.repair)?.challenges===undefined)return report;
+ const contracts=verifyBehavioralContracts(root,{expectedProvenance:report.provenance||report.plan?.provenance,requestedRepair});
  return {...report,nativeExitCode:report.exitCode,nativeComplete:report.complete,contracts,
   exitCode:contracts.exitCode===2||report.exitCode===2?2:contracts.exitCode===1?1:report.exitCode,
   ...(report.timings?{timings:{...report.timings,contractsMs:contracts.durationMs,totalMs:report.timings.totalMs+contracts.durationMs}}:{})};
