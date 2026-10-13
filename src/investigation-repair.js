@@ -1,3 +1,4 @@
+import {persistResultReceipt} from './result-receipt.js';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
@@ -102,7 +103,7 @@ export async function repairInvestigation(root, options = {}) {
   };
   const outer = fs.mkdtempSync(path.join(os.tmpdir(),'testlore-investigation-repair-'));
   const id = randomUUID(); let result = {schemaVersion:1,kind:'source-repair',id,originalCheckout:root,sourceHead:base,base,baseBranch,worktree:outer,worktreeRoot:outer,sha:null,status:'preparing',published:false,merged:false,sourcePaths:[finding.module],investigation:{report:options.report,reportSha256:options.reportSha256,findingId:finding.id,recipeId:finding.recipeId,recipeSha256:finding.recipeSha256,regressionTest:added.path,regressionSha256:digest(added.content),originalGreenRuns:[],regressionFailureRuns:[],deadlineMs,scope:'standalone-node-approved-module-probe-to-native-regression',limitations:['Target approval is a reviewed declaration; this controller does not independently authenticate the reviewer.','A new passing regression does not certify behavior outside the observed native and module scopes.']}};
-  const save = () => { remaining(); const directory = safePath(result.worktree,'.tddswarm/investigation-repair'); fs.mkdirSync(directory,{recursive:true,mode:0o700}); result.receipt = path.join(directory,'result.json'); fs.writeFileSync(result.receipt,JSON.stringify(result,null,2)+'\n',{mode:0o600}); return result; };
+  const save = () => { remaining(); return persistResultReceipt(result.worktree,result,'.tddswarm/investigation-repair/result.json'); };
   try {
     assertCaller(); git(root,['worktree','add','--detach',outer,base]);
     const dependencies = path.join(root,'node_modules'); if (fs.existsSync(dependencies) && !fs.existsSync(path.join(outer,'node_modules'))) fs.symlinkSync(fs.realpathSync(dependencies),path.join(outer,'node_modules'),'dir');
@@ -144,7 +145,7 @@ export async function repairInvestigation(root, options = {}) {
     assertCaller(); return save();
   } catch (error) {
     result.status='failed'; result.error=error.message; result.published=false; result.merged=false;
-    if (fs.existsSync(path.join(result.worktree,'.git'))) { const directory=safePath(result.worktree,'.tddswarm/investigation-repair');fs.mkdirSync(directory,{recursive:true,mode:0o700});result.receipt=path.join(directory,'result.json');fs.writeFileSync(result.receipt,JSON.stringify(result,null,2)+'\n',{mode:0o600}); }
+    if (fs.existsSync(path.join(result.worktree,'.git'))) persistResultReceipt(result.worktree,result,'.tddswarm/investigation-repair/result.json');
     else fs.rmSync(outer,{recursive:true,force:true});
     return result;
   }

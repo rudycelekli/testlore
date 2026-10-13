@@ -19,9 +19,9 @@ const commandModules = {
   pilot: ['pilot'], 'pilot-export': ['pilot'],
   plugins: ['files', 'plugins', 'plugin-recommendations'],
   assess: ['assessments'], campaign: ['community-campaign'],
-  improve: ['files', 'agent-profile', 'improvement', 'quality-layer', 'pull-request'],
-  repair: ['files', 'repair', 'pull-request'],
-  autopilot: ['files', 'repair', 'improvement', 'pull-request'],
+  improve: ['files', 'agent-profile', 'improvement', 'quality-layer', 'pull-request', 'result-receipt'],
+  repair: ['files', 'repair', 'pull-request', 'result-receipt'],
+  autopilot: ['files', 'repair', 'improvement', 'pull-request', 'result-receipt'],
   agent: ['agent-profile'], learn: ['learning'], recall: ['learning'], 'learning-export': ['learning'],
   'knowledge-import': ['contribution-knowledge'], knowledge: ['contribution-knowledge', 'files'],
   'knowledge-reflect': ['contribution-knowledge'],
@@ -29,7 +29,7 @@ const commandModules = {
   investigate: ['bug-investigation'], immunity: ['bug-investigation'],
   'investigation-outcome': ['investigation-outcomes'], 'investigation-links': ['investigation-outcomes'],
   'investigation-learn': ['investigation-outcomes'],
-  'investigation-repair': ['investigation-repair','files','pull-request'],
+  'investigation-repair': ['investigation-repair','files','pull-request','result-receipt'],
   'probe-catalog': ['bug-catalog'],
   snapshot: ['files', 'provenance'], evidence: ['evidence'],
   mutation: ['files', 'quality-measurement', 'evidence'], effectiveness: ['files', 'quality-measurement'],
@@ -230,7 +230,7 @@ function human(command, result, implementations = {}) {
   if (command === 'init') return `${result.created ? 'Created' : 'Kept'} ${result.config}\n${human('audit', result.report)}\nNext: ${result.next.join(' → ')}`;
   if (command === 'audit') return `${result.testFiles} test files · static triage grade ${result.grade}${result.score === null ? '' : ` (${result.score}/100)`}\n${Object.entries(result.measured).map(([key,value])=>`${key}: ${value?'measured (see JSON scope)':'not measured'}`).join(' · ')}\n${result.files.flatMap(f => f.findings.map(x => `  ${f.file}:${x.line} — ${x.message}`)).join('\n')}\n${result.sourcesWithoutImportingTests.length} source files have no importing tests (not a coverage result).`;
   if (command === 'plan') return `${result.mode.toUpperCase()} · ${result.selected.length}/${result.total} test files selected\n${result.reasons.length ? `Reasons: ${result.reasons.join(', ')}\n` : ''}${result.decisions.map(d => `${d.selected ? 'RUN ' : 'SKIP'} ${d.test} — ${d.reasons.join(', ')}${d.paths.length ? `\n     ${d.paths.map(p => p.join(' → ')).join('\n     ')}` : ''}`).join('\n')}\nStatic evidence; runtime dependencies require declarations.`;
-  if(['improve','repair','autopilot','investigation-repair'].includes(command))return `${result.status} · ${result.branch||result.kind||command}\n${result.worktree||''}\n${result.pullRequest||result.publicationError||result.error||result.next?.join('\n')||'Review the retained improvement receipt.'}`;
+  if(['improve','repair','autopilot','investigation-repair'].includes(command))return `${result.status} · ${result.branch||result.kind||command}\n${result.worktree||''}\n${result.status==='receipt-failed'?[result.pullRequest&&`Confirmed pull request: ${result.pullRequest}`,result.receiptError||result.error].filter(Boolean).join('\n'):result.pullRequest||result.publicationError||result.error||result.next?.join('\n')||'Review the retained improvement receipt.'}`;
   if(command==='probe-catalog')return `${result.entries.length} qualified historical recipes · ${result.directory||'read-only catalog'}\n${result.entries.map(row=>`${row.id} — ${row.contract}`).join('\n')}\n${result.nextAction}`;
   if(command==='investigate'||command==='immunity')return `${result.kind} · ${result.status||'observation'}\n${result.summary?Object.entries(result.summary).map(([key,value])=>`${key}: ${value}`).join(' · '):result.coverage?`${result.coverage.approvedInvestigations} approved probes · ${result.coverage.unresolvedInvestigations} unresolved`:result.candidates?`${result.candidates.filter(row=>row.applicable).length}/${result.candidates.length} approved probes`:'No reviewed probe scope yet.'}\n${result.receipt||''}\n${result.nextAction}\nNo universal coverage or automatic learning improvement is established.`;
   if (command === 'modules') return `${result.groups.map(g => `${g.name}: ${g.tests.join(', ')}`).join('\n')}\nProposal only; no tests rewritten.`;
@@ -315,7 +315,7 @@ export async function main(args = process.argv.slice(2)) {
       let patch;if(options.patch){const {readInvestigationInput}=await import('./bug-investigation.js');patch=readInvestigationInput(root,options.patch,{maxBytes:131072}).value;}
       result=await implementations.repairInvestigation(root,{report:options.report,reportSha256:options.sha256,findingId:options.id,agent,patch,deadlineMs:options['deadline-ms']===undefined?undefined:Number(options['deadline-ms'])});
       if(result.status==='ready-for-review'&&!options.local){try{result=implementations.publishImprovement(root,result,{baseBranch:options['base-branch']});}catch(error){result={...result,published:false,publicationError:error.message};}}
-      if(result.receipt)fs.writeFileSync(result.receipt,JSON.stringify(result,null,2));break;
+      if(result.receipt)result=implementations.persistResultReceipt(result.worktree||root,result);break;
     }
     case 'knowledge-import': result=implementations.importContributionKnowledge(root,options.report,{expectedSha256:options.sha256});break;
     case 'knowledge-reflect': result=implementations.reflectContributionKnowledge(root);break;
@@ -406,7 +406,7 @@ export async function main(args = process.argv.slice(2)) {
       }
       if(options.provider&&result.kind==='source-repair')result.generationProviderRequest={provider:options.provider,applied:false,reason:'Author-provider selection applies to test generation. Source repair retains dedicated JSON-worker roles.'};
       if(result.status==='ready-for-review'&&!options.local){try{result=publishImprovement(root,result,{baseBranch:options['base-branch']});}catch(error){result={...result,published:false,publicationError:error.message};}}
-      if(result.receipt)fs.writeFileSync(result.receipt,JSON.stringify(result,null,2));
+      if(result.receipt)result=implementations.persistResultReceipt(result.worktree||root,result);
       break;
     }
     case 'report': result=JSON.parse(fs.readFileSync(safePath(root,options.report||'.tddswarm/last-run.json'),'utf8'));if(!options.json){console.log(renderRunReport(result));return result.exitCode||0;}break;
@@ -460,7 +460,7 @@ export async function main(args = process.argv.slice(2)) {
         try{result=publishImprovement(root,result,{baseBranch:options['base-branch']});}
         catch(error){result={...result,published:false,publicationError:error.message};}
       }
-      if(result.receipt)fs.writeFileSync(result.receipt,JSON.stringify(result,null,2));
+      if(result.receipt)result=implementations.persistResultReceipt(result.worktree||root,result);
       break;
     }
     case 'agent': result=ensureQualityAgent(root,{name:options.name});break;

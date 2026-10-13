@@ -10,6 +10,7 @@ import {proposeRepair} from './repair-swarm.js';
 import {withRepairEnvironment} from './repair-environment.js';
 import {captureRepairChallenges,runRepairChallenges,captureChallengeRuntime} from './repair-challenges.js';
 import {captureTypecheckInputs,verifyTypecheck} from './typecheck.js';
+import {persistResultReceipt} from './result-receipt.js';
 
 function changes(root){
  const entries=git(root,['status','--porcelain=v1','-z','--untracked-files=all']).split('\0').filter(Boolean),result=[];
@@ -90,7 +91,7 @@ export async function repair(root,options={}){
  let baseBranch=null;try{baseBranch=git(repository,['symbolic-ref','--short','HEAD']).trim();}catch{}
  const id=randomUUID(),branch=`tddswarm/repair-${id}`,worktreeRoot=fs.mkdtempSync(path.join(os.tmpdir(),'testlore-repair-')),worktree=prefix?path.join(worktreeRoot,prefix):worktreeRoot;
  const result={schemaVersion:1,kind:'source-repair',id,branch,worktreeRoot,worktree,originalCheckout:root,sourceHead:base,base,baseBranch,sha:null,status:'preparing',published:false,merged:false,budget:{deadlineMs,timeoutMs,maxTasks:3,maxFiles:3,maxPatchBytes:65536,maxRounds:1},sourcePaths};
- const receipt=()=>{const directory=safePath(worktree,'.tddswarm/repair');fs.mkdirSync(directory,{recursive:true});result.receipt=path.join(directory,'result.json');fs.writeFileSync(result.receipt,JSON.stringify(result,null,2));return result;};
+ const receipt=()=>persistResultReceipt(worktree,result,'.tddswarm/repair/result.json');
  try{
   git(repository,['worktree','add','-b',branch,worktreeRoot,base]);
   if(originalContribution){
