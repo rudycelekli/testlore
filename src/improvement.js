@@ -8,6 +8,8 @@ import { git, readConfig, safePath, listFiles } from './files.js';
 import { snapshot, freshness, digest } from './provenance.js';
 import { stagePatch, validateCandidates, applyPatch } from './candidates.js';
 import { generate } from './swarm.js';
+import {captureTypecheckInputs,verifyTypecheck} from './typecheck.js';
+import {summarizeTypecheck} from './typecheck-report.js';
 import { discover, execute } from './execution.js';
 
 const candidateId = id => typeof id === 'string' && /^[a-zA-Z0-9][a-zA-Z0-9_-]{0,127}$/.test(id);
@@ -59,10 +61,11 @@ function copyCandidate(root, destination, id) {
 }
 const repositoryInputs=root=>digest(Object.fromEntries(listFiles(root).map(file=>[file,digest(fs.readFileSync(safePath(root,file)))])));
 function fullSuite(root, options) {
-  const config = readConfig(root);
-  const discovery = discover(root, { ...config, discovery: Array.isArray(config.discovery) ? config.discovery : 'native' });
+  const config = readConfig(root),provenance=options.typecheckRequested?snapshot(root,config):undefined;
+  const discovery = discover(root, { ...config, discovery: Array.isArray(config.discovery) ? config.discovery : 'native',...(options.typecheckRequested?{runnerTimeoutMs:Math.min(options.timeoutMs||20000,Math.max(1,options.deadline-performance.now()))}:{}) });
   if (!discovery.complete || !discovery.files.length) return { exitCode: 2, complete: false, discovery, tests: [], error: 'Full native test scope is incomplete or empty' };
-  return { ...execute(root, discovery.files, config, { capture: true, timeoutMs: options.timeoutMs }), discovery };
+  if(options.typecheckRequested&&performance.now()>=options.deadline)return {exitCode:2,complete:false,discovery,tests:[],error:'typed-improvement-total-timeout',provenance};
+  return { ...execute(root, discovery.files, config, { capture: true, timeoutMs: options.typecheckRequested?Math.min(options.timeoutMs||20000,Math.max(1,options.deadline-performance.now())):options.timeoutMs }), discovery,...(provenance?{provenance}:{}) };
 }
 function missingPassingCases(expected, actual) {
   const counts = new Map();
@@ -75,10 +78,71 @@ function missingPassingCases(expected, actual) {
   return missing;
 }
 
+const typeSettings=config=>config.plugins?.typescript?.enabled===true?{enabled:true,project:config.plugins.typescript.project||'tsconfig.json',timeoutMs:config.plugins.typescript.timeoutMs||30000}:null;
+function dependencyInventory(root,deadline){
+ const base=fs.realpathSync(path.join(root,'node_modules')),rows=[];let bytes=0,count=0;
+ function walk(directory,prefix=''){for(const name of fs.readdirSync(directory).sort()){
+  if(performance.now()>deadline)throw Error('typed-improvement-total-timeout');
+  const file=prefix+name,target=path.join(directory,name),stat=fs.lstatSync(target);
+  if(++count>100000||/[\x00-\x1f\x7f]/.test(file))throw Error('typed-improvement-dependency-profile-unsupported');
+  if(stat.isDirectory()){rows.push({file,kind:'directory',mode:stat.mode&0o777});walk(target,file+'/');}
+  else if(stat.isSymbolicLink()){const link=fs.readlinkSync(target);if(path.isAbsolute(link)||!fs.realpathSync(target).startsWith(base+path.sep))throw Error('typed-improvement-external-dependency-link');rows.push({file,kind:'symlink',target:link});}
+  else if(stat.isFile()){bytes+=stat.size;if(bytes>1024*1024*1024)throw Error('typed-improvement-dependency-bound');rows.push({file,kind:'file',size:stat.size,mode:stat.mode&0o777,sha256:digest(fs.readFileSync(target))});}
+  else throw Error('typed-improvement-dependency-profile-unsupported');
+ }}
+ walk(base);return {base,rows,sha256:digest(rows),bytes,mode:fs.statSync(base).mode&0o777};
+}
+function copyTypedDependencies(root,worktree,deadline){
+ if(!fs.existsSync(path.join(root,'node_modules/typescript/lib/typescript.js')))throw Error('typed-improvement-installed-SDK-required');
+ const before=dependencyInventory(root,deadline),destination=path.join(worktree,'node_modules');
+ if(fs.existsSync(destination))throw Error('typed-improvement-tracked-dependencies-unsupported');
+ const space=fs.statfsSync(worktree);if(Number(space.bavail)*Number(space.bsize)<before.bytes+1024*1024*1024)throw Error('typed-improvement-copy-storage-bound');
+ function copy(from,to){for(const name of fs.readdirSync(from).sort()){
+  if(performance.now()>deadline)throw Error('typed-improvement-total-timeout');const source=path.join(from,name),target=path.join(to,name),stat=fs.lstatSync(source);
+  if(stat.isDirectory()){fs.mkdirSync(target);copy(source,target);fs.chmodSync(target,stat.mode&0o777);}
+  else if(stat.isSymbolicLink())fs.symlinkSync(fs.readlinkSync(source),target);
+  else if(stat.isFile()){fs.copyFileSync(source,target);fs.chmodSync(target,stat.mode&0o777);}else throw Error('typed-improvement-dependency-profile-unsupported');
+ }}
+ fs.mkdirSync(destination);copy(before.base,destination);fs.chmodSync(destination,before.mode);
+ if(dependencyInventory(root,deadline).sha256!==before.sha256||dependencyInventory(worktree,deadline).sha256!==before.sha256)throw Error('typed-improvement-installed-copy-drift');
+ return before;
+}
+function assertObligation(root,expected){if(digest(typeSettings(readConfig(root)))!==digest(expected))throw Error('typed-improvement-enabled-obligation-changed');}
+function sameTypedInputs(left,right){return left.binding?.source?.sha256===right.binding?.source?.sha256&&left.binding?.dependencies?.sha256===right.binding?.dependencies?.sha256&&digest(left.compiler)===digest(right.compiler)&&digest(left.binding?.node)===digest(right.binding?.node)&&digest(left.binding?.producers)===digest(right.binding?.producers);}
+function attachTypecheck(result,report,check){
+ result.typecheck=check;report.nativeExitCode=report.exitCode;report.nativeComplete=report.complete;report.typecheck=check;
+ const summary=summarizeTypecheck(check);report.complete=report.nativeComplete&&summary.complete;report.exitCode=summary.status==='incomplete'?2:summary.status==='failed'?1:report.nativeExitCode;
+ return summary;
+}
+function safeImprovementMetadata(root){
+ const directory=path.join(root,'.tddswarm');if(!fs.existsSync(directory))return;
+ let count=0;function walk(target){const stat=fs.lstatSync(target);if(++count>10000||stat.isSymbolicLink()||!stat.isDirectory()&&(!stat.isFile()||stat.nlink!==1))throw Error('improvement-receipt-unsafe-metadata');if(stat.isDirectory())for(const name of fs.readdirSync(target))walk(path.join(target,name));}
+ walk(directory);
+}
+function writeTypedCandidateValidation(root,directory,value){
+ safeImprovementMetadata(root);const target=safePath(directory,'validation.json'),temporary=path.join(directory,'.typed-validation-'+randomUUID()+'.tmp');
+ try{const fd=fs.openSync(temporary,fs.constants.O_WRONLY|fs.constants.O_CREAT|fs.constants.O_EXCL|(fs.constants.O_NOFOLLOW||0),0o600);try{fs.writeFileSync(fd,JSON.stringify(value,null,2));}finally{fs.closeSync(fd);}fs.renameSync(temporary,target);}
+ finally{fs.rmSync(temporary,{force:true});}
+}
+function writeImprovementReceipt(root,result){
+ let directory=root;
+ for(const part of ['.tddswarm','improvement']){directory=path.join(directory,part);if(!fs.existsSync(directory))fs.mkdirSync(directory,{mode:0o700});const stat=fs.lstatSync(directory);if(!stat.isDirectory()||stat.isSymbolicLink())throw Error('improvement-receipt-unsafe-directory');}
+ const target=path.join(directory,'result.json');
+ if(fs.existsSync(target)||fs.lstatSync(directory).isSymbolicLink()){
+  const stat=fs.lstatSync(target);if(!stat.isFile()||stat.isSymbolicLink()||stat.nlink!==1)throw Error('improvement-receipt-unsafe-output');
+ }
+ const temporary=path.join(directory,'.result-'+randomUUID()+'.tmp');
+ try{const text=JSON.stringify(result,null,2);if(Buffer.byteLength(text)>32*1024*1024)throw Error('improvement-receipt-output-bound');const fd=fs.openSync(temporary,fs.constants.O_WRONLY|fs.constants.O_CREAT|fs.constants.O_EXCL|(fs.constants.O_NOFOLLOW||0),0o600);try{fs.writeFileSync(fd,text);}finally{fs.closeSync(fd);}fs.renameSync(temporary,target);return target;}
+ finally{fs.rmSync(temporary,{force:true});}
+}
 /** Improve in a new branch. Never check out, apply into, or merge the caller's checkout. */
 export async function improve(root, options = {}) {
   root = fs.realpathSync(path.resolve(root));
-  if (readConfig(root).integration) throw new Error('Reviewed improvements currently require Node/Jest/Vitest/Playwright individual-case validation. Use plan/run for your native ecosystem backend; a native-backend candidate validator is required before improving that project.');
+  const originalConfig=readConfig(root),obligation=typeSettings(originalConfig);
+  const typedBudget=options.totalTimeoutMs??120000;
+  if(obligation&&(!Number.isSafeInteger(typedBudget)||typedBudget<1||typedBudget>600000))throw Error('Invalid bounded typed improvement totalTimeoutMs');
+  const deadline=performance.now()+typedBudget,remaining=()=>{const time=Math.floor(deadline-performance.now());if(time<1)throw Error('typed-improvement-total-timeout');return Math.min(obligation?.timeoutMs||20000,time);};
+  if (originalConfig.integration) throw new Error('Reviewed improvements currently require Node/Jest/Vitest/Playwright individual-case validation. Use plan/run for your native ecosystem backend; a native-backend candidate validator is required before improving that project.');
   if (options.agent !== undefined && (!Array.isArray(options.agent) || !options.agent.length || options.agent.some(argument => typeof argument !== 'string' || !argument))) throw new Error('agent must be a nonempty executable and argv array');
   if (options.id && options.patch) throw new Error('Use a candidate id or a patch, not both');
   if (options.id && !candidateId(options.id)) throw new Error('Invalid candidate id');
@@ -98,17 +162,25 @@ export async function improve(root, options = {}) {
   git(repository, ['check-ref-format', '--branch', branch]);
   const worktreeRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'tddswarm-improve-'));
   const worktree = prefix ? path.join(worktreeRoot, prefix) : worktreeRoot;
-  const result = { schemaVersion: 1, id, branch, worktree, worktreeRoot, base, sourceHead: base, baseBranch, sha: null, status: 'preparing', merged: false, originalCheckout: root };
+  const result = { schemaVersion: 1, id, branch, worktree, worktreeRoot, base, sourceHead: base, baseBranch, sha: null, status: 'preparing', merged: false, originalCheckout: root,...(obligation?{typecheckObligation:obligation,typecheckVerified:false}: {}) };
+  let installedTypedDependencies=null;
   const receipt = () => {
-    result.learning=mergeLearning(worktree,root);
-    const directory = safePath(worktree, '.tddswarm/improvement'); fs.mkdirSync(directory, { recursive: true });
-    result.receipt = path.join(directory, 'result.json'); fs.writeFileSync(result.receipt, JSON.stringify(result, null, 2)); return result;
+    try{
+      safeImprovementMetadata(worktree);safeImprovementMetadata(root);
+      result.learning=mergeLearning(worktree,root);
+      safeImprovementMetadata(worktree);safeImprovementMetadata(root);
+      result.receipt=path.join(worktree,'.tddswarm/improvement/result.json');writeImprovementReceipt(worktree,result);return result;
+    }catch(error){result.status='receipt-failed';result.error=error.message;result.receipt=null;result.typecheckVerified=false;if(result.validation)result.validation.qualityReady=false;return result;}
   };
   try {
     git(repository, ['worktree', 'add', '-b', branch, worktreeRoot, base]);
     const dependencies = path.join(root, 'node_modules');
-    const dependencyMetadata=fs.existsSync(dependencies)&&fs.lstatSync(dependencies).isDirectory()?{root:fs.realpathSync(root),nodeModules:fs.realpathSync(dependencies),sourceHead:base}:undefined;
-    if (fs.existsSync(dependencies) && !fs.existsSync(path.join(worktree, 'node_modules'))) fs.symlinkSync(fs.realpathSync(dependencies), path.join(worktree, 'node_modules'), 'dir');
+    const dependencyMetadata=!obligation&&fs.existsSync(dependencies)&&fs.lstatSync(dependencies).isDirectory()?{root:fs.realpathSync(root),nodeModules:fs.realpathSync(dependencies),sourceHead:base}:undefined;
+    if(obligation){
+      try{installedTypedDependencies=copyTypedDependencies(root,worktree,deadline);result.typecheckPreflight=verifyTypecheck(worktree,{project:obligation.project,timeoutMs:remaining()});const admitted=summarizeTypecheck(result.typecheckPreflight);if(!admitted.complete)throw Error(result.typecheckPreflight.errorCode||'typed-improvement-profile-incomplete');}
+      catch(error){result.status='typecheck-incomplete';result.error=error.message;return receipt();}
+    }
+    if (!obligation&&fs.existsSync(dependencies) && !fs.existsSync(path.join(worktree, 'node_modules'))) fs.symlinkSync(fs.realpathSync(dependencies), path.join(worktree, 'node_modules'), 'dir');
     result.agentProfile=ensureQualityAgent(worktree,{name:qualityAgent(root).name}).profile;
     result.learningSeed=copyLearning(root,worktree);
     // Bound original input must match the checked-out branch before any agent runs.
@@ -121,6 +193,7 @@ export async function improve(root, options = {}) {
       if (!Array.isArray(files) || files.some(file => typeof file !== 'string')) throw new Error('initialize must return changed project paths');
       initialized.push(...files.map(file => changedPath(worktree, file)));
     }
+    if(obligation)assertObligation(worktree,obligation);
     let staged;
     if (options.id) staged = copyCandidate(root, worktree, options.id);
     else if (options.patch) staged = stagePatch(worktree, options.patch);
@@ -137,6 +210,7 @@ export async function improve(root, options = {}) {
     if(staged.generation)result.generation=staged.generation;
     const validation = validateCandidates(worktree, staged.id, options);
     result.validation = validation;
+    if(obligation){validation.typecheckFinalRequired=true;validation.qualityReady=false;const value={...validation};delete value.integrity;validation.integrity=digest(value);writeTypedCandidateValidation(worktree,staged.directory,validation);}
     if (!validation.accepted) { result.status = 'validation-rejected'; return receipt(); }
     result.application = applyPatch(worktree, staged.id, { execute: true });
     const candidate = manifest(worktree, staged.id).value;
@@ -157,9 +231,12 @@ export async function improve(root, options = {}) {
     const paths = [...new Set([...candidate.files.map(file => file.path), ...candidate.delete, ...initialized, ...prepared])];
     for (const file of candidate.files) if (digest(fs.readFileSync(safePath(worktree, file.path))) !== file.hash) throw new Error(`Preparation altered reviewed candidate: ${file.path}`);
     for (const file of candidate.delete) if (fs.existsSync(safePath(worktree, file))) throw new Error(`Preparation restored a reviewed deletion: ${file}`);
+    if(obligation){assertObligation(worktree,obligation);if(dependencyInventory(worktree,deadline).sha256!==installedTypedDependencies.sha256||dependencyInventory(root,deadline).sha256!==installedTypedDependencies.sha256)throw Error('typed-improvement-dependencies-mutated-before-final-run');}
     const installed = snapshot(worktree, readConfig(worktree));
     const testedRepository=repositoryInputs(worktreeRoot);
-    const report = fullSuite(worktree, options); result.fullRun = report;
+    const opening=obligation?captureTypecheckInputs(worktree,{timeoutMs:remaining()}):null;
+    if(obligation&&opening.complete!==true){result.status='typecheck-incomplete';result.error=opening.errorCode;return receipt();}
+    const report = fullSuite(worktree, obligation?{...options,typecheckRequested:true,deadline,timeoutMs:Math.min(options.timeoutMs||20000,remaining())}:options); result.fullRun = report;if(obligation){report.nativeExitCode=report.exitCode;report.nativeComplete=report.complete;}
     result.missingCases = missingPassingCases(validation.candidate?.tests, report.tests);
     if (!report.complete || report.exitCode !== 0 || !report.tests.some(test => test.status === 'passed') || result.missingCases.length) {
       result.status = 'full-run-failed'; return receipt();
@@ -169,6 +246,12 @@ export async function improve(root, options = {}) {
     if (!branchFresh.fresh) throw new Error(`Branch changed during full execution: ${branchFresh.reasons.join(', ')}`);
     const originalFresh = freshness(before, snapshot(root, readConfig(root)));
     if (!originalFresh.fresh || git(repository, ['rev-parse', 'HEAD']).trim() !== base || clean(repository, prefix).length) throw new Error('Original checkout changed while improvement was running; branch retained without a commit');
+    if(obligation){
+      assertObligation(worktree,obligation);assertObligation(root,obligation);
+      if(dependencyInventory(root,deadline).sha256!==installedTypedDependencies.sha256)throw Error('typed-improvement-original-dependencies-mutated');
+      const check=verifyTypecheck(worktree,{project:obligation.project,timeoutMs:remaining(),openingInputs:opening});
+      const typed=attachTypecheck(result,report,check);if(typed.status!=='passed'){result.status=typed.status==='failed'?'typecheck-failed':'typecheck-incomplete';return receipt();}
+    }
     const allowed = new Set([...paths.map(file => prefix ? `${prefix}/${file}` : file),...repositoryPrepared]);
     const unexpected = changes(worktreeRoot).filter(change => !metadata(change, prefix) && !allowed.has(change.file));
     if (unexpected.length) throw new Error(`Unexpected changes outside the reviewed patch: ${unexpected.map(change => change.file).join(', ')}`);
@@ -180,10 +263,28 @@ export async function improve(root, options = {}) {
     const afterCommit = freshness(installed, snapshot(worktree, readConfig(worktree)));
     const committedMatches = !git(worktreeRoot, ['diff', 'HEAD', '--name-only']).trim() && !changes(worktreeRoot).some(change => !metadata(change, prefix));
     const treeMatches=git(worktreeRoot,['rev-parse','HEAD^{tree}']).trim()===intendedTree&&repositoryInputs(worktreeRoot)===testedRepository;
-    result.status = afterCommit.fresh && committedMatches && treeMatches ? 'ready-for-review' : 'commit-requires-review';
+    const preCommitTypecheck=result.typecheck;
+    let postCommitTyped=true;
+    if(obligation){
+      assertObligation(worktree,obligation);assertObligation(root,obligation);
+      const postOpening=captureTypecheckInputs(worktree,{timeoutMs:remaining()});
+      const postNative=fullSuite(worktree,{...options,typecheckRequested:true,deadline,timeoutMs:Math.min(options.timeoutMs||20000,remaining())});
+      // Capture every potentially executable config/probe callback before the
+      // closing compiler; no copied revision can stand in for actual execution.
+      const postOriginalFresh=freshness(before,snapshot(root,readConfig(root)));
+      assertObligation(worktree,obligation);assertObligation(root,obligation);
+      const check=verifyTypecheck(worktree,{project:obligation.project,timeoutMs:remaining(),openingInputs:postOpening,expectedProvenance:postNative.provenance});
+      const typed=attachTypecheck(result,postNative,check);
+      const cases=tests=>digest((tests||[]).map(({file,name,status})=>[file,name,status]).sort((a,b)=>JSON.stringify(a).localeCompare(JSON.stringify(b))));
+      postCommitTyped=postOpening.complete===true&&typed.status==='passed'&&postNative.nativeComplete===true&&postNative.nativeExitCode===0&&cases(report.tests)===cases(postNative.tests)&&sameTypedInputs(preCommitTypecheck,check)&&postOriginalFresh.fresh&&git(repository,['rev-parse','HEAD']).trim()===base&&repositoryInputs(worktreeRoot)===testedRepository&&dependencyInventory(root,deadline).sha256===installedTypedDependencies.sha256;
+      result.fullRunPreCommit=report;result.fullRun=postNative;result.typecheckPreCommit=preCommitTypecheck;result.typecheck=check;result.typecheckVerified=postCommitTyped;
+      if(!postCommitTyped){postNative.exitCode=2;postNative.complete=false;result.error='Post-commit native or TypeScript inputs differ from the exact previously tested scope';}
+    }
+    result.status = postCommitTyped&&afterCommit.fresh && committedMatches && treeMatches ? 'ready-for-review' : 'commit-requires-review';
     if(!treeMatches)result.error='Committed repository tree differs from the exact tested and staged inputs';
     if (!committedMatches) result.error = 'Committed tree differs from the inputs that passed the full suite';
     if (!afterCommit.fresh) result.error = `Git hooks changed tested inputs: ${afterCommit.reasons.join(', ')}`;
+    if(obligation){result.validation.qualityReady=result.status==='ready-for-review';result.validation.typecheckFinalRequired=true;result.validation.typecheckVerified=result.typecheckVerified;const value={...result.validation};delete value.integrity;value.integrity=digest(value);result.validation=value;writeTypedCandidateValidation(worktree,result.candidate.directory,value);}
     result.preparedPaths = [...initialized, ...prepared];result.repositoryPreparedPaths=repositoryPrepared;
     result.next = ['Review the branch diff and retained original/candidate/full-run evidence.', 'Open a pull request when ready; merge is explicit.', 'Keep configured quality workflows enabled after merge.'];
     return receipt();
