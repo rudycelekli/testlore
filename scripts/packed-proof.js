@@ -26,7 +26,7 @@ const sourceIndex=process.argv.indexOf('--expected-source-sha'),expectedSource=s
 if(expectedSource&&!/^[a-f0-9]{40}$/.test(expectedSource))throw new Error('Expected source SHA must be 40 lowercase hex characters');
 const expectedSha=expectedIndex<0?null:process.argv[expectedIndex+1];
 if(expectedSha&&!/^[a-f0-9]{64}$/.test(expectedSha))throw new Error('Expected SHA-256 must be 64 lowercase hex characters');
-let improvement;
+let improvement,typedImprovement;
 try{
  const pack=inputArchive?{filename:path.basename(inputArchive)}:JSON.parse(invoke(source,['npm','pack','--ignore-scripts','--json','--pack-destination',workspace]))[0];
  const archive=inputArchive||path.join(workspace,pack.filename);
@@ -59,11 +59,27 @@ try{
  assert.equal(typedFault.nativeExitCode,0);assert.equal(typedFault.typecheck.status,'failed');assert.ok(typedFault.typecheck.diagnostics.some(row=>row.code===2322));
  typedWrite('src/value.ts','export const value: number = 42;\n');
  const typedHealthy=typedCommand('healthy-shadow',['run','--shadow','--base','HEAD'],0);assert.equal(typedHealthy.typecheck.status,'passed');assert.equal(typedHealthy.nativeExitCode,0);
+ for(const args of [['add','.'],['commit','-m','healthy typed baseline']])invoke(typedRoot,['git',...args]);
+ const typedBase=invoke(typedRoot,['git','rev-parse','HEAD']).trim();
+ const typedOriginal=fs.readFileSync(path.join(typedRoot,'test/value.test.mjs'));
+ typedWrite('.tddswarm/typed-proposal.json',{files:[{path:'test/boundary.test.mjs',content:"import test from 'node:test';import assert from 'node:assert/strict';import {value} from '../src/value.ts';test('independent numeric boundary',()=>assert.equal(value+1,43));"}],requirements:'Independent numeric contract: value is 42 and adding one yields 43.',review:{accepted:true,findings:[],oracle:{independent:true,basis:['Independent public numeric contract.']}}});
+ const typedImprovementRaw=invoke(typedRoot,[process.execPath,cli,'improve','--local','--patch','.tddswarm/typed-proposal.json','--json']);
+ typedImprovement=JSON.parse(typedImprovementRaw);
+ assert.equal(typedImprovement.status,'ready-for-review');assert.equal(typedImprovement.typecheckVerified,true);
+ assert.equal(typedImprovement.fullRun.nativeExitCode,0);assert.equal(typedImprovement.fullRun.exitCode,0);assert.equal(typedImprovement.fullRun.complete,true);
+ assert.equal(typedImprovement.fullRun.typecheck.status,'passed');assert.equal(typedImprovement.fullRun.provenance.revision,typedImprovement.sha);
+ assert.equal(typedImprovement.fullRun.tests.length,2);assert.ok(typedImprovement.fullRun.tests.every(row=>row.status==='passed'));
+ assert.equal(invoke(typedImprovement.worktree,['git','rev-parse','HEAD']).trim(),typedImprovement.sha);
+ assert.equal(fs.lstatSync(path.join(typedImprovement.worktree,'node_modules')).isDirectory(),true);
+ assert.deepEqual(fs.readFileSync(path.join(typedImprovement.worktree,'test/value.test.mjs')),typedOriginal);
+ assert.equal(invoke(typedRoot,['git','rev-parse','HEAD']).trim(),typedBase);assert.equal(invoke(typedRoot,['git','status','--porcelain']).trim(),'');
+ fs.writeFileSync(path.join(typedEvidenceDirectory,'improvement-ready.json'),typedImprovementRaw,{flag:'wx'});
+ const typedImprovementEvidence={status:typedImprovement.status,verified:typedImprovement.typecheckVerified,nativeCases:2,sha:typedImprovement.sha,sourceHead:typedBase,originalCallerUnchanged:true,originalAssertionsUnchanged:true,physicalDependencies:true,rawSha256:createHash('sha256').update(typedImprovementRaw).digest('hex')};
  typedWrite('tsconfig.json',{compilerOptions:{noCheck:true,noEmit:true},files:['src/value.ts']});
  const typedUnsupported=typedCommand('unsupported-no-check',['run','--shadow','--base','HEAD'],2);assert.equal(typedUnsupported.typecheck.complete,false);assert.equal(typedUnsupported.nativeExitCode,0);
  const installedTypecheck={verified:true,productionInstalled:true,setupEnabled:true,providerCalls:0,outcomes:typeOutcomes,
   archiveSha256:sha256,installedCliSha256:createHash('sha256').update(fs.readFileSync(cli)).digest('hex'),compilerVersion:typedHealthy.typecheck.compiler.version,
-  scope:'Controlled single-project TypeScript production-install fixture; no upstream defect or universal compatibility claim.'};
+  improvement:typedImprovementEvidence,scope:'Controlled single-project TypeScript production-install fixture with supplied reviewed test patch; no model, upstream defect or universal compatibility claim.'};
  const command=(args,exit=0)=>JSON.parse(invoke(project,[process.execPath,cli,...args,'--json'],exit));
  const immunityRoot=path.join(workspace,'immunity-inspection');fs.mkdirSync(immunityRoot);
  const immunity=command(['immunity','--root',immunityRoot]);assert.equal(immunity.backgroundServiceRunning,false);assert.equal(immunity.status,'awaiting-reviewed-probes');assert.equal(immunity.catalog.entries.length,3);
@@ -154,6 +170,7 @@ try{
  const receipt={schemaVersion:1,exactInputArchive:Boolean(inputArchive),proofScriptSha256:createHash('sha256').update(fs.readFileSync(fileURLToPath(import.meta.url))).digest('hex'),date:new Date().toISOString(),archive:pack.filename,sha256,version:pack.version,node:process.version,productionInstall:true,mcpStdioVerified:true,mcpShadowVerified:true,briefInspectionVerified:true,evidenceLoopVerified:true,mappingQualificationVerified:true,packedManifestSha256:createHash('sha256').update(fs.readFileSync(path.join(tools,'node_modules/testlore/package.json'))).digest('hex'),actionReference:installedPackage.gitHead||null,workflowActionReference,actionIdentityVerified:Boolean(expectedSource),shadowSetupVerified:true,adoptionInspectionVerified:true,plugins:{catalogCount:catalog.plugins.length,missingSdkExit:missingVectorSdk.exitCode,lexicalFallbackVerified:true},nativeShadow:{complete:shadow.complete,selected:shadow.plan.selected,executed:shadow.executedFiles.length,detected:true},runtimeCaptureComplete:capture.complete,improvement:{status:improvement.status,cases:improvement.fullRun.tests.length,originalBranch:'main'},installedRepair,oneCommand,assessmentImports,installedTypecheck,limitations:['Local packed-artifact installation; no registry publication or live GitHub PR created.','Controlled two-module fixture; broad project compatibility remains unqualified.','Repair workers are deterministic transport fixtures; no real model provider quality or cost measured.','One-command npm exec uses the same sealed local archive and isolated cache reused between controlled runs; no cold-start speed claim.']};
  fs.mkdirSync(path.dirname(output),{recursive:true});fs.writeFileSync(output,JSON.stringify(receipt,null,2));console.log(JSON.stringify(receipt,null,2));
 }finally{
+ if(typedImprovement?.worktreeRoot)invoke(path.join(workspace,'type-oracle'),['git','worktree','remove','--force',typedImprovement.worktreeRoot]);
  if(improvement?.worktreeRoot)invoke(project,['git','worktree','remove','--force',improvement.worktreeRoot]);
  fs.rmSync(workspace,{recursive:true,force:true});
 }

@@ -2,11 +2,44 @@ import fs from 'node:fs';
 import path from 'node:path';
 import {spawnSync} from 'node:child_process';
 import {renderRunReport} from './run-report.js';
-import {git,safePath} from './files.js';
-import {digest} from './provenance.js';
+import {git,safePath,readConfig} from './files.js';
+import {digest,freshness} from './provenance.js';
 import {captureRepairChallenges,captureChallengeRuntime,assessRepairChallenges} from './repair-challenges.js';
 import {verifyAppliedRepairValidation} from './repair-candidates.js';
 import {summarizeTypecheck} from './typecheck-report.js';
+import {verifyTypecheck} from './typecheck.js';
+import {randomUUID} from 'node:crypto';
+
+function savePullRequestBody(root,value){
+ const file='.tddswarm/pull-request.md',target=safePath(root,file);
+ if(fs.existsSync(target)){const stat=fs.lstatSync(target);if(!stat.isFile()||stat.nlink!==1)throw Error('Pull request body must be an unlinked regular file');}
+ const temporary=safePath(root,file+'.'+randomUUID()+'.tmp');let fd;
+ try{
+  fd=fs.openSync(temporary,fs.constants.O_WRONLY|fs.constants.O_CREAT|fs.constants.O_EXCL|fs.constants.O_NOFOLLOW,0o600);
+  if(!fs.fstatSync(fd).isFile()||fs.fstatSync(fd).nlink!==1)throw Error('Pull request body must be an unlinked regular file');
+  fs.writeFileSync(fd,value);fs.closeSync(fd);fd=undefined;safePath(root,file);fs.renameSync(temporary,target);return target;
+ }finally{if(fd!==undefined)fs.closeSync(fd);fs.rmSync(temporary,{force:true});}
+}
+
+function improvementTypecheckGuard(worktree,result){
+ const settings=readConfig(worktree).plugins?.typescript,retained=result.fullRun?.typecheck||result.typecheck;
+ if(settings?.enabled!==true&&!retained&&!result.typecheckObligation)return false;
+ if(settings?.enabled!==true)throw Error('Test improvement TypeScript obligation changed before publication');
+ const project=settings.project||'tsconfig.json',obligation=result.typecheckObligation;
+ if(obligation&&(obligation.enabled!==true||obligation.project!==project||obligation.timeoutMs!==(settings.timeoutMs||30000)))throw Error('Test improvement TypeScript obligation changed before publication');
+ if(!summarizeTypecheck(retained).complete||retained.status!=='passed'||retained.project!==project)throw Error('Test improvement publication requires completed final TypeScript verification');
+ // Re-execute the genuine installed oracle at publication boundaries. Advisory
+ // result JSON alone cannot authorize the current compiler check.
+ const current=verifyTypecheck(worktree,{project,timeoutMs:settings.timeoutMs||30000});
+ if(!summarizeTypecheck(current).complete||current.status!=='passed')throw Error('Test improvement current TypeScript verification failed or is incomplete');
+ if(!freshness(retained.binding.provenance,current.binding.provenance).fresh)throw Error('Test improvement native contract changed before publication');
+ for(const key of ['source','dependencies','node','producers']){
+  const previous=retained.binding?.[key],fresh=current.binding?.[key];
+  if(digest(previous)!==digest(fresh))throw Error('Test improvement TypeScript inputs changed before publication');
+ }
+ if(digest(current.compiler)!==digest(retained.compiler))throw Error('Test improvement TypeScript compiler changed before publication');
+ return true;
+}
 
 // Advisory reviewer approval and suite-only receipts cannot qualify source
 // repair publication. Reconcile actual controller observations, then rebind the
@@ -62,6 +95,9 @@ export function publishImprovement(root, result, options = {}) {
   const worktree=result.worktree;
   const repair=result.kind==='source-repair';
   if(repair)repairPublicationGuard(worktree,result);
+  else improvementTypecheckGuard(worktree,result);
+  const bodyTarget=safePath(worktree,'.tddswarm/pull-request.md');
+  if(fs.existsSync(bodyTarget)){const stat=fs.lstatSync(bodyTarget);if(!stat.isFile()||stat.nlink!==1)throw Error('Pull request body must be an unlinked regular file');}
   if(!new RegExp(`^tddswarm/${repair?'repair':'improve'}-[a-zA-Z0-9][a-zA-Z0-9_-]{0,100}$`).test(result.branch))throw new Error('Invalid improvement branch');
   if(result.sourceHead!==undefined&&!/^(?:[a-f0-9]{40}|[a-f0-9]{64})$/.test(result.sourceHead))throw new Error('Invalid original source head for pull request receipt');
   const prefix=git(worktree,['rev-parse','--show-prefix']).trim();
@@ -70,10 +106,11 @@ export function publishImprovement(root, result, options = {}) {
     // Repair admission above authenticates the full installed tree at every
     // boundary. Physical typed-repair copies need the same metadata treatment
     // as shared installations without hiding a changed dependency byte.
-    if(repair&&(local==='node_modules'||local.startsWith('node_modules/'))){try{if(fs.lstatSync(path.join(worktree,'node_modules')).isDirectory())return true;}catch{}}
+    if((repair||result.typecheckObligation)&&(local==='node_modules'||local.startsWith('node_modules/'))){try{if(fs.lstatSync(path.join(worktree,'node_modules')).isDirectory())return true;}catch{}}
     if(local==='node_modules'){try{return fs.lstatSync(path.join(worktree,'node_modules')).isSymbolicLink()&&fs.realpathSync(path.join(worktree,'node_modules'))===fs.realpathSync(path.join(root,'node_modules'));}catch{}}return false;};
   function exactState(){
     if(repair)repairPublicationGuard(worktree,result);
+    else improvementTypecheckGuard(worktree,result);
     if(git(worktree,['rev-parse',`refs/heads/${result.branch}`]).trim()!==result.sha)throw new Error('Improvement branch changed after validation');
     if(git(worktree,['rev-parse','HEAD']).trim()!==result.sha)throw new Error('Improvement commit changed after validation');
     const status=git(worktree,['status','--porcelain=v1','-z','--untracked-files=all']).split('\0').filter(Boolean);
@@ -119,7 +156,7 @@ export function publishImprovement(root, result, options = {}) {
   const introduction=repair?`TestLore proposes a bounded source repair against the original assertions.${investigation}\n\nThe original assertions were retained unchanged. Repeated baseline and candidate runs in disposable copies evaluated whether the source change repaired the observed failure; the repair branch then ran the full discovered suite before this commit. Independently maintained behavioral challenges passed twice on unchanged source, twice on the candidate, and again on the final branch. Their oracle, runtime and source bindings were rechecked before publication.\n\nSource changes: ${(result.files||result.changedFiles||result.patch?.files||[]).map(file=>typeof file==='string'?file:file.path).filter(Boolean).join(', ')||'see retained source-repair receipt'}. Baseline runs: ${(result.validation.baselineRuns||result.validation.baseline||[]).length||'see receipt'}; candidate runs: ${(result.validation.candidateRuns||[]).length||'see receipt'}. Challenges: ${result.finalChallenges.runs.map(item=>item.id).join(', ')}. The receipt binds the tested source and unchanged original assertions. A passing candidate does not establish behavior outside those observations.`:`TestLore proposes reviewed test improvements and an ongoing quality layer.\n\nThe original and candidate suites were validated in disposable copies; the improvement branch then ran the full discovered suite before this commit.`;
   const policy=repair?'The existing test and deployment policy is preserved. Review the source change and retained failure evidence before merging; unobserved dependencies and outcomes remain uncertain.':'New workflows run a scoped audit and shadow validation on pull requests, and full tests on default-branch pushes. Existing project policy is preserved. Static grades and exercised traces do not certify all possible behavior.';
   const dedupeMarker=result.sourceHead?`<!-- testlore-source-head:${result.sourceHead} -->\n\n`:'';
-  fs.writeFileSync(body,`${dedupeMarker}${introduction}\n\nValidation: ${summary} Commit ${result.sha}. See the retained local ${repair?'source-repair':'improvement'} receipt for exact scope, held-out checks and limitations.\n\n${policy}\n\n${renderRunReport({...full,executedFiles:full.executedFiles||full.collectionFiles,plan:full.plan||{mode:'full',total:full.executedFiles?.length||0,selected:full.executedFiles||full.collectionFiles||[],decisions:(full.executedFiles||full.collectionFiles||[]).map(test=>({test,reasons:[repair?'full source-repair validation':'full improvement validation']})),warnings:[]}})}\n`);
+  savePullRequestBody(worktree,`${dedupeMarker}${introduction}\n\nValidation: ${summary} Commit ${result.sha}. See the retained local ${repair?'source-repair':'improvement'} receipt for exact scope, held-out checks and limitations.\n\n${policy}\n\n${renderRunReport({...full,executedFiles:full.executedFiles||full.collectionFiles,plan:full.plan||{mode:'full',total:full.executedFiles?.length||0,selected:full.executedFiles||full.collectionFiles||[],decisions:(full.executedFiles||full.collectionFiles||[]).map(test=>({test,reasons:[repair?'full source-repair validation':'full improvement validation']})),warnings:[]}})}\n`);
   const output=existing||invoke(['pr','create','--repo',match[1],'--head',result.branch,'--base',base,'--title',options.title||(repair?'Repair the verified source failure with TestLore':'Improve test quality with TestLore'),'--body-file',body]);
   const pullRequest=output.split(/\s+/).find(s=>/^https:\/\/github\.com\/[^/]+\/[^/]+\/pull\/[1-9]\d*$/.test(s));
   if(!pullRequest)throw new Error('GitHub CLI did not return a pull request URL; inspect the published branch before retrying');

@@ -18,7 +18,7 @@ evidence.installedTypecheck={verified:true,productionInstalled:true,setupEnabled
  {id:'setup-fault',exitCode:1,nativeExitCode:0,status:'failed',complete:true,implementationCount:1,errorCodes:[2322],rawSha256:source},
  {id:'healthy-shadow',exitCode:0,nativeExitCode:0,status:'passed',complete:true,implementationCount:1,errorCodes:[],rawSha256:source},
  {id:'unsupported-no-check',exitCode:2,nativeExitCode:0,status:'incomplete',complete:false,implementationCount:0,errorCodes:[],rawSha256:source}
-]};
+],improvement:{status:'ready-for-review',verified:true,nativeCases:2,sha:'4'.repeat(40),sourceHead:'5'.repeat(40),originalCallerUnchanged:true,originalAssertionsUnchanged:true,physicalDependencies:true,rawSha256:source}};
 
 test('installed qualification requires explicit evidence for persisted shadow and generated Action identity', () => {
   assert.equal(packedEvidenceComplete(receipt, evidence, context), true);
@@ -31,7 +31,8 @@ test('installed qualification requires explicit evidence for persisted shadow an
 test('packed admission requires native-green/type-failed, healthy and incomplete installed controls',()=>{
  for(const mutation of [undefined,{...evidence.installedTypecheck,verified:'true'},{...evidence.installedTypecheck,providerCalls:1},{...evidence.installedTypecheck,outcomes:[]},
   {...evidence.installedTypecheck,outcomes:evidence.installedTypecheck.outcomes.map(row=>({...row,nativeExitCode:1}))},
-  {...evidence.installedTypecheck,outcomes:evidence.installedTypecheck.outcomes.map(row=>({...row,exitCode:0}))}])
+  {...evidence.installedTypecheck,outcomes:evidence.installedTypecheck.outcomes.map(row=>({...row,exitCode:0}))},
+  ...[undefined,{...evidence.installedTypecheck.improvement,verified:'true'},{...evidence.installedTypecheck.improvement,nativeCases:0},{...evidence.installedTypecheck.improvement,originalAssertionsUnchanged:false},{...evidence.installedTypecheck.improvement,sha:evidence.installedTypecheck.improvement.sourceHead}].map(improvement=>({...evidence.installedTypecheck,improvement}))])
   assert.equal(packedEvidenceComplete(receipt,{...evidence,installedTypecheck:mutation},context),false);
 });
 

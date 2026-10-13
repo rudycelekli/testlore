@@ -12,7 +12,23 @@ export function installedTypecheckEvidenceComplete(value){
   typeof value.compilerVersion==='string'&&/^\d+\.\d+\.\d+/.test(value.compilerVersion)&&Array.isArray(value.outcomes)&&value.outcomes.length===3&&
   typePhases.every(([id,exit,status,complete,count,codes],index)=>{
    const row=value.outcomes[index];return row?.id===id&&row.exitCode===exit&&row.nativeExitCode===0&&row.status===status&&row.complete===complete&&row.implementationCount===count&&JSON.stringify(row.errorCodes)===JSON.stringify(codes)&&hex(row.rawSha256);
-  });
+  })&&value.improvement?.status==='ready-for-review'&&value.improvement.verified===true&&value.improvement.nativeCases===2&&
+  typeof value.improvement.sha==='string'&&/^[a-f0-9]{40}$/.test(value.improvement.sha)&&typeof value.improvement.sourceHead==='string'&&/^[a-f0-9]{40}$/.test(value.improvement.sourceHead)&&value.improvement.sha!==value.improvement.sourceHead&&
+  value.improvement.originalCallerUnchanged===true&&value.improvement.originalAssertionsUnchanged===true&&value.improvement.physicalDependencies===true&&hex(value.improvement.rawSha256);
+}
+function verifyInstalledTypedImprovement(value,directory){
+ const row=value.improvement,file=path.join(directory,'improvement-ready.json'),stat=fs.lstatSync(file);
+ if(!stat.isFile()||stat.isSymbolicLink()||stat.size>16*1024*1024)return false;
+ const bytes=fs.readFileSync(file);if(createHash('sha256').update(bytes).digest('hex')!==row.rawSha256)return false;
+ const result=JSON.parse(bytes),report=result.fullRun,check=report?.typecheck,typed=summarizeTypecheck(check,{expectedProvenance:report?.provenance});
+ const expected=[['test/boundary.test.mjs','independent numeric boundary'],['test/value.test.mjs','ordinary value']];
+ const cases=report?.tests?.map(test=>[test.file,test.name]).sort((a,b)=>a[0].localeCompare(b[0]));
+ return result.status==='ready-for-review'&&result.typecheckVerified===true&&result.sha===row.sha&&result.sourceHead===row.sourceHead&&result.base===row.sourceHead&&result.merged===false&&
+  result.typecheckObligation?.enabled===true&&result.typecheckObligation.project==='tsconfig.json'&&result.typecheckObligation.timeoutMs===30000&&result.validation?.accepted===true&&result.validation.qualityReady===true&&
+  report?.provenance?.revision===row.sha&&report.complete===true&&report.nativeComplete===true&&report.exitCode===0&&report.nativeExitCode===0&&!report.signal&&!report.error&&!report.reportErrors?.length&&!report.missingFiles?.length&&!report.unknownFiles?.length&&
+  typed.complete&&typed.status==='passed'&&check.exitCode===0&&check.compiler?.version===value.compilerVersion&&check.implementationFiles?.length===1&&JSON.stringify(result.typecheck)===JSON.stringify(check)&&
+  JSON.stringify(cases)===JSON.stringify(expected)&&report.tests.every(test=>typeof test.id==='string'&&test.id&&test.status==='passed')&&
+  report.discovery?.complete===true&&JSON.stringify([...report.discovery.files].sort())===JSON.stringify(expected.map(([file])=>file));
 }
 export function verifyInstalledTypecheckRawEvidence(value,directory){
  if(!installedTypecheckEvidenceComplete(value))return false;
@@ -31,7 +47,7 @@ export function verifyInstalledTypecheckRawEvidence(value,directory){
   return report.exitCode===row.exitCode&&report.nativeExitCode===0&&check?.status===row.status&&check.complete===row.complete&&
     check.implementationFiles?.length===row.implementationCount&&JSON.stringify(check.diagnostics.filter(d=>d.category==='error').map(d=>d.code))===JSON.stringify(row.errorCodes)&&
     report.tests?.length===1&&report.tests[0].status==='passed';
- });}catch{return false;}
+ })&&verifyInstalledTypedImprovement(value,directory);}catch{return false;}
 }
 /** Validate the independently produced installed-archive proof, without truthy attestations. */
 export function packedEvidenceComplete(receipt, evidence, {proofScriptSha256, sourceManifestSha256, installedRepairProofSha256,oneCommandProofSha256,assessmentImportProofSha256}) {

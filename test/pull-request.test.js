@@ -27,6 +27,15 @@ test('automatic PR publication uses actual Git push and structured GitHub CLI ar
  const requests=fs.readFileSync(path.join(root,'.tddswarm/requests.jsonl'),'utf8').trim().split('\n').map(JSON.parse);assert.deepEqual(requests[1].slice(0,8),['pr','create','--repo','test-owner/project','--head',result.branch,'--base','main']);
  assert.deepEqual(requests[2],['pr','view',published.pullRequest,'--repo','test-owner/project','--json','url,headRefOid,headRefName,baseRefName,state,isDraft']);
 });
+test('linked publication bodies cannot overwrite source or start external publication',t=>{
+ const {root,bare,result}=publicationFixture(t),cli=fakeGithub(root,result),source=path.join(root,'src/a.js'),original=fs.readFileSync(source),body=path.join(root,'.tddswarm/pull-request.md');
+ for(const link of ['symbolic','hard']){
+  fs.rmSync(body,{force:true});if(link==='symbolic')fs.symlinkSync('../src/a.js',body);else fs.linkSync(source,body);
+  assert.throws(()=>publishImprovement(root,result,{command:[process.execPath,cli]}),/Symlink path is unsupported|unlinked regular file/);
+  assert.deepEqual(fs.readFileSync(source),original);assert.equal(fs.existsSync(path.join(root,'.tddswarm/requests.jsonl')),false);
+  assert.throws(()=>git(bare,'rev-parse',`refs/heads/${result.branch}`));fs.rmSync(body);
+ }
+});
 
 
 test('verified shared dependency metadata does not block an otherwise clean improvement publication',async t=>{
