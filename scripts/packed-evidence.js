@@ -22,13 +22,15 @@ function verifyInstalledTypedImprovement(value,directory){
  const bytes=fs.readFileSync(file);if(createHash('sha256').update(bytes).digest('hex')!==row.rawSha256)return false;
  const result=JSON.parse(bytes),report=result.fullRun,check=report?.typecheck,typed=summarizeTypecheck(check,{expectedProvenance:report?.provenance});
  const expected=[['test/boundary.test.mjs','independent numeric boundary'],['test/value.test.mjs','ordinary value']];
+ const files=expected.map(([file])=>file),exactFiles=value=>Array.isArray(value)&&JSON.stringify([...value].sort())===JSON.stringify(files);
  const cases=report?.tests?.map(test=>[test.file,test.name]).sort((a,b)=>a[0].localeCompare(b[0]));
  return result.status==='ready-for-review'&&result.typecheckVerified===true&&result.sha===row.sha&&result.sourceHead===row.sourceHead&&result.base===row.sourceHead&&result.merged===false&&
   result.typecheckObligation?.enabled===true&&result.typecheckObligation.project==='tsconfig.json'&&result.typecheckObligation.timeoutMs===30000&&result.validation?.accepted===true&&result.validation.qualityReady===true&&
   report?.provenance?.revision===row.sha&&report.complete===true&&report.nativeComplete===true&&report.exitCode===0&&report.nativeExitCode===0&&!report.signal&&!report.error&&!report.reportErrors?.length&&!report.missingFiles?.length&&!report.unknownFiles?.length&&
   typed.complete&&typed.status==='passed'&&check.exitCode===0&&check.compiler?.version===value.compilerVersion&&check.implementationFiles?.length===1&&JSON.stringify(result.typecheck)===JSON.stringify(check)&&
-  JSON.stringify(cases)===JSON.stringify(expected)&&report.tests.every(test=>typeof test.id==='string'&&test.id&&test.status==='passed')&&
-  report.discovery?.complete===true&&JSON.stringify([...report.discovery.files].sort())===JSON.stringify(expected.map(([file])=>file));
+  JSON.stringify(cases)===JSON.stringify(expected)&&report.tests.every(test=>typeof test.id==='string'&&test.id&&test.status==='passed')&&new Set(report.tests.map(test=>test.id)).size===2&&
+  !report.actualExecutedFilesUnverified&&exactFiles(report.collectionFiles)&&exactFiles(report.requestedFiles)&&exactFiles(report.executedFiles)&&
+  Array.isArray(result.missingCases)&&result.missingCases.length===0&&report.discovery?.complete===true&&exactFiles(report.discovery.files);
 }
 export function verifyInstalledTypecheckRawEvidence(value,directory){
  if(!installedTypecheckEvidenceComplete(value))return false;

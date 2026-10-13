@@ -43,7 +43,7 @@ test('native-backed raw compiler evidence rejects contradictory archive result c
   assert.equal(verifyInstalledTypecheckRawEvidence(receipt,directory),false);
  }
  fs.writeFileSync(path.join(directory,'healthy-shadow.json'),JSON.stringify(healthy));
- for(const mutate of [r=>{r.fullRun.provenance.revision=r.sourceHead;},r=>{r.fullRun.typecheck.signal='SIGKILL';},r=>{r.typecheckVerified=false;},r=>{r.validation.qualityReady=false;},r=>{r.fullRun.tests.pop();},r=>{r.fullRun.tests[0].status='failed';},r=>{r.typecheckObligation.enabled=false;}]){
+ for(const mutate of [r=>{r.fullRun.provenance.revision=r.sourceHead;},r=>{r.fullRun.typecheck.signal='SIGKILL';},r=>{r.typecheckVerified=false;},r=>{r.validation.qualityReady=false;},r=>{r.fullRun.tests.pop();},r=>{r.fullRun.tests[0].status='failed';},r=>{r.typecheckObligation.enabled=false;},r=>{r.fullRun.collectionFiles=[];},r=>{r.fullRun.requestedFiles=['test/value.test.mjs'];},r=>{r.fullRun.executedFiles=[];},r=>{r.fullRun.actualExecutedFilesUnverified=true;},r=>{r.fullRun.tests[1].id=r.fullRun.tests[0].id;},r=>{r.missingCases=['ordinary value'];}]){
   const changed=structuredClone(improved);mutate(changed);const bytes=JSON.stringify(changed),receipt=structuredClone(envelope);
   fs.writeFileSync(path.join(directory,'improvement-ready.json'),bytes);receipt.improvement.rawSha256=hash(bytes);
   assert.equal(verifyInstalledTypecheckRawEvidence(receipt,directory),false);
