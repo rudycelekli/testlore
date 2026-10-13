@@ -1,0 +1,228 @@
+{
+  "schemaVersion": 1,
+  "kind": "observed-genuine-upstream-type-history",
+  "repository": "https://github.com/unjs/unimport",
+  "fixedRevision": "0efa8122b4cff4af044ddfd77dd6522d21bcfee1",
+  "parentRevision": "fdf98b5aef3c2f6d5a6519d5dbb69631347b62fb",
+  "source": "src/detect-acorn.ts",
+  "sourceBindings": [
+    {
+      "kind": "fixed-source",
+      "path": "src/detect-acorn.ts",
+      "sha256": "58f1a5b422a002bfc4f5621c332e050edbe15dd6c509a179000d6bcc1e761785",
+      "bytes": 1159,
+      "gitBlob": "5061cb366c3b9e978b4ededa46dbd112cb1b7eb1"
+    },
+    {
+      "kind": "prior-source",
+      "path": "src/detect-acorn.ts",
+      "sha256": "270ed690fd879956407d5400a1590e346112c8f14fd2efffabf1c6fc860502a9",
+      "bytes": 1084,
+      "gitBlob": "27172619f8ba0b4662bf3eca89d889d6b4ec1bbc"
+    }
+  ],
+  "project": "tsconfig.json",
+  "projectSha256": "7dba544bbbf1eb75d0ff30419612733e0b22f35fccf7647f3d0b7feea03d01ec",
+  "compiler": {
+    "version": "6.0.3",
+    "sha256": "569177652966bd528c319171c7dd22860dbf72bde116cbc4f644f1d02bb12e39",
+    "manifestSha256": "9332e97c30d3e53ed54910b89207ed657fb444066484df6e5b6965bf130865e9"
+  },
+  "node": "v22.19.0",
+  "platform": "darwin",
+  "arch": "arm64",
+  "typeRows": [
+    {
+      "state": "fixed",
+      "repeat": 0,
+      "sourceSha256": "58f1a5b422a002bfc4f5621c332e050edbe15dd6c509a179000d6bcc1e761785",
+      "testLore": {
+        "status": "passed",
+        "complete": true,
+        "exitCode": 0,
+        "errorCode": null,
+        "codes": [],
+        "files": 75,
+        "durationMs": 5808
+      },
+      "originalChecker": {
+        "exitCode": 0,
+        "signal": null,
+        "error": null,
+        "durationMs": 1087,
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "codes": []
+      },
+      "ownerVueTsc": {
+        "exitCode": 0,
+        "signal": null,
+        "error": null,
+        "durationMs": 1186,
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "codes": []
+      }
+    },
+    {
+      "state": "fixed",
+      "repeat": 1,
+      "sourceSha256": "58f1a5b422a002bfc4f5621c332e050edbe15dd6c509a179000d6bcc1e761785",
+      "testLore": {
+        "status": "passed",
+        "complete": true,
+        "exitCode": 0,
+        "errorCode": null,
+        "codes": [],
+        "files": 75,
+        "durationMs": 5835
+      },
+      "originalChecker": {
+        "exitCode": 0,
+        "signal": null,
+        "error": null,
+        "durationMs": 994,
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "codes": []
+      },
+      "ownerVueTsc": {
+        "exitCode": 0,
+        "signal": null,
+        "error": null,
+        "durationMs": 1169,
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "codes": []
+      }
+    },
+    {
+      "state": "prior",
+      "repeat": 0,
+      "sourceSha256": "270ed690fd879956407d5400a1590e346112c8f14fd2efffabf1c6fc860502a9",
+      "testLore": {
+        "status": "failed",
+        "complete": true,
+        "exitCode": 1,
+        "errorCode": null,
+        "codes": [
+          2554
+        ],
+        "files": 75,
+        "durationMs": 6288
+      },
+      "originalChecker": {
+        "exitCode": 2,
+        "signal": null,
+        "error": null,
+        "durationMs": 1008,
+        "stdoutSha256": "aebf2b8b822765857dcdb56984589d74802957e2b6ef96cfa81b708f01a706ef",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "codes": [
+          2554
+        ]
+      },
+      "ownerVueTsc": {
+        "exitCode": 2,
+        "signal": null,
+        "error": null,
+        "durationMs": 1222,
+        "stdoutSha256": "aebf2b8b822765857dcdb56984589d74802957e2b6ef96cfa81b708f01a706ef",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "codes": [
+          2554
+        ]
+      }
+    },
+    {
+      "state": "prior",
+      "repeat": 1,
+      "sourceSha256": "270ed690fd879956407d5400a1590e346112c8f14fd2efffabf1c6fc860502a9",
+      "testLore": {
+        "status": "failed",
+        "complete": true,
+        "exitCode": 1,
+        "errorCode": null,
+        "codes": [
+          2554
+        ],
+        "files": 75,
+        "durationMs": 7108
+      },
+      "originalChecker": {
+        "exitCode": 2,
+        "signal": null,
+        "error": null,
+        "durationMs": 1047,
+        "stdoutSha256": "aebf2b8b822765857dcdb56984589d74802957e2b6ef96cfa81b708f01a706ef",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "codes": [
+          2554
+        ]
+      },
+      "ownerVueTsc": {
+        "exitCode": 2,
+        "signal": null,
+        "error": null,
+        "durationMs": 1270,
+        "stdoutSha256": "aebf2b8b822765857dcdb56984589d74802957e2b6ef96cfa81b708f01a706ef",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "codes": [
+          2554
+        ]
+      }
+    }
+  ],
+  "runtimeRows": [
+    {
+      "state": "fixed",
+      "reportedAssertions": 252,
+      "passed": 252,
+      "failed": 0,
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "durationMs": 2440,
+      "stdoutSha256": "9c3c05d747b28bea0e5f701a95470467252a60cf5424ea692a8e390433905ead",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "state": "prior",
+      "reportedAssertions": 252,
+      "passed": 252,
+      "failed": 0,
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "durationMs": 3259,
+      "stdoutSha256": "af18f190cbf7f0b1f5a580a7d3a5cb872e9637237379d4838038c4205ee879f5",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "independentReview": {
+    "typeReplayAccepted": true,
+    "runtimeAggregateAccepted": true,
+    "distinctNativeIdentityKeys": 235,
+    "duplicateNameGroups": 12,
+    "uniqueNamedOutcomeQualified": false,
+    "sameRuntimeMultisetAcrossStates": true,
+    "compilerAndDeclarationsUnchanged": true,
+    "onlyDependencyChange": "Native Vitest results cache"
+  },
+  "sourceRestored": true,
+  "claims": {
+    "newBugDiscovery": false,
+    "untouchedHoldout": false,
+    "freshOriginalInstallation": false,
+    "routingOmissions": false,
+    "speedAdvantage": false,
+    "learningImprovement": false,
+    "competitiveSuperiority": false
+  },
+  "limitations": [
+    "Relocated existing dependencies with original unchanged upstream lock/workspace; fresh pinned install stopped at unchanged450MiB growth limit.",
+    "Two compiler repeats per state, one full native run per state.",
+    "Native cache changed between states; the entire dependency tree was not byte-identical.",
+    "Owner vue-tsc and standalone TypeScript already detect this historical type error."
+  ]
+}
