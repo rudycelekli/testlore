@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 import {spawnSync} from 'node:child_process';
-import {verifyBehavioralContracts} from '../src/behavioral-contracts.js';
+import {verifyBehavioralContracts,saveBehavioralContractReport} from '../src/behavioral-contracts.js';
 import {run,runUnifiedNative} from '../src/runner.js';
 import {snapshot} from '../src/provenance.js';
 import {readConfig} from '../src/files.js';
@@ -69,6 +69,12 @@ test('standalone CLI records actionable actual outcomes without provider calls',
  const actual=spawnSync(process.execPath,[path.resolve('src/cli.js'),'contracts','--root',root,'--json'],{encoding:'utf8',timeout:10000});
  assert.equal(actual.status,1,actual.stderr);const report=JSON.parse(actual.stdout);assert.equal(report.status,'failed');assert.equal(report.receipt,'.tddswarm/contracts.json');
  assert.equal(JSON.parse(fs.readFileSync(path.join(root,report.receipt))).runs[0].id,'contract-0');
+});
+test('standalone receipt refuses symlink destinations and preserves the outside file',t=>{
+ const root=project(t),outside=fixture(t,{'preserved.json':'original'});fs.mkdirSync(path.join(root,'.tddswarm'));
+ fs.symlinkSync(path.join(outside,'preserved.json'),path.join(root,'.tddswarm/contracts.json'));
+ assert.throws(()=>saveBehavioralContractReport(root,{status:'passed'}),/Symlink|ELOOP/);
+ assert.equal(fs.readFileSync(path.join(outside,'preserved.json'),'utf8'),'original');
 });
 test('setup verification and unsupported unified fallback cannot bypass configured contracts',async t=>{
  const root=project(t,['module.exports=({assert})=>assert(false);']);

@@ -60,6 +60,6 @@ export function supplementWithBehavioralContracts(root,report) {
 
 export function saveBehavioralContractReport(root,report) {
  const directory=safePath(root,'.tddswarm');fs.mkdirSync(directory,{recursive:true});
- const file=path.join(directory,'contracts.json');fs.writeFileSync(file,JSON.stringify(report,null,2),{mode:0o600});
+ const file=safePath(root,'.tddswarm/contracts.json');fs.writeFileSync(file,JSON.stringify(report,null,2),{mode:0o600,flag:fs.constants.O_WRONLY|fs.constants.O_CREAT|fs.constants.O_TRUNC|fs.constants.O_NOFOLLOW});
  return {...report,receipt:'.tddswarm/contracts.json'};
 }
