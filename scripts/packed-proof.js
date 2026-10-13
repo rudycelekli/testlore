@@ -45,6 +45,7 @@ try{
  typedWrite('tsconfig.json',{compilerOptions:{strict:true,noEmit:true,module:'NodeNext',moduleResolution:'NodeNext',target:'ES2022'},files:['src/value.ts']});
  typedWrite('tddswarm.config.json',{adapter:'node',runner:[process.execPath,'--experimental-strip-types','--no-warnings','--test','{files}'],executionMode:'shadow'});
  fs.mkdirSync(path.join(typedRoot,'node_modules'));fs.cpSync(path.join(tools,'node_modules/typescript'),path.join(typedRoot,'node_modules/typescript'),{recursive:true});
+ fs.mkdirSync(path.join(typedRoot,'node_modules/.bin'));fs.symlinkSync('../typescript/bin/tsc',path.join(typedRoot,'node_modules/.bin/tsc'));
  for(const args of [['init','-b','main'],['config','user.name','Packed Proof'],['config','user.email','proof@example.invalid'],['add','.'],['commit','-m','independent type contract']])invoke(typedRoot,['git',...args]);
  const typedEvidenceDirectory=path.join(path.dirname(output),'installed-typecheck-raw');fs.mkdirSync(typedEvidenceDirectory,{recursive:true});
  const typeOutcomes=[];

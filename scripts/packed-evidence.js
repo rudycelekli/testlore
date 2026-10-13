@@ -4,6 +4,7 @@ import {assessmentImportEvidenceComplete} from './assessment-import-proof.js';
 import fs from 'node:fs';
 import path from 'node:path';
 import {createHash} from 'node:crypto';
+import {summarizeTypecheck} from '../src/typecheck-report.js';
 const typePhases=[['setup-fault',1,'failed',true,1,[2322]],['healthy-shadow',0,'passed',true,1,[]],['unsupported-no-check',2,'incomplete',false,0,[]]];
 export function installedTypecheckEvidenceComplete(value){
  const hex=x=>typeof x==='string'&&/^[a-f0-9]{64}$/.test(x);
@@ -19,6 +20,14 @@ export function verifyInstalledTypecheckRawEvidence(value,directory){
   const file=path.join(directory,row.id+'.json'),stat=fs.lstatSync(file);if(!stat.isFile()||stat.isSymbolicLink()||stat.size>16*1024*1024)return false;
   const bytes=fs.readFileSync(file);if(createHash('sha256').update(bytes).digest('hex')!==row.rawSha256)return false;
   const envelope=JSON.parse(bytes),report=envelope.verification||envelope,check=report.typecheck;
+  const native=report.tests?.[0],typed=summarizeTypecheck(check,{expectedProvenance:report.provenance||report.plan?.provenance});
+  if(report.complete!==true||report.nativeComplete!==true||report.signal||report.error||report.reportErrors?.length||
+    report.missingFiles?.length||report.unknownFiles?.length||report.tests?.length!==1||
+    typeof native?.id!=='string'||!native.id||native.file!=='test/value.test.mjs'||native.name!=='ordinary value'||native.status!=='passed'||
+    JSON.stringify(report.collectionFiles)!==JSON.stringify(['test/value.test.mjs']))return false;
+  if(row.id==='unsupported-no-check'){
+    if(check?.exitCode!==2||check.signal!==null||check.errorCode!=='typecheck-no-check'||JSON.stringify(check.reasons)!==JSON.stringify(['typecheck-no-check']))return false;
+  }else if(!typed.complete||typed.status!==row.status||check.exitCode!==row.exitCode)return false;
   return report.exitCode===row.exitCode&&report.nativeExitCode===0&&check?.status===row.status&&check.complete===row.complete&&
     check.implementationFiles?.length===row.implementationCount&&JSON.stringify(check.diagnostics.filter(d=>d.category==='error').map(d=>d.code))===JSON.stringify(row.errorCodes)&&
     report.tests?.length===1&&report.tests[0].status==='passed';

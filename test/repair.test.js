@@ -32,7 +32,7 @@ test('source repair validates repeated unchanged assertions and commits an isola
 });
 test('enabled native compiler vetoes a runtime-green repair and qualifies the corrected complete branch',async t=>{
  const root=project(t,{
-  '.gitignore':'node_modules/\n.tddswarm/\n',
+  '.gitignore':'.tddswarm/\n',
   'src/a.js':'/** @type {number} */ export const a=9;',
   'test/a.test.js':"import test from 'node:test';import assert from 'node:assert/strict';import {a} from '../src/a.js';test('numeric value',()=>assert.equal(Number(a),1));",
   'tsconfig.json':{compilerOptions:{allowJs:true,checkJs:true,noEmit:true,strict:true,module:'NodeNext',moduleResolution:'NodeNext',target:'ES2022'},include:['src/*.js']},
@@ -50,6 +50,8 @@ test('enabled native compiler vetoes a runtime-green repair and qualifies the co
  assert.throws(()=>publishImprovement(root,missing),/final TypeScript verification/);
  const corrupt=structuredClone(good);corrupt.fullRun.typecheck.compiler.sha256='0'.repeat(64);
  assert.throws(()=>publishImprovement(root,corrupt),/compiler identities differ/);
+ git(root,'remote','add','origin','/private/tmp/testlore-no-network');
+ assert.throws(()=>publishImprovement(root,good),/Automatic pull requests require a configured GitHub remote/);
 });
 test('wrong source repair never commits, and test edits cannot replace a repair',async t=>{
  const root=project(t),wrong=await repair(root,{patch:patch('export const a=99;'),sourcePaths:['src/a.js']});cleanup(t,root,wrong);assert.equal(wrong.status,'validation-rejected');assert.equal(wrong.sha,null);

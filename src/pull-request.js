@@ -67,6 +67,10 @@ export function publishImprovement(root, result, options = {}) {
   const prefix=git(worktree,['rev-parse','--show-prefix']).trim();
   const metadata=line=>{if(line.slice(0,2)!=='??')return false;const file=line.slice(3);const local=prefix&&file.startsWith(prefix)?file.slice(prefix.length):file;
     if(local==='.tddswarm'||local.startsWith('.tddswarm/'))return true;
+    // Repair admission above authenticates the full installed tree at every
+    // boundary. Physical typed-repair copies need the same metadata treatment
+    // as shared installations without hiding a changed dependency byte.
+    if(repair&&(local==='node_modules'||local.startsWith('node_modules/'))){try{if(fs.lstatSync(path.join(worktree,'node_modules')).isDirectory())return true;}catch{}}
     if(local==='node_modules'){try{return fs.lstatSync(path.join(worktree,'node_modules')).isSymbolicLink()&&fs.realpathSync(path.join(worktree,'node_modules'))===fs.realpathSync(path.join(root,'node_modules'));}catch{}}return false;};
   function exactState(){
     if(repair)repairPublicationGuard(worktree,result);
