@@ -72,9 +72,12 @@ export function verifyTypecheck(projectRoot,{project='tsconfig.json',timeoutMs=3
     if(!Number.isSafeInteger(timeoutMs)||timeoutMs<1||timeoutMs>300000)failure('typecheck-invalid-timeout');
     const deadline=started+timeoutMs,root=fs.realpathSync(projectRoot);
     if(!canonical(project))failure('typecheck-invalid-project');
+    if(['.git','.tddswarm'].includes(project.split('/')[0]))failure('typecheck-reserved-input');
     const configFile=path.join(root,project);
     if(!fs.existsSync(configFile))return finish({status:'not-configured',errorCode:'typecheck-config-missing',reasons:['typecheck-config-missing'],nextAction:`Add ${project}, or configure the path to an existing TypeScript project.`});
-    if(!inside(root,fs.realpathSync(configFile))||!fs.statSync(configFile).isFile())failure('typecheck-external-config');
+    const realConfig=fs.realpathSync(configFile);
+    if(!inside(root,realConfig)||!fs.statSync(configFile).isFile())failure('typecheck-external-config');
+    if(['.git','.tddswarm'].includes(path.relative(root,realConfig).split(path.sep)[0]))failure('typecheck-reserved-input');
     const before=inventory(root,deadline);
     const beforeProvenance=snapshot(root,readConfig(root));checkDeadline(deadline);
     if(expectedProvenance){const check=freshness(expectedProvenance,beforeProvenance);if(!check.fresh||expectedProvenance.revision!==beforeProvenance.revision)failure('typecheck-provenance-mismatch');}

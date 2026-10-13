@@ -86,3 +86,11 @@ test('malformed native diagnostic categories and offsets reject evaluator false 
     assert.notEqual(altered,original);fs.writeFileSync(compiler,altered);const result=check(root);assert.equal(result.status,'incomplete');assert.equal(result.errorCode,'typecheck-malformed-diagnostic');assert.equal(result.exitCode,2);
   }
 });
+
+test('reserved state configurations and real-path aliases never become unbound native inputs',t=>{
+  const root=project(t);for(const project of ['.tddswarm/tsconfig.json','.git/tsconfig.json']){const result=verifyTypecheck(root,{project,timeoutMs:20000});assert.equal(result.errorCode,'typecheck-reserved-input');assert.equal(result.exitCode,2);}
+  write(root,'.tddswarm/shared.json',{compilerOptions:{strict:true}});write(root,'tsconfig.json',{extends:'./.tddswarm/shared.json',compilerOptions:{target:'ES2022',module:'NodeNext',moduleResolution:'NodeNext',skipLibCheck:true},include:['src/**/*.ts']});let result=check(root);assert.equal(result.errorCode,'typecheck-reserved-input');assert.equal(result.complete,false);
+  fs.symlinkSync(path.join(root,'.tddswarm/shared.json'),path.join(root,'shared-alias.json'));write(root,'tsconfig.json',{extends:'./shared-alias.json',files:['src/value.ts']});result=check(root);assert.equal(result.errorCode,'typecheck-reserved-input');assert.equal(result.exitCode,2);
+  fs.symlinkSync(path.join(root,'.tddswarm/shared.json'),path.join(root,'config-alias.json'));result=verifyTypecheck(root,{project:'config-alias.json',timeoutMs:20000});assert.equal(result.errorCode,'typecheck-reserved-input');
+  write(root,'.tddswarm/source.ts','export const hidden=1;');write(root,'tsconfig.json',{files:['.tddswarm/source.ts']});result=check(root);assert.equal(result.errorCode,'typecheck-reserved-input');assert.equal(result.complete,false);
+});
