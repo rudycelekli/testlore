@@ -7,7 +7,7 @@ try{
   const request=JSON.parse(fs.readFileSync(0,'utf8'));
   if(!request||typeof request.root!=='string'||typeof request.project!=='string'||typeof request.sdk!=='string')fail('typecheck-invalid-request');
   const root=fs.realpathSync(request.root),relative=file=>path.relative(root,fs.realpathSync(file)).split(path.sep).join('/');
-  const local=file=>{const lexical=path.relative(root,path.resolve(file)).split(path.sep)[0];if(['.git','.tddswarm'].includes(lexical))fail('typecheck-reserved-input');const real=fs.realpathSync(file);if(real!==root&&!real.startsWith(root+path.sep))fail('typecheck-external-closure');if(['.git','.tddswarm'].includes(path.relative(root,real).split(path.sep)[0]))fail('typecheck-reserved-input');return real;};
+  const local=file=>{if(typeof file!=='string'||/[\x00-\x1f\x7f]/.test(file))fail('typecheck-invalid-input-path');const lexical=path.relative(root,path.resolve(file)).split(path.sep)[0];if(['.git','.tddswarm'].includes(lexical))fail('typecheck-reserved-input');const real=fs.realpathSync(file);if(/[\x00-\x1f\x7f]/.test(path.relative(root,real)))fail('typecheck-invalid-input-path');if(real!==root&&!real.startsWith(root+path.sep))fail('typecheck-external-closure');if(['.git','.tddswarm'].includes(path.relative(root,real).split(path.sep)[0]))fail('typecheck-reserved-input');return real;};
   local(request.sdk);const ts=require(request.sdk);output.compiler.version=ts.version;
   if(ts.version!==request.version||typeof ts.createProgram!=='function'||typeof ts.getPreEmitDiagnostics!=='function')fail('typecheck-sdk-invalid');
   const readFile=file=>{if(!fs.existsSync(file))return undefined;return ts.sys.readFile(local(file));};

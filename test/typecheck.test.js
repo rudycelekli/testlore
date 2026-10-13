@@ -4,8 +4,8 @@ import fs from 'node:fs';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {spawnSync} from 'node:child_process';
-import {fixture,write} from './helpers.js';
-import {verifyTypecheck} from '../src/typecheck.js';
+import {fixture,write,commit} from './helpers.js';
+import {verifyTypecheck,captureTypecheckInputs} from '../src/typecheck.js';
 import {snapshot} from '../src/provenance.js';
 import {readConfig} from '../src/files.js';
 
@@ -26,7 +26,7 @@ const hook=(root,code)=>{const file=path.join(root,'node_modules/typescript/lib/
 
 test('native runtime green cannot hide TS2322; healthy inverse is genuinely checked and read-only',t=>{
   const root=project(t,{'src/value.ts':'export const value: string = 42;\n','test/runtime.test.mjs':"import test from 'node:test';import assert from 'node:assert/strict';import {value} from '../src/value.ts';test('runtime value',()=>assert.equal(value,42));"});
-  const runtime=spawnSync(process.execPath,['--experimental-strip-types','--test','test/runtime.test.mjs'],{cwd:root,encoding:'utf8'});assert.equal(runtime.status,0,runtime.stderr);
+  const runtime=spawnSync(process.execPath,['--experimental-strip-types','--test','test/runtime.test.mjs'],{cwd:root,encoding:'utf8',env:{HOME:root,LANG:'C',PATH:path.dirname(process.execPath)+path.delimiter+'/usr/bin:/bin'}});assert.equal(runtime.status,0,runtime.stderr);assert.match(runtime.stdout,/# tests 1/);assert.match(runtime.stdout,/# pass 1/);
   const result=check(root);assert.equal(result.status,'failed',JSON.stringify({status:result.status,errorCode:result.errorCode,diagnostics:result.diagnostics}));assert.equal(result.exitCode,1);assert.equal(result.complete,true);assert.ok(result.diagnostics.some(d=>d.code===2322&&d.file==='src/value.ts'&&d.line===1));assert.ok(result.compiler.version);assert.ok(result.binding.source.files.some(row=>row.file==='ignored.txt'));assert.ok(result.files.includes('src/value.ts'));
   write(root,'src/value.ts','export const value: number = 42;\n');const healthy=check(root);assert.equal(healthy.status,'passed',JSON.stringify({status:healthy.status,errorCode:healthy.errorCode,diagnostics:healthy.diagnostics}));assert.equal(healthy.exitCode,0);assert.equal(healthy.complete,true);assert.equal(healthy.diagnostics.length,0);assert.ok(healthy.limitations.some(s=>s.includes('skipLibCheck')));assert.equal(fs.existsSync(path.join(root,'src/value.js')),false);assert.equal(fs.existsSync(path.join(root,'tsconfig.tsbuildinfo')),false);
 });
@@ -93,4 +93,34 @@ test('reserved state configurations and real-path aliases never become unbound n
   fs.symlinkSync(path.join(root,'.tddswarm/shared.json'),path.join(root,'shared-alias.json'));write(root,'tsconfig.json',{extends:'./shared-alias.json',files:['src/value.ts']});result=check(root);assert.equal(result.errorCode,'typecheck-reserved-input');assert.equal(result.exitCode,2);
   fs.symlinkSync(path.join(root,'.tddswarm/shared.json'),path.join(root,'config-alias.json'));result=verifyTypecheck(root,{project:'config-alias.json',timeoutMs:20000});assert.equal(result.errorCode,'typecheck-reserved-input');
   write(root,'.tddswarm/source.ts','export const hidden=1;');write(root,'tsconfig.json',{files:['.tddswarm/source.ts']});result=check(root);assert.equal(result.errorCode,'typecheck-reserved-input');assert.equal(result.complete,false);
+});
+
+test('final service provenance callbacks cannot mutate ignored compiler input behind successful evidence',t=>{
+  const root=project(t);write(root,'.gitignore','src/value.ts\nnode_modules/\n.tddswarm/\n');write(root,'.tddswarm/probe-count','0');
+  const code="const fs=require('node:fs');const n=Number(fs.readFileSync('.tddswarm/probe-count'))+1;fs.writeFileSync('.tddswarm/probe-count',String(n));if(n===2)fs.writeFileSync('src/value.ts','export const value: number=\"broken\";');process.stdout.write('stable-service-version');";
+  write(root,'tddswarm.config.json',{services:{example:{tests:['test/example.test.js'],probe:[process.execPath,'-e',code]}}});commit(root);const result=check(root);assert.equal(Number(fs.readFileSync(path.join(root,'.tddswarm/probe-count'))),2);assert.equal(result.errorCode,'typecheck-source-drift');assert.equal(result.complete,false);assert.equal(result.exitCode,2);
+});
+
+test('service probes use a bare environment and share the total deadline',t=>{
+  const root=project(t);write(root,'tddswarm.config.json',{services:{example:{tests:['test/example.test.js'],probe:[process.execPath,'-e',"if(process.env.TESTLORE_SECRET_SENTINEL||process.env.NODE_OPTIONS)process.exit(3);process.stdout.write('stable');"]}}});
+  const expectedProvenance=snapshot(root,readConfig(root));assert.equal(verifyTypecheck(root,{expectedProvenance,timeoutMs:20000}).status,'passed','Successful service probe binding must match the existing provenance contract');
+  const prior=process.env.TESTLORE_SECRET_SENTINEL;try{process.env.TESTLORE_SECRET_SENTINEL='private-test-sentinel';assert.equal(check(root).status,'passed');}finally{if(prior===undefined)delete process.env.TESTLORE_SECRET_SENTINEL;else process.env.TESTLORE_SECRET_SENTINEL=prior;}
+  write(root,'tddswarm.config.json',{services:{example:{tests:['test/example.test.js'],probe:[process.execPath,'-e','setTimeout(()=>process.stdout.write("stable"),5000)']}}});const started=performance.now(),result=verifyTypecheck(root,{timeoutMs:500});assert.equal(result.errorCode,'typecheck-timeout');assert.equal(result.exitCode,2);assert.ok(performance.now()-started<2500,'Configured probe must respect remaining total budget');
+});
+
+test('ASCII control and DEL paths are rejected without returning unsafe path prose',t=>{
+  const root=project(t);for(const unsafe of ['src/\x1b[31mbad.ts','src/bad\nname.ts','src/bad\x7fname.ts']){
+    write(root,unsafe,'export const value: string=42;');const result=check(root);assert.equal(result.status,'incomplete');assert.equal(result.errorCode,'typecheck-invalid-input-path');assert.equal(result.exitCode,2);assert.equal(/[\x00-\x1f\x7f]/.test(result.errorCode),false);fs.rmSync(path.join(root,unsafe));
+  }
+  for(const project of ['\x1b[31mconfig.json','bad\nconfig.json','bad\x7fconfig.json']){const result=verifyTypecheck(root,{project});assert.equal(result.errorCode,'typecheck-invalid-project');assert.equal(result.project,null);}
+});
+
+test('private opening inputs bind ignored source and SDK across prior native execution',t=>{
+  const root=project(t);write(root,'.gitignore','src/value.ts\nnode_modules/\n');const token=captureTypecheckInputs(root,{timeoutMs:20000});assert.equal(token.status,'captured');assert.equal(token.complete,true);assert.equal(Object.isFrozen(token),true);
+  write(root,'test/native.test.mjs',"import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';import {value} from '../src/value.ts';test('native then mutates',()=>{assert.equal(value,42);fs.writeFileSync('src/value.ts','export const value: number=99;');});");
+  // Capture after installation of the independent native oracle, before it runs.
+  commit(root);const opening=captureTypecheckInputs(root,{timeoutMs:20000});const native=spawnSync(process.execPath,['--experimental-strip-types','--test','test/native.test.mjs'],{cwd:root,encoding:'utf8',env:{HOME:root,LANG:'C',PATH:path.dirname(process.execPath)+path.delimiter+'/usr/bin:/bin'}});assert.equal(native.status,0,native.stderr);assert.match(native.stdout,/# tests 1/);assert.match(native.stdout,/# pass 1/);assert.match(fs.readFileSync(path.join(root,'src/value.ts'),'utf8'),/99/);
+  const changed=verifyTypecheck(root,{openingInputs:opening,timeoutMs:20000});assert.equal(changed.errorCode,'typecheck-opening-source-drift');assert.equal(changed.exitCode,2);assert.equal(changed.complete,false);assert.equal(check(root).status,'passed','Standalone current-state type check alone would not detect prior runtime drift');
+  write(root,'src/value.ts','export const value: number=42;');const sdkOpening=captureTypecheckInputs(root,{timeoutMs:20000});hook(root,"require('node:fs').writeFileSync('compiler-entered.txt','yes');");const sdkChanged=verifyTypecheck(root,{openingInputs:sdkOpening,timeoutMs:20000});assert.equal(sdkChanged.errorCode,'typecheck-opening-dependency-drift');assert.equal(fs.existsSync(path.join(root,'compiler-entered.txt')),false);
+  for(const copied of [{...sdkOpening},JSON.parse(JSON.stringify(sdkOpening)),null])assert.equal(verifyTypecheck(root,{openingInputs:copied,timeoutMs:20000}).errorCode,'typecheck-invalid-opening-inputs');
 });
