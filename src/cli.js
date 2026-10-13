@@ -11,6 +11,7 @@ const commandModules = {
   brief: ['agent-contract'], doctor: ['adoption-readiness'],
   setup: ['quality-layer', 'agent-profile', 'files', 'adoption-readiness', 'plugin-recommendations', 'plugins', 'run-report'],
   report: ['files', 'run-report'], mappings: ['routing-proposals'],
+  contracts: ['behavioral-contracts'],
   'mapping-qualify': ['files', 'mapping-qualification'],
   'browser-build': ['files', 'browser-evidence'], 'browser-instrument': ['browser-evidence'],
   'browser-capture': ['browser-evidence'], 'browser-mappings': ['files', 'browser-evidence'],
@@ -69,6 +70,7 @@ Usage: testlore <command> [options]
   audit       Grade static test structure; report what has not been measured
   plan        Explain which tests a Git change can affect
   run         Execute the planned tests and preserve the runner's exit code
+  contracts   Execute explicitly configured independent behavioral challenges
   modules     Propose test groups and flag broad dependencies
   generate    Produce an agent work order; --execute stages reviewed candidates
   snapshot    Save source/runner/environment provenance before measurement
@@ -198,6 +200,7 @@ function init(root, {safePath, defaultNativeAdapter, defaultNativeRunner, audit}
   return { config: file, created, report, next: report.testFiles ? ['tddswarm plan --base HEAD', 'tddswarm run --shadow'] : ['tddswarm generate', 'Add tddswarm.requirements.md and configure an agent for generation.'] };
 }
 function human(command, result, implementations = {}) {
+  if(command==='contracts')return `Behavioral challenges: ${result.status}; ${result.runs.length} observed.\n${result.runs.filter(row=>!row.passed).map(row=>`Did not pass: ${row.id} (${row.script})`).join('\n')}\n${result.nextAction}\nReceipt: ${result.receipt}`;
   if(command==='mappings') {
     const diagnostics=result.processRegistrations,rows=[...(diagnostics?.proposals||[])].sort((a,b)=>Number(b.launches.length>0)-Number(a.launches.length>0)||a.fixture.localeCompare(b.fixture));
     const mappings=result.proposals.slice(0,8).map(row=>`  ${row.source}: ${row.inputs.slice(0,4).join(', ')}${row.inputs.length>4?` (+${row.inputs.length-4} more)`:''} → ${row.tests.length} test files (${row.kind}); review and challenge before adoption.`);
@@ -278,6 +281,10 @@ export async function main(args = process.argv.slice(2)) {
     pilot, exportPilot, verificationBrief, qualifyRoutingMappings, adoptionReadiness, importAssessments, assessCommunityCampaignFile} = implementations;
   let result;
   switch (command) {
+    case 'contracts': {
+      if(Object.keys(options).some(key=>!['root','json'].includes(key)))throw Error('contracts accepts only --root and --json');
+      result=implementations.saveBehavioralContractReport(root,implementations.verifyBehavioralContracts(root));break;
+    }
     case 'probe-catalog': result=options.execute?implementations.installBundledBugRecipes(root,{directory:options.output}):implementations.listBundledBugRecipes();break;
     case 'probe-qualify': {
       const profile=implementations.readInvestigationInput(root,options.manifest).value;
@@ -500,6 +507,7 @@ export async function main(args = process.argv.slice(2)) {
   }
   console.log(options.json ? JSON.stringify(result, null, 2) : human(command, result, implementations));
   if(command==='knowledge-import')return result.imported?0:2;
+  if(command==='contracts')return result.exitCode;
   if(command==='probe-qualify')return result.qualified?0:2;
   if(['investigate','immunity'].includes(command))return result.exitCode??0;
   if(command==='investigation-outcome')return result.recorded?0:2;
