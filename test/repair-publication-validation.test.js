@@ -32,7 +32,9 @@ test('legacy direct suite-only validation cannot qualify applied production publ
  const supplied={kind:'source-repair',status:'ready-for-review',candidate,validation:result,fullRun:{complete:true,exitCode:0,tests:[{status:'passed'}]},sha:git(root,'rev-parse','HEAD').trim(),branch:'tddswarm/repair-forged',worktree:root};assert.throws(()=>publishImprovement(root,supplied),/repair challenges|regression challenges|protected project/);
 });
 test('a forged public validation object never reaches remote authentication or branch push',async t=>{
- const root=project(t),result=await repair(root,{patch:{files:[{path:'src/a.js',content:'export const a=1;'}],review},sourcePaths:['src/a.js'],deadlineMs:30000});t.after(()=>fs.rmSync(result.worktreeRoot,{recursive:true,force:true}));assert.equal(result.status,'ready-for-review',JSON.stringify(result));
+ // This positive setup qualifies publication authentication, not campaign
+ // timeout behavior. Keep its budget bounded while allowing full-suite load.
+ const root=project(t),result=await repair(root,{patch:{files:[{path:'src/a.js',content:'export const a=1;'}],review},sourcePaths:['src/a.js'],deadlineMs:60000});t.after(()=>fs.rmSync(result.worktreeRoot,{recursive:true,force:true}));assert.equal(result.status,'ready-for-review',JSON.stringify(result));
  const fake=structuredClone(result);fake.validation.challenges.candidate[0].runs[0].observed.assertions++;
  assert.throws(()=>publishImprovement(root,fake),/authenticated|Authenticated|validation.*differ|receipt.*differ/);
 });

@@ -38,6 +38,8 @@ TestLore brings **test creation, intelligent routing and reviewed learning** int
 
 **Go beyond a green suite:** explicitly configured independent behavioral challenges also run during routine verification—even when no native tests are selected. Reports separate native outcomes, additional failures and incomplete checks. [Configure behavioral checks and compare detector coverage →](docs/defect-detection.md)
 
+**Catch type errors runtime assertions miss:** setup enables the installed project-local TypeScript checker when a root `tsconfig.json` is present. Runtime and compiler results stay separate; ignored-source or dependency drift prevents a combined pass. [Native type verification and reproducible development examples →](docs/native-typecheck.md)
+
 | Your starting point | What TestLore does |
 | --- | --- |
 | **No tests yet** | An architect, bounded author team, and independent reviewer propose runnable tests from your behavioral requirements. |

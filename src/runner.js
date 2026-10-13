@@ -1,5 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import {randomUUID} from 'node:crypto';
 import { plan, planWithinStartupPhase } from './selector.js';
 import { readConfig, safePath } from './files.js';
 import { execute, adapterFor } from './execution.js';
@@ -11,7 +12,36 @@ import { externalRun } from './integrations.js';
 import { captureVitestWorkspaceRoot } from './native-workspace-root.js';
 import { captureNativeVitestCases } from './native-vitest-cases.js';
 import {captureReaObservation} from './rea-observation.js';
-import {supplementWithBehavioralContracts} from './behavioral-contracts.js';
+import {supplementWithChecks} from './verification-checks.js';
+import {captureTypecheckInputs} from './typecheck.js';
+const typecheckOpening=Symbol('typecheck-opening-inputs');
+const checkRequest=Symbol('opening-requested-checks');
+
+function writeReceipt(root,file,value) {
+ const target=safePath(root,file);
+ if(fs.existsSync(target)){const stat=fs.lstatSync(target);if(!stat.isFile()||stat.nlink!==1)throw Error('Receipt must be an unlinked regular file');}
+ const temporary=safePath(root,file+'.'+randomUUID()+'.tmp');let fd;
+ try{
+  fd=fs.openSync(temporary,fs.constants.O_WRONLY|fs.constants.O_CREAT|fs.constants.O_EXCL|fs.constants.O_NOFOLLOW,0o600);
+  const stat=fs.fstatSync(fd);if(!stat.isFile()||stat.nlink!==1)throw Error('Receipt must be an unlinked regular file');
+  fs.writeFileSync(fd,value);fs.closeSync(fd);fd=undefined;
+  safePath(root,file);fs.renameSync(temporary,target);
+ }finally{if(fd!==undefined)fs.closeSync(fd);fs.rmSync(temporary,{force:true});}
+}
+
+function openCheckWindow(root,options,config) {
+ if(options[checkRequest])return options;
+ const requested=Object.freeze({typescript:Object.freeze({...config.plugins?.typescript}),repair:structuredClone(config.repair)});
+ const opened={...options,[checkRequest]:requested};
+ return config.plugins?.typescript?.enabled!==true?opened:{...opened,[typecheckOpening]:captureTypecheckInputs(root,{timeoutMs:config.plugins.typescript.timeoutMs})};
+}
+function openingRejected(options) {
+ const opening=options[typecheckOpening];
+ if(!opening||opening.status==='captured')return null;
+ return {executed:false,complete:false,exitCode:2,nativeExitCode:2,nativeComplete:false,
+  typecheck:{schemaVersion:1,kind:'native-typecheck',status:'incomplete',complete:false,exitCode:2,files:[],diagnostics:[],reasons:[opening.errorCode||'typecheck-opening-capture-incomplete'],errorCode:opening.errorCode||'typecheck-opening-capture-incomplete'},
+  error:'TypeScript input-window capture is incomplete; repair the declared scope before native execution.'};
+}
 
 export function compareShadow(selection, execution) {
   const proposed = new Set(selection.selected);
@@ -36,8 +66,13 @@ export function compareSubsetCases(full, subset, files) {
 }
 
 export function run(root,options={}) {
- const prepared=prepareRun(root,options);
- if(prepared.terminal)return finishTerminal(root,prepared.terminal);
+ const started=performance.now(),config=readConfig(root);
+ if(options.shadow&&options.selective)throw Error('Choose shadow or selective execution');
+ if(options.signal?.aborted)return declineContracts(config,{exitCode:2,executed:false,complete:false,error:'Native execution cancelled'});
+ options=openCheckWindow(root,options,config);
+ const rejected=openingRejected(options);if(rejected)return rejected;
+ const prepared=prepareRun(root,options,undefined,started);
+ if(prepared.terminal)return finishTerminal(root,prepared.terminal,options);
  return finishRun(prepared,execute(root,prepared.executedTests,prepared.config,prepared.options));
 }
 
@@ -47,12 +82,13 @@ export async function runUnifiedNative(root,options={}) {
  if(options.changed)throw new Error('--changed is diagnostic only. Unified execution requires Git change discovery.');
  if(options.shadow&&options.selective)throw new Error('Choose shadow or selective execution');
  if(options.signal?.aborted)return declineContracts(config,{exitCode:2,executed:false,complete:false,error:'Unified execution cancelled'});
+ options=openCheckWindow(root,options,config);const rejected=openingRejected(options);if(rejected)return rejected;
  if(config.reaObservation!==undefined)try{captureReaObservation(root,config,config.runner||[]);if(options.selective)throw Error('REA observation is shadow-only; selective execution is not admitted');}catch(error){return declineContracts(config,{exitCode:2,executed:false,complete:false,tests:[],requestedFiles:[],error:error.message,unifiedNative:{prototype:true,used:false,reason:'Explicit REA shadow observation rejected before native startup'}});}
  // An explicit workspace profile cannot escape rejection through legacy fallback.
  if(adapterFor(config)==='vitest')try{captureVitestWorkspaceRoot(root,config.runner||[],{nativeCwd:config.nativeCwd});captureNativeVitestCases(root,config,config.runner||[]);}catch(error){return declineContracts(config,{exitCode:2,executed:false,complete:false,tests:[],requestedFiles:[],error:error.message,unifiedNative:{prototype:true,used:false,reason:'Explicit workspace/case profile rejected before native startup'}});}
  const unsupported=unifiedNativeEligibility(root,config);
  if(unsupported){if(config.nativeCwd!==undefined)return declineContracts(config,{exitCode:2,executed:false,complete:false,tests:[],requestedFiles:[],error:'Explicit native cwd cannot use legacy fallback: '+unsupported,unifiedNative:{prototype:true,used:false,fallbackReason:unsupported}});const result=run(root,options);return {...result,unifiedNative:{prototype:true,used:false,fallbackReason:unsupported}};}
- const initial=snapshot(root,config);let session,prepared,executionAttempted=false;
+ const initial=snapshot(root,config);let session,prepared,executionAttempted=false,sessionClosed=false;
  try {
   session=await openNativeSession(root,config,options,{root,configurationDigest:digest(config),files:Object.keys(initial.files)});
   if(session.unsupported)throw new Error('Native command eligibility changed before startup; rerun after inputs stabilize');
@@ -60,19 +96,21 @@ export async function runUnifiedNative(root,options={}) {
   const startupCheck=freshness(initial,startupCurrent);
   if(!startupCheck.fresh)throw new Error('Inputs changed during native context startup: '+startupCheck.reasons.join(', '));
   prepared=prepareRun(root,options,session.token,started,{root,configurationDigest:digest(config),provenance:startupCurrent});
-  if(prepared.terminal)return finishTerminal(root,{...prepared.terminal,unifiedNative:{prototype:true,used:true,contexts:1}});
+  if(prepared.terminal){await session.close();sessionClosed=true;return finishTerminal(root,{...prepared.terminal,unifiedNative:{prototype:true,used:true,contexts:1}},options);}
   executionAttempted=true;
   const execution=await session.execute(prepared.executedTests);
   if(!options.capture){if(execution.stdout)process.stdout.write(execution.stdout);if(execution.stderr)process.stderr.write(execution.stderr);}
+  await session.close();sessionClosed=true;
   return finishRun(prepared,execution);
  } catch(error) {
   if(prepared&&executionAttempted)return finishRun(prepared,{adapter:'vitest',exitCode:2,complete:false,tests:[],collectionFiles:[],requestedFiles:prepared.executedTests,executedFiles:prepared.executedTests,actualExecutedFilesUnverified:true,durationMs:Math.round(performance.now()-started-prepared.planningMs),...session?.failureEvidence?.(),error:error.message,unifiedNative:{prototype:true,used:true,contexts:1,partial:true}});
   return declineContracts(config,{exitCode:2,executed:executionAttempted,complete:false,tests:[],requestedFiles:prepared?.executedTests||[],...(prepared?{plan:prepared.selection}:{}),...session?.failureEvidence?.(),...error.nativeFailureEvidence,error:error.message,unifiedNative:{prototype:true,used:true,reason:'Unified context rejected; no automatic replan after configuration execution'}});
- } finally {await session?.close?.();}
+ } finally {if(!sessionClosed)await session?.close?.();}
 }
 function declineContracts(config,report) {
- return config.repair?.challenges===undefined?report:{...report,nativeExitCode:report.exitCode,nativeComplete:report.complete,
-  contracts:{schemaVersion:1,status:'incomplete',complete:false,exitCode:2,runs:[],reasons:['native-startup-rejected-contracts-not-run']}};
+ const contracts=config.repair?.challenges===undefined?{}:{contracts:{schemaVersion:1,status:'incomplete',complete:false,exitCode:2,runs:[],reasons:['native-startup-rejected-contracts-not-run']}};
+ const typecheck=config.plugins?.typescript?.enabled===true?{typecheck:{schemaVersion:1,status:'incomplete',complete:false,exitCode:2,files:[],diagnostics:[],reasons:['native-startup-rejected-typecheck-not-run']}}:{};
+ return !Object.keys(contracts).length&&!Object.keys(typecheck).length?report:{...report,nativeExitCode:report.exitCode,nativeComplete:report.complete,...contracts,...typecheck};
 }
 
 function prepareRun(root, options = {}, nativeSession, started = performance.now(), startupPhase) {
@@ -111,7 +149,7 @@ function finishRun({root,options,config,selection,before,serviceBefore,executedT
   const directory = safePath(root, '.tddswarm');
   fs.mkdirSync(directory, { recursive: true });
   const runner = runnerIdentity(root, config);
-  const historyFile = path.join(directory, `history-${runner}.json`);
+  const historyFile = safePath(root, `.tddswarm/history-${runner}.json`);
   let history = { count: 0, failed: [], failedCases: [] };
   try { history = JSON.parse(fs.readFileSync(historyFile, 'utf8')); } catch {}
   if (!Number.isInteger(history.count) || history.count < 0) history.count = 0;
@@ -128,26 +166,26 @@ function finishRun({root,options,config,selection,before,serviceBefore,executedT
     failed: [...new Set([...history.failed.filter(f => !actualFiles.includes(f)), ...failed])].sort(),
     failedCases: [...history.failedCases.filter(t => !actualFiles.includes(t.file)), ...failedCases],
     complete: execution.complete, provenance: report.provenance };
-  fs.writeFileSync(historyFile, JSON.stringify(next, null, 2));
+  writeReceipt(root, `.tddswarm/history-${runner}.json`, JSON.stringify(next, null, 2));
   // Compatibility receipt only; selection treats namespaced history as authority.
-  fs.writeFileSync(path.join(directory, 'history.json'), JSON.stringify(next, null, 2));
+  writeReceipt(root, '.tddswarm/history.json', JSON.stringify(next, null, 2));
   // Timings cover completed selection/execution/provenance/history work. Final
   // report sealing cannot include its own write; pilots measure an outer span.
   report.timings={planningMs,executionMs:execution.durationMs||0,totalMs:Math.round(performance.now()-started),finalReportSealingExcluded:true};
   report.timings.otherMs=Math.max(0,report.timings.totalMs-planningMs-report.timings.executionMs);
-  const combined=supplementWithBehavioralContracts(root,report);
+  const combined=supplementWithChecks(root,report,{openingInputs:options[typecheckOpening],requested:options[checkRequest]});
   combined.summary=summarizeFirstRun(combined);
-  fs.writeFileSync(path.join(directory, 'last-run.md'), renderRunReport(combined));
-  fs.writeFileSync(path.join(directory, 'last-run.json'), JSON.stringify(combined, null, 2));
+  writeReceipt(root, '.tddswarm/last-run.md', renderRunReport(combined));
+  writeReceipt(root, '.tddswarm/last-run.json', JSON.stringify(combined, null, 2));
   return combined;
 }
-function finishTerminal(root,report) {
- const combined=supplementWithBehavioralContracts(root,report);
- if(combined.contracts){
+function finishTerminal(root,report,options={}) {
+ const combined=supplementWithChecks(root,report,{openingInputs:options[typecheckOpening],requested:options[checkRequest]});
+ if(combined.contracts||combined.typecheck){
   const directory=safePath(root,'.tddswarm');fs.mkdirSync(directory,{recursive:true});
   combined.summary=summarizeFirstRun(combined);
-  fs.writeFileSync(path.join(directory,'last-run.md'),renderRunReport(combined));
-  fs.writeFileSync(path.join(directory,'last-run.json'),JSON.stringify(combined,null,2));
+  writeReceipt(root,'.tddswarm/last-run.md',renderRunReport(combined));
+  writeReceipt(root,'.tddswarm/last-run.json',JSON.stringify(combined,null,2));
  }
  return combined;
 }

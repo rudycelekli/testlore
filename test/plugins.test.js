@@ -30,7 +30,7 @@ test('enabled native plugin resolves existing integration without mutating raw c
 });
 test('disabled unknown and malformed executable settings remain inert in catalog and checks', t => {
   const root = fixture(t, { plugins: { 'not-installed': { enabled: false, command: 'invalid', kind: 'future' }, nx: { enabled: false, executable: [] } } });
-  const catalog = pluginCatalog(root); assert.equal(catalog.plugins.length, 10);
+  const catalog = pluginCatalog(root); assert.equal(catalog.plugins.length, 11);
   assert.ok(catalog.plugins.every(plugin => plugin.measured === false && plugin.availability === 'unchecked'));
   const check = checkPlugins(root); assert.equal(check.exitCode, 0);
   assert.ok(check.plugins.every(plugin => plugin.probe === 'skipped-disabled'));
@@ -86,7 +86,7 @@ test('custom workers require explicit protocol version and reject ambiguous agen
 });
 test('all builtins can be available while one explicit backend owns execution', t => {
   const root = fixture(t);
-  for (const id of ['nx', 'bazel', 'pytest-testmon', 'agentic-qe', 'c8', 'stryker', 'ruvector', 'guardana', 'ifixai']) configurePlugin(root, id, { enabled: true });
+  for (const id of ['typescript','nx', 'bazel', 'pytest-testmon', 'agentic-qe', 'c8', 'stryker', 'ruvector', 'guardana', 'ifixai']) configurePlugin(root, id, { enabled: true });
   const raw = readRaw(root); assert.equal(raw.executionPlugin, 'nx');
   assert.equal(raw.integration, undefined); // Configuration persists opt-ins, not derived adapter settings.
   assert.equal(readConfig(root).integration.type, 'nx');

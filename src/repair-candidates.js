@@ -6,6 +6,8 @@ import {spawnSync} from 'node:child_process';
 import {SOURCE, TEST, safePath, readConfig} from './files.js';
 import {digest, freshness, snapshot} from './provenance.js';
 import {adapterFor, discover, execute, nativeEnvironment} from './execution.js';
+import {captureTypecheckInputs,verifyTypecheck} from './typecheck.js';
+import {fileURLToPath} from 'node:url';
 import {withRepairEnvironment} from './repair-environment.js';
 import {captureRepairChallenges,captureChallengeRuntime,captureNativeRepairRuntime,runRepairChallenges,assessRepairChallenges} from './repair-challenges.js';
 
@@ -104,7 +106,7 @@ export function stageRepair(root, {files, requirements, sourcePaths, review} = {
   for (const file of files) { const target = safePath(directory,`files/${file.path}`); fs.mkdirSync(path.dirname(target),{recursive:true}); fs.writeFileSync(target,file.content,{flag:'wx'}); }
   const challenges=captureRepairChallenges(root);
   if(challenges.status==='configured'&&challenges.cases.some(item=>sourcePaths.includes(item.script)))throw Error('Repair source cannot own challenge assertions');
-  const manifest = {schemaVersion:1,kind:'source-repair',id,state:before,sourcePaths,files:files.map(file=>({path:file.path,hash:digest(file.content),beforeHash:before.scope.files[file.path].hash})),requirementsPath:'tddswarm.requirements.md',requirements,requirementsHash:digest(requirements),review,challenges,...(challenges.status==='configured'?{challengeRuntime:captureChallengeRuntime()}:{})};
+  const manifest = {schemaVersion:1,kind:'source-repair',id,state:before,sourcePaths,files:files.map(file=>({path:file.path,hash:digest(file.content),beforeHash:before.scope.files[file.path].hash})),requirementsPath:'tddswarm.requirements.md',requirements,requirementsHash:digest(requirements),review,challenges,...(repairTypecheckSettings(readConfig(root))?{typecheck:repairTypecheckSettings(readConfig(root))}:{}),...(challenges.status==='configured'?{challengeRuntime:captureChallengeRuntime()}:{})};
   const serialized=JSON.stringify(manifest,null,2);if(Buffer.byteLength(serialized)>MAX_REPORT){fs.rmSync(directory,{recursive:true,force:true});throw new Error('Repair manifest evidence exceeds bound');}
   fs.writeFileSync(path.join(directory,'manifest.json'),serialized);
   return {id,directory,candidatePath,kind:'source-repair',status:review.accepted?'reviewed-repair':'rejected-repair',applied:false};
@@ -160,11 +162,71 @@ function seal(root,value,{create=false}={}) {
   if(key.length!==32)throw new Error('Invalid local repair validation key');
   return createHmac('sha256',key).update(JSON.stringify(value)).digest('hex');
 }
-function copied(root, scope, action) {
+function repairTypecheckSettings(config){const value=config.plugins?.typescript;return value?.enabled===true?{project:value.project||'tsconfig.json',timeoutMs:value.timeoutMs||20000}:null;}
+const typecheckProducerFiles=['./repair-candidates.js','./typecheck.js','./reporters/typecheck-worker.cjs','./provenance.js','./files.js','./inputs.js','./configuration-inputs.js','./plugin-config.js'].map(file=>fileURLToPath(new URL(file,import.meta.url)));
+function typecheckProducers(){return typecheckProducerFiles.map(file=>({file:path.relative(path.dirname(fileURLToPath(import.meta.url)),file).split(path.sep).join('/'),sha256:digest(fs.readFileSync(file))}));}
+const sha=value=>typeof value==='string'&&/^[a-f0-9]{64}$/.test(value);
+function typecheckValid(run,{candidate=false}={}){
+ const errors=Array.isArray(run?.diagnostics)&&run.diagnostics.filter(item=>item?.category==='error');
+ const paths=value=>Array.isArray(value)&&value.length<=10000&&new Set(value).size===value.length&&value.every(file=>canonical(file)&&!/[\x00-\x1f\x7f]/.test(file));
+ if(!paths(run?.files)||!paths(run?.implementationFiles)||!paths(run?.programFiles)||!run.files.every(file=>run.programFiles.includes(file))||!Array.isArray(run?.diagnostics)||run.diagnostics.some(row=>!row||!Number.isSafeInteger(row.code)||row.code<1||!['error','warning','message','suggestion'].includes(row.category)||!(row.file===null||canonical(row.file)&&!/[\x00-\x1f\x7f]/.test(row.file))||!(row.line===null||Number.isSafeInteger(row.line)&&row.line>0)||!(row.column===null||Number.isSafeInteger(row.column)&&row.column>0)))return false;
+ return run?.schemaVersion===1&&run.kind==='native-typecheck'&&run.complete===true&&run.signal===null&&run.errorCode===null&&Array.isArray(run.reasons)&&run.reasons.length===0&&Array.isArray(run.implementationFiles)&&run.implementationFiles.length>0&&digest(run.implementationFiles)===digest(run.files)&&sha(run.compiler?.sha256)&&sha(run.compiler?.manifestSha256)&&typeof run.compiler.version==='string'&&sha(run.binding?.source?.sha256)&&sha(run.binding?.dependencies?.sha256)&&sha(run.binding?.node?.sha256)&&Array.isArray(run.binding?.source?.files)&&((run.exitCode===0&&run.status==='passed'&&errors?.length===0)||(!candidate&&run.exitCode===1&&run.status==='failed'&&errors?.length>0));
+}
+function typecheckOutcome(run){return digest({status:run.status,exitCode:run.exitCode,files:run.implementationFiles,programFiles:run.programFiles,suppressions:run.suppressions,diagnostics:run.diagnostics.map(({code,category,file,line,column})=>({code,category,file,line,column}))});}
+function typedRepeatable(baseline,candidate){return baseline.length===2&&candidate.length===2&&typecheckOutcome(baseline[0])===typecheckOutcome(baseline[1])&&typecheckOutcome(candidate[0])===typecheckOutcome(candidate[1]);}
+function typedInstalledBinding(root,{deadline=performance.now()+30000}={}){
+ const installed=fs.realpathSync(path.join(root,'node_modules')),rows=[];let bytes=0,count=0;
+ function walk(target,file){
+  if(performance.now()>deadline)throw Error('repair-total-time-budget-exceeded');if(++count>100000)throw Error('typed-repair-installed-bound');
+  const stat=fs.lstatSync(target);
+  if(stat.isDirectory()){rows.push({file,kind:'directory',mode:stat.mode&0o777});for(const name of fs.readdirSync(target).sort())walk(path.join(target,name),file+'/'+name);}
+  else if(stat.isSymbolicLink()){const link=fs.readlinkSync(target),real=fs.realpathSync(target);if(path.isAbsolute(link)||!real.startsWith(installed+path.sep))throw Error('typed-repair-dependency-link-unsupported');rows.push({file,kind:'symlink',target:link,real:'node_modules/'+path.relative(installed,real).split(path.sep).join('/')});}
+  else if(stat.isFile()){bytes+=stat.size;if(bytes>1024*1024*1024)throw Error('typed-repair-installed-bound');rows.push({file,kind:'file',size:stat.size,mode:stat.mode&0o777,sha256:digest(fs.readFileSync(target))});}else throw Error('typed-repair-dependency-entry-unsupported');
+ }
+ walk(installed,'node_modules');
+ const sdk=fs.realpathSync(path.join(root,'node_modules/typescript/lib/typescript.js')),manifest=fs.realpathSync(path.join(root,'node_modules/typescript/package.json'));
+ if(!sdk.startsWith(installed+path.sep)||!manifest.startsWith(installed+path.sep))throw Error('typed-repair-sdk-closure-unsupported');
+ const packageData=JSON.parse(fs.readFileSync(manifest,'utf8'));if(packageData.name!=='typescript')throw Error('typed-repair-sdk-invalid');
+ return {rows,compiler:{version:packageData.version,file:'node_modules/'+path.relative(installed,sdk).split(path.sep).join('/'),sha256:digest(fs.readFileSync(sdk)),manifestSha256:digest(fs.readFileSync(manifest))},node:{executable:fs.realpathSync(process.execPath),version:process.version,platform:process.platform,arch:process.arch,sha256:digest(fs.readFileSync(fs.realpathSync(process.execPath)))}};
+}
+function assertTypedReceipt(root,manifest,receipt,{deadline=performance.now()+30000}={}){
+ const currentSettings=repairTypecheckSettings(readConfig(root)),settings=manifest.typecheck||currentSettings;if(!settings)return;
+ if(digest(settings)!==digest(currentSettings))throw Error('Repair TypeScript obligation or settings changed');
+ const evidence=receipt.typecheck;
+ if(!evidence||evidence.schemaVersion!==1||evidence.kind!=='repair-typecheck'||evidence.accepted!==true||digest(evidence.settings)!==digest(settings)||digest(manifest.typecheck)!==digest(settings)||!Array.isArray(evidence.baseline)||evidence.baseline.length!==2||!Array.isArray(evidence.candidate)||evidence.candidate.length!==2||evidence.baseline.some(run=>!typecheckValid(run))||evidence.candidate.some(run=>!typecheckValid(run,{candidate:true})))throw Error('Authenticated repeated TypeScript repair validation required');
+ if(!typedRepeatable(evidence.baseline,evidence.candidate))throw Error('Repair TypeScript outcomes are not repeatable');
+ if(digest(evidence.producers)!==digest(typecheckProducers())||evidence.dependencyFingerprint!==manifest.state.dependencies.fingerprint)throw Error('Repair TypeScript compiler producer or dependency binding changed');
+ const installed=typedInstalledBinding(root,{deadline}),verifierProducers=typecheckProducers().filter(row=>row.file!=='repair-candidates.js');
+ const compilerIdentity=run=>({compiler:run.compiler,node:run.binding.node,producers:run.binding.producers,dependencies:run.binding.dependencies.sha256,project:run.project});
+ const all=[...evidence.baseline,...evidence.candidate];if(all.some(run=>digest(compilerIdentity(run))!==digest(compilerIdentity(all[0]))||run.project!==settings.project))throw Error('Repair TypeScript native identities differ');
+ for(const run of all){if(run.binding.source.sha256!==digest(run.binding.source.files)||run.binding.dependencies.sha256!==digest(run.binding.dependencies.files)||digest(run.binding.dependencies.files)!==digest(installed.rows)||digest(run.compiler)!==digest(installed.compiler)||digest(run.binding.node)!==digest(installed.node)||digest(run.binding.producers)!==digest(verifierProducers)||run.binding.projectSha256!==manifest.state.scope.files[settings.project]?.hash)throw Error('Repair TypeScript current compiler or input inventory differs from authenticated evidence');}
+ for(const [runs,candidate] of [[evidence.baseline,false],[evidence.candidate,true]])for(const run of runs){
+  const expected=Object.fromEntries(Object.entries(manifest.state.scope.files).map(([file,value])=>[file,{hash:candidate?(manifest.files.find(item=>item.path===file)?.hash??value.hash):value.hash,mode:value.mode}]));
+  const actual=Object.fromEntries(run.binding.source.files.filter(row=>row.kind==='file').map(row=>[row.file,{hash:row.sha256,mode:row.mode}]));
+  const sorted=value=>Object.fromEntries(Object.entries(value).sort(([a],[b])=>a<b?-1:a>b?1:0));
+  if(digest(sorted(actual))!==digest(sorted(expected)))throw Error('Repair TypeScript source evidence differs from authenticated manifest');
+ }
+}
+function copied(root, scope, action,{typed=false,deadline=Infinity,dependencies}={}) {
   const temp=fs.mkdtempSync(path.join(os.tmpdir(),'testlore-repair-'));
   try {
     for(const [file,value] of Object.entries(scope.files)){const target=safePath(temp,file);fs.mkdirSync(path.dirname(target),{recursive:true});fs.copyFileSync(regular(root,file),target);fs.chmodSync(target,value.mode);}
-    if(fs.existsSync(path.join(root,'node_modules')))fs.symlinkSync(fs.realpathSync(path.join(root,'node_modules')),path.join(temp,'node_modules'),'dir');
+    if(fs.existsSync(path.join(root,'node_modules'))){
+      if(typed){
+        const installed=fs.realpathSync(path.join(root,'node_modules'));
+        // Absolute/exterior links cannot be relocated without changing native
+        // origin semantics. Decline rather than weakening the compiler closure.
+        function copy(from,to){for(const name of fs.readdirSync(from).sort()){
+          if(performance.now()>deadline)throw Error('repair-total-time-budget-exceeded');
+          const source=path.join(from,name),target=path.join(to,name),stat=fs.lstatSync(source);
+          if(stat.isDirectory()){fs.mkdirSync(target);copy(source,target);fs.chmodSync(target,stat.mode&0o777);}
+          else if(stat.isSymbolicLink()){const link=fs.readlinkSync(source);if(path.isAbsolute(link)||!fs.realpathSync(source).startsWith(installed+path.sep))throw Error('typed-repair-dependency-link-unsupported');fs.symlinkSync(link,target);}
+          else if(stat.isFile()){fs.copyFileSync(source,target);fs.chmodSync(target,stat.mode&0o777);}else throw Error('typed-repair-dependency-entry-unsupported');
+        }}
+        fs.mkdirSync(path.join(temp,'node_modules'));copy(installed,path.join(temp,'node_modules'));fs.chmodSync(path.join(temp,'node_modules'),fs.statSync(installed).mode&0o777);
+        if(tree(temp,{dependencies:true,deadline}).fingerprint!==dependencies.fingerprint)throw Error('typed-repair-installed-copy-differs');
+      }else fs.symlinkSync(fs.realpathSync(path.join(root,'node_modules')),path.join(temp,'node_modules'),'dir');
+    }
     return action(temp);
   }finally{fs.rmSync(temp,{recursive:true,force:true});}
 }
@@ -172,14 +234,16 @@ function copied(root, scope, action) {
 export function validateRepair(root, candidatePath, options={}) {
   const started=performance.now(),total=options.totalTimeoutMs??120000,perRun=options.timeoutMs??20000;
   if(!Number.isInteger(total)||total<1||total>600000||!Number.isInteger(perRun)||perRun<1||perRun>120000)throw new Error('Invalid bounded repair runtime budget');
-  const deadline=started+total,{directory,manifest,hash}=locate(root,candidatePath),baseline=[],candidateRuns=[],assertionRuns=[],challengeBaseline=[],challengeCandidate=[],reasons=[];
+  const deadline=started+total,{directory,manifest,hash}=locate(root,candidatePath),baseline=[],candidateRuns=[],assertionRuns=[],challengeBaseline=[],challengeCandidate=[],typecheckBaseline=[],typecheckCandidate=[],reasons=[];
+  let typecheckSettings=null,typecheckProducerBinding=null;
   const remaining=()=>{const value=Math.floor(Math.min(perRun,deadline-performance.now()));if(value<1)throw new Error('repair-total-time-budget-exceeded');return value;};
   const nativeFresh=()=>{if(manifest.state.nativeRuntime?.status!=='qualified'||digest(captureNativeRepairRuntime(root))!==digest(manifest.state.nativeRuntime))throw Error('native-execution-mutated-runtime');};
   try {
     assertFresh(manifest,state(root,deadline));
     if(manifest.state.nativeRuntime?.status!=='qualified')throw new Error('assertion-evidence-unsupported: '+(manifest.state.nativeRuntime?.reason||'repair-native-runtime-binding-required'));
     if(!manifest.review.accepted||!manifest.review.oracle?.independent||!Array.isArray(manifest.review.oracle.basis)||!manifest.review.oracle.basis.length||manifest.review.oracle.basis.some(x=>typeof x!=='string'||!x.trim()||x.length>4096))throw new Error('independent-repair-review-required');
-    const config=readConfig(root);
+    const config=readConfig(root);typecheckSettings=repairTypecheckSettings(config);
+    if(typecheckSettings){if(digest(manifest.typecheck)!==digest(typecheckSettings))throw Error('repair-TypeScript-settings-drift');typecheckProducerBinding=typecheckProducers();}
     const argv=config.runner||['node','--test','{files}'];
     if(adapterFor(config)!=='node'||config.integration||Array.isArray(config.discovery)||!/(?:^|[\/\\])node(?:\.exe)?$/.test(argv[0])||!argv.includes('--test')||argv.slice(1).some(arg=>arg!=='{files}'&&!arg.startsWith('-'))||argv.some(arg=>/^--test-(?:name-pattern|skip-pattern|only|force-exit)(?:=|$)/.test(arg)))throw new Error('assertion-evidence-unsupported');
     for(const candidate of [false,false,true,true]) {
@@ -187,6 +251,8 @@ export function validateRepair(root, candidatePath, options={}) {
       const result=copied(root,manifest.state.scope,temp=>{
         if(candidate)for(const file of manifest.files)fs.writeFileSync(regular(temp,file.path),fs.readFileSync(regular(directory,`files/${file.path}`)));
         const before=tree(temp,{deadline}),localConfig=readConfig(temp);
+        const opening=typecheckSettings?captureTypecheckInputs(temp,{timeoutMs:remaining()}):null;
+        if(typecheckSettings&&opening.complete!==true)throw Error('repair-TypeScript-opening-incomplete:'+(opening.errorCode||'unknown'));
         return withRepairEnvironment(localConfig,isolatedConfig=>{
         const discovery=discover(temp,{...isolatedConfig,discovery:'native',runnerTimeoutMs:remaining()});
         nativeFresh();
@@ -209,9 +275,15 @@ export function validateRepair(root, candidatePath, options={}) {
           (candidate?challengeCandidate:challengeBaseline).push(challenge);
           if(!challenge.accepted)throw Error(candidate?'independent-challenge-candidate-regression':'independent-challenge-baseline-not-passing');
         }
+        if(typecheckSettings){
+          const typed=verifyTypecheck(temp,{project:typecheckSettings.project,timeoutMs:Math.min(typecheckSettings.timeoutMs,remaining()),openingInputs:opening});
+          (candidate?typecheckCandidate:typecheckBaseline).push(typed);
+          if(!typecheckValid(typed,{candidate}))throw Error(candidate?'candidate-TypeScript-not-complete-green':'baseline-TypeScript-incomplete');
+          if(digest(typecheckProducerBinding)!==digest(typecheckProducers()))throw Error('repair-TypeScript-producer-drift');
+        }
         return report;
         });
-      });
+      },{typed:Boolean(typecheckSettings),deadline,dependencies:manifest.state.dependencies});
       if(tree(root,{dependencies:true,deadline}).fingerprint!==manifest.state.dependencies.fingerprint)throw new Error('native-execution-mutated-dependencies');
       if(digest(captureNativeRepairRuntime(root))!==digest(manifest.state.nativeRuntime))throw Error('native-execution-mutated-runtime');
       if(baseline.length===2&&digest(inventory(baseline[0]))!==digest(inventory(baseline[1])))throw new Error('baseline-case-outcomes-not-repeatable');
@@ -222,14 +294,16 @@ export function validateRepair(root, candidatePath, options={}) {
   }catch(error){reasons.push(error.message.slice(0,1000));}
   const challenges=manifest.challenges?.status==='configured'?assessRepairChallenges(challengeBaseline,challengeCandidate):{status:'not-configured',accepted:false,next:['Suite-only validation does not qualify production repair readiness; configure independent behavioral challenges.']};
   if(manifest.challenges?.status==='configured'&&!challenges.accepted)reasons.push(...challenges.reasons);
-  const result={schemaVersion:1,kind:'source-repair',accepted:!reasons.length&&baseline.length===2&&candidateRuns.length===2&&assertionRuns.length===2,reasons,manifestHash:hash,inputFingerprint:digest(manifest.state),baseline,candidateRuns,assertionRuns,challenges,qualification:challenges.accepted?'suite-and-independent-challenges':'original-suite-only',original:baseline[0]??null,candidate:candidateRuns[0]??null,durationMs:Math.round(performance.now()-started),bounds:{totalTimeoutMs:total,perNativeTimeoutMs:perRun,retainedReportBytes:MAX_REPORT,nativeTransportMaxBufferBytes:64*1024*1024},cost:null};
-  if(Buffer.byteLength(JSON.stringify(result,null,2))>MAX_REPORT-512){result.accepted=false;result.reasons.push('repair-total-evidence-output-budget-exceeded');result.baseline=[];result.candidateRuns=[];result.assertionRuns=[];result.challenges={status:'rejected',accepted:false,reasons:['repair-total-evidence-output-budget-exceeded']};result.original=null;result.candidate=null;}
+  const result={schemaVersion:1,kind:'source-repair',accepted:!reasons.length&&baseline.length===2&&candidateRuns.length===2&&assertionRuns.length===2,reasons,manifestHash:hash,inputFingerprint:digest(manifest.state),baseline,candidateRuns,assertionRuns,challenges,qualification:challenges.accepted?'suite-and-independent-challenges':'original-suite-only',original:baseline[0]??null,candidate:candidateRuns[0]??null,durationMs:Math.round(performance.now()-started),bounds:{totalTimeoutMs:total,perNativeTimeoutMs:perRun,retainedReportBytes:MAX_REPORT,nativeTransportMaxBufferBytes:64*1024*1024},cost:null,...(typecheckSettings?{typecheck:{schemaVersion:1,kind:'repair-typecheck',settings:typecheckSettings,producers:typecheckProducerBinding,dependencyFingerprint:manifest.state.dependencies.fingerprint,baseline:typecheckBaseline,candidate:typecheckCandidate,accepted:typecheckBaseline.length===2&&typecheckCandidate.length===2&&typecheckBaseline.every(run=>typecheckValid(run))&&typecheckCandidate.every(run=>typecheckValid(run,{candidate:true}))&&typedRepeatable(typecheckBaseline,typecheckCandidate)}}:{})};
+  if(typecheckSettings&&result.typecheck.accepted!==true){result.accepted=false;if(!result.reasons.includes('repair-TypeScript-repeatable-evidence-required'))result.reasons.push('repair-TypeScript-repeatable-evidence-required');}
+  if(Buffer.byteLength(JSON.stringify(result,null,2))>MAX_REPORT-512){result.accepted=false;result.reasons.push('repair-total-evidence-output-budget-exceeded');result.baseline=[];result.candidateRuns=[];result.assertionRuns=[];result.challenges={status:'rejected',accepted:false,reasons:['repair-total-evidence-output-budget-exceeded']};if(result.typecheck){result.typecheck.accepted=false;result.typecheck.baseline=[];result.typecheck.candidate=[];}result.original=null;result.candidate=null;}
   result.integrity=seal(root,result,{create:true});fs.writeFileSync(safePath(directory,'validation.json'),JSON.stringify(result,null,2));return result;
 }
 /** Apply only an accepted, fresh source repair. No tests or requirements are touched. */
 export function applyRepair(root,candidatePath) {
   const {directory,manifest,hash}=locate(root,candidatePath),receipt=readJson(regular(directory,'validation.json')),{integrity,...body}=receipt;
   if(integrity!==seal(root,body)||!receipt.accepted||receipt.kind!=='source-repair'||receipt.manifestHash!==hash||receipt.inputFingerprint!==digest(manifest.state)||receipt.baseline?.length!==2||receipt.candidateRuns?.length!==2||receipt.assertionRuns?.length!==2)throw new Error('Accepted intact repair validation required');
+  assertTypedReceipt(root,manifest,receipt);
   if(manifest.challenges?.status==='configured'&&!receipt.challenges?.accepted)throw Error('Accepted independent regression challenges required');
   if(manifest.challengeRuntime&&digest(captureChallengeRuntime())!==digest(manifest.challengeRuntime))throw Error('Repair challenge runtime changed before apply');
   assertFresh(manifest,state(root,performance.now()+30000));
@@ -249,6 +323,7 @@ export function verifyAppliedRepairValidation(root,candidatePath,{deadline=perfo
  if(!Number.isFinite(deadline)||deadline<=performance.now())throw Error('Repair publication freshness deadline exhausted');
  const {directory,manifest,hash}=locate(root,candidatePath),receipt=readJson(regular(directory,'validation.json')),{integrity,...body}=receipt;
  if(typeof integrity!=='string'||integrity!==seal(root,body)||receipt.kind!=='source-repair'||receipt.accepted!==true||receipt.manifestHash!==hash||receipt.inputFingerprint!==digest(manifest.state)||receipt.baseline?.length!==2||receipt.candidateRuns?.length!==2||receipt.assertionRuns?.length!==2)throw Error('Authenticated accepted repair validation required for publication');
+ assertTypedReceipt(root,manifest,receipt,{deadline});
  if(manifest.challenges?.status!=='configured'||receipt.challenges?.accepted!==true||!assessRepairChallenges(receipt.challenges.baseline,receipt.challenges.candidate).accepted)throw Error('Authenticated independent repair challenges required for publication');
  if(digest(captureRepairChallenges(root))!==digest(manifest.challenges)||digest(captureChallengeRuntime())!==digest(manifest.challengeRuntime))throw Error('Repair challenge oracle or runtime changed before publication');
  const source=applied=>manifest.sourcePaths.map(file=>({file,sha256:applied?(manifest.files.find(item=>item.path===file)?.hash??manifest.state.scope.files[file].hash):manifest.state.scope.files[file].hash,bytes:fs.statSync(regular(root,file)).size}));

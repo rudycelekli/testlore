@@ -4,6 +4,7 @@ export { audit, modules, inspectTest } from './audit.js';
 export { workOrder, generate } from './swarm.js';
 export { run, runUnifiedNative } from './runner.js';
 export {verifyBehavioralContracts} from './behavioral-contracts.js';
+export {verifyTypecheck} from './typecheck.js';
 export { discover, execute, resolveNative, adapterFor } from './execution.js';
 export { snapshot, freshness, runnerIdentity } from './provenance.js';
 export { ingestQuality, qualityEvidence, measureStability, captureRuntime, ingestRuntime } from './evidence.js';

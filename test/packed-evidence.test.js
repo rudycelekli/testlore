@@ -14,6 +14,11 @@ const evidence = {schemaVersion: 1, sha256: archive, version: '0.1.0', exactInpu
 const oneCommandProof='3'.repeat(64);evidence.oneCommand=oneCommandFixture({archive,manifest,producer:oneCommandProof,revision:identity});
 evidence.assessmentImports={verified:true,mode:'installed-cli-synthetic-report-import',liveEvaluation:false,providerCalls:0,archiveSha256:archive,installedManifestSha256:manifest,installedCliSha256:'1'.repeat(64),sourceRevision:identity,proofScriptSha256:proof,outcomes:[{id:'guardana',exitCode:0,outcome:'reported-clean'},{id:'ifixai',exitCode:2,outcome:'incomplete'},{id:'unsupported',exitCode:2,outcome:'incomplete'}],rawEvidence:['guardana','ifixai','unsupported'].flatMap(id=>['input.json','stdout.json','stderr.txt','process.json','receipt.json'].map(suffix=>({file:`${id}.${suffix}`,bytes:3,sha256:source})))};
 const context = {proofScriptSha256: proof, sourceManifestSha256: source,installedRepairProofSha256:repairProof,oneCommandProofSha256:oneCommandProof,assessmentImportProofSha256:proof};
+evidence.installedTypecheck={verified:true,productionInstalled:true,setupEnabled:true,providerCalls:0,archiveSha256:archive,installedCliSha256:'1'.repeat(64),compilerVersion:'6.0.3',outcomes:[
+ {id:'setup-fault',exitCode:1,nativeExitCode:0,status:'failed',complete:true,implementationCount:1,errorCodes:[2322],rawSha256:source},
+ {id:'healthy-shadow',exitCode:0,nativeExitCode:0,status:'passed',complete:true,implementationCount:1,errorCodes:[],rawSha256:source},
+ {id:'unsupported-no-check',exitCode:2,nativeExitCode:0,status:'incomplete',complete:false,implementationCount:0,errorCodes:[],rawSha256:source}
+],improvement:{status:'ready-for-review',verified:true,nativeCases:2,sha:'4'.repeat(40),sourceHead:'5'.repeat(40),originalCallerUnchanged:true,originalAssertionsUnchanged:true,physicalDependencies:true,rawSha256:source}};
 
 test('installed qualification requires explicit evidence for persisted shadow and generated Action identity', () => {
   assert.equal(packedEvidenceComplete(receipt, evidence, context), true);
@@ -22,6 +27,13 @@ test('installed qualification requires explicit evidence for persisted shadow an
   }
   assert.equal(packedEvidenceComplete({...receipt, qualified: 'true'}, evidence, context), false);
   for (const field of ['complete', 'detected']) for (const value of [undefined, false, 'true']) assert.equal(packedEvidenceComplete(receipt, {...evidence, nativeShadow: {...evidence.nativeShadow, [field]: value}}, context), false);
+});
+test('packed admission requires native-green/type-failed, healthy and incomplete installed controls',()=>{
+ for(const mutation of [undefined,{...evidence.installedTypecheck,verified:'true'},{...evidence.installedTypecheck,providerCalls:1},{...evidence.installedTypecheck,outcomes:[]},
+  {...evidence.installedTypecheck,outcomes:evidence.installedTypecheck.outcomes.map(row=>({...row,nativeExitCode:1}))},
+  {...evidence.installedTypecheck,outcomes:evidence.installedTypecheck.outcomes.map(row=>({...row,exitCode:0}))},
+  ...[undefined,{...evidence.installedTypecheck.improvement,verified:'true'},{...evidence.installedTypecheck.improvement,nativeCases:0},{...evidence.installedTypecheck.improvement,originalAssertionsUnchanged:false},{...evidence.installedTypecheck.improvement,sha:evidence.installedTypecheck.improvement.sourceHead}].map(improvement=>({...evidence.installedTypecheck,improvement}))])
+  assert.equal(packedEvidenceComplete(receipt,{...evidence,installedTypecheck:mutation},context),false);
 });
 
 test('installed qualification rejects lineage, manifest, fixture scope and proof producer drift', () => {

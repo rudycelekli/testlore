@@ -116,12 +116,16 @@ test('repeated cursors, changed counts and transport errors produce explicit inc
   });
 });
 
-test('API, time and byte ceilings retain partial public evidence without false completeness', async () => {
+test('API, time and byte ceilings retain partial public evidence without false completeness', async t => {
   const result = await collectPublicContributions({ ...config, maxCalls: 1, fetch: async () => page([pr(1)], 2, true, 'next') });
   assert.equal(result.coverage.complete, false); assert.equal(result.pullRequests.length, 1); assert.equal(result.coverage.apiCalls, 1);
   const tooLarge = await collectPublicContributions({ ...config, maxPersistedBytes: 1, fetch: async () => page([pr(1)]) });
   assert.equal(tooLarge.coverage.complete, false); assert.equal(tooLarge.sourceHashes.pages.length, 0);
-  const timed = await collectPublicContributions({ ...config, maxDurationMs: 1, fetch: async (_,__,bounds) => { assert.ok(bounds.timeoutMs <= 1); await new Promise(resolve => setTimeout(resolve, 10)); return page([pr(1)]); } });
+  // Freeze startup time, then consume the budget inside the actual fetch seam.
+  // A real one-millisecond clock can expire before any query starts, correctly
+  // yielding zero calls; scheduler speed must not determine this assertion.
+  t.mock.timers.enable({apis:['Date'],now:0});
+  const timed = await collectPublicContributions({ ...config, maxDurationMs: 1, fetch: async (_,__,bounds) => { assert.ok(bounds.timeoutMs <= 1); t.mock.timers.tick(10); return page([pr(1)]); } });
   assert.equal(timed.coverage.complete, false); assert.equal(timed.coverage.apiCalls, 1); assert.equal(timed.pullRequests.length, 0);
   assert.match(timed.coverage.limits[0], /wall-clock-budget/);
 });

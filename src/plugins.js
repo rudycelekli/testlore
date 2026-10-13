@@ -95,6 +95,14 @@ function executablePath(root, executable) {
   return candidates.find(candidate => { try { fs.accessSync(candidate, process.platform === 'win32' ? fs.constants.F_OK : fs.constants.X_OK); return fs.statSync(candidate).isFile(); } catch { return false; } }) || null;
 }
 function probe(root, id, entry) {
+  if(id==='typescript') {
+    try {
+      const manifest=safePath(root,'node_modules/typescript/package.json'),library=safePath(root,'node_modules/typescript/lib/typescript.js'),project=safePath(root,entry.project||'tsconfig.json');
+      if(fs.statSync(manifest).size>65536||fs.statSync(library).size>32*1024*1024||!fs.statSync(project).isFile()||fs.statSync(project).size>128*1024)throw Error('Unsupported compiler presence');
+      const metadata=JSON.parse(fs.readFileSync(manifest,'utf8'));if(metadata.name!=='typescript'||typeof metadata.version!=='string'||!fs.statSync(library).isFile())throw Error('Missing compiler');
+      return {available:true,installed:true,version:metadata.version,probe:'bounded-project-compiler-presence',measured:false,limitation:'Presence only. Run typecheck for actual diagnostics and unsupported-scope detection.'};
+    }catch{return {available:false,installed:false,probe:'bounded-project-compiler-presence',measured:false,error:'Project TypeScript compiler or declared tsconfig is missing, unsafe or unbounded.'};}
+  }
   if (ASSESSMENT_PLUGINS.includes(id)) {
     if (!entry.report) return { available: false, probe: 'local-assessment-report', measured: false, error: 'Configure a project-relative report path; this adapter never invokes an upstream executable.' };
     try {

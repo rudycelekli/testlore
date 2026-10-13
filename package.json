@@ -31,7 +31,8 @@
     "demo": "node src/cli.js demo",
     "benchmark": "node scripts/benchmark.js",
     "benchmark:public": "node scripts/public-benchmark.js",
-    "benchmark:defects": "node scripts/generated-defects.js"
+    "benchmark:defects": "node scripts/generated-defects.js",
+    "benchmark:types": "node scripts/type-detection-benchmark.js"
   },
   "dependencies": {
     "@modelcontextprotocol/server": "2.2.0",

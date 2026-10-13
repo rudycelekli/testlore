@@ -9,6 +9,29 @@ concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
 jobs:
+  type-detection:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - uses: actions/setup-node@v7.0.0
+        with:
+          node-version: '24'
+      - run: npm ci --ignore-scripts
+      - name: Reproduce observed type defects, retain unsupported scope, challenge evaluator
+        run: |
+          node scripts/type-detection-benchmark.js --output .tddswarm/ci-type-detection
+          node scripts/type-detection-benchmark.js --verify .tddswarm/ci-type-detection/summary.json
+          node scripts/type-detection-benchmark.js --challenge-evaluator .tddswarm/ci-type-detection/summary.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: type-detection-${{ github.event.pull_request.head.sha || github.sha }}
+          path: .tddswarm/ci-type-detection/
+          include-hidden-files: true
+          if-no-files-found: error
   gradia-evidence:
     runs-on: ubuntu-latest
     timeout-minutes: 5

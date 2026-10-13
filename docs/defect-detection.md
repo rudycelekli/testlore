@@ -67,6 +67,8 @@ Primary documentation inspected October 12, 2026. Descriptions below are upstrea
 
 TestLore should coordinate complementary oracles and preserve their evidence. Enabling a tool, retrieving a lesson, parsing an advisory report or listing an adapter does not establish that its detectors executed successfully. Unrun detector families remain unknown.
 
+The installed project-local TypeScript checker now participates in routine verification when enabled. Setup recommends it for a root TypeScript project. Five observed development defect pairs demonstrate native-green/type-failed behavior with healthy controls; the genuine TypeScript compiler detects the same defects. [Scope, failure handling and public reproduction](native-typecheck.md).
+
 ## Qualification and next detection gate
 
 The new evaluator controls intentionally use development fixtures. They demonstrate native-green/contract-failed behavior, empty selections, continuing independent cases, setup/fallback/cancellation, ignored/dependency drift, timeout/output rejection, and completed asynchronous assertions. They do not demonstrate new upstream defects or out-of-sample model quality.

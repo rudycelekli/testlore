@@ -9,6 +9,8 @@ import {stageRepair,validateRepair,applyRepair,isRepairSourcePath,captureRepairS
 import {proposeRepair} from './repair-swarm.js';
 import {withRepairEnvironment} from './repair-environment.js';
 import {captureRepairChallenges,runRepairChallenges,captureChallengeRuntime} from './repair-challenges.js';
+import {captureTypecheckInputs,verifyTypecheck} from './typecheck.js';
+import {persistResultReceipt} from './result-receipt.js';
 
 function changes(root){
  const entries=git(root,['status','--porcelain=v1','-z','--untracked-files=all']).split('\0').filter(Boolean),result=[];
@@ -20,7 +22,9 @@ const clean=(root,prefix)=>changes(root).filter(row=>!metadata(row,prefix));
 const inputs=root=>digest(Object.fromEntries(listFiles(root).map(file=>[file,digest(fs.readFileSync(safePath(root,file)))])));
 export function repairFullSuite(root,{timeoutMs=120000}={}){
  const deadline=performance.now()+boundInteger(timeoutMs,120000,120000,'timeoutMs');
- return withRepairEnvironment(readConfig(root),config=>{
+ const declared=readConfig(root),settings=declared.plugins?.typescript;
+ const opening=settings?.enabled===true?captureTypecheckInputs(root,{timeoutMs:Math.max(1,Math.floor(deadline-performance.now()))}):undefined;
+ const native=withRepairEnvironment(declared,config=>{
   const remaining=()=>Math.floor(deadline-performance.now());
   if(remaining()<1)return {exitCode:2,complete:false,tests:[],error:'Full native phase deadline exhausted before discovery'};
   const discovery=discover(root,{...config,runnerTimeoutMs:remaining(),discovery:Array.isArray(config.discovery)?config.discovery:'native'});
@@ -28,6 +32,13 @@ export function repairFullSuite(root,{timeoutMs=120000}={}){
   if(remaining()<1)return {exitCode:2,complete:false,tests:[],discovery,error:'Full native phase deadline exhausted after discovery'};
   return {...execute(root,discovery.files,config,{capture:true,timeoutMs:remaining()}),discovery,credentialPolicy:'fresh-native-home-and-masked-auth-environment'};
  });
+ return settings?.enabled===true?closeRepairTypecheck(root,native,settings,opening,Math.max(1,Math.floor(deadline-performance.now()))):native;
+}
+function closeRepairTypecheck(root,native,settings,opening,timeoutMs){
+ const typecheck=verifyTypecheck(root,{project:settings.project||'tsconfig.json',timeoutMs:Math.min(settings.timeoutMs||30000,timeoutMs),openingInputs:opening});
+ return {...native,nativeExitCode:native.nativeExitCode??native.exitCode,nativeComplete:native.nativeComplete??native.complete,typecheck,
+  complete:(native.nativeComplete??native.complete)===true&&typecheck.complete===true,
+  exitCode:typecheck.exitCode===2||native.exitCode===2?2:typecheck.exitCode===1?1:native.exitCode};
 }
 const inventory=tests=>tests.map(test=>JSON.stringify([test.file,test.name,test.project||null,test.status])).sort();
 function boundInteger(value,fallback,max,label){const number=value??fallback;if(!Number.isSafeInteger(number)||number<1||number>max)throw new Error(`${label} must be an integer from 1 to ${max}`);return number;}
@@ -80,7 +91,7 @@ export async function repair(root,options={}){
  let baseBranch=null;try{baseBranch=git(repository,['symbolic-ref','--short','HEAD']).trim();}catch{}
  const id=randomUUID(),branch=`tddswarm/repair-${id}`,worktreeRoot=fs.mkdtempSync(path.join(os.tmpdir(),'testlore-repair-')),worktree=prefix?path.join(worktreeRoot,prefix):worktreeRoot;
  const result={schemaVersion:1,kind:'source-repair',id,branch,worktreeRoot,worktree,originalCheckout:root,sourceHead:base,base,baseBranch,sha:null,status:'preparing',published:false,merged:false,budget:{deadlineMs,timeoutMs,maxTasks:3,maxFiles:3,maxPatchBytes:65536,maxRounds:1},sourcePaths};
- const receipt=()=>{const directory=safePath(worktree,'.tddswarm/repair');fs.mkdirSync(directory,{recursive:true});result.receipt=path.join(directory,'result.json');fs.writeFileSync(result.receipt,JSON.stringify(result,null,2));return result;};
+ const receipt=()=>persistResultReceipt(worktree,result,'.tddswarm/repair/result.json');
  try{
   git(repository,['worktree','add','-b',branch,worktreeRoot,base]);
   if(originalContribution){
@@ -93,7 +104,10 @@ export async function repair(root,options={}){
    branchContributionBinding=contributionState(worktree).binding;
    result.contributionKnowledge={advisoryOnly:true,callerIndex:originalContribution.binding,branchIndex:branchContributionBinding,branchCopied:originalContribution.bytes!==null};assertContributionFresh();
   }
-  const dependencies=path.join(root,'node_modules');if(fs.existsSync(dependencies)&&!fs.existsSync(path.join(worktree,'node_modules')))fs.symlinkSync(fs.realpathSync(dependencies),path.join(worktree,'node_modules'),'dir');
+  const dependencies=path.join(root,'node_modules');if(fs.existsSync(dependencies)&&!fs.existsSync(path.join(worktree,'node_modules'))){
+   if(config.plugins?.typescript?.enabled===true)fs.cpSync(fs.realpathSync(dependencies),path.join(worktree,'node_modules'),{recursive:true,verbatimSymlinks:true});
+   else fs.symlinkSync(fs.realpathSync(dependencies),path.join(worktree,'node_modules'),'dir');
+  }
   if(!freshness(before,snapshot(worktree,readConfig(worktree))).fresh)throw new Error('Repair branch inputs differ from caller inputs');
   const branchState=captureRepairState(worktree,{deadline:performance.now()+remaining()});
   if(branchState.scope.fingerprint!==originalState.scope.fingerprint||branchState.dependencies.fingerprint!==originalState.dependencies.fingerprint||digest(branchState.nativeRuntime)!==digest(originalState.nativeRuntime))throw new Error('Repair branch does not contain the caller’s exact runtime inputs, including ignored files');
@@ -122,6 +136,7 @@ export async function repair(root,options={}){
   if(!result.validation.accepted||result.validation.challenges?.accepted!==true){result.status=result.validation.reasons.some(reason=>reason==='independent-challenge-candidate-regression')?'regression-challenge-rejected':'validation-rejected';result.next=result.validation.challenges?.next??['Inspect retained native validation reasons.'];return receipt();}
   result.application=applyRepair(worktree,staged.candidatePath);
   const tested=snapshot(worktree,readConfig(worktree)),testedInputs=inputs(worktreeRoot),testedState=captureRepairState(worktree,{deadline:performance.now()+remaining()});
+  const finalTypecheckOpening=config.plugins?.typescript?.enabled===true?captureTypecheckInputs(worktree,{timeoutMs:Math.min(timeoutMs,remaining())}):undefined;
   result.fullRun=repairFullSuite(worktree,{timeoutMs:Math.min(timeoutMs,remaining())});assertContributionFresh();
   const final=result.fullRun,expected=result.validation.candidate?.tests;
   if(!final.complete||final.exitCode!==0||!final.tests.some(test=>test.status==='passed')||!expected||JSON.stringify(inventory(expected))!==JSON.stringify(inventory(final.tests))){result.status='full-run-failed';result.error='Final native execution must preserve the validated case identities and pass/skip outcomes';result.next=['Inspect final native evidence for missing, failed or newly skipped assertions.','Resolve unstable outcomes before starting another bounded repair round.'];return receipt();}
@@ -129,6 +144,10 @@ export async function repair(root,options={}){
    const current=captureRepairState(worktree,{deadline});if(current.scope.fingerprint!==testedState.scope.fingerprint||current.dependencies.fingerprint!==testedState.dependencies.fingerprint||digest(current.nativeRuntime)!==digest(testedState.nativeRuntime))throw Error('repair-final-challenge-input-drift');assertContributionFresh();
   }});
   if(!result.finalChallenges.accepted){result.status='regression-challenge-rejected';result.next=['Inspect the retained final challenge failure; no repair commit or PR was produced.'];return receipt();}
+  if(config.plugins?.typescript?.enabled===true){
+   result.fullRun=closeRepairTypecheck(worktree,result.fullRun,config.plugins.typescript,finalTypecheckOpening,Math.min(timeoutMs,remaining()));
+   if(!result.fullRun.complete||result.fullRun.exitCode!==0){result.status='final-typecheck-rejected';result.next=['Resolve the final compiler diagnostic or input drift; no repair commit or PR was produced.'];return receipt();}
+  }
   const afterRun=captureRepairState(worktree,{deadline:performance.now()+remaining()}),callerState=captureRepairState(root,{deadline:performance.now()+remaining()});
   if(inputs(worktreeRoot)!==testedInputs||!freshness(tested,snapshot(worktree,readConfig(worktree))).fresh||afterRun.scope.fingerprint!==testedState.scope.fingerprint||afterRun.dependencies.fingerprint!==testedState.dependencies.fingerprint||digest(afterRun.nativeRuntime)!==digest(testedState.nativeRuntime))throw new Error('Repository or dependencies changed during final repair validation');
   if(git(repository,['rev-parse','HEAD']).trim()!==base||clean(repository,prefix).length||!freshness(before,snapshot(root,readConfig(root))).fresh||callerState.scope.fingerprint!==originalState.scope.fingerprint||callerState.dependencies.fingerprint!==originalState.dependencies.fingerprint||digest(callerState.nativeRuntime)!==digest(originalState.nativeRuntime))throw new Error('Original checkout changed during repair');
