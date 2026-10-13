@@ -36,6 +36,8 @@ TestLore brings **test creation, intelligent routing and reviewed learning** int
 
 [How TestLore complements Agentic QE →](docs/agentic-qe-comparison.md) · [Fresh project routing and controlled replay →](docs/project-aware-routing.md) · [Qualified omissions and repair vetoes, including timing losses →](docs/qualified-routing-repair-gates.md)
 
+**Go beyond a green suite:** explicitly configured independent behavioral challenges also run during routine verification—even when no native tests are selected. Reports separate native outcomes, additional failures and incomplete checks. [Configure behavioral checks and compare detector coverage →](docs/defect-detection.md)
+
 | Your starting point | What TestLore does |
 | --- | --- |
 | **No tests yet** | An architect, bounded author team, and independent reviewer propose runnable tests from your behavioral requirements. |

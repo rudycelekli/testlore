@@ -92,8 +92,21 @@ export function summarizeFirstRun(input = {}) {
    Boolean(report.signal) || Boolean(report.error) || (report.reportErrors!==undefined && (!Array.isArray(report.reportErrors)||report.reportErrors.length>0)) ||
    (!delegated && (filesWithoutNamedOutcomes.length>0 || caseFilesOutsideExecuted.length>0)) ||
    (!delegated && missingRequested.length>0) || (!delegated && observedNamedCases.length===0);
- const verdict=incomplete?'incomplete':omittedFailures.length?'omitted-failures-observed':(report.exitCode!==0||failures.length)?'failed':delegated?'native-result-reported':'passed-in-observed-scope';
- const nextAction=verdict==='incomplete'&&report.executed!==true&&!delegated&&declaredTotal===0&&selection.discovery?.complete!==false?
+ const contracts=object(report.contracts),contractsRequested=report.contracts!==undefined;
+ const contractRows=array(contracts.runs),emptyHash='e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855';
+ const contractShape=Array.isArray(contracts.runs)&&contractRows.length>0&&contractRows.length<=32&&new Set(contractRows.map(row=>row?.id)).size===contractRows.length&&
+  new Set(contractRows.map(row=>row?.script)).size===contractRows.length&&contractRows.every(row=>
+   typeof row?.id==='string'&&/^[-a-zA-Z0-9_.]{1,100}$/.test(row.id)&&typeof row.script==='string'&&row.script.endsWith('.cjs')&&!row.script.includes('\\')&&row.script.split('/').every(part=>part&&part!=='.'&&part!=='..'&&!part.startsWith('.'))&&
+   row.signal===null&&row.errorCode===null&&row.stderrSha256===emptyHash&&/^[a-f0-9]{64}$/.test(row.scriptSha256||'')&&/^[a-f0-9]{64}$/.test(row.stdoutSha256||'')&&
+   row.observed?.id===row.id&&Number.isSafeInteger(row.observed.assertions)&&row.observed.assertions>0&&row.observed.assertions<=100000&&
+   ((row.passed===true&&row.exitCode===0&&row.observed.status==='passed')||(row.passed===false&&row.exitCode===1&&row.observed.status==='failed')));
+ const contractPassed=contractShape&&contracts.status==='passed'&&contracts.complete===true&&contracts.exitCode===0&&Array.isArray(contracts.reasons)&&contracts.reasons.length===0&&contractRows.every(row=>row.passed);
+ const contractFailed=contractShape&&contracts.status==='failed'&&contracts.complete===true&&contracts.exitCode===1&&Array.isArray(contracts.reasons)&&contracts.reasons.length>0&&contracts.reasons.every(reason=>typeof reason==='string'&&contractRows.some(row=>!row.passed&&reason===`repair-challenge-failed:${row.id}`))&&contractRows.some(row=>!row.passed);
+ const contractIncomplete=contractsRequested&&!contractPassed&&!contractFailed;
+ const verdict=incomplete||contractIncomplete?'incomplete':omittedFailures.length?'omitted-failures-observed':(report.exitCode!==0||failures.length||contractFailed)?'failed':delegated?'native-result-reported':'passed-in-observed-scope';
+ const nextAction=contractIncomplete?'Inspect incomplete behavioral contract evidence, preserve its independent assertions, and rerun verification. Native case outcomes remain separate.':
+   contractFailed?'Inspect the named behavioral challenge failures, even when native tests passed. Repair independently established defects and preserve the challenge assertions.':
+   verdict==='incomplete'&&report.executed!==true&&!delegated&&declaredTotal===0&&selection.discovery?.complete!==false?
    'No native test files were discovered. Run testlore doctor --json to confirm your runner; if the project has no tests, add independent behavioral requirements in tddswarm.requirements.md before requesting generation.':
    verdict==='incomplete'?nextVerificationAction({executed:false}):
    verdict==='omitted-failures-observed'?nextVerificationAction({...report,comparison:{omittedFailures}}):
@@ -110,7 +123,12 @@ export function summarizeFirstRun(input = {}) {
  const fallback=fallbackCauses(selection);
  const timing=object(report.timings),validTiming=value=>typeof value==='number'&&Number.isFinite(value)&&value>=0?value:null;
  return {
-   schemaVersion:1,advisory:true,verdict,complete:!incomplete,delegated,
+   schemaVersion:1,advisory:true,verdict,complete:!incomplete&&!contractIncomplete,delegated,
+   behavioralContracts:{requested:contractsRequested,status:contractsRequested?contractPassed?'passed':contractFailed?'failed':'incomplete':'not-configured',
+    nativeExitCode:contractsRequested?(Number.isInteger(report.nativeExitCode)?report.nativeExitCode:null):report.exitCode,
+    observed:array(contracts.runs).length,failed:array(contracts.runs).filter(row=>row?.passed===false).slice(0,32).map(row=>({id:label(row.id),script:label(row.script)})),
+    durationMs:typeof contracts.durationMs==='number'&&Number.isFinite(contracts.durationMs)?contracts.durationMs:null,
+    scope:'Declared Node behavioral oracles only; unconfigured fuzzing, security, type, browser and service checks are not established.'},
    nativeExecution:delegated?{adapter:label(report.adapter||selection.adapter),mode:label(selection.mode||'native'),targetCount:Array.isArray(selection.targets)?selection.targets.length:null}:null,
    displayLimits:{maxLabelCharacters:512,maxFailures:10,maxOmittedFailures:10,maxSlowCases:5,maxCauseFileExamples:5},
    labelsTruncated:[...failures,...omittedFailures,...timed].some(entry=>[entry.id,entry.file,entry.name].some(value=>typeof value==='string'&&value.length>512)),
@@ -149,6 +167,10 @@ export function renderFirstRunSummary(report = {}) {
  }
  if(summary.failedCases.length)text.push('');
  for(const failure of summary.failedCases)text.push(`- Failed: ${escape(failure.file)} — ${escape(failure.name)} (identity: ${escape(failure.id)}).`);
+ const behavioral=summary.behavioralContracts;
+ text.push('',`Additional behavioral challenges: ${escape(behavioral.status)}; ${behavioral.observed} observed. ${escape(behavioral.scope)}`);
+ if(behavioral.requested)text.push(`Native runner exit: ${behavioral.nativeExitCode??'unknown'}. Overall exit: ${Number.isInteger(report.exitCode)?report.exitCode:'unknown'}. Contract span: ${behavioral.durationMs===null?'unknown':behavioral.durationMs+' ms'}.`);
+ for(const failure of behavioral.failed)text.push(`- Behavioral check did not pass: ${escape(failure.id)} (${escape(failure.script)}). Preserve its assertions; inspect the JSON receipt.`);
  if(summary.failedCasesTruncated)text.push(`Showing ${summary.failedCases.length}/${summary.failedCaseCount} failures; remaining identities are in the JSON receipt.`);
  if(summary.omittedFailureCount)text.push('',`Shadow detected ${summary.omittedFailureCount} failing case records that the proposed selection would omit. Keep shadow mode enabled.`,'');
  for(const failure of summary.omittedFailures)text.push(`- Proposed omission failure: ${escape(failure.file||'file unavailable')} — ${escape(failure.name||'name unavailable')} (identity: ${escape(failure.id||'unavailable')}).`);
@@ -193,7 +215,8 @@ export function renderRunReport(input = {}) {
    if(report.error)rows.push('',`Execution issue: ${escape(report.error)}`);
    rows.push('','Omitted targets and their dependency decisions are owned by the native engine; inspect the JSON command and native report. This report makes no individual-case safety claim.','',`Next action: ${firstSummary.nextAction}`);return renderFirstRunSummary(report)+'\n'+rows.join('\n')+'\n';
  }
- const unverified=report.actualExecutedFilesUnverified===true||!firstSummary.complete;
+ const nativeSummary=report.contracts===undefined?firstSummary:summarizeFirstRun({...report,exitCode:report.nativeExitCode,contracts:undefined});
+ const unverified=report.actualExecutedFilesUnverified===true||!nativeSummary.complete;
  const fileEvidence=executionFileEvidence(unverified?{...report,actualExecutedFilesUnverified:true}:report);
  const ran = new Set(fileEvidence.executedFiles),requested=new Set(fileEvidence.requestedFiles);
  const proposed = new Set(strings(selection.selected));

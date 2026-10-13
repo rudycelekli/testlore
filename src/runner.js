@@ -11,6 +11,7 @@ import { externalRun } from './integrations.js';
 import { captureVitestWorkspaceRoot } from './native-workspace-root.js';
 import { captureNativeVitestCases } from './native-vitest-cases.js';
 import {captureReaObservation} from './rea-observation.js';
+import {supplementWithBehavioralContracts} from './behavioral-contracts.js';
 
 export function compareShadow(selection, execution) {
   const proposed = new Set(selection.selected);
@@ -36,7 +37,7 @@ export function compareSubsetCases(full, subset, files) {
 
 export function run(root,options={}) {
  const prepared=prepareRun(root,options);
- if(prepared.terminal)return prepared.terminal;
+ if(prepared.terminal)return finishTerminal(root,prepared.terminal);
  return finishRun(prepared,execute(root,prepared.executedTests,prepared.config,prepared.options));
 }
 
@@ -45,12 +46,12 @@ export async function runUnifiedNative(root,options={}) {
  root=path.resolve(root);const started=performance.now(),config=readConfig(root);
  if(options.changed)throw new Error('--changed is diagnostic only. Unified execution requires Git change discovery.');
  if(options.shadow&&options.selective)throw new Error('Choose shadow or selective execution');
- if(options.signal?.aborted)return {exitCode:2,executed:false,complete:false,error:'Unified execution cancelled'};
- if(config.reaObservation!==undefined)try{captureReaObservation(root,config,config.runner||[]);if(options.selective)throw Error('REA observation is shadow-only; selective execution is not admitted');}catch(error){return {exitCode:2,executed:false,complete:false,tests:[],requestedFiles:[],error:error.message,unifiedNative:{prototype:true,used:false,reason:'Explicit REA shadow observation rejected before native startup'}};}
+ if(options.signal?.aborted)return declineContracts(config,{exitCode:2,executed:false,complete:false,error:'Unified execution cancelled'});
+ if(config.reaObservation!==undefined)try{captureReaObservation(root,config,config.runner||[]);if(options.selective)throw Error('REA observation is shadow-only; selective execution is not admitted');}catch(error){return declineContracts(config,{exitCode:2,executed:false,complete:false,tests:[],requestedFiles:[],error:error.message,unifiedNative:{prototype:true,used:false,reason:'Explicit REA shadow observation rejected before native startup'}});}
  // An explicit workspace profile cannot escape rejection through legacy fallback.
- if(adapterFor(config)==='vitest')try{captureVitestWorkspaceRoot(root,config.runner||[],{nativeCwd:config.nativeCwd});captureNativeVitestCases(root,config,config.runner||[]);}catch(error){return {exitCode:2,executed:false,complete:false,tests:[],requestedFiles:[],error:error.message,unifiedNative:{prototype:true,used:false,reason:'Explicit workspace/case profile rejected before native startup'}};}
+ if(adapterFor(config)==='vitest')try{captureVitestWorkspaceRoot(root,config.runner||[],{nativeCwd:config.nativeCwd});captureNativeVitestCases(root,config,config.runner||[]);}catch(error){return declineContracts(config,{exitCode:2,executed:false,complete:false,tests:[],requestedFiles:[],error:error.message,unifiedNative:{prototype:true,used:false,reason:'Explicit workspace/case profile rejected before native startup'}});}
  const unsupported=unifiedNativeEligibility(root,config);
- if(unsupported){if(config.nativeCwd!==undefined)return {exitCode:2,executed:false,complete:false,tests:[],requestedFiles:[],error:'Explicit native cwd cannot use legacy fallback: '+unsupported,unifiedNative:{prototype:true,used:false,fallbackReason:unsupported}};const result=run(root,options);return {...result,unifiedNative:{prototype:true,used:false,fallbackReason:unsupported}};}
+ if(unsupported){if(config.nativeCwd!==undefined)return declineContracts(config,{exitCode:2,executed:false,complete:false,tests:[],requestedFiles:[],error:'Explicit native cwd cannot use legacy fallback: '+unsupported,unifiedNative:{prototype:true,used:false,fallbackReason:unsupported}});const result=run(root,options);return {...result,unifiedNative:{prototype:true,used:false,fallbackReason:unsupported}};}
  const initial=snapshot(root,config);let session,prepared,executionAttempted=false;
  try {
   session=await openNativeSession(root,config,options,{root,configurationDigest:digest(config),files:Object.keys(initial.files)});
@@ -59,15 +60,19 @@ export async function runUnifiedNative(root,options={}) {
   const startupCheck=freshness(initial,startupCurrent);
   if(!startupCheck.fresh)throw new Error('Inputs changed during native context startup: '+startupCheck.reasons.join(', '));
   prepared=prepareRun(root,options,session.token,started,{root,configurationDigest:digest(config),provenance:startupCurrent});
-  if(prepared.terminal)return {...prepared.terminal,unifiedNative:{prototype:true,used:true,contexts:1}};
+  if(prepared.terminal)return finishTerminal(root,{...prepared.terminal,unifiedNative:{prototype:true,used:true,contexts:1}});
   executionAttempted=true;
   const execution=await session.execute(prepared.executedTests);
   if(!options.capture){if(execution.stdout)process.stdout.write(execution.stdout);if(execution.stderr)process.stderr.write(execution.stderr);}
   return finishRun(prepared,execution);
  } catch(error) {
   if(prepared&&executionAttempted)return finishRun(prepared,{adapter:'vitest',exitCode:2,complete:false,tests:[],collectionFiles:[],requestedFiles:prepared.executedTests,executedFiles:prepared.executedTests,actualExecutedFilesUnverified:true,durationMs:Math.round(performance.now()-started-prepared.planningMs),...session?.failureEvidence?.(),error:error.message,unifiedNative:{prototype:true,used:true,contexts:1,partial:true}});
-  return {exitCode:2,executed:executionAttempted,complete:false,tests:[],requestedFiles:prepared?.executedTests||[],...(prepared?{plan:prepared.selection}:{}),...session?.failureEvidence?.(),...error.nativeFailureEvidence,error:error.message,unifiedNative:{prototype:true,used:true,reason:'Unified context rejected; no automatic replan after configuration execution'}};
+  return declineContracts(config,{exitCode:2,executed:executionAttempted,complete:false,tests:[],requestedFiles:prepared?.executedTests||[],...(prepared?{plan:prepared.selection}:{}),...session?.failureEvidence?.(),...error.nativeFailureEvidence,error:error.message,unifiedNative:{prototype:true,used:true,reason:'Unified context rejected; no automatic replan after configuration execution'}});
  } finally {await session?.close?.();}
+}
+function declineContracts(config,report) {
+ return config.repair?.challenges===undefined?report:{...report,nativeExitCode:report.exitCode,nativeComplete:report.complete,
+  contracts:{schemaVersion:1,status:'incomplete',complete:false,exitCode:2,runs:[],reasons:['native-startup-rejected-contracts-not-run']}};
 }
 
 function prepareRun(root, options = {}, nativeSession, started = performance.now(), startupPhase) {
@@ -130,8 +135,19 @@ function finishRun({root,options,config,selection,before,serviceBefore,executedT
   // report sealing cannot include its own write; pilots measure an outer span.
   report.timings={planningMs,executionMs:execution.durationMs||0,totalMs:Math.round(performance.now()-started),finalReportSealingExcluded:true};
   report.timings.otherMs=Math.max(0,report.timings.totalMs-planningMs-report.timings.executionMs);
-  report.summary=summarizeFirstRun(report);
-  fs.writeFileSync(path.join(directory, 'last-run.md'), renderRunReport(report));
-  fs.writeFileSync(path.join(directory, 'last-run.json'), JSON.stringify(report, null, 2));
-  return report;
+  const combined=supplementWithBehavioralContracts(root,report);
+  combined.summary=summarizeFirstRun(combined);
+  fs.writeFileSync(path.join(directory, 'last-run.md'), renderRunReport(combined));
+  fs.writeFileSync(path.join(directory, 'last-run.json'), JSON.stringify(combined, null, 2));
+  return combined;
+}
+function finishTerminal(root,report) {
+ const combined=supplementWithBehavioralContracts(root,report);
+ if(combined.contracts){
+  const directory=safePath(root,'.tddswarm');fs.mkdirSync(directory,{recursive:true});
+  combined.summary=summarizeFirstRun(combined);
+  fs.writeFileSync(path.join(directory,'last-run.md'),renderRunReport(combined));
+  fs.writeFileSync(path.join(directory,'last-run.json'),JSON.stringify(combined,null,2));
+ }
+ return combined;
 }

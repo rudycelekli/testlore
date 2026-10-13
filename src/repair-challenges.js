@@ -59,11 +59,11 @@ export function captureNativeRepairRuntime(root,config=readConfig(root)) {
 /** One fresh native execution per case. Caller binds the complete project and
  * installed dependency tree before/after; this runner also binds scripts,
  * source files and actual executable/preload bytes at every invocation. */
-export function runRepairChallenges(root,definition,{sourcePaths,runtime=captureChallengeRuntime(),timeoutMs=20000,deadline=performance.now()+120000,assertFresh=()=>{}}={}) {
+export function runRepairChallenges(root,definition,{sourcePaths,runtime=captureChallengeRuntime(),timeoutMs=20000,deadline=performance.now()+120000,assertFresh=()=>{},continueOnFailure=false}={}) {
  const started=performance.now(),runs=[],reasons=[];
  const result=()=>({schemaVersion:1,status:reasons.length?'rejected':'passed',accepted:!reasons.length&&runs.length===definition.cases.length,identity:definition.identity,runtime,source:sourcePaths.map(file=>({file,...binding(safePath(root,file),65536)})),runs,reasons,durationMs:Math.round(performance.now()-started)});
  if(definition.status!=='configured'||!Array.isArray(sourcePaths)||!sourcePaths.length)throw Error('repair-challenge-configured-source-required');
- if(!Number.isSafeInteger(timeoutMs)||timeoutMs<1||timeoutMs>120000||!Number.isFinite(deadline)||typeof assertFresh!=='function')throw Error('repair-challenge-budget-invalid');
+ if(!Number.isSafeInteger(timeoutMs)||timeoutMs<1||timeoutMs>120000||!Number.isFinite(deadline)||typeof assertFresh!=='function'||typeof continueOnFailure!=='boolean')throw Error('repair-challenge-budget-invalid');
  const expectedSources=sourcePaths.map(file=>({file,...binding(safePath(root,file),65536)}));
  const fresh=()=>{
   if(digest(captureRepairChallenges(root))!==digest(definition))throw Error('repair-challenge-oracle-drift');
@@ -84,7 +84,7 @@ export function runRepairChallenges(root,definition,{sourcePaths,runtime=capture
    let observed=null;try{const value=JSON.parse(native.stdout.trim());if(value&&typeof value==='object'&&!Array.isArray(value)&&Object.keys(value).every(key=>['id','status','assertions','error'].includes(key))&&typeof value.id==='string'&&value.id.length<=100&&['passed','failed'].includes(value.status)&&Number.isSafeInteger(value.assertions)&&value.assertions>=0&&value.assertions<=100000&&(!value.error||typeof value.error.name==='string'&&value.error.name.length<=80&&Object.keys(value.error).length===1))observed=value;}catch{}
    const passed=!native.error&&!native.signal&&native.status===0&&!native.stderr&&observed?.id===item.id&&observed.status==='passed'&&Number.isSafeInteger(observed.assertions)&&observed.assertions>0&&observed.assertions<=100000;
    runs.push({id:item.id,script:item.script,scriptSha256:item.sha256,exitCode:native.status,signal:native.signal||null,errorCode:native.error?.code||null,observed,stdoutSha256:digest(native.stdout||''),stderrSha256:digest(native.stderr||''),outputBytes:Buffer.byteLength(native.stdout||'')+Buffer.byteLength(native.stderr||''),passed});
-   fresh();if(!passed)throw Error(`repair-challenge-failed:${item.id}`);
+   fresh();if(!passed){if(!continueOnFailure)throw Error(`repair-challenge-failed:${item.id}`);reasons.push(`repair-challenge-failed:${item.id}`);}
   }
  }catch(error){reasons.push(String(error.message).slice(0,500));}
  return result();
