@@ -34,7 +34,7 @@ for(const link of ['symbolic','hard'])test(`actual repaired native test cannot c
  const fixed='export const a=1;',result=await repair(root,{patch:{files:[{path:'src/a.js',content:fixed}],review:{accepted:true,findings:[],oracle:{independent:true,basis:[requirements]}}},sourcePaths:['src/a.js'],deadlineMs:60000});cleanWorktree(t,root,result);
  assert.equal(result.status,'receipt-failed',JSON.stringify(result));assert.equal(result.validation.accepted,true);assert.equal(result.fullRun.exitCode,0);assert.ok(result.sha);assert.equal(result.receipt,null);assert.equal(result.published,false);
  assert.equal(fs.readFileSync(path.join(result.worktree,'src/a.js'),'utf8'),fixed);assert.equal(fs.readFileSync(path.join(root,'src/a.js'),'utf8'),'export const a=9;');
- const repeat=spawnSync(process.execPath,['--test','test/a.test.js','test/b.test.js'],{cwd:result.worktree,encoding:'utf8',env:nativeEnv(),timeout:10000});assert.equal(repeat.status,0,repeat.stderr+repeat.stdout);assert.match(repeat.stdout,/# tests 2/);
+ const repeat=spawnSync(process.execPath,['--test','--test-reporter=tap','test/a.test.js','test/b.test.js'],{cwd:result.worktree,encoding:'utf8',env:nativeEnv(),timeout:10000});assert.equal(repeat.status,0,repeat.stderr+repeat.stdout);assert.match(repeat.stdout,/# tests 2/);
 });
 test('actual CLI retains verified local PR metadata while refusing a late service-probe receipt alias',t=>{
  const original='/** @type {number} */ export const value=42;';
@@ -49,6 +49,6 @@ test('actual CLI retains verified local PR metadata while refusing a late servic
  assert.equal(response.status,2,response.stderr+response.stdout);const result=JSON.parse(response.stdout);cleanWorktree(t,root,result);
  assert.equal(result.status,'receipt-failed',JSON.stringify(result));assert.equal(result.published,true,result.publicationError||result.receiptError);assert.equal(result.pullRequest,'https://github.com/type-proof/project/pull/123');assert.equal(result.pullRequestVerification.headRefOid,result.sha);assert.equal(result.receipt,null);assert.equal(result.fullRun.typecheck.status,'passed');assert.equal(fs.readFileSync(path.join(result.worktree,'src/value.js'),'utf8'),original);assert.equal(fs.readFileSync(path.join(root,'src/value.js'),'utf8'),original);assert.ok(fs.existsSync(path.join(result.worktree,'.tddswarm/alias-observed')));
  assert.equal(git(bare,'rev-parse',`refs/heads/${result.branch}`).trim(),result.sha);
- const repeat=spawnSync(process.execPath,['--test','test/value.test.js','test/boundary.test.js'],{cwd:result.worktree,encoding:'utf8',timeout:10000,env:nativeEnv()});assert.equal(repeat.status,0,repeat.stderr+repeat.stdout);assert.match(repeat.stdout,/# tests 2/);
+ const repeat=spawnSync(process.execPath,['--test','--test-reporter=tap','test/value.test.js','test/boundary.test.js'],{cwd:result.worktree,encoding:'utf8',timeout:10000,env:nativeEnv()});assert.equal(repeat.status,0,repeat.stderr+repeat.stdout);assert.match(repeat.stdout,/# tests 2/);
  // Real local Git, Node and SDK; deterministic gh only, no external publication.
 });
