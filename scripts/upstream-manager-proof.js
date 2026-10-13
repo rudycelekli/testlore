@@ -13,7 +13,7 @@ import {installUpstreamCandidate,verifyUpstreamInstallation} from './public-corp
 
 const save=(file,value)=>fs.writeFileSync(file,JSON.stringify(value,null,2)+'\n',{flag:'wx',mode:0o600});
 export async function proveUpstreamManagers(directory){
- directory=path.resolve(directory);fs.mkdirSync(directory,{mode:0o700});const scratch=fs.mkdtempSync(path.join(os.tmpdir(),'testlore-manager-proof-'));fs.chmodSync(scratch,0o700);
+ directory=path.resolve(directory);if(fs.existsSync(directory))throw Error('Output must be new; preserve earlier evidence');fs.mkdirSync(directory,{mode:0o700,recursive:true});directory=fs.realpathSync(directory);const scratch=fs.mkdtempSync(path.join(os.tmpdir(),'testlore-manager-proof-'));fs.chmodSync(scratch,0o700);
  const producer=fileIdentity(fileURLToPath(import.meta.url)),installer=fileIdentity(fileURLToPath(new URL('./public-corpus-upstream.js',import.meta.url))),fixtureLock=fileIdentity(fileURLToPath(new URL('./fixtures/upstream-manager/pnpm-12.3.4-lock.yaml',import.meta.url)),8192),rows=[];
  save(path.join(directory,'scratch.json'),{scratch,scope:'Constructed fixture, actual pinned manager and lifecycle execution. No genuine upstream or routing qualification.'});
  for(const [version,expectedExecution]of [['10.33.0','node'],['12.3.4','native']]){
