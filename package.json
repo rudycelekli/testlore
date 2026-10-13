@@ -2,6 +2,11 @@
   "name": "testlore",
   "version": "0.2.0-alpha.1",
   "description": "The verification layer for coding agents and developers: native test evidence, conservative routing, and reviewed repairs.",
+  "homepage": "https://github.com/rudycelekli/testlore#readme",
+  "author": {
+    "name": "Rudy Mizrahi Celekli",
+    "url": "https://rudycelekli.github.io/"
+  },
   "type": "module",
   "bin": {
     "testlore": "src/cli.js",
@@ -52,6 +57,9 @@
     "test-impact-analysis",
     "tdd",
     "ai-agents",
+    "agentic-ai",
+    "agentic-quality-engineering",
+    "verification",
     "vitest",
     "jest",
     "developer-tools"

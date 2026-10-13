@@ -24,6 +24,13 @@
   <a href="CONTRIBUTING.md">Contribute</a>
 </p>
 
+| Project metadata | Value |
+| --- | --- |
+| Author and maintainer | [Rudy Celekli](https://rudycelekli.github.io/#rudy) · Charlotte, North Carolina |
+| Domain | Agentic quality engineering · test intelligence |
+| Core capabilities | Evidence-aware test routing · independent challenges · reviewed learning |
+| Machine-readable record | [`codemeta.json`](codemeta.json) |
+
 Community value is measured through independent regressions, native comparisons and maintainer outcomes. See the [community campaign](docs/community-campaign.md) and [Gradia integration review](docs/gradia-ecosystem-review.md) for current evidence and limits.
 
 ## A quality engineer inside your repository
